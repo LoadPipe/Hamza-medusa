@@ -34,7 +34,7 @@ export default async function Nav() {
             zIndex={'2'}
             className="sticky top-0"
             width="100%"
-            height={'125px'}
+            height={{ base: '60px', md: '125px' }}
             justifyContent={'center'}
             alignItems={'center'}
             backgroundColor={'#020202'}
@@ -56,16 +56,15 @@ export default async function Nav() {
                     <LocalizedClientLink href="/">
                         <Flex width={'190px'} flexShrink={0}>
                             <Image
+                                className="w-[22.92px] h-[33px] md:w-[47.34px] md:h-[67px]"
                                 src={HamzaLogo}
-                                style={{ width: '100%', height: '67px' }}
                                 alt="Hamza"
                             />
 
                             <Image
                                 src={HamzaTitle}
+                                className="w-[60.73px] h-[11.59px] md:w-[125.42px] md:h-[23.07px]"
                                 style={{
-                                    width: '100%',
-                                    height: '23.07px',
                                     alignSelf: 'center',
                                     marginLeft: '1rem',
                                 }}
