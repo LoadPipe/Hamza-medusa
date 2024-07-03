@@ -14,6 +14,7 @@ const VerifyEmail = () => {
 
     const [email, setEmail] = useState('');
     const router = useRouter();
+    const authParams = `wallet=${authData.wallet_address}`;
 
     if (authData.status == 'unauthenticated') {
         return <div>Please connect wallet before adding email address.</div>;
@@ -72,7 +73,7 @@ const VerifyEmail = () => {
                             Or
                         </div>
                         <div className="buttons flex flex-col space-y-2 w-full">
-                            <a href={getGoogleOAuthURL()}>
+                            <a href={getGoogleOAuthURL(authParams)}>
                                 <button className="px-4 py-2 w-full border flex gap-2 border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-300 hover:shadow transition duration-150">
                                     <img
                                         className="w-6 h-6"

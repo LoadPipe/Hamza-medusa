@@ -2,10 +2,12 @@ import type {
     EventBusService,
     MedusaRequest,
     MedusaResponse,
+    Logger,
 } from '@medusajs/medusa';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import CustomerRepository from '../../../repositories/customer';
+import { logger } from '@medusajs/admin-ui';
 
 interface GoogleTokensResult {
     access_token: string;
@@ -17,8 +19,10 @@ interface GoogleTokensResult {
 
 async function getGoogleOAuthTokens({
     code,
+    logger,
 }: {
     code: string;
+    logger: Logger;
 }): Promise<GoogleTokensResult> {
     const url = 'https://oauth2.googleapis.com/token';
 
@@ -30,7 +34,7 @@ async function getGoogleOAuthTokens({
         grant_type: 'authorization_code',
     };
 
-    console.log('values', values);
+    logger.debug(`values: ${values}`);
     try {
         const res = await axios.post<GoogleTokensResult>(
             url,
@@ -43,8 +47,7 @@ async function getGoogleOAuthTokens({
         );
         return res.data;
     } catch (error: any) {
-        console.log('error in getting google token', error);
-
+        logger.error(`error in getting google token: ${error}`);
         throw new Error(error.message);
     }
 }
@@ -63,6 +66,11 @@ interface GoogleUserResult {
 async function getGoogleUser({
     id_token,
     access_token,
+    logger,
+}: {
+    id_token: string;
+    access_token: string;
+    logger: Logger;
 }): Promise<GoogleUserResult> {
     try {
         const res = await axios.get<GoogleUserResult>(
@@ -73,23 +81,32 @@ async function getGoogleUser({
                 },
             }
         );
+
+        logger.debug(`google user: ${res.data}`);
         return res.data;
     } catch (error: any) {
-        console.log('error in getting google user', error);
+        logger.error(`error in getting google user: ${error}`);
         throw new Error(error.message);
     }
 }
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
+    const logger = req.scope.resolve('logger') as Logger;
+
     try {
+        logger.debug(`google oauth cookies: ${req.cookies}`);
         let decoded: any = jwt.decode(req.cookies['_medusa_jwt']);
+        logger.debug(`google oauth decoded _medusa_jwt: ${decoded}`);
+
         let tokens = await getGoogleOAuthTokens({
             code: req.query.code.toString(),
+            logger,
         });
 
         let user = await getGoogleUser({
             id_token: tokens.id_token,
             access_token: tokens.access_token,
+            logger,
         });
 
         let eventBus_: EventBusService = req.scope.resolve('eventBusService');
@@ -113,9 +130,13 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         return res.redirect(`${process.env.STORE_URL}/account?verify=true`);
     } catch (err) {
-        console.error('Error authorizing google:', err);
-        res.status(500).json({
-            error: 'Failed to authorize with google',
-        });
+        logger.error('Error authorizing google:', err);
+        return res.redirect(
+            `${process.env.STORE_URL}/account?verify=false&error=true`
+        );
+
+        //res.status(500).json({
+        //    error: 'Failed to authorize with google',
+        //});
     }
 };
