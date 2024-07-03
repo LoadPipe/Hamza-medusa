@@ -16,6 +16,7 @@ import FilterModal from './components/filter-modal';
 import useModalFilter from '@store/store-page/filter-modal';
 import { usePathname } from 'next/navigation';
 import SearchModal from '@modules/search/templates/search-modal';
+import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
 const MobileFilter = () => {
     const { setModalFilterSelected } = useModalFilter();
@@ -47,13 +48,15 @@ const MobileFilter = () => {
             gap={'12px'}
         >
             {/* back button */}
-            <Box alignSelf={'center'} width={'30px'} cursor={'pointer'}>
-                <MdChevronLeft
-                    color="white"
-                    size={40}
-                    style={{ marginRight: 'auto' }}
-                />
-            </Box>
+            <LocalizedClientLink href="/">
+                <Box alignSelf={'center'} width={'30px'} cursor={'pointer'}>
+                    <MdChevronLeft
+                        color="white"
+                        size={40}
+                        style={{ marginRight: 'auto' }}
+                    />
+                </Box>
+            </LocalizedClientLink>
             {/* search bar */}
             <InputGroup>
                 <Input
