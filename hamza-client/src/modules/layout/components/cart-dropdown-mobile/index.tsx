@@ -105,7 +105,7 @@ const CartDropdown = ({
                     >
                         <HiOutlineShoppingCart
                             className="cart-icon"
-                            size={'24px'}
+                            size={'18px'}
                         />
                     </Flex>
                     {totalItems > 0 && (
