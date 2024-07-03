@@ -30,6 +30,8 @@ type TwitterTokenResponse = {
     scope: string;
 };
 
+//TODO: is it possble to have Logger on this page?
+
 // the main step 1 function, getting the access token from twitter using the code that the twitter sent us
 export async function getTwitterOAuthToken(code: string) {
     try {
