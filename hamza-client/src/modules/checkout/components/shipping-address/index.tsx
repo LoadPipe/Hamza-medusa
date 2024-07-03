@@ -169,7 +169,7 @@ const ShippingAddress = ({
                     onChange={onChange}
                 /> */}
             </div>
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                     label="Email"
                     name="email"
