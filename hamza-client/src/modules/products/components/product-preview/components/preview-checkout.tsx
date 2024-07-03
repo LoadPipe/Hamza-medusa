@@ -37,7 +37,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
     };
     const [options, setOptions] = useState<Record<string, string>>({});
     const updateOptions = (update: Record<string, string>) => {
-        console.log('options are ', options);
+        // console.log('options are ', options);
         setOptions({ ...options, ...update });
     };
     let countryCode = useParams().countryCode as string;
@@ -101,9 +101,12 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
 
             return map;
         }
-    }, [productData]);
+    }, [productData, variantId]);
 
-    // console.log(`Product Data ${productData}`);
+    console.log(`Variant ID ${variantId}`);
+    console.log(
+        `Product Data ${JSON.stringify(productData)} ${productData.variant}`
+    );
 
     useEffect(() => {
         let checkVariantId: string | undefined = undefined;
@@ -122,12 +125,12 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
     useEffect(() => {
         if (productData && productData.variants) {
             if (!variantId) {
+                console.log(`variantId is not set yet`);
                 setVariantId(productData.variants[0].id);
             }
-            let selectedProductVariant =
-                productData &&
-                productData.variants.find((a: any) => a.id == variantId);
-            setSelectedVariant(selectedProductVariant);
+            let selectedProductVariant = productData.variants.find(
+                (a: any) => a.id == productData.variants[0].id
+            );
             const price =
                 selectedProductVariant &&
                 (selectedProductVariant.prices.find(
@@ -135,8 +138,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                         p.currency_code === preferred_currency_code ?? 'usdt'
                 ) ??
                     selectedProductVariant.prices[0]);
+            // console.log(`price is being set to ${price}`);
             setSelectedPrice(price?.amount ?? 0);
-            console.log(productData);
+            // console.log(productData);
         }
     }, [productData, variantId]);
 
@@ -154,7 +158,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
             `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/product/get-store?product_id=${productData.id}`
         );
         let data = res.data;
-        console.log(data);
+        // console.log(data);
 
         if (data.status == true) {
             console.log('white list config ', whitelist_config);
@@ -164,7 +168,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                     ? true
                     : false;
 
-            console.log('white listed product ', whitelistedProduct);
+            // console.log('white listed product ', whitelistedProduct);
 
             setIsWhitelisted(whitelistedProduct);
         }
@@ -182,7 +186,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
             selectedVariant &&
             selectedVariant.allow_backorder
         ) {
-            console.log('running whitelist product handler');
+            // console.log('running whitelist product handler');
             whitelistedProductHandler();
         }
     }, [authData.status, productData, selectedVariant]);
@@ -255,15 +259,15 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                     >
                         {`${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} ${preferred_currency_code?.toUpperCase() ?? 'USDC'}`}
                     </Heading>
-                    <Text
-                        style={{ textDecoration: 'line-through' }}
-                        alignSelf={'center'}
-                        fontSize={{ base: '9px', md: '18px' }}
-                        display={{ base: 'none', md: 'block' }}
-                        color="#555555"
-                    >
-                        {`${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')}`}
-                    </Text>
+                    {/*<Text*/}
+                    {/*    style={{ textDecoration: 'line-through' }}*/}
+                    {/*    alignSelf={'center'}*/}
+                    {/*    fontSize={{ base: '9px', md: '18px' }}*/}
+                    {/*    display={{ base: 'none', md: 'block' }}*/}
+                    {/*    color="#555555"*/}
+                    {/*>*/}
+                    {/*    {`${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')}`}*/}
+                    {/*</Text>*/}
                 </Flex>
 
                 <Heading
