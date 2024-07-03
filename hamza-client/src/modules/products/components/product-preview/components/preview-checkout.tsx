@@ -131,6 +131,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
             let selectedProductVariant = productData.variants.find(
                 (a: any) => a.id == productData.variants[0].id
             );
+            setSelectedVariant(selectedProductVariant);
             const price =
                 selectedProductVariant &&
                 (selectedProductVariant.prices.find(
