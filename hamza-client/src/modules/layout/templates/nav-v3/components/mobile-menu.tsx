@@ -12,35 +12,34 @@ import {
     MenuItem,
     MenuDivider,
 } from '@chakra-ui/react';
-
+import Image from 'next/image';
 import { IoMdMenu } from 'react-icons/io';
 import Link from 'next/link';
 import NavLink from '../components/nav-link';
 import { CgProfile } from 'react-icons/cg';
 import AuthorizedLinks from '../components/authorized-links';
 import ConnectWalletLink from '../components/connect-wallet-link';
+import { AiOutlineMenu } from 'react-icons/ai';
+
+// import filterImage from '../../../../../../public/images/buttons/filter-16px.svg'
 
 export default function MobileMenu() {
     return (
         <Flex display={{ sm: 'flex', md: 'none' }} mr="auto">
-            <Menu placement="bottom-end">
+            <Menu placement="bottom-start">
                 <MenuButton
                     flexShrink={0}
                     width={{ base: '60px' }}
                     height={{ base: '60px' }}
                     px="1rem"
                     borderRadius={{ base: 'none' }}
-                    justifyContent={'center'}
-                    alignSelf={'center'}
                     backgroundColor={{
                         base: 'transparent',
                     }}
                     cursor={'pointer'}
                 >
-                    <Flex>
-                        <Flex alignSelf={'center'} color={{ base: 'white' }}>
-                            <IoMdMenu size={30} />
-                        </Flex>
+                    <Flex color={'primary.green.900'}>
+                        <AiOutlineMenu size={'20px'} />
                     </Flex>
                 </MenuButton>
                 <MenuList

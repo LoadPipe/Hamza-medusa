@@ -1,17 +1,17 @@
 import React from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-
 import { Flex, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 import HamzaLogo from '../../../../../../public/images/logo/logo_green.svg';
 import HamzaTitle from '../../../../../../public/images/logo/hamza-title.svg';
 import MobileMenu from '../components/mobile-menu';
-
+// import CartButton from '@modules/layout/components/cart-button';
+import CartButton from '@modules/layout/components/cart-button-mobile';
 export default async function MobileNav() {
     return (
         <Flex
             h={'87px'}
-            mx="1rem"
+            mr="1rem"
             maxWidth={'1280px'}
             width={'100%'}
             bgColor={'transparent'}
@@ -44,10 +44,10 @@ export default async function MobileNav() {
                     </LocalizedClientLink>
                 </Flex>
 
-                <Flex flex={1} textAlign={'right'}>
-                    <Text ml="auto" color="white">
-                        Cart
-                    </Text>
+                <Flex flex={1}>
+                    <Flex ml="auto">
+                        <CartButton />
+                    </Flex>
                 </Flex>
             </Flex>
         </Flex>
