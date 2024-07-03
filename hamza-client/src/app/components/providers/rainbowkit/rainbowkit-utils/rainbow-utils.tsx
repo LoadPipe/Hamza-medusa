@@ -103,8 +103,6 @@ export const SwitchNetwork = ({ enabled }: SwitchNetworkProps) => {
         }
     }, [chain, onClose, onOpen, requiredChains]);
 
-    if (!chain) return <div>Loading...</div>;
-
     if (enabled) {
         return (
             <Modal isOpen={isOpen} onClose={() => {}}>

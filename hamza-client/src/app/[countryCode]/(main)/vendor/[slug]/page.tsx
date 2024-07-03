@@ -118,13 +118,16 @@ export default function Page({ params }: { params: { slug: string } }) {
                 {displaySlug} {/* Display the capitalized slug */}
             </h1>
             <Image
-                src={reviewStats.thumbnail} // Replace with your image URL
+                src={reviewStats.thumbnail}
                 alt="Vendor"
                 borderRadius="full"
-                boxSize="150px"
+                boxSize="250px"
+                objectFit="cover"
+                objectPosition="center"
                 mx="auto"
                 my={4}
             />
+
             <Text>Total Products: {reviewStats.productCount}</Text>
             <Text>Vendor Created at: {readableDate}</Text>
             <Text>Number of Followers: {reviewStats.numberOfFollowers}</Text>

@@ -119,7 +119,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             'password'
         );
 
-
         const store0 = await storeService.createStore(
             user0,
             'Medusa Merch',
@@ -130,61 +129,61 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             user1,
             'Echo Rift',
             'pcol_01HSGAM4918EX0DETKY6E662WT',
-            'http://54.253.186.85/vr_3.webp'
+            'https://images.hamza.biz/headphones.webp'
         );
         const store2 = await storeService.createStore(
             user2,
             'Dauntless',
             'pcol_01HSGAMXDJD725MR3VSW631SN2',
-            'http://54.253.186.85/headphones.webp'
+            'https://images.hamza.biz/dalle_vr.webp'
         );
         const store3 = await storeService.createStore(
             user3,
             'Drones',
             'pcol_01HSGAMXDJD725MR3VSW631DR0',
-            'http://54.253.186.85/headphones.webp'
+            'https://images.hamza.biz/Drones/dji_mini_4_pro/dji_mini_pro_1.jpg'
         );
         const store4 = await storeService.createStore(
             user4,
             'Legos',
             'pcol_01HSGAMXDJD725MR3VSW63LEG0',
-            'http://54.253.186.85/headphones.webp'
+            'https://images.hamza.biz/Lego/corvette/corvette_1.jpg'
         );
         const store5 = await storeService.createStore(
             user5,
             'Board Games',
             'pcol_01HSGAMXDJD725MR3VSW63B0RD',
-            'http://54.253.186.85/headphones.webp'
+            'https://images.hamza.biz/Board_Games/dark_souls/souls_1.jpg'
         );
         const store6 = await storeService.createStore(
             user6,
             'Workout Gear',
             'pcol_01HSGAMXDJD725MR3VSW63W0GE',
-            'http://54.253.186.85/headphones.webp'
+            'https://images.hamza.biz/Workout/dumbbell/dumb_2.jpg'
         );
         const store7 = await storeService.createStore(
             user7,
-            'Lofi Jungle',
-            'pcol_lofi',
-            'http://54.253.186.85/headphones.webp'
+            'Gaming Gear',
+            'pcol_01HSGAMXDJD725MR3VSW63W0GA',
+            'https://images.hamza.biz/gaming_store/6.1.png'
         );
         const store8 = await storeService.createStore(
             user8,
             'Shake',
             'pcol_shake',
-            'http://54.253.186.85/headphones.webp'
+            'https://images.hamza.biz/headphones.webp'
         );
         const store9 = await storeService.createStore(
             user9,
             'Legendary Light Design',
             'pcol_lighting',
-            'http://localhost/Legendary/icon.jpg'
+            'https://images.hamza.biz/Legendary/mood/LLD_mood1.webp'
         );
         const store10 = await storeService.createStore(
             user10,
             'Block',
             'pcol_blocks',
-            'http://54.253.186.85/headphones.webp'
+            'https://images.hamza.biz/headphones.webp'
         );
 
         await productCollectionService.update(
@@ -237,9 +236,12 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             store_id: store6.id,
         });
 
-        await productCollectionService.update('pcol_lofi', {
-            store_id: store7.id,
-        });
+        await productCollectionService.update(
+            'pcol_01HSGAMXDJD725MR3VSW63W0GA',
+            {
+                store_id: store7.id,
+            }
+        );
 
         await productCollectionService.update('pcol_shake', {
             store_id: store8.id,

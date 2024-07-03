@@ -58,7 +58,7 @@ const Addresses = ({
     const [message, formAction] = useFormState(setAddresses, null);
 
     return (
-        <div className="bg-black p-4 min-h-screen">
+        <div className="bg-black">
             <div className="flex flex-row items-center justify-between mb-6">
                 <Heading
                     level="h2"

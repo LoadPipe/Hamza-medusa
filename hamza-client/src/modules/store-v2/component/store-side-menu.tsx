@@ -95,6 +95,10 @@ const SideMenu = () => {
                         categoryType="games"
                         categoryName="Echo Rift"
                     />
+                    <CategoryButton
+                        categoryType="games"
+                        categoryName="Gaming Gear"
+                    />
                 </Flex>
             </Box>
 

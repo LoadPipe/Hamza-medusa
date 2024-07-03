@@ -84,7 +84,7 @@ export class RelayClient extends EventEmitter {
   // encode and send a message and then wait for a response
   encodeAndSend(
     encoder: PBMessage,
-    object: PBObject = {},
+    object: PBObject = {}
   ): Promise<PBInstance> {
     const id = this.encodeAndSendNoWait(encoder, object);
     return new Promise((resolve, reject) => {
@@ -101,7 +101,7 @@ export class RelayClient extends EventEmitter {
   }
 
   async sendShopEvent(
-    shopEvent: schema.IShopEvent,
+    shopEvent: schema.IShopEvent
   ): Promise<schema.EventWriteResponse> {
     await this.connect();
     const shopEventBytes = schema.ShopEvent.encode(shopEvent).finish();
@@ -211,7 +211,7 @@ export class RelayClient extends EventEmitter {
     const payload = data.slice(1);
     const message = pbMessage.decode(payload);
     console.log(
-      `[recv] reqId=${bytesToHex(message.requestId)} typeCode=${prefix}`,
+      `[recv] reqId=${bytesToHex(message.requestId)} typeCode=${prefix}`
     );
     switch (pbMessage) {
       case schema.PingRequest:
@@ -253,27 +253,34 @@ export class RelayClient extends EventEmitter {
         console.error("WebSocket error!");
         console.error(error);
       });
-      this.connection.addEventListener(
-        "message",
-        this.#decodeMessage.bind(this),
-      );
+      this.connection.addEventListener("message", () => {
+        try {
+          this.#decodeMessage.bind(this);
+        } catch (e) {
+          console.error(e);
+        }
+      });
     }
     return new Promise((resolve, reject) => {
       if (this.connection.readyState === WebSocket.OPEN) {
         resolve("already open");
       } else {
         this.connection.addEventListener("open", async () => {
-          if (this.keyCardEnrolled) {
-            const res = await this.#authenticate();
-            if (res) {
-              console.log("authentication success");
-              resolve(res);
+          try {
+            if (this.keyCardEnrolled) {
+              const res = await this.#authenticate();
+              if (res) {
+                console.log("authentication success");
+                resolve(res);
+              } else {
+                console.log("authentication failed");
+                reject(res);
+              }
             } else {
-              console.log("authentication failed");
-              reject(res);
+              resolve("ws connected without authentication");
             }
-          } else {
-            resolve("ws connected without authentication");
+          } catch (e) {
+            reject(e);
           }
         });
       }
@@ -321,11 +328,11 @@ export class RelayClient extends EventEmitter {
   async uploadBlob(blob: FormData) {
     await this.connect();
     const uploadURLResp = (await this.encodeAndSend(
-      schema.GetBlobUploadURLRequest,
+      schema.GetBlobUploadURLRequest
     )) as schema.GetBlobUploadURLResponse;
     if (uploadURLResp.error !== null) {
       throw new Error(
-        `Failed to get blob upload URL: ${uploadURLResp.error!.message}`,
+        `Failed to get blob upload URL: ${uploadURLResp.error!.message}`
       );
     }
     const uploadResp = await fetch(uploadURLResp.url, {
@@ -335,7 +342,7 @@ export class RelayClient extends EventEmitter {
     if (uploadResp.status !== 201) {
       console.log(uploadResp);
       throw new Error(
-        `unexpected status: ${uploadResp.statusText} (${uploadResp.status})`,
+        `unexpected status: ${uploadResp.statusText} (${uploadResp.status})`
       );
     }
     return uploadResp.json();
@@ -343,7 +350,7 @@ export class RelayClient extends EventEmitter {
 
   // null erc20Addr means vanilla ethererum is used
   async commitOrder(
-    order: schema.ICommitItemsToOrderRequest,
+    order: schema.ICommitItemsToOrderRequest
   ): Promise<schema.CommitItemsToOrderResponse> {
     await this.connect();
     return this.encodeAndSend(schema.CommitItemsToOrderRequest, order);

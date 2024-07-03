@@ -113,9 +113,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         return res.redirect(`${process.env.STORE_URL}/account?verify=true`);
     } catch (err) {
-        console.error('Error creating product review:', err);
+        console.error('Error authorizing google:', err);
         res.status(500).json({
-            error: 'Failed to create product review',
+            error: 'Failed to authorize with google',
         });
     }
 };
