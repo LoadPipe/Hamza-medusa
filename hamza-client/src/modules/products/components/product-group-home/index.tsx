@@ -110,7 +110,7 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
 
     return (
         <Flex
-            mt={{ base: '2rem', md: '3rem' }}
+            mt={{ base: '0', md: '1rem' }}
             mb={'4rem'}
             maxW={'1280px'}
             width="100%"
@@ -159,7 +159,7 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
                           return (
                               <GridItem
                                   key={index}
-                                  maxW={'295px'}
+                                  //   maxW={'295px'}
                                   minHeight={'243.73px'}
                                   height={{ base: '100%', md: '399px' }}
                                   width="100%"

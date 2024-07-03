@@ -28,11 +28,12 @@ const FilterBar = () => {
 
     return (
         <Flex
-            mt={{ base: '2.5rem', md: '4rem' }}
+            mt={{ base: '0.5rem', md: '2rem' }}
             maxW={'1280px'}
             width={'100%'}
             alignItems={'center'}
             justifyContent={'center'}
+            py="2rem"
         >
             <Flex
                 mx="1rem"
