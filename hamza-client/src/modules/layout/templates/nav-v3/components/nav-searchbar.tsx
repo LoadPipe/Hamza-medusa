@@ -40,7 +40,7 @@ const NavSearchBar = () => {
                     color="#3E3E3E"
                     placeholder="Search for product name, product..."
                     _placeholder={{ color: '#555555' }}
-                    _hover={{ borderColor: 'primary.indigo.900' }}
+                    _hover={{ borderColor: 'primary.green.900' }}
                     cursor={'pointer'}
                     noOfLines={1}
                     onClick={() => {

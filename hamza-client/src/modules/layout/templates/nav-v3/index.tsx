@@ -95,8 +95,10 @@ export default async function Nav() {
                         cursor={'pointer'}
                         display={{ base: 'none', md: 'flex' }}
                         _hover={{
-                            color: 'primary.indigo.900',
-                            borderColor: 'primary.indigo.900',
+                            color: 'primary.green.900',
+                            borderColor: 'primary.green.900',
+                            transition:
+                                'color 0.2s ease-in-out, border-color 0.2s ease-in-out',
                         }}
                     >
                         <Text

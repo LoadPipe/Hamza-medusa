@@ -49,12 +49,16 @@ const MobileFilter = () => {
         >
             {/* back button */}
             <LocalizedClientLink className="self-center" href="/">
-                <Box width={'30px'} cursor={'pointer'}>
-                    <MdChevronLeft
-                        color="white"
-                        size={40}
-                        style={{ marginRight: 'auto' }}
-                    />
+                <Box
+                    width={'30px'}
+                    cursor={'pointer'}
+                    color={'white'}
+                    _hover={{
+                        color: 'primary.green.900',
+                        transition: 'color 0.2s ease-in-out',
+                    }}
+                >
+                    <MdChevronLeft size={40} style={{ marginRight: 'auto' }} />
                 </Box>
             </LocalizedClientLink>
             {/* search bar */}
@@ -66,6 +70,9 @@ const MobileFilter = () => {
                     borderColor={'#3E3E3E'}
                     borderRadius={'full'}
                     cursor={'pointer'}
+                    _hover={{
+                        borderColor: 'primary.green.900',
+                    }}
                     onClick={() => {
                         setSearchOpened(true);
                     }}
@@ -103,8 +110,11 @@ const MobileFilter = () => {
                     borderColor={'#3E3E3E'}
                     justifyContent={'center'}
                     cursor={'pointer'}
+                    color={'white'}
                     _hover={{
-                        borderColor: 'white',
+                        color: 'primary.green.900',
+                        borderColor: 'primary.green.900',
+                        transition: 'color 0.2s ease-in-out',
                     }}
                 >
                     <Image
