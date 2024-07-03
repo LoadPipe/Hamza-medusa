@@ -123,7 +123,10 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                         alignItems={'center'}
                         mt={'auto'}
                         color="white"
-                        _hover={{ color: 'primary.green.900' }}
+                        _hover={{
+                            color: 'primary.green.900',
+                            transition: 'color 0.2s ease-in-out',
+                        }}
                     >
                         <Flex
                             alignSelf={'center'}
