@@ -15,7 +15,7 @@ const VerifyEmail = () => {
 
     const [email, setEmail] = useState('');
     const router = useRouter();
-    const authParams = `wallet=${authData.wallet_address}`;
+    const authParams = `customer_id=${authData.customer_id}`;
 
     if (authData.status == 'unauthenticated') {
         return <div>Please connect wallet before adding email address.</div>;
