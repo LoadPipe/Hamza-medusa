@@ -186,29 +186,33 @@ export default async function Footer() {
                 {/* Bottom Content */}
 
                 <Flex pt="2rem" justifyContent={'space-between'} width={'100%'}>
-                    <LocalizedClientLink href="/">
-                        <Flex width={'190px'} flexShrink={0}>
-                            <Image
-                                src={HamzaLogo}
-                                style={{ width: '100%', height: '67px' }}
-                                alt="Hamza"
-                            />
+                    <Flex justifyContent={'center'} alignItems="center">
+                        <LocalizedClientLink href="/">
+                            <Flex width={'190px'} flexShrink={0}>
+                                <Image
+                                    src={HamzaLogo}
+                                    style={{ width: '100%', height: '67px' }}
+                                    alt="Hamza"
+                                />
 
-                            <Image
-                                src={HamzaTitle}
-                                style={{
-                                    width: '100%',
-                                    height: '23.07px',
-                                    alignSelf: 'center',
-                                    marginLeft: '1rem',
-                                }}
-                                alt="Hamza"
-                            />
-                        </Flex>
-                    </LocalizedClientLink>
+                                <Image
+                                    src={HamzaTitle}
+                                    style={{
+                                        width: '100%',
+                                        height: '23.07px',
+                                        alignSelf: 'center',
+                                        marginLeft: '1rem',
+                                    }}
+                                    alt="Hamza"
+                                />
+                            </Flex>
+                        </LocalizedClientLink>
+                    </Flex>
                     <Flex
                         mr={{ base: 'auto', md: '0' }}
                         flexDir={'row'}
+                        justifyContent={'center'}
+                        alignItems="center"
                         color={'white'}
                         gap={'8px'}
                     >
@@ -229,7 +233,13 @@ export default async function Footer() {
                         </Link>
                     </Flex>
 
-                    <Flex flexDir={'column'} color={'white'} gap={'8px'}>
+                    <Flex
+                        justifyContent={'center'}
+                        alignItems="center"
+                        flexDir={'column'}
+                        color={'white'}
+                        gap={'8px'}
+                    >
                         <Text
                             display={{ base: 'none', md: 'block' }}
                             className="text-base font-bold"
