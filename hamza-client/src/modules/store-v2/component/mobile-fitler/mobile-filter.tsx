@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import mobileFilter from '../../../../../public/images/categories/mobile-filter.svg';
 import {
     Flex,
@@ -14,12 +14,30 @@ import { MdChevronLeft } from 'react-icons/md';
 import { FaSearch } from 'react-icons/fa';
 import FilterModal from './components/filter-modal';
 import useModalFilter from '@store/store-page/filter-modal';
+import { usePathname } from 'next/navigation';
+import SearchModal from '@modules/search/templates/search-modal';
+import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
 const MobileFilter = () => {
     const { setModalFilterSelected } = useModalFilter();
 
     const [showFilterModal, setShowFilterModal] = useState(true);
     const { isOpen, onOpen, onClose } = useDisclosure();
+
+    const [searchOpened, setSearchOpened] = useState(false);
+    const pathname = usePathname();
+
+    useEffect(() => {
+        window.addEventListener('keydown', (event) => {
+            if ((event.ctrlKey || event.metaKey) && event.key == 'k') {
+                setSearchOpened(true);
+            }
+        });
+    }, []);
+
+    useEffect(() => {
+        setSearchOpened(false);
+    }, [pathname]);
 
     return (
         <Flex
@@ -30,13 +48,15 @@ const MobileFilter = () => {
             gap={'12px'}
         >
             {/* back button */}
-            <Box alignSelf={'center'} width={'30px'} cursor={'pointer'}>
-                <MdChevronLeft
-                    color="white"
-                    size={40}
-                    style={{ marginRight: 'auto' }}
-                />
-            </Box>
+            <LocalizedClientLink className="self-center" href="/">
+                <Box width={'30px'} cursor={'pointer'}>
+                    <MdChevronLeft
+                        color="white"
+                        size={40}
+                        style={{ marginRight: 'auto' }}
+                    />
+                </Box>
+            </LocalizedClientLink>
             {/* search bar */}
             <InputGroup>
                 <Input
@@ -45,6 +65,10 @@ const MobileFilter = () => {
                     borderWidth={'2px'}
                     borderColor={'#3E3E3E'}
                     borderRadius={'full'}
+                    cursor={'pointer'}
+                    onClick={() => {
+                        setSearchOpened(true);
+                    }}
                 />
                 <InputRightElement
                     height="100%"
@@ -56,6 +80,13 @@ const MobileFilter = () => {
                     <FaSearch size={20} color="white" />
                 </InputRightElement>
             </InputGroup>
+            {searchOpened && (
+                <SearchModal
+                    closeModal={() => {
+                        setSearchOpened(false);
+                    }}
+                />
+            )}
             {/* filter button */}
             <Box>
                 <Flex
