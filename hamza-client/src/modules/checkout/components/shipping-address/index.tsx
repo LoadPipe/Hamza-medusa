@@ -95,69 +95,71 @@ const ShippingAddress = ({
                     />
                 </Container>
             )}
-            <div className="grid grid-cols-2 gap-4">
-                <Input
-                    label="First name"
-                    name="shipping_address.first_name"
-                    autoComplete="given-name"
-                    value={formData['shipping_address.first_name']}
-                    onChange={handleChange}
-                    required
-                />
-                <Input
-                    label="Last name"
-                    name="shipping_address.last_name"
-                    autoComplete="family-name"
-                    value={formData['shipping_address.last_name']}
-                    onChange={handleChange}
-                    required
-                />
-                <Input
-                    label="Address"
-                    name="shipping_address.address_1"
-                    autoComplete="address-line1"
-                    value={formData['shipping_address.address_1']}
-                    onChange={handleChange}
-                    required
-                />
-                <Input
-                    label="Company"
-                    name="shipping_address.company"
-                    value={formData['shipping_address.company']}
-                    onChange={handleChange}
-                    autoComplete="organization"
-                />
-                <Input
-                    label="Postal code"
-                    name="shipping_address.postal_code"
-                    autoComplete="postal-code"
-                    value={formData['shipping_address.postal_code']}
-                    onChange={handleChange}
-                    required
-                />
-                <Input
-                    label="City"
-                    name="shipping_address.city"
-                    autoComplete="address-level2"
-                    value={formData['shipping_address.city']}
-                    onChange={handleChange}
-                    required
-                />
-                <CountrySelect
-                    name="shipping_address.country_code"
-                    autoComplete="country"
-                    region={cart?.region}
-                    value={formData['shipping_address.country_code']}
-                    onChange={handleChange}
-                    required
-                />
-                <Input
-                    label="State / Province"
-                    name="shipping_address.province"
-                    autoComplete="address-level1"
-                    value={formData['shipping_address.province']}
-                    onChange={handleChange}
-                />
+            <div className="grid gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+                    <Input
+                        label="First name"
+                        name="shipping_address.first_name"
+                        autoComplete="given-name"
+                        value={formData['shipping_address.first_name']}
+                        onChange={handleChange}
+                        required
+                    />
+                    <Input
+                        label="Last name"
+                        name="shipping_address.last_name"
+                        autoComplete="family-name"
+                        value={formData['shipping_address.last_name']}
+                        onChange={handleChange}
+                        required
+                    />
+                    <Input
+                        label="Address"
+                        name="shipping_address.address_1"
+                        autoComplete="address-line1"
+                        value={formData['shipping_address.address_1']}
+                        onChange={handleChange}
+                        required
+                    />
+                    <Input
+                        label="Company"
+                        name="shipping_address.company"
+                        value={formData['shipping_address.company']}
+                        onChange={handleChange}
+                        autoComplete="organization"
+                    />
+                    <Input
+                        label="Postal code"
+                        name="shipping_address.postal_code"
+                        autoComplete="postal-code"
+                        value={formData['shipping_address.postal_code']}
+                        onChange={handleChange}
+                        required
+                    />
+                    <Input
+                        label="City"
+                        name="shipping_address.city"
+                        autoComplete="address-level2"
+                        value={formData['shipping_address.city']}
+                        onChange={handleChange}
+                        required
+                    />
+                    <CountrySelect
+                        name="shipping_address.country_code"
+                        autoComplete="country"
+                        region={cart?.region}
+                        value={formData['shipping_address.country_code']}
+                        onChange={handleChange}
+                        required
+                    />
+                    <Input
+                        label="State / Province"
+                        name="shipping_address.province"
+                        autoComplete="address-level1"
+                        value={formData['shipping_address.province']}
+                        onChange={handleChange}
+                    />
+                </div>
             </div>
             <div className="my-8">
                 {/* <Checkbox
@@ -167,7 +169,7 @@ const ShippingAddress = ({
                     onChange={onChange}
                 /> */}
             </div>
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
                     label="Email"
                     name="email"
