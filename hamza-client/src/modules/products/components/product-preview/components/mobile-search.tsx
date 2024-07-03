@@ -1,18 +1,13 @@
-'use client';
-
 import React from 'react';
 import { Flex, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
 import { FaSearch } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import SearchModal from '@modules/search/templates/search-modal';
-import { getRegion } from 'app/actions';
 
-const NavSearchBar = () => {
+const SearchBar = () => {
     const [searchOpened, setSearchOpened] = useState(false);
     const pathname = usePathname();
-    //Todo: get country code
-    const isHomePage = pathname === '/us';
 
     useEffect(() => {
         window.addEventListener('keydown', (event) => {
@@ -27,19 +22,25 @@ const NavSearchBar = () => {
     }, [pathname]);
 
     return (
-        <>
-            <InputGroup mx="2rem" display={isHomePage ? 'none' : 'block'}>
+        <Flex
+            width="100%"
+            display={{ base: 'flex', md: 'none' }}
+            justifyContent={'center'}
+            alignItems={'center'}
+        >
+            <InputGroup>
                 <Input
+                    height={{ base: '52px', md: '86px' }}
                     width={'100%'}
-                    height={'80px'}
-                    border="1px solid"
+                    padding="16px 8px 16px 28px"
+                    border="2px solid"
                     borderRadius="40px"
-                    borderColor="#555555"
+                    borderColor="#3E3E3E"
                     backgroundColor="black"
-                    fontSize={{ base: '14px', md: '16px' }}
+                    fontSize={{ base: '14px', md: '22px' }}
                     color="#3E3E3E"
-                    placeholder="Search for product name, product..."
-                    _placeholder={{ color: '#555555' }}
+                    placeholder=""
+                    _placeholder={{ color: '#3E3E3E' }}
                     _hover={{ borderColor: 'primary.indigo.900' }}
                     cursor={'pointer'}
                     noOfLines={1}
@@ -52,10 +53,11 @@ const NavSearchBar = () => {
                     display="flex"
                     alignItems="center"
                     pointerEvents="none"
-                    mr="1rem"
+                    mr="5"
+                    ml="5"
                     fontSize={{ base: '20px', md: '28px' }}
                 >
-                    <FaSearch color="#555555" />
+                    <FaSearch color="white" />
                 </InputRightElement>
             </InputGroup>
             {searchOpened && (
@@ -65,8 +67,8 @@ const NavSearchBar = () => {
                     }}
                 />
             )}
-        </>
+        </Flex>
     );
 };
 
-export default NavSearchBar;
+export default SearchBar;

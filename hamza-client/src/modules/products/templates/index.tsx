@@ -15,7 +15,7 @@ import RelatedProducts from '@modules/products/components/related-products';
 import SkeletonRelatedProducts from '@modules/skeletons/templates/skeleton-related-products';
 import { notFound } from 'next/navigation';
 import ProductActionsWrapper from './product-actions-wrapper';
-import { Box, Flex, Divider } from '@chakra-ui/react';
+import { Box, Flex, Divider, Text } from '@chakra-ui/react';
 import PreviewGallery from '../components/product-preview/components/preview-gallery';
 import ProductInfo from '../components/product-preview/components/product-info';
 import PreviewCheckout from '../components/product-preview/components/preview-checkout';
@@ -23,9 +23,11 @@ import ProductReview from '../components/product-preview/components/product-revi
 import ProductReviewMobile from '../components/product-preview/components/product-review-mobile';
 import useProductPreview from '@store/product-preview/product-preview';
 import VendorBanner from '../components/product-preview/components/vendor-banner';
+import SearchBar from '../components/product-preview/components/mobile-search';
 import axios from 'axios';
 import Tweet from '@/components/tweet';
 import { XMark } from '@medusajs/icons';
+import { MdChevronLeft } from 'react-icons/md';
 
 type ProductTemplateProps = {
     product: PricedProduct;
@@ -104,13 +106,41 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
             alignItems="center"
             mx="1rem"
         >
-            <Flex maxWidth="1280px" width="100%" justifyContent="left">
-                <LocalizedClientLink
-                    href="/"
-                    className="flex gap-2 text-white hover:text-ui-fg-base"
-                >
-                    <XMark /> Back to Products
+            <Flex
+                mt="1rem"
+                mb="-1rem"
+                maxWidth="1280px"
+                height={'52px'}
+                width="100%"
+                flexDirection={'row'}
+            >
+                <LocalizedClientLink href="/store">
+                    <Flex
+                        ml="-0.5rem"
+                        height={'52px'}
+                        flexDirection={'row'}
+                        justifyContent={'center'}
+                        alignItems={'center'}
+                        mt={'auto'}
+                    >
+                        <Flex
+                            alignSelf={'center'}
+                            flexDirection={'row'}
+                            my="auto"
+                        >
+                            <MdChevronLeft color="white" size={40} />
+                            <Text
+                                alignSelf={'center'}
+                                display={{ base: 'none', md: 'block' }}
+                                color="white"
+                            >
+                                Back to products
+                            </Text>
+                        </Flex>
+                    </Flex>
                 </LocalizedClientLink>
+
+                <SearchBar />
             </Flex>
             <Flex mt="2rem">
                 <PreviewGallery />
