@@ -7,7 +7,6 @@ import type {
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import CustomerRepository from '../../../repositories/customer';
-import { logger } from '@medusajs/admin-ui';
 
 interface GoogleTokensResult {
     access_token: string;
@@ -95,15 +94,11 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     try {
         logger.debug(`google oauth cookies: ${JSON.stringify(req.cookies)}`);
-        let decoded: any = jwt.decode(
-            JSON.stringify(req.cookies['_medusa_jwt'])
-        );
+        let decoded: any = jwt.decode(req.cookies['_medusa_jwt']);
         logger.debug(
             `google oauth decoded _medusa_jwt: ${JSON.stringify(decoded)}`
         );
-        logger.debug(
-            `google oauth decoded _medusa_jwt: ${JSON.stringify(req.params)}`
-        );
+        logger.debug(`google oauth req.params: ${JSON.stringify(req.params)}`);
 
         if (!decoded) throw new Error('unable to get the _medusa_jwt cookie');
 
