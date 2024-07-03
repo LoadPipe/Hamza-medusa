@@ -98,6 +98,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         let decoded: any = jwt.decode(req.cookies['_medusa_jwt']);
         logger.debug(`google oauth decoded _medusa_jwt: ${decoded}`);
 
+        if (!decoded) throw new Error('unable to get the _medusa_jwt cookie');
+
         let tokens = await getGoogleOAuthTokens({
             code: req.query.code.toString(),
             logger,
@@ -132,7 +134,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     } catch (err) {
         logger.error('Error authorizing google:', err);
         return res.redirect(
-            `${process.env.STORE_URL}/account?verify=false&error=true`
+            `${process.env.STORE_URL}/account/profile?verify=false&error=true`
         );
 
         //res.status(500).json({
