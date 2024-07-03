@@ -29,6 +29,7 @@ const AccountNav = ({
     const searchParams = useSearchParams();
     const { countryCode } = useParams();
     const { setCustomerAuthData, authData } = useCustomerAuthStore();
+    const { setCustomerAuthData, authData } = useCustomerAuthStore();
     const router = useRouter();
     const handleLogout = async () => {
         setCustomerAuthData({
@@ -45,11 +46,18 @@ const AccountNav = ({
     };
 
     useEffect(() => {
-        if (searchParams.get('verify') == 'true') {
+        if (searchParams.get('verify') === 'true') {
             setCustomerAuthData({
                 ...authData,
                 is_verified: true,
             });
+        } else {
+            if (
+                searchParams.get('verify') === 'false' &&
+                searchParams.get('error') === 'true'
+            ) {
+                router.push(`/${countryCode}/verify-email?auth_error=true`);
+            }
         }
     }, []);
     useEffect(() => {

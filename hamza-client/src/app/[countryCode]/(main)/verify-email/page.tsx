@@ -5,12 +5,13 @@ import Input from '@modules/common/components/input';
 import axios from 'axios';
 import { useState } from 'react';
 import { Toast } from '@medusajs/ui';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import getGoogleOAuthURL from '@lib/util/google-url';
 import getTwitterOauthUrl from '@lib/util/twitter-url';
 
 const VerifyEmail = () => {
     const { authData, setCustomerAuthData } = useCustomerAuthStore();
+    const searchParams = useSearchParams();
 
     const [email, setEmail] = useState('');
     const router = useRouter();
@@ -42,9 +43,12 @@ const VerifyEmail = () => {
             <div className="flex flex-col items-center w-full">
                 <div className="my-8">
                     <h1 className="font-semibold text-4xl text-white text-center">
-                        Email Verification
+                        Account Verification
                     </h1>
                 </div>
+                {searchParams.get('auth_error') == 'true' && (
+                    <div>An error occurred during verification</div>
+                )}
                 <div className="px-16">
                     <div className="p-4 md:p-5">
                         <form
