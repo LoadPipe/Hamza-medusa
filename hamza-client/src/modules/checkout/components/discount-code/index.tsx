@@ -10,6 +10,7 @@ import Input from '@modules/common/components/input';
 import Trash from '@modules/common/icons/trash';
 import ErrorMessage from '@modules/checkout/components/error-message';
 import { SubmitButton } from '@modules/checkout/components/submit-button';
+import { Button } from '@chakra-ui/react';
 import {
     removeDiscount,
     removeGiftCard,
@@ -146,12 +147,13 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
                                         type="text"
                                         autoFocus={false}
                                     />
-                                    <SubmitButton
+                                    <Button
+                                        backgroundColor={'primary.green.900'}
+                                        color={'white'}
                                         variant="secondary"
-                                        className="bg-green-400"
                                     >
                                         Apply
-                                    </SubmitButton>
+                                    </Button>
                                 </div>
                                 <ErrorMessage error={message} />
                             </>
