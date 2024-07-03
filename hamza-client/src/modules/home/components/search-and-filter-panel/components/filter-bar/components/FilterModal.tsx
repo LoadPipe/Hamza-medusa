@@ -63,19 +63,19 @@ const FilterModalHome: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                 maxWidth={'884px'}
                 width={'100%'}
                 backgroundColor={'#121212'}
+                borderRadius={'12px'}
                 boxShadow="lg"
             >
                 <ModalHeader
                     fontWeight={'600'}
-                    fontSize={'16px'}
+                    fontSize={'24px'}
                     textAlign={'center'}
                     color="primary.green.900"
                 >
                     Filters
                 </ModalHeader>
-
                 <ModalCloseButton color={'white'} />
-                <ModalBody padding={'1rem'}>
+                <ModalBody maxW={'771px'} padding={'1rem'} mx="auto">
                     <Text fontWeight={'600'} fontSize={'16px'} color="white">
                         Vendors
                     </Text>
@@ -159,14 +159,20 @@ const FilterModalHome: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         <ReviewModalButton title={'2 Stars'} value={'2'} />
                         <ReviewModalButton title={'1 Star'} value={'1'} />
                     </Flex>
+                    <Divider mt="2rem" opacity={'0.5'} />
                 </ModalBody>
-                <Divider mt="1.5rem" />
 
-                <ModalFooter px={'1rem'} pt="1.4rem" pb="1.2rem">
+                <ModalFooter
+                    maxW={'771px'}
+                    width={'100%'}
+                    mx="auto"
+                    px={'1rem'}
+                    pb="2.5rem"
+                >
                     <Button
                         fontSize={'16px'}
                         fontWeight={'400'}
-                        justifyItems={'flex-start'}
+                        mr="auto"
                         color={'white'}
                         backgroundColor={'transparent'}
                         onClick={() => {
@@ -174,7 +180,6 @@ const FilterModalHome: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                                 setHomeModalCurrencyFilterSelect(null),
                                 setHomeModalCategoryFilterSelect(null);
                         }}
-                        mr="auto"
                     >
                         Clear All
                     </Button>

@@ -1,5 +1,4 @@
 import React from 'react';
-import { listRegions } from '@lib/data';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import CartButton from '@modules/layout/components/cart-button';
 import WishListPopover from '@/components/wishlist-dropdown';
@@ -27,6 +26,7 @@ import { CgProfile, CgBell } from 'react-icons/cg';
 import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
 import AuthorizedLinks from './components/authorized-links';
 import ConnectWalletLink from './components/connect-wallet-link';
+import NavSearchBar from './components/nav-searchbar';
 
 export default async function Nav() {
     return (
@@ -48,9 +48,13 @@ export default async function Nav() {
                 display="flex"
                 alignItems="center"
             >
-                <Flex width={'100%'} alignSelf="center">
+                <Flex
+                    width={'100%'}
+                    justifyContent={'center'}
+                    alignItems="center"
+                >
                     <LocalizedClientLink href="/">
-                        <Flex>
+                        <Flex width={'190px'} flexShrink={0}>
                             <Image
                                 src={HamzaLogo}
                                 style={{ width: '100%', height: '67px' }}
@@ -69,7 +73,13 @@ export default async function Nav() {
                             />
                         </Flex>
                     </LocalizedClientLink>
+
+                    <Flex width={'100%'} display={{ base: 'none', md: 'flex' }}>
+                        <NavSearchBar />
+                    </Flex>
+
                     <Flex
+                        flexShrink={0}
                         width={'162px'}
                         height={'52px'}
                         borderWidth={'1px'}
@@ -92,6 +102,7 @@ export default async function Nav() {
                             fontWeight={'600'}
                             fontSize={'16px'}
                             alignSelf={'center'}
+                            textAlign={'center'}
                         >
                             Sell on Hamza
                         </Text>
@@ -99,6 +110,7 @@ export default async function Nav() {
 
                     <Menu placement="bottom-end">
                         <MenuButton
+                            flexShrink={0}
                             width={'115px'}
                             height={'52px'}
                             px="1rem"

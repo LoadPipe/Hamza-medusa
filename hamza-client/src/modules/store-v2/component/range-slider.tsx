@@ -23,8 +23,8 @@ const RangeSliderComponent = () => {
     };
 
     return (
-        <Box my={'2rem'}>
-            <Box mx="0.10rem">
+        <Flex my={'2rem'} flexDirection={'column'}>
+            <Box>
                 <RangeSlider
                     // eslint-disable-next-line jsx-a11y/aria-proptypes
                     aria-label={['min', 'max']}
@@ -62,7 +62,7 @@ const RangeSliderComponent = () => {
                     borderWidth="1px"
                     h="56px"
                     minW="124px"
-                    width={'100%'}
+                    w={'100%'}
                 >
                     <Text mb="5px" color="secondary.davy.900" lineHeight="1">
                         Minimum
@@ -73,7 +73,7 @@ const RangeSliderComponent = () => {
                 </Flex>
                 <Divider
                     borderColor="secondary.davy.900"
-                    width={'100%'}
+                    w={'100%'}
                     minW={'15.87px'}
                     maxW={'15.87px'}
                     mx="1rem"
@@ -89,7 +89,7 @@ const RangeSliderComponent = () => {
                     borderWidth="1px"
                     h="56px"
                     minW="124px"
-                    width={'100%'}
+                    w={'100%'}
                 >
                     <Text mb="5px" color="secondary.davy.900" lineHeight="1">
                         Maximum
@@ -99,7 +99,7 @@ const RangeSliderComponent = () => {
                     </Text>
                 </Flex>
             </Flex>
-        </Box>
+        </Flex>
     );
 };
 

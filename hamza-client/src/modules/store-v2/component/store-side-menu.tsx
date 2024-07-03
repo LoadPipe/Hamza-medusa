@@ -16,10 +16,11 @@ const SideMenu = () => {
         <Box
             display={isLargerThan820 ? 'block' : 'none'}
             p="2rem"
+            mr="auto"
             color={'white'}
             borderRadius={'20px'}
             width={'348.74px'}
-            height={'100%'}
+            height={'1900px'}
             backgroundColor={'secondary.onyx.900'}
         >
             <Heading as="h2" size="h2">

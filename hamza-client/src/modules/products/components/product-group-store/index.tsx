@@ -101,12 +101,7 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
     };
 
     return (
-        <Box
-            maxW={'941px'}
-            width="100%"
-            height="100%"
-            mx={{ base: '0', md: '1rem' }}
-        >
+        <Box maxW={'941px'} w="100%" ml={{ base: '0', md: '1rem' }}>
             <StoreFilterDisplay />
             <Grid
                 mt={{ base: '0px', md: '3rem' }}
@@ -115,7 +110,7 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
                     base: 'repeat(2, 1fr)',
                     lg: 'repeat(3, 1fr)',
                 }}
-                gap={{ base: 4, md: 5 }}
+                gap={{ base: 4, md: 7 }}
             >
                 {isLoading
                     ? renderSkeletons(8) // Render 8 skeletons while loading
@@ -148,9 +143,10 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
                           return (
                               <GridItem
                                   key={index}
-                                  minHeight={'243.73px'}
-                                  height={{ base: '100%', md: '399px' }}
-                                  width="100%"
+                                  minH={'243.73px'}
+                                  //   maxW={{ base: '100%', md: '295px' }}
+                                  h={{ base: '100%', md: '399px' }}
+                                  w="100%"
                               >
                                   <ProductCardStore
                                       key={index}
