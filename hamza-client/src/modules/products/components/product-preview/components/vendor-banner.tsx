@@ -12,7 +12,7 @@ const VendorBanner = (props: VendorProps) => {
     const router = useRouter();
     const { countryCode } = useParams();
 
-    console.log(`vendor name is ${props.vendor}`);
+    // console.log(`vendor name is ${props.vendor}`);
     const navigateToVendor = () => {
         router.push(`/${countryCode}/vendor/${props.vendor}`);
     };
