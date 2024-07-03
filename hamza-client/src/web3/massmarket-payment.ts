@@ -54,8 +54,10 @@ export class MassmarketPaymentClient {
     }
 
     async pay(inputs: IMultiPaymentInput[]) {
-        const chainId = parseInt((await this.provider.getNetwork()).chainId.toString());
-        console.log(`chainID is ${chainId}`)
+        const chainId = parseInt(
+            (await this.provider.getNetwork()).chainId.toString()
+        );
+        console.log(`chainID is ${chainId}`);
 
         //for wrong chain, just doing a very very fake checkout for now !
         if (chainId != 11155111 || process.env.NEXT_PUBLIC_FAKE_CHECKOUT) {
@@ -86,13 +88,13 @@ export class MassmarketPaymentClient {
             }
         }
 
-        const sleep = async (sec: number) => {
-            return new Promise((resolve) => setTimeout(resolve, sec * 1000));
-        };
+        //const sleep = async (sec: number) => {
+        //    return new Promise((resolve) => setTimeout(resolve, sec * 1000));
+        //};
 
         //make any necessary token approvals
         await this.approveAllTokens(this.contractAddress, inputs);
-        await sleep(15);
+        //await sleep(15);
 
         //get total native amount
         const nativeTotal: BigNumberish = this.getNativeTotal(inputs);
@@ -304,7 +306,9 @@ export class MassmarketPaymentClient {
             console.log(
                 `approving ${bigintAmount} of ${tokenAddr} for ${spender}`
             );
-            await token.approve(spender, bigintAmount.toString()); // Convert bigint back to string for the smart contract call
+            const tx = await token.approve(spender, bigintAmount.toString()); // Convert bigint back to string for the smart contract call
+            await tx.wait();
+            await this.provider.waitForTransaction(tx.hash, 1);
         }
     }
 }
