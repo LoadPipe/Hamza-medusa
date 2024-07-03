@@ -101,8 +101,8 @@ const Addresses = ({
                 <div className="bg-black text-white p-4 rounded-md shadow-md">
                     <div className="text-small-regular">
                         {cart && cart.shipping_address ? (
-                            <div className="flex flex-col items-start gap-4 md:flex-row md:items-start md:gap-x-8">
-                                <div className="flex flex-col w-full md:w-1/3 mb-4 md:mb-0 text-white">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="flex flex-col gap-4">
                                     <div className="flex flex-col w-full md:w-1/3 mb-4 md:mb-0 text-white">
                                         <Text
                                             className="text-medium-plus
