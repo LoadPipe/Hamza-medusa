@@ -9,9 +9,9 @@ import {
     ModalHeader,
     ModalOverlay,
     Text,
+    CheckCircleIcon,
 } from '@chakra-ui/react';
 import React from 'react';
-import { CheckCircleIcon } from '@chakra-ui/icons';
 
 type Props = {
     open: boolean;
