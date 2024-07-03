@@ -29,7 +29,6 @@ const AccountNav = ({
     const searchParams = useSearchParams();
     const { countryCode } = useParams();
     const { setCustomerAuthData, authData } = useCustomerAuthStore();
-    const { setCustomerAuthData, authData } = useCustomerAuthStore();
     const router = useRouter();
     const handleLogout = async () => {
         setCustomerAuthData({
