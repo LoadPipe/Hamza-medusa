@@ -21,6 +21,7 @@ import {
     TiStarHalfOutline,
     TiStarOutline,
 } from 'react-icons/ti';
+import CartPopup from '../../cart-popup';
 
 const MEDUSA_SERVER_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -35,6 +36,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
         USDC: 'USDC',
     };
     const [options, setOptions] = useState<Record<string, string>>({});
+    const [cartModalOpen, setCartModalOpen] = useState(false);
     const updateOptions = (update: Record<string, string>) => {
         console.log('options are ', options);
         setOptions({ ...options, ...update });
@@ -144,6 +146,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
             countryCode: countryCode,
             currencyCode: 'eth',
         });
+        setCartModalOpen(true);
     };
 
     const whitelistedProductHandler = async () => {
@@ -458,6 +461,12 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                     color="#555555"
                     display={{ base: 'block', md: 'none' }}
                     mt="2rem"
+                />
+                <CartPopup
+                    open={cartModalOpen}
+                    closeModal={() => {
+                        setCartModalOpen(false);
+                    }}
                 />
             </Flex>
         </Flex>
