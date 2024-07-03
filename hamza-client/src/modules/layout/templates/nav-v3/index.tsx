@@ -27,6 +27,8 @@ import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
 import AuthorizedLinks from './components/authorized-links';
 import ConnectWalletLink from './components/connect-wallet-link';
 import NavSearchBar from './components/nav-searchbar';
+import MobileMenu from './components/mobile-menu';
+import MobileNav from './components/mobile-nav';
 
 export default async function Nav() {
     return (
@@ -39,13 +41,14 @@ export default async function Nav() {
             alignItems={'center'}
             backgroundColor={'#020202'}
         >
+            <MobileNav />
             <Flex
+                display={{ base: 'none', md: 'flex' }}
                 h={'87px'}
                 mx="1rem"
                 maxWidth={'1280px'}
                 width={'100%'}
                 bgColor={'transparent'}
-                display="flex"
                 alignItems="center"
             >
                 <Flex
@@ -53,8 +56,9 @@ export default async function Nav() {
                     justifyContent={'center'}
                     alignItems="center"
                 >
+                    <MobileMenu />
                     <LocalizedClientLink href="/">
-                        <Flex width={'190px'} flexShrink={0}>
+                        <Flex width={'190px'} marginLeft="auto" flexShrink={0}>
                             <Image
                                 className="w-[22.92px] h-[33px] md:w-[47.34px] md:h-[67px]"
                                 src={HamzaLogo}
@@ -63,10 +67,9 @@ export default async function Nav() {
 
                             <Image
                                 src={HamzaTitle}
-                                className="w-[60.73px] h-[11.59px] md:w-[125.42px] md:h-[23.07px]"
+                                className="w-[60.73px] h-[11.59px] md:w-[125.42px] md:h-[23.07px] ml-[0.5rem] md:ml-[1rem]"
                                 style={{
                                     alignSelf: 'center',
-                                    marginLeft: '1rem',
                                 }}
                                 alt="Hamza"
                             />
@@ -107,96 +110,75 @@ export default async function Nav() {
                         </Text>
                     </Flex>
 
-                    <Menu placement="bottom-end">
-                        <MenuButton
-                            flexShrink={0}
-                            width={'115px'}
-                            height={'52px'}
-                            px="1rem"
-                            borderRadius={'full'}
-                            justifyContent={'center'}
-                            alignSelf={'center'}
-                            marginLeft={{ base: 'auto', md: '1rem' }}
-                            backgroundColor={'primary.green.900'}
-                            cursor={'pointer'}
-                        >
-                            <Flex>
-                                <Flex alignSelf={'center'}>
-                                    <IoMdMenu color="black" size={30} />
+                    <Flex display={{ base: 'none', md: 'flex' }}>
+                        <Menu placement="bottom-end">
+                            <MenuButton
+                                flexShrink={0}
+                                width={'115px'}
+                                height={'52px'}
+                                px="1rem"
+                                borderRadius={'full'}
+                                justifyContent={'center'}
+                                alignSelf={'center'}
+                                marginLeft={{ base: 'auto', md: '1rem' }}
+                                backgroundColor={{
+                                    base: 'transparent',
+                                    md: 'primary.green.900',
+                                }}
+                                cursor={'pointer'}
+                            >
+                                <Flex>
+                                    <Flex alignSelf={'center'} color={'black'}>
+                                        <IoMdMenu size={30} />
+                                    </Flex>
+                                    <Flex
+                                        marginLeft={'auto'}
+                                        alignSelf={'center'}
+                                    >
+                                        <CgProfile color="black" size={30} />
+                                    </Flex>
                                 </Flex>
-                                <Flex marginLeft={'auto'} alignSelf={'center'}>
-                                    <CgProfile color="black" size={30} />
-                                </Flex>
-                            </Flex>
-                        </MenuButton>
-                        <MenuList
-                            marginTop={'1rem'}
-                            pb={'0px'}
-                            borderTopRadius={'0px'}
-                            borderBottomRadius={'16px'}
-                            borderColor={{ base: 'transparent', md: 'white' }}
-                            backgroundColor={'black'}
-                            width={{ base: '100vw', md: '321px' }}
-                        >
-                            <MenuItem
-                                mt="0.5rem"
-                                mb="1rem"
-                                fontWeight={'600'}
-                                px="2rem"
-                                flex={1}
-                                color={'white'}
+                            </MenuButton>
+                            <MenuList
+                                marginTop={'1rem'}
+                                pb={'0px'}
+                                borderTopRadius={'0px'}
+                                borderBottomRadius={'16px'}
+                                borderColor={{
+                                    base: 'transparent',
+                                    md: 'white',
+                                }}
                                 backgroundColor={'black'}
+                                width={{ base: '100vw', md: '321px' }}
                             >
-                                <CartButton />
-                            </MenuItem>
-                            <MenuItem
-                                mt="0.5rem"
-                                mb="1rem"
-                                fontWeight={'600'}
-                                px="2rem"
-                                color={'white'}
-                                backgroundColor={'black'}
-                            >
-                                <Wishlist />
-                            </MenuItem>
-
-                            <Box px={{ base: '2rem', md: 0 }}>
-                                <MenuDivider
-                                    opacity={{ base: '0.5', md: '1' }}
-                                    borderColor={'white'}
-                                />
-                            </Box>
-                            <MenuItem
-                                fontWeight={'600'}
-                                mt="1rem"
-                                px="2rem"
-                                color={'white'}
-                                backgroundColor={'black'}
-                                _hover={{ color: 'primary.green.900' }}
-                            >
-                                Sell on Hamza
-                            </MenuItem>
-                            <Link href={`https://blog.hamza.biz/affiliate/`}>
                                 <MenuItem
-                                    fontWeight={'600'}
+                                    mt="0.5rem"
                                     mb="1rem"
+                                    fontWeight={'600'}
+                                    px="2rem"
+                                    flex={1}
+                                    color={'white'}
+                                    backgroundColor={'black'}
+                                >
+                                    <CartButton />
+                                </MenuItem>
+                                <MenuItem
+                                    mt="0.5rem"
+                                    mb="1rem"
+                                    fontWeight={'600'}
                                     px="2rem"
                                     color={'white'}
                                     backgroundColor={'black'}
-                                    _hover={{ color: 'primary.green.900' }}
                                 >
-                                    Be an affiliate
+                                    <Wishlist />
                                 </MenuItem>
-                            </Link>
-                            <Box px={{ base: '2rem', md: 0 }}>
-                                <MenuDivider
-                                    opacity={{ base: '0.5', md: '1' }}
-                                    borderColor={'white'}
-                                />
-                            </Box>
 
-                            <AuthorizedLinks />
-                            <NavLink href={`/`}>
+                                <Box px={{ base: '2rem', md: 0 }}>
+                                    <MenuDivider
+                                        opacity={{ base: '0.5', md: '1' }}
+                                        borderColor={'white'}
+                                    />
+                                </Box>
                                 <MenuItem
                                     fontWeight={'600'}
                                     mt="1rem"
@@ -205,62 +187,96 @@ export default async function Nav() {
                                     backgroundColor={'black'}
                                     _hover={{ color: 'primary.green.900' }}
                                 >
-                                    <Text>Home</Text>
+                                    Sell on Hamza
                                 </MenuItem>
-                            </NavLink>
-                            <NavLink href={`/store`}>
-                                <MenuItem
-                                    fontWeight={'600'}
-                                    px="2rem"
-                                    color={'white'}
-                                    backgroundColor={'black'}
-                                    _hover={{ color: 'primary.green.900' }}
+                                <Link
+                                    href={`https://blog.hamza.biz/affiliate/`}
                                 >
-                                    <Text> Market</Text>
-                                </MenuItem>
-                            </NavLink>
+                                    <MenuItem
+                                        fontWeight={'600'}
+                                        mb="1rem"
+                                        px="2rem"
+                                        color={'white'}
+                                        backgroundColor={'black'}
+                                        _hover={{ color: 'primary.green.900' }}
+                                    >
+                                        Be an affiliate
+                                    </MenuItem>
+                                </Link>
+                                <Box px={{ base: '2rem', md: 0 }}>
+                                    <MenuDivider
+                                        opacity={{ base: '0.5', md: '1' }}
+                                        borderColor={'white'}
+                                    />
+                                </Box>
 
-                            <a
-                                target="_blank"
-                                href="https://blog.hamza.biz/about/"
-                            >
-                                <MenuItem
-                                    fontWeight={'600'}
-                                    px="2rem"
-                                    color={'white'}
-                                    backgroundColor={'black'}
-                                    _hover={{ color: 'primary.green.900' }}
+                                <AuthorizedLinks />
+                                <NavLink href={`/`}>
+                                    <MenuItem
+                                        fontWeight={'600'}
+                                        mt="1rem"
+                                        px="2rem"
+                                        color={'white'}
+                                        backgroundColor={'black'}
+                                        _hover={{ color: 'primary.green.900' }}
+                                    >
+                                        <Text>Home</Text>
+                                    </MenuItem>
+                                </NavLink>
+                                <NavLink href={`/store`}>
+                                    <MenuItem
+                                        fontWeight={'600'}
+                                        px="2rem"
+                                        color={'white'}
+                                        backgroundColor={'black'}
+                                        _hover={{ color: 'primary.green.900' }}
+                                    >
+                                        <Text> Market</Text>
+                                    </MenuItem>
+                                </NavLink>
+
+                                <a
+                                    target="_blank"
+                                    href="https://blog.hamza.biz/about/"
                                 >
-                                    About Us
-                                </MenuItem>
-                            </a>
+                                    <MenuItem
+                                        fontWeight={'600'}
+                                        px="2rem"
+                                        color={'white'}
+                                        backgroundColor={'black'}
+                                        _hover={{ color: 'primary.green.900' }}
+                                    >
+                                        About Us
+                                    </MenuItem>
+                                </a>
 
-                            <a
-                                target="_blank"
-                                href="https://blog.hamza.biz/contact/"
-                            >
-                                <MenuItem
-                                    fontWeight={'600'}
-                                    px="2rem"
-                                    mb="1.5rem"
-                                    color={'white'}
-                                    backgroundColor={'black'}
-                                    _hover={{ color: 'primary.green.900' }}
+                                <a
+                                    target="_blank"
+                                    href="https://blog.hamza.biz/contact/"
                                 >
-                                    Help Center
-                                </MenuItem>
-                            </a>
+                                    <MenuItem
+                                        fontWeight={'600'}
+                                        px="2rem"
+                                        mb="1.5rem"
+                                        color={'white'}
+                                        backgroundColor={'black'}
+                                        _hover={{ color: 'primary.green.900' }}
+                                    >
+                                        Help Center
+                                    </MenuItem>
+                                </a>
 
-                            <MenuDivider
-                                display={{ base: 'none', md: 'flex' }}
-                                mb="0"
-                                opacity={'1'}
-                                borderColor={'white'}
-                            />
+                                <MenuDivider
+                                    display={{ base: 'none', md: 'flex' }}
+                                    mb="0"
+                                    opacity={'1'}
+                                    borderColor={'white'}
+                                />
 
-                            <ConnectWalletLink />
-                        </MenuList>
-                    </Menu>
+                                <ConnectWalletLink />
+                            </MenuList>
+                        </Menu>
+                    </Flex>
                 </Flex>
             </Flex>
         </Flex>
