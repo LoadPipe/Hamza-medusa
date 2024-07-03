@@ -42,7 +42,7 @@ const SearchBar = () => {
                     color="#3E3E3E"
                     textOverflow={'ellipsis'}
                     whiteSpace={'nowrap'}
-                    paddingRight={{ base: '11rem', md: '0' }}
+                    paddingRight={{ base: '14rem', md: '0' }}
                     overflow={'hidden'}
                     placeholder="Search for product name, product type, brand name, category, etc..."
                     _placeholder={{ color: '#3E3E3E' }}
