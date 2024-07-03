@@ -94,9 +94,16 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const logger = req.scope.resolve('logger') as Logger;
 
     try {
-        logger.debug(`google oauth cookies: ${req.cookies}`);
-        let decoded: any = jwt.decode(req.cookies['_medusa_jwt']);
-        logger.debug(`google oauth decoded _medusa_jwt: ${decoded}`);
+        logger.debug(`google oauth cookies: ${JSON.stringify(req.cookies)}`);
+        let decoded: any = jwt.decode(
+            JSON.stringify(req.cookies['_medusa_jwt'])
+        );
+        logger.debug(
+            `google oauth decoded _medusa_jwt: ${JSON.stringify(decoded)}`
+        );
+        logger.debug(
+            `google oauth decoded _medusa_jwt: ${JSON.stringify(req.params)}`
+        );
 
         if (!decoded) throw new Error('unable to get the _medusa_jwt cookie');
 
