@@ -5,15 +5,17 @@ import Input from '@modules/common/components/input';
 import axios from 'axios';
 import { useState } from 'react';
 import { Toast } from '@medusajs/ui';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import getGoogleOAuthURL from '@lib/util/google-url';
 import getTwitterOauthUrl from '@lib/util/twitter-url';
 
 const VerifyEmail = () => {
     const { authData, setCustomerAuthData } = useCustomerAuthStore();
+    const searchParams = useSearchParams();
 
     const [email, setEmail] = useState('');
     const router = useRouter();
+    const authParams = `customer_id=${authData.customer_id}`;
 
     if (authData.status == 'unauthenticated') {
         return <div>Please connect wallet before adding email address.</div>;
@@ -41,9 +43,12 @@ const VerifyEmail = () => {
             <div className="flex flex-col items-center w-full">
                 <div className="my-8">
                     <h1 className="font-semibold text-4xl text-white text-center">
-                        Email Verification
+                        Account Verification
                     </h1>
                 </div>
+                {searchParams.get('auth_error') == 'true' && (
+                    <div>An error occurred during verification</div>
+                )}
                 <div className="px-16">
                     <div className="p-4 md:p-5">
                         <form
@@ -72,7 +77,7 @@ const VerifyEmail = () => {
                             Or
                         </div>
                         <div className="buttons flex flex-col space-y-2 w-full">
-                            <a href={getGoogleOAuthURL()}>
+                            <a href={getGoogleOAuthURL(authParams)}>
                                 <button className="px-4 py-2 w-full border flex gap-2 border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-300 hover:shadow transition duration-150">
                                     <img
                                         className="w-6 h-6"
@@ -84,7 +89,7 @@ const VerifyEmail = () => {
                                 </button>
                             </a>
 
-                            <a href={getTwitterOauthUrl()}>
+                            <a href={getTwitterOauthUrl(authParams)}>
                                 <button className="px-4 py-2 w-full border flex gap-2 border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-300 hover:shadow transition duration-150 items-center">
                                     <svg
                                         className="w-4 h-4 me-2"

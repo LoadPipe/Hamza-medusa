@@ -2,15 +2,24 @@ import {
     EventBusService,
     MedusaRequest,
     MedusaResponse,
+    Logger,
 } from '@medusajs/medusa';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import CustomerRepository from '../../../repositories/customer';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
+    const logger: Logger = req.scope.resolve('logger');
+
     try {
-        let decoded: any = jwt.decode(req.cookies['_medusa_jwt']);
         let eventBus_: EventBusService = req.scope.resolve('eventBusService');
+
+        logger.debug(`discord oauth cookies: ${JSON.stringify(req.cookies)}`);
+        let decoded: any = jwt.decode(req.cookies['_medusa_jwt']);
+        logger.debug(
+            `discord oauth decoded _medusa_jwt: ${JSON.stringify(decoded)}`
+        );
+        logger.debug(`discord oauth req.params: ${JSON.stringify(req.params)}`);
 
         const tokenResponse = await axios.post(
             'https://discord.com/api/oauth2/token',
@@ -37,7 +46,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             }
         );
 
-        console.log('user response ', userResponse.data);
+        logger.debug(`user response: ${userResponse.data}`);
 
         if (userResponse.data.email) {
             await CustomerRepository.update(
@@ -56,17 +65,18 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                     eventName: 'customer.verified',
                 },
             ]);
-            return res.redirect(`${process.env.STORE_URL}/account`);
+            return res.redirect(`${process.env.STORE_URL}/account?verify=true`);
         }
 
+        logger.debug('Failed to retrieve email from discord');
         return res.send({
             status: false,
             message: 'Failed to retrieve email from discord',
         });
     } catch (err) {
-        console.error('Error creating product review:', err);
-        res.status(500).json({
-            error: 'Failed to verify with discord',
-        });
+        logger.error('Error creating product review:', err);
+        return res.redirect(
+            `${process.env.STORE_URL}/account?verify=false&error=true`
+        );
     }
 };

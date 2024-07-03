@@ -30,6 +30,8 @@ type TwitterTokenResponse = {
     scope: string;
 };
 
+//TODO: is it possble to have Logger on this page?
+
 // the main step 1 function, getting the access token from twitter using the code that the twitter sent us
 export async function getTwitterOAuthToken(code: string) {
     try {
@@ -110,9 +112,11 @@ export async function GET(
         }
 
         // 5. finally redirect to the client
-        return res.redirect(`${process.env.STORE_URL}/account`);
+        return res.redirect(`${process.env.STORE_URL}/account?verify=true`);
     } catch (e) {
         console.log('error ', e);
-        return res.redirect(process.env.STORE_URL);
+        return res.redirect(
+            `${process.env.STORE_URL}/account?verify=false&error=true`
+        );
     }
 }

@@ -147,7 +147,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const storeService = req.scope.resolve('storeService');
     const storeRepository = req.scope.resolve('storeRepository');
     const productService = req.scope.resolve('productService');
-    const logger = req.scope.resolve('productService') as Logger;
+    const logger = req.scope.resolve('logger') as Logger;
 
     try {
         const stores = await storeService.getStores();

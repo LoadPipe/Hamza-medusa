@@ -1,4 +1,4 @@
-function getGoogleOAuthURL() {
+function getGoogleOAuthURL(querystring?: string) {
     const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
 
     const options = {
@@ -16,7 +16,9 @@ function getGoogleOAuthURL() {
 
     const qs = new URLSearchParams(options);
 
-    return `${rootUrl}?${qs.toString()}`;
+    let url = `${rootUrl}?${qs.toString()}`;
+    if (querystring) url += `&${querystring}`;
+    return url;
 }
 
 export default getGoogleOAuthURL;

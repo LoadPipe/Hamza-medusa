@@ -45,11 +45,18 @@ const AccountNav = ({
     };
 
     useEffect(() => {
-        if (searchParams.get('verify') == 'true') {
+        if (searchParams.get('verify') === 'true') {
             setCustomerAuthData({
                 ...authData,
                 is_verified: true,
             });
+        } else {
+            if (
+                searchParams.get('verify') === 'false' &&
+                searchParams.get('error') === 'true'
+            ) {
+                router.push(`/${countryCode}/verify-email?auth_error=true`);
+            }
         }
     }, []);
     useEffect(() => {
