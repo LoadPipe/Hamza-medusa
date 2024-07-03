@@ -18,6 +18,7 @@ import Package from '@modules/common/icons/package';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { useEffect } from 'react';
+import Cookies from 'js-cookie';
 
 const AccountNav = ({
     customer,
@@ -37,7 +38,10 @@ const AccountNav = ({
             wallet_address: '',
             status: 'unauthenticated',
         });
-        await signOut();
+        Cookies.remove('_medusa_jwt');
+        Cookies.remove('_medusa_cart_id');
+        router.replace('/');
+        return;
     };
 
     useEffect(() => {

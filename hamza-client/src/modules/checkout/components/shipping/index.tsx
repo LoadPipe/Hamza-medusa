@@ -150,7 +150,7 @@ const Shipping: React.FC<ShippingProps> = ({
                                                     {option.name}
                                                 </span>
                                             </div>
-                                            <span className="justify-self-end text-ui-fg-base">
+                                            <span className="justify-self-end text-white">
                                                 {option.name === 'FakeEx Standard' ?
                                                     (preferred_currency_code === 'eth' ? '0.00001 ' : '1.20') :
                                                     (preferred_currency_code === 'eth' ? '0.000025 ' : '3.25')
@@ -171,7 +171,7 @@ const Shipping: React.FC<ShippingProps> = ({
 
                     <Button
                         size="large"
-                        className="mt-6 bg-teal-500 text-white py-3 px-6 rounded text-base"
+                        className="mt-6 bg-purple-500 text-white py-3 px-6 rounded text-base"
                         onClick={handleSubmit}
                         isLoading={isLoading}
                         disabled={

@@ -8,7 +8,8 @@ import {
 } from 'next/navigation';
 import { Cart, Customer } from '@medusajs/medusa';
 import { CheckCircleSolid } from '@medusajs/icons';
-import { Heading, Text, useToggleState } from '@medusajs/ui';
+import { Text, useToggleState } from '@medusajs/ui';
+import { Heading } from '@chakra-ui/react';
 
 import Divider from '@modules/common/components/divider';
 import Spinner from '@modules/common/icons/spinner';
@@ -62,7 +63,8 @@ const Addresses = ({
             <div className="flex flex-row items-center justify-between mb-6">
                 <Heading
                     level="h2"
-                    className="flex flex-row text-3xl-regular gap-x-2 items-baseline text-white"
+                    className="flex flex-row text-3xl-regular gap-x-2 items-baseline"
+                    color={'primary.green.900'}
                 >
                     Shipping Address
                     {!isOpen && <CheckCircleSolid />}
@@ -88,7 +90,7 @@ const Addresses = ({
                             onChange={toggleSameAsBilling}
                             cart={cart}
                         />
-                        <SubmitButton className="mt-6 bg-teal-500 text-white py-3 px-6 rounded text-base">
+                        <SubmitButton className="mt-6 bg-purple-500 text-white py-3 px-6 rounded text-base">
                             Continue to delivery
                         </SubmitButton>
 
@@ -96,40 +98,43 @@ const Addresses = ({
                     </div>
                 </form>
             ) : (
-                <div className="bg-white text-black p-4 rounded-md shadow-md">
+                <div className="bg-black text-white p-4 rounded-md shadow-md">
                     <div className="text-small-regular">
                         {cart && cart.shipping_address ? (
-                            <div className="flex flex-col md:flex-row items-start gap-x-8">
-                                <div className="flex flex-col md:flex-row items-start gap-x-1 w-full">
-                                    <div className="flex flex-col w-full md:w-1/3 mb-4 md:mb-0">
-                                        <Text className="text-medium-plus text-black mb-1">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="flex flex-col gap-4">
+                                    <div className="flex flex-col w-full md:w-1/3 mb-4 md:mb-0 text-white">
+                                        <Text
+                                            className="text-medium-plus
+                                            mb-1"
+                                        >
                                             Shipping Address
                                         </Text>
-                                        <Text className="text-medium text-gray-800">
+                                        <Text className="text-medium text-white">
                                             {cart.shipping_address.first_name}{' '}
                                             {cart.shipping_address.last_name}
                                         </Text>
-                                        <Text className="text-medium text-gray-800">
+                                        <Text className="text-medium text-white">
                                             {cart.shipping_address.address_1}{' '}
                                             {cart.shipping_address.address_2}
                                         </Text>
-                                        <Text className="text-medium text-gray-800">
+                                        <Text className="text-medium text-white">
                                             {cart.shipping_address.postal_code},{' '}
                                             {cart.shipping_address.city}
                                         </Text>
-                                        <Text className="text-medium text-gray-800">
+                                        <Text className="text-medium text-white">
                                             {cart.shipping_address.country_code?.toUpperCase()}
                                         </Text>
                                     </div>
 
                                     <div className="flex flex-col w-full md:w-1/3 mb-4 md:mb-0">
-                                        <Text className="text-medium-plus text-black mb-1">
+                                        <Text className="text-medium-plus text-white mb-1">
                                             Contact
                                         </Text>
-                                        <Text className="text-medium text-gray-800">
+                                        <Text className="text-medium text-white">
                                             {cart.shipping_address.phone}
                                         </Text>
-                                        <Text className="text-medium text-gray-800">
+                                        <Text className="text-medium text-white">
                                             {cart.email}
                                         </Text>
                                     </div>
