@@ -3816,7 +3816,7 @@
       ],
       "collection_id": "pcol_01HSGAMXDJD725MR3VSW63W0GA",
       "subtitle": "Pc, Ps5, Xbox Series X|S, Angled 53Mm Drivers",
-      "description": "<div><hr><h1> About this item </h1> <ul> <li><span> Comfort is King - Comfort’s in the Cloud III’s DNA. HyperX signature memory foam in the headband and ear cushions wrapped in soft, premium leatherette make for a plush, comfortable fit all around. </span></li> <li><span> Audio Tuned for Your Entertainment - Angled 53mm drivers have been tuned by HyperX audio engineers to provide the optimal listening experience that accents the dynamic sounds of gaming. </span></li> <li><span> Upgraded Microphone for Clarity and Accuracy - Captures high-quality audio for clear voice chat and calls. The mic is noise-cancelling and features a built-in mesh filter to reduce disruptive sounds. It also features an LED mic mute indicator that lets you know when you’re muted. </span></li> <li><span> Durability, for the Toughest of Battles - The headset is flexible and features a full metal frame so it’s resilient against travel, accidents, mishaps, and those level-headed’ reactions to losses and defeat screens. </span></li> <li><span> DTS Headphone:X Spatial Audio - A lifetime activation of DTS Spatial Audio will help amp up your audio advantage and immersion with its precise sound localization and virtual 3D sound stage. </span></li> </ul></div>",
+      "description": "<ul> <li><span> Comfort is King - Comfort’s in the Cloud III’s DNA. HyperX signature memory foam in the headband and ear cushions wrapped in soft, premium leatherette make for a plush, comfortable fit all around. </span></li> <li><span> Audio Tuned for Your Entertainment - Angled 53mm drivers have been tuned by HyperX audio engineers to provide the optimal listening experience that accents the dynamic sounds of gaming. </span></li> <li><span> Upgraded Microphone for Clarity and Accuracy - Captures high-quality audio for clear voice chat and calls. The mic is noise-cancelling and features a built-in mesh filter to reduce disruptive sounds. It also features an LED mic mute indicator that lets you know when you’re muted. </span></li> <li><span> Durability, for the Toughest of Battles - The headset is flexible and features a full metal frame so it’s resilient against travel, accidents, mishaps, and those level-headed’ reactions to losses and defeat screens. </span></li> <li><span> DTS Headphone:X Spatial Audio - A lifetime activation of DTS Spatial Audio will help amp up your audio advantage and immersion with its precise sound localization and virtual 3D sound stage. </span></li> </ul>",
       "handle": "hyper-x-headset",
       "is_giftcard": false,
       "weight": 260,
@@ -3884,7 +3884,7 @@
       ],
       "options": [
         {
-          "title": "Color",
+          "title": "HyperX Pulsefire",
           "values": [
             "Black"
           ]
@@ -3905,6 +3905,11 @@
             {
               "currency_code": "usdt",
               "amount": 23000
+            }
+          ],
+          "options": [
+            {
+              "value": "Black"
             }
           ],
           "inventory_quantity": 100,
