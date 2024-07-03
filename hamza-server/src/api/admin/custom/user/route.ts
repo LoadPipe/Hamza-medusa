@@ -163,15 +163,15 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         );
         const store7 = await storeService.createStore(
             user7,
-            'Lofi Jungle',
-            'pcol_lofi',
-            'http://54.253.186.85/headphones.webp'
+            'Gaming Gear',
+            'pcol_01HSGAMXDJD725MR3VSW63W0GA',
+            'https://images.hamza.biz/gaming_store/6.1.png'
         );
         const store8 = await storeService.createStore(
             user8,
             'Shake',
             'pcol_shake',
-            'http://54.253.186.85/headphones.webp'
+            'https://images.hamza.biz/headphones.webp'
         );
         const store9 = await storeService.createStore(
             user9,
@@ -183,7 +183,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             user10,
             'Block',
             'pcol_blocks',
-            'http://54.253.186.85/headphones.webp'
+            'https://images.hamza.biz/headphones.webp'
         );
 
         await productCollectionService.update(
@@ -236,9 +236,12 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             store_id: store6.id,
         });
 
-        await productCollectionService.update('pcol_lofi', {
-            store_id: store7.id,
-        });
+        await productCollectionService.update(
+            'pcol_01HSGAMXDJD725MR3VSW63W0GA',
+            {
+                store_id: store7.id,
+            }
+        );
 
         await productCollectionService.update('pcol_shake', {
             store_id: store8.id,
