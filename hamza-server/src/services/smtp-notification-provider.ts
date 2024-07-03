@@ -63,13 +63,14 @@ class SmtpNotificationService extends AbstractNotificationService {
                                 'store',
                                 'items',
                                 'cart.items',
+                                'cart.items.variant',
+                                'cart.items.variant.product',
                             ],
                         });
                     })
                 );
 
                 let parsedOrdersData = ordersDataParser(ordersData);
-                console.dir(parsedOrdersData, { depth: null });
                 if (
                     ordersData[0].customer &&
                     ordersData[0].customer.is_verified == true

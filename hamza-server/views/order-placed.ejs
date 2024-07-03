@@ -65,6 +65,9 @@
                         <p><strong>Order Date:</strong>
                             <%= order.orderDate %>
                         </p>
+                        <p><strong>Order Amount:</strong>
+                            <%= order.orderAmount %>
+                        </p>
                     </div>
                     <div class="order-items">
                         <% order.items.forEach(item=> { %>
@@ -88,6 +91,7 @@
                             <% }); %>
                     </div>
                     <% }); %>
+
             </div>
             <% } %>
 
