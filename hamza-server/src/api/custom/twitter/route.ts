@@ -110,9 +110,11 @@ export async function GET(
         }
 
         // 5. finally redirect to the client
-        return res.redirect(`${process.env.STORE_URL}/account`);
+        return res.redirect(`${process.env.STORE_URL}/account?verify=true`);
     } catch (e) {
         console.log('error ', e);
-        return res.redirect(process.env.STORE_URL);
+        return res.redirect(
+            `${process.env.STORE_URL}/account?verify=false&error=true`
+        );
     }
 }

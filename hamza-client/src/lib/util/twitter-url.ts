@@ -1,4 +1,4 @@
-function getTwitterOauthUrl() {
+function getTwitterOauthUrl(querystring?: string) {
     const rootUrl = 'https://twitter.com/i/oauth2/authorize';
     const options = {
         redirect_uri: process.env.NEXT_PUBLIC_TWITTER_OAUTH_REDIRECT_URL!, // client url cannot be http://localhost:3000/ or http://127.0.0.1:3000/
@@ -14,8 +14,12 @@ function getTwitterOauthUrl() {
             'follows.write',
         ].join(' '),
     };
+
     const qs = new URLSearchParams(options).toString();
-    return `${rootUrl}?${qs}`;
+
+    let url = `${rootUrl}?${qs.toString()}`;
+    if (querystring) url += `&${querystring}`;
+    return url;
 }
 
 export default getTwitterOauthUrl;

@@ -89,7 +89,7 @@ const VerifyEmail = () => {
                                 </button>
                             </a>
 
-                            <a href={getTwitterOauthUrl()}>
+                            <a href={getTwitterOauthUrl(authParams)}>
                                 <button className="px-4 py-2 w-full border flex gap-2 border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-300 hover:shadow transition duration-150 items-center">
                                     <svg
                                         className="w-4 h-4 me-2"
