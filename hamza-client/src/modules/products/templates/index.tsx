@@ -122,17 +122,18 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                         justifyContent={'center'}
                         alignItems={'center'}
                         mt={'auto'}
+                        color="white"
+                        _hover={{ color: 'primary.green.900' }}
                     >
                         <Flex
                             alignSelf={'center'}
                             flexDirection={'row'}
                             my="auto"
                         >
-                            <MdChevronLeft color="white" size={40} />
+                            <MdChevronLeft size={40} />
                             <Text
                                 alignSelf={'center'}
                                 display={{ base: 'none', md: 'block' }}
-                                color="white"
                             >
                                 Back to products
                             </Text>
