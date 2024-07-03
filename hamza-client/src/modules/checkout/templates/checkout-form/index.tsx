@@ -10,6 +10,8 @@ import {
 import { cookies } from 'next/headers';
 import { CartWithCheckoutStep } from 'types/global';
 import { getCheckoutStep } from '@lib/util/get-checkout-step';
+import LocalizedClientLink from '@modules/common/components/localized-client-link';
+import ChevronDown from '@modules/common/icons/chevron-down';
 
 export default async function CheckoutForm(params: any) {
     const cartId = params.cartId;
@@ -45,6 +47,18 @@ export default async function CheckoutForm(params: any) {
     return (
         <div>
             <div className="w-full grid grid-cols-1 gap-y-8">
+                <LocalizedClientLink
+                    href="/cart"
+                    className="text-small-semi text-ui-fg-base flex items-center gap-x-2 uppercase flex-1 basis-0"
+                >
+                    <ChevronDown className="rotate-90" size={16} />
+                    <span className="mt-px hidden small:block txt-compact-plus text-ui-fg-subtle hover:text-ui-fg-base ">
+                        Back to shopping cart
+                    </span>
+                    <span className="mt-px block small:hidden txt-compact-plus text-ui-fg-subtle hover:text-ui-fg-base">
+                        Back
+                    </span>
+                </LocalizedClientLink>
                 <div>
                     <Addresses cart={cart} customer={customer} />
                 </div>
