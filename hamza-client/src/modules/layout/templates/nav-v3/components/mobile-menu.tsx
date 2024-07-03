@@ -33,9 +33,6 @@ export default function MobileMenu() {
                     height={{ base: '60px' }}
                     px="1rem"
                     borderRadius={{ base: 'none' }}
-                    backgroundColor={{
-                        base: 'transparent',
-                    }}
                     cursor={'pointer'}
                 >
                     <Flex color={'primary.green.900'}>
@@ -43,7 +40,7 @@ export default function MobileMenu() {
                     </Flex>
                 </MenuButton>
                 <MenuList
-                    marginTop={'1rem'}
+                    mt="-1rem"
                     pb={'0px'}
                     borderTopRadius={'0px'}
                     borderBottomRadius={'16px'}
