@@ -35,6 +35,7 @@ const HeroBanner = () => {
     return (
         <>
             <Flex
+                display={{ base: 'none', md: 'flex' }}
                 w="100%"
                 bg="primary.indigo.900"
                 color="white"
