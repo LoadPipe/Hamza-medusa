@@ -48,8 +48,8 @@ const MobileFilter = () => {
             gap={'12px'}
         >
             {/* back button */}
-            <LocalizedClientLink href="/">
-                <Box alignSelf={'center'} width={'30px'} cursor={'pointer'}>
+            <LocalizedClientLink className="self-center" href="/">
+                <Box width={'30px'} cursor={'pointer'}>
                     <MdChevronLeft
                         color="white"
                         size={40}
