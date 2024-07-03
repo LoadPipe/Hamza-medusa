@@ -172,7 +172,7 @@ const Shipping: React.FC<ShippingProps> = ({
 
                     <Button
                         size="large"
-                        className="mt-6 bg-teal-500 text-white py-3 px-6 rounded text-base"
+                        className="mt-6 bg-purple-500 text-white py-3 px-6 rounded text-base"
                         onClick={handleSubmit}
                         isLoading={isLoading}
                         disabled={
