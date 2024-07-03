@@ -1,11 +1,15 @@
 import { clx } from '@medusajs/ui';
-import { Flex, Container, Text, Box, Divider, Image } from '@chakra-ui/react';
+import { Flex, Container, Text, Box, Divider } from '@chakra-ui/react';
 import { getCategoriesList, getCollectionsList } from '@lib/data';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { FaTwitter } from 'react-icons/fa6';
 import { FaDiscord } from 'react-icons/fa6';
 import Link from 'next/link';
+import Image from 'next/image';
 import Reputation from '@modules/home/components/reputation';
+import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
+import React from 'react';
+import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
 
 const fetchCollections = async () => {
     const { collections } = await getCollectionsList();
@@ -182,17 +186,33 @@ export default async function Footer() {
                 {/* Bottom Content */}
 
                 <Flex pt="2rem" justifyContent={'space-between'} width={'100%'}>
-                    <Flex flexDir={'column'} color={'white'} gap={'8px'}>
-                        <Text
-                            display={{ base: 'none', md: 'block' }}
-                            className="text-3xl font-bold"
-                        >
-                            HAMZA
-                        </Text>
+                    <Flex justifyContent={'center'} alignItems="center">
+                        <LocalizedClientLink href="/">
+                            <Flex width={'190px'} flexShrink={0}>
+                                <Image
+                                    src={HamzaLogo}
+                                    style={{ width: '100%', height: '67px' }}
+                                    alt="Hamza"
+                                />
+
+                                <Image
+                                    src={HamzaTitle}
+                                    style={{
+                                        width: '100%',
+                                        height: '23.07px',
+                                        alignSelf: 'center',
+                                        marginLeft: '1rem',
+                                    }}
+                                    alt="Hamza"
+                                />
+                            </Flex>
+                        </LocalizedClientLink>
                     </Flex>
                     <Flex
                         mr={{ base: 'auto', md: '0' }}
                         flexDir={'row'}
+                        justifyContent={'center'}
+                        alignItems="center"
                         color={'white'}
                         gap={'8px'}
                     >
@@ -213,7 +233,13 @@ export default async function Footer() {
                         </Link>
                     </Flex>
 
-                    <Flex flexDir={'column'} color={'white'} gap={'8px'}>
+                    <Flex
+                        justifyContent={'center'}
+                        alignItems="center"
+                        flexDir={'column'}
+                        color={'white'}
+                        gap={'8px'}
+                    >
                         <Text
                             display={{ base: 'none', md: 'block' }}
                             className="text-base font-bold"

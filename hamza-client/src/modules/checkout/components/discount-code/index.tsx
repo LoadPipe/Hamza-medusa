@@ -146,7 +146,10 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
                                         type="text"
                                         autoFocus={false}
                                     />
-                                    <SubmitButton variant="secondary">
+                                    <SubmitButton
+                                        variant="secondary"
+                                        className="bg-green-400"
+                                    >
                                         Apply
                                     </SubmitButton>
                                 </div>

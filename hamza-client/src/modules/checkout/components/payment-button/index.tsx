@@ -373,7 +373,7 @@ const CryptoPaymentButton = ({
                 disabled={notReady}
                 color="white"
                 onClick={handlePayment}
-                className="mt-6 bg-teal-500 text-white py-3 px-6 rounded text-base"
+                className="mt-6 bg-purple-500 text-white py-3 px-6 rounded text-base"
             >
                 Place Order: Crypto
             </Button>

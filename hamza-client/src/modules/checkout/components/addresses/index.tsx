@@ -88,7 +88,7 @@ const Addresses = ({
                             onChange={toggleSameAsBilling}
                             cart={cart}
                         />
-                        <SubmitButton className="mt-6 bg-teal-500 text-white py-3 px-6 rounded text-base">
+                        <SubmitButton className="mt-6 bg-purple-500 text-white py-3 px-6 rounded text-base">
                             Continue to delivery
                         </SubmitButton>
 

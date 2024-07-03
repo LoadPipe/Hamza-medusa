@@ -21,6 +21,7 @@ import {
     TiStarHalfOutline,
     TiStarOutline,
 } from 'react-icons/ti';
+import CartPopup from '../../cart-popup';
 
 const MEDUSA_SERVER_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -28,6 +29,7 @@ interface PreviewCheckoutProps {
     productId: string;
 }
 
+// TODO: REFACTOR THIS COMPONENT, POST DEMO - GN
 const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
     const currencies: { [key: string]: 'ETH' | 'USDC' | 'USDT' } = {
         ETH: 'ETH',
@@ -35,8 +37,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
         USDC: 'USDC',
     };
     const [options, setOptions] = useState<Record<string, string>>({});
+    const [cartModalOpen, setCartModalOpen] = useState(false);
     const updateOptions = (update: Record<string, string>) => {
-        console.log('options are ', options);
+        // console.log('options are ', options);
         setOptions({ ...options, ...update });
     };
     let countryCode = useParams().countryCode as string;
@@ -78,9 +81,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
         };
 
         fetchProductReview();
-        console.log(
-            `ReviewCount ${reviewCount} AverageRating ${averageRating}`
-        );
+        // console.log(
+        //     `ReviewCount ${reviewCount} AverageRating ${averageRating}`
+        // );
     }, [productId]);
 
     const variantRecord = useMemo(() => {
@@ -100,7 +103,12 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
 
             return map;
         }
-    }, [productData]);
+    }, [productData, variantId]);
+
+    console.log(`Variant ID ${variantId}`);
+    console.log(
+        `Product Data ${JSON.stringify(productData)} ${productData.variant}`
+    );
 
     useEffect(() => {
         let checkVariantId: string | undefined = undefined;
@@ -119,11 +127,12 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
     useEffect(() => {
         if (productData && productData.variants) {
             if (!variantId) {
+                console.log(`variantId is not set yet`);
                 setVariantId(productData.variants[0].id);
             }
-            let selectedProductVariant =
-                productData &&
-                productData.variants.find((a: any) => a.id == variantId);
+            let selectedProductVariant = productData.variants.find(
+                (a: any) => a.id == productData.variants[0].id
+            );
             setSelectedVariant(selectedProductVariant);
             const price =
                 selectedProductVariant &&
@@ -132,8 +141,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                         p.currency_code === preferred_currency_code ?? 'usdt'
                 ) ??
                     selectedProductVariant.prices[0]);
+            // console.log(`price is being set to ${price}`);
             setSelectedPrice(price?.amount ?? 0);
-            console.log(productData);
+            // console.log(productData);
         }
     }, [productData, variantId]);
 
@@ -144,6 +154,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
             countryCode: countryCode,
             currencyCode: 'eth',
         });
+        setCartModalOpen(true);
     };
 
     const whitelistedProductHandler = async () => {
@@ -151,7 +162,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
             `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/product/get-store?product_id=${productData.id}`
         );
         let data = res.data;
-        console.log(data);
+        // console.log(data);
 
         if (data.status == true) {
             console.log('white list config ', whitelist_config);
@@ -161,7 +172,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                     ? true
                     : false;
 
-            console.log('white listed product ', whitelistedProduct);
+            // console.log('white listed product ', whitelistedProduct);
 
             setIsWhitelisted(whitelistedProduct);
         }
@@ -179,7 +190,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
             selectedVariant &&
             selectedVariant.allow_backorder
         ) {
-            console.log('running whitelist product handler');
+            // console.log('running whitelist product handler');
             whitelistedProductHandler();
         }
     }, [authData.status, productData, selectedVariant]);
@@ -252,15 +263,15 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                     >
                         {`${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} ${preferred_currency_code?.toUpperCase() ?? 'USDC'}`}
                     </Heading>
-                    <Text
-                        style={{ textDecoration: 'line-through' }}
-                        alignSelf={'center'}
-                        fontSize={{ base: '9px', md: '18px' }}
-                        display={{ base: 'none', md: 'block' }}
-                        color="#555555"
-                    >
-                        {`${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')}`}
-                    </Text>
+                    {/*<Text*/}
+                    {/*    style={{ textDecoration: 'line-through' }}*/}
+                    {/*    alignSelf={'center'}*/}
+                    {/*    fontSize={{ base: '9px', md: '18px' }}*/}
+                    {/*    display={{ base: 'none', md: 'block' }}*/}
+                    {/*    color="#555555"*/}
+                    {/*>*/}
+                    {/*    {`${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')}`}*/}
+                    {/*</Text>*/}
                 </Flex>
 
                 <Heading
@@ -458,6 +469,12 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                     color="#555555"
                     display={{ base: 'block', md: 'none' }}
                     mt="2rem"
+                />
+                <CartPopup
+                    open={cartModalOpen}
+                    closeModal={() => {
+                        setCartModalOpen(false);
+                    }}
                 />
             </Flex>
         </Flex>
