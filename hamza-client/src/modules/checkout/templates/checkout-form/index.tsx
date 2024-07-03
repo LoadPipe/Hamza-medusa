@@ -8,6 +8,7 @@ import {
     listShippingMethods,
 } from '@lib/data';
 import { cookies } from 'next/headers';
+import { Button } from '@chakra-ui/react';
 import { CartWithCheckoutStep } from 'types/global';
 import { getCheckoutStep } from '@lib/util/get-checkout-step';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
@@ -51,13 +52,12 @@ export default async function CheckoutForm(params: any) {
                     href="/cart"
                     className="text-small-semi text-ui-fg-base flex items-center gap-x-2 uppercase flex-1 basis-0"
                 >
-                    <ChevronDown className="rotate-90" size={16} />
-                    <span className="mt-px hidden small:block txt-compact-plus text-ui-fg-subtle hover:text-ui-fg-base ">
+                    <Button
+                        backgroundColor={'primary.indigo.900'}
+                        color={'white'}
+                    >
                         Back to shopping cart
-                    </span>
-                    <span className="mt-px block small:hidden txt-compact-plus text-ui-fg-subtle hover:text-ui-fg-base">
-                        Back
-                    </span>
+                    </Button>
                 </LocalizedClientLink>
                 <div>
                     <Addresses cart={cart} customer={customer} />
