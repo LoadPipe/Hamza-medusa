@@ -150,7 +150,7 @@ const Shipping: React.FC<ShippingProps> = ({
                                                     {option.name}
                                                 </span>
                                             </div>
-                                            <span className="justify-self-end text-ui-fg-base">
+                                            <span className="justify-self-end text-white">
                                                 {formatCryptoPrice(
                                                     option.amount!,
                                                     preferred_currency_code!
