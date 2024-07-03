@@ -35,6 +35,10 @@ const vendors = [
         id: 9,
         vendorName: 'Echo Rift',
     },
+    {
+        id: 10,
+        vendorName: 'Gaming Gear',
+    },
 ];
 
 export default vendors;
