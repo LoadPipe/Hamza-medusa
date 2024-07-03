@@ -73,9 +73,9 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
     // if (!product || !product.id) {
     //     return null; // Return null or some error display component
     // }
-    console.log(
-        `Product Page, we have product ${product.id} ${product.handle}`
-    );
+    // console.log(
+    //     `Product Page, we have product ${product.id} ${product.handle}`
+    // );
 
     useEffect(() => {
         // Fetch Vendor Name from product.id
@@ -87,7 +87,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                         product_id: product.id,
                     }
                 );
-                console.log(`Vendor: ${data}`);
+                // console.log(`Vendor: ${data}`);
                 setVendor(data);
             } catch (error) {
                 console.error('Error fetching vendor: ', error);

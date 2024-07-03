@@ -142,7 +142,7 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                     display="flex"
                     justifyContent="center"
                     alignItems="center"
-                    onClick={() => console.log('hello')}
+                    // onClick={() => console.log('hello')}
                     style={{ cursor: 'pointer' }}
                 >
                     {!imageLoaded && <Skeleton height="240px" width="100%" />}

@@ -28,6 +28,7 @@ interface PreviewCheckoutProps {
     productId: string;
 }
 
+// TODO: REFACTOR THIS COMPONENT, POST DEMO - GN
 const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
     const currencies: { [key: string]: 'ETH' | 'USDC' | 'USDT' } = {
         ETH: 'ETH',
@@ -78,9 +79,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
         };
 
         fetchProductReview();
-        console.log(
-            `ReviewCount ${reviewCount} AverageRating ${averageRating}`
-        );
+        // console.log(
+        //     `ReviewCount ${reviewCount} AverageRating ${averageRating}`
+        // );
     }, [productId]);
 
     const variantRecord = useMemo(() => {
@@ -101,6 +102,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
             return map;
         }
     }, [productData]);
+
+    // console.log(`Product Data ${productData}`);
 
     useEffect(() => {
         let checkVariantId: string | undefined = undefined;
