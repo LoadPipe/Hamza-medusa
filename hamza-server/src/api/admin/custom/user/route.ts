@@ -171,7 +171,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             user8,
             'Shake',
             'pcol_shake',
-            'https://54.253.186.85/headphones.webp'
+            'https://images.hamza.biz/headphones.webp'
         );
         const store9 = await storeService.createStore(
             user9,
@@ -183,7 +183,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             user10,
             'Block',
             'pcol_blocks',
-            'https://54.253.186.85/headphones.webp'
+            'https://images.hamza.biz/headphones.webp'
         );
 
         await productCollectionService.update(
