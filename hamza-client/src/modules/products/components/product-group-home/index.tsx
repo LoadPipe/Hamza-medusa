@@ -159,6 +159,7 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
                           return (
                               <GridItem
                                   key={index}
+                                  maxW={'295px'}
                                   minHeight={'243.73px'}
                                   height={{ base: '100%', md: '399px' }}
                                   width="100%"
