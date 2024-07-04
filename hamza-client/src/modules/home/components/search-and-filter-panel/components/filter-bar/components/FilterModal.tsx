@@ -85,13 +85,46 @@ const FilterModalHome: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         wrap={'wrap'}
                         gap="16px"
                     >
-                        {vendors.map((vendor: any, index) => (
-                            <CategoryModalButton
-                                key={index}
-                                categoryType="clothes"
-                                categoryName={vendor.vendorName}
-                            />
-                        ))}
+                        <CategoryModalButton
+                            categoryType="home_light"
+                            categoryName="All"
+                        />
+                        <CategoryModalButton
+                            categoryType="home_light"
+                            categoryName="Legendary Light Design"
+                        />
+                        <CategoryModalButton
+                            categoryType="gadgets"
+                            categoryName="Dauntless"
+                        />
+                        <CategoryModalButton
+                            categoryType="clothes"
+                            categoryName="Medusa Merch"
+                        />
+                        <CategoryModalButton
+                            categoryType="games"
+                            categoryName="Drones"
+                        />
+                        <CategoryModalButton
+                            categoryType="games"
+                            categoryName="Legos"
+                        />
+                        <CategoryModalButton
+                            categoryType="board_games"
+                            categoryName="Board Games"
+                        />
+                        <CategoryModalButton
+                            categoryType="workout_gear"
+                            categoryName="Workout Gear"
+                        />
+                        <CategoryModalButton
+                            categoryType="games"
+                            categoryName="Echo Rift"
+                        />
+                        <CategoryModalButton
+                            categoryType="games"
+                            categoryName="Gaming Gear"
+                        />
                     </Flex>
                     <Text
                         mt="1.5rem"
