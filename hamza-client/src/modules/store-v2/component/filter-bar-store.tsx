@@ -29,7 +29,7 @@ const FilterBarStore = () => {
                 {visibleVendors.map((vendor: any, index) => (
                     <CategoryTopButton
                         key={index}
-                        categoryType="clothes"
+                        categoryType={vendor.vendorType}
                         categoryName={vendor.vendorName}
                     />
                 ))}
