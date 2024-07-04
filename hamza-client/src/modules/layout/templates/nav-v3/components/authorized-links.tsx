@@ -10,7 +10,7 @@ const AuthorizedLinks = () => {
         <>
             {authData.status === 'authenticated' && (
                 <>
-                    <NavLink href={`/account`}>
+                    <NavLink href={`/account/profile`}>
                         <MenuItem
                             fontWeight={'600'}
                             mt="1rem"
@@ -24,8 +24,7 @@ const AuthorizedLinks = () => {
                             <Text>Account</Text>
                         </MenuItem>
                     </NavLink>
-            
-            
+
                     {authData.is_verified == false && (
                         <NavLink href={`/verify-email`}>
                             <MenuItem
@@ -41,8 +40,6 @@ const AuthorizedLinks = () => {
                             </MenuItem>
                         </NavLink>
                     )}
-
-                
 
                     <Box px={{ base: '2rem', md: 0 }}>
                         <MenuDivider

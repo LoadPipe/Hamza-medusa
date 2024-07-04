@@ -172,17 +172,6 @@ const AccountNav = ({
                     </div>
                     <div className="text-base-regular">
                         <ul className="flex mb-0 justify-start items-start flex-col gap-y-4 ">
-                            {authData.is_verified && (
-                                <li className="text-white">
-                                    <AccountNavLink
-                                        href="/account"
-                                        route={route!}
-                                    >
-                                        Overview
-                                    </AccountNavLink>
-                                </li>
-                            )}
-
                             <li>
                                 <AccountNavLink
                                     href="/account/profile"
