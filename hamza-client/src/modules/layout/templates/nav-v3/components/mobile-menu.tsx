@@ -66,7 +66,10 @@ export default function MobileMenu() {
                             borderColor={'white'}
                         />
                     </Box>
-                    <Link href={`https://blog.hamza.biz/merchant/`}>
+                    <Link
+                        href={`https://blog.hamza.biz/merchant/`}
+                        target="_blank"
+                    >
                         <MenuItem
                             fontWeight={'600'}
                             mt="1rem"
@@ -78,7 +81,10 @@ export default function MobileMenu() {
                             Sell on Hamza
                         </MenuItem>
                     </Link>
-                    <Link href={`https://blog.hamza.biz/affiliate/`}>
+                    <Link
+                        href={`https://blog.hamza.biz/affiliate/`}
+                        target="_blank"
+                    >
                         <MenuItem
                             fontWeight={'600'}
                             mb="1rem"

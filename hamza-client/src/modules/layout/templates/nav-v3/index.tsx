@@ -171,7 +171,10 @@ export default async function Nav() {
                                         borderColor={'white'}
                                     />
                                 </Box>
-                                <Link href={`https://blog.hamza.biz/merchant/`}>
+                                <Link
+                                    href={`https://blog.hamza.biz/merchant/`}
+                                    target="_blank"
+                                >
                                     <MenuItem
                                         fontWeight={'600'}
                                         mt="1rem"
@@ -185,6 +188,7 @@ export default async function Nav() {
                                 </Link>
                                 <Link
                                     href={`https://blog.hamza.biz/affiliate/`}
+                                    target="_blank"
                                 >
                                     <MenuItem
                                         fontWeight={'600'}
