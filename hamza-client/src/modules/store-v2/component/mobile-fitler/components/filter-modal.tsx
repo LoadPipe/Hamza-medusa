@@ -85,6 +85,10 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                     >
                         <CategoryModalButton
                             categoryType="home_light"
+                            categoryName="All"
+                        />
+                        <CategoryModalButton
+                            categoryType="home_light"
                             categoryName="Legendary Light Design"
                         />
                         <CategoryModalButton
@@ -97,7 +101,27 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         />
                         <CategoryModalButton
                             categoryType="games"
+                            categoryName="Drones"
+                        />
+                        <CategoryModalButton
+                            categoryType="games"
+                            categoryName="Legos"
+                        />
+                        <CategoryModalButton
+                            categoryType="board_games"
+                            categoryName="Board Games"
+                        />
+                        <CategoryModalButton
+                            categoryType="workout_gear"
+                            categoryName="Workout Gear"
+                        />
+                        <CategoryModalButton
+                            categoryType="games"
                             categoryName="Echo Rift"
+                        />
+                        <CategoryModalButton
+                            categoryType="games"
+                            categoryName="Gaming Gear"
                         />
                     </Flex>
                     <Text
