@@ -1,7 +1,8 @@
 import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
-import { FaTshirt } from 'react-icons/fa';
+import categoryIcons from '@modules/store-v2/data/category-icons';
+import Image from 'next/image';
 
 interface CategoryButtonProps {
     categoryName: string;
@@ -47,7 +48,7 @@ const CategoryButtons: React.FC<CategoryButtonProps> = ({
                 background: 'white',
             }}
         >
-            <FaTshirt />
+            <Image src={categoryIcons[categoryType]} alt={categoryName} />
             <Text ml="10px" fontSize={{ base: '14px', md: '18px' }}>
                 {categoryName}
             </Text>

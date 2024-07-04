@@ -47,7 +47,8 @@ const FilterBar = () => {
                 {visibleVendors.map((vendor: any, index) => (
                     <CategoryButtons
                         key={index}
-                        categoryType="clothes"
+                        categoryType={vendor.vendorType}
+                        // categoryType="lego"
                         categoryName={vendor.vendorName}
                     />
                 ))}
