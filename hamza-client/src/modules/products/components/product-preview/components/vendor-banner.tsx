@@ -24,9 +24,13 @@ const VendorBanner = (props: VendorProps) => {
             width="100%"
             height={{ base: '99px', md: '165.78px' }}
             borderRadius={'16px'}
-            p="2rem"
+            p={{ base: '1rem', md: '2rem' }}
         >
-            <Flex mr="1rem" alignSelf={'center'}>
+            <Flex
+                flexShrink={0}
+                mr={{ base: '0.5rem', md: '1rem' }}
+                alignSelf={'center'}
+            >
                 <Image
                     src="https://images.hamza.biz/Legendary/wall/wall1.jpeg"
                     alt="Light Logo"
