@@ -155,16 +155,22 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
     }, [productData, variantId]);
 
     const handleAddToCart = async () => {
-        console.log(`variantID in handleAddToCart: ${variantId}`);
+        if (!selectedVariant) {
+            console.error('Selected variant is null or undefined.');
+            return;
+        }
 
-        console.log(`Selected Variant hook? : ${selectedVariant.id}`);
-        await addToCart({
-            variantId: selectedVariant.id!,
-            quantity: quantity,
-            countryCode: countryCode,
-            currencyCode: 'eth',
-        });
-        setCartModalOpen(true);
+        try {
+            await addToCart({
+                variantId: selectedVariant.id!,
+                quantity: quantity,
+                countryCode: countryCode,
+                currencyCode: 'eth',
+            });
+            setCartModalOpen(true);
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+        }
     };
 
     const whitelistedProductHandler = async () => {
