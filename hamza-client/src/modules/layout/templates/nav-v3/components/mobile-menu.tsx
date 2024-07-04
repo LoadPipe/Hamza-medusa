@@ -66,16 +66,18 @@ export default function MobileMenu() {
                             borderColor={'white'}
                         />
                     </Box>
-                    <MenuItem
-                        fontWeight={'600'}
-                        mt="1rem"
-                        px="2rem"
-                        color={'white'}
-                        backgroundColor={'black'}
-                        _hover={{ color: 'primary.green.900' }}
-                    >
-                        Sell on Hamza
-                    </MenuItem>
+                    <Link href={`https://blog.hamza.biz/merchant/`}>
+                        <MenuItem
+                            fontWeight={'600'}
+                            mt="1rem"
+                            px="2rem"
+                            color={'white'}
+                            backgroundColor={'black'}
+                            _hover={{ color: 'primary.green.900' }}
+                        >
+                            Sell on Hamza
+                        </MenuItem>
+                    </Link>
                     <Link href={`https://blog.hamza.biz/affiliate/`}>
                         <MenuItem
                             fontWeight={'600'}
