@@ -15,7 +15,6 @@ const categoryIcons: Record<string, any> = {
     games: games,
     gadgets: gadgets,
     home_light: lights,
-    drones: games,
     workout_gear: workout,
     board_games: boardgames,
     lego: lego,
