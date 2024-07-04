@@ -8,11 +8,17 @@ const productsToIds = {
 
     //Legendary Light
     'INDOOR/OUTDOOR WALL LAMP M - W100 X D4':
-        '0x2bec4242fbb2803d4b8c937474b180fbe59fa1fb59d9052c5374867650f802dc',
+        '0x6daba4e86c82fae30a1968f34d52dfe355be084258dadca22cc61be44e0fcb23',
     'Tripod RGB Spine':
-        '0x3df4d361c56898b08302fe6521c1b3bd2e2aae293475445c028c9b23a462d6fa',
+        '0xec1b576bfd5b19cafbeea87a57a88e0f281fb95b135b19b11d7ef68e4b06453a',
     'RGB LED Strips':
-        '0xa619cf448f807c7c83f2602eaa03cf616d80ab20a1723e55bcdfa7fe0d10d364',
+        '0xccf005507aa57ec97227edec1d244810a8ceabd540401b4a10676c0ce23e8029',
+    'LED RGB Wall Art':
+        '0xc1197bda71004750fff4b97bb924b45aed9d8576e16700de711f613fe6fc1d22',
+    '3D Infinity Mirror':
+        '0x1cd6d920bd8acaf77f23f7947cc8519b9af2d12670710927dbadf9bdd9c9ab2e',
+    '12 Pack Black Recessed Lights 6 Inch, Dimmable':
+        '0x866b7abc209a28a7bd66866a84d279e4157b6a00a2cd4e7210abdcfab315004e',
 
     //Echo Rift
     'The Streamline Rift':
@@ -48,9 +54,9 @@ const storesToIds = {
     },
     'Legendary Light Design': {
         storeId:
-            '0xc7bf3136b9f2122179ae0d6a9463b45559900ce1874dde30613d520b39cafd15',
+            '0x805e83d38d5c946bc1559f7d80ce94bce13a4cc0ec4640426bc81835f5958a57',
         keycard:
-            '0xd8b398a4cfca54f12d4b1505d631b5e95ce69664098f6aacbe32014b6c02b2ed',
+            '0x0000000000000000000000000000000000000000000000000000000000000007',
     },
     'Echo Rift': {
         storeId:
