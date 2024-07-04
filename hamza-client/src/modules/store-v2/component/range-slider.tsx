@@ -15,7 +15,7 @@ type RangeType = [number, number];
 
 const RangeSliderComponent = () => {
     // Using the RangeType for the state
-    const [range, setRange] = useState<RangeType>([10, 2000]);
+    const [range, setRange] = useState<RangeType>([0, 2000]);
 
     // Define the type for the values parameter
     const handleRangeChange = (values: number[]) => {
@@ -23,12 +23,12 @@ const RangeSliderComponent = () => {
     };
 
     return (
-        <Flex my={'2rem'} flexDirection={'column'}>
+        <Flex w="100%" my={'2rem'} flexDirection={'column'}>
             <Box>
                 <RangeSlider
                     // eslint-disable-next-line jsx-a11y/aria-proptypes
                     aria-label={['min', 'max']}
-                    defaultValue={[10, 2000]}
+                    defaultValue={[0, 2000]}
                     min={0}
                     max={2000}
                     onChange={handleRangeChange}
@@ -74,9 +74,7 @@ const RangeSliderComponent = () => {
                 <Divider
                     borderColor="secondary.davy.900"
                     w={'100%'}
-                    minW={'15.87px'}
-                    maxW={'15.87px'}
-                    mx="1rem"
+                    mx="0.5rem"
                     alignSelf="center"
                 />
                 <Flex

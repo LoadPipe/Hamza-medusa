@@ -24,40 +24,59 @@ const VendorBanner = (props: VendorProps) => {
             width="100%"
             height={{ base: '99px', md: '165.78px' }}
             borderRadius={'16px'}
-            p="2rem"
+            p={{ base: '1rem', md: '2rem' }}
         >
-            <Box mr="1rem">
-                <Image
-                    src="https://images.hamza.biz/Legendary/wall/wall1.jpeg"
-                    alt="Light Logo"
-                    boxSize="50px"
-                    borderRadius="full"
-                />
-            </Box>
+            <Flex gap={{ base: '10px', md: '20px' }}>
+                <Flex flexShrink={0} alignSelf={'center'}>
+                    <Image
+                        src="https://images.hamza.biz/Legendary/wall/wall1.jpeg"
+                        alt="Light Logo"
+                        boxSize={{ base: '36.5px', md: '72px' }}
+                        borderRadius="full"
+                    />
+                </Flex>
 
-            {/* Middle Section with Text */}
-            <Box flex="1">
-                <Flex alignItems="center">
-                    <Text
-                        fontSize="24px"
-                        color="white"
-                        fontWeight="bold"
-                        mr="1rem"
-                    >
-                        {props.vendor}
-                    </Text>
-                    <FaCheckCircle color="blue" size="20px" />
+                {/* Middle Section with Text */}
+                <Flex
+                    flexDirection={'column'}
+                    justifyContent={'center'}
+                    alignItems={'flex-start'}
+                >
+                    <Flex gap={{ base: '5px', md: '10px' }}>
+                        <Text
+                            fontSize={{ base: '14px', md: '24px' }}
+                            color="white"
+                            fontWeight="bold"
+                            noOfLines={1}
+                        >
+                            {props.vendor}
+                        </Text>
+                        <Flex
+                            display={{ base: 'none', md: 'flex' }}
+                            alignSelf={'center'}
+                            fontSize={{ base: '10px', md: '20px' }}
+                        >
+                            <FaCheckCircle color="#3196DF" />
+                        </Flex>
+                    </Flex>
+
+                    <Flex color="#555555" gap={'7px'}>
+                        <Text fontSize={{ base: '10px', md: '16px' }}>
+                            Flagship Store
+                        </Text>
+                        <Box
+                            alignSelf={'center'}
+                            width={{ base: '2.53px', md: '7.33px' }}
+                            height={{ base: '2.53px', md: '7.33px' }}
+                            borderRadius={'full'}
+                            backgroundColor="primary.green.900"
+                        />
+                        <Text fontSize={{ base: '10px', md: '16px' }}>
+                            Online
+                        </Text>
+                    </Flex>
                 </Flex>
-                <Flex>
-                    <Text fontSize="16px" color="gray.400">
-                        Flagship Store{' '}
-                        <Box as="span" color="green.500" mx="2">
-                            •
-                        </Box>{' '}
-                        Online
-                    </Text>
-                </Flex>
-            </Box>
+            </Flex>
 
             <Flex
                 ml="auto"

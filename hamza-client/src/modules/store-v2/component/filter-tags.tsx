@@ -16,6 +16,7 @@ const FilterTags = () => {
         setCategorySelect,
         setCurrencySelect,
         setReviewStarsSelect,
+        setCategoryTypeSelect,
     } = useStorePage();
 
     const filterTags = () => {
@@ -23,7 +24,11 @@ const FilterTags = () => {
         if (categorySelect) {
             tags.push(
                 <FilterTag
-                    img={categoryTypeSelect ? categoryIcons[categoryTypeSelect] : ''}
+                    img={
+                        categoryTypeSelect
+                            ? categoryIcons[categoryTypeSelect]
+                            : ''
+                    }
                     key="category"
                     name={`${categorySelect}`}
                 />
@@ -42,13 +47,23 @@ const FilterTags = () => {
         if (reviewStarsSelect) {
             // Check for non-null explicitly for numbers
             tags.push(
-                <FilterTag img={ReviewStar} name={`${reviewStarsSelect}`} />
+                <FilterTag
+                    img={
+                        categoryTypeSelect
+                            ? categoryIcons[categoryTypeSelect]
+                            : ''
+                    }
+                    key="category"
+                    name={`${categorySelect}`}
+                />
             );
         }
         return tags.length > 0 ? (
             tags
         ) : (
-            <Text alignSelf={'center'} color={'primary.yellow.900'}>
+            // <FilterTag img={categoryIcons['all']} key="category" name={`All`} />
+
+            <Text alignSelf={'center'} color={'primary.green.900'}>
                 No filters applied.
             </Text>
         );
@@ -62,18 +77,22 @@ const FilterTags = () => {
                 ml="auto"
                 cursor={'pointer'}
                 onClick={() => {
-                    setCategorySelect(null);
+                    setCategorySelect('All');
+                    setCategoryTypeSelect('all');
                     setCurrencySelect(null);
                     setReviewStarsSelect(null);
                 }}
+                color="white"
+                _hover={{
+                    color: 'primary.green.900',
+                }}
             >
-                <Text fontSize="16px" alignSelf={'center'} color={'white'}>
+                <Text fontSize="16px" alignSelf={'center'}>
                     Clear All
                 </Text>
                 <Flex>
                     <IoCloseOutline
                         size={19}
-                        color="white"
                         style={{ alignSelf: 'center', marginLeft: '5px' }}
                     />
                 </Flex>

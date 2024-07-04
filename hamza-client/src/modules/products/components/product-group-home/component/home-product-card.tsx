@@ -243,7 +243,7 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                                 fontWeight="700"
                                 fontSize={{ base: '14px', md: '18px' }}
                             >
-                                {`${productPrice}`}{' '}
+                                {`${productPrice} ${currencyCode}`}
                                 <Text
                                     as="span"
                                     display={{
