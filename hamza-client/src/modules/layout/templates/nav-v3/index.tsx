@@ -164,17 +164,7 @@ export default async function Nav() {
                                 >
                                     <CartButton />
                                 </MenuItem>
-                                <MenuItem
-                                    mt="0.5rem"
-                                    mb="1rem"
-                                    fontWeight={'600'}
-                                    px="2rem"
-                                    color={'white'}
-                                    backgroundColor={'black'}
-                                >
-                                    <Wishlist />
-                                </MenuItem>
-
+                                <Wishlist />
                                 <Box px={{ base: '2rem', md: 0 }}>
                                     <MenuDivider
                                         opacity={{ base: '0.5', md: '1' }}
