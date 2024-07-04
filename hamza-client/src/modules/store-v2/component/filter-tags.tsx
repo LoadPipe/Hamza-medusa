@@ -77,19 +77,22 @@ const FilterTags = () => {
                 ml="auto"
                 cursor={'pointer'}
                 onClick={() => {
-                    setCategorySelect(null);
-                    setCategoryTypeSelect(null);
+                    setCategorySelect('All');
+                    setCategoryTypeSelect('all');
                     setCurrencySelect(null);
                     setReviewStarsSelect(null);
                 }}
+                color="white"
+                _hover={{
+                    color: 'primary.green.900',
+                }}
             >
-                <Text fontSize="16px" alignSelf={'center'} color={'white'}>
+                <Text fontSize="16px" alignSelf={'center'}>
                     Clear All
                 </Text>
                 <Flex>
                     <IoCloseOutline
                         size={19}
-                        color="white"
                         style={{ alignSelf: 'center', marginLeft: '5px' }}
                     />
                 </Flex>

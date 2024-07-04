@@ -26,30 +26,37 @@ const VendorBanner = (props: VendorProps) => {
             borderRadius={'16px'}
             p="2rem"
         >
-            <Box mr="1rem">
+            <Flex mr="1rem" alignSelf={'center'}>
                 <Image
                     src="https://images.hamza.biz/Legendary/wall/wall1.jpeg"
                     alt="Light Logo"
-                    boxSize="50px"
+                    boxSize={{ base: '36.5px', md: '72px' }}
                     borderRadius="full"
                 />
-            </Box>
+            </Flex>
 
             {/* Middle Section with Text */}
-            <Box flex="1">
-                <Flex alignItems="center">
+            <Flex alignSelf={'center'} flexDirection={'column'}>
+                <Flex gap={{ base: '5px', md: '10px' }}>
                     <Text
-                        fontSize="24px"
+                        fontSize={{ base: '14px', md: '24px' }}
                         color="white"
                         fontWeight="bold"
-                        mr="1rem"
                     >
                         {props.vendor}
                     </Text>
-                    <FaCheckCircle color="blue" size="20px" />
+                    <Flex
+                        alignSelf={'center'}
+                        fontSize={{ base: '10px', md: '23.05px' }}
+                    >
+                        <FaCheckCircle color="#3196DF" />
+                    </Flex>
                 </Flex>
                 <Flex>
-                    <Text fontSize="16px" color="gray.400">
+                    <Text
+                        fontSize={{ base: '10px', md: '16px' }}
+                        color="gray.400"
+                    >
                         Flagship Store{' '}
                         <Box as="span" color="green.500" mx="2">
                             •
@@ -57,7 +64,7 @@ const VendorBanner = (props: VendorProps) => {
                         Online
                     </Text>
                 </Flex>
-            </Box>
+            </Flex>
 
             <Flex
                 ml="auto"

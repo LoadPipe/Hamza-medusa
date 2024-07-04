@@ -14,7 +14,7 @@ const FilterTag = (props: any) => {
                 borderWidth={'1px'}
                 borderRadius={'49px'}
                 height={'63px'}
-                style={{ padding: '10px 24px', cursor: 'pointer' }}
+                style={{ padding: '10px 24px' }}
             >
                 <Image src={props.img} alt={props.name} />
                 <Text ml="10px" fontSize="18px" color="white">
