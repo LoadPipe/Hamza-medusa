@@ -5634,6 +5634,7 @@ $root.market = (function () {
        * @property {market.mass.UpdateOrder.IChangeItems|null} [changeItems] UpdateOrder changeItems
        * @property {market.mass.UpdateOrder.IItemsFinalized|null} [itemsFinalized] UpdateOrder itemsFinalized
        * @property {market.mass.UpdateOrder.IOrderCanceled|null} [orderCanceled] UpdateOrder orderCanceled
+       * @property {market.mass.UpdateOrder.IAddressDetails|null} [updateShippingDetails] UpdateOrder updateShippingDetails
        */
 
       /**
@@ -5691,18 +5692,31 @@ $root.market = (function () {
        */
       UpdateOrder.prototype.orderCanceled = null;
 
+      /**
+       * UpdateOrder updateShippingDetails.
+       * @member {market.mass.UpdateOrder.IAddressDetails|null|undefined} updateShippingDetails
+       * @memberof market.mass.UpdateOrder
+       * @instance
+       */
+      UpdateOrder.prototype.updateShippingDetails = null;
+
       // OneOf field names bound to virtual getters and setters
       var $oneOfFields;
 
       /**
        * UpdateOrder action.
-       * @member {"changeItems"|"itemsFinalized"|"orderCanceled"|undefined} action
+       * @member {"changeItems"|"itemsFinalized"|"orderCanceled"|"updateShippingDetails"|undefined} action
        * @memberof market.mass.UpdateOrder
        * @instance
        */
       Object.defineProperty(UpdateOrder.prototype, "action", {
         get: $util.oneOfGetter(
-          ($oneOfFields = ["changeItems", "itemsFinalized", "orderCanceled"]),
+          ($oneOfFields = [
+            "changeItems",
+            "itemsFinalized",
+            "orderCanceled",
+            "updateShippingDetails",
+          ]),
         ),
         set: $util.oneOfSetter($oneOfFields),
       });
@@ -5763,6 +5777,14 @@ $root.market = (function () {
           $root.market.mass.UpdateOrder.OrderCanceled.encode(
             message.orderCanceled,
             writer.uint32(/* id 5, wireType 2 =*/ 42).fork(),
+          ).ldelim();
+        if (
+          message.updateShippingDetails != null &&
+          Object.hasOwnProperty.call(message, "updateShippingDetails")
+        )
+          $root.market.mass.UpdateOrder.AddressDetails.encode(
+            message.updateShippingDetails,
+            writer.uint32(/* id 6, wireType 2 =*/ 50).fork(),
           ).ldelim();
         return writer;
       };
@@ -5825,6 +5847,14 @@ $root.market = (function () {
             case 5: {
               message.orderCanceled =
                 $root.market.mass.UpdateOrder.OrderCanceled.decode(
+                  reader,
+                  reader.uint32(),
+                );
+              break;
+            }
+            case 6: {
+              message.updateShippingDetails =
+                $root.market.mass.UpdateOrder.AddressDetails.decode(
                   reader,
                   reader.uint32(),
                 );
@@ -5919,6 +5949,19 @@ $root.market = (function () {
             if (error) return "orderCanceled." + error;
           }
         }
+        if (
+          message.updateShippingDetails != null &&
+          message.hasOwnProperty("updateShippingDetails")
+        ) {
+          if (properties.action === 1) return "action: multiple values";
+          properties.action = 1;
+          {
+            var error = $root.market.mass.UpdateOrder.AddressDetails.verify(
+              message.updateShippingDetails,
+            );
+            if (error) return "updateShippingDetails." + error;
+          }
+        }
         return null;
       };
 
@@ -5981,6 +6024,16 @@ $root.market = (function () {
           message.orderCanceled =
             $root.market.mass.UpdateOrder.OrderCanceled.fromObject(
               object.orderCanceled,
+            );
+        }
+        if (object.updateShippingDetails != null) {
+          if (typeof object.updateShippingDetails !== "object")
+            throw TypeError(
+              ".market.mass.UpdateOrder.updateShippingDetails: object expected",
+            );
+          message.updateShippingDetails =
+            $root.market.mass.UpdateOrder.AddressDetails.fromObject(
+              object.updateShippingDetails,
             );
         }
         return message;
@@ -6058,6 +6111,17 @@ $root.market = (function () {
               options,
             );
           if (options.oneofs) object.action = "orderCanceled";
+        }
+        if (
+          message.updateShippingDetails != null &&
+          message.hasOwnProperty("updateShippingDetails")
+        ) {
+          object.updateShippingDetails =
+            $root.market.mass.UpdateOrder.AddressDetails.toObject(
+              message.updateShippingDetails,
+              options,
+            );
+          if (options.oneofs) object.action = "updateShippingDetails";
         }
         return object;
       };
@@ -7265,6 +7329,383 @@ $root.market = (function () {
         };
 
         return OrderCanceled;
+      })();
+
+      UpdateOrder.AddressDetails = (function () {
+        /**
+         * Properties of an AddressDetails.
+         * @memberof market.mass.UpdateOrder
+         * @interface IAddressDetails
+         * @property {string|null} [name] AddressDetails name
+         * @property {string|null} [address1] AddressDetails address1
+         * @property {string|null} [address2] AddressDetails address2
+         * @property {string|null} [city] AddressDetails city
+         * @property {string|null} [postalCode] AddressDetails postalCode
+         * @property {string|null} [country] AddressDetails country
+         * @property {string|null} [phoneNumber] AddressDetails phoneNumber
+         */
+
+        /**
+         * Constructs a new AddressDetails.
+         * @memberof market.mass.UpdateOrder
+         * @classdesc Represents an AddressDetails.
+         * @implements IAddressDetails
+         * @constructor
+         * @param {market.mass.UpdateOrder.IAddressDetails=} [properties] Properties to set
+         */
+        function AddressDetails(properties) {
+          if (properties)
+            for (
+              var keys = Object.keys(properties), i = 0;
+              i < keys.length;
+              ++i
+            )
+              if (properties[keys[i]] != null)
+                this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * AddressDetails name.
+         * @member {string} name
+         * @memberof market.mass.UpdateOrder.AddressDetails
+         * @instance
+         */
+        AddressDetails.prototype.name = "";
+
+        /**
+         * AddressDetails address1.
+         * @member {string} address1
+         * @memberof market.mass.UpdateOrder.AddressDetails
+         * @instance
+         */
+        AddressDetails.prototype.address1 = "";
+
+        /**
+         * AddressDetails address2.
+         * @member {string} address2
+         * @memberof market.mass.UpdateOrder.AddressDetails
+         * @instance
+         */
+        AddressDetails.prototype.address2 = "";
+
+        /**
+         * AddressDetails city.
+         * @member {string} city
+         * @memberof market.mass.UpdateOrder.AddressDetails
+         * @instance
+         */
+        AddressDetails.prototype.city = "";
+
+        /**
+         * AddressDetails postalCode.
+         * @member {string} postalCode
+         * @memberof market.mass.UpdateOrder.AddressDetails
+         * @instance
+         */
+        AddressDetails.prototype.postalCode = "";
+
+        /**
+         * AddressDetails country.
+         * @member {string} country
+         * @memberof market.mass.UpdateOrder.AddressDetails
+         * @instance
+         */
+        AddressDetails.prototype.country = "";
+
+        /**
+         * AddressDetails phoneNumber.
+         * @member {string} phoneNumber
+         * @memberof market.mass.UpdateOrder.AddressDetails
+         * @instance
+         */
+        AddressDetails.prototype.phoneNumber = "";
+
+        /**
+         * Creates a new AddressDetails instance using the specified properties.
+         * @function create
+         * @memberof market.mass.UpdateOrder.AddressDetails
+         * @static
+         * @param {market.mass.UpdateOrder.IAddressDetails=} [properties] Properties to set
+         * @returns {market.mass.UpdateOrder.AddressDetails} AddressDetails instance
+         */
+        AddressDetails.create = function create(properties) {
+          return new AddressDetails(properties);
+        };
+
+        /**
+         * Encodes the specified AddressDetails message. Does not implicitly {@link market.mass.UpdateOrder.AddressDetails.verify|verify} messages.
+         * @function encode
+         * @memberof market.mass.UpdateOrder.AddressDetails
+         * @static
+         * @param {market.mass.UpdateOrder.IAddressDetails} message AddressDetails message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AddressDetails.encode = function encode(message, writer) {
+          if (!writer) writer = $Writer.create();
+          if (
+            message.name != null &&
+            Object.hasOwnProperty.call(message, "name")
+          )
+            writer.uint32(/* id 1, wireType 2 =*/ 10).string(message.name);
+          if (
+            message.address1 != null &&
+            Object.hasOwnProperty.call(message, "address1")
+          )
+            writer.uint32(/* id 2, wireType 2 =*/ 18).string(message.address1);
+          if (
+            message.address2 != null &&
+            Object.hasOwnProperty.call(message, "address2")
+          )
+            writer.uint32(/* id 3, wireType 2 =*/ 26).string(message.address2);
+          if (
+            message.city != null &&
+            Object.hasOwnProperty.call(message, "city")
+          )
+            writer.uint32(/* id 4, wireType 2 =*/ 34).string(message.city);
+          if (
+            message.postalCode != null &&
+            Object.hasOwnProperty.call(message, "postalCode")
+          )
+            writer
+              .uint32(/* id 5, wireType 2 =*/ 42)
+              .string(message.postalCode);
+          if (
+            message.country != null &&
+            Object.hasOwnProperty.call(message, "country")
+          )
+            writer.uint32(/* id 6, wireType 2 =*/ 50).string(message.country);
+          if (
+            message.phoneNumber != null &&
+            Object.hasOwnProperty.call(message, "phoneNumber")
+          )
+            writer
+              .uint32(/* id 7, wireType 2 =*/ 58)
+              .string(message.phoneNumber);
+          return writer;
+        };
+
+        /**
+         * Encodes the specified AddressDetails message, length delimited. Does not implicitly {@link market.mass.UpdateOrder.AddressDetails.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof market.mass.UpdateOrder.AddressDetails
+         * @static
+         * @param {market.mass.UpdateOrder.IAddressDetails} message AddressDetails message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        AddressDetails.encodeDelimited = function encodeDelimited(
+          message,
+          writer,
+        ) {
+          return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes an AddressDetails message from the specified reader or buffer.
+         * @function decode
+         * @memberof market.mass.UpdateOrder.AddressDetails
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {market.mass.UpdateOrder.AddressDetails} AddressDetails
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AddressDetails.decode = function decode(reader, length) {
+          if (!(reader instanceof $Reader)) reader = $Reader.create(reader);
+          var end = length === undefined ? reader.len : reader.pos + length,
+            message = new $root.market.mass.UpdateOrder.AddressDetails();
+          while (reader.pos < end) {
+            var tag = reader.uint32();
+            switch (tag >>> 3) {
+              case 1: {
+                message.name = reader.string();
+                break;
+              }
+              case 2: {
+                message.address1 = reader.string();
+                break;
+              }
+              case 3: {
+                message.address2 = reader.string();
+                break;
+              }
+              case 4: {
+                message.city = reader.string();
+                break;
+              }
+              case 5: {
+                message.postalCode = reader.string();
+                break;
+              }
+              case 6: {
+                message.country = reader.string();
+                break;
+              }
+              case 7: {
+                message.phoneNumber = reader.string();
+                break;
+              }
+              default:
+                reader.skipType(tag & 7);
+                break;
+            }
+          }
+          return message;
+        };
+
+        /**
+         * Decodes an AddressDetails message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof market.mass.UpdateOrder.AddressDetails
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {market.mass.UpdateOrder.AddressDetails} AddressDetails
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        AddressDetails.decodeDelimited = function decodeDelimited(reader) {
+          if (!(reader instanceof $Reader)) reader = new $Reader(reader);
+          return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies an AddressDetails message.
+         * @function verify
+         * @memberof market.mass.UpdateOrder.AddressDetails
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        AddressDetails.verify = function verify(message) {
+          if (typeof message !== "object" || message === null)
+            return "object expected";
+          if (message.name != null && message.hasOwnProperty("name"))
+            if (!$util.isString(message.name)) return "name: string expected";
+          if (message.address1 != null && message.hasOwnProperty("address1"))
+            if (!$util.isString(message.address1))
+              return "address1: string expected";
+          if (message.address2 != null && message.hasOwnProperty("address2"))
+            if (!$util.isString(message.address2))
+              return "address2: string expected";
+          if (message.city != null && message.hasOwnProperty("city"))
+            if (!$util.isString(message.city)) return "city: string expected";
+          if (
+            message.postalCode != null &&
+            message.hasOwnProperty("postalCode")
+          )
+            if (!$util.isString(message.postalCode))
+              return "postalCode: string expected";
+          if (message.country != null && message.hasOwnProperty("country"))
+            if (!$util.isString(message.country))
+              return "country: string expected";
+          if (
+            message.phoneNumber != null &&
+            message.hasOwnProperty("phoneNumber")
+          )
+            if (!$util.isString(message.phoneNumber))
+              return "phoneNumber: string expected";
+          return null;
+        };
+
+        /**
+         * Creates an AddressDetails message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof market.mass.UpdateOrder.AddressDetails
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {market.mass.UpdateOrder.AddressDetails} AddressDetails
+         */
+        AddressDetails.fromObject = function fromObject(object) {
+          if (object instanceof $root.market.mass.UpdateOrder.AddressDetails)
+            return object;
+          var message = new $root.market.mass.UpdateOrder.AddressDetails();
+          if (object.name != null) message.name = String(object.name);
+          if (object.address1 != null)
+            message.address1 = String(object.address1);
+          if (object.address2 != null)
+            message.address2 = String(object.address2);
+          if (object.city != null) message.city = String(object.city);
+          if (object.postalCode != null)
+            message.postalCode = String(object.postalCode);
+          if (object.country != null) message.country = String(object.country);
+          if (object.phoneNumber != null)
+            message.phoneNumber = String(object.phoneNumber);
+          return message;
+        };
+
+        /**
+         * Creates a plain object from an AddressDetails message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof market.mass.UpdateOrder.AddressDetails
+         * @static
+         * @param {market.mass.UpdateOrder.AddressDetails} message AddressDetails
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        AddressDetails.toObject = function toObject(message, options) {
+          if (!options) options = {};
+          var object = {};
+          if (options.defaults) {
+            object.name = "";
+            object.address1 = "";
+            object.address2 = "";
+            object.city = "";
+            object.postalCode = "";
+            object.country = "";
+            object.phoneNumber = "";
+          }
+          if (message.name != null && message.hasOwnProperty("name"))
+            object.name = message.name;
+          if (message.address1 != null && message.hasOwnProperty("address1"))
+            object.address1 = message.address1;
+          if (message.address2 != null && message.hasOwnProperty("address2"))
+            object.address2 = message.address2;
+          if (message.city != null && message.hasOwnProperty("city"))
+            object.city = message.city;
+          if (
+            message.postalCode != null &&
+            message.hasOwnProperty("postalCode")
+          )
+            object.postalCode = message.postalCode;
+          if (message.country != null && message.hasOwnProperty("country"))
+            object.country = message.country;
+          if (
+            message.phoneNumber != null &&
+            message.hasOwnProperty("phoneNumber")
+          )
+            object.phoneNumber = message.phoneNumber;
+          return object;
+        };
+
+        /**
+         * Converts this AddressDetails to JSON.
+         * @function toJSON
+         * @memberof market.mass.UpdateOrder.AddressDetails
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        AddressDetails.prototype.toJSON = function toJSON() {
+          return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        /**
+         * Gets the default type url for AddressDetails
+         * @function getTypeUrl
+         * @memberof market.mass.UpdateOrder.AddressDetails
+         * @static
+         * @param {string} [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns {string} The default type url
+         */
+        AddressDetails.getTypeUrl = function getTypeUrl(typeUrlPrefix) {
+          if (typeUrlPrefix === undefined) {
+            typeUrlPrefix = "type.googleapis.com";
+          }
+          return typeUrlPrefix + "/market.mass.UpdateOrder.AddressDetails";
+        };
+
+        return AddressDetails;
       })();
 
       return UpdateOrder;

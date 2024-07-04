@@ -1,0 +1,22 @@
+{
+  "name": "@massmarket/utils",
+  "version": "1.0.0",
+  "description": "Utils",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@massmarket/tsconfig": "workspace:*"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "buffer": "^6.0.3",
+    "viem": "^2.16.3"
+  }
+}

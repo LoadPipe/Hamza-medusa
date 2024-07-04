@@ -3,16 +3,14 @@ import ProgressBar from "@/app/components/checkout/ProgressBar";
 import React, { useEffect, useState } from "react";
 import { useStoreContext } from "@/context/StoreContext";
 import NewCart from "@/app/cart/NewCart";
-// import CurrencyChange from "@/app/common/components/CurrencyChange";
-// import CurrencyButton from "@/app/common/components/CurrencyButton";
 import ShippingDetails from "@/app/components/checkout/ShippingDetails";
 import Image from "next/image";
-
+import { IStatus } from "@/types";
 import PaymentOptions from "@/app/components/checkout/PaymentOptions";
-import ModalHeader from "@/app/common/components/ModalHeader";
 
 const CheckoutFlow = () => {
-  const { commitOrder, finalizedOrders } = useStoreContext();
+  const { commitOrder, finalizedOrders, orderItems, orderId, setOrderId } =
+    useStoreContext();
 
   const [step, setStep] = useState(0);
 
@@ -21,30 +19,36 @@ const CheckoutFlow = () => {
     null,
   );
   const [showErrorMessage, setShowErrorMessage] = useState<null | string>(null);
-  const [erc20Checkout, setErc20Checkout] = useState<boolean>(false);
   const [cryptoTotal, setCryptoTotal] = useState<string | null>(null);
   const [purchaseAdd, setPurchaseAdd] = useState<string | null>(null);
   const [totalDollar, setTotalDollar] = useState<string | null>(null);
-  // const [showCurrencyOptions, setShowCurrencyOptions] =
-  //   useState<boolean>(false);
+  const [city, setCity] = useState("");
+  const [address, setAddress] = useState("");
+  const [name, setName] = useState("");
+  const [zip, setZip] = useState("");
+  const [country, setCountry] = useState("");
+  const [number, setNumber] = useState("");
 
-  useEffect((): void => {
-    if (finalizedOrders && checkoutReqId) {
+  useEffect(() => {
+    if (
+      orderItems &&
+      orderId &&
+      orderItems.get(orderId)?.status === IStatus.Complete
+    ) {
+      setOrderId(null);
+      setStep(3);
+    }
+  }, [orderItems]);
+
+  useEffect(() => {
+    if (finalizedOrders.size && checkoutReqId) {
       const currentCart = finalizedOrders.get(checkoutReqId);
       if (!currentCart) return;
-      const { totalInCrypto, erc20Addr, purchaseAddress, total } = currentCart;
+      const { totalInCrypto, purchaseAddress, total } = currentCart;
       setCryptoTotal(totalInCrypto);
-      //FIXME
-      setErc20Checkout(false);
       setPurchaseAdd(purchaseAddress);
       setTotalDollar(total);
-      if (erc20Checkout) {
-        setSrc(
-          `ethereum:${erc20Addr}/transfer?address=${purchaseAddress}&uint256=${totalInCrypto}`,
-        );
-      } else {
-        setSrc(`ethereum:${purchaseAddress}?value=${totalInCrypto}`);
-      }
+      setSrc(`ethereum:${purchaseAddress}?value=${totalInCrypto}`);
       setStep(2);
     }
   }, [finalizedOrders, checkoutReqId]);
@@ -64,7 +68,17 @@ const CheckoutFlow = () => {
     if (step === 0) {
       return <NewCart next={() => setStep(1)} />;
     } else if (step === 1) {
-      return <ShippingDetails checkout={checkout} />;
+      return (
+        <ShippingDetails
+          checkout={checkout}
+          setCity={setCity}
+          setName={setName}
+          setAddress={setAddress}
+          setZip={setZip}
+          setCountry={setCountry}
+          setNumber={setNumber}
+        />
+      );
     } else if (
       step === 2 &&
       imgSrc &&
@@ -74,20 +88,23 @@ const CheckoutFlow = () => {
     ) {
       return (
         <PaymentOptions
-          next={() => {
-            setStep(3);
-          }}
           imgSrc={imgSrc}
           totalDollar={totalDollar}
           purchaseAddress={purchaseAdd}
           cryptoTotal={cryptoTotal}
+          city={city}
+          name={name}
+          address={address}
+          zip={zip}
+          country={country}
+          number={number}
         />
       );
     } else {
       return (
         <div className="text-center">
           <h2>Thank you</h2>
-          <div className="flex-col items-center gap-2">
+          <div className="flex-col items-center gap-2 flex">
             <p>Tx hash:</p>
             <div className="bg-white w-fit p-2 border-2 rounded-xl shadow-lg flex gap-2">
               <p>0xb5c8 ... 9838</p>
@@ -109,7 +126,7 @@ const CheckoutFlow = () => {
     <main className="pt-under-nav h-screen bg-gray-100 ">
       {/* FIXME: need banner design for errors */}
       {showErrorMessage && showErrorMessage}
-      <ModalHeader />
+      {/* <ModalHeader /> */}
       {/* <CurrencyButton
         toggle={() => setShowCurrencyOptions(!showCurrencyOptions)}
       /> */}

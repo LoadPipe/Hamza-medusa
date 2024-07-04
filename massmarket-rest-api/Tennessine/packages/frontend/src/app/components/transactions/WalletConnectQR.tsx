@@ -125,7 +125,7 @@ function WalletConnectQR({
   }, [signClient]);
 
   return (
-    <div>
+    <div className="mt-2">
       <Button onClick={handleConnect} disabled={!signClient}>
         Connect Wallet
       </Button>

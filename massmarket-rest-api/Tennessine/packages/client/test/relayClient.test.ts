@@ -4,8 +4,8 @@
 
 import { WebSocket } from "isows";
 import {
-  bytesToHex,
   hexToBytes,
+  toHex,
   createWalletClient,
   createPublicClient,
   http,
@@ -16,8 +16,13 @@ import { privateKeyToAccount } from "viem/accounts";
 import { describe, beforeEach, expect, test } from "vitest";
 
 import { RelayClient } from "../src";
-import { random32BytesHex, randomBytes } from "../src/utils";
+import { random32BytesHex, randomBytes } from "@massmarket/utils";
 import * as abi from "@massmarket/contracts";
+import { randomAddress } from "@massmarket/utils";
+import {
+  BlockchainClient,
+  WalletClientWithAccount,
+} from "@massmarket/blockchain";
 
 // this key is from one of anvil's default keypairs
 const account = privateKeyToAccount(
@@ -28,45 +33,32 @@ const wallet = createWalletClient({
   account,
   chain: hardhat,
   transport: http(),
-});
+}) as WalletClientWithAccount;
 
 const publicClient = createPublicClient({
   chain: hardhat,
   transport: http(),
 });
 
+const shopId = random32BytesHex();
+let blockchain: BlockchainClient;
 const relayEndpoint =
   (process && process.env["RELAY_ENDPOINT"]) || "ws://localhost:4444/v2";
 
 function createRelayClient() {
   return new RelayClient({
-    shopId: random32BytesHex(),
     relayEndpoint,
     keyCardWallet: privateKeyToAccount(random32BytesHex()),
-    keyCardEnrolled: false,
   });
 }
-
+beforeEach(async () => {
+  blockchain = new BlockchainClient(shopId);
+});
 describe("RelayClient", async () => {
   const relayClient = createRelayClient();
-  describe("connection behavior", () => {
-    test("should connect and disconnect", async () => {
-      await relayClient.connect();
-      const closeEvent = await relayClient.disconnect();
-      const r = closeEvent as CloseEvent;
-      expect(r.wasClean).toBe(true);
-      await relayClient.disconnect();
-    });
-
-    test("should reconnect", async () => {
-      await relayClient.disconnect();
-      await relayClient.connect();
-      expect(relayClient.connection.readyState).toBe(WebSocket.OPEN);
-    });
-  });
 
   test("should create a shop", async () => {
-    const transactionHash = await relayClient.blockchain.createShop(wallet);
+    const transactionHash = await blockchain.createShop(wallet);
     // wait for the transaction to be included in the blockchain
     const receipt = await publicClient.waitForTransactionReceipt({
       hash: transactionHash,
@@ -81,16 +73,12 @@ describe("RelayClient", async () => {
     // if we knew that before hand, we could just call registerUser(acc2.address, Clerk)
     const sk = random32BytesHex();
     const token = privateKeyToAccount(sk);
-    const hash = await relayClient.blockchain.createInviteSecret(
-      wallet,
-      token.address,
-    );
+    const hash = await blockchain.createInviteSecret(wallet, token.address);
 
     // wait for the transaction to be included in the blockchain
     const receipt = await publicClient.waitForTransactionReceipt({
       hash,
     });
-
     expect(receipt.status).to.equal("success");
     const acc2 = privateKeyToAccount(sk);
     await wallet.sendTransaction({
@@ -103,19 +91,14 @@ describe("RelayClient", async () => {
       account: acc2,
       chain: hardhat,
       transport: http(),
-    });
+    }) as WalletClientWithAccount;
 
     const relayClient2 = new RelayClient({
       relayEndpoint,
       keyCardWallet: privateKeyToAccount(sk),
-      keyCardEnrolled: false,
-      shopId: relayClient.blockchain.shopId,
     });
 
-    const hash2 = await relayClient.blockchain.redeemInviteSecret(
-      sk,
-      client2Wallet,
-    );
+    const hash2 = await blockchain.redeemInviteSecret(sk, client2Wallet);
     // wait for the transaction to be included in the blockchain
     const transaction = await publicClient.waitForTransactionReceipt({
       hash: hash2,
@@ -127,22 +110,14 @@ describe("RelayClient", async () => {
       address: abi.addresses.ShopReg as Address,
       abi: abi.ShopReg,
       functionName: "hasPermission",
-      args: [
-        relayClient.blockchain.shopId,
-        acc2.address,
-        abi.permissions.updateRootHash,
-      ],
+      args: [blockchain.shopId, acc2.address, abi.permissions.updateRootHash],
     });
     expect(canUpdateRootHash).toBe(true);
     const canRemoveUser = await publicClient.readContract({
       address: abi.addresses.ShopReg as Address,
       abi: abi.ShopReg,
       functionName: "hasPermission",
-      args: [
-        relayClient.blockchain.shopId,
-        acc2.address,
-        abi.permissions.removeUser,
-      ],
+      args: [blockchain.shopId, acc2.address, abi.permissions.removeUser],
     });
     expect(canRemoveUser).toBe(false);
 
@@ -155,16 +130,22 @@ describe("user behaviour", () => {
   const relayClient = createRelayClient();
   // enroll and login
   test("should enroll keycard", async () => {
-    const transactionHash = await relayClient.blockchain.createShop(wallet);
-    // wait for the transaction to be included in the blockchain
-    const receipt = await publicClient.waitForTransactionReceipt({
-      hash: transactionHash,
-    });
-    expect(receipt.status).equals("success");
-    const response = await relayClient.enrollKeycard(wallet);
+    const response = await relayClient.enrollKeycard(wallet, false, shopId);
     expect(response.status).toBe(201);
+  });
+
+  test("should connect and disconnect", async () => {
     const authenticated = await relayClient.connect();
     expect(authenticated.error).toBeNull();
+    const closeEvent = await relayClient.disconnect();
+    const r = closeEvent as CloseEvent;
+    expect(r.wasClean).toBe(true);
+  });
+
+  test("should reconnect", async () => {
+    await relayClient.disconnect();
+    await relayClient.connect();
+    expect(relayClient.connection.readyState).toBe(WebSocket.OPEN);
   });
 
   test("write shop manifest", async () => {
@@ -172,12 +153,15 @@ describe("user behaviour", () => {
     const name = "test shop";
     const description = "creating test shop";
     const profilePictureUrl = "https://http.cat/images/200.jpg";
-    await relayClient.shopManifest({
-      name,
-      description,
-      profilePictureUrl,
-      publishedTagId,
-    });
+    await relayClient.shopManifest(
+      {
+        name,
+        description,
+        profilePictureUrl,
+        publishedTagId,
+      },
+      shopId,
+    );
   });
 
   test("update shop manifest", async () => {
@@ -278,13 +262,42 @@ describe("user behaviour", () => {
       });
 
       test("single item checkout", { timeout: 10000 }, async () => {
+        const payee = hexToBytes(randomAddress());
+        const currency = hexToBytes(abi.addresses.Eddies as Address);
+
+        const txHash = await wallet.writeContract({
+          address: abi.addresses.Eddies as Address,
+          abi: abi.Eddies,
+          functionName: "mint",
+          args: [account.address, 999999999999],
+        });
+
+        const mintComplete = publicClient
+          .waitForTransactionReceipt({
+            hash: txHash,
+          })
+          .then(() => {
+            // allow the payment contract to transfer on behalf of the test user
+            return wallet.writeContract({
+              address: abi.addresses.Eddies as Address,
+              abi: abi.Eddies,
+              functionName: "approve",
+              args: [abi.addresses.Payments, 9999999999],
+            });
+          })
+          .then((hash) => {
+            return publicClient.waitForTransactionReceipt({
+              hash,
+            });
+          });
+
         await relayClient.updateShopManifest({
           addAcceptedCurrency: {
-            tokenAddr: hexToBytes(abi.addresses.Eddies as Address),
+            tokenAddr: currency,
             chainId: 31337,
           },
           addPayee: {
-            addr: hexToBytes(abi.addresses.Eddies as Address),
+            addr: payee,
             callAsContract: false,
             chainId: 31337,
             name: "test",
@@ -301,7 +314,7 @@ describe("user behaviour", () => {
         const checkout = await relayClient.commitOrder({
           orderId,
           currency: {
-            tokenAddr: hexToBytes(abi.addresses.Eddies as Address),
+            tokenAddr: currency,
             chainId: 31337,
           },
           payeeName: "test",
@@ -309,38 +322,44 @@ describe("user behaviour", () => {
         expect(checkout).not.toBeNull();
         expect(checkout.orderFinalizedId).not.toBeNull();
 
-        const getStream = async () => {
-          const stream = relayClient.createEventStream();
-          for await (const event of stream) {
-            if (event.event.updateOrder?.itemsFinalized) {
-              return bytesToHex(event.event.updateOrder.orderId);
-            }
+        // iterate through the event stream
+        const stream = relayClient.createEventStream();
+        for await (const { event } of stream) {
+          if (event.updateOrder?.itemsFinalized) {
+            const order = event.updateOrder.itemsFinalized;
+            const args = [
+              31337, // chainid
+              order.ttl,
+              toHex(order.orderHash),
+              toHex(order.currencyAddr),
+              toHex(order.totalInCrypto),
+              toHex(order.payeeAddr),
+              false, // is paymentendpoint?
+              shopId,
+              toHex(order.shopSignature),
+            ];
+
+            const paymentId = (await publicClient.readContract({
+              address: abi.addresses.Payments as Address,
+              abi: abi.PaymentsByAddress,
+              functionName: "getPaymentId",
+              args: [args],
+            })) as bigint;
+            expect(toHex(order.paymentId)).toEqual(toHex(paymentId));
+            // need to wait for the minting of eddies to be done before sending them
+            await mintComplete;
+            // call the pay function
+            wallet.writeContract({
+              address: abi.addresses.Payments as Address,
+              abi: abi.PaymentsByAddress,
+              functionName: "payTokenPreApproved",
+              args: [args],
+            });
+          } else if (event.changeStock) {
+            expect(toHex(event.changeStock.itemIds[0])).toEqual(toHex(itemId));
+            return;
           }
-          return null;
-        };
-        const receivedId = await getStream();
-        expect(receivedId).toEqual(bytesToHex(orderId));
-      });
-
-      test("erc20 checkout", async () => {
-        await relayClient.updateOrder({
-          orderId,
-          changeItems: {
-            itemId,
-            quantity: 1,
-          },
-        });
-
-        const checkout = await relayClient.commitOrder({
-          orderId,
-          currency: {
-            tokenAddr: hexToBytes(abi.addresses.Eddies as Address),
-            chainId: 31337,
-          },
-          payeeName: "test",
-        });
-        expect(checkout).not.toBeNull();
-        expect(checkout.orderFinalizedId).not.toBeNull();
+        }
       });
     });
   });
@@ -351,10 +370,7 @@ describe("user behaviour", () => {
     beforeEach(async () => {
       const sk = random32BytesHex();
       const token = privateKeyToAccount(sk);
-      const hash = await relayClient.blockchain.createInviteSecret(
-        wallet,
-        token.address,
-      );
+      const hash = await blockchain.createInviteSecret(wallet, token.address);
 
       // wait for the transaction to be included in the blockchain
       const receipt = await publicClient.waitForTransactionReceipt({
@@ -376,20 +392,15 @@ describe("user behaviour", () => {
       relayClient2 = new RelayClient({
         relayEndpoint,
         keyCardWallet: privateKeyToAccount(sk),
-        keyCardEnrolled: false,
-        shopId: relayClient.blockchain.shopId,
       });
-      const redeemHash = await relayClient.blockchain.redeemInviteSecret(
-        sk,
-        client2Wallet,
-      );
+      const redeemHash = await blockchain.redeemInviteSecret(sk, client2Wallet);
       // wait for the transaction to be included in the blockchain
       const redeemReceipt = await publicClient.waitForTransactionReceipt({
         hash: redeemHash,
       });
 
       expect(redeemReceipt.status).to.equal("success");
-      await relayClient2.enrollKeycard(client2Wallet);
+      await relayClient2.enrollKeycard(client2Wallet, false, shopId);
       await relayClient2.connect();
     });
 

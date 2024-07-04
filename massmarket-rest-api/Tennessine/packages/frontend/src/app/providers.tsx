@@ -12,6 +12,7 @@ import { config } from "../wagmi";
 import { MyContextProvider } from "../context/MyContext";
 import { StoreContextProvider } from "../context/StoreContext";
 import { AuthProvider } from "@/context/AuthContext";
+import { MerchantProvider } from "@/context/MerchantContext";
 
 export function Providers(props: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
@@ -21,7 +22,9 @@ export function Providers(props: { children: ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <MyContextProvider>
-            <StoreContextProvider>{props.children}</StoreContextProvider>
+            <StoreContextProvider>
+              <MerchantProvider>{props.children}</MerchantProvider>
+            </StoreContextProvider>
           </MyContextProvider>
         </AuthProvider>
       </QueryClientProvider>

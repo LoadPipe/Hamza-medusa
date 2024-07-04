@@ -13,41 +13,30 @@ import schema, {
   MESSAGE_TYPES,
   MESSAGE_PREFIXES,
 } from "@massmarket/schema";
-import {
-  BlockchainClient,
-  WalletClientWithAccount,
-} from "./blockchainClient.js";
+import { WalletClientWithAccount } from "@massmarket/blockchain";
 import { ReadableEventStream } from "./stream.js";
-import { requestId, eventId, hexToBase64 } from "./utils.js";
+import { requestId, eventId, hexToBase64 } from "@massmarket/utils";
 
 export type { WalletClientWithAccount };
 
 export class RelayClient extends EventEmitter {
   connection!: WebSocket;
-  blockchain: BlockchainClient;
   private keyCardWallet;
   private endpoint;
   private useTLS;
-  keyCardEnrolled;
   private eventStream;
 
   constructor({
     relayEndpoint,
     keyCardWallet,
-    keyCardEnrolled,
-    shopId,
   }: {
     relayEndpoint: string;
     keyCardWallet: PrivateKeyAccount;
-    keyCardEnrolled: boolean;
-    shopId: `0x${string}` | undefined;
   }) {
     super();
-    this.blockchain = new BlockchainClient(shopId);
     this.keyCardWallet = keyCardWallet;
     this.endpoint = relayEndpoint;
     this.useTLS = relayEndpoint.startsWith("wss");
-    this.keyCardEnrolled = keyCardEnrolled;
     this.eventStream = new ReadableEventStream(this);
   }
 
@@ -84,7 +73,7 @@ export class RelayClient extends EventEmitter {
   // encode and send a message and then wait for a response
   encodeAndSend(
     encoder: PBMessage,
-    object: PBObject = {}
+    object: PBObject = {},
   ): Promise<PBInstance> {
     const id = this.encodeAndSendNoWait(encoder, object);
     return new Promise((resolve, reject) => {
@@ -101,7 +90,7 @@ export class RelayClient extends EventEmitter {
   }
 
   async sendShopEvent(
-    shopEvent: schema.IShopEvent
+    shopEvent: schema.IShopEvent,
   ): Promise<schema.EventWriteResponse> {
     await this.connect();
     const shopEventBytes = schema.ShopEvent.encode(shopEvent).finish();
@@ -121,9 +110,9 @@ export class RelayClient extends EventEmitter {
     return this.encodeAndSend(schema.EventWriteRequest, eventWriteRequest);
   }
 
-  async shopManifest(manifest: schema.IShopManifest) {
+  async shopManifest(manifest: schema.IShopManifest, shopId: `0x${string}`) {
     const id = (manifest.eventId = eventId());
-    manifest.shopTokenId = hexToBytes(this.blockchain.shopId);
+    manifest.shopTokenId = hexToBytes(shopId);
     await this.sendShopEvent({
       shopManifest: manifest,
     });
@@ -211,7 +200,7 @@ export class RelayClient extends EventEmitter {
     const payload = data.slice(1);
     const message = pbMessage.decode(payload);
     console.log(
-      `[recv] reqId=${bytesToHex(message.requestId)} typeCode=${prefix}`
+      `[recv] reqId=${bytesToHex(message.requestId)} typeCode=${prefix}`,
     );
     switch (pbMessage) {
       case schema.PingRequest:
@@ -253,34 +242,23 @@ export class RelayClient extends EventEmitter {
         console.error("WebSocket error!");
         console.error(error);
       });
-      this.connection.addEventListener("message", () => {
-        try {
-          this.#decodeMessage.bind(this);
-        } catch (e) {
-          console.error(e);
-        }
-      });
+      this.connection.addEventListener(
+        "message",
+        this.#decodeMessage.bind(this),
+      );
     }
     return new Promise((resolve, reject) => {
       if (this.connection.readyState === WebSocket.OPEN) {
         resolve("already open");
       } else {
         this.connection.addEventListener("open", async () => {
-          try {
-            if (this.keyCardEnrolled) {
-              const res = await this.#authenticate();
-              if (res) {
-                console.log("authentication success");
-                resolve(res);
-              } else {
-                console.log("authentication failed");
-                reject(res);
-              }
-            } else {
-              resolve("ws connected without authentication");
-            }
-          } catch (e) {
-            reject(e);
+          const res = await this.#authenticate();
+          if (res) {
+            console.log("authentication success");
+            resolve(res);
+          } else {
+            console.log("authentication failed");
+            reject(res);
           }
         });
       }
@@ -301,38 +279,56 @@ export class RelayClient extends EventEmitter {
     });
   }
 
-  async enrollKeycard(wallet: WalletClientWithAccount) {
+  async enrollKeycard(
+    wallet: WalletClientWithAccount,
+    isGuest: boolean = true,
+    shopId: `0x${string}`,
+  ) {
     const publicKey = toBytes(this.keyCardWallet.publicKey).slice(1);
-    const signature = await wallet.signMessage({
-      message: { raw: publicKey },
+    const types = {
+      Enrollment: [{ name: "keyCard", type: "string" }],
+    };
+    const message = {
+      keyCard: Buffer.from(publicKey).toString("hex"),
+    };
+    // formatMessageForSigning(message); will turn keyCard into key_card
+    // const sig = await this.#signTypedDataMessage(types, message);
+    const signature = await wallet.signTypedData({
+      types,
+      domain: {
+        name: "MassMarket",
+        version: "1",
+        chainId: 0,
+        verifyingContract: "0x0000000000000000000000000000000000000000",
+      },
+      primaryType: "Enrollment",
+      message,
     });
     const body = JSON.stringify({
       key_card: Buffer.from(publicKey).toString("base64"),
       signature: hexToBase64(signature),
-      shop_token_id: hexToBase64(this.blockchain.shopId),
+      shop_token_id: hexToBase64(shopId),
     });
     const endpointURL = new URL(this.endpoint);
     endpointURL.protocol = this.useTLS ? "https" : "http";
-    endpointURL.pathname += "/enroll_key_card";
+    endpointURL.pathname += `/enroll_key_card`;
+    endpointURL.search = `guest=${isGuest ? 1 : 0}`;
     console.log(`posting to ${endpointURL.href}`);
     const response = await fetch(endpointURL.href, {
       method: "POST",
       body,
     });
-    if (response.ok) {
-      this.keyCardEnrolled = true;
-    }
     return response;
   }
 
   async uploadBlob(blob: FormData) {
     await this.connect();
     const uploadURLResp = (await this.encodeAndSend(
-      schema.GetBlobUploadURLRequest
+      schema.GetBlobUploadURLRequest,
     )) as schema.GetBlobUploadURLResponse;
     if (uploadURLResp.error !== null) {
       throw new Error(
-        `Failed to get blob upload URL: ${uploadURLResp.error!.message}`
+        `Failed to get blob upload URL: ${uploadURLResp.error!.message}`,
       );
     }
     const uploadResp = await fetch(uploadURLResp.url, {
@@ -342,7 +338,7 @@ export class RelayClient extends EventEmitter {
     if (uploadResp.status !== 201) {
       console.log(uploadResp);
       throw new Error(
-        `unexpected status: ${uploadResp.statusText} (${uploadResp.status})`
+        `unexpected status: ${uploadResp.statusText} (${uploadResp.status})`,
       );
     }
     return uploadResp.json();
@@ -350,7 +346,7 @@ export class RelayClient extends EventEmitter {
 
   // null erc20Addr means vanilla ethererum is used
   async commitOrder(
-    order: schema.ICommitItemsToOrderRequest
+    order: schema.ICommitItemsToOrderRequest,
   ): Promise<schema.CommitItemsToOrderResponse> {
     await this.connect();
     return this.encodeAndSend(schema.CommitItemsToOrderRequest, order);

@@ -26,7 +26,7 @@ const AccountSettings = () => {
   const [firstName, setFirstName] = useState<string>("Martin");
   const [ethAdd, setEthAdd] = useState<string>("");
   const router = useRouter();
-  const { setIsAuthenticated } = useAuth();
+  const { setIsConnected } = useAuth();
   const { db } = useStoreContext();
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const AccountSettings = () => {
 
   const logout = () => {
     db.clear();
-    setIsAuthenticated(IStatus.Pending);
+    setIsConnected(IStatus.Pending);
     localStorage.clear();
     router.push("/");
   };

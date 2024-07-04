@@ -77,8 +77,8 @@ export const testController = {
                 */
                 const rc = new RelayClientWrapper(
                     `relay-beta.mass.market/v2`,
-                    '0x382e9fdf10295e01ad4c7e4dc7e3cecf461016addbe8e15e55736983af39426c',
-                    '0x6f9986adb793d928a1ded3d185397d1150d4138aebeafccf5162a0dd56094231'
+                    '0x805e83d38d5c946bc1559f7d80ce94bce13a4cc0ec4640426bc81835f5958a57',
+                    '0x0000000000000000000000000000000000000000000000000000000000000007'
                 );
 
                 //product: 0x3736fa407ac3ba42ad6f4d2625c38d160db135a59f871ffe151ca73398e275e6
@@ -88,7 +88,7 @@ export const testController = {
                 console.log('add to cart');
                 await rc.addToCart(
                     cartId,
-                    '0x3736fa407ac3ba42ad6f4d2625c38d160db135a59f871ffe151ca73398e275e6'
+                    '0x866b7abc209a28a7bd66866a84d279e4157b6a00a2cd4e7210abdcfab315004e'
                 );
 
                 console.log('commit cart', cartId);
@@ -149,6 +149,68 @@ export const testController = {
                     `relay-beta.mass.market/v2`,
                     '0x65c1196c888ae6bb110077201346dfe426b220ce1d49a366102a2d85e7ad0e35'
                 );
+            },
+            201
+        );
+    },
+
+    enroll: async (req: Request, res: Response) => {
+        serveRequest(
+            req,
+            res,
+            async (id, body) => {
+                /*
+                shopId 0x382e9fdf10295e01ad4c7e4dc7e3cecf461016addbe8e15e55736983af39426c
+                keycard 0x6f9986adb793d928a1ded3d185397d1150d4138aebeafccf5162a0dd56094231
+                
+                shopId 0x9df5cfee9daa70d339591d5d78d75612220e36b7a3e46c6034f8131cb2db16cb
+                keycard 0x757da489fe6691b6c547b8d20b4f4db274367bcce21b786c31a6fdb61a989e44
+                */
+                const rc = new RelayClientWrapper(
+                    `relay-beta.mass.market/v2`,
+                    '0x805e83d38d5c946bc1559f7d80ce94bce13a4cc0ec4640426bc81835f5958a57',
+                    '0x0000000000000000000000000000000000000000000000000000000000000007',
+                    false
+                );
+
+                await rc.enrollKeycard(
+                    '0x65c1196c888ae6bb110077201346dfe426b220ce1d49a366102a2d85e7ad0e35'
+                );
+            },
+            201
+        );
+    },
+
+    setCurrencies: async (req: Request, res: Response) => {
+        serveRequest(
+            req,
+            res,
+            async (id, body) => {
+                /*
+                shopId 0x382e9fdf10295e01ad4c7e4dc7e3cecf461016addbe8e15e55736983af39426c
+                keycard 0x6f9986adb793d928a1ded3d185397d1150d4138aebeafccf5162a0dd56094231
+                
+                shopId 0x9df5cfee9daa70d339591d5d78d75612220e36b7a3e46c6034f8131cb2db16cb
+                keycard 0x757da489fe6691b6c547b8d20b4f4db274367bcce21b786c31a6fdb61a989e44
+                */
+                const rc = new RelayClientWrapper(
+                    `relay-beta.mass.market/v2`,
+                    '0x805e83d38d5c946bc1559f7d80ce94bce13a4cc0ec4640426bc81835f5958a57',
+                    '0x0000000000000000000000000000000000000000000000000000000000000007'
+                );
+
+                console.log('set 1');
+                await rc.setPayee(
+                    'hamza-switch',
+                    '0x74b7284836F753101bD683C3843e95813b381f18'
+                );
+                console.log('set 2');
+                await rc.setErc20('0x0000000000000000000000000000000000000000');
+                console.log('set 3');
+                await rc.setErc20('0x822585D682B973e4b1B47C0311f162b29586DD02');
+                console.log('set 4');
+                await rc.setErc20('0xbe9fe9b717c888a2b2ca0a6caa639afe369249c5');
+                console.log('done');
             },
             201
         );

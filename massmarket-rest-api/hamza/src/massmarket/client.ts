@@ -44,9 +44,7 @@ export class RelayClientWrapper {
 
         const args = {
             relayEndpoint: `wss://${endpoint}`,
-            shopId: this.shopId,
             keyCardWallet,
-            keyCardEnrolled,
         };
 
         this._client = new RelayClient(args);
@@ -147,9 +145,9 @@ export class RelayClientWrapper {
         console.log('create relay client');
         const client = new RelayClient({
             relayEndpoint: `wss://${endpoint}`,
-            shopId,
+            //shopId,
             keyCardWallet: keycard.wallet,
-            keyCardEnrolled: false,
+            //keyCardEnrolled: false,
         });
 
         //create actual (store) wallet
@@ -166,23 +164,25 @@ export class RelayClientWrapper {
         console.log('shopId', shopId);
         console.log('keycard', keycard.string);
 
-        const shopToken = await client.blockchain.createShop(storeWallet);
+        const shopToken = '0x0'; //await client.blockchain.createShop(storeWallet);
 
         console.log('waiting...');
         await sleep(45);
 
         //enroll keycard
         console.log('enrolling KC');
-        await client.enrollKeycard(storeWallet); //this uses store wallet
+        //await client.enrollKeycard(storeWallet, false, shopId); //this uses store wallet
 
-        //THIS ONE WORKS TOO
         console.log('writing manifest');
-        await client.shopManifest({
-            name: 'test shop',
-            description: 'test shop is the best shop',
-            profilePictureUrl: 'https://http.cat/images/200.jpg',
-            publishedTagId: randomBytes(32),
-        });
+        await client.shopManifest(
+            {
+                name: 'test shop',
+                description: 'test shop is the best shop',
+                profilePictureUrl: 'https://http.cat/images/200.jpg',
+                publishedTagId: randomBytes(32),
+            },
+            shopId
+        );
 
         await sleep(25);
         console.log('setting currency 1');
@@ -349,7 +349,10 @@ export class RelayClientWrapper {
         await this._client.disconnect();
     }
 
-    async enrollKeycard(walletPrivKey: HexString): Promise<void> {
+    async enrollKeycard(
+        walletPrivKey: HexString,
+        guest: boolean = false
+    ): Promise<void> {
         const account: PrivateKeyAccount = privateKeyToAccount(walletPrivKey);
 
         const storeWallet = createWalletClient({
@@ -358,7 +361,7 @@ export class RelayClientWrapper {
             transport: http(),
         });
 
-        await this._client.enrollKeycard(storeWallet);
+        await this._client.enrollKeycard(storeWallet, guest, this.shopId);
     }
 
     async createCart(): Promise<HexString> {
