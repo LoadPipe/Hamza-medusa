@@ -4,7 +4,7 @@ import LocalizedClientLink from '@modules/common/components/localized-client-lin
 import React, { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex, Text, MenuItem } from '@chakra-ui/react';
 import useWishlistStore from '@store/wishlist/wishlist-store';
 import { WishlistType } from '@store/wishlist/types/wishlist-types';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
@@ -39,52 +39,67 @@ const Wishlist: React.FC<WishlistPopoverItemProps> = () => {
     return (
         <>
             {authData.status === 'authenticated' ? (
-                <Flex width={'100%'}>
-                    <LocalizedClientLink className="w-full" href="/wishlist">
-                        <Flex
-                            width={'100%'}
-                            flex={1}
-                            color="white"
-                            _hover={{
-                                '.wishlist-text, .wishlist-icon': {
-                                    color: 'primary.green.900',
-                                },
-                            }}
+                <MenuItem
+                    mt="0.5rem"
+                    mb="1rem"
+                    fontWeight={'600'}
+                    px="2rem"
+                    color={'white'}
+                    backgroundColor={'black'}
+                >
+                    <Flex width={'100%'}>
+                        <LocalizedClientLink
+                            className="w-full"
+                            href="/wishlist"
                         >
-                            <Flex flexDirection={'row'} alignSelf={'center'}>
-                                <FaRegHeart
-                                    className="wishlist-icon"
-                                    size={'24px'}
-                                />
-                                <Text
-                                    className="wishlist-text"
-                                    fontSize={'16px'}
-                                    fontWeight={'700'}
-                                    ml="5px"
-                                    _hover={{ color: 'primary.green.900' }}
-                                >
-                                    Wishlist
-                                </Text>
-                            </Flex>
                             <Flex
-                                width={'21px'}
-                                height={'21px'}
-                                borderRadius={'full'}
-                                backgroundColor={'#EB4C60'}
-                                ml="auto"
-                                justifyContent={'center'}
-                                alignItems={'center'}
-                                alignSelf={'center'}
+                                width={'100%'}
+                                flex={1}
+                                color="white"
+                                _hover={{
+                                    '.wishlist-text, .wishlist-icon': {
+                                        color: 'primary.green.900',
+                                    },
+                                }}
                             >
-                                <Text
-                                    fontSize={'13px'}
-                                    fontWeight={'700'}
+                                <Flex
+                                    flexDirection={'row'}
                                     alignSelf={'center'}
-                                >{`${totalItems}`}</Text>
+                                >
+                                    <FaRegHeart
+                                        className="wishlist-icon"
+                                        size={'24px'}
+                                    />
+                                    <Text
+                                        className="wishlist-text"
+                                        fontSize={'16px'}
+                                        fontWeight={'700'}
+                                        ml="5px"
+                                        _hover={{ color: 'primary.green.900' }}
+                                    >
+                                        Wishlist
+                                    </Text>
+                                </Flex>
+                                <Flex
+                                    width={'21px'}
+                                    height={'21px'}
+                                    borderRadius={'full'}
+                                    backgroundColor={'#EB4C60'}
+                                    ml="auto"
+                                    justifyContent={'center'}
+                                    alignItems={'center'}
+                                    alignSelf={'center'}
+                                >
+                                    <Text
+                                        fontSize={'13px'}
+                                        fontWeight={'700'}
+                                        alignSelf={'center'}
+                                    >{`${totalItems}`}</Text>
+                                </Flex>
                             </Flex>
-                        </Flex>
-                    </LocalizedClientLink>
-                </Flex>
+                        </LocalizedClientLink>
+                    </Flex>
+                </MenuItem>
             ) : null}
         </>
     );
