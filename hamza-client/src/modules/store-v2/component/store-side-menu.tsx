@@ -84,11 +84,11 @@ const SideMenu = () => {
                     />
                     <CategoryButton categoryType="games" categoryName="Legos" />
                     <CategoryButton
-                        categoryType="games"
+                        categoryType="board_games"
                         categoryName="Board Games"
                     />
                     <CategoryButton
-                        categoryType="games"
+                        categoryType="workout_gear"
                         categoryName="Workout Gear"
                     />
                     <CategoryButton
