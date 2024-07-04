@@ -45,7 +45,7 @@ const StoreFilterDisplay = () => {
                         <FaGreaterThan size={12} color="white" />
                     </Flex>
                     <Text fontSize={'18px'} color="primary.indigo.900">
-                        {categorySelect}
+                        {categorySelect ? categorySelect : 'All'}
                     </Text>
                 </Flex>
                 {/* top button filter */}

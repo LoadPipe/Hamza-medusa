@@ -16,6 +16,7 @@ const FilterTags = () => {
         setCategorySelect,
         setCurrencySelect,
         setReviewStarsSelect,
+        setCategoryTypeSelect,
     } = useStorePage();
 
     const filterTags = () => {
@@ -23,7 +24,11 @@ const FilterTags = () => {
         if (categorySelect) {
             tags.push(
                 <FilterTag
-                    img={categoryTypeSelect ? categoryIcons[categoryTypeSelect] : ''}
+                    img={
+                        categoryTypeSelect
+                            ? categoryIcons[categoryTypeSelect]
+                            : ''
+                    }
                     key="category"
                     name={`${categorySelect}`}
                 />
@@ -42,13 +47,23 @@ const FilterTags = () => {
         if (reviewStarsSelect) {
             // Check for non-null explicitly for numbers
             tags.push(
-                <FilterTag img={ReviewStar} name={`${reviewStarsSelect}`} />
+                <FilterTag
+                    img={
+                        categoryTypeSelect
+                            ? categoryIcons[categoryTypeSelect]
+                            : ''
+                    }
+                    key="category"
+                    name={`${categorySelect}`}
+                />
             );
         }
         return tags.length > 0 ? (
             tags
         ) : (
-            <Text alignSelf={'center'} color={'primary.yellow.900'}>
+            // <FilterTag img={categoryIcons['all']} key="category" name={`All`} />
+
+            <Text alignSelf={'center'} color={'primary.green.900'}>
                 No filters applied.
             </Text>
         );
@@ -63,6 +78,7 @@ const FilterTags = () => {
                 cursor={'pointer'}
                 onClick={() => {
                     setCategorySelect(null);
+                    setCategoryTypeSelect(null);
                     setCurrencySelect(null);
                     setReviewStarsSelect(null);
                 }}
