@@ -86,7 +86,7 @@ const ProductInfo = () => {
                                         title: productData.title,
                                     });
                                 }}
-                                className="text-white text-2xl cursor-pointer"
+                                className="text-white text-6xl cursor-pointer"
                             />
                         ) : (
                             <BiHeart
@@ -99,7 +99,7 @@ const ProductInfo = () => {
                                         title: productData.title,
                                     });
                                 }}
-                                className="text-white text-2xl cursor-pointer"
+                                className="text-white text-6xl cursor-pointer"
                             />
                         )}
                     </Box>
