@@ -171,18 +171,24 @@ export default async function Nav() {
                                         borderColor={'white'}
                                     />
                                 </Box>
-                                <MenuItem
-                                    fontWeight={'600'}
-                                    mt="1rem"
-                                    px="2rem"
-                                    color={'white'}
-                                    backgroundColor={'black'}
-                                    _hover={{ color: 'primary.green.900' }}
+                                <Link
+                                    href={`https://blog.hamza.biz/merchant/`}
+                                    target="_blank"
                                 >
-                                    Sell on Hamza
-                                </MenuItem>
+                                    <MenuItem
+                                        fontWeight={'600'}
+                                        mt="1rem"
+                                        px="2rem"
+                                        color={'white'}
+                                        backgroundColor={'black'}
+                                        _hover={{ color: 'primary.green.900' }}
+                                    >
+                                        Sell on Hamza
+                                    </MenuItem>
+                                </Link>
                                 <Link
                                     href={`https://blog.hamza.biz/affiliate/`}
+                                    target="_blank"
                                 >
                                     <MenuItem
                                         fontWeight={'600'}
