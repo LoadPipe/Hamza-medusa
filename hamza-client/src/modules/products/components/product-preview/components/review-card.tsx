@@ -55,13 +55,6 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
         <Flex width={'506.63px'}>
             <Flex flexDirection={'column'}>
                 <Flex>
-                    <Box
-                        width="76px"
-                        height="76px"
-                        backgroundColor="white"
-                        borderRadius={'full'}
-                    />
-
                     <Flex
                         ml="1rem"
                         flexDirection={'column'}
