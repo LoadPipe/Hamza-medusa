@@ -13,7 +13,7 @@ const SideMenu = () => {
     return (
         <Box
             display={{ base: 'none', md: 'block' }}
-            p="2rem"
+            p="1.5rem"
             color={'white'}
             borderRadius={'20px'}
             width={'348.74px'}
