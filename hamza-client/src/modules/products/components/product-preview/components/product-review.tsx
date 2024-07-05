@@ -158,7 +158,7 @@ const ProductReview = ({ productId }: { productId: string }) => {
                                     (a: any, b: any) => a + b.stars,
                                     0
                                 ) / reviews.length}{' '}
-                                - {reviews.length} Reviews
+                                average stars - {reviews.length} Reviews
                             </>
                         )}
                     </Text>
