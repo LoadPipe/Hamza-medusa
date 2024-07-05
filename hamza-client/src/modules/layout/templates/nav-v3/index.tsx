@@ -106,7 +106,6 @@ export default async function Nav() {
                             }}
                         >
                             <Text
-                                className="font-sora"
                                 fontWeight={'600'}
                                 fontSize={'16px'}
                                 alignSelf={'center'}
