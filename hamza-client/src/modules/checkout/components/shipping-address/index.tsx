@@ -98,6 +98,7 @@ const ShippingAddress = ({
             <div className="grid gap-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
                     <Input
+                        className="bg-white text-black"
                         label="First name"
                         name="shipping_address.first_name"
                         autoComplete="given-name"
@@ -106,6 +107,7 @@ const ShippingAddress = ({
                         required
                     />
                     <Input
+                        className="bg-white text-black"
                         label="Last name"
                         name="shipping_address.last_name"
                         autoComplete="family-name"
@@ -114,6 +116,7 @@ const ShippingAddress = ({
                         required
                     />
                     <Input
+                        className="bg-white text-black"
                         label="Address"
                         name="shipping_address.address_1"
                         autoComplete="address-line1"
@@ -122,6 +125,7 @@ const ShippingAddress = ({
                         required
                     />
                     <Input
+                        className="bg-white text-black"
                         label="Company"
                         name="shipping_address.company"
                         value={formData['shipping_address.company']}
@@ -129,6 +133,7 @@ const ShippingAddress = ({
                         autoComplete="organization"
                     />
                     <Input
+                        className="bg-white text-black"
                         label="Postal code"
                         name="shipping_address.postal_code"
                         autoComplete="postal-code"
@@ -137,6 +142,7 @@ const ShippingAddress = ({
                         required
                     />
                     <Input
+                        className="bg-white text-black"
                         label="City"
                         name="shipping_address.city"
                         autoComplete="address-level2"
@@ -145,6 +151,7 @@ const ShippingAddress = ({
                         required
                     />
                     <CountrySelect
+                        className="bg-white text-black"
                         name="shipping_address.country_code"
                         autoComplete="country"
                         region={cart?.region}
@@ -153,6 +160,7 @@ const ShippingAddress = ({
                         required
                     />
                     <Input
+                        className="bg-white text-black"
                         label="State / Province"
                         name="shipping_address.province"
                         autoComplete="address-level1"
@@ -171,6 +179,7 @@ const ShippingAddress = ({
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input
+                    className="bg-white text-black"
                     label="Email"
                     name="email"
                     type="email"
@@ -180,6 +189,7 @@ const ShippingAddress = ({
                     onChange={handleChange}
                 />
                 <Input
+                    className="bg-white text-black"
                     label="Phone"
                     name="shipping_address.phone"
                     autoComplete="tel"
