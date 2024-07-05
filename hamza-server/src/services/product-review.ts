@@ -115,6 +115,13 @@ class ProductReviewService extends TransactionBaseService {
             this.activeManager_.getRepository(ProductReview);
         const reviews = await productReviewRepository.find({
             where: { product_id },
+            relations: { customer: true },
+            select: {
+                customer: {
+                    first_name: true,
+                    last_name: true,
+                },
+            },
         });
 
         if (!reviews) {

@@ -106,9 +106,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
     }, [productData, variantId]);
 
     console.log(`Variant ID ${variantId}`);
-    console.log(
-        `Product Data ${JSON.stringify(productData)} ${productData.variant}`
-    );
+    // console.log(
+    //     `Product Data ${JSON.stringify(productData)} ${productData.variant}`
+    // );
 
     useEffect(() => {
         let checkVariantId: string | undefined = undefined;
@@ -132,7 +132,14 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
             }
             let selectedProductVariant = productData.variants.find(
                 (a: any) => a.id == productData.variants[0].id
+                // (a: any) => a.id == variantId
             );
+            console.log(`variantID is: ${variantId}`);
+            if (!variantId) {
+                setVariantId(selectedProductVariant.id);
+            }
+            console.log(`variantID is: ${variantId}`);
+
             setSelectedVariant(selectedProductVariant);
             const price =
                 selectedProductVariant &&
@@ -148,13 +155,22 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
     }, [productData, variantId]);
 
     const handleAddToCart = async () => {
-        await addToCart({
-            variantId: variantId!,
-            quantity: quantity,
-            countryCode: countryCode,
-            currencyCode: 'eth',
-        });
-        setCartModalOpen(true);
+        if (!selectedVariant) {
+            console.error('Selected variant is null or undefined.');
+            return;
+        }
+
+        try {
+            await addToCart({
+                variantId: selectedVariant.id!,
+                quantity: quantity,
+                countryCode: countryCode,
+                currencyCode: 'eth',
+            });
+            setCartModalOpen(true);
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+        }
     };
 
     const whitelistedProductHandler = async () => {

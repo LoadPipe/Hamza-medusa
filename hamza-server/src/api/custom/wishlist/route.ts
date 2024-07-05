@@ -19,19 +19,23 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     } catch (err) {
         if (err.message.includes('not found')) {
             logger.debug(
-                'Wishlist does not exist, creating a new wishlist-dropdown for:' +
-                    customer_id
+                'Wishlist does not exist, creating a new wishlist for:' +
+                customer_id
             );
             try {
                 const newWishlist = await wishlistService.create(customer_id);
-                res.status(201).json(newWishlist); // Respond with HTTP 201 for created resources
+                if (newWishlist)
+                    res.status(201).json(newWishlist);
+                else
+                    res.status(424).json({ 'message': 'Failed to create wishlist; customer id might be invalid' });
+
             } catch (createErr) {
                 logger.error(
-                    'Error creating new wishlist-dropdown:',
+                    'Error creating new wishlist:',
                     createErr
                 );
                 res.status(500).json({
-                    error: 'Failed to create new wishlist-dropdown',
+                    error: 'Failed to create new wishlist',
                 });
             }
         } else {
@@ -57,7 +61,10 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
     try {
         const wishlist = await wishlistService.create(customer_id);
-        res.json(wishlist);
+        if (wishlist)
+            res.status(201).json(wishlist);
+        else
+            res.status(424).json({ 'message': 'Failed to create wishlist; customer id might be invalid' });
     } catch (err) {
         logger.error('Create wishlist error: ', err);
     }
