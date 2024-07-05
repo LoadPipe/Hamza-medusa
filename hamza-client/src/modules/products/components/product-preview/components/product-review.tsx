@@ -2,7 +2,7 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa6';
 import { GoArrowLeft, GoArrowRight } from 'react-icons/go';
-import ReviewCard from './review-card';
+import ReviewCard, { renderStars } from './review-card';
 import ReviewCardMobile from './review-card-mobile';
 import ReviewStar from '../../../../../../public/images/products/review-star.svg';
 import Image from 'next/image';
@@ -154,11 +154,13 @@ const ProductReview = ({ productId }: { productId: string }) => {
                     <Text fontSize={'32px'} fontWeight={'bold'} color="white">
                         {reviews.length > 0 && (
                             <>
-                                {reviews.reduce(
-                                    (a: any, b: any) => a + b.stars,
-                                    0
-                                ) / reviews.length}{' '}
-                                average stars - {reviews.length} Reviews
+                                {renderStars(
+                                    reviews.reduce(
+                                        (a: any, b: any) => a + b.stars,
+                                        0
+                                    ) / reviews.length
+                                )}{' '}
+                                - {reviews.length} Reviews
                             </>
                         )}
                     </Text>
