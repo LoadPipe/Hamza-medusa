@@ -9,35 +9,35 @@ import Image from 'next/image';
 import axios from 'axios';
 import useProductPreview from '@store/product-preview/product-preview';
 
+const fakeReviews = [
+    {
+        id: 1,
+        name: 'John Doe',
+        location: 'New York',
+        review: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+        stars: 4,
+    },
+    {
+        id: 2,
+        name: 'Jane Smith',
+        location: 'California',
+        stars: 4,
+        review: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+    },
+    {
+        id: 3,
+        name: 'Alice Johnson',
+        location: 'Texas',
+        stars: 4,
+        review: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+    },
+];
 const ProductReview = () => {
     const [startIndex, setStartIndex] = useState(0);
     const reviewsToShow = 2;
     const { productId } = useProductPreview();
 
-    const [fakeReviews, setFakeReviews] = useState(true);
-    const [reviews, setReviews] = useState([
-        {
-            id: 1,
-            name: 'John Doe',
-            location: 'New York',
-            review: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-            stars: 4,
-        },
-        {
-            id: 2,
-            name: 'Jane Smith',
-            location: 'California',
-            stars: 4,
-            review: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-        },
-        {
-            id: 3,
-            name: 'Alice Johnson',
-            location: 'Texas',
-            stars: 4,
-            review: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-        },
-    ]);
+    const [reviews, setReviews] = useState<any>([]);
 
     const handleNext = () => {
         setStartIndex((prevIndex) => (prevIndex + 1) % reviews.length);
@@ -61,27 +61,57 @@ const ProductReview = () => {
                 product_id: productId,
             }
         );
-
-        if (res.data && res.data.length > 0) {
-            setReviews(
-                res.data.map((a: any) => {
-                    return {
-                        id: a.id,
-                        name:
-                            `${a.customer.first_name} ${a.customer.last_name}` ||
-                            'Anonymous Customer',
-                        location: 'US',
-                        review: a.content,
-                        stars: a.rating,
-                    };
-                })
-            );
-            setFakeReviews(false);
+        if (res.data) {
+            if (res.data.length < 6) {
+                console.log('setting ', [
+                    ...fakeReviews,
+                    ...res.data.map((a: any) => {
+                        return {
+                            id: a.id,
+                            name:
+                                `${a.customer.first_name} ${a.customer.last_name}` ||
+                                'Anonymous Customer',
+                            location: 'US',
+                            review: a.content,
+                            stars: a.rating,
+                        };
+                    }),
+                ]);
+                setReviews([
+                    ...fakeReviews,
+                    ...res.data.map((a: any) => {
+                        return {
+                            id: a.id,
+                            name:
+                                `${a.customer.first_name} ${a.customer.last_name}` ||
+                                'Anonymous Customer',
+                            location: 'US',
+                            review: a.content,
+                            stars: a.rating,
+                        };
+                    }),
+                ]);
+            } else {
+                setReviews([
+                    ...res.data.map((a: any) => {
+                        return {
+                            id: a.id,
+                            name:
+                                `${a.customer.first_name} ${a.customer.last_name}` ||
+                                'Anonymous Customer',
+                            location: 'US',
+                            review: a.content,
+                            stars: a.rating,
+                        };
+                    }),
+                ]);
+            }
         }
 
         return;
     };
 
+    console.log('product reviews are ', reviews);
     useEffect(() => {
         if (productId) {
             reviewDataFetcher();
@@ -118,20 +148,30 @@ const ProductReview = () => {
 
                 <Flex flexDirection={'column'} my="auto" overflow={'hidden'}>
                     <Text fontSize={'32px'} fontWeight={'bold'} color="white">
-                        {fakeReviews == true
-                            ? '4.96 - 312 Reviews'
-                            : `${reviews.reduce((a, b) => a + b.stars, 0) / reviews.length} - ${reviews.length} Reviews`}
+                        {reviews.length > 0 && (
+                            <>
+                                {reviews.reduce(
+                                    (a: any, b: any) => a + b.stars,
+                                    0
+                                ) / reviews.length}{' '}
+                                - {reviews.length} Reviews
+                            </>
+                        )}
                     </Text>
                     <Flex mt="2rem" flexDirection="row" gap="26px">
-                        {displayedReviews.map((review) => (
-                            <ReviewCard
-                                key={review.id}
-                                name={review.name}
-                                location={review.location}
-                                review={review.review}
-                                stars={review.stars}
-                            />
-                        ))}
+                        {displayedReviews.map((review) => {
+                            if (review) {
+                                return (
+                                    <ReviewCard
+                                        key={review.id}
+                                        name={review.name}
+                                        location={review.location}
+                                        review={review.review}
+                                        stars={review.stars}
+                                    />
+                                );
+                            }
+                        })}
                     </Flex>
                 </Flex>
 
