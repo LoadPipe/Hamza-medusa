@@ -197,7 +197,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 61000000
+                            "amount": 6500000
                         },
                         {
                             "currency_code": "usdc",
@@ -250,7 +250,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 62000000
+                            "amount": 6600000
                         },
                         {
                             "currency_code": "usdc",
@@ -303,7 +303,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 31000000
+                            "amount": 3700000
                         },
                         {
                             "currency_code": "usdc",
@@ -409,7 +409,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1700000
+                            "amount": 2100000
                         },
                         {
                             "currency_code": "usdc",
@@ -462,7 +462,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1300000
+                            "amount": 1800000
                         },
                         {
                             "currency_code": "usdc",
@@ -509,7 +509,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 68000000
+                            "amount": 5500000
                         },
                         {
                             "currency_code": "usdc",
@@ -556,7 +556,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 68000000
+                            "amount": 4300000
                         },
                         {
                             "currency_code": "usdc",
@@ -603,7 +603,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 68000000
+                            "amount": 1000000
                         },
                         {
                             "currency_code": "usdc",
@@ -650,7 +650,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 35000000
+                            "amount": 3500000
                         },
                         {
                             "currency_code": "usdc",
@@ -697,7 +697,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 8000000
+                            "amount": 3000000
                         },
                         {
                             "currency_code": "usdc",
@@ -744,7 +744,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 3000000
+                            "amount": 5200000
                         },
                         {
                             "currency_code": "usdc",
@@ -791,7 +791,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 3000000
+                            "amount": 5000000
                         },
                         {
                             "currency_code": "usdc",
@@ -838,7 +838,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 3000000
+                            "amount": 5100000
                         },
                         {
                             "currency_code": "usdc",
@@ -894,7 +894,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 3100000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -921,7 +921,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 3200000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -948,7 +948,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 3300000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -975,7 +975,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 2950000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1002,7 +1002,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 660000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1029,7 +1029,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 395000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1056,7 +1056,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 395000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1083,7 +1083,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 660000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1136,7 +1136,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 850000
+                            "amount": 1200000
                         },
                         {
                             "currency_code": "usdc",
@@ -1160,7 +1160,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 850000
+                            "amount": 1200000
                         },
                         {
                             "currency_code": "usdc",
@@ -1184,15 +1184,15 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 850000
+                            "amount": 1200000
                         },
                         {
                             "currency_code": "usdc",
-                            "amount": 8500
+                            "amount": 2950
                         },
                         {
                             "currency_code": "usdt",
-                            "amount": 8500
+                            "amount": 2950
                         }
                     ],
                     "options": [
@@ -1208,7 +1208,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 450000
+                            "amount": 1200000
                         },
                         {
                             "currency_code": "usdc",
@@ -1258,7 +1258,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 495000
+                            "amount": 1200000
                         },
                         {
                             "currency_code": "usdc",
@@ -1282,7 +1282,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 850000
+                            "amount": 1200000
                         },
                         {
                             "currency_code": "usdc",
@@ -1306,7 +1306,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 850000
+                            "amount": 1200000
                         },
                         {
                             "currency_code": "usdc",
@@ -1330,7 +1330,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 850000
+                            "amount": 1200000
                         },
                         {
                             "currency_code": "usdt",
@@ -1380,7 +1380,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 810000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1404,7 +1404,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 810000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1428,7 +1428,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 810000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1452,7 +1452,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 810000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1505,7 +1505,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 120000
+                            "amount": 1400000
                         },
                         {
                             "currency_code": "usdt",
@@ -1529,7 +1529,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 120000
+                            "amount": 1400000
                         },
                         {
                             "currency_code": "usdc",
@@ -1553,7 +1553,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1200000
+                            "amount": 1400000
                         },
                         {
                             "currency_code": "usdt",
@@ -1577,7 +1577,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1200000
+                            "amount": 1400000
                         },
                         {
                             "currency_code": "usdc",
@@ -1630,7 +1630,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1200000
+                            "amount": 1400000
                         },
                         {
                             "currency_code": "usdc",
@@ -1654,7 +1654,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1200000
+                            "amount": 1400000
                         },
                         {
                             "currency_code": "usdc",
@@ -1678,7 +1678,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1200000
+                            "amount": 1400000
                         },
                         {
                             "currency_code": "usdc",
@@ -1702,7 +1702,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1200000
+                            "amount": 1400000
                         },
                         {
                             "currency_code": "usdc",
@@ -1754,7 +1754,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 300000
+                            "amount": 400000
                         },
                         {
                             "currency_code": "usdc",
@@ -1807,7 +1807,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 41000000
+                            "amount": 4300000
                         },
                         {
                             "currency_code": "usdc",
@@ -1860,7 +1860,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 3800000
+                            "amount": 4300000
                         },
                         {
                             "currency_code": "usdc",
@@ -1913,7 +1913,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 38000000
+                            "amount": 4300000
                         },
                         {
                             "currency_code": "usdc",
@@ -1966,7 +1966,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 68000000
+                            "amount": 7300000
                         },
                         {
                             "currency_code": "usdc",
@@ -2019,7 +2019,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 48000000
+                            "amount": 4300000
                         },
                         {
                             "currency_code": "usdc",
@@ -2072,7 +2072,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 48000000
+                            "amount": 4300000
                         },
                         {
                             "currency_code": "usdc",
@@ -2125,7 +2125,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 38000000
+                            "amount": 4300000
                         },
                         {
                             "currency_code": "usdc",
@@ -2178,7 +2178,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 32000000
+                            "amount": 4200000
                         },
                         {
                             "currency_code": "usdc",
@@ -2231,7 +2231,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 38000000
+                            "amount": 4300000
                         },
                         {
                             "currency_code": "usdc",
@@ -2284,7 +2284,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 31000000
+                            "amount": 4000000
                         },
                         {
                             "currency_code": "usdc",
@@ -2336,7 +2336,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 31000000
+                            "amount": 4000000
                         },
                         {
                             "currency_code": "usdc",
@@ -2389,7 +2389,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 31000000
+                            "amount": 4300000
                         },
                         {
                             "currency_code": "usdc",
@@ -2442,7 +2442,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 48000000
+                            "amount": 4100000
                         },
                         {
                             "currency_code": "usdc",
@@ -2495,7 +2495,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4900000
+                            "amount": 7000000
                         },
                         {
                             "currency_code": "usdc",
@@ -2548,7 +2548,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 69000000
+                            "amount": 7000000
                         },
                         {
                             "currency_code": "usdc",
@@ -2601,7 +2601,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 35000000
+                            "amount": 2000000
                         },
                         {
                             "currency_code": "usdc",
@@ -2654,7 +2654,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 21000000
+                            "amount": 2100000
                         },
                         {
                             "currency_code": "usdc",
@@ -2707,7 +2707,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 58000000
+                            "amount": 2100000
                         },
                         {
                             "currency_code": "usdc",
@@ -2760,7 +2760,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 12000000
+                            "amount": 1000000
                         },
                         {
                             "currency_code": "usdc",
@@ -2813,7 +2813,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 24000000
+                            "amount": 2000000
                         },
                         {
                             "currency_code": "usdc",
@@ -2866,7 +2866,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 28000000
+                            "amount": 2800000
                         },
                         {
                             "currency_code": "usdc",
@@ -2919,7 +2919,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 38000000
+                            "amount": 2800000
                         },
                         {
                             "currency_code": "usdc",
@@ -2971,7 +2971,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 48000000
+                            "amount": 4800000
                         },
                         {
                             "currency_code": "usdc",
@@ -3023,7 +3023,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 18000000
+                            "amount": 1800000
                         },
                         {
                             "currency_code": "usdc",
@@ -3076,7 +3076,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 50000000
+                            "amount": 5000000
                         },
                         {
                             "currency_code": "usdc",
@@ -3129,7 +3129,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4800000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -3182,7 +3182,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4800000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -3235,7 +3235,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4300000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -3288,7 +3288,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4500000
+                            "amount": 1300000
                         },
                         {
                             "currency_code": "usdc",
@@ -3341,7 +3341,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 6600000
+                            "amount": 2100000
                         },
                         {
                             "currency_code": "usdc",
@@ -3394,7 +3394,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 6800000
+                            "amount": 2200000
                         },
                         {
                             "currency_code": "usdc",
@@ -3446,7 +3446,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4800000
+                            "amount": 2100000
                         },
                         {
                             "currency_code": "usdc",
@@ -3499,7 +3499,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4100000
+                            "amount": 2400000
                         },
                         {
                             "currency_code": "usdc",
@@ -3552,7 +3552,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4200000
+                            "amount": 1800000
                         },
                         {
                             "currency_code": "usdc",
@@ -3605,7 +3605,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 3800000
+                            "amount": 1400000
                         },
                         {
                             "currency_code": "usdc",
@@ -3658,7 +3658,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4400000
+                            "amount": 1800000
                         },
                         {
                             "currency_code": "usdc",
@@ -3711,7 +3711,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4400000
+                            "amount": 1800000
                         },
                         {
                             "currency_code": "usdc",
@@ -3764,7 +3764,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4400000
+                            "amount": 1800000
                         },
                         {
                             "currency_code": "usdc",
@@ -3817,7 +3817,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4400000
+                            "amount": 1800000
                         },
                         {
                             "currency_code": "usdc",
@@ -3870,7 +3870,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4400000
+                            "amount": 1800000
                         },
                         {
                             "currency_code": "usdc",
@@ -3923,7 +3923,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4400000
+                            "amount": 1800000
                         },
                         {
                             "currency_code": "usdc",
@@ -3976,7 +3976,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4400000
+                            "amount": 1800000
                         },
                         {
                             "currency_code": "usdc",
@@ -4029,7 +4029,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4400000
+                            "amount": 1800000
                         },
                         {
                             "currency_code": "usdc",
@@ -4082,7 +4082,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4400000
+                            "amount": 1800000
                         },
                         {
                             "currency_code": "usdc",
