@@ -16,9 +16,9 @@ import {
 const fakeReviews = [
     {
         id: 1,
-        name: 'John Doe',
-        location: 'New York',
-        review: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+        name: 'Inpachem Reskweiat',
+        location: 'India',
+        review: 'I thought that this was a pretty good product, if a little bit less so that what the reviews said; still and all though, I was satisfied. I think I might get another in a different color.',
         stars: 4,
     },
     {
@@ -66,7 +66,7 @@ const ProductReview = ({ productId }: { productId: string }) => {
             }
         );
         if (res.data) {
-            if (res.data.length < 6) {
+            if (res.data.length < 2) {
                 console.log('setting ', [
                     ...fakeReviews,
                     ...res.data.map((a: any) => {
