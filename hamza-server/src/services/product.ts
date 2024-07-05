@@ -72,9 +72,22 @@ class ProductService extends MedusaProductService {
     }
 
     async getAllProductsFromStoreWithPrices(): Promise<Product[]> {
-        return this.productRepository_.find({
+        const products = await this.productRepository_.find({
             relations: ['variants.prices', 'reviews'],
         });
+
+        // Sort products so those with weight 69 come first
+        const sortedProducts = products.sort((a, b) => {
+            if (a.weight === 69 && b.weight !== 69) {
+                return -1;
+            }
+            if (a.weight !== 69 && b.weight === 69) {
+                return 1;
+            }
+            return 0;
+        });
+
+        return sortedProducts;
     }
 
     async getProductsFromStore(storeId: string): Promise<Product[]> {
