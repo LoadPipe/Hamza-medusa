@@ -40,13 +40,6 @@ const ReviewCardMobile: React.FC<ReviewCardProps> = ({
                 </Text>
 
                 <Flex my="2rem">
-                    <Box
-                        width="40px"
-                        height="40px"
-                        backgroundColor="white"
-                        borderRadius={'full'}
-                    />
-
                     <Flex
                         ml="0.5rem"
                         flexDirection={'column'}

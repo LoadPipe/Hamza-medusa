@@ -17,23 +17,23 @@ const fakeReviews = [
     {
         id: 1,
         name: 'Inpachem Reskweiat',
-        location: 'India',
-        review: 'I thought that this was a pretty good product, if a little bit less so that what the reviews said; still and all though, I was satisfied. I think I might get another in a different color.',
+        location: 'Myanmar',
+        review: 'I thought that this was a pretty good product, if a little bit less so that what the Lori Wymar article said; still and all though, I was satisfied. I think I might get another in a different color.',
         stars: 4,
     },
     {
         id: 2,
-        name: 'Jane Smith',
+        name: 'Count Cagliostro',
         location: 'California',
-        stars: 4,
-        review: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+        stars: 3,
+        review: 'Bro, this was exactly what I was looking for when they said "you gotta get in on this thing"! I was all no, really? And then I was yeah I guess I should. All good!',
     },
     {
         id: 3,
-        name: 'Alice Johnson',
-        location: 'Texas',
+        name: 'Clothar Magnusson',
+        location: 'Iceland',
         stars: 4,
-        review: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+        review: 'Aside from all the lorem ipsum bulls**t, this product is actually the best one of its kind. If you think that it is not, let please teach you how to be a buff Icelandic giant. Plot twist: you gotta deadlift like every other day.',
     },
 ];
 
