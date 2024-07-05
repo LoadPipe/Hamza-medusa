@@ -48,11 +48,11 @@ const ProfileCurrency: React.FC<MyInformationProps> = ({ customer }) => {
         <div className="currency-dropdown grid grid-cols-2 gap-x-4">
             <label htmlFor="currency-select">Choose a currency:</label>
             <Select
+                className="bg-black"
                 id="currency-select"
                 value={preferred_currency_code!}
                 onChange={handleCurrencyChange}
-                bg="gray.800"
-                color="white"
+                color={'white'}
             >
                 <option value="usdc">USDC</option>
                 <option value="usdt">USDT</option>
