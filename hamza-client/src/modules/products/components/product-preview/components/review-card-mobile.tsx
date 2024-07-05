@@ -2,6 +2,8 @@ import React from 'react';
 import { Text, Box, Flex, Heading } from '@chakra-ui/react';
 import Image from 'next/image';
 import ReviewStar from '../../../../../../public/images/products/review-star.svg';
+import { TiStarFullOutline } from 'react-icons/ti';
+import { renderStars } from './review-card';
 
 interface ReviewCardProps {
     name: string;
@@ -26,18 +28,7 @@ const ReviewCardMobile: React.FC<ReviewCardProps> = ({
             background="linear-gradient(317.5deg, #53594A 42.03%, #2C272D 117.46%, #2C272D 117.46%)"
         >
             <Flex flexDirection={'column'}>
-                <Flex mt="1rem">
-                    {Array(stars)
-                        .fill(0)
-                        .map((_, index) => (
-                            <Image
-                                style={{ width: '16px', height: '16px' }}
-                                src={ReviewStar}
-                                alt="star"
-                                key={index}
-                            />
-                        ))}
-                </Flex>
+                <Flex mt="1rem">{renderStars(stars)}</Flex>
 
                 <Text
                     mt="1.5rem"

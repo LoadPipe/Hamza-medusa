@@ -7,7 +7,11 @@ import ReviewCardMobile from './review-card-mobile';
 import ReviewStar from '../../../../../../public/images/products/review-star.svg';
 import Image from 'next/image';
 import axios from 'axios';
-import useProductPreview from '@store/product-preview/product-preview';
+import {
+    TiStarFullOutline,
+    TiStarHalfOutline,
+    TiStarOutline,
+} from 'react-icons/ti';
 
 const fakeReviews = [
     {
@@ -32,10 +36,10 @@ const fakeReviews = [
         review: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
     },
 ];
-const ProductReview = () => {
+
+const ProductReview = ({ productId }: { productId: string }) => {
     const [startIndex, setStartIndex] = useState(0);
     const reviewsToShow = 2;
-    const { productId } = useProductPreview();
 
     const [reviews, setReviews] = useState<any>([]);
 

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import ReviewCardMobile from './review-card-mobile';
 import { Text, Flex, Box } from '@chakra-ui/react';
 import axios from 'axios';
-import useProductPreview from '@store/product-preview/product-preview';
 
 const fakeReviews = [
     {
@@ -27,9 +26,7 @@ const fakeReviews = [
         review: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
     },
 ];
-const ProductReviewMobile = () => {
-    const { productId } = useProductPreview();
-
+const ProductReviewMobile = ({ productId }: { productId: string }) => {
     const [reviews, setReviews] = useState<any>([]);
     const reviewDataFetcher = async () => {
         let res = await axios.post(
@@ -76,6 +73,7 @@ const ProductReviewMobile = () => {
     };
 
     useEffect(() => {
+        console.log('product id changed on product review ', productId);
         if (productId) {
             reviewDataFetcher();
         }
