@@ -3658,15 +3658,15 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1800000
+                            "amount": 2000000
                         },
                         {
                             "currency_code": "usdc",
-                            "amount": 23000
+                            "amount": 6000
                         },
                         {
                             "currency_code": "usdt",
-                            "amount": 23000
+                            "amount": 6000
                         }
                     ],
                     "options": [
@@ -3711,15 +3711,15 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1800000
+                            "amount": 1010000
                         },
                         {
                             "currency_code": "usdc",
-                            "amount": 23000
+                            "amount": 30500
                         },
                         {
                             "currency_code": "usdt",
-                            "amount": 23000
+                            "amount": 30500
                         }
                     ],
                     "options": [
@@ -3768,11 +3768,11 @@
                         },
                         {
                             "currency_code": "usdc",
-                            "amount": 23000
+                            "amount": 5900
                         },
                         {
                             "currency_code": "usdt",
-                            "amount": 23000
+                            "amount": 5900
                         }
                     ],
                     "options": [
@@ -3817,15 +3817,15 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1800000
+                            "amount": 3900000
                         },
                         {
                             "currency_code": "usdc",
-                            "amount": 23000
+                            "amount": 12000
                         },
                         {
                             "currency_code": "usdt",
-                            "amount": 23000
+                            "amount": 12000
                         }
                     ],
                     "options": [
@@ -3870,7 +3870,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1800000
+                            "amount": 5900000
                         },
                         {
                             "currency_code": "usdc",
@@ -3923,15 +3923,15 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1800000
+                            "amount": 6900000
                         },
                         {
                             "currency_code": "usdc",
-                            "amount": 23000
+                            "amount": 21000
                         },
                         {
                             "currency_code": "usdt",
-                            "amount": 23000
+                            "amount": 21000
                         }
                     ],
                     "options": [
@@ -3976,15 +3976,15 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1800000
+                            "amount": 6900000
                         },
                         {
                             "currency_code": "usdc",
-                            "amount": 23000
+                            "amount": 22000
                         },
                         {
                             "currency_code": "usdt",
-                            "amount": 23000
+                            "amount": 22000
                         }
                     ],
                     "options": [
@@ -4029,15 +4029,15 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1800000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
-                            "amount": 23000
+                            "amount": 13000
                         },
                         {
                             "currency_code": "usdt",
-                            "amount": 23000
+                            "amount": 13000
                         }
                     ],
                     "options": [
@@ -4086,11 +4086,11 @@
                         },
                         {
                             "currency_code": "usdc",
-                            "amount": 23000
+                            "amount": 6000
                         },
                         {
                             "currency_code": "usdt",
-                            "amount": 23000
+                            "amount": 6000
                         }
                     ],
                     "options": [
