@@ -8,11 +8,12 @@ import {
     listShippingMethods,
 } from '@lib/data';
 import { cookies } from 'next/headers';
-import { Button } from '@chakra-ui/react';
+import { Button, Flex, Text } from '@chakra-ui/react';
 import { CartWithCheckoutStep } from 'types/global';
 import { getCheckoutStep } from '@lib/util/get-checkout-step';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import ChevronDown from '@modules/common/icons/chevron-down';
+import { MdChevronLeft } from 'react-icons/md';
 
 export default async function CheckoutForm(params: any) {
     const cartId = params.cartId;
@@ -50,14 +51,34 @@ export default async function CheckoutForm(params: any) {
             <div className="w-full grid grid-cols-1 gap-y-8">
                 <LocalizedClientLink
                     href="/cart"
-                    className="text-small-semi text-ui-fg-base flex items-center gap-x-2 uppercase flex-1 basis-0"
+                    className="flex flex-1 basis-0"
                 >
-                    <Button
-                        backgroundColor={'primary.indigo.900'}
-                        color={'white'}
+                    <Flex
+                        height={'52px'}
+                        flexDirection={'row'}
+                        justifyContent={'center'}
+                        alignItems={'center'}
+                        mt={'auto'}
+                        color="white"
+                        _hover={{
+                            color: 'primary.green.900',
+                            transition: 'color 0.2s ease-in-out',
+                        }}
                     >
-                        Back to shopping cart
-                    </Button>
+                        <Flex
+                            alignSelf={'center'}
+                            flexDirection={'row'}
+                            my="auto"
+                        >
+                            <MdChevronLeft size={40} />
+                            <Text
+                                alignSelf={'center'}
+                                display={{ base: 'none', md: 'block' }}
+                            >
+                                Back to shopping cart
+                            </Text>
+                        </Flex>
+                    </Flex>
                 </LocalizedClientLink>
                 <div>
                     <Addresses cart={cart} customer={customer} />

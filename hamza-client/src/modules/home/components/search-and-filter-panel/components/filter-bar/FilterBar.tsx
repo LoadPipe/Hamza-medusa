@@ -40,7 +40,7 @@ const FilterBar = () => {
                 maxW={'1249px'}
                 width={'100%'}
                 overflow={'hidden'}
-                gap={'20px'}
+                gap={{ base: '12px', md: '20px' }}
                 position="relative"
             >
                 <FilterButton onClick={() => onOpen()} />
@@ -63,6 +63,7 @@ const FilterBar = () => {
                     right="0"
                     top="0"
                     bg="linear-gradient(90deg, rgba(44, 39, 45, 0) 0%, #2C272D 50%)" // Applying linear gradient
+                    userSelect={'none'}
                 >
                     <Flex
                         w="35px"

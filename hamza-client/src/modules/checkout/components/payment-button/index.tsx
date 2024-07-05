@@ -1,6 +1,7 @@
 'use client';
 import { Cart, PaymentSession } from '@medusajs/medusa';
-import { Button } from '@medusajs/ui';
+
+import { Button } from '@chakra-ui/react';
 import React, { useState, useEffect, useRef } from 'react';
 import ErrorMessage from '../error-message';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
@@ -375,12 +376,17 @@ const CryptoPaymentButton = ({
     return (
         <>
             <Button
-                size="large"
+                height="52px"
+                color="white"
+                backgroundColor={'primary.indigo.900'}
+                className="mt-6 py-3 px-6 "
                 isLoading={submitting}
                 disabled={notReady}
-                color="white"
                 onClick={handlePayment}
-                className="mt-6 bg-purple-500 text-white py-3 px-6 rounded text-base"
+                _hover={{
+                    backgroundColor: 'white',
+                    color: 'black',
+                }}
             >
                 Place Order: Crypto
             </Button>

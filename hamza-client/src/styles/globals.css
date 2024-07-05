@@ -2,21 +2,6 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-/* Add Sora font face */
-@font-face {
-    font-family: 'Sora';
-    src: url('/hamza-client/public/fonts/Sora-Regular.ttf') format('truetype');
-    font-weight: 400;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Sora';
-    src: url('/hamza-client/public/fonts/Sora-Bold.ttf') format('truetype');
-    font-weight: 700;
-    font-style: normal;
-}
-
 /* Dark mode styles */
 .dark .text-base-regular {
     @apply text-gray-300;
