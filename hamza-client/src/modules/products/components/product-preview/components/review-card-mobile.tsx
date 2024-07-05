@@ -7,12 +7,14 @@ interface ReviewCardProps {
     name: string;
     location: string;
     review: string;
+    stars: number;
 }
 
 const ReviewCardMobile: React.FC<ReviewCardProps> = ({
     name,
     location,
     review,
+    stars,
 }) => {
     return (
         <Flex
@@ -25,31 +27,16 @@ const ReviewCardMobile: React.FC<ReviewCardProps> = ({
         >
             <Flex flexDirection={'column'}>
                 <Flex mt="1rem">
-                    <Image
-                        style={{ width: '16px', height: '16px' }}
-                        src={ReviewStar}
-                        alt="star"
-                    />
-                    <Image
-                        style={{ width: '16px', height: '16px' }}
-                        src={ReviewStar}
-                        alt="star"
-                    />
-                    <Image
-                        style={{ width: '16px', height: '16px' }}
-                        src={ReviewStar}
-                        alt="star"
-                    />
-                    <Image
-                        style={{ width: '16px', height: '16px' }}
-                        src={ReviewStar}
-                        alt="star"
-                    />
-                    <Image
-                        style={{ width: '16px', height: '16px' }}
-                        src={ReviewStar}
-                        alt="star"
-                    />
+                    {Array(stars)
+                        .fill(0)
+                        .map((_, index) => (
+                            <Image
+                                style={{ width: '16px', height: '16px' }}
+                                src={ReviewStar}
+                                alt="star"
+                                key={index}
+                            />
+                        ))}
                 </Flex>
 
                 <Text
