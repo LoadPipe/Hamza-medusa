@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@medusajs/ui';
+import { Button } from '@chakra-ui/react';
 import React from 'react';
 import { useFormStatus } from 'react-dom';
 

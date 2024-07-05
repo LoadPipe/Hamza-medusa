@@ -4,7 +4,8 @@ import { RadioGroup } from '@headlessui/react';
 import { CheckCircleSolid } from '@medusajs/icons';
 import { Cart } from '@medusajs/medusa';
 import { PricedShippingOption } from '@medusajs/medusa/dist/types/pricing';
-import { Button, Heading, Text, clx, useToggleState } from '@medusajs/ui';
+import { Heading, Text, clx, useToggleState } from '@medusajs/ui';
+import { Button } from '@chakra-ui/react';
 import { formatAmount } from '@lib/util/prices';
 
 import Divider from '@modules/common/components/divider';
@@ -108,7 +109,7 @@ const Shipping: React.FC<ShippingProps> = ({
                             value={
                                 cart.shipping_methods?.length
                                     ? cart.shipping_methods[0]
-                                        ?.shipping_option_id
+                                          ?.shipping_option_id
                                     : ''
                             }
                             onChange={(value: string) => handleChange(value)}
@@ -127,8 +128,8 @@ const Shipping: React.FC<ShippingProps> = ({
                                                         (cart.shipping_methods
                                                             ?.length
                                                             ? cart
-                                                                .shipping_methods[0]
-                                                                ?.shipping_option_id
+                                                                  .shipping_methods[0]
+                                                                  ?.shipping_option_id
                                                             : ''),
                                                 }
                                             )}
@@ -141,8 +142,8 @@ const Shipping: React.FC<ShippingProps> = ({
                                                         (cart.shipping_methods
                                                             ?.length
                                                             ? cart
-                                                                .shipping_methods[0]
-                                                                ?.shipping_option_id
+                                                                  .shipping_methods[0]
+                                                                  ?.shipping_option_id
                                                             : '')
                                                     }
                                                 />
@@ -151,10 +152,17 @@ const Shipping: React.FC<ShippingProps> = ({
                                                 </span>
                                             </div>
                                             <span className="justify-self-end text-white">
-                                                {option.name === 'FakeEx Standard' ?
-                                                    (preferred_currency_code === 'eth' ? '0.00001 ' : '1.20') :
-                                                    (preferred_currency_code === 'eth' ? '0.000025 ' : '3.25')
-                                                } {' '}{preferred_currency_code?.toUpperCase()}
+                                                {option.name ===
+                                                'FakeEx Standard'
+                                                    ? preferred_currency_code ===
+                                                      'eth'
+                                                        ? '0.00001 '
+                                                        : '1.20'
+                                                    : preferred_currency_code ===
+                                                        'eth'
+                                                      ? '0.000025 '
+                                                      : '3.25'}{' '}
+                                                {preferred_currency_code?.toUpperCase()}
                                             </span>
                                         </RadioGroup.Option>
                                     );
@@ -170,9 +178,15 @@ const Shipping: React.FC<ShippingProps> = ({
                     <ErrorMessage error={error} />
 
                     <Button
-                        size="large"
-                        className="mt-6 bg-purple-500 text-white py-3 px-6 rounded text-base"
+                        height={'52px'}
+                        backgroundColor={'primary.indigo.900'}
+                        color={'white'}
+                        className="mt-6 text-white py-3 px-6  text-base"
                         onClick={handleSubmit}
+                        _hover={{
+                            backgroundColor: 'white',
+                            color: 'black',
+                        }}
                         isLoading={isLoading}
                         disabled={
                             !cart.shipping_methods?.length ||
@@ -193,14 +207,18 @@ const Shipping: React.FC<ShippingProps> = ({
                                 <Text className="txt-medium text-white">
                                     {cart.shipping_methods?.length
                                         ? cart.shipping_methods[0]
-                                            .shipping_option.name
+                                              .shipping_option.name
                                         : ' '}{' '}
                                     (
-                                    {cart.shipping_methods[0].shipping_option.name === 'FakeEx Standard' ?
-                                        (preferred_currency_code === 'eth' ? '0.00001 ' : '1.20') :
-                                        (preferred_currency_code === 'eth' ? '0.000025 ' : '3.25')
-                                    } {' '}{preferred_currency_code?.toUpperCase()}
-                                    )
+                                    {cart.shipping_methods[0].shipping_option
+                                        .name === 'FakeEx Standard'
+                                        ? preferred_currency_code === 'eth'
+                                            ? '0.00001 '
+                                            : '1.20'
+                                        : preferred_currency_code === 'eth'
+                                          ? '0.000025 '
+                                          : '3.25'}{' '}
+                                    {preferred_currency_code?.toUpperCase()})
                                 </Text>
                             </div>
                         )}

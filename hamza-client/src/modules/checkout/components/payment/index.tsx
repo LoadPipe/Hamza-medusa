@@ -6,7 +6,8 @@ import { RadioGroup } from '@headlessui/react';
 import ErrorMessage from '@modules/checkout/components/error-message';
 import { Cart } from '@medusajs/medusa';
 import { CheckCircleSolid, CreditCard } from '@medusajs/icons';
-import { Button, Container, Heading, Text, Tooltip, clx } from '@medusajs/ui';
+import { Container, Heading, Text, Tooltip, clx } from '@medusajs/ui';
+import { Button } from '@chakra-ui/react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useAccount, useConnect } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
@@ -160,8 +161,14 @@ const Payment = ({
                         <ErrorMessage error={error} />
 
                         <Button
-                            size="large"
-                            className="mt-6 bg-purple-500 text-white py-3 px-6 rounded text-base"
+                            height="52px"
+                            color={'white'}
+                            backgroundColor="primary.indigo.900"
+                            className="mt-6  py-3 px-6 rounded text-base"
+                            _hover={{
+                                backgroundColor: 'white',
+                                color: 'black',
+                            }}
                             onClick={handleSubmit}
                             isLoading={isLoading}
                             disabled={!cart.payment_session}
