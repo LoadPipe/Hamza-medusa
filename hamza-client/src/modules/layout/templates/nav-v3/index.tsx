@@ -80,7 +80,10 @@ export default async function Nav() {
                         <NavSearchBar />
                     </Flex>
 
-                    <Link href="https://blog.hamza.biz/affiliate" target="_blank">
+                    <Link
+                        href="https://blog.hamza.biz/affiliate"
+                        target="_blank"
+                    >
                         <Flex
                             flexShrink={0}
                             width={'162px'}
@@ -103,7 +106,6 @@ export default async function Nav() {
                             }}
                         >
                             <Text
-                                className="font-sora"
                                 fontWeight={'600'}
                                 fontSize={'16px'}
                                 alignSelf={'center'}

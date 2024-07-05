@@ -34,7 +34,7 @@ const HeroBanner = () => {
 
     return (
         <>
-            <Flex
+            {/* <Flex
                 display={{ base: 'none', md: 'flex' }}
                 w="100%"
                 bg="primary.indigo.900"
@@ -50,9 +50,10 @@ const HeroBanner = () => {
                         Become an affiliate
                     </Text>
                 </Link>
-            </Flex>
+            </Flex> */}
             <SwitchNetwork enabled={false} />
             <Flex
+                mt="2rem"
                 justifyContent={'center'}
                 alignItems={'center'}
                 flexDirection={'column'}

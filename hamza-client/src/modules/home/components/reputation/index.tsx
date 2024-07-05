@@ -10,7 +10,6 @@ import Image from 'next/image';
 const Reputation = () => {
     return (
         <Box
-            fontFamily={'Sora'}
             bg="transparent"
             mt={6}
             p={5}

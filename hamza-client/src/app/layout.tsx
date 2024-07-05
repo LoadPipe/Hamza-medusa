@@ -10,6 +10,7 @@ import { RainbowWrapper } from '@/components/providers/rainbowkit/rainbow-provid
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import theme from '../styles/chakra-theme';
 import { Toaster } from 'react-hot-toast';
+import { Sora } from '@next/font/google';
 // TODO: Refactor using scaffold-eth-2 for proper layout.
 
 // export const metadata: Metadata = {
@@ -17,6 +18,11 @@ import { Toaster } from 'react-hot-toast';
 // };
 
 // Define your custom colors
+
+const sora = Sora({
+    subsets: ['latin'],
+    weight: ['400', '700'],
+});
 
 export default function RootLayout(props: { children: React.ReactNode }) {
     return (
@@ -26,7 +32,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                     <MedusaProvider>
                         <RainbowWrapper>
                             <ChakraProvider theme={theme}>
-                                <main className="relative">
+                                <main className={sora.className}>
                                     {props.children}
                                 </main>
                             </ChakraProvider>
