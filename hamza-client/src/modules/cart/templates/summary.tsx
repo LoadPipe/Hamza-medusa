@@ -1,7 +1,7 @@
 'use client';
 
-import { Button, Heading } from '@medusajs/ui';
-
+import { Heading } from '@medusajs/ui';
+import { Button } from '@chakra-ui/react';
 import CartTotals from '@modules/common/components/cart-totals';
 import Divider from '@modules/common/components/divider';
 import { CartWithCheckoutStep } from 'types/global';
@@ -22,8 +22,18 @@ const Summary = ({ cart }: SummaryProps) => {
             <Divider />
             <CartTotals data={cart} />
             <LocalizedClientLink href={'/checkout?step=' + cart.checkout_step}>
-                <Button className="w-full mt-6 bg-purple-500 text-white py-3 px-6 rounded text-base">
-                    Go to checkout
+                <Button
+                    backgroundColor={'primary.indigo.900'}
+                    color={'white'}
+                    width={'100%'}
+                    height={'52px'}
+                    fontSize={'16px'}
+                    _hover={{
+                        backgroundColor: 'white',
+                        color: 'black',
+                    }}
+                >
+                    Checkout Now
                 </Button>
             </LocalizedClientLink>
         </div>
