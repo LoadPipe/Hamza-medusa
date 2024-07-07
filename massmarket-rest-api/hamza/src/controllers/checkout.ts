@@ -74,8 +74,9 @@ export const checkoutController = {
                         currency: '',
                     };
 
-                    if (input.storeId !== '0x') {
+                    output = checkoutOutput;
 
+                    if (input.storeId !== '0x') {
                         //get the client
                         const rc = await RelayClientWrapper.get(
                             ENDPOINT,
@@ -93,7 +94,8 @@ export const checkoutController = {
                             if (
                                 !input.paymentCurrency ||
                                 !input.paymentCurrency?.length ||
-                                input.paymentCurrency?.replaceAll('0', '0') === 'x'
+                                input.paymentCurrency?.replaceAll('0', '0') ===
+                                    'x'
                             )
                                 input.paymentCurrency =
                                     '0x0000000000000000000000000000000000000000';
@@ -134,9 +136,10 @@ export const checkoutController = {
                                     );
 
                                     //currency & payee address
-                                    checkoutOutput.currency = input.paymentCurrency
-                                        ? bytesToHex(event.currencyAddr)
-                                        : '0x0000000000000000000000000000000000000000';
+                                    checkoutOutput.currency =
+                                        input.paymentCurrency
+                                            ? bytesToHex(event.currencyAddr)
+                                            : '0x0000000000000000000000000000000000000000';
                                     checkoutOutput.payeeAddress = bytesToHex(
                                         event.payeeAddr
                                     );
