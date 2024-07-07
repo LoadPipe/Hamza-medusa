@@ -16,6 +16,7 @@ import { setShippingMethod } from '@modules/checkout/actions';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import { setPaymentMethod } from '@modules/checkout/actions';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
 type ShippingProps = {
@@ -46,7 +47,10 @@ const Shipping: React.FC<ShippingProps> = ({
 
     const handleSubmit = () => {
         setIsLoading(true);
-        router.push(pathname + '?step=payment', { scroll: false });
+        //router.push(pathname + '?step=payment', { scroll: false });
+        router.push(pathname + '?step=review', {
+            scroll: false,
+        });
     };
 
     const set = async (id: string) => {
@@ -57,6 +61,13 @@ const Shipping: React.FC<ShippingProps> = ({
             })
             .catch((err) => {
                 setError(err.toString());
+                setIsLoading(false);
+            });
+
+        //set payment method to crypto
+        await setPaymentMethod('crypto')
+            .catch((err) => setError(err.toString()))
+            .finally(() => {
                 setIsLoading(false);
             });
     };
@@ -109,7 +120,7 @@ const Shipping: React.FC<ShippingProps> = ({
                             value={
                                 cart.shipping_methods?.length
                                     ? cart.shipping_methods[0]
-                                          ?.shipping_option_id
+                                        ?.shipping_option_id
                                     : ''
                             }
                             onChange={(value: string) => handleChange(value)}
@@ -128,8 +139,8 @@ const Shipping: React.FC<ShippingProps> = ({
                                                         (cart.shipping_methods
                                                             ?.length
                                                             ? cart
-                                                                  .shipping_methods[0]
-                                                                  ?.shipping_option_id
+                                                                .shipping_methods[0]
+                                                                ?.shipping_option_id
                                                             : ''),
                                                 }
                                             )}
@@ -142,8 +153,8 @@ const Shipping: React.FC<ShippingProps> = ({
                                                         (cart.shipping_methods
                                                             ?.length
                                                             ? cart
-                                                                  .shipping_methods[0]
-                                                                  ?.shipping_option_id
+                                                                .shipping_methods[0]
+                                                                ?.shipping_option_id
                                                             : '')
                                                     }
                                                 />
@@ -153,15 +164,15 @@ const Shipping: React.FC<ShippingProps> = ({
                                             </div>
                                             <span className="justify-self-end text-white">
                                                 {option.name ===
-                                                'FakeEx Standard'
+                                                    'FakeEx Standard'
                                                     ? preferred_currency_code ===
-                                                      'eth'
+                                                        'eth'
                                                         ? '0.00001 '
                                                         : '1.20'
                                                     : preferred_currency_code ===
                                                         'eth'
-                                                      ? '0.000025 '
-                                                      : '3.25'}{' '}
+                                                        ? '0.000025 '
+                                                        : '3.25'}{' '}
                                                 {preferred_currency_code?.toUpperCase()}
                                             </span>
                                         </RadioGroup.Option>
@@ -207,7 +218,7 @@ const Shipping: React.FC<ShippingProps> = ({
                                 <Text className="txt-medium text-white">
                                     {cart.shipping_methods?.length
                                         ? cart.shipping_methods[0]
-                                              .shipping_option.name
+                                            .shipping_option.name
                                         : ' '}{' '}
                                     (
                                     {cart.shipping_methods[0].shipping_option
@@ -216,8 +227,8 @@ const Shipping: React.FC<ShippingProps> = ({
                                             ? '0.00001 '
                                             : '1.20'
                                         : preferred_currency_code === 'eth'
-                                          ? '0.000025 '
-                                          : '3.25'}{' '}
+                                            ? '0.000025 '
+                                            : '3.25'}{' '}
                                     {preferred_currency_code?.toUpperCase()})
                                 </Text>
                             </div>
