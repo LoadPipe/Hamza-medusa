@@ -40,10 +40,6 @@ const WishlistItem = (props: WishlistProps) => {
                             <p className="font-semibold mb-4">
                                 {props.item?.title}
                             </p>
-                            <p
-                                dangerouslySetInnerHTML={{
-                                    __html: props.item?.description,
-                                }}></p>
                         </div>
                     </div>
                 </LocalizedClientLink>
