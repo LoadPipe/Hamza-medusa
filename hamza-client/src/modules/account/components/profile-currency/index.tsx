@@ -46,7 +46,7 @@ const ProfileCurrency: React.FC<MyInformationProps> = ({ customer }) => {
 
     return (
         <div className="currency-dropdown grid grid-cols-2 gap-x-4">
-            <label htmlFor="currency-select">Choose a currency:</label>
+            <label htmlFor="currency-select">Preferred payment currency:</label>
             <Select
                 className="bg-black"
                 id="currency-select"
@@ -54,9 +54,9 @@ const ProfileCurrency: React.FC<MyInformationProps> = ({ customer }) => {
                 onChange={handleCurrencyChange}
                 color={'white'}
             >
-                <option value="usdc">USDC</option>
-                <option value="usdt">USDT</option>
-                <option value="eth">ETH</option>
+                <option value="usdc" style={{ backgroundColor: 'black', color: 'white' }}>USDC</option>
+                <option value="usdt" style={{ backgroundColor: 'black', color: 'white' }}>USDT</option>
+                <option value="eth" style={{ backgroundColor: 'black', color: 'white' }}>ETH</option>
             </Select>
         </div>
     );
