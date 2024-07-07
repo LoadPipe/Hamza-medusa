@@ -29,8 +29,7 @@ export default async function Profile() {
                 <h1 className="text-2xl-semi">Profile</h1>
                 <p className="text-base-regular">
                     View and update your profile information, including your
-                    name, email, and phone number. You can also update your
-                    billing address, or change your password.
+                    name and preferred checkout currency.
                 </p>
             </div>
             <div className="flex flex-col gap-y-8 w-full">
