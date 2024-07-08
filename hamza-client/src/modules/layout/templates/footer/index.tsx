@@ -226,7 +226,7 @@ export default async function Footer() {
                             <FaTwitter size={24} />
                         </Link>
                         <Link
-                            href="https://discord.gg/Js2EmJ9k"
+                            href="https://discord.gg/kNGx38WZ"
                             target="_blank"
                         >
                             <FaDiscord size={24} />
