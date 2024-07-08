@@ -6,6 +6,7 @@ import {
     Image,
     useBreakpointValue,
 } from '@chakra-ui/react';
+import { getObjectFit } from '@modules/get-object-fit';
 import useProductPreview from '@store/product-preview/product-preview';
 import React, { useEffect, useState } from 'react';
 
@@ -29,6 +30,8 @@ const PreviewGallery = () => {
         }
     );
 
+    const objectFit = getObjectFit(productData.handle);
+
     //TODO: If each product needs 5 images how will we handle blank images?
     return (
         <Flex maxWidth={'1280px'} width={'100%'} flexDirection={'column'}>
@@ -50,7 +53,7 @@ const PreviewGallery = () => {
                                 alt="Left Image"
                                 width="100%"
                                 height="100%"
-                                objectFit="cover"
+                                objectFit={objectFit}
                             />
                         )}
                     </Flex>
