@@ -30,7 +30,9 @@ const PreviewGallery = () => {
         }
     );
 
+    console.log("PRODUCT HANDLE IS", productData.handle)
     const objectFit = getObjectFit(productData.handle);
+    console.log("objectFit IS", objectFit)
 
     //TODO: If each product needs 5 images how will we handle blank images?
     return (
@@ -38,10 +40,9 @@ const PreviewGallery = () => {
             <Grid templateColumns={gridTemplate} gap={4}>
                 <GridItem
                     display={'flex'}
-                    backgroundColor={objectFit === 'cover' ? 'black' : 'white'}
                 >
                     <Flex
-                        backgroundColor={'white'}
+                        backgroundColor={objectFit === 'cover' ? 'black' : 'white'}
                         width={'100%'}
                         minH={'312.22px'}
                         maxH={'504.11px'}
