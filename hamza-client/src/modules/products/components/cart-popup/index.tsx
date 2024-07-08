@@ -33,7 +33,7 @@ function CartPopup({ closeModal, open }: Props) {
                     <CheckCircleIcon boxSize={12} color="green.400" />
                 </Box>
                 <ModalHeader fontSize="2xl" fontWeight="bold" mt={4}>
-                    Add to cart Successfully!
+                    Added to cart successfully!
                 </ModalHeader>
                 <ModalCloseButton color="white" />
                 <ModalBody mt={-5}>
