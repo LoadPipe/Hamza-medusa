@@ -15,7 +15,7 @@ type ItemsTemplateProps = {
 
 const ItemsTemplate = ({ items, region }: ItemsTemplateProps) => {
     return (
-        <div className="bg-black p-8">
+        <div className="bg-black">
             <div className="pb-3 flex items-center">
                 <Heading className="text-[2rem] leading-[2.75rem] text-white">
                     Cart
