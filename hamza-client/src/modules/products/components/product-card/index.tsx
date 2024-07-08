@@ -23,6 +23,7 @@ import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutatio
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
+import { getObjectFit } from '@modules/get-object-fit';
 
 interface ProductCardProps {
     reviewCount?: number;
@@ -83,6 +84,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
         setLoadingBuy(false);
     };
 
+    const objectFit = getObjectFit(productHandle);
+
     return (
         <Card
             width={{ base: '167px', md: '280px' }}
@@ -97,6 +100,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                     height={{ base: '134.73px', md: '238px' }}
                     width="100%"
                     display="flex"
+                    backgroundColor={objectFit === 'cover' ? 'black' : 'white'}
                     justifyContent="center"
                     alignItems="center"
                     style={{ cursor: 'pointer' }}
@@ -107,7 +111,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                         alt={productName}
                         width="100%"
                         height="100%"
-                        objectFit="cover"
+                        objectFit={objectFit}
                         onLoad={() => setImageLoaded(true)}
                         display={imageLoaded ? 'block' : 'none'}
                     />{' '}
@@ -154,21 +158,21 @@ const ProductCard: React.FC<ProductCardProps> = ({
                                             (a) => a.id == productId
                                         )
                                             ? addWishlistItemMutation.mutate({
-                                                  id: productId!,
-                                                  description: '',
-                                                  title: productName!,
-                                                  thumbnail: imageSrc!,
-                                                  handle: productHandle!,
-                                              })
+                                                id: productId!,
+                                                description: '',
+                                                title: productName!,
+                                                thumbnail: imageSrc!,
+                                                handle: productHandle!,
+                                            })
                                             : removeWishlistItemMutation.mutate(
-                                                  {
-                                                      id: productId!,
-                                                      description: '',
-                                                      title: productName!,
-                                                      thumbnail: imageSrc!,
-                                                      handle: productHandle!,
-                                                  }
-                                              );
+                                                {
+                                                    id: productId!,
+                                                    description: '',
+                                                    title: productName!,
+                                                    thumbnail: imageSrc!,
+                                                    handle: productHandle!,
+                                                }
+                                            );
                                     }}
                                     sx={{
                                         userSelect: 'none',
