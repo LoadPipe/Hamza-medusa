@@ -74,96 +74,102 @@ export const checkoutController = {
                         currency: '',
                     };
 
-                    //get the client
-                    const rc = await RelayClientWrapper.get(
-                        ENDPOINT,
-                        input.storeId,
-                        input.keycard
-                    );
+                    output = checkoutOutput;
 
-                    //do the full checkout
-                    if (rc && input.items.length) {
-                        console.log('creating cart...');
-                        const cartId = await rc.createCart();
-                        console.log('CART ID: ', cartId);
+                    if (input.storeId !== '0x') {
+                        //get the client
+                        const rc = await RelayClientWrapper.get(
+                            ENDPOINT,
+                            input.storeId,
+                            input.keycard
+                        );
 
-                        //handle empty payment currency
-                        if (
-                            !input.paymentCurrency ||
-                            !input.paymentCurrency?.length ||
-                            input.paymentCurrency?.replaceAll('0', '0') === 'x'
-                        )
-                            input.paymentCurrency =
-                                '0x0000000000000000000000000000000000000000';
+                        //do the full checkout
+                        if (rc && input.items.length) {
+                            console.log('creating cart...');
+                            const cartId = await rc.createCart();
+                            console.log('CART ID: ', cartId);
 
-                        //add products to cart
-                        for (const item of input.items) {
-                            console.log('ADDING TO CART ', item.productId);
-                            await rc.addToCart(
-                                cartId,
-                                item.productId,
-                                item.quantity
-                            );
-                        }
+                            //handle empty payment currency
+                            if (
+                                !input.paymentCurrency ||
+                                !input.paymentCurrency?.length ||
+                                input.paymentCurrency?.replaceAll('0', '0') ===
+                                    'x'
+                            )
+                                input.paymentCurrency =
+                                    '0x0000000000000000000000000000000000000000';
 
-                        //commit cart
-                        console.log('COMMITTING CART');
-                        await rc.commitCart(cartId, input.paymentCurrency);
-
-                        //try a number of times to retrieve the checkout event
-                        const numRetries = 2;
-                        let retry = 0;
-                        while (retry < numRetries) {
-                            console.log('trying to get checkout event...');
-                            const event =
-                                await rc.getCartFinalizedEvent(cartId);
-
-                            //if event is gotten, then return output from it
-                            if (event) {
-                                //order id or order hash
-                                checkoutOutput.orderHash = bytesToHex(
-                                    event.orderHash
+                            //add products to cart
+                            for (const item of input.items) {
+                                console.log('ADDING TO CART ', item.productId);
+                                await rc.addToCart(
+                                    cartId,
+                                    item.productId,
+                                    item.quantity
                                 );
-
-                                //ttl & amount
-                                checkoutOutput.ttl = parseInt(event.ttl);
-                                checkoutOutput.amount = bytesToHex(
-                                    event.totalInCrypto
-                                );
-
-                                //currency & payee address
-                                checkoutOutput.currency = input.paymentCurrency
-                                    ? bytesToHex(event.currencyAddr)
-                                    : '0x0000000000000000000000000000000000000000';
-                                checkoutOutput.payeeAddress = bytesToHex(
-                                    event.payeeAddr
-                                );
-
-                                //this is passed into multiPay
-                                checkoutOutput.isPaymentEndpoint =
-                                    event.isPaymentEndpoint;
-
-                                //this is like a checksum
-                                checkoutOutput.paymentId = bytesToHex(
-                                    event.paymentId
-                                );
-
-                                //checkout success
-                                checkoutOutput.success = true;
-                                break;
-                            } else {
-                                console.log('event not found');
                             }
 
-                            await sleep(3);
-                            retry++;
-                        }
+                            //commit cart
+                            console.log('COMMITTING CART');
+                            await rc.commitCart(cartId, input.paymentCurrency);
 
-                        output = checkoutOutput;
-                    } else {
-                        console.log(
-                            'did not get RC, or input.items.length was 0'
-                        );
+                            //try a number of times to retrieve the checkout event
+                            const numRetries = 2;
+                            let retry = 0;
+                            while (retry < numRetries) {
+                                console.log('trying to get checkout event...');
+                                const event =
+                                    await rc.getCartFinalizedEvent(cartId);
+
+                                //if event is gotten, then return output from it
+                                if (event) {
+                                    //order id or order hash
+                                    checkoutOutput.orderHash = bytesToHex(
+                                        event.orderHash
+                                    );
+
+                                    //ttl & amount
+                                    checkoutOutput.ttl = parseInt(event.ttl);
+                                    checkoutOutput.amount = bytesToHex(
+                                        event.totalInCrypto
+                                    );
+
+                                    //currency & payee address
+                                    checkoutOutput.currency =
+                                        input.paymentCurrency
+                                            ? bytesToHex(event.currencyAddr)
+                                            : '0x0000000000000000000000000000000000000000';
+                                    checkoutOutput.payeeAddress = bytesToHex(
+                                        event.payeeAddr
+                                    );
+
+                                    //this is passed into multiPay
+                                    checkoutOutput.isPaymentEndpoint =
+                                        event.isPaymentEndpoint;
+
+                                    //this is like a checksum
+                                    checkoutOutput.paymentId = bytesToHex(
+                                        event.paymentId
+                                    );
+
+                                    //checkout success
+                                    checkoutOutput.success = true;
+                                    break;
+                                } else {
+                                    console.log('event not found');
+                                }
+
+                                await sleep(3);
+                                retry++;
+                            }
+
+                            output = checkoutOutput;
+                        } else {
+                            console.log(
+                                'did not get RC, or input.items.length was 0'
+                            );
+                        }
                     }
                 }
 

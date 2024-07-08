@@ -77,6 +77,7 @@ const Payment = ({
 
     const handleChange = (providerId: string) => {
         setError(null);
+        console.log('setting provider id', providerId);
         set(providerId);
     };
 
@@ -213,7 +214,7 @@ const Payment = ({
                                     {/* </Container> */}
                                     <Text className="text-white">
                                         {cart.payment_session.provider_id ===
-                                        cardBrand
+                                            cardBrand
                                             ? cardBrand
                                             : 'Another step will appear'}
                                     </Text>
