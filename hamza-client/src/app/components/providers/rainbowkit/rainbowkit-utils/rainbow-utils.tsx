@@ -85,7 +85,7 @@ export const SwitchNetwork = ({ enabled }: SwitchNetworkProps) => {
         useSwitchNetwork();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const voidFunction = () => {};
+    const voidFunction = () => { };
 
     const requiredChains = [11155111]; // Sepolia and Optimism Sepolia
 
@@ -105,7 +105,7 @@ export const SwitchNetwork = ({ enabled }: SwitchNetworkProps) => {
 
     if (enabled) {
         return (
-            <Modal isOpen={isOpen} onClose={() => {}}>
+            <Modal isOpen={isOpen} onClose={() => { }}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Switch Network</ModalHeader>
@@ -143,7 +143,7 @@ const connectors = connectorsForWallets([
     {
         groupName: 'Recommended',
         wallets: [
-            rainbowWallet({ projectId: PROJECT_ID, chains }),
+            //rainbowWallet({ projectId: PROJECT_ID, chains }),
             coinbaseWallet({ appName: PROJECT_ID, chains }),
             metaMaskWallet({
                 projectId: PROJECT_ID,
