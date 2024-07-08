@@ -27,16 +27,22 @@ export default function OrderCompletedTemplate({
     const isOnboarding = cookies().get('_medusa_onboarding')?.value === 'true';
 
     return (
-        <Box py={6} minH="calc(100vh - 64px)">
+        <Box
+            py={6}
+            minH="calc(100vh - 64px)"
+            mx="1rem"
+            justifyContent={'center'}
+            alignItems={'center'}
+        >
             <Flex
-                className="content-container"
                 direction="column"
-                justify="center"
-                align="center"
+                justifyContent={'center'}
+                alignItems={'center'}
                 gap={10}
                 maxW="4xl"
                 h="full"
                 w="full"
+                mx="auto"
             >
                 {isOnboarding && <OnboardingCta orderId={order.id} />}
                 <Box

@@ -76,7 +76,7 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
             {products.map((product) => (
                 <Box
                     key={product.id}
-                    borderWidth="1px"
+                    borderWidth={{ base: '0px', md: '1px' }}
                     borderRadius="lg"
                     p={6}
                     mb={8}
@@ -116,6 +116,8 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
                     </LocalizedClientLink>
                     <Button
                         my={4}
+                        backgroundColor={'black'}
+                        color="white"
                         onClick={() =>
                             router.push(
                                 `/${countryCode}/vendor/${product.store_name}`
