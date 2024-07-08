@@ -154,7 +154,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
         }
     }, [productData, variantId]);
 
-    const handleAddToCart = async () => {
+    const handleAddToCart = async (showPopup: boolean = true) => {
         if (!selectedVariant) {
             console.error('Selected variant is null or undefined.');
             return;
@@ -167,7 +167,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                 countryCode: countryCode,
                 currencyCode: 'eth',
             });
-            setCartModalOpen(true);
+
+            if (showPopup) {
+                setCartModalOpen(true);
+                setTimeout(() => { setCartModalOpen(false); }, 3000);
+            }
         } catch (error) {
             console.error('Error adding to cart:', error);
         }
@@ -184,7 +188,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
             console.log('white list config ', whitelist_config);
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                whitelist_config.whitelisted_stores.includes(data.data)
+                    whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -411,13 +415,13 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                 <Button
                     onClick={() => {
                         if (!inStock && isWhitelisted) {
-                            handleAddToCart();
+                            handleAddToCart(false);
                             router.push('/checkout?step=address');
 
                             return;
                         }
                         if (inStock) {
-                            handleAddToCart();
+                            handleAddToCart(false);
                             router.push('/checkout?step=address');
 
                             return;
@@ -472,8 +476,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                     {!inStock && isWhitelisted
                         ? 'Add to cart'
                         : inStock
-                          ? 'Add to Cart'
-                          : 'Out of Stock'}
+                            ? 'Add to Cart'
+                            : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs text-white px-4 py-2">
