@@ -36,7 +36,10 @@ const PreviewGallery = () => {
     return (
         <Flex maxWidth={'1280px'} width={'100%'} flexDirection={'column'}>
             <Grid templateColumns={gridTemplate} gap={4}>
-                <GridItem display={'flex'}>
+                <GridItem
+                    display={'flex'}
+                    backgroundColor={objectFit === 'cover' ? 'black' : 'white'}
+                >
                     <Flex
                         backgroundColor={'white'}
                         width={'100%'}
@@ -79,7 +82,11 @@ const PreviewGallery = () => {
                                 {images.length > 0 && (
                                     <Image
                                         // src="path/to/your/image2.jpg"
-                                        src={images.length > 1 ? (images[1] as any).url : (images[0] as any).url}
+                                        src={
+                                            images.length > 1
+                                                ? (images[1] as any).url
+                                                : (images[0] as any).url
+                                        }
                                         alt="Top Left Image"
                                         width="100%"
                                         height="100%"
@@ -104,7 +111,11 @@ const PreviewGallery = () => {
                                 {images.length > 0 && (
                                     <Image
                                         // src="path/to/your/image2.jpg"
-                                        src={images.length > 2 ? (images[2] as any).url : (images[0] as any).url}
+                                        src={
+                                            images.length > 2
+                                                ? (images[2] as any).url
+                                                : (images[0] as any).url
+                                        }
                                         alt="Top Right Image"
                                         width="100%"
                                         height="100%"
@@ -126,7 +137,11 @@ const PreviewGallery = () => {
                                 {images.length > 0 && (
                                     <Image
                                         // src="path/to/your/image2.jpg"
-                                        src={images.length > 3 ? (images[3] as any).url : (images[0] as any).url}
+                                        src={
+                                            images.length > 3
+                                                ? (images[3] as any).url
+                                                : (images[0] as any).url
+                                        }
                                         alt="Bottom Left Image"
                                         width="100%"
                                         height="100%"
@@ -151,7 +166,11 @@ const PreviewGallery = () => {
                                 {images.length > 0 && (
                                     <Image
                                         // src="path/to/your/image2.jpg"
-                                        src={images.length > 4 ? (images[4] as any).url : (images[0] as any).url}
+                                        src={
+                                            images.length > 4
+                                                ? (images[4] as any).url
+                                                : (images[0] as any).url
+                                        }
                                         alt="Bottom Right Image"
                                         width="100%"
                                         height="100%"
