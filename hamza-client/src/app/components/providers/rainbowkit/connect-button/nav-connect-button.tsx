@@ -3,7 +3,12 @@ import { Box, Button, Text, Flex, Image } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { formatAddress } from '@lib/util/format-address';
 import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
+import { Sora } from '@next/font/google';
 
+const sora = Sora({
+    subsets: ['latin'],
+    weight: ['400', '700'],
+});
 export const WalletConnectButton = () => {
     return (
         <ConnectButton.Custom>
@@ -26,9 +31,7 @@ export const WalletConnectButton = () => {
 
                 return (
                     <Flex
-                        width={'203px'}
                         height={'54px'}
-                        ml="1rem"
                         {...(!ready && {
                             'aria-hidden': true,
                             style: {
@@ -41,23 +44,17 @@ export const WalletConnectButton = () => {
                         {(() => {
                             if (!connected) {
                                 return (
-                                    <Flex
-                                        width={'203px'}
-                                        height={'54px'}
+                                    <Button
+                                        fontFamily={sora.style.fontFamily}
                                         borderRadius={'30px'}
-                                        justifyContent={'center'}
-                                        alignItems={'center'}
                                         backgroundColor={'primary.green.900'}
                                         onClick={openConnectModal}
+                                        ml="1rem"
+                                        height="54px"
+                                        fontSize={'20px'}
                                     >
-                                        <Text
-                                            alignSelf={'center'}
-                                            fontWeight={'600'}
-                                            fontSize={'20px'}
-                                        >
-                                            Connect Wallet
-                                        </Text>
-                                    </Flex>
+                                        Connect Wallet
+                                    </Button>
                                 );
                             }
                             if (chain && chain.unsupported) {
