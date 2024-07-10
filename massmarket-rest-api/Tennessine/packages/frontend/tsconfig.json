@@ -1,0 +1,24 @@
+{
+  "extends": ["@massmarket/tsconfig/base.json"],
+  "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "./test/*.json"],
+  "exclude": ["node_modules", "dist"],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "paths": {
+      "@/types": ["src/types/index"],
+      "@/app/*": ["src/app/*"],
+      "@/context/*": ["src/context/*"],
+      "@/reducers/*": ["src/reducers/*"],
+      "@/utils/*": ["src/utils/*"]
+    },
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "noEmit": true,
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  }
+}

@@ -1,9 +1,9 @@
 import { Customer, Order } from '@medusajs/medusa';
 import { Container } from '@medusajs/ui';
 import { formatAmount } from '@lib/util/prices';
-
 import ChevronDown from '@modules/common/icons/chevron-down';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
 
 type OverviewProps = {
     customer: Omit<Customer, 'password_hash'> | null;
@@ -12,6 +12,17 @@ type OverviewProps = {
 
 //TODO: (HIGH) need wallet_address property on customer
 const Overview = ({ customer, orders }: OverviewProps) => {
+    console.log(`Customer orders are`);
+    console.log(`Orders are ${JSON.stringify(orders?.length)}`);
+
+    const getAmount = (amount: number | null, currency_code: string) => {
+        if (amount === null || amount === undefined) {
+            return;
+        }
+
+        return formatCryptoPrice(amount, currency_code || 'ETH');
+    };
+
     return (
         <div>
             <div className="hidden small:block bg-black text-white p-8">
@@ -90,12 +101,13 @@ const Overview = ({ customer, orders }: OverviewProps) => {
                                                                 }
                                                             </span>
                                                             <span>
-                                                                {formatAmount({
-                                                                    amount: order.total,
-                                                                    region: order.region,
-                                                                    includeTaxes:
-                                                                        false,
-                                                                })}
+                                                                {getAmount(
+                                                                    order.paid_total,
+                                                                    order.currency_code
+                                                                )}{' '}
+                                                                {
+                                                                    order.currency_code
+                                                                }
                                                             </span>
                                                         </div>
                                                         <button className="flex items-center justify-between">

@@ -15,7 +15,7 @@ import { InjectedConnector } from 'wagmi/connectors/injected';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 
 const RecommendedItems = () => {
-    const [vendorName, setVendorName] = useState('Goblin Store');
+    const [vendorName, setVendorName] = useState('Legendary Light Design');
     const { openConnectModal } = useConnectModal();
     const { connector: activeConnector, isConnected } = useAccount();
     const { connect } = useConnect({
@@ -31,10 +31,12 @@ const RecommendedItems = () => {
     };
 
     // Dynamic button color change
+    //TODO: get these from database
     const VENDOR_NAMES = {
-        quality: 'Quality Store',
-        goblin: 'Goblin Store',
-        headphones: 'Headphones Store',
+        lighting: 'Legendary Light Design',
+        quality: 'Echo Rift',
+        medusa: 'Medusa Merch',
+        headphones: 'Dauntless',
     } as const;
 
     return (
@@ -180,22 +182,50 @@ const RecommendedItems = () => {
                 >
                     <Button
                         fontWeight="italic"
+                        name="Legendary Light & Design"
                         bg={
-                            VENDOR_NAMES.goblin === vendorName
+                            VENDOR_NAMES.lighting === vendorName
                                 ? 'white'
                                 : 'black'
                         }
                         color={
-                            VENDOR_NAMES.goblin === vendorName
+                            VENDOR_NAMES.lighting === vendorName
                                 ? 'black'
                                 : 'white'
                         }
                         size="lg"
-                        name={'Goblin Store'}
                         width="250px"
                         borderRadius="full"
                         onClick={() => {
-                            setVendorName('Goblin Store');
+                            setVendorName('Legendary Light Design');
+                        }}
+                    >
+                        <Image
+                            className="mr-2"
+                            src={game}
+                            alt={'Img of a game'}
+                            height={22}
+                        />
+                        Headphone Vendor
+                    </Button>
+                    <Button
+                        fontWeight="italic"
+                        bg={
+                            VENDOR_NAMES.medusa === vendorName
+                                ? 'white'
+                                : 'black'
+                        }
+                        color={
+                            VENDOR_NAMES.medusa === vendorName
+                                ? 'black'
+                                : 'white'
+                        }
+                        size="lg"
+                        name={'Medusa Merch'}
+                        width="250px"
+                        borderRadius="full"
+                        onClick={() => {
+                            setVendorName('Medusa Merch');
                         }}
                     >
                         <Image
@@ -205,7 +235,7 @@ const RecommendedItems = () => {
                             width={22}
                             height={22}
                         />
-                        Goblin Vendor
+                        medusa Vendor
                     </Button>
 
                     <Button
@@ -221,11 +251,11 @@ const RecommendedItems = () => {
                                 : 'white'
                         }
                         size="lg"
-                        name={'Quality Store'}
+                        name={'Echo Rift'}
                         width="250px"
                         borderRadius="full"
                         onClick={() => {
-                            setVendorName('Quality Store');
+                            setVendorName('Echo Rift');
                         }}
                     >
                         <Image
@@ -239,7 +269,7 @@ const RecommendedItems = () => {
                     </Button>
                     <Button
                         fontWeight="italic"
-                        name="Headphones Store"
+                        name="Dauntless"
                         bg={
                             VENDOR_NAMES.headphones === vendorName
                                 ? 'white'
@@ -254,7 +284,7 @@ const RecommendedItems = () => {
                         width="250px"
                         borderRadius="full"
                         onClick={() => {
-                            setVendorName('Headphones Store');
+                            setVendorName('Dauntless');
                         }}
                     >
                         <Image

@@ -1,0 +1,9 @@
+{
+  "name": "@massmarket/monorepo",
+  "private": true,
+  "packageManager": "pnpm@8.15.5",
+  "scripts": {
+    "format": "prettier --write .",
+    "lint": "prettier --check ."
+  }
+}

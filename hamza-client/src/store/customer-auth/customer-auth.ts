@@ -3,57 +3,55 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 type State = {
-    wallet_address: string | null;
-    token: string | null;
-    customer_id: string | null;
-    status: AuthenticationStatus;
+    authData: {
+        wallet_address: string;
+        token: string;
+        customer_id: string;
+        status: AuthenticationStatus;
+        is_verified: boolean;
+    };
+    whitelist_config: {
+        is_whitelisted: boolean;
+        whitelisted_stores: string[];
+    };
     preferred_currency_code: string | null;
-    is_verified: boolean | null;
 };
 
 type Actions = {
-    setCustomerAuthData: ({
-        wallet_address,
-        token,
-        customer_id,
-        preferred_currency_code,
-        is_verified,
-    }: {
-        wallet_address: string | null;
-        token: string | null;
-        customer_id: string;
-        preferred_currency_code: string | null;
-        is_verified: boolean | null;
-    }) => void;
-    setStatus: (status: AuthenticationStatus) => void;
-    setVerified: (status: boolean) => void;
+    setCustomerAuthData: (authData: State['authData']) => void;
+    setCustomerPreferredCurrency: (currency: string) => void;
+    setWhitelistConfig: (configData: State['whitelist_config']) => void;
 };
 
 export const useCustomerAuthStore = create<State & Actions>()(
     persist(
         (set, get) => ({
-            token: null,
-            wallet_address: null,
-            customer_id: null,
-            status: 'unauthenticated',
+            authData: {
+                customer_id: 'empty',
+                is_verified: false,
+                status: 'unauthenticated',
+                token: 'empty',
+                wallet_address: 'empty',
+            },
             preferred_currency_code: null,
-            is_verified: false,
-            setCustomerAuthData: ({
-                wallet_address,
-                token,
-                customer_id,
-                preferred_currency_code,
-                is_verified,
-            }) =>
+            whitelist_config: {
+                is_whitelisted: false,
+                whitelisted_stores: [],
+            },
+            setCustomerAuthData: (authData) => {
                 set({
-                    token,
-                    wallet_address,
-                    customer_id,
-                    preferred_currency_code,
-                    is_verified,
-                }),
-            setStatus: (status) => set({ status: status }),
-            setVerified: (status) => set({ is_verified: status }),
+                    authData: authData,
+                });
+            },
+            setCustomerPreferredCurrency: (currency) => {
+                set({ preferred_currency_code: currency });
+            },
+
+            setWhitelistConfig: (configData) => {
+                set({
+                    whitelist_config: configData,
+                });
+            },
         }),
 
         {

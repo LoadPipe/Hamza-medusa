@@ -1,5 +1,8 @@
 import { Lifetime } from 'awilix';
-import { ProductCollectionService as MedusaProductCollectionService } from '@medusajs/medusa';
+import {
+    ProductCollectionService as MedusaProductCollectionService,
+    Logger,
+} from '@medusajs/medusa';
 import {
     CreateProductCollection as MedusaCreateProductCollection,
     UpdateProductCollection as MedusaUpdateProductCollection,
@@ -19,18 +22,19 @@ type CreateProductCollection = MedusaCreateProductCollection & {
 export default class ProductCollectionService extends MedusaProductCollectionService {
     static LIFE_TIME = Lifetime.SCOPED;
     protected readonly productCollectionRepository_: typeof ProductCollectionRepository;
+    protected readonly logger: Logger;
 
     constructor(container) {
         super(container);
         this.productCollectionRepository_ =
             container.productCollectionRepository;
+        this.logger = container.logger;
     }
 
     async update(
         id: string,
         input: UpdateProductCollection
     ): Promise<ProductCollection> {
-        console.log('updating product collection', id, input);
         const result: UpdateResult =
             await this.productCollectionRepository_.update(id, input);
         return await this.productCollectionRepository_.findOne({
@@ -39,7 +43,6 @@ export default class ProductCollectionService extends MedusaProductCollectionSer
     }
 
     async create(input: CreateProductCollection): Promise<ProductCollection> {
-        console.log('creating product collection', input);
         return await this.productCollectionRepository_.save(input);
     }
 

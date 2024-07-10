@@ -1,4 +1,4 @@
-import { TransactionBaseService } from '@medusajs/medusa';
+import { Logger } from '@medusajs/medusa';
 import nodemailer from 'nodemailer';
 import ejs from 'ejs';
 import path from 'path';
@@ -35,7 +35,7 @@ class SmtpMailService {
         });
     }
 
-    public async mailSender({
+    public async sendMail({
         from,
         mailData,
         subject,
@@ -54,14 +54,18 @@ class SmtpMailService {
             ejs.renderFile(
                 path.join(__dirname, `../../views/${templateName}.ejs`),
                 { data: mailData },
-                (err, template) => {
+                (err, data) => {
                     if (err) {
-                        // printSafe(["error in rendering the template", err]);
                         console.log('error in rendering the template ', err);
                         return;
                     }
                     console.log('sending mail');
-                    this.mailInitiator({ from, to, subject, html: template });
+                    this.mailInitiator({
+                        from,
+                        to,
+                        subject,
+                        html: data,
+                    });
                     return;
                 }
             );

@@ -42,12 +42,14 @@ const ProfileName: React.FC<MyInformationProps> = ({ customer }) => {
           <Input
             label="First name"
             name="first_name"
+            style={{ backgroundColor: 'black', color: 'white' }}
             required
             defaultValue={customer.first_name}
           />
           <Input
             label="Last name"
             name="last_name"
+            style={{ backgroundColor: 'black', color: 'white' }}
             required
             defaultValue={customer.last_name}
           />

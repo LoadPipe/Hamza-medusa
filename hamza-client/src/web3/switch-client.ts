@@ -1,5 +1,5 @@
 import { BigNumberish, ethers } from 'ethers';
-import { switchAbi } from './switch-abi';
+import { switchAbi } from './abi/switch-abi';
 import { IPaymentInput, IMultiPaymentInput, ITransactionOutput } from './';
 import { getCurrencyAddress } from '../currency.config';
 

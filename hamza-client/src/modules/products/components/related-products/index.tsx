@@ -17,6 +17,8 @@ export default async function RelatedProducts({
 }: RelatedProductsProps) {
     const region = await getRegion(countryCode);
 
+    console.log(`Related Products ${JSON.stringify(product)}`);
+
     if (!region) {
         return null;
     }
@@ -67,7 +69,7 @@ export default async function RelatedProducts({
                 <span className="text-base-regular text-gray-600 mb-6 text-white">
                     Related products
                 </span>
-                <p className="text-2xl-regular text-ui-fg-base max-w-lg">
+                <p className="text-2xl-regular text-white max-w-lg">
                     You might also want to check out these products.
                 </p>
             </div>

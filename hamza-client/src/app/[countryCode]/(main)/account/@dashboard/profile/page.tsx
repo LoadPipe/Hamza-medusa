@@ -29,15 +29,19 @@ export default async function Profile() {
                 <h1 className="text-2xl-semi">Profile</h1>
                 <p className="text-base-regular">
                     View and update your profile information, including your
-                    name, email, and phone number. You can also update your
-                    billing address, or change your password.
+                    name and preferred checkout currency.
                 </p>
             </div>
             <div className="flex flex-col gap-y-8 w-full">
                 <ProfileName customer={customer} />
                 <Divider />
-                {/*<ProfileEmail customer={customer} />*/}
-                {/*<Divider />*/}
+
+                {!customer.email.includes('@evm.blockchain') && (
+                    <>
+                        <ProfileEmail customer={customer} />
+                        <Divider />
+                    </>
+                )}
                 {/*<ProfilePhone customer={customer} />*/}
                 <ProfileCurrency customer={customer} />
                 <Divider />

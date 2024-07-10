@@ -47,45 +47,38 @@ async function sendVerifyRequest(message: any, signature: any) {
 }
 
 export function RainbowWrapper({ children }: { children: React.ReactNode }) {
-    const { setCustomerAuthData, token, wallet_address, status, setStatus } =
-        useCustomerAuthStore();
+    const {
+        authData,
+        setCustomerAuthData,
+        setCustomerPreferredCurrency,
+        setWhitelistConfig,
+    } = useCustomerAuthStore();
     const router = useRouter();
     const [customer_id, setCustomerId] = useState('');
     const { loadWishlist } = useWishlistStore((state) => state);
 
     useEffect(() => {
-        if (status === 'authenticated' && customer_id) {
+        if (authData.status === 'authenticated' && customer_id) {
             loadWishlist(customer_id);
         }
-    }, [status, customer_id]); // Dependency array includes any state variables that trigger a reload
+    }, [authData.status, customer_id]); // Dependency array includes any state variables that trigger a reload
 
     useEffect(() => {
-        // getCustomer()
-        //     .then((customer) => {
-        //         setStatus(
-        //             customer?.has_account ? 'authenticated' : 'unauthenticated'
-        //         );
-        //     })
-        //     .catch(() => {
-        //         console.log('rainbow-provider: customer not found');
-        //     });
-
         getCustomer().then((customer) => {
+            console.log('CUSTOMER: ', customer);
             if (!customer) {
-                setStatus('unauthenticated');
+                console.log('setting auth to unauthenticated');
                 setCustomerAuthData({
-                    wallet_address: null,
                     customer_id: '',
-                    preferred_currency_code: null,
-                    token: null,
                     is_verified: false,
+                    status: 'unauthenticated',
+                    token: '',
+                    wallet_address: '',
                 });
+                return;
             }
         });
-
-        !wallet_address && setStatus('unauthenticated');
-        wallet_address && setStatus('authenticated');
-    }, [wallet_address]);
+    }, [authData.wallet_address]);
 
     const walletSignature = createAuthenticationAdapter({
         getNonce: async () => {
@@ -148,17 +141,27 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     setCustomerId(data.data.customer_id);
                     console.log('token response is ', tokenResponse);
                     Cookies.set('_medusa_jwt', tokenResponse);
-                    setStatus('authenticated');
+
                     setCustomerAuthData({
+                        token: tokenResponse,
                         wallet_address: message.address,
                         customer_id: data.data.customer_id,
-                        preferred_currency_code:
-                            data.data.preferred_currency.code,
-                        token: tokenResponse,
                         is_verified: data.data.is_verified,
+                        status: 'authenticated',
                     });
+                    setCustomerPreferredCurrency(
+                        data.data.preferred_currency.code
+                    );
+
+                    setWhitelistConfig(data.data.whitelist_config);
+
+                    return true;
                 } else {
-                    setStatus('unauthenticated');
+                    console.log('running verify unauthenticated');
+                    setCustomerAuthData({
+                        ...authData,
+                        status: 'unauthenticated',
+                    });
                     throw new Error(data.message);
                 }
 
@@ -170,12 +173,12 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         },
 
         signOut: async () => {
-            setStatus('unauthenticated');
             setCustomerAuthData({
-                token: null,
-                wallet_address: null,
+                ...authData,
+                status: 'unauthenticated',
+                token: '',
+                wallet_address: '',
                 customer_id: '',
-                preferred_currency_code: null,
                 is_verified: false,
             });
             await signOut();
@@ -190,7 +193,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                 <QueryClientProvider client={queryClient}>
                     <RainbowKitAuthenticationProvider
                         adapter={walletSignature}
-                        status={status}
+                        status={authData.status}
                     >
                         <RainbowKitProvider
                             theme={darkThemeConfig}

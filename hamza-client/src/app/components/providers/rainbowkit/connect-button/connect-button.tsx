@@ -1,5 +1,8 @@
 'use client';
+import { Box, Button, Text, Flex, Image } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { formatAddress } from '@lib/util/format-address';
+import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
 
 export const WalletConnectButton = () => {
     return (
@@ -19,11 +22,12 @@ export const WalletConnectButton = () => {
                     ready &&
                     account &&
                     chain &&
-                    (!authenticationStatus ||
-                        authenticationStatus === 'authenticated');
+                    authenticationStatus === 'authenticated';
 
                 return (
-                    <div
+                    <Flex
+                        width={'100%'}
+                        height={'100%'}
                         {...(!ready && {
                             'aria-hidden': true,
                             style: {
@@ -36,33 +40,30 @@ export const WalletConnectButton = () => {
                         {(() => {
                             if (!connected) {
                                 return (
-                                    <button
+                                    <Flex
+                                        width={'100%'}
+                                        justifyContent={'center'}
+                                        alignItems={'center'}
+                                        gap={'8px'}
+                                        backgroundColor={'primary.green.900'}
                                         onClick={openConnectModal}
-                                        type="button"
-                                        style={{
-                                            padding: '5px 10px',
-                                            border: '2px solid white',
-                                            backgroundColor: 'transparent',
-                                            color: 'white',
-                                            cursor: 'pointer',
-                                            borderRadius: '4px',
-                                            fontWeight: 'bold',
-                                            outline: 'none',
-                                            transition: 'all 0.3s ease',
-                                        }}
                                     >
-                                        <span
-                                            style={{
-                                                fontSize: '14px',
-                                                fontWeight: 'bold',
-                                            }}
+                                        <Flex alignSelf={'center'}>
+                                            <MdOutlineAccountBalanceWallet
+                                                size={30}
+                                            />
+                                        </Flex>
+                                        <Text
+                                            alignSelf={'center'}
+                                            fontWeight={'600'}
+                                            fontSize={'20px'}
                                         >
                                             Connect Wallet
-                                        </span>
-                                    </button>
+                                        </Text>
+                                    </Flex>
                                 );
                             }
-                            if (chain.unsupported) {
+                            if (chain && chain.unsupported) {
                                 return (
                                     <button
                                         onClick={openChainModal}
@@ -71,47 +72,60 @@ export const WalletConnectButton = () => {
                                 );
                             }
                             return (
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '8px',
-                                    }}
+                                <Flex
+                                    px="1rem"
+                                    width={'100%'}
+                                    flexDirection={'row'}
                                 >
-                                    <button
+                                    <Box
+                                        mr="0.5rem"
+                                        w="2.5rem"
+                                        h="2.5rem"
+                                        display={'flex'}
+                                        justifyContent={'center'}
+                                        borderRadius={'50%'}
+                                        alignSelf={'center'}
+                                        backgroundColor={'#2C272D'}
+                                    >
+                                        {chain.iconUrl && (
+                                            <Image
+                                                alignSelf={'center'}
+                                                alt={`${chain.name ?? 'Chain'} icon`}
+                                                src={chain.iconUrl}
+                                            />
+                                        )}
+                                    </Box>
+                                    <Flex
+                                        flex={1}
+                                        borderRadius={'0px'}
+                                        backgroundColor={'#2C272D'}
                                         onClick={openAccountModal}
-                                        type="button"
                                         style={{
-                                            background: 'none',
-                                            cursor: 'pointer',
+                                            outline: 'none',
+                                            transition: 'all 0.3s ease',
                                         }}
                                     >
-                                        <div
-                                            style={{
-                                                background:
-                                                    chain.iconBackground,
-                                                width: 20, // Adjust the size as needed
-                                                height: 20,
-                                                borderRadius: '50%', // Makes it circular
-                                                overflow: 'hidden',
-                                            }}
+                                        <Text
+                                            as="p"
+                                            alignSelf={'center'}
+                                            textStyle="h2"
+                                            color="#8C8C8C"
                                         >
-                                            {chain.iconUrl && (
-                                                <img
-                                                    alt={`${chain.name ?? 'Chain'} icon`}
-                                                    src={chain.iconUrl}
-                                                    style={{
-                                                        width: 20,
-                                                        height: 20,
-                                                    }}
-                                                />
-                                            )}
-                                        </div>
-                                    </button>
-                                </div>
+                                            {formatAddress(account.address)}
+                                        </Text>
+                                        <Text
+                                            alignSelf={'center'}
+                                            ml="auto"
+                                            fontSize={'40px'}
+                                            color="primary.green.900"
+                                        >
+                                            &#x2022;
+                                        </Text>
+                                    </Flex>
+                                </Flex>
                             );
                         })()}
-                    </div>
+                    </Flex>
                 );
             }}
         </ConnectButton.Custom>

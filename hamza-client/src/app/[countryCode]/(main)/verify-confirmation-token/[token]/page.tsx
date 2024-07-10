@@ -13,7 +13,7 @@ const VerifyEmail = () => {
     );
     const router = useRouter();
     const { token } = useParams();
-    const { setVerified } = useCustomerAuthStore();
+    const { setCustomerAuthData, authData } = useCustomerAuthStore();
 
     const confirmationTokenHandler = async () => {
         let res = await axios.get(
@@ -23,7 +23,7 @@ const VerifyEmail = () => {
         let data = res.data;
         if (data.status == true) {
             setDisplayMessage('Email verified successfully!!!');
-            setVerified(true);
+            setCustomerAuthData({ ...authData, is_verified: true });
             return;
         } else {
             setDisplayMessage(data.message);

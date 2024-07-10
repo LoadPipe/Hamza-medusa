@@ -4,6 +4,7 @@ import {
     PriceSelectionContext,
     PriceSelectionResult,
     ProductVariant,
+    Logger,
 } from '@medusajs/medusa';
 import ProductVariantRepository from '@medusajs/medusa/dist/repositories/product-variant';
 import { In } from 'typeorm';
@@ -11,20 +12,24 @@ import { In } from 'typeorm';
 type InjectedDependencies = {
     customerService: CustomerService;
     productVariantRepository: typeof ProductVariantRepository;
+    logger: Logger;
 };
 
 export default class PriceSelectionStrategy extends AbstractPriceSelectionStrategy {
     protected readonly customerService_: CustomerService;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
+    protected readonly logger: Logger;
 
     constructor({
         customerService,
         productVariantRepository,
+        logger,
     }: InjectedDependencies) {
         super(arguments[0]);
 
         this.customerService_ = customerService;
         this.productVariantRepository_ = productVariantRepository;
+        this.logger = logger;
     }
 
     async calculateVariantPrice(

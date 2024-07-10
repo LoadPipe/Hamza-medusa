@@ -1,4 +1,7 @@
-import { CustomerService as MedusaCustomerService } from '@medusajs/medusa';
+import {
+    CustomerService as MedusaCustomerService,
+    Logger,
+} from '@medusajs/medusa';
 import { CreateCustomerInput } from '@medusajs/medusa/dist/types/customers';
 import { Lifetime } from 'awilix';
 import { CustomerRepository } from '../repositories/customer';
@@ -12,16 +15,17 @@ export default class CustomerService extends MedusaCustomerService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
 
     protected customerRepository_: typeof CustomerRepository;
+    protected logger: Logger;
 
     constructor(container) {
         super(container);
         this.customerRepository_ = container.customerRepository;
+        this.logger = container.logger;
     }
 
     async create(input: CustomCustomerInput): Promise<any> {
-        console.log(
-            'CustomerService.create() method running with input;',
-            input
+        this.logger.debug(
+            `CustomerService.create() method running with input; ${input}`
         );
 
         let existingWalletAddress =
@@ -32,7 +36,7 @@ export default class CustomerService extends MedusaCustomerService {
             });
 
         if (existingWalletAddress) {
-            console.log(
+            this.logger.debug(
                 `Customer with wallet address ${input.wallet_address} already exists`
             );
             return {
@@ -42,11 +46,13 @@ export default class CustomerService extends MedusaCustomerService {
                     existingWalletAddress.customer.preferred_currency,
             };
         } else {
-            console.log(
+            this.logger.debug(
                 `Customer with wallet address ${input.wallet_address} not found`
             );
         }
-        console.log(`creating Customer with input ${JSON.stringify(input)}`);
+        this.logger.debug(
+            `creating Customer with input ${JSON.stringify(input)}`
+        );
         try {
             const _customer: any = await super.create(input);
             const _customerWalletAddress =
@@ -60,7 +66,7 @@ export default class CustomerService extends MedusaCustomerService {
                     relations: { preferred_currency: true },
                     select: { id: true },
                 });
-            console.log(
+            this.logger.debug(
                 `Extending Customer with wallet address: ${_customer.wallet_address}`
             );
             return {
@@ -70,33 +76,33 @@ export default class CustomerService extends MedusaCustomerService {
                     _customerPreferredCurrency.preferred_currency,
             };
         } catch (e) {
-            console.log(`Error creating customer: ${e}`);
+            this.logger.error(`Error creating customer: ${e}`);
         }
         // lets add a try catch for actually creating a customer?
     }
 
     async updateCurrency(customerId: string, currency: string): Promise<any> {
-        console.log('CustomerService UpdateCurrency method running');
+        this.logger.debug('CustomerService UpdateCurrency method running');
         let customer = await this.customerRepository_.findOne({
             where: { id: customerId },
             select: { id: true },
         });
         if (!customer) {
-            console.log(`Customer with id ${customerId} not found`);
+            this.logger.debug(`Customer with id ${customerId} not found`);
             return null;
         }
-        console.log(`Customer Selected ${JSON.stringify(customer)}`);
+        this.logger.debug(`Customer Selected ${JSON.stringify(customer)}`);
         try {
             let updatedCustomer = await this.customerRepository_.save({
                 ...customer,
                 preferred_currency_id: currency,
             });
-            console.log(
+            this.logger.debug(
                 `Customer with id ${currency} updated with currency ID ${currency}`
             );
             return updatedCustomer;
         } catch (e) {
-            console.log(`Error updating customer currency: ${e}`);
+            this.logger.error(`Error updating customer currency: ${e}`);
             throw e; // It might be helpful to rethrow the error for further handling by the caller.
         }
     }

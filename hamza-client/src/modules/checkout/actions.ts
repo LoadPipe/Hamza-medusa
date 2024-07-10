@@ -42,7 +42,7 @@ export async function applyDiscount(code: string) {
 
 export async function applyGiftCard(code: string) {
     const cartId = cookies().get('_medusa_cart_id')?.value;
-
+    console.log(code);
     if (!cartId) return 'No cartId cookie found';
 
     try {
@@ -111,6 +111,8 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
 
     if (!cartId) return { message: 'No cartId cookie found' };
 
+    const email = formData.get('email') as string;
+
     const data = {
         shipping_address: {
             first_name: formData.get('shipping_address.first_name'),
@@ -124,8 +126,13 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
             province: formData.get('shipping_address.province'),
             phone: formData.get('shipping_address.phone'),
         },
-        email: formData.get('email'),
     } as StorePostCartsCartReq;
+
+    if (email && email.trim() !== '') {
+        data.email = email;
+    }
+
+    console.log('Data sent', data);
 
     data.billing_address = data.shipping_address;
 
@@ -137,7 +144,7 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
     }
 
     redirect(
-        `/${formData.get('shipping_address.country_code')}/checkout?step=delivery`
+        `/${process.env.NEXT_PUBLIC_FORCE_US_COUNTRY ? 'us' : formData.get('shipping_address.country_code')}/checkout?step=delivery&cart=${cartId}`
     );
 }
 
@@ -183,8 +190,9 @@ export async function placeOrder() {
     }
 
     if (cart?.type === 'order') {
-        const countryCode =
-            cart.data.shipping_address?.country_code?.toLowerCase();
+        const countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY
+            ? 'us'
+            : cart.data.shipping_address?.country_code?.toLowerCase();
         cookies().set('_medusa_cart_id', '', { maxAge: -1 });
         redirect(`/${countryCode}/order/confirmed/${cart?.data.id}`);
     }

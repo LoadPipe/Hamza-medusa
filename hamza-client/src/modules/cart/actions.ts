@@ -8,6 +8,7 @@ import { cookies } from 'next/headers';
 import {
     addItem,
     createCart,
+    createPaymentSessions,
     getCart,
     getProductsById,
     removeItem,
@@ -43,6 +44,7 @@ export async function getOrSetCart(countryCode: string) {
         cart = await createCart({ region_id }).then((res) => res);
         cart && cookies().set('_medusa_cart_id', cart.id);
         revalidateTag('cart');
+        if (cart) await createPaymentSessions(cart?.id);
     }
 
     if (cart && cart?.region_id !== region_id) {
@@ -53,8 +55,10 @@ export async function getOrSetCart(countryCode: string) {
     return cart;
 }
 
-export async function retrieveCart() {
-    const cartId = cookies().get('_medusa_cart_id')?.value;
+export async function retrieveCart(
+    cartId: string | null | undefined = undefined
+) {
+    if (!cartId?.length) cartId = cookies().get('_medusa_cart_id')?.value;
 
     if (!cartId) {
         return null;
@@ -64,7 +68,7 @@ export async function retrieveCart() {
         const cart = await getCart(cartId).then((cart) => cart);
         return cart;
     } catch (e) {
-        console.log(e);
+        console.error(e);
         return null;
     }
 }
@@ -80,13 +84,16 @@ export async function addToCart({
     countryCode: string;
     currencyCode: string;
 }) {
+    if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY) countryCode = 'us';
     const cart = await getOrSetCart(countryCode).then((cart) => cart);
 
     if (!cart) {
+        console.log('Missing cart ID ', countryCode);
         return 'Missing cart ID';
     }
 
     if (!variantId) {
+        console.log('Missing var ID');
         return 'Missing product variant ID';
     }
 
@@ -99,6 +106,7 @@ export async function addToCart({
         });
         revalidateTag('cart');
     } catch (e) {
+        console.error(e);
         return 'Error adding item to cart';
     }
 }
@@ -164,9 +172,9 @@ export async function enrichLineItems(
     regionId: string
 ): Promise<
     | Omit<
-          ExtendedLineItem,
-          'beforeInsert' | 'beforeUpdate' | 'afterUpdateOrLoad'
-      >[]
+        ExtendedLineItem,
+        'beforeInsert' | 'beforeUpdate' | 'afterUpdateOrLoad'
+    >[]
     | undefined
 > {
     // Prepare query parameters

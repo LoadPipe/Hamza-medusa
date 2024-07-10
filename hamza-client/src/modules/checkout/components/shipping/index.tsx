@@ -4,7 +4,8 @@ import { RadioGroup } from '@headlessui/react';
 import { CheckCircleSolid } from '@medusajs/icons';
 import { Cart } from '@medusajs/medusa';
 import { PricedShippingOption } from '@medusajs/medusa/dist/types/pricing';
-import { Button, Heading, Text, clx, useToggleState } from '@medusajs/ui';
+import { Heading, Text, clx, useToggleState } from '@medusajs/ui';
+import { Button } from '@chakra-ui/react';
 import { formatAmount } from '@lib/util/prices';
 
 import Divider from '@modules/common/components/divider';
@@ -14,6 +15,9 @@ import ErrorMessage from '@modules/checkout/components/error-message';
 import { setShippingMethod } from '@modules/checkout/actions';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
+import { setPaymentMethod } from '@modules/checkout/actions';
+import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
 type ShippingProps = {
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
@@ -30,16 +34,23 @@ const Shipping: React.FC<ShippingProps> = ({
     const searchParams = useSearchParams();
     const router = useRouter();
     const pathname = usePathname();
+    const { authData, preferred_currency_code } = useCustomerAuthStore();
 
     const isOpen = searchParams.get('step') === 'delivery';
+    const cartId = isOpen ? searchParams.get('cart') : cart.id;
 
     const handleEdit = () => {
-        router.push(pathname + '?step=delivery', { scroll: false });
+        router.push(pathname + `?step=delivery&cart=${cart.id}`, {
+            scroll: false,
+        });
     };
 
     const handleSubmit = () => {
         setIsLoading(true);
-        router.push(pathname + '?step=payment', { scroll: false });
+        //router.push(pathname + '?step=payment', { scroll: false });
+        router.push(pathname + '?step=review', {
+            scroll: false,
+        });
     };
 
     const set = async (id: string) => {
@@ -50,6 +61,13 @@ const Shipping: React.FC<ShippingProps> = ({
             })
             .catch((err) => {
                 setError(err.toString());
+                setIsLoading(false);
+            });
+
+        //set payment method to crypto
+        await setPaymentMethod('crypto')
+            .catch((err) => setError(err.toString()))
+            .finally(() => {
                 setIsLoading(false);
             });
     };
@@ -102,7 +120,7 @@ const Shipping: React.FC<ShippingProps> = ({
                             value={
                                 cart.shipping_methods?.length
                                     ? cart.shipping_methods[0]
-                                          ?.shipping_option_id
+                                        ?.shipping_option_id
                                     : ''
                             }
                             onChange={(value: string) => handleChange(value)}
@@ -114,18 +132,19 @@ const Shipping: React.FC<ShippingProps> = ({
                                             key={option.id}
                                             value={option.id}
                                             className={clx(
-                                                'flex items-center justify-between text-small-regular cursor-pointer py-4 border rounded-rounded px-8 mb-2 hover:shadow-borders-interactive-with-active',
+                                                'flex items-center justify-between text-white text-regular cursor-pointer py-4 border rounded-rounded px-8 mb-2 hover:shadow-borders-interactive-with-active',
                                                 {
                                                     'border-ui-border-interactive':
                                                         option.id ===
                                                         (cart.shipping_methods
                                                             ?.length
                                                             ? cart
-                                                                  .shipping_methods[0]
-                                                                  ?.shipping_option_id
+                                                                .shipping_methods[0]
+                                                                ?.shipping_option_id
                                                             : ''),
                                                 }
                                             )}
+                                            style={{ color: 'white' }} // Inline style for testing
                                         >
                                             <div className="flex items-center gap-x-4">
                                                 <Radio
@@ -134,8 +153,8 @@ const Shipping: React.FC<ShippingProps> = ({
                                                         (cart.shipping_methods
                                                             ?.length
                                                             ? cart
-                                                                  .shipping_methods[0]
-                                                                  ?.shipping_option_id
+                                                                .shipping_methods[0]
+                                                                ?.shipping_option_id
                                                             : '')
                                                     }
                                                 />
@@ -143,12 +162,18 @@ const Shipping: React.FC<ShippingProps> = ({
                                                     {option.name}
                                                 </span>
                                             </div>
-                                            <span className="justify-self-end text-ui-fg-base">
-                                                {formatAmount({
-                                                    amount: option.amount!,
-                                                    region: cart?.region,
-                                                    includeTaxes: false,
-                                                })}
+                                            <span className="justify-self-end text-white">
+                                                {option.name ===
+                                                    'FakeEx Standard'
+                                                    ? preferred_currency_code ===
+                                                        'eth'
+                                                        ? '0.00001 '
+                                                        : '1.20'
+                                                    : preferred_currency_code ===
+                                                        'eth'
+                                                        ? '0.000025 '
+                                                        : '3.25'}{' '}
+                                                {preferred_currency_code?.toUpperCase()}
                                             </span>
                                         </RadioGroup.Option>
                                     );
@@ -164,9 +189,15 @@ const Shipping: React.FC<ShippingProps> = ({
                     <ErrorMessage error={error} />
 
                     <Button
-                        size="large"
-                        className="mt-6"
+                        height={'52px'}
+                        backgroundColor={'primary.indigo.900'}
+                        color={'white'}
+                        className="mt-6 text-white py-3 px-6  text-base"
                         onClick={handleSubmit}
+                        _hover={{
+                            backgroundColor: 'white',
+                            color: 'black',
+                        }}
                         isLoading={isLoading}
                         disabled={
                             !cart.shipping_methods?.length ||
@@ -184,22 +215,21 @@ const Shipping: React.FC<ShippingProps> = ({
                                 <Text className="txt-medium-plus text-ui-fg-base mb-1">
                                     Method
                                 </Text>
-                                <Text className="txt-medium text-ui-fg-subtle">
+                                <Text className="txt-medium text-white">
                                     {cart.shipping_methods?.length
                                         ? cart.shipping_methods[0]
-                                              .shipping_option.name
+                                            .shipping_option.name
                                         : ' '}{' '}
                                     (
-                                    {formatAmount({
-                                        amount: cart.shipping_methods?.length
-                                            ? cart.shipping_methods[0].price
-                                            : 0,
-                                        region: cart.region,
-                                        includeTaxes: false,
-                                    })
-                                        .replace(/,/g, '')
-                                        .replace(/\./g, ',')}
-                                    )
+                                    {cart.shipping_methods[0].shipping_option
+                                        .name === 'FakeEx Standard'
+                                        ? preferred_currency_code === 'eth'
+                                            ? '0.00001 '
+                                            : '1.20'
+                                        : preferred_currency_code === 'eth'
+                                            ? '0.000025 '
+                                            : '3.25'}{' '}
+                                    {preferred_currency_code?.toUpperCase()})
                                 </Text>
                             </div>
                         )}

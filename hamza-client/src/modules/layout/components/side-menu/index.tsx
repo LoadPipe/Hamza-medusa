@@ -9,26 +9,27 @@ import { Fragment, useEffect } from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import CountrySelect from '../country-select';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { MdOutlineMenu } from 'react-icons/md';
 
 const SideMenuItems: any = {
     Home: '/',
     Store: '/store',
     Search: '/search',
-    //Account: "/account",
     Cart: '/cart',
 };
 
 const SideMenu = ({ regions }: { regions: Region[] | null }) => {
     const toggleState = useToggleState();
-    const { status, is_verified } = useCustomerAuthStore();
+    const { authData, setCustomerAuthData } = useCustomerAuthStore();
     useEffect(() => {
-        status == 'authenticated' &&
-            is_verified == false &&
+        authData.status == 'authenticated' &&
+            authData.is_verified == false &&
             (SideMenuItems['Verify Account'] = '/verify-email');
-        status == 'authenticated' &&
-            is_verified == true &&
-            (SideMenuItems['Account'] = '/account');
-    }, [status]);
+        authData.status == 'authenticated' &&
+            (authData.is_verified == true
+                ? (SideMenuItems['Account'] = '/account')
+                : (SideMenuItems['Account'] = '/account/profile'));
+    }, [authData.status]);
 
     return (
         <div className="h-full">
@@ -38,7 +39,7 @@ const SideMenu = ({ regions }: { regions: Region[] | null }) => {
                         <>
                             <div className="relative flex h-full">
                                 <Popover.Button className="relative h-full flex items-center transition-all ease-out duration-200 focus:outline-none hover:text-ui-fg-base">
-                                    Menu
+                                    <MdOutlineMenu color="white" size="2rem" />
                                 </Popover.Button>
                             </div>
 
@@ -68,7 +69,9 @@ const SideMenu = ({ regions }: { regions: Region[] | null }) => {
                                                     return (
                                                         <li key={name}>
                                                             <LocalizedClientLink
-                                                                href={href}
+                                                                href={
+                                                                    href as string
+                                                                }
                                                                 className="text-3xl leading-10 hover:text-ui-fg-disabled"
                                                                 onClick={close}
                                                             >

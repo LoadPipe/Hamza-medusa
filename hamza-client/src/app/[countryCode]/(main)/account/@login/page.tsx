@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function Login() {
-    return <div>Use connect wallet to sign in.</div>;
+    return <div>Connect your wallet to sign in.</div>;
 }

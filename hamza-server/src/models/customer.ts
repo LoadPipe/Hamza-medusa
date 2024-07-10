@@ -12,6 +12,7 @@ import {
     Customer as MedusaCustomer,
 } from '@medusajs/medusa';
 import { CustomerWalletAddress } from './customer-wallet-address';
+import { CustomerNotification } from './customer-notification';
 
 @Entity()
 export class Customer extends MedusaCustomer {
@@ -33,6 +34,12 @@ export class Customer extends MedusaCustomer {
         (walletAddress) => walletAddress.customer
     )
     walletAddresses: CustomerWalletAddress[];
+
+    @OneToMany(
+        () => CustomerNotification,
+        (notification) => notification.customer
+    )
+    notifications: CustomerNotification[];
 
     @BeforeInsert()
     private assignRandomCurrency(): void {

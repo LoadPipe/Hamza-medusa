@@ -1,4 +1,5 @@
 import { TransactionBaseService } from '@medusajs/medusa/dist/interfaces';
+import { Customer, CustomerService, Logger } from '@medusajs/medusa';
 import { MedusaError } from 'medusa-core-utils';
 import { Lifetime } from 'awilix';
 import { WishlistItem } from '../models/wishlist-item';
@@ -6,9 +7,13 @@ import { Wishlist } from '../models/wishlist';
 
 class WishlistService extends TransactionBaseService {
     static LIFE_TIME = Lifetime.SCOPED;
+    protected readonly logger: Logger;
+    protected readonly customerService: CustomerService;
 
     constructor(container) {
         super(container);
+        this.logger = container.logger;
+        this.customerService = container.customerService;
     }
 
     async create(customer_id) {
@@ -32,7 +37,7 @@ class WishlistService extends TransactionBaseService {
 
             if (existingWishlist) {
                 // Wishlist already exists, return it
-                console.log('Wishlist already exists for this customer');
+                this.logger.debug('Wishlist already exists for this customer');
                 return existingWishlist;
             }
 
@@ -40,16 +45,22 @@ class WishlistService extends TransactionBaseService {
                 customer_id,
             };
 
-            const createdWishlist = wishlistRepository.create(payload);
-            const savedWishList =
-                await wishlistRepository.save(createdWishlist);
+            //check for existing customer
+            if (await this.customerExists(customer_id)) {
 
-            const [wishlist] = await wishlistRepository.find({
-                where: { id: savedWishList.id },
-                relations: ['items', 'items.product'],
-            });
+                const createdWishlist = wishlistRepository.create(payload);
+                const savedWishList =
+                    await wishlistRepository.save(createdWishlist);
 
-            return wishlist;
+                const [wishlist] = await wishlistRepository.find({
+                    where: { id: savedWishList.id },
+                    relations: ['items', 'items.product'],
+                });
+
+                return wishlist;
+            }
+
+            return null;
         });
     }
 
@@ -151,6 +162,16 @@ class WishlistService extends TransactionBaseService {
 
             return updatedWishlist;
         });
+    }
+
+    private async customerExists(customerId: string): Promise<boolean> {
+        try {
+            const customer = await this.customerService.retrieve(customerId);
+            return customer ? true : false;
+        }
+        catch (e: any) {
+            return false;
+        }
     }
 }
 

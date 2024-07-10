@@ -17,14 +17,14 @@ const StoreTemplate = ({
 }) => {
     const pageNumber = page ? parseInt(page, 10) : 1;
 
+    /*If RefinementList component is still necessary for other filters, keep it. Otherwise, consider removing or adjusting it as well.
+             Since we're not using sortBy, we might not need to pass it to RefinementList */
     return (
-        <div className="flex flex-col small:flex-row small:items-start py-6 content-container !bg-[var(--chakra-colors-black)]">
-            {/* If RefinementList component is still necessary for other filters, keep it. Otherwise, consider removing or adjusting it as well. */}
-            {/* Since we're not using sortBy, we might not need to pass it to RefinementList */}
+        <div className="flex flex-col w-full small:flex-row small:items-start py-6 content-container bg-[var(--chakra-colors-black)]">
             {/*<RefinementList />*/}
             <div className="w-full">
                 <div className="mb-8 text-2xl-semi">
-                    <h1 className="!text-white">All products</h1>
+                    <h1 className="text-white">All products</h1>
                 </div>
                 <Suspense fallback={<SkeletonProductGrid />}>
                     <PaginatedProducts

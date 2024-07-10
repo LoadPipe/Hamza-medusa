@@ -1,0 +1,492 @@
+{
+  "signatures": {
+    "signer_address": "0x27B369BDD9b49C322D13e7E91d83cFD47d465713"
+  },
+  "events": [
+    {
+      "type": "ShopManifest",
+      "object": {
+        "event_id": "3fc32f16f1d1333a8252ed96983a629a230f3cc2dd7877dcf849251312ce0d63",
+        "shop_token_id": "4ac80fed51567875a1661ec3003c2bed195354faaceffa83c72fc3101d068135",
+        "published_tag_id": "8c134154502986733b09608617096dce7d7f84af8c2f55951540e09e4d8b6162",
+        "domain": "https://masslbs.xyz"
+      },
+      "signature": "6c8dc5a16a491c5890e31b9d7ec3cd541b8c53c559818d7d181d9f90da1b18aa7eee58d15cdb7fe1251702ea5b1c4b848947b2eb7c5450b8693a5f238f0181eb1c",
+      "hash": "08a18ef005413f6a4715163ede4e6438af0ff70cd6c187f7372409edbf4239d4",
+      "encoded": "127b0a203fc32f16f1d1333a8252ed96983a629a230f3cc2dd7877dcf849251312ce0d6312204ac80fed51567875a1661ec3003c2bed195354faaceffa83c72fc3101d0681351a208c134154502986733b09608617096dce7d7f84af8c2f55951540e09e4d8b61623a1368747470733a2f2f6d6173736c62732e78797a"
+    },
+    {
+      "type": "NewKeyCard",
+      "object": {
+        "event_id": "b16003df1615ceb85c76f78bb0ca91a297e4a58bb33adc7de2c899e5753da0ba",
+        "user_wallet_addr": "1157dc27420280a03340e7ee5b9879e9b2bc4efe",
+        "card_public_key": "248b2fb379d102f621c26459ca886a6a20b19193a63c9146390aad0ccaba5f5fb9ac2b24330fd1296750f6ce5bfd8ea083eb78c9e358a4515ecb375e6a21e70f"
+      },
+      "signature": "476a2e4bc7682f57793c87664e4cca9b531ad4ba3464c0de5ed6c16001abf3856061c5a6605160530aa20d0bfe42ad662cb02bfd7e9324df36cc319baddae0c61b",
+      "hash": "dacba9568ca322b2a5cb37c0569913a12ed4fb31fd42c0d62270c431bcf777f6",
+      "encoded": "6a7a0a20b16003df1615ceb85c76f78bb0ca91a297e4a58bb33adc7de2c899e5753da0ba12141157dc27420280a03340e7ee5b9879e9b2bc4efe1a40248b2fb379d102f621c26459ca886a6a20b19193a63c9146390aad0ccaba5f5fb9ac2b24330fd1296750f6ce5bfd8ea083eb78c9e358a4515ecb375e6a21e70f"
+    },
+    {
+      "type": "NewKeyCard",
+      "object": {
+        "event_id": "053d653f1bf820cdcbb14a43d0aa0bca18b781f974977806261ea68eff672c53",
+        "user_wallet_addr": "eb66fdf86989e10034b78805962c9234f8c76e7e",
+        "card_public_key": "a8c465f75de1c0f16aaa05a0ca6766b5f98fbd5eebcfa8e025f1e0cfefaa87fbc0162c42befb1810ae15e5f5c07290c64b133a0f2d6b9f7a983a8ea2d94e051b"
+      },
+      "signature": "2c3fda0baee5c3682eaa78dbdf053e9bc34695d01297601cae849a7366a8fbec7444d71b53862d7a8140739582c9920fe817d9cb50e767a4908d82eb911b0d8e1c",
+      "hash": "ac41163024b9e5ccb5ac0ba87d06b168d8e3bafba53852bbbd3bebc20ca467b4",
+      "encoded": "6a7a0a20053d653f1bf820cdcbb14a43d0aa0bca18b781f974977806261ea68eff672c531214eb66fdf86989e10034b78805962c9234f8c76e7e1a40a8c465f75de1c0f16aaa05a0ca6766b5f98fbd5eebcfa8e025f1e0cfefaa87fbc0162c42befb1810ae15e5f5c07290c64b133a0f2d6b9f7a983a8ea2d94e051b"
+    },
+    {
+      "type": "UpdateShopManifest",
+      "object": {
+        "event_id": "0420da896b910e27207b4312bef40529d86df6fed6ab8ca7a5ed6f7a44face82",
+        "domain": "https://shop.mass.market"
+      },
+      "signature": "e30b8b376181c71eef843db8d2b74ca5b7711b4984385f841ac2b0534ee91fb4448106056d9ceec32119e3f14f7c34c484d398d08fc0b91658a59e5cc4bf41be1c",
+      "hash": "a349449db097d2bf27b441325b1d62e24a7fab92f13f0e3589fa95cbfaa32c1d",
+      "encoded": "1a3c0a200420da896b910e27207b4312bef40529d86df6fed6ab8ca7a5ed6f7a44face822a1868747470733a2f2f73686f702e6d6173732e6d61726b6574"
+    },
+    {
+      "type": "CreateTag",
+      "object": {
+        "event_id": "3127d54db09354057cdad21c30d0206463dcda8cc87d2bb7c6dbffa7ebf15637",
+        "name": "Tag1"
+      },
+      "signature": "7ae9530da661718fe74b0e42b20047dd068f69a1826b75e0a62de14c061bfef30745a2ed5e6e869b650da99b0b8fdc3c1aebb524ee2c49bc812d7849fe25d1dd1b",
+      "hash": "c3d0baa510d652b43fd5a081069839c06bf4dca4322cfe01c6f5c061efc350fd",
+      "encoded": "32280a203127d54db09354057cdad21c30d0206463dcda8cc87d2bb7c6dbffa7ebf15637120454616731"
+    },
+    {
+      "type": "UpdateShopManifest",
+      "object": {
+        "event_id": "397a3d4257663059fa31eceb6b15f0ecbc40ddc84183f8ad553fb4f9ef402088",
+        "published_tag_id": "3127d54db09354057cdad21c30d0206463dcda8cc87d2bb7c6dbffa7ebf15637"
+      },
+      "signature": "149b31e20908802e75c66a72e1d85473daf029f9ccba3510bccd919a453352ed4fdd67cb1d19f61561ce7abe69c720659692ebbbe109dc79a3fa6beea9d1efcd1b",
+      "hash": "c6c124a1339fa63c7f4232145cc3b24a140bfcb67bdb04d74dbe15adae08420c",
+      "encoded": "1a440a20397a3d4257663059fa31eceb6b15f0ecbc40ddc84183f8ad553fb4f9ef40208832203127d54db09354057cdad21c30d0206463dcda8cc87d2bb7c6dbffa7ebf15637"
+    },
+    {
+      "type": "UpdateShopManifest",
+      "object": {
+        "event_id": "6efc7e8d499f3e7ed288328c66848ac254db5f55561bcc74eab3f3d0cd670e3d",
+        "name": "little shop of horrors",
+        "description": "Seymour and Audrey are going digital!"
+      },
+      "signature": "094001cf2e98455cd1449a28a9b122a5141d4686805f48d693b823aa051a78865574d523030a8cd3a1501ab49dd87f4c206906ffe4f41354dc3f89dd8bc9be421b",
+      "hash": "ae364da85a70dea61ac7ebbba0f71d66ebcd139c08220a8e12a75ce6364b72f8",
+      "encoded": "1a610a206efc7e8d499f3e7ed288328c66848ac254db5f55561bcc74eab3f3d0cd670e3d12166c6974746c652073686f70206f6620686f72726f72731a255365796d6f757220616e64204175647265792061726520676f696e67206469676974616c21"
+    },
+    {
+      "type": "UpdateShopManifest",
+      "object": {
+        "event_id": "04750c7e416038c7f662e1ec7b385da0a467df0793c2c4f1b559362818890f44",
+        "profile_picture_url": "https://s3.amazonaws.com/nightjarprod/content/uploads/sites/34/2019/04/28111813/bxRm8F7rnCsVDyrNh3K9yIFFBKL.jpg"
+      },
+      "signature": "c0175749bb485b529d779f1545dad74f8d54f23ce99696be4b8548df87a8270b5b67674d445b661e5b0042d93af51db7ffe249546bba5cfc81f8ee3330d7d6e31c",
+      "hash": "c7f94efd05517889dede725df7e592060af260f6d892ca5828241196280cc57a",
+      "encoded": "1a93010a2004750c7e416038c7f662e1ec7b385da0a467df0793c2c4f1b559362818890f44226f68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6e696768746a617270726f642f636f6e74656e742f75706c6f6164732f73697465732f33342f323031392f30342f32383131313831332f6278526d384637726e4373564479724e68334b3979494646424b4c2e6a7067"
+    },
+    {
+      "type": "UpdateShopManifest",
+      "object": {
+        "event_id": "d69a82112a6e6980a7ff64a9c5bb7ccbe224b9668846f01e19a4429099ce5c06",
+        "add_accepted_currency": {
+          "chain_id": 1,
+          "token_addr": "0000000000000000000000000000000000000000"
+        }
+      },
+      "signature": "8cea34b8edec684abc395d34af742d43d5cdc1ceebe3932495f177c958e53d446491ecef526fcffa4525395f8c75a09a092f2a7c632c6b22b8b766cfd2ead82a1b",
+      "hash": "dfacf199ce741a4ecda1a7958ed01e630941a18b1cd0908e4c20e9bb81ca4f09",
+      "encoded": "1a3c0a20d69a82112a6e6980a7ff64a9c5bb7ccbe224b9668846f01e19a4429099ce5c064a18080112140000000000000000000000000000000000000000"
+    },
+    {
+      "type": "UpdateShopManifest",
+      "object": {
+        "event_id": "5b1a2a8b1f298a0c463f86652daf13179fd253f5b2db31fd089ce3b90a5a89d3",
+        "add_accepted_currency": {
+          "chain_id": 1,
+          "token_addr": "8793c96dcc8a27868b7cb2f6144f2706e6a9b6f6"
+        }
+      },
+      "signature": "0a0cd0e357610ade72f796f09f831afb445aeb2ed29b992afafc0cd2587e10e30c6b26f80d8abebb611d2acedcc404e5630dfaf5664970dc6d2c9e271509dd001b",
+      "hash": "d7178faeecf7a20ea7e7303c63829c88f38ae2cb890f7c179983f87ee4402a7a",
+      "encoded": "1a3c0a205b1a2a8b1f298a0c463f86652daf13179fd253f5b2db31fd089ce3b90a5a89d34a18080112148793c96dcc8a27868b7cb2f6144f2706e6a9b6f6"
+    },
+    {
+      "type": "UpdateShopManifest",
+      "object": {
+        "event_id": "16c9db3eca58a4e921c0c27ac7be661b475a95e743e5db0a05a50f7a7cd9364f",
+        "add_accepted_currency": {
+          "chain_id": 23,
+          "token_addr": "f23a62a45ca55cfd6f0b28368424d0bef17e6124"
+        }
+      },
+      "signature": "f2d6cb112a742145666378fa50125e8dd2c65c84e6cd60f3b348b0b5e35cab6727c3e02793d244a1a2c2511a7fa57a5baabaa8ba1f562a8c72df8603348184be1c",
+      "hash": "44a515e06a50e54b3b64833773df094a72a49fa9a1034ebf1c15283716bc51ec",
+      "encoded": "1a3c0a2016c9db3eca58a4e921c0c27ac7be661b475a95e743e5db0a05a50f7a7cd9364f4a1808171214f23a62a45ca55cfd6f0b28368424d0bef17e6124"
+    },
+    {
+      "type": "UpdateShopManifest",
+      "object": {
+        "event_id": "73eb17812867a696548be45e2ab8655eac02000d25ca216349f6d69e222bc10d",
+        "remove_accepted_currency": {
+          "chain_id": 1,
+          "token_addr": "8793c96dcc8a27868b7cb2f6144f2706e6a9b6f6"
+        }
+      },
+      "signature": "32a6c46c130aba008346935c45adf56fbf1a1675e93ecbf771511f84aa2b325e78c5acba24bc1b7fc741cb2d3f862b415347010175e23ae845d9c19df8e278891b",
+      "hash": "c9bb836d12a42126b4bd544a29c8c3e959788f11d54c4014a5f9cc5d9916c8b9",
+      "encoded": "1a3c0a2073eb17812867a696548be45e2ab8655eac02000d25ca216349f6d69e222bc10d5218080112148793c96dcc8a27868b7cb2f6144f2706e6a9b6f6"
+    },
+    {
+      "type": "CreateItem",
+      "object": {
+        "event_id": "17296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e",
+        "price": "42.00",
+        "metadata": "7b227469746c65223a2262657374207363686f6573222c2022696d616765223a2268747470733a2f2f6d6173736c62732e78797a2f7363686f65732e6a7067227d"
+      },
+      "signature": "01530eeaed8e17f96eecb91762bf04e00919ad713534bc46523bab389b6a0d0554d47b63734f99c8f364616ecbe4017052726d08a984693fdda4ba7a3b7245961b",
+      "hash": "73c1b7d05fb5deb08f4d0803f0ce6a73572af72338f1c5483fb0663fd4c02a02",
+      "encoded": "226c0a2017296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e120534322e30301a417b227469746c65223a2262657374207363686f6573222c2022696d616765223a2268747470733a2f2f6d6173736c62732e78797a2f7363686f65732e6a7067227d"
+    },
+    {
+      "type": "UpdateTag",
+      "object": {
+        "event_id": "fdb382dd2c60a5638b3c9a27ff38aedbd66600a7ab38cc2f1dec2197b6c9900a",
+        "tag_id": "3127d54db09354057cdad21c30d0206463dcda8cc87d2bb7c6dbffa7ebf15637",
+        "add_item_id": "17296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e"
+      },
+      "signature": "c3657dbc7868da4062396894119630358a69fd3bb71911836bcaf06efb90a2b250c2fc43f5cd06fb592b4e99c8fe8190f62fa348c6948cf8deed76d51494b8d51c",
+      "hash": "7a4fd38d5bd24ad91c00e337b0dbeed4eda7f2fa3b1db797ca2f028272b3261d",
+      "encoded": "3a660a20fdb382dd2c60a5638b3c9a27ff38aedbd66600a7ab38cc2f1dec2197b6c9900a12203127d54db09354057cdad21c30d0206463dcda8cc87d2bb7c6dbffa7ebf156371a2017296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e"
+    },
+    {
+      "type": "UpdateItem",
+      "object": {
+        "event_id": "30a764ec54fb320d040004912902f431384f3028466894aa92f81dbefaa26b9e",
+        "item_id": "17296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e",
+        "price": "23.00"
+      },
+      "signature": "7704cdd692ce6a4f62a3b429332d0a40ae124cb99808c342b18434a842d758f277560ff349c157b64061dffe8cece9267e2a3c2883afc16f60ece7a824583bc41b",
+      "hash": "9880171fa722a7694ef59c99c426eb4f74c2b46bbe4cebeb761784dd233435c1",
+      "encoded": "2a4b0a2030a764ec54fb320d040004912902f431384f3028466894aa92f81dbefaa26b9e122017296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e1a0532332e3030"
+    },
+    {
+      "type": "CreateItem",
+      "object": {
+        "event_id": "02ebeb86c50c41c17f99cf2850498b372fc0c9776787f6a5820e4089c47632b7",
+        "price": "13.12",
+        "metadata": "7b227469746c65223a226e6f7420796574207075626c6973686564222c2022696d616765223a2268747470733a2f2f6d6173736c62732e78797a2f7363686f65732e6a7067227d"
+      },
+      "signature": "4fdfde977d8cbbb56429daf7a30b07d570e3b272586b17f7346c9ebc72776db762e761d73513e260a80ef8a344081e191a7a46e29a77cae9cd705bc71de9a3b01c",
+      "hash": "527e6c26144b9d51117571287d5187166b8f207d85ada61646866df2cf3a91be",
+      "encoded": "22720a2002ebeb86c50c41c17f99cf2850498b372fc0c9776787f6a5820e4089c47632b7120531332e31321a477b227469746c65223a226e6f7420796574207075626c6973686564222c2022696d616765223a2268747470733a2f2f6d6173736c62732e78797a2f7363686f65732e6a7067227d"
+    },
+    {
+      "type": "UpdateTag",
+      "object": {
+        "event_id": "2dc2479de7e92ef9dd4deff6df3e0a7a87982a9ebd1974c5a429ff3df4bce0d9",
+        "tag_id": "3127d54db09354057cdad21c30d0206463dcda8cc87d2bb7c6dbffa7ebf15637",
+        "add_item_id": "02ebeb86c50c41c17f99cf2850498b372fc0c9776787f6a5820e4089c47632b7"
+      },
+      "signature": "8766180155c4400e367b8c31281383384d1a30adda1527ea609869efd34ef2c76cbe755456a234af597fd18d3dfb85c5b5d159e88c1a60d022f74ea28fb7cd801b",
+      "hash": "2edfad1751ab1e78cdda19dd2a0eccff5e364433426ee7bb6958a458862573be",
+      "encoded": "3a660a202dc2479de7e92ef9dd4deff6df3e0a7a87982a9ebd1974c5a429ff3df4bce0d912203127d54db09354057cdad21c30d0206463dcda8cc87d2bb7c6dbffa7ebf156371a2002ebeb86c50c41c17f99cf2850498b372fc0c9776787f6a5820e4089c47632b7"
+    },
+    {
+      "type": "UpdateTag",
+      "object": {
+        "event_id": "d58b4737d48d68f4361b8e94ab4dac0fbb5d247d7e9309ac0104780043c191c1",
+        "tag_id": "3127d54db09354057cdad21c30d0206463dcda8cc87d2bb7c6dbffa7ebf15637",
+        "remove_item_id": "02ebeb86c50c41c17f99cf2850498b372fc0c9776787f6a5820e4089c47632b7"
+      },
+      "signature": "4cbdb477c2cbc44f64d7eeec636d31e872a989c5fb10c8114a514a278813c3147c4b210455ad11739b7e2ef399a6db644bb9f4167ac69557bf7a763684fb360c1c",
+      "hash": "e902bbf8e52a66354d3acf440a548013550e18b03b260bfcb1d49b3576511042",
+      "encoded": "3a660a20d58b4737d48d68f4361b8e94ab4dac0fbb5d247d7e9309ac0104780043c191c112203127d54db09354057cdad21c30d0206463dcda8cc87d2bb7c6dbffa7ebf15637222002ebeb86c50c41c17f99cf2850498b372fc0c9776787f6a5820e4089c47632b7"
+    },
+    {
+      "type": "ChangeStock",
+      "object": {
+        "event_id": "01d8648edbd8f0bf7dc95b5aae251081a56c8c4bab0209a9927042616f5aded9",
+        "item_ids": [
+          "17296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e",
+          "02ebeb86c50c41c17f99cf2850498b372fc0c9776787f6a5820e4089c47632b7"
+        ],
+        "diffs": [
+          100,
+          123
+        ]
+      },
+      "signature": "f19b652f3968fae7f7e06a1b257c0d2fcf197e226fd100bbc5fd8de755ae99f360d7726ef246a25cb8612b255ca69510f1cfe1eb009812636c023b117221d3eb1c",
+      "hash": "58fc70fd0342647be15e7b9912e43190fd7acd0a9465b7c3eeaf1d37a10cbdfd",
+      "encoded": "626c0a2001d8648edbd8f0bf7dc95b5aae251081a56c8c4bab0209a9927042616f5aded9122017296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e122002ebeb86c50c41c17f99cf2850498b372fc0c9776787f6a5820e4089c47632b71a04c801f601"
+    },
+    {
+      "type": "CreateOrder",
+      "object": {
+        "event_id": "2eced9fc53ea235a241513715ed348114baad5681f64e4a911ca531300f69628"
+      },
+      "signature": "562834036d8d009c55d22783e4ecdec51678b6c52ac2b49b60d3bfd3195879f82b3f5f8a36078b3fbcf26e8ab4b7c2ce572f8fa5badd0b3c0a6685c3cacbc3ca1c",
+      "hash": "666f20a3349d5508376f394452dd1914c9f4709c10a6b30a071561c2d9cae99f",
+      "encoded": "42220a202eced9fc53ea235a241513715ed348114baad5681f64e4a911ca531300f69628"
+    },
+    {
+      "type": "UpdateOrder",
+      "object": {
+        "event_id": "5e09ced3af6601905578298a36c3175e595554b576e4282a682bdb644420e55c",
+        "order_id": "2eced9fc53ea235a241513715ed348114baad5681f64e4a911ca531300f69628",
+        "change_items": {
+          "item_id": "17296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e",
+          "quantity": 23
+        }
+      },
+      "signature": "08515cdefad25a98c8892bda495ed24d4228c05690127d7cb49fd3cfade27b142e641a4e58eda9183183907c9c1ef1722507502ae85952d42d84daf5427c45501b",
+      "hash": "ac8065d27d81774e3fb42ca3d1bd709f3b285753dffb91820315fedea5c4cc56",
+      "encoded": "4a6a0a205e09ced3af6601905578298a36c3175e595554b576e4282a682bdb644420e55c12202eced9fc53ea235a241513715ed348114baad5681f64e4a911ca531300f696281a240a2017296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e102e"
+    },
+    {
+      "type": "CreateOrder",
+      "object": {
+        "event_id": "c5d28af211a85f5e00ba006101b6de90f442f9aa3b03daad030415b7fdddd13e"
+      },
+      "signature": "99696bb34d88db2e76542d8a626fa4367969088156152c57896fc0d7c10acd4d49dc3b531ff2915deca9d6b0bffd8bce8df2f34d2954331e84add312bfe52b5e1c",
+      "hash": "9ae85fd19034a4add8f4ff18170a78fdc7593c8644c0e631e18eb862223074fa",
+      "encoded": "42220a20c5d28af211a85f5e00ba006101b6de90f442f9aa3b03daad030415b7fdddd13e"
+    },
+    {
+      "type": "UpdateOrder",
+      "object": {
+        "event_id": "ecca69ea526c85e16e63e5c6f6d48a9b59fc646c2ff0d1006fce29995c4a0329",
+        "order_id": "c5d28af211a85f5e00ba006101b6de90f442f9aa3b03daad030415b7fdddd13e",
+        "change_items": {
+          "item_id": "17296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e",
+          "quantity": 42
+        }
+      },
+      "signature": "fb3a637334cd34c98b2f9a413b68d0063d7bcb0e6b6b8cbe14c834d4c1bd151d243cc088c6a1261f2a5d37213b5ef055a74499030f3126efc077c808ecc7022c1c",
+      "hash": "ed34165fc264bca834dcc17b0e8267edb2978ec7cf3a8b41dbef23f3a38fe1d2",
+      "encoded": "4a6a0a20ecca69ea526c85e16e63e5c6f6d48a9b59fc646c2ff0d1006fce29995c4a03291220c5d28af211a85f5e00ba006101b6de90f442f9aa3b03daad030415b7fdddd13e1a240a2017296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e1054"
+    },
+    {
+      "type": "UpdateOrder",
+      "object": {
+        "event_id": "a69c2c3e98a986d83d307af9d72f4703cfd2535794a6d2c246b5cd04f8b2d96b",
+        "order_id": "c5d28af211a85f5e00ba006101b6de90f442f9aa3b03daad030415b7fdddd13e",
+        "items_finalized": {
+          "payment_id": "b086153d36b4f9563cded6a16db2903006ba7bd4bc0cc6af77be8f295f7e6d15",
+          "sub_total": "1764.00",
+          "sales_tax": "88.20",
+          "total": "1852.20",
+          "ttl": "1",
+          "order_hash": "c6db6ae5031ffeb13e703309b99eb05b47157e6c952120861036e65b471aa97b",
+          "currency_addr": "7ff834c9e6d3fc3ca127e00b8412ebe8ca946066",
+          "total_in_crypto": "000000000000000000000000000000000000000000000000000000000002d384",
+          "payee_addr": "73c1a8d8cb38368a2e5a0733c3e5fb2d54ce6983",
+          "is_payment_endpoint": true,
+          "shop_signature": "adc3f3379f0b904f3c4c11ee88dcf92582223fd469df2263ade6e8020166808fe20616a7ced144d47a8abe824892173282c252f98b86cfc7d539b9c5f9f7073e"
+        }
+      },
+      "signature": "da8ac957bf61fccf0ca83d5568d5f75fd5b17d5d5e6bf4932bebe72654ffc1504417372ded52a0182f3204dc4ae403b7b4d5c619acf0082c1c70cbb77ff6f5a21b",
+      "hash": "b2cd415bb074603f6667cb2aa0beed480a64337ec0c4412821e747a47d3c11e6",
+      "encoded": "4ab9020a20a69c2c3e98a986d83d307af9d72f4703cfd2535794a6d2c246b5cd04f8b2d96b1220c5d28af211a85f5e00ba006101b6de90f442f9aa3b03daad030415b7fdddd13e22f2010a20b086153d36b4f9563cded6a16db2903006ba7bd4bc0cc6af77be8f295f7e6d151207313736342e30301a0538382e32302207313835322e32302a01313220c6db6ae5031ffeb13e703309b99eb05b47157e6c952120861036e65b471aa97b3a147ff834c9e6d3fc3ca127e00b8412ebe8ca9460664220000000000000000000000000000000000000000000000000000000000002d3844a1473c1a8d8cb38368a2e5a0733c3e5fb2d54ce698350015a40adc3f3379f0b904f3c4c11ee88dcf92582223fd469df2263ade6e8020166808fe20616a7ced144d47a8abe824892173282c252f98b86cfc7d539b9c5f9f7073e"
+    },
+    {
+      "type": "ChangeStock",
+      "object": {
+        "event_id": "41556cb280b63ac3e863d226c14c603b09bb9507d4d74349744aef39b20039bc",
+        "item_ids": [
+          "17296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e"
+        ],
+        "diffs": [
+          -42
+        ],
+        "order_id": "c5d28af211a85f5e00ba006101b6de90f442f9aa3b03daad030415b7fdddd13e",
+        "tx_hash": "32b36377007de4ab0fcc3eabb1ef3a7096c42004c14babc3638f81b9d0982625"
+      },
+      "signature": "b948309b50b46e580f04629440e01d47e6dc2d22eb10ad2361a0e0e888894e643bc36647bf88ca9e75443c6f3fce73e20e9aa93acf432094ddd75e77b6ff60851b",
+      "hash": "8767d594b6b961f0fb9ba1fd773d05fe1d63862f8c1871b537ced8d9b40cb493",
+      "encoded": "628b010a2041556cb280b63ac3e863d226c14c603b09bb9507d4d74349744aef39b20039bc122017296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e1a01532220c5d28af211a85f5e00ba006101b6de90f442f9aa3b03daad030415b7fdddd13e2a2032b36377007de4ab0fcc3eabb1ef3a7096c42004c14babc3638f81b9d0982625"
+    },
+    {
+      "type": "CreateOrder",
+      "object": {
+        "event_id": "1279c802fdb6edf7016de82c5f055d6a3b64bb5f682ddfa7c4df1c3e9200b455"
+      },
+      "signature": "1218ae6f611ec18c674a2433d67cd516f03851cf68be2957d25a8f4de6cbea3916b54d95358b8668ccefc1e4194f912f4f148f161c0b7faed075e3f9a83a76461b",
+      "hash": "182a06e30651c931587b1c4e78dc4f17a899e9c964c9ba53134c78bfff05bb66",
+      "encoded": "42220a201279c802fdb6edf7016de82c5f055d6a3b64bb5f682ddfa7c4df1c3e9200b455"
+    },
+    {
+      "type": "UpdateOrder",
+      "object": {
+        "event_id": "3734157d6f90f8861cfb309caa1ad09d869fe6544f48afd07ff3c954efa8e558",
+        "order_id": "1279c802fdb6edf7016de82c5f055d6a3b64bb5f682ddfa7c4df1c3e9200b455",
+        "change_items": {
+          "item_id": "17296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e",
+          "quantity": 1
+        }
+      },
+      "signature": "1be2cb4e333e074b9c7c38adc768f1eafe80a0cecd2752553100899f0afe004f413521de737d3edcdcd866734be644cae556503da45039de0e0a29dba2658e7d1c",
+      "hash": "e77c5565040c0ba8cb4193545940caa6c50cdb5ef13cfb926d08f91003c20e6e",
+      "encoded": "4a6a0a203734157d6f90f8861cfb309caa1ad09d869fe6544f48afd07ff3c954efa8e55812201279c802fdb6edf7016de82c5f055d6a3b64bb5f682ddfa7c4df1c3e9200b4551a240a2017296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e1002"
+    },
+    {
+      "type": "UpdateOrder",
+      "object": {
+        "event_id": "298995e8ec09c2d69aa577f663c5ad8e7bce51a5abd635174c7d56ffbb56751b",
+        "order_id": "1279c802fdb6edf7016de82c5f055d6a3b64bb5f682ddfa7c4df1c3e9200b455",
+        "items_finalized": {
+          "payment_id": "b1f2dccbe1b11e58354771fdc6c95677b3843cb80a869d19b6986804129566d7",
+          "sub_total": "42.00",
+          "sales_tax": "2.10",
+          "total": "44.10",
+          "ttl": "2",
+          "order_hash": "a40b4769e6a032bf0fa5656471ec51888c93f0417f22db26893f006582df263b",
+          "total_in_crypto": "000000000000000000000000000000000000000000000000000000000000113a",
+          "payee_addr": "27b369bdd9b49c322d13e7e91d83cfd47d465713",
+          "shop_signature": "9dbdcd5dd170c0edb15a65b9e5d9dc20266497dc5324cf38beef41bbbabd975568c38a98152b3691da932611782608fbb219c5598f12f641e9a2177ae3093831"
+        }
+      },
+      "signature": "9e77176133c2e2a0117870db1a15c9c373b71752a1645b40a868106b1d95c4dd4cfac123d801fe97e46961c25d3f1b4665a334d73838b6084d95f8afd06703bf1c",
+      "hash": "36876ae143684b4fd45e417abc237ebd97d64efaaf7e82eb9ebff07e8c7fbcaa",
+      "encoded": "4a9c020a20298995e8ec09c2d69aa577f663c5ad8e7bce51a5abd635174c7d56ffbb56751b12201279c802fdb6edf7016de82c5f055d6a3b64bb5f682ddfa7c4df1c3e9200b45522d5010a20b1f2dccbe1b11e58354771fdc6c95677b3843cb80a869d19b6986804129566d7120534322e30301a04322e3130220534342e31302a01323220a40b4769e6a032bf0fa5656471ec51888c93f0417f22db26893f006582df263b4220000000000000000000000000000000000000000000000000000000000000113a4a1427b369bdd9b49c322d13e7e91d83cfd47d4657135a409dbdcd5dd170c0edb15a65b9e5d9dc20266497dc5324cf38beef41bbbabd975568c38a98152b3691da932611782608fbb219c5598f12f641e9a2177ae3093831"
+    },
+    {
+      "type": "UpdateOrder",
+      "object": {
+        "event_id": "ed251c1a7c9cf71038f8d2c1c59e97b006e6fef21cbdd361d906614250438865",
+        "order_id": "1279c802fdb6edf7016de82c5f055d6a3b64bb5f682ddfa7c4df1c3e9200b455",
+        "order_canceled": {
+          "timestamp": 23
+        }
+      },
+      "signature": "6623030f38c277e471f2b18d4dd544af42425046171a0ca254e616167896d1a917bbe6936eaa363f2ba748dbc424a2d48b5567a83ee69d2cacdb416cee5b2c1b1c",
+      "hash": "857f33bd28b6960d4f361b33829fcda07de032add2b2b2b719cd958a74e61b4f",
+      "encoded": "4a480a20ed251c1a7c9cf71038f8d2c1c59e97b006e6fef21cbdd361d90661425043886512201279c802fdb6edf7016de82c5f055d6a3b64bb5f682ddfa7c4df1c3e9200b4552a020817"
+    },
+    {
+      "type": "CreateOrder",
+      "object": {
+        "event_id": "2fe718f6b6f7a661313d151b7d8cee52bda408017624212bbf1c3fd77a749eb8"
+      },
+      "signature": "56c69d5d7d44059900a42e40c4aa2b8bc730d689fc58cacaf6486345f798f9762ec65f2dd4e5fee2998e22a4b6ff69f8bbb89ca9de6527ca61954588616fac561c",
+      "hash": "5c7dcd7b7c3ea4132c1c71526fb5f5d7b2ec41c8e2ad27f3deef134b45dfa6a4",
+      "encoded": "42220a202fe718f6b6f7a661313d151b7d8cee52bda408017624212bbf1c3fd77a749eb8"
+    },
+    {
+      "type": "UpdateOrder",
+      "object": {
+        "event_id": "8a4f44869468f5eb830dacfc254502a655d838b951001a585dcc406a4d6cd0a0",
+        "order_id": "2fe718f6b6f7a661313d151b7d8cee52bda408017624212bbf1c3fd77a749eb8",
+        "change_items": {
+          "item_id": "17296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e",
+          "quantity": 4
+        }
+      },
+      "signature": "67edb0087f142da82ac87cea25165b75e6245e5f471813417e6d0c6535c926ef0b62495b91b7bcdb3b79671805407da475e558f21bbdf43c0a2d9b766cdb7ea21c",
+      "hash": "2e365101e4ce8ce5554e2f3c9e18c5fc41a292b84877211c097f589cf32cd8c2",
+      "encoded": "4a6a0a208a4f44869468f5eb830dacfc254502a655d838b951001a585dcc406a4d6cd0a012202fe718f6b6f7a661313d151b7d8cee52bda408017624212bbf1c3fd77a749eb81a240a2017296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e1008"
+    },
+    {
+      "type": "UpdateOrder",
+      "object": {
+        "event_id": "ebd64ea8dcf23110db038dc5a246dc38f7b13d930b46b8ac4f5f759cff68f111",
+        "order_id": "2fe718f6b6f7a661313d151b7d8cee52bda408017624212bbf1c3fd77a749eb8",
+        "items_finalized": {
+          "payment_id": "1083a69be420c8a3786e07b7270de3ca2f5765f71fe35a6e80d4e951fc5e68d0",
+          "sub_total": "168.00",
+          "sales_tax": "8.40",
+          "total": "176.40",
+          "ttl": "3",
+          "order_hash": "06d4c9b633299e54e594107d822abeca9f18dcbe2f4c59fcb692607216bb0bfa",
+          "total_in_crypto": "00000000000000000000000000000000000000000000000000000000000044e8",
+          "payee_addr": "27b369bdd9b49c322d13e7e91d83cfd47d465713",
+          "shop_signature": "8184b305accddb0854d81811fb06ee4f8b64835d4d0db58954776ee903e49774354735e5c8479a038f6412ced63953f3990645b300d1cd053e29333513dca082"
+        }
+      },
+      "signature": "2b833ece0d9dcb79fb3b07ee2cc64df56564634eb22afad7c012cc3a1d80813e7cab1d0029918538a0f948a9fbc655c57870e136458c446b47ad91cdb5ef288a1b",
+      "hash": "51dbb2cbbf53b20a7246e3237fe350b15982209859806ee0c50e356705e70fdd",
+      "encoded": "4a9e020a20ebd64ea8dcf23110db038dc5a246dc38f7b13d930b46b8ac4f5f759cff68f11112202fe718f6b6f7a661313d151b7d8cee52bda408017624212bbf1c3fd77a749eb822d7010a201083a69be420c8a3786e07b7270de3ca2f5765f71fe35a6e80d4e951fc5e68d012063136382e30301a04382e343022063137362e34302a0133322006d4c9b633299e54e594107d822abeca9f18dcbe2f4c59fcb692607216bb0bfa422000000000000000000000000000000000000000000000000000000000000044e84a1427b369bdd9b49c322d13e7e91d83cfd47d4657135a408184b305accddb0854d81811fb06ee4f8b64835d4d0db58954776ee903e49774354735e5c8479a038f6412ced63953f3990645b300d1cd053e29333513dca082"
+    }
+  ],
+  "reduced": {
+    "manifest": {
+      "shop_token_id": "4ac80fed51567875a1661ec3003c2bed195354faaceffa83c72fc3101d068135",
+      "name": "little shop of horrors",
+      "description": "Seymour and Audrey are going digital!",
+      "profile_picture_url": "https://s3.amazonaws.com/nightjarprod/content/uploads/sites/34/2019/04/28111813/bxRm8F7rnCsVDyrNh3K9yIFFBKL.jpg",
+      "domain": "https://shop.mass.market",
+      "published_tag": {
+        "3127d54db09354057cdad21c30d0206463dcda8cc87d2bb7c6dbffa7ebf15637": {
+          "text": "Tag1"
+        }
+      },
+      "accepted_currencies": [
+        {
+          "chain": 1,
+          "addr": "0000000000000000000000000000000000000000"
+        },
+        {
+          "chain": 23,
+          "addr": "f23a62a45ca55cfd6f0b28368424d0bef17e6124"
+        }
+      ],
+      "base_currency": {
+        "chain": 1,
+        "addr": "0000000000000000000000000000000000000000"
+      }
+    },
+    "keycards": {
+      "248b2fb379d102f621c26459ca886a6a20b19193a63c9146390aad0ccaba5f5fb9ac2b24330fd1296750f6ce5bfd8ea083eb78c9e358a4515ecb375e6a21e70f": "1157dc27420280a03340e7ee5b9879e9b2bc4efe",
+      "a8c465f75de1c0f16aaa05a0ca6766b5f98fbd5eebcfa8e025f1e0cfefaa87fbc0162c42befb1810ae15e5f5c07290c64b133a0f2d6b9f7a983a8ea2d94e051b": "eb66fdf86989e10034b78805962c9234f8c76e7e"
+    },
+    "items": {
+      "17296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e": {
+        "price": "23.00",
+        "metadata": "{\"title\":\"best schoes\", \"image\":\"https://masslbs.xyz/schoes.jpg\"}",
+        "tag_id": [
+          "3127d54db09354057cdad21c30d0206463dcda8cc87d2bb7c6dbffa7ebf15637"
+        ],
+        "stock_qty": 58
+      },
+      "02ebeb86c50c41c17f99cf2850498b372fc0c9776787f6a5820e4089c47632b7": {
+        "price": "13.12",
+        "metadata": "{\"title\":\"not yet published\", \"image\":\"https://masslbs.xyz/schoes.jpg\"}",
+        "tag_id": [],
+        "stock_qty": 123
+      }
+    },
+    "published_items": [
+      "17296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e"
+    ],
+    "open_orders": {
+      "2eced9fc53ea235a241513715ed348114baad5681f64e4a911ca531300f69628": {
+        "17296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e": 23
+      }
+    },
+    "commited_orders": {
+      "2fe718f6b6f7a661313d151b7d8cee52bda408017624212bbf1c3fd77a749eb8": {
+        "payment_id": "1083a69be420c8a3786e07b7270de3ca2f5765f71fe35a6e80d4e951fc5e68d0",
+        "items": {
+          "17296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e": 4
+        },
+        "total": "176.40"
+      }
+    },
+    "payed_orders": [
+      {
+        "order_id": "c5d28af211a85f5e00ba006101b6de90f442f9aa3b03daad030415b7fdddd13e",
+        "tx_hash": "32b36377007de4ab0fcc3eabb1ef3a7096c42004c14babc3638f81b9d0982625"
+      }
+    ],
+    "abandoned_orders": [
+      "1279c802fdb6edf7016de82c5f055d6a3b64bb5f682ddfa7c4df1c3e9200b455"
+    ],
+    "inventory": {
+      "17296c1f9b02617dec0db6437790af4a95339e6005579df93f6a9f0eecb3409e": 58,
+      "02ebeb86c50c41c17f99cf2850498b372fc0c9776787f6a5820e4089c47632b7": 123
+    }
+  }
+}

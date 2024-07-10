@@ -1,4 +1,4 @@
-import type { MedusaRequest, MedusaResponse } from '@medusajs/medusa';
+import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import { ProductSelector as MedusaProductSelector } from '@medusajs/medusa/dist/types/product';
 import StoreService from '../../../../services/store';
 import ProductService from '../../../../services/product';
@@ -8,6 +8,7 @@ type ProductSelector = {
 } & MedusaProductSelector;
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
+    const logger = req.scope.resolve('logger') as Logger;
     try {
         //get store by name
         const storeService: StoreService = req.scope.resolve('storeService');
@@ -31,7 +32,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             await productService.getProductsFromStoreWithPrices(store.id);
         return res.json(list_products);
     } catch (error) {
-        console.error(error);
+        logger.error(error);
         return res.status(500).json({ message: 'Internal server error' });
     }
 };

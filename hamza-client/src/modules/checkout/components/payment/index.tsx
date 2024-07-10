@@ -6,9 +6,8 @@ import { RadioGroup } from '@headlessui/react';
 import ErrorMessage from '@modules/checkout/components/error-message';
 import { Cart } from '@medusajs/medusa';
 import { CheckCircleSolid, CreditCard } from '@medusajs/icons';
-import { Button, Container, Heading, Text, Tooltip, clx } from '@medusajs/ui';
-import { CardElement } from '@stripe/react-stripe-js';
-import { StripeCardElementOptions } from '@stripe/stripe-js';
+import { Container, Heading, Text, Tooltip, clx } from '@medusajs/ui';
+import { Button } from '@chakra-ui/react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useAccount, useConnect } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
@@ -53,27 +52,8 @@ const Payment = ({
 
     const isOpen = searchParams.get('step') === 'payment';
 
-    const isStripe = cart?.payment_session?.provider_id === 'stripe';
-
     const paymentReady =
         cart?.payment_session && cart?.shipping_methods.length !== 0;
-
-    const useOptions: StripeCardElementOptions = useMemo(() => {
-        return {
-            style: {
-                base: {
-                    fontFamily: 'Inter, sans-serif',
-                    color: '#424270',
-                    '::placeholder': {
-                        color: 'rgb(107 114 128)',
-                    },
-                },
-            },
-            classes: {
-                base: 'pt-3 pb-1 block w-full h-11 px-4 mt-0 bg-ui-bg-field border rounded-md appearance-none focus:outline-none focus:ring-0 focus:shadow-borders-interactive-with-active border-ui-border-base hover:bg-ui-bg-field-hover transition-all duration-300 ease-in-out',
-            },
-        };
-    }, []);
 
     const createQueryString = useCallback(
         (name: string, value: string) => {
@@ -97,6 +77,7 @@ const Payment = ({
 
     const handleChange = (providerId: string) => {
         setError(null);
+        console.log('setting provider id', providerId);
         set(providerId);
     };
 
@@ -107,10 +88,14 @@ const Payment = ({
     };
 
     const handleSubmit = () => {
-        setIsLoading(true);
-        router.push(pathname + '?' + createQueryString('step', 'review'), {
-            scroll: false,
-        });
+        if (!isConnected) {
+            if (openConnectModal) openConnectModal();
+        } else {
+            setIsLoading(true);
+            router.push(pathname + '?' + createQueryString('step', 'review'), {
+                scroll: false,
+            });
+        }
     };
 
     useEffect(() => {
@@ -174,57 +159,23 @@ const Payment = ({
                                 })}
                         </RadioGroup>
 
-                        {/*{isStripe && (*/}
-                        {/*    <div className="mt-5 transition-all duration-150 ease-in-out">*/}
-                        {/*        <Text className="txt-medium-plus text-ui-fg-base mb-1">*/}
-                        {/*            Enter your card details:*/}
-                        {/*        </Text>*/}
-
-                        {/*        <CardElement*/}
-                        {/*            options={*/}
-                        {/*                useOptions as StripeCardElementOptions*/}
-                        {/*            }*/}
-                        {/*            onChange={(e) => {*/}
-                        {/*                setCardBrand(*/}
-                        {/*                    e.brand &&*/}
-                        {/*                        e.brand*/}
-                        {/*                            .charAt(0)*/}
-                        {/*                            .toUpperCase() +*/}
-                        {/*                            e.brand.slice(1)*/}
-                        {/*                );*/}
-                        {/*                setError(e.error?.message || null);*/}
-                        {/*                setCardComplete(e.complete);*/}
-                        {/*            }}*/}
-                        {/*        />*/}
-                        {/*    </div>*/}
-                        {/*)}*/}
-
                         <ErrorMessage error={error} />
 
-                        {isConnected && (
-                            <Button
-                                size="large"
-                                className="mt-6 text-white"
-                                onClick={handleSubmit}
-                                isLoading={isLoading}
-                                disabled={
-                                    (isStripe && !cardComplete) ||
-                                    !cart.payment_session
-                                }
-                            >
-                                Continue to review
-                            </Button>
-                        )}
-                        {!isConnected && (
-                            <Button
-                                size="large"
-                                className="mt-6 text-white"
-                                onClick={connectWallet}
-                                isLoading={isLoading}
-                            >
-                                Connect Wallet
-                            </Button>
-                        )}
+                        <Button
+                            height="52px"
+                            color={'white'}
+                            backgroundColor="primary.indigo.900"
+                            className="mt-6  py-3 px-6 rounded text-base"
+                            _hover={{
+                                backgroundColor: 'white',
+                                color: 'black',
+                            }}
+                            onClick={handleSubmit}
+                            isLoading={isLoading}
+                            disabled={!cart.payment_session}
+                        >
+                            Continue to review
+                        </Button>
                     </div>
                 ) : (
                     <div className="flex flex-col items-center justify-center px-4 py-16 text-ui-fg-base">
@@ -235,11 +186,11 @@ const Payment = ({
                 <div className={isOpen ? 'hidden' : 'block'}>
                     {cart && paymentReady && cart.payment_session && (
                         <div className="flex items-start gap-x-1 w-full">
-                            <div className="flex flex-col w-1/3">
-                                <Text className="txt-medium-plus text-ui-fg-base mb-1">
+                            <div className="flex flex-col w-1/3 text-white">
+                                <Text className="txt-medium-plus text-white mb-1">
                                     Payment method
                                 </Text>
-                                <Text className="txt-medium text-ui-fg-subtle">
+                                <Text className="txt-medium text-white">
                                     {paymentInfoMap[
                                         cart.payment_session.provider_id
                                     ]?.title ||
@@ -254,18 +205,16 @@ const Payment = ({
                                     )}
                             </div>
                             <div className="flex flex-col w-1/3">
-                                <Text className="txt-medium-plus text-ui-fg-base mb-1">
+                                <Text className="txt-medium-plus text-white mb-1">
                                     Payment details
                                 </Text>
-                                <div className="flex gap-2 txt-medium text-ui-fg-subtle items-center">
-                                    <Container className="flex items-center h-7 w-fit p-2 bg-ui-button-neutral-hover">
-                                        {paymentInfoMap[
-                                            cart.payment_session.provider_id
-                                        ]?.icon || <CreditCard />}
-                                    </Container>
-                                    <Text>
+                                <div className="flex gap-2 txt-medium text-white items-center">
+                                    {/* <Container className="flex items-center h-7 w-fit p-2 bg-ui-button-neutral-hover"> */}
+                                    {/* //todo add custom icon afterwards */}
+                                    {/* </Container> */}
+                                    <Text className="text-white">
                                         {cart.payment_session.provider_id ===
-                                            'stripe' && cardBrand
+                                            cardBrand
                                             ? cardBrand
                                             : 'Another step will appear'}
                                     </Text>

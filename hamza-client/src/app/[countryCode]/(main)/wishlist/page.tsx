@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import useWishlistStore from '@store/wishlist/wishlist-store';
 import WishlistItem from '@/components/wishlist-dropdown/WishlistItem';
-import { SimpleGrid } from '@chakra-ui/react';
+import { SimpleGrid, Flex, Text, Box } from '@chakra-ui/react';
 
 const Wishlist = () => {
     const { wishlist } = useWishlistStore((state) => ({
@@ -34,7 +34,19 @@ const Wishlist = () => {
                             ))}
                         </SimpleGrid>
                     ) : (
-                        <p>Loading...</p>
+                        <Flex
+                            justifyContent="center"
+                            alignItems="center"
+                            minHeight="200px"
+                        >
+                            <Text
+                                fontSize="xl"
+                                color="white"
+                                textAlign="center"
+                            >
+                                You don't have any items in your wishlist
+                            </Text>
+                        </Flex>
                     )}
                 </div>
             </div>

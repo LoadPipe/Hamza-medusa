@@ -297,10 +297,15 @@ export async function signOut() {
         cookies().set('_medusa_jwt', '', {
             maxAge: -1,
         });
+        cookies().set('_medusa_cart_id', '', {
+            maxAge: -1,
+        });
     } catch (e) {
         console.error(e);
     }
-    const countryCode = headers().get('next-url')?.split('/')[1] || '';
+    const countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY
+        ? 'us'
+        : headers().get('next-url')?.split('/')[1] || '';
     revalidateTag('auth');
     revalidateTag('customer');
     redirect(`/${countryCode}/account`);

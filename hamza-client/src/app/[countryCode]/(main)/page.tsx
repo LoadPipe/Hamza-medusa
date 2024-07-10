@@ -11,10 +11,16 @@ import Reputation from '@modules/home/components/reputation';
 import { getRegion } from 'app/actions';
 import { ProductCollectionWithPreviews } from 'types/global';
 import ContactSection from '@modules/home/components/contact-section';
+import ProductCardGroup from '@modules/home/components/product-layout';
+import SearchAndFilterPanel from '@modules/home/components/search-and-filter-panel';
+import { Box } from '@chakra-ui/react';
+import HeroBanner from '@modules/home/components/hero-banner';
+import SkeletonProductGrid from '@modules/skeletons/components/skeleton-product-grid';
+import { Suspense } from 'react';
+
 export const metadata: Metadata = {
-    title: 'Hamza Shop',
-    description:
-        'A performant frontend ecommerce starter template with Next.js 14 and Medusa.',
+    title: 'Hamza Store',
+    description: 'Buy & Sell Products Using Crypto as a Community',
 };
 
 const getCollectionsWithProducts = async (
@@ -72,19 +78,9 @@ export default async function Home({
     }
 
     return (
-        <>
-            <Hero />
-            <RecommendedItems />
-            <ToggleSection />
-            <Testimonials />
-            <Reputation />
-            <FAQSection />
-            <ContactSection />
-            {/*<div className="py-12">*/}
-            {/*  <ul className="flex flex-col gap-x-6">*/}
-            {/*    <FeaturedProducts collections={collections} region={region} />*/}
-            {/*  </ul>*/}
-            {/*</div>*/}
-        </>
+        <Box backgroundColor={'transparent'}>
+            <HeroBanner />
+            <SearchAndFilterPanel />
+        </Box>
     );
 }

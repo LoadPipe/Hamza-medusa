@@ -13,7 +13,7 @@ const getNumberOfSkeletons = (pages?: InfiniteProductPage[]) => {
 
   const count = pages[pages.length - 1].response.count
   const retrieved =
-    count - pages.reduce((acc, curr) => acc + curr.response.products.length, 0)
+    count - pages.reduce((acc: any, curr: any) => acc + curr.response.products.length, 0)
 
   if (count - retrieved < 12) {
     return count - retrieved

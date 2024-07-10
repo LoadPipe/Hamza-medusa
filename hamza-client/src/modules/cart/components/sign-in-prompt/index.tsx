@@ -20,7 +20,7 @@ const SignInPrompt = () => {
         //         </LocalizedClientLink>
         //     </div>
         // </div>
-        <div>Use Connect wallet to sign in</div>
+        <div>Connect your wallet to sign in</div>
     );
 };
 

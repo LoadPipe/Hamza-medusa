@@ -1,4 +1,8 @@
-import { TransactionBaseService } from '@medusajs/medusa';
+import {
+    TransactionBaseService,
+    Logger,
+    EventBusService,
+} from '@medusajs/medusa';
 import ConfirmationTokenRepository from '../repositories/confirmation-token';
 import CustomerRepository from '../repositories/customer';
 import moment from 'moment';
@@ -10,10 +14,15 @@ dotenv.config();
 export default class ConfirmationTokenService extends TransactionBaseService {
     protected readonly confirmationTokenRepository_: typeof ConfirmationTokenRepository;
     protected readonly customerRepository_: typeof CustomerRepository;
+    protected readonly logger: Logger;
+    protected readonly eventBus_: EventBusService;
+
     constructor(container) {
         super(container);
         this.confirmationTokenRepository_ = ConfirmationTokenRepository;
         this.customerRepository_ = CustomerRepository;
+        this.logger = container.logger;
+        this.eventBus_ = container.eventBusService;
     }
 
     async createConfirmationToken({
@@ -31,7 +40,7 @@ export default class ConfirmationTokenService extends TransactionBaseService {
         }
         let token = ethers.keccak256(new Uint8Array(32));
 
-        console.log('token is ', token);
+        this.logger.debug('token is ' + token);
         let confirmationToken = await this.confirmationTokenRepository_.save({
             id: token,
             customer: { id: customer_id },
@@ -40,7 +49,7 @@ export default class ConfirmationTokenService extends TransactionBaseService {
         });
         //sending email
         let smtpService = new SmtpMailService();
-        await smtpService.mailSender({
+        await smtpService.sendMail({
             from: process.env.SMTP_FROM,
             subject: 'Email Verification',
             templateName: 'verify-email',
@@ -94,6 +103,14 @@ export default class ConfirmationTokenService extends TransactionBaseService {
             { token: tokenCheck.token },
             { redeemed: true }
         );
+
+        //sending email for the confirmation
+        await this.eventBus_.emit([
+            {
+                data: { email: tokenCheck.email_address },
+                eventName: 'customer.verified',
+            },
+        ]);
         return;
     }
 }

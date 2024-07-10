@@ -14,11 +14,18 @@ Content-Type: application/json
 GET http://localhost:9000/admin/custom/user
 Content-Type: application/json
 
-###
-GET http://localhost:9000/store/custom/products?store_name=Goblin Store
+
+### Show all products
+GET http://localhost:9000/store/products
 Content-Type: application/json
 
 ###
+GET http://localhost:9000/store/custom/products?store_name=Medusa Merch
+Content-Type: application/json
+
+### Get All products yayayay
+GET http://localhost:9000/store/custom/all-products
+Content-Type: application/json
 
 
 ### Create a Wishlist
@@ -105,7 +112,7 @@ POST http://localhost:9000/custom/order
 Content-Type: application/json
 
 {
-  "cart_id": "cart_01HY0FVSWJ8J28AVHY5819AZ04"
+  "cart_id": "cart_01J14XTSA3X0TRQQHAPCR8QY2A"
 }
 
 ### Update Currency
@@ -113,6 +120,252 @@ POST http://localhost:9000/custom/update-currency
 Content-Type: application/json
 
 {
-"customer_id": "cus_01HYAAZB62RNRTXXY9TC20DK8E",
+  "customer_id": "cus_01HYAAZB62RNRTXXY9TC20DK8E",
   "preferred_currency": "eth"
+}
+
+#### Create Mock Review
+POST http://localhost:9000/custom/review
+Content-Type: application/json
+
+{
+  "customer_id": "cus_01HZGXW2JCY41TTZFSE256EDT4",
+  "product_id": "variant_01HZGXK5NJ75CJNK0C1F464DQG",
+  "rating": 3,
+  "content": "This is a great product!",
+  "title": "Great Product 2222!",
+  "order_id": "order_01HZH11A8DVHQJHM4NR308WB72"
+}
+
+### Get All Product Reviews
+POST http://localhost:9000/custom/review/all-reviews
+Content-Type: application/json
+
+{
+  "product_id": "prod_01HYYR4MV4TRXMWH1TQ9KTGWSF"
+}
+
+### Get Specific Customers All Reviews
+POST http://localhost:9000/custom/review/customer-reviews
+Content-Type: application/json
+
+{
+  "customer_id": "cus_01HYYRFGXRQ44NQXMJK9DDVNB3",
+    "product_id": "prod_01HYYR4MV4TRXMWH1TQ9KTGWSF"
+}
+
+### Get Review Count
+POST http://localhost:9000/custom/review/count
+Content-Type: application/json
+
+{
+  "product_id": "prod_01HYYR4MV4TRXMWH1TQ9KTGWSF"
+}
+
+### Get Average Rating
+POST http://localhost:9000/custom/review/average
+Content-Type: application/json
+
+{
+  "product_id": "prod_01HYYR4MHSPM9Q2P5HNV55BJA1"
+}
+
+### Update Product Review
+PATCH http://localhost:9000/custom/review/content
+Content-Type: application/json
+
+{
+  "customer_id": "cus_01HYW342BBBEK3GXETA26VJQSW",
+  "product_id": "prod_01HYYR4MWE0TB0B8T79KH5BEFZ",
+  "reviewUpdates": "CONTENT CONTENRT"
+}
+
+### Update Product Rating
+PATCH http://localhost:9000/custom/review/rating
+Content-Type: application/json
+
+{
+  "customer_id": "cus_01HYW342BBBEK3GXETA26VJQSW",
+  "product_id": "prod_01HYYR4MWE0TB0B8T79KH5BEFZ",
+  "rating": 10
+}
+
+### Update Product
+POST http://localhost:9000/custom/review/update
+Content-Type: application/json
+
+{
+  "customer_id": "cus_01HZGXW2JCY41TTZFSE256EDT4",
+  "product_id": "prod_01HZGXK5K93QD6132PNESEYBVS",
+  "ratingUpdates": 10,
+  "reviewUpdates": "CONTENT CONTENRT",
+  "order_id": "order_01HZGXXX8V51W8XQBTH7YPWTPP"
+}
+
+
+### Verify Email
+POST http://localhost:9000/custom/review/verify
+Content-Type: application/json
+
+{
+  "customer_id":  "cus_01HYYRFGXRQ44NQXMJK9DDVNB3"
+}
+
+### Check if Customer has bought product
+POST http://localhost:9000/custom/review/bought
+Content-Type: application/json
+
+{
+  "customer_id": "cus_01HYYRFGXRQ44NQXMJK9DDVNB3",
+  "product_id": "prod_01HYYR4MV4TRXMWH1TQ9KTGWSF"
+}
+
+### Check if customer already left a review
+POST http://localhost:9000/custom/review/exists
+Content-Type: application/json
+
+{
+  "order_id": "order_01HZGXXX8V51W8XQBTH7YPWTPP"
+}
+
+### Return review and rating of existing product
+POST http://localhost:9000/custom/review/existing
+Content-Type: application/json
+
+{
+  "order_id": "order_01J00BJJVD3N6XGE7RYAVJ3EVX",
+  "product_id": "variant_01J008A6ZZJ9YM9ENWRJ36ZFN0"
+}
+
+### Return all vendors
+GET http://localhost:9000/custom/vendors
+Content-Type: application/json
+
+### Get Products by Store_id
+POST http://localhost:9000/custom/vendors/vendor-products
+Content-Type: application/json
+
+{
+  "store_id": "store_01HZGXTNW8CZ291Q1TACR6GQVW"
+}
+
+
+### GET Store Name from Product ID
+POST http://localhost:9000/custom/get-store
+Content-Type: application/json
+
+{
+  "product_id": "prod_01J00RYNARG6AXK0TRFPG0TPET"
+}
+
+
+### Get Vendor by Store Name
+POST http://localhost:9000/custom/vendors/vendor-store
+Content-Type: application/json
+
+{
+  "store_name": "Goblin Store"
+}
+
+
+### Get Product Reviews by Store_id
+POST http://localhost:9000/custom/vendors/vendor-reviews
+Content-Type: application/json
+
+{
+  "store_id": "store_01HZGXK5DHZCHW6ECP5DN3DDHF"
+}
+
+### Get Specific Customer All Reviews
+POST http://localhost:9000/custom/review/all-customer-reviews
+Content-Type: application/json
+
+{
+  "customer_id": "cus_01J0QK65HY311HDHQKN5W042GZ"
+}
+
+
+### Create Notification Types
+POST http://localhost:9000/custom/notification/add-notification
+Content-Type: application/json
+
+{
+  "customer_id": "cus_01J0JA3R9P1T1182517BPS48DM",
+    "notification_type": "orderShipped, newProduct, orderStatusChanged"
+}
+
+
+### GET All Notifications for Customer
+POST http://localhost:9000/custom/notification/get-notification
+Content-Type: application/json
+
+{
+  "customer_id": "cus_01J0JA3R9P1T1182517BPS48DM"
+}
+
+
+### Remove All Notifications for Customer
+DELETE http://localhost:9000/custom/notification/remove-notification
+Content-Type: application/json
+
+{
+  "customer_id": "cus_01J0JA3R9P1T1182517BPS48DM"
+}
+
+
+### Cancel Order
+DELETE http://localhost:9000/custom/order/cancel
+Content-Type: application/json
+
+{
+  "order_id": "order_01J05M54MDN9AC5E5JNMYHFKB8"
+}
+
+### GET Order Status
+GET http://localhost:9000/custom/order/status
+Content-Type: application/json
+
+{
+  "order_id": "order_01J05M54MDN9AC5E5JNMYHFKB8"
+}
+
+### Get Vendor Name by Order_id
+POST http://localhost:9000/custom/order/vendor
+Content-Type: application/json
+
+{
+  "order_id": "order_01J0N1CPD866R0TF9RVDZFZ125"
+}
+
+### Get Specific Customers All Orders METHOD: listCustomerOrders() in order.ts
+POST http://localhost:9000/custom/order/customer-orders
+Content-Type: application/json
+
+{
+  "customer_id": "cus_01J0WJ5M458YXMWJ2EFBGTAKK1"
+}
+
+
+### Get Specific Order Details
+POST http://localhost:9000/custom/order/order-details
+Content-Type: application/json
+
+{
+  "cart_id": "cart_01J14XTSA3X0TRQQHAPCR8QY2A"
+}
+
+### Get Specific Order all items
+POST http://localhost:9000/custom/order/all-orders
+Content-Type: application/json
+
+{
+  "cart_id": "cart_01J14XTSA3X0TRQQHAPCR8QY2A"
+}
+
+### Get Order Template Information
+POST http://localhost:9000/custom/order/complete-template
+Content-Type: application/json
+
+{
+  "cart_id": "cart_01J1AD0YVD46WW4JWWNE33G2SX"
 }

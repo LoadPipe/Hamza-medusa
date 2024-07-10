@@ -10,6 +10,7 @@ import Input from '@modules/common/components/input';
 import Trash from '@modules/common/icons/trash';
 import ErrorMessage from '@modules/checkout/components/error-message';
 import { SubmitButton } from '@modules/checkout/components/submit-button';
+import { Button } from '@chakra-ui/react';
 import {
     removeDiscount,
     removeGiftCard,
@@ -38,6 +39,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
                 return `- ${formatAmount({
                     amount: discounts[0].rule.value,
                     region: region,
+                    currency_code: '',
                 })}`;
 
             default:
@@ -77,7 +79,8 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
                                         region: region,
                                         amount: gc.balance,
                                         includeTaxes: false,
-                                    })}
+                                        currency_code: '',
+                                    }).toString()}
                                 </Text>
                                 <button
                                     className="flex items-center gap-x-2 !background-transparent !border-none"
@@ -144,9 +147,13 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
                                         type="text"
                                         autoFocus={false}
                                     />
-                                    <SubmitButton variant="secondary">
+                                    <Button
+                                        backgroundColor={'primary.green.900'}
+                                        color={'white'}
+                                        variant="secondary"
+                                    >
                                         Apply
-                                    </SubmitButton>
+                                    </Button>
                                 </div>
                                 <ErrorMessage error={message} />
                             </>

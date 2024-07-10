@@ -14,4 +14,18 @@ export class Store extends MedusaStore {
 
     @Column('owner_id')
     owner_id?: string;
+
+    @Column()
+    massmarket_store_id?: string;
+
+    @Column()
+    massmarket_keycard?: string;
+
+    @Column()
+    icon: string;
+
+    get numberOfFollowers(): number {
+        // Hard-coded value for now
+        return 100;
+    }
 }

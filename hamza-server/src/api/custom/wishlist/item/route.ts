@@ -1,9 +1,10 @@
-import type { MedusaRequest, MedusaResponse } from '@medusajs/medusa';
+import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import WishlistService from '../../../../services/wishlist';
 import { readRequestBody } from '../../../../utils/request-body';
 
 // ADD Wishlist `item` by customer_id
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
+    const logger = req.scope.resolve('logger') as Logger;
     const wishlistService: WishlistService =
         req.scope.resolve('wishlistService');
 
@@ -19,12 +20,13 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         );
         res.json(wishlist);
     } catch (err) {
-        console.log('ERROR: ', err);
+        logger.error('Add wishlist item error: ', err);
         res.status(500).send('Internal Server Error');
     }
 };
 
 export const DELETE = async (req: MedusaRequest, res: MedusaResponse) => {
+    const logger = req.scope.resolve('logger') as Logger;
     const wishlistService: WishlistService =
         req.scope.resolve('wishlistService');
     const { customer_id, product_id } = readRequestBody(req.body, [
@@ -40,7 +42,7 @@ export const DELETE = async (req: MedusaRequest, res: MedusaResponse) => {
         );
         res.json(wishlist);
     } catch (err) {
-        console.log('ERROR: ', err);
+        logger.error('ERROR: ', err);
         res.status(500).send('Internal Server Error');
     }
 };

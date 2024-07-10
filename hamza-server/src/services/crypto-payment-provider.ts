@@ -6,27 +6,8 @@ import {
     PaymentProcessorError,
     PaymentProcessorSessionResponse,
     PaymentSessionStatus,
-} from '@medusajs/medusa';
-import { PaymentIntentOptions } from 'medusa-payment-stripe'; //TODO: need?
-import { ethers, TransactionResponse } from 'ethers';
-
-async function verifyPaymentTransactionId(
-    transactionId: any
-): Promise<boolean> {
-    try {
-        const provider = new ethers.JsonRpcProvider('https://rpc.sepolia.org');
-        const tx: TransactionResponse =
-            await provider.getTransaction(transactionId);
-        if (tx) {
-            //TODO: more verification is needed
-            //tx.from
-            return true;
-        }
-    } catch (e) {
-        console.error(e);
-    }
-    return false;
-}
+    Logger,
+} from '@medusajs/medusa'; //TODO: need?
 
 /**
  * @description This is being used as a test right now for payment processing using
@@ -36,12 +17,14 @@ async function verifyPaymentTransactionId(
 class CryptoPaymentService extends AbstractPaymentProcessor {
     static identifier = 'crypto';
     cartService: CartService;
+    logger: Logger;
 
     constructor(container, config) {
-        console.log('CryptoPaymentService::config');
-        //console.log(config);
+        //this.logger.debug(config);
         super(container, config);
         this.cartService = container.cartService;
+        this.logger = container.logger;
+        this.logger.debug('CryptoPaymentService::config');
     }
 
     async capturePayment(
@@ -49,8 +32,8 @@ class CryptoPaymentService extends AbstractPaymentProcessor {
     ): Promise<
         PaymentProcessorError | PaymentProcessorSessionResponse['session_data']
     > {
-        console.log('CryptoPaymentService: capturePayment');
-        //console.log(paymentSessionData);
+        this.logger.debug('CryptoPaymentService: capturePayment');
+        //this.logger.debug(paymentSessionData);
         return {
             session_data: paymentSessionData,
         };
@@ -66,8 +49,8 @@ class CryptoPaymentService extends AbstractPaymentProcessor {
               data: PaymentProcessorSessionResponse['session_data'];
           }
     > {
-        console.log('CryptoPaymentService: authorizePayment');
-        //console.log(paymentSessionData);
+        this.logger.debug('CryptoPaymentService: authorizePayment');
+        //this.logger.debug(paymentSessionData);
         let payment_status = paymentSessionData.payment_status;
         if (!payment_status) payment_status = 'ok';
 
@@ -87,26 +70,17 @@ class CryptoPaymentService extends AbstractPaymentProcessor {
     ): Promise<
         PaymentProcessorError | PaymentProcessorSessionResponse['session_data']
     > {
-        console.log('CryptoPaymentService: cancelPayment');
+        this.logger.debug('CryptoPaymentService: cancelPayment');
         return {
             session_data: paymentSessionData,
         };
     }
 
-    getPaymentIntentOptions(): PaymentIntentOptions {
-        const options: PaymentIntentOptions = {};
-
-        options.capture_method = 'manual';
-
-        options.payment_method_types = ['crypto', 'payment', 'manual'];
-        return options;
-    }
-
     async initiatePayment(
         context: PaymentProcessorContext
     ): Promise<PaymentProcessorError | PaymentProcessorSessionResponse> {
-        console.log('CryptoPaymentService: initiatePayment');
-        //console.log(context);
+        this.logger.debug('CryptoPaymentService: initiatePayment');
+        //this.logger.debug(context);
 
         //get the store id
         let walletAddresses: string[] = [];
@@ -120,7 +94,6 @@ class CryptoPaymentService extends AbstractPaymentProcessor {
             );
         }
 
-        const intentRequestData = this.getPaymentIntentOptions();
         const { email, currency_code, amount, resource_id, customer } = context;
 
         const session_data: any = {
@@ -137,7 +110,6 @@ class CryptoPaymentService extends AbstractPaymentProcessor {
                     manual_expiry_period: 10,
                 },
             },
-            ...intentRequestData,
         };
         return {
             session_data: session_data as any,
@@ -149,8 +121,8 @@ class CryptoPaymentService extends AbstractPaymentProcessor {
     ): Promise<
         PaymentProcessorError | PaymentProcessorSessionResponse['session_data']
     > {
-        console.log('CryptoPaymentService: deletePayment');
-        //console.log(paymentSessionData);
+        this.logger.debug('CryptoPaymentService: deletePayment');
+        //this.logger.debug(paymentSessionData);
         return {
             session_data: paymentSessionData,
         };
@@ -159,19 +131,19 @@ class CryptoPaymentService extends AbstractPaymentProcessor {
     async getPaymentStatus(
         paymentSessionData: Record<string, unknown>
     ): Promise<PaymentSessionStatus> {
-        console.log('CryptoPaymentService: getPaymentStatus');
-        //console.log(paymentSessionData);
+        this.logger.debug('CryptoPaymentService: getPaymentStatus');
+        //this.logger.debug(paymentSessionData);
 
         try {
             const payment_status =
                 paymentSessionData.session_data['session_data']?.payment
                     ?.payment_status ?? '';
-            console.log(payment_status);
+            this.logger.debug(payment_status);
             return payment_status === 'failed'
                 ? PaymentSessionStatus.ERROR
                 : PaymentSessionStatus.AUTHORIZED;
         } catch (e) {
-            console.error(e);
+            this.logger.error(e);
         }
 
         return PaymentSessionStatus.AUTHORIZED;
@@ -183,8 +155,8 @@ class CryptoPaymentService extends AbstractPaymentProcessor {
     ): Promise<
         PaymentProcessorError | PaymentProcessorSessionResponse['session_data']
     > {
-        console.log('CryptoPaymentService: refundPayment');
-        //console.log(paymentSessionData);
+        this.logger.debug('CryptoPaymentService: refundPayment');
+        //this.logger.debug(paymentSessionData);
         return {
             session_data: paymentSessionData,
         };
@@ -195,8 +167,8 @@ class CryptoPaymentService extends AbstractPaymentProcessor {
     ): Promise<
         PaymentProcessorError | PaymentProcessorSessionResponse['session_data']
     > {
-        console.log('CryptoPaymentService: retrievePayment');
-        //console.log(paymentSessionData);
+        this.logger.debug('CryptoPaymentService: retrievePayment');
+        //this.logger.debug(paymentSessionData);
         return {
             session_data: paymentSessionData,
         };
@@ -205,8 +177,8 @@ class CryptoPaymentService extends AbstractPaymentProcessor {
     async updatePayment(
         context: PaymentProcessorContext
     ): Promise<PaymentProcessorError | PaymentProcessorSessionResponse | void> {
-        console.log('CryptoPaymentService: updatePayment');
-        //console.log(context);
+        this.logger.debug('CryptoPaymentService: updatePayment');
+        //this.logger.debug(context);
         return this.initiatePayment(context);
     }
 
@@ -216,7 +188,7 @@ class CryptoPaymentService extends AbstractPaymentProcessor {
     ): Promise<
         PaymentProcessorError | PaymentProcessorSessionResponse['session_data']
     > {
-        console.log('CryptoPaymentService: updatePaymentData');
+        this.logger.debug('CryptoPaymentService: updatePaymentData');
         return {
             session_data: {
                 method: 'updatePaymentData',
@@ -247,7 +219,7 @@ class CryptoPaymentService extends AbstractPaymentProcessor {
                 });
             }
         } catch (e) {
-            console.error(e);
+            this.logger.error(e);
         }
 
         return output;

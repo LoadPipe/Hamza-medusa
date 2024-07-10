@@ -1,0 +1,19 @@
+{
+  "name": "stateManager",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@massmarket/client": "workspace:*",
+    "@massmarket/tsconfig": "workspace:*",
+    "@massmarket/schema": "workspace:*",
+    "abstract-level": "^2.0.0",
+    "level": "^8.0.1"
+  }
+}

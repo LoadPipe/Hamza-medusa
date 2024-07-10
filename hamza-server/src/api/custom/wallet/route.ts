@@ -1,7 +1,8 @@
-import type { MedusaRequest, MedusaResponse } from '@medusajs/medusa';
+import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import { readRequestBody } from '../../../utils/request-body';
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
+    const logger = req.scope.resolve('logger') as Logger;
     const { message, signature } = readRequestBody(req.body, [
         'message',
         'signature',
@@ -9,17 +10,19 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
     const customerService = req.scope.resolve('customerService');
 
-    console.log('Received for verification:', {
-        signature,
-        message,
-    });
+    logger.debug(
+        `Received for verification: ${{
+            signature,
+            message,
+        }}`
+    );
 
     try {
         const isVerified = await customerService.verifyWalletSignature(
             signature,
             message
         );
-        console.log('Verification result:', isVerified);
+        logger.debug('Verification result:' + isVerified);
 
         if (!isVerified) {
             return res
@@ -28,13 +31,16 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         }
         res.json({ success: true, message: 'Authentication successful' });
     } catch (error) {
-        console.log(error);
+        logger.error('Error verifying wallet signature', error);
         return res.status(500).json({ message: 'Internal server error' });
     }
 };
 
+//TODO: is this GET route used?
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const customerService = req.scope.resolve('customerService');
+    const logger = req.scope.resolve('logger') as Logger;
+
     try {
         const customer = await customerService.generateNonce();
         return res.json({ nonce: customer });

@@ -85,18 +85,10 @@ const ToggleSelection = () => {
                                 justifyContent="center"
                                 height="100%"
                             >
-                                <Text
-                                    fontFamily=""
-                                    fontSize="xs"
-                                    color={'#94D42A'}
-                                >
+                                <Text fontSize="xs" color={'#94D42A'}>
                                     JOIN THE MOVEMENT
                                 </Text>
-                                <Text
-                                    fontFamily=""
-                                    fontSize="xl"
-                                    fontWeight="bold"
-                                >
+                                <Text fontSize="xl" fontWeight="bold">
                                     {' '}
                                     Buy products as a Community
                                 </Text>

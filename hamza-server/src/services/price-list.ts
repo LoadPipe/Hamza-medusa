@@ -2,6 +2,7 @@ import { Lifetime } from 'awilix';
 import {
     PriceList,
     PriceListService as MedusaPriceListService,
+    Logger,
 } from '@medusajs/medusa';
 import {
     UpdatePriceListInput as MedusaUpdatePriceListInput,
@@ -20,21 +21,22 @@ type CreatePriceListInput = MedusaCreatePriceListInput & {
 export default class PriceListService extends MedusaPriceListService {
     static LIFE_TIME = Lifetime.SCOPED;
     protected readonly priceListRepository_: typeof PriceListRepository;
+    protected readonly logger: Logger;
 
     constructor(container) {
         super(container);
         this.priceListRepository_ = container.priceListRepository;
+        this.logger = container.logger;
     }
 
     //TODO: any needed functions go here
 
     async create(input: CreatePriceListInput): Promise<PriceList> {
-        console.log('creating price list', input);
+        this.logger.debug('creating price list ' + input);
         return await this.priceListRepository_.save(input);
     }
 
     async update(id: string, input: UpdatePriceListInput): Promise<PriceList> {
-        console.log('updating price list', input);
         return await this.priceListRepository_.save(input);
     }
 }

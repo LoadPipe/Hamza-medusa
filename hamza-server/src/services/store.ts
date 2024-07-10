@@ -1,34 +1,57 @@
 import { Lifetime } from 'awilix';
-import { StoreService as MedusaStoreService, Store } from '@medusajs/medusa';
+import {
+    StoreService as MedusaStoreService,
+    Store,
+    Logger,
+} from '@medusajs/medusa';
 import { User } from '../models/user';
 import StoreRepository from '../repositories/store';
 import axios from 'axios';
+import { UpdateStoreInput as MedusaUpdateStoreInput } from '@medusajs/medusa/dist/types/store';
+
+type UpdateStoreInput = MedusaUpdateStoreInput & {
+    massmarket_keycard?: string;
+    massmarket_store_id?: string;
+};
 
 class StoreService extends MedusaStoreService {
     static LIFE_TIME = Lifetime.SCOPED;
     protected readonly storeRepository_: typeof StoreRepository;
+    protected readonly logger: Logger;
 
     constructor(container) {
         super(container);
         this.storeRepository_ = container.storeRepository;
+        this.logger = container.logger;
     }
 
     async createStore(
         user: User,
         store_name: string,
-        collection: string
+        collection: string,
+        icon: string
     ): Promise<Store> {
         let owner_id = user.id;
-        console.log('owner_id: ', owner_id);
+        this.logger.debug('owner_id: ' + owner_id);
         const storeRepo = this.manager_.withRepository(this.storeRepository_);
         let newStore = storeRepo.create();
         // newStore.owner = user; // Set the owner
         newStore.name = store_name; // Set the store name
         newStore.owner_id = owner_id; // Set the owner_id
+        newStore.icon = icon;
+        newStore.default_currency_code = 'eth';
         newStore = await storeRepo.save(newStore);
-        console.log('New Store Saved:', newStore);
+        this.logger.debug('New Store Saved:' + newStore);
         await this.populateProductsWithStoreId(newStore, collection);
         return newStore; // Return the newly created and saved store
+    }
+
+    async getStores() {
+        return await this.storeRepository_.find();
+    }
+
+    async update(data: UpdateStoreInput) {
+        return await super.update(data);
     }
 
     // TODO: Should I pull this out of the store service? -G
@@ -37,7 +60,9 @@ class StoreService extends MedusaStoreService {
         collection: String
     ): Promise<any> {
         let collectionListUrl = `http://localhost:9000/store/products?collection_id[]=${collection}`;
-        console.log('Fetching products from collection: ', collectionListUrl);
+        this.logger.debug(
+            'Fetching products from collection: ' + collectionListUrl
+        );
         let updateProductUrl = `http://localhost:9000/routes/products`;
         try {
             // Get a list of products belonging to a collection
@@ -54,11 +79,11 @@ class StoreService extends MedusaStoreService {
             });
 
             await Promise.all(updatePromises);
-            console.log(
+            this.logger.debug(
                 'All products have been successfully updated with store_id'
             );
         } catch (error) {
-            console.error('Error processing products:', error);
+            this.logger.error('Error processing products:', error);
         }
     }
 

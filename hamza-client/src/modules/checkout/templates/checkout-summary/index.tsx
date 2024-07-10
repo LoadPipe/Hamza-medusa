@@ -6,10 +6,12 @@ import CartTotals from '@modules/common/components/cart-totals';
 import Divider from '@modules/common/components/divider';
 import { retrieveCart } from '@modules/cart/actions';
 
-const CheckoutSummary = async () => {
-    const cart = await retrieveCart().then((cart) => cart);
+const CheckoutSummary = async (params: any) => {
+    const cartId = params.cartId;
+    const cart = await retrieveCart(cartId).then((cart) => cart);
 
     if (!cart) {
+        console.log('cart not found');
         return null;
     }
 

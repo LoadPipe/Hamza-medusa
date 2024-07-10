@@ -1,5 +1,6 @@
 import { BigNumberish, ethers } from 'ethers';
-import { masterAbi, erc20abi } from './switch-abi';
+import { masterAbi } from './abi/switch-abi';
+import { erc20abi } from './abi/erc20-abi';
 import { IMultiPaymentInput, ITransactionOutput } from './';
 import { getCurrencyAddress } from '../currency.config';
 

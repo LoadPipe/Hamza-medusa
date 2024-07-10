@@ -11,12 +11,15 @@ import { useIntersection } from '@lib/hooks/use-in-view';
 import { addToCart } from '@modules/cart/actions';
 import Divider from '@modules/common/components/divider';
 import OptionSelect from '@modules/products/components/option-select';
-
+import BuyButton from '../buy-button';
+import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import MobileActions from '../mobile-actions';
 import ProductPrice from '../product-price';
 import WishlistIcon from '@/components/wishlist-dropdown/icon/wishlist-icon';
 import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
 import Medusa from '@medusajs/medusa-js';
+import useWishlistStore from '@store/wishlist/wishlist-store';
+import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
 type ProductActionsProps = {
     product: PricedProduct;
@@ -36,16 +39,24 @@ export default function ProductActions({
 }: ProductActionsProps): JSX.Element {
     const [options, setOptions] = useState<Record<string, string>>({});
     const [isAdding, setIsAdding] = useState(false);
+    const [buyNowLoader, setBuyNowLoader] = useState(false);
     const { addWishlistItemMutation, removeWishlistItemMutation } =
         useWishlistMutations();
     const [inventoryCount, setInventoryCount] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const countryCode = useParams().countryCode as string;
+    let countryCode = useParams().countryCode as string;
+    if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY)
+        countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY;
+    const { whitelist_config, authData } = useCustomerAuthStore();
+    const [isWhitelisted, setIsWhitelisted] = useState(false);
+    const { wishlist } = useWishlistStore();
 
     const variants = product.variants;
     const variant_id = variants[0].id;
-    console.log('Variant id is', variant_id);
+    // console.log('Variant id is', variant_id);
+
+    const { isCustomerAuthenticated } = useWishlistStore();
 
     useEffect(() => {
         if (!variant_id) return;
@@ -54,7 +65,7 @@ export default function ProductActions({
             setLoading(true);
             try {
                 const response = await axios.post(
-                    'http://localhost:9000/custom/variant/count',
+                    `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/variant/count`,
                     { variant_id }
                 );
                 console.log('Response is', JSON.stringify(response));
@@ -151,11 +162,68 @@ export default function ProductActions({
         setIsAdding(false);
     };
 
+    //Add to card and buy now
+    //FYI: If user clicks buy now and then navigates back to the product preview and clicks again it will increase quanitity again
+    const handleBuyNow = async () => {
+        if (!variant?.id) return;
+        setBuyNowLoader(true);
+        await addToCart({
+            variantId: variant.id,
+            quantity: 1,
+            countryCode: countryCode,
+            currencyCode: 'eth', //variant.prices[0].currency_code,
+        });
+        setBuyNowLoader(false);
+    };
+
     // add product to wishlist-dropdown
     const toggleWishlist = async () => {
-        console.log('toggle wishlist-dropdown item', product);
-        addWishlistItemMutation.mutate(product);
+        // console.log('toggle wishlist-dropdown item', product);
+        wishlist.products.find((a) => a.id == product.id)
+            ? removeWishlistItemMutation.mutate({
+                id: product.id!,
+                description: product.description!,
+                handle: product.handle!,
+                thumbnail: product.thumbnail!,
+                title: product.title!,
+            })
+            : addWishlistItemMutation.mutate({
+                id: product.id!,
+                description: product.description!,
+                handle: product.handle!,
+                thumbnail: product.thumbnail!,
+                title: product.title!,
+            });
     };
+
+    const whitelistedProductHandler = async () => {
+        let res = await axios.get(
+            `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/product/get-store?product_id=${product.id}`
+        );
+        let data = res.data;
+        console.log(data);
+
+        if (data.status == true) {
+            const whitelistedProduct =
+                whitelist_config.is_whitelisted &&
+                    whitelist_config.whitelisted_stores.includes(data.data)
+                    ? true
+                    : false;
+
+            setIsWhitelisted(whitelistedProduct);
+            console.log('white listed product ', whitelistedProduct);
+        }
+        return;
+    };
+
+    useEffect(() => {
+        if (
+            authData.status == 'authenticated' &&
+            product.variants[0].allow_backorder
+        ) {
+            whitelistedProductHandler();
+        }
+    }, [authData.status]);
 
     return (
         <>
@@ -196,34 +264,61 @@ export default function ProductActions({
                         ? 'Loading...'
                         : `Inventory Count: ${inventoryCount !== null ? inventoryCount : '0'}`}
                 </Button>
+
                 <Button
                     onClick={handleAddToCart}
-                    disabled={!inStock || !variant}
+                    disabled={(!inStock || !variant) && !isWhitelisted}
                     variant="primary"
                     className="w-full h-10 text-white"
                     isLoading={isAdding}
                 >
                     {!variant
                         ? 'Select variant'
-                        : !inStock
-                          ? 'Out of stock'
-                          : 'Add to cart'}
+                        : !inStock && isWhitelisted
+                            ? 'Add to Cart'
+                            : inStock
+                                ? 'Add to Cart'
+                                : 'Out of Stock'}
                 </Button>
+                {!inStock && isWhitelisted && (
+                    <span className="text-xs">
+                        You can add it as you are whitelisted customer
+                    </span>
+                )}
                 {/* TODO: wishlist-dropdown add ternary for fill IF item already in wishlist-dropdown maybe we can have a variant ternary for 'Remove from Wishlist' || 'Add to Wishlist'    */}
-                <Button
-                    className="w-full h-10 text-white"
-                    variant="primary"
-                    onClick={toggleWishlist}
-                >
-                    <WishlistIcon
-                        fill={false}
-                        props={{
-                            className: 'wishlist-dropdown-icon',
-                            'aria-label': 'wishlist',
-                        }}
+                {isCustomerAuthenticated && (
+                    <Button
+                        className="w-full h-10 text-white"
+                        variant="primary"
+                        onClick={toggleWishlist}
+                    >
+                        <WishlistIcon
+                            fill={
+                                wishlist.products.find(
+                                    (a) => a.id == product.id
+                                )
+                                    ? true
+                                    : false
+                            }
+                            props={{
+                                className: 'wishlist-dropdown-icon',
+                                'aria-label': 'wishlist',
+                            }}
+                        />
+                        {wishlist.products.find((a) => a.id == product.id)
+                            ? 'Remove from Wishlist'
+                            : 'Add to Wishlist'}
+                    </Button>
+                )}
+                <LocalizedClientLink href="/checkout?step=address">
+                    <BuyButton
+                        styles={'w-full h-10 text-white'}
+                        handleBuyNow={handleBuyNow}
+                        loader={buyNowLoader}
+                        outOfStock={!inStock || !variant}
+                        isWhitelisted={isWhitelisted}
                     />
-                    Add to Wishlist
-                </Button>
+                </LocalizedClientLink>
                 <MobileActions
                     product={product}
                     variant={variant}

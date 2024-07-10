@@ -1,8 +1,9 @@
-import { MedusaRequest, MedusaResponse } from '@medusajs/medusa';
+import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import ConfirmationTokenService from '../../../../services/confirmation-token';
 import { readRequestBody } from '../../../../utils/request-body';
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
+    const logger = req.scope.resolve('logger') as Logger;
     try {
         let { email, customer_id } = readRequestBody(req.body, [
             'email',
@@ -16,7 +17,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         });
         return res.send({ status: true });
     } catch (e) {
-        console.log('error in generating token ', e);
+        logger.error('error in generating token ', e);
         return res.send({ status: false, message: e.message });
     }
 };

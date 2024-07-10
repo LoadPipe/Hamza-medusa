@@ -1,0 +1,66 @@
+/*
+ * SPDX-FileCopyrightText: 2024 Mass Labs
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* :root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+} */
+
+@layer base {
+  html {
+    font-family: "JetBrainsMono", system-ui, sans-serif;
+  }
+}
+@layer utilities {
+  /* Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+@font-face {
+  font-family: "JetBrainsMono";
+  src: url("../../public/fonts/JetBrainsMono-VariableFont_wght.ttf");
+}
+
+body {
+  overflow: visible;
+  color: rgb(var(--foreground-rgb));
+  background-color: #eaedee;
+  h2 {
+    font-size: 25px;
+  }
+  h3 {
+    font-size: 22px;
+  }
+  h4 {
+    font-size: 20px;
+  }
+  h5 {
+    font-size: 18px;
+  }
+  h6 {
+    font-size: 15px;
+  }
+}

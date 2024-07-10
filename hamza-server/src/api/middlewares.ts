@@ -6,6 +6,7 @@ import {
     type MedusaRequest,
     type MedusaResponse,
     authenticateCustomer,
+    Logger,
 } from '@medusajs/medusa';
 import cors from 'cors';
 
@@ -17,7 +18,9 @@ const registerLoggedInUser = async (
     res: MedusaResponse,
     next: MedusaNextFunction
 ) => {
-    console.log('running logged in user function')
+    const logger = req.scope.resolve('logger') as Logger;
+
+    logger.debug('running logged in user function');
     let loggedInUser: User | null = null;
 
     if (req.user && req.user.userId) {
@@ -34,11 +37,15 @@ const registerLoggedInUser = async (
     next();
 };
 
-const registerLoggedInCustomer = async (req: MedusaRequest, res: MedusaResponse, next: MedusaNextFunction) => {
-
-    console.log(req);
-    next()
-}
+const registerLoggedInCustomer = async (
+    req: MedusaRequest,
+    res: MedusaResponse,
+    next: MedusaNextFunction
+) => {
+    const logger = req.scope.resolve('logger') as Logger;
+    logger.debug(req);
+    next();
+};
 
 export const permissions = async (
     req: MedusaRequest,
@@ -148,8 +155,5 @@ export const config: MiddlewaresConfig = {
         //     matcher: '/custom/confirmation-token/generate',
         //     // middlewares: [authenticateCustomer(), registerLoggedInCustomer],
         // },
-
-
-
     ],
 };

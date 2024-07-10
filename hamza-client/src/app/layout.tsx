@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Metadata } from 'next';
 import 'styles/globals.css';
@@ -5,11 +7,22 @@ const BASE_URL =
     process.env.NEXT_PUBLIC_MEDUSA_CLIENT_URL || 'https://localhost:8000';
 import MedusaProvider from '@/components/providers/medusa/medusa-provider'; // Import MedusaProvider
 import { RainbowWrapper } from '@/components/providers/rainbowkit/rainbow-provider';
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import theme from '../styles/chakra-theme';
+import { Toaster } from 'react-hot-toast';
+import { Sora } from '@next/font/google';
 // TODO: Refactor using scaffold-eth-2 for proper layout.
-export const metadata: Metadata = {
-    metadataBase: new URL(BASE_URL),
-};
+
+// export const metadata: Metadata = {
+//     metadataBase: new URL(BASE_URL),
+// };
+
+// Define your custom colors
+
+const sora = Sora({
+    subsets: ['latin'],
+    weight: ['400', '700'],
+});
 
 export default function RootLayout(props: { children: React.ReactNode }) {
     return (
@@ -18,13 +31,16 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                 <div>
                     <MedusaProvider>
                         <RainbowWrapper>
-                            <ChakraProvider>
-                                <main className="relative">
+                            <ChakraProvider theme={theme}>
+                                <main className={sora.className}>
                                     {props.children}
                                 </main>
                             </ChakraProvider>
                         </RainbowWrapper>
                     </MedusaProvider>
+                    <div>
+                        <Toaster position="top-right" />
+                    </div>
                 </div>
             </body>
         </html>

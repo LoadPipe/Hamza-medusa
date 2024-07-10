@@ -10,12 +10,12 @@ export const findCheapestRegionPrice = (
     variants: Variant[],
     regionId: string
 ) => {
-    const regionPrices = variants.reduce((acc, v) => {
+    const regionPrices = variants.reduce((acc: any, v: any) => {
         if (!v.prices) {
             return acc;
         }
 
-        const price = v.prices.find((p) => p.region_id === regionId);
+        const price = v.prices.find((p: any) => p.region_id === regionId);
         if (price) {
             acc.push(price);
         }
@@ -28,7 +28,7 @@ export const findCheapestRegionPrice = (
     }
 
     //find the price with the lowest amount in regionPrices
-    const cheapestPrice = regionPrices.reduce((acc, p) => {
+    const cheapestPrice = regionPrices.reduce((acc: any, p: any) => {
         if (acc.amount > p.amount) {
             return p;
         }
@@ -43,12 +43,14 @@ export const findCheapestCurrencyPrice = (
     variants: Variant[],
     currencyCode: string
 ) => {
-    const currencyPrices = variants.reduce((acc, v) => {
+    const currencyPrices = variants.reduce((acc: any, v: any) => {
         if (!v.prices) {
             return acc;
         }
 
-        const price = v.prices.find((p) => p.currency_code === currencyCode);
+        const price = v.prices.find(
+            (p: any) => p.currency_code === currencyCode
+        );
         if (price) {
             acc.push(price);
         }
@@ -61,7 +63,7 @@ export const findCheapestCurrencyPrice = (
     }
 
     //find the price with the lowest amount in currencyPrices
-    const cheapestPrice = currencyPrices.reduce((acc, p) => {
+    const cheapestPrice = currencyPrices.reduce((acc: any, p: any) => {
         if (acc.amount > p.amount) {
             return p;
         }
@@ -115,11 +117,16 @@ export const formatVariantPrice = ({
     includeTaxes = true,
     ...rest
 }: FormatVariantPriceParams) => {
-    const amount = computeVariantPrice({ variant, region, includeTaxes });
+    const amount = computeVariantPrice({
+        variant,
+        region,
+        includeTaxes,
+        currency_code,
+    });
 
     return convertToLocale({
         amount,
-        currency_code: currency_code,
+        currency_code,
         ...rest,
     });
 };
@@ -223,9 +230,10 @@ export const formatAmount = ({
         includeTaxes,
     });
 
+    return `${parseInt(amount.toString()).toFixed(2)} ${currency_code.toUpperCase()}`;
     return convertToLocale({
         amount: taxAwareAmount,
-        currency_code: currency_code,
+        currency_code,
         ...rest,
     });
 };
@@ -246,22 +254,29 @@ const getTaxRate = (region?: RegionInfo) => {
 const traditionalCurrencies = ['usdc', 'eth', 'usdt']; // Add more as needed
 
 const convertToLocale = ({
-    amount,
-    currency_code,
+    amount = 0,
+    currency_code = '',
     minimumFractionDigits = 2, // Default value if not provided
     maximumFractionDigits = 2,
     locale = 'en-US',
 }): ConvertToLocaleParams => {
-    return amount.toString();
-    /*
-    // Ensure currency_code is a valid string before proceeding
     if (typeof currency_code !== 'string' || !currency_code) {
+        currency_code = 'eth';
+        /*
         console.error('Invalid or missing currency code', currency_code);
-        return amount.toString(); // or handle the error as needed
+        return {
+            amount,
+            currency_code,
+            minimumFractionDigits,
+            maximumFractionDigits
+        }
+        */
     }
 
+    let formattedAmount;
+
     if (traditionalCurrencies.includes(currency_code.toUpperCase())) {
-        return new Intl.NumberFormat(locale, {
+        formattedAmount = new Intl.NumberFormat(locale, {
             style: 'currency',
             currency: currency_code,
             minimumFractionDigits,
@@ -269,9 +284,15 @@ const convertToLocale = ({
         }).format(amount);
     } else {
         // Custom handling for non-standard currency codes
-        return `${amount.toFixed(minimumFractionDigits)} ${currency_code.toUpperCase()}`;
+        formattedAmount = `${amount.toFixed(minimumFractionDigits)} ${currency_code.toUpperCase()}`;
     }
-    */
+
+    return {
+        amount: amount,
+        currency_code: currency_code.toUpperCase(),
+        minimumFractionDigits,
+        maximumFractionDigits,
+    };
 };
 
 type ConvertToLocaleParams = {

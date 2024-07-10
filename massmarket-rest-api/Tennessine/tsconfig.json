@@ -1,0 +1,17 @@
+{
+  "files": [],
+  "references": [
+    {
+      "path": "./packages/contracts"
+    },
+    {
+      "path": "./packages/schema"
+    },
+    {
+      "path": "./packages/client"
+    },
+    {
+      "path": "./packages/frontend"
+    }
+  ]
+}
