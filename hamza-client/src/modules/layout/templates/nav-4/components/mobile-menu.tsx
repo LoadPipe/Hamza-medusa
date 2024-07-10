@@ -18,7 +18,7 @@ import Link from 'next/link';
 import NavLink from '../components/nav-link';
 import { CgProfile } from 'react-icons/cg';
 import AuthorizedLinks from '../components/authorized-links';
-import ConnectWalletLink from '../components/connect-wallet-link';
+// import ConnectWalletLink from '../components/connect-wallet-link';
 import { AiOutlineMenu } from 'react-icons/ai';
 
 // import filterImage from '../../../../../../public/images/buttons/filter-16px.svg'
@@ -160,7 +160,7 @@ export default function MobileMenu() {
                         borderColor={'white'}
                     />
 
-                    <ConnectWalletLink />
+                    {/* <ConnectWalletLink /> */}
                 </MenuList>
             </Menu>
         </Flex>

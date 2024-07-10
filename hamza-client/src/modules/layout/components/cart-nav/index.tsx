@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { LineItem, Cart } from '@medusajs/medusa';
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
-import CartDropdown from '../cart-dropdown';
+import CartDropdown from './components/cart-button';
 
 const fetchCartData = async (): Promise<Omit<
     Cart,

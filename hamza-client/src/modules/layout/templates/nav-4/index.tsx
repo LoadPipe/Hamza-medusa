@@ -24,11 +24,18 @@ import NavLink from './components/nav-link';
 import { CgProfile, CgBell } from 'react-icons/cg';
 import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
 import AuthorizedLinks from './components/authorized-links';
-import ConnectWalletLink from './components/connect-wallet-link';
 import NavSearchBar from './components/nav-searchbar';
 import MobileMenu from './components/mobile-menu';
 import MobileNav from './components/mobile-nav';
 import { WalletConnectButton } from '@/components/providers/rainbowkit/connect-button/nav-connect-button';
+import {
+    MdOutlinePeople,
+    MdOutlineStorefront,
+    MdOutlineSell,
+    MdOutlineHelpCenter,
+    MdOutlineFiberSmartRecord,
+} from 'react-icons/md';
+import { FaHome } from 'react-icons/fa';
 
 export default async function Nav() {
     return (
@@ -111,37 +118,26 @@ export default async function Nav() {
                                 backgroundColor={'black'}
                                 width={{ base: '100vw', md: '321px' }}
                             >
-                                <MenuItem
-                                    mt="0.5rem"
-                                    mb="1rem"
-                                    fontWeight={'600'}
-                                    px="2rem"
-                                    flex={1}
-                                    color={'white'}
-                                    backgroundColor={'black'}
-                                >
-                                    <CartButton />
-                                </MenuItem>
-                                <Wishlist />
-                                <Box px={{ base: '2rem', md: 0 }}>
-                                    <MenuDivider
-                                        opacity={{ base: '0.5', md: '1' }}
-                                        borderColor={'white'}
-                                    />
-                                </Box>
                                 <Link
                                     href={`https://blog.hamza.biz/merchant/`}
                                     target="_blank"
                                 >
                                     <MenuItem
                                         fontWeight={'600'}
-                                        mt="1rem"
+                                        mt="0.5rem"
                                         px="2rem"
                                         color={'white'}
                                         backgroundColor={'black'}
                                         _hover={{ color: 'primary.green.900' }}
                                     >
-                                        Sell on Hamza
+                                        <Flex
+                                            w="30px"
+                                            justifyContent={'center'}
+                                            alignItems={'center'}
+                                        >
+                                            <MdOutlineStorefront size={28} />
+                                        </Flex>
+                                        <Text ml="0.5rem">Sell on Hamza</Text>
                                     </MenuItem>
                                 </Link>
                                 <Link
@@ -156,7 +152,14 @@ export default async function Nav() {
                                         backgroundColor={'black'}
                                         _hover={{ color: 'primary.green.900' }}
                                     >
-                                        Be an affiliate
+                                        <Flex
+                                            w="30px"
+                                            alignItems={'center'}
+                                            justifyContent={'center'}
+                                        >
+                                            <MdOutlinePeople size={30} />
+                                        </Flex>
+                                        <Text ml="0.5rem">Be an affiliate</Text>
                                     </MenuItem>
                                 </Link>
                                 <Box px={{ base: '2rem', md: 0 }}>
@@ -166,7 +169,6 @@ export default async function Nav() {
                                     />
                                 </Box>
 
-                                <AuthorizedLinks />
                                 <NavLink href={`/`}>
                                     <MenuItem
                                         fontWeight={'600'}
@@ -176,7 +178,14 @@ export default async function Nav() {
                                         backgroundColor={'black'}
                                         _hover={{ color: 'primary.green.900' }}
                                     >
-                                        <Text>Home</Text>
+                                        <Flex
+                                            w="30px"
+                                            justifyContent={'center'}
+                                            alignItems={'center'}
+                                        >
+                                            <FaHome size={25} />
+                                        </Flex>
+                                        <Text ml="0.5rem">Home</Text>
                                     </MenuItem>
                                 </NavLink>
                                 <NavLink href={`/store`}>
@@ -187,7 +196,14 @@ export default async function Nav() {
                                         backgroundColor={'black'}
                                         _hover={{ color: 'primary.green.900' }}
                                     >
-                                        <Text> Market</Text>
+                                        <Flex
+                                            w="30px"
+                                            justifyContent={'center'}
+                                            alignItems={'center'}
+                                        >
+                                            <MdOutlineSell size={25} />
+                                        </Flex>
+                                        <Text ml="0.5rem"> Market</Text>
                                     </MenuItem>
                                 </NavLink>
 
@@ -202,7 +218,16 @@ export default async function Nav() {
                                         backgroundColor={'black'}
                                         _hover={{ color: 'primary.green.900' }}
                                     >
-                                        About Us
+                                        <Flex
+                                            w="30px"
+                                            justifyContent={'center'}
+                                            alignItems={'center'}
+                                        >
+                                            <MdOutlineFiberSmartRecord
+                                                size={28}
+                                            />
+                                        </Flex>
+                                        <Text ml="0.5rem">About Us</Text>
                                     </MenuItem>
                                 </a>
 
@@ -218,18 +243,18 @@ export default async function Nav() {
                                         backgroundColor={'black'}
                                         _hover={{ color: 'primary.green.900' }}
                                     >
-                                        Help Center
+                                        <Flex
+                                            w="30px"
+                                            justifyContent={'center'}
+                                            alignItems={'center'}
+                                        >
+                                            <MdOutlineHelpCenter size={28} />
+                                        </Flex>
+                                        <Text ml="0.5rem">Help Center</Text>
                                     </MenuItem>
                                 </a>
 
-                                <MenuDivider
-                                    display={{ base: 'none', md: 'flex' }}
-                                    mb="0"
-                                    opacity={'1'}
-                                    borderColor={'white'}
-                                />
-
-                                <ConnectWalletLink />
+                                {/* <ConnectWalletLink /> */}
                             </MenuList>
                         </Menu>
                     </Flex>

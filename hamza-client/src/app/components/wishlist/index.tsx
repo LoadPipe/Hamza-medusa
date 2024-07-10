@@ -66,15 +66,20 @@ const Wishlist: React.FC<WishlistPopoverItemProps> = () => {
                                     flexDirection={'row'}
                                     alignSelf={'center'}
                                 >
-                                    <FaRegHeart
-                                        className="wishlist-icon"
-                                        size={'24px'}
-                                    />
+                                    <Flex
+                                        w="30px"
+                                        alignItems={'center'}
+                                        justifyContent={'center'}
+                                    >
+                                        <FaRegHeart
+                                            className="wishlist-icon"
+                                            size={24}
+                                        />
+                                    </Flex>
                                     <Text
-                                        className="wishlist-text"
-                                        fontSize={'16px'}
-                                        fontWeight={'700'}
-                                        ml="5px"
+                                        alignSelf={'center'}
+                                        fontWeight={'600'}
+                                        ml="0.5rem"
                                         _hover={{ color: 'primary.green.900' }}
                                     >
                                         Wishlist
