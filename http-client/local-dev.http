@@ -20,11 +20,11 @@ GET http://localhost:9000/store/products
 Content-Type: application/json
 
 ###
-GET http://localhost:9000/store/custom/products?store_name=Medusa Merch
+GET http://localhost:9000/custom/store/products?store_name=Medusa Merch
 Content-Type: application/json
 
 ### Get All products yayayay
-GET http://localhost:9000/store/custom/all-products
+GET http://localhost:9000/custom/store/all-products
 Content-Type: application/json
 
 

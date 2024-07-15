@@ -41,7 +41,7 @@ const ProductCardGroup = ({
         ['products', { vendor: vendorName }],
         () =>
             axios.get(
-                `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/store/custom/products?store_name=${vendorName}`
+                `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products?store_name=${vendorName}`
             )
     );
 
@@ -132,49 +132,49 @@ const ProductCardGroup = ({
                 {isLoading
                     ? renderSkeletons(8) // Render 8 skeletons while loading
                     : filteredProducts.map((product: any, index: number) => {
-                          const variantPrices = product.variants
-                              .map((variant: any) => variant.prices)
-                              .flat();
+                        const variantPrices = product.variants
+                            .map((variant: any) => variant.prices)
+                            .flat();
 
-                          const productPricing = formatCryptoPrice(
-                              variantPrices.find(
-                                  (p: any) =>
-                                      p.currency_code ===
-                                      preferred_currency_code
-                              ).amount,
-                              preferred_currency_code as string
-                          );
-                          const reviewCounter = product.reviews.length;
-                          const totalRating = product.reviews.reduce(
-                              (acc: number, review: any) => acc + review.rating,
-                              0
-                          );
-                          const avgRating = totalRating / reviewCounter;
-                          const roundedAvgRating = parseFloat(
-                              avgRating.toFixed(2)
-                          );
+                        const productPricing = formatCryptoPrice(
+                            variantPrices.find(
+                                (p: any) =>
+                                    p.currency_code ===
+                                    preferred_currency_code
+                            ).amount,
+                            preferred_currency_code as string
+                        );
+                        const reviewCounter = product.reviews.length;
+                        const totalRating = product.reviews.reduce(
+                            (acc: number, review: any) => acc + review.rating,
+                            0
+                        );
+                        const avgRating = totalRating / reviewCounter;
+                        const roundedAvgRating = parseFloat(
+                            avgRating.toFixed(2)
+                        );
 
-                          const variantID = product.variants[0].id;
-                          return (
-                              <ProductCard
-                                  key={index}
-                                  productHandle={products[index].handle}
-                                  variantID={variantID}
-                                  reviewCount={reviewCounter}
-                                  totalRating={roundedAvgRating}
-                                  countryCode={product.countryCode}
-                                  productName={product.title}
-                                  productPrice={productPricing}
-                                  currencyCode={
-                                      preferred_currency_code ?? 'usdc'
-                                  }
-                                  imageSrc={product.thumbnail}
-                                  hasDiscount={product.is_giftcard}
-                                  discountValue={product.discountValue}
-                                  productId={product.id}
-                              />
-                          );
-                      })}
+                        const variantID = product.variants[0].id;
+                        return (
+                            <ProductCard
+                                key={index}
+                                productHandle={products[index].handle}
+                                variantID={variantID}
+                                reviewCount={reviewCounter}
+                                totalRating={roundedAvgRating}
+                                countryCode={product.countryCode}
+                                productName={product.title}
+                                productPrice={productPricing}
+                                currencyCode={
+                                    preferred_currency_code ?? 'usdc'
+                                }
+                                imageSrc={product.thumbnail}
+                                hasDiscount={product.is_giftcard}
+                                discountValue={product.discountValue}
+                                productId={product.id}
+                            />
+                        );
+                    })}
             </Flex>
         </Container>
     );
