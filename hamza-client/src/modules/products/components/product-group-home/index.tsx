@@ -30,7 +30,7 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
         () => {
             const url =
                 vendorName === 'All'
-                    ? `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/all-products`
+                    ? `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products`
                     : `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products?store_name=${vendorName}`;
 
             return axios.get(url);
