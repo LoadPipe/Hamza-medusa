@@ -13,7 +13,6 @@ const SearchAndFilterPanel = () => {
     const [vendorName, setVendorName] = useState('All');
     const [isClient, setIsClient] = useState(false);
 
-    // Ensure that the component knows when it's running on the client
     useEffect(() => {
         setIsClient(true);
     }, []);
