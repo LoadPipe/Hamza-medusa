@@ -6,34 +6,6 @@ import { FaArrowRightLong } from 'react-icons/fa6';
 import { SwitchNetwork } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 
 const HeroBanner = () => {
-    //!!!Hydration fix causing hero text not to load instantly
-
-    // const [opacity, setOpacity] = useState(1);
-
-    // const [isHydrated, setIsHydrated] = useState(false);
-
-    // useEffect(() => {
-    //     const handleScroll = () => {
-    //         const scrollY = window.scrollY;
-    //         const newOpacity = Math.max(0, 1 - scrollY / 200);
-    //         setOpacity(newOpacity);
-    //     };
-
-    //     window.addEventListener('scroll', handleScroll);
-
-    //     return () => {
-    //         window.removeEventListener('scroll', handleScroll);
-    //     };
-    // }, []);
-
-    // useEffect(() => {
-    //     setIsHydrated(true);
-    // }, []);
-
-    // if (!isHydrated) {
-    //     return <></>;
-    // }
-
     return (
         <>
             {/* <Flex
