@@ -16,6 +16,8 @@ import { Region } from '@medusajs/medusa';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import axios from 'axios';
 import { format } from 'date-fns';
+import { EditIcon } from '@chakra-ui/icons';
+import Link from 'next/link';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -24,7 +26,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
     const { authData } = useCustomerAuthStore();
 
     useEffect(() => {
-        if (authData.customer_id) {
+        if (authData.status == 'authenticated') {
             const fetchReviews = async () => {
                 try {
                     const response = await axios.post(
@@ -43,7 +45,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
             };
             fetchReviews();
         }
-    }, [authData.customer_id]);
+    }, [authData.status]);
 
     return (
         <Card>
@@ -56,12 +58,21 @@ const ReviewPage = ({ region }: { region: Region }) => {
                         <Stack divider={<StackDivider />} spacing={4}>
                             {reviews.map((review: any) => (
                                 <Box key={review.id}>
-                                    <Heading
-                                        size="xs"
-                                        textTransform="uppercase"
-                                    >
-                                        {review.title}
-                                    </Heading>
+                                    <div className="flex flex-row space-x-2 items-center">
+                                        <Heading
+                                            size="xs"
+                                            textTransform="uppercase"
+                                        >
+                                            {review.title}
+                                        </Heading>
+                                        {review.order_id && (
+                                            <Link
+                                                href={`/account/editreview/${review.order_id}`}
+                                            >
+                                                <EditIcon className="cursor-pointer" />
+                                            </Link>
+                                        )}
+                                    </div>
                                     <Text fontSize="sm">
                                         Customer ID: {review.customer_id}
                                     </Text>
