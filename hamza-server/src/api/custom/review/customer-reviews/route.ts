@@ -2,7 +2,7 @@ import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import ProductReviewService from 'src/services/product-review';
 import { readRequestBody } from '../../../../utils/request-body';
 
-//TODO: this and all-reviews can be consolidated 
+//TODO: this and all-reviews, all-customer-reviews, customer-reviews, etc. can be consolidated 
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const logger = req.scope.resolve('logger') as Logger;

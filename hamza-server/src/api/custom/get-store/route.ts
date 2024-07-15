@@ -2,6 +2,7 @@ import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import ProductService from 'src/services/product';
 import { readRequestBody } from '../../../utils/request-body';
 
+//TODO: should this not just be GET /store?
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const logger = req.scope.resolve('logger') as Logger;
     const productService: ProductService = req.scope.resolve('productService');

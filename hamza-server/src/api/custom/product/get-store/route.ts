@@ -1,6 +1,4 @@
 import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
-import ConfirmationTokenService from '../../../../services/confirmation-token';
-import { readRequestBody } from '../../../../utils/request-body';
 import ProductRepository from '@medusajs/medusa/dist/repositories/product';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
