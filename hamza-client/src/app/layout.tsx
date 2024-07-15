@@ -1,7 +1,5 @@
-'use client';
-
-import React from 'react';
 import { Metadata } from 'next';
+import React from 'react';
 import 'styles/globals.css';
 const BASE_URL =
     process.env.NEXT_PUBLIC_MEDUSA_CLIENT_URL || 'https://localhost:8000';
@@ -13,9 +11,9 @@ import { Toaster } from 'react-hot-toast';
 import { Sora } from '@next/font/google';
 // TODO: Refactor using scaffold-eth-2 for proper layout.
 
-// export const metadata: Metadata = {
-//     metadataBase: new URL(BASE_URL),
-// };
+export const metadata: Metadata = {
+    metadataBase: new URL(BASE_URL),
+};
 
 // Define your custom colors
 
