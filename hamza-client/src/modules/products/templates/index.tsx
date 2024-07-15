@@ -73,7 +73,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
     ]);
 
     // if (!product || !product.id) {
-    //     return null; // Return null or some error display component
+    //     return null; // Return null or some error display components
     // }
     // console.log(
     //     `Product Page, we have product ${product.id} ${product.handle}`

@@ -11,7 +11,7 @@ const FilterBar = () => {
     const [startIdx, setStartIdx] = useState(0); // State to keep track of the starting index of visible vendors
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    // Ensure that the component knows when it's running on the client
+    // Ensure that the components knows when it's running on the client
     useEffect(() => {
         setIsClient(true);
     }, []);

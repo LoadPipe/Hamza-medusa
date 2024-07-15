@@ -1,102 +1,285 @@
-import { headers } from 'next/headers';
-import { Suspense, useState } from 'react';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { listRegions } from '@lib/data';
+import React from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import CartButton from '@modules/layout/components/cart-button';
 import WishListPopover from '@/components/wishlist-dropdown';
+import Wishlist from '@/components/wishlist';
 import SideMenu from '@modules/layout/components/side-menu';
-import Image from 'next/image';
-import logo from '../../../../../public/nav/hamza_logo.png';
 import { WalletConnectButton } from '@/components/providers/rainbowkit/connect-button/connect-button';
-import SearchModal from '@modules/search/templates/search-modal';
-import SearchModalWrapper from '@modules/search/templates/search-wrapper';
-import dynamic from 'next/dynamic';
 
-const Wish = dynamic(() => import('../../../../store/wishlist/wish'), {
-    ssr: false, // This will prevent the component from rendering on the server side
-});
+import {
+    Flex,
+    Text,
+    Box,
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    MenuDivider,
+} from '@chakra-ui/react';
+import Image from 'next/image';
+import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
+import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
+import { IoMdMenu } from 'react-icons/io';
+import Link from 'next/link';
+import NavLink from './components/nav-link';
+import { CgProfile, CgBell } from 'react-icons/cg';
+import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
+import AuthorizedLinks from './components/authorized-links';
+import ConnectWalletLink from './components/connect-wallet-link';
+import NavSearchBar from './components/nav-searchbar';
+import MobileMenu from './components/mobile-menu';
+import MobileNav from './components/mobile-nav';
 
 export default async function Nav() {
-    const regions = await listRegions().then((regions) => regions);
-
     return (
-        <div className="sticky top-0 inset-x-0 z-50 group">
-            <header className="relative h-16 mx-auto border-b duration-200 bg-white dark:bg-black border-ui-border-base">
-                <nav className="content-container txt-xsmall-plus text-ui-fg-subtle flex items-center justify-between w-full h-full text-small-regular">
-                    <div className="flex items-center h-full">
-                        <LocalizedClientLink
-                            href="/"
-                            className="txt-compact-xlarge-plus hover:text-ui-fg-base uppercase"
+        <Flex
+            zIndex={'2'}
+            className="sticky top-0"
+            width="100%"
+            height={{ base: '60px', md: '125px' }}
+            justifyContent={'center'}
+            alignItems={'center'}
+            backgroundColor={'#020202'}
+        >
+            <MobileNav />
+            <Flex
+                display={{ base: 'none', md: 'flex' }}
+                h={'87px'}
+                mx="1rem"
+                maxWidth={'1280px'}
+                width={'100%'}
+                bgColor={'transparent'}
+                alignItems="center"
+            >
+                <Flex
+                    width={'100%'}
+                    justifyContent={'center'}
+                    alignItems="center"
+                >
+                    <MobileMenu />
+                    <LocalizedClientLink href="/">
+                        <Flex width={'190px'} marginLeft="auto" flexShrink={0}>
+                            <Image
+                                className="w-[22.92px] h-[33px] md:w-[47.34px] md:h-[67px]"
+                                src={HamzaLogo}
+                                alt="Hamza"
+                            />
+
+                            <Image
+                                src={HamzaTitle}
+                                className="w-[60.73px] h-[11.59px] md:w-[125.42px] md:h-[23.07px] ml-[0.5rem] md:ml-[1rem]"
+                                style={{
+                                    alignSelf: 'center',
+                                }}
+                                alt="Hamza"
+                            />
+                        </Flex>
+                    </LocalizedClientLink>
+
+                    <Flex width={'100%'} display={{ base: 'none', md: 'flex' }}>
+                        <NavSearchBar />
+                    </Flex>
+
+                    <Link
+                        href="https://blog.hamza.biz/affiliate"
+                        target="_blank"
+                    >
+                        <Flex
+                            flexShrink={0}
+                            width={'162px'}
+                            height={'52px'}
+                            borderWidth={'1px'}
+                            borderRadius={'full'}
+                            borderColor="white"
+                            alignSelf={'center'}
+                            justifyContent={'center'}
+                            marginLeft={'auto'}
+                            backgroundColor={'transparent'}
+                            color="White"
+                            cursor={'pointer'}
+                            display={{ base: 'none', md: 'flex' }}
+                            _hover={{
+                                color: 'primary.green.900',
+                                borderColor: 'primary.green.900',
+                                transition:
+                                    'color 0.2s ease-in-out, border-color 0.2s ease-in-out',
+                            }}
                         >
-                            {/*<Image*/}
-                            {/*    src={logo}*/}
-                            {/*    width={50.41}*/}
-                            {/*    height={57.27}*/}
-                            {/*    alt="Hamza Logo"*/}
-                            {/*/>*/}
-                        </LocalizedClientLink>
-                    </div>
-                    <div className="flex-1 basis-0 h-full flex items-center">
-                        <div className="font-sora h-full">
-                            <SideMenu regions={regions} />
-                        </div>
-                    </div>
-
-                    {/*Add ETH CURRENCY*/}
-
-                    <div className="flex items-center gap-x-6 h-full flex-1 basis-0 justify-end">
-                        <div className="hidden small:flex items-center gap-x-6 h-full">
-                            {process.env.FEATURE_SEARCH_ENABLED && (
-                                <SearchModalWrapper />
-                            )}
-                        </div>
-                        <Wish />
-                        <Suspense
-                            fallback={
-                                <LocalizedClientLink
-                                    className="hover:text-ui-fg-base font-sora"
-                                    href="/cart"
-                                >
-                                    <span
-                                        style={{
-                                            fontSize: '14px',
-                                            fontWeight: 'bold',
-                                        }}
-                                    >
-                                        Cart (0)
-                                    </span>
-                                </LocalizedClientLink>
-                            }
-                        >
-                            <CartButton />
-                            <WalletConnectButton />
-
-                            <a
-                                href="https://twitter.com/intent/tweet?text=Hello%20world"
-                                target="_blank"
+                            <Text
+                                fontWeight={'600'}
+                                fontSize={'16px'}
+                                alignSelf={'center'}
+                                textAlign={'center'}
                             >
-                                <button
-                                    type="button"
-                                    data-twe-ripple-init
-                                    data-twe-ripple-color="light"
-                                    className="mb-2 inline-block rounded bg-black px-6 py-2.5 text-xs font-medium uppercase leading-normal text-white shadow-md transition duration-150 ease-in-out hover:shadow-lg focus:shadow-lg focus:outline-none focus:ring-0 active:shadow-lg"
+                                Sell on Hamza
+                            </Text>
+                        </Flex>
+                    </Link>
+                    <Flex display={{ base: 'none', md: 'flex' }}>
+                        <Menu placement="bottom-end">
+                            <MenuButton
+                                flexShrink={0}
+                                width={'115px'}
+                                height={'52px'}
+                                px="1rem"
+                                borderRadius={'full'}
+                                justifyContent={'center'}
+                                alignSelf={'center'}
+                                marginLeft={{ base: 'auto', md: '1rem' }}
+                                backgroundColor={{
+                                    base: 'transparent',
+                                    md: 'primary.green.900',
+                                }}
+                                cursor={'pointer'}
+                            >
+                                <Flex>
+                                    <Flex alignSelf={'center'} color={'black'}>
+                                        <IoMdMenu size={30} />
+                                    </Flex>
+                                    <Flex
+                                        marginLeft={'auto'}
+                                        alignSelf={'center'}
+                                    >
+                                        <CgProfile color="black" size={30} />
+                                    </Flex>
+                                </Flex>
+                            </MenuButton>
+                            <MenuList
+                                marginTop={'1rem'}
+                                pb={'0px'}
+                                borderTopRadius={'0px'}
+                                borderBottomRadius={'16px'}
+                                borderColor={{
+                                    base: 'transparent',
+                                    md: 'white',
+                                }}
+                                backgroundColor={'black'}
+                                width={{ base: '100vw', md: '321px' }}
+                            >
+                                <MenuItem
+                                    mt="0.5rem"
+                                    mb="1rem"
+                                    fontWeight={'600'}
+                                    px="2rem"
+                                    flex={1}
+                                    color={'white'}
+                                    backgroundColor={'black'}
                                 >
-                                    <span className="[&>svg]:h-4 [&>svg]:w-4">
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="currentColor"
-                                            viewBox="0 0 512 512"
-                                        >
-                                            <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
-                                        </svg>
-                                    </span>
-                                </button>
-                            </a>
-                        </Suspense>
-                    </div>
-                </nav>
-            </header>
-        </div>
+                                    <CartButton />
+                                </MenuItem>
+                                <Wishlist />
+                                <Box px={{ base: '2rem', md: 0 }}>
+                                    <MenuDivider
+                                        opacity={{ base: '0.5', md: '1' }}
+                                        borderColor={'white'}
+                                    />
+                                </Box>
+                                <Link
+                                    href={`https://blog.hamza.biz/merchant/`}
+                                    target="_blank"
+                                >
+                                    <MenuItem
+                                        fontWeight={'600'}
+                                        mt="1rem"
+                                        px="2rem"
+                                        color={'white'}
+                                        backgroundColor={'black'}
+                                        _hover={{ color: 'primary.green.900' }}
+                                    >
+                                        Sell on Hamza
+                                    </MenuItem>
+                                </Link>
+                                <Link
+                                    href={`https://blog.hamza.biz/affiliate/`}
+                                    target="_blank"
+                                >
+                                    <MenuItem
+                                        fontWeight={'600'}
+                                        mb="1rem"
+                                        px="2rem"
+                                        color={'white'}
+                                        backgroundColor={'black'}
+                                        _hover={{ color: 'primary.green.900' }}
+                                    >
+                                        Be an affiliate
+                                    </MenuItem>
+                                </Link>
+                                <Box px={{ base: '2rem', md: 0 }}>
+                                    <MenuDivider
+                                        opacity={{ base: '0.5', md: '1' }}
+                                        borderColor={'white'}
+                                    />
+                                </Box>
+
+                                <AuthorizedLinks />
+                                <NavLink href={`/`}>
+                                    <MenuItem
+                                        fontWeight={'600'}
+                                        mt="1rem"
+                                        px="2rem"
+                                        color={'white'}
+                                        backgroundColor={'black'}
+                                        _hover={{ color: 'primary.green.900' }}
+                                    >
+                                        <Text>Home</Text>
+                                    </MenuItem>
+                                </NavLink>
+                                <NavLink href={`/store`}>
+                                    <MenuItem
+                                        fontWeight={'600'}
+                                        px="2rem"
+                                        color={'white'}
+                                        backgroundColor={'black'}
+                                        _hover={{ color: 'primary.green.900' }}
+                                    >
+                                        <Text> Market</Text>
+                                    </MenuItem>
+                                </NavLink>
+
+                                <a
+                                    target="_blank"
+                                    href="https://blog.hamza.biz/about/"
+                                >
+                                    <MenuItem
+                                        fontWeight={'600'}
+                                        px="2rem"
+                                        color={'white'}
+                                        backgroundColor={'black'}
+                                        _hover={{ color: 'primary.green.900' }}
+                                    >
+                                        About Us
+                                    </MenuItem>
+                                </a>
+
+                                <a
+                                    target="_blank"
+                                    href="https://blog.hamza.biz/contact/"
+                                >
+                                    <MenuItem
+                                        fontWeight={'600'}
+                                        px="2rem"
+                                        mb="1.5rem"
+                                        color={'white'}
+                                        backgroundColor={'black'}
+                                        _hover={{ color: 'primary.green.900' }}
+                                    >
+                                        Help Center
+                                    </MenuItem>
+                                </a>
+
+                                <MenuDivider
+                                    display={{ base: 'none', md: 'flex' }}
+                                    mb="0"
+                                    opacity={'1'}
+                                    borderColor={'white'}
+                                />
+
+                                <ConnectWalletLink />
+                            </MenuList>
+                        </Menu>
+                    </Flex>
+                </Flex>
+            </Flex>
+        </Flex>
     );
 }
