@@ -106,6 +106,14 @@ const colors = {
 
 const theme = extendTheme({
     colors,
+    styles: {
+        global: {
+            // These styles are applied to the 'html' and 'body' elements
+            'html, body': {
+                fontFamily: `'Sora', sans-serif`,
+            },
+        },
+    },
     fonts: {
         body: `'Sora', sans-serif`,
         heading: `'Sora', sans-serif`,

@@ -80,38 +80,41 @@ export default async function Nav() {
                         <NavSearchBar />
                     </Flex>
 
-                    <Flex
-                        flexShrink={0}
-                        width={'162px'}
-                        height={'52px'}
-                        borderWidth={'1px'}
-                        borderRadius={'full'}
-                        borderColor="white"
-                        alignSelf={'center'}
-                        justifyContent={'center'}
-                        marginLeft={'auto'}
-                        backgroundColor={'transparent'}
-                        color="White"
-                        cursor={'pointer'}
-                        display={{ base: 'none', md: 'flex' }}
-                        _hover={{
-                            color: 'primary.green.900',
-                            borderColor: 'primary.green.900',
-                            transition:
-                                'color 0.2s ease-in-out, border-color 0.2s ease-in-out',
-                        }}
+                    <Link
+                        href="https://blog.hamza.biz/affiliate"
+                        target="_blank"
                     >
-                        <Text
-                            className="font-sora"
-                            fontWeight={'600'}
-                            fontSize={'16px'}
+                        <Flex
+                            flexShrink={0}
+                            width={'162px'}
+                            height={'52px'}
+                            borderWidth={'1px'}
+                            borderRadius={'full'}
+                            borderColor="white"
                             alignSelf={'center'}
-                            textAlign={'center'}
+                            justifyContent={'center'}
+                            marginLeft={'auto'}
+                            backgroundColor={'transparent'}
+                            color="White"
+                            cursor={'pointer'}
+                            display={{ base: 'none', md: 'flex' }}
+                            _hover={{
+                                color: 'primary.green.900',
+                                borderColor: 'primary.green.900',
+                                transition:
+                                    'color 0.2s ease-in-out, border-color 0.2s ease-in-out',
+                            }}
                         >
-                            Sell on Hamza
-                        </Text>
-                    </Flex>
-
+                            <Text
+                                fontWeight={'600'}
+                                fontSize={'16px'}
+                                alignSelf={'center'}
+                                textAlign={'center'}
+                            >
+                                Sell on Hamza
+                            </Text>
+                        </Flex>
+                    </Link>
                     <Flex display={{ base: 'none', md: 'flex' }}>
                         <Menu placement="bottom-end">
                             <MenuButton

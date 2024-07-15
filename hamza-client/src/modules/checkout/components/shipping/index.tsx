@@ -4,7 +4,8 @@ import { RadioGroup } from '@headlessui/react';
 import { CheckCircleSolid } from '@medusajs/icons';
 import { Cart } from '@medusajs/medusa';
 import { PricedShippingOption } from '@medusajs/medusa/dist/types/pricing';
-import { Button, Heading, Text, clx, useToggleState } from '@medusajs/ui';
+import { Heading, Text, clx, useToggleState } from '@medusajs/ui';
+import { Button } from '@chakra-ui/react';
 import { formatAmount } from '@lib/util/prices';
 
 import Divider from '@modules/common/components/divider';
@@ -15,6 +16,7 @@ import { setShippingMethod } from '@modules/checkout/actions';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import { setPaymentMethod } from '@modules/checkout/actions';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
 type ShippingProps = {
@@ -45,7 +47,10 @@ const Shipping: React.FC<ShippingProps> = ({
 
     const handleSubmit = () => {
         setIsLoading(true);
-        router.push(pathname + '?step=payment', { scroll: false });
+        //router.push(pathname + '?step=payment', { scroll: false });
+        router.push(pathname + '?step=review', {
+            scroll: false,
+        });
     };
 
     const set = async (id: string) => {
@@ -56,6 +61,13 @@ const Shipping: React.FC<ShippingProps> = ({
             })
             .catch((err) => {
                 setError(err.toString());
+                setIsLoading(false);
+            });
+
+        //set payment method to crypto
+        await setPaymentMethod('crypto')
+            .catch((err) => setError(err.toString()))
+            .finally(() => {
                 setIsLoading(false);
             });
     };
@@ -151,10 +163,17 @@ const Shipping: React.FC<ShippingProps> = ({
                                                 </span>
                                             </div>
                                             <span className="justify-self-end text-white">
-                                                {option.name === 'FakeEx Standard' ?
-                                                    (preferred_currency_code === 'eth' ? '0.00001 ' : '1.20') :
-                                                    (preferred_currency_code === 'eth' ? '0.000025 ' : '3.25')
-                                                } {' '}{preferred_currency_code?.toUpperCase()}
+                                                {option.name ===
+                                                    'FakeEx Standard'
+                                                    ? preferred_currency_code ===
+                                                        'eth'
+                                                        ? '0.00001 '
+                                                        : '1.20'
+                                                    : preferred_currency_code ===
+                                                        'eth'
+                                                        ? '0.000025 '
+                                                        : '3.25'}{' '}
+                                                {preferred_currency_code?.toUpperCase()}
                                             </span>
                                         </RadioGroup.Option>
                                     );
@@ -170,9 +189,15 @@ const Shipping: React.FC<ShippingProps> = ({
                     <ErrorMessage error={error} />
 
                     <Button
-                        size="large"
-                        className="mt-6 bg-purple-500 text-white py-3 px-6 rounded text-base"
+                        height={'52px'}
+                        backgroundColor={'primary.indigo.900'}
+                        color={'white'}
+                        className="mt-6 text-white py-3 px-6  text-base"
                         onClick={handleSubmit}
+                        _hover={{
+                            backgroundColor: 'white',
+                            color: 'black',
+                        }}
                         isLoading={isLoading}
                         disabled={
                             !cart.shipping_methods?.length ||
@@ -196,11 +221,15 @@ const Shipping: React.FC<ShippingProps> = ({
                                             .shipping_option.name
                                         : ' '}{' '}
                                     (
-                                    {cart.shipping_methods[0].shipping_option.name === 'FakeEx Standard' ?
-                                        (preferred_currency_code === 'eth' ? '0.00001 ' : '1.20') :
-                                        (preferred_currency_code === 'eth' ? '0.000025 ' : '3.25')
-                                    } {' '}{preferred_currency_code?.toUpperCase()}
-                                    )
+                                    {cart.shipping_methods[0].shipping_option
+                                        .name === 'FakeEx Standard'
+                                        ? preferred_currency_code === 'eth'
+                                            ? '0.00001 '
+                                            : '1.20'
+                                        : preferred_currency_code === 'eth'
+                                            ? '0.000025 '
+                                            : '3.25'}{' '}
+                                    {preferred_currency_code?.toUpperCase()})
                                 </Text>
                             </div>
                         )}

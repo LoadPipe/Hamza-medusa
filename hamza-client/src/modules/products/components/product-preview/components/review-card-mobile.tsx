@@ -2,17 +2,21 @@ import React from 'react';
 import { Text, Box, Flex, Heading } from '@chakra-ui/react';
 import Image from 'next/image';
 import ReviewStar from '../../../../../../public/images/products/review-star.svg';
+import { TiStarFullOutline } from 'react-icons/ti';
+import { renderStars } from './review-card';
 
 interface ReviewCardProps {
     name: string;
     location: string;
     review: string;
+    stars: number;
 }
 
 const ReviewCardMobile: React.FC<ReviewCardProps> = ({
     name,
     location,
     review,
+    stars,
 }) => {
     return (
         <Flex
@@ -24,33 +28,7 @@ const ReviewCardMobile: React.FC<ReviewCardProps> = ({
             background="linear-gradient(317.5deg, #53594A 42.03%, #2C272D 117.46%, #2C272D 117.46%)"
         >
             <Flex flexDirection={'column'}>
-                <Flex mt="1rem">
-                    <Image
-                        style={{ width: '16px', height: '16px' }}
-                        src={ReviewStar}
-                        alt="star"
-                    />
-                    <Image
-                        style={{ width: '16px', height: '16px' }}
-                        src={ReviewStar}
-                        alt="star"
-                    />
-                    <Image
-                        style={{ width: '16px', height: '16px' }}
-                        src={ReviewStar}
-                        alt="star"
-                    />
-                    <Image
-                        style={{ width: '16px', height: '16px' }}
-                        src={ReviewStar}
-                        alt="star"
-                    />
-                    <Image
-                        style={{ width: '16px', height: '16px' }}
-                        src={ReviewStar}
-                        alt="star"
-                    />
-                </Flex>
+                <Flex mt="1rem">{renderStars(stars)}</Flex>
 
                 <Text
                     mt="1.5rem"
@@ -62,13 +40,6 @@ const ReviewCardMobile: React.FC<ReviewCardProps> = ({
                 </Text>
 
                 <Flex my="2rem">
-                    <Box
-                        width="40px"
-                        height="40px"
-                        backgroundColor="white"
-                        borderRadius={'full'}
-                    />
-
                     <Flex
                         ml="0.5rem"
                         flexDirection={'column'}

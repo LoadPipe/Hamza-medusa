@@ -61,7 +61,6 @@ export async function retrieveCart(
     if (!cartId?.length) cartId = cookies().get('_medusa_cart_id')?.value;
 
     if (!cartId) {
-        console.log('retrieveCart returning null');
         return null;
     }
 
@@ -173,9 +172,9 @@ export async function enrichLineItems(
     regionId: string
 ): Promise<
     | Omit<
-          ExtendedLineItem,
-          'beforeInsert' | 'beforeUpdate' | 'afterUpdateOrLoad'
-      >[]
+        ExtendedLineItem,
+        'beforeInsert' | 'beforeUpdate' | 'afterUpdateOrLoad'
+    >[]
     | undefined
 > {
     // Prepare query parameters

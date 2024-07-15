@@ -40,20 +40,27 @@ const FilterBar = () => {
                 maxW={'1249px'}
                 width={'100%'}
                 overflow={'hidden'}
-                gap={'20px'}
+                gap={{ base: '12px', md: '20px' }}
                 position="relative"
             >
                 <FilterButton onClick={() => onOpen()} />
-                {visibleVendors.map((vendor: any, index) => (
-                    <CategoryButtons
-                        key={index}
-                        categoryType={vendor.vendorType}
-                        // categoryType="lego"
-                        categoryName={vendor.vendorName}
-                    />
-                ))}
                 <Flex
-                    w="50px"
+                    maxW={'1100px'}
+                    width={'100%'}
+                    overflow={'hidden'}
+                    gap={{ base: '12px', md: '20px' }}
+                >
+                    {visibleVendors.map((vendor: any, index) => (
+                        <CategoryButtons
+                            key={index}
+                            categoryType={vendor.vendorType}
+                            // categoryType="lego"
+                            categoryName={vendor.vendorName}
+                        />
+                    ))}
+                </Flex>
+                <Flex
+                    w="123px"
                     height={{ base: '42px', md: '63px' }}
                     justifyContent={'center'}
                     alignItems={'center'}
@@ -62,10 +69,13 @@ const FilterBar = () => {
                     position="absolute"
                     right="0"
                     top="0"
-                    bg="linear-gradient(90deg, rgba(44, 39, 45, 0) 0%, #2C272D 50%)" // Applying linear gradient
+                    bg="linear-gradient(90deg, rgba(44, 39, 45, 0) 0%, #2C272D 75%)" // Applying linear gradient
+                    userSelect={'none'}
                 >
                     <Flex
+                        ml="auto"
                         w="35px"
+                        mr="0.75rem"
                         height={'100%'}
                         justifyContent={'center'}
                         alignItems={'center'}

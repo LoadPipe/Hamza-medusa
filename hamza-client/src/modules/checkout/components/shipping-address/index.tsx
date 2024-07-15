@@ -96,7 +96,7 @@ const ShippingAddress = ({
                 </Container>
             )}
             <div className="grid gap-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 ">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Input
                         label="First name"
                         name="shipping_address.first_name"
@@ -145,6 +145,7 @@ const ShippingAddress = ({
                         required
                     />
                     <CountrySelect
+                        className="bg-white"
                         name="shipping_address.country_code"
                         autoComplete="country"
                         region={cart?.region}

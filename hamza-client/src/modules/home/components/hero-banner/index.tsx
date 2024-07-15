@@ -6,35 +6,37 @@ import { FaArrowRightLong } from 'react-icons/fa6';
 import { SwitchNetwork } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 
 const HeroBanner = () => {
-    const [opacity, setOpacity] = useState(1);
+    //!!!Hydration fix causing hero text not to load instantly
 
-    const [isHydrated, setIsHydrated] = useState(false);
+    // const [opacity, setOpacity] = useState(1);
 
-    useEffect(() => {
-        const handleScroll = () => {
-            const scrollY = window.scrollY;
-            const newOpacity = Math.max(0, 1 - scrollY / 200);
-            setOpacity(newOpacity);
-        };
+    // const [isHydrated, setIsHydrated] = useState(false);
 
-        window.addEventListener('scroll', handleScroll);
+    // useEffect(() => {
+    //     const handleScroll = () => {
+    //         const scrollY = window.scrollY;
+    //         const newOpacity = Math.max(0, 1 - scrollY / 200);
+    //         setOpacity(newOpacity);
+    //     };
 
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
+    //     window.addEventListener('scroll', handleScroll);
 
-    useEffect(() => {
-        setIsHydrated(true);
-    }, []);
+    //     return () => {
+    //         window.removeEventListener('scroll', handleScroll);
+    //     };
+    // }, []);
 
-    if (!isHydrated) {
-        return <></>;
-    }
+    // useEffect(() => {
+    //     setIsHydrated(true);
+    // }, []);
+
+    // if (!isHydrated) {
+    //     return <></>;
+    // }
 
     return (
         <>
-            <Flex
+            {/* <Flex
                 display={{ base: 'none', md: 'flex' }}
                 w="100%"
                 bg="primary.indigo.900"
@@ -50,9 +52,10 @@ const HeroBanner = () => {
                         Become an affiliate
                     </Text>
                 </Link>
-            </Flex>
+            </Flex> */}
             <SwitchNetwork enabled={false} />
             <Flex
+                mt="2rem"
                 justifyContent={'center'}
                 alignItems={'center'}
                 flexDirection={'column'}

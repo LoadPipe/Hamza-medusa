@@ -2,42 +2,46 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa6';
 import { GoArrowLeft, GoArrowRight } from 'react-icons/go';
-import ReviewCard from './review-card';
+import ReviewCard, { renderStars } from './review-card';
 import ReviewCardMobile from './review-card-mobile';
 import ReviewStar from '../../../../../../public/images/products/review-star.svg';
 import Image from 'next/image';
 import axios from 'axios';
-import useProductPreview from '@store/product-preview/product-preview';
+import {
+    TiStarFullOutline,
+    TiStarHalfOutline,
+    TiStarOutline,
+} from 'react-icons/ti';
 
-const ProductReview = () => {
+const fakeReviews = [
+    {
+        id: 1,
+        name: 'Inpachem Reskweiat',
+        location: 'Myanmar',
+        review: 'I thought that this was a pretty good product, if a little bit less so that what the Lori Wymar article said; still and all though, I was satisfied. I think I might get another in a different color.',
+        stars: 4,
+    },
+    {
+        id: 2,
+        name: 'Count Cagliostro',
+        location: 'California',
+        stars: 3,
+        review: 'Bro, this was exactly what I was looking for when they said "you gotta get in on this thing"! I was all no, really? And then I was yeah I guess I should. All good!',
+    },
+    {
+        id: 3,
+        name: 'Clothar Magnusson',
+        location: 'Iceland',
+        stars: 4,
+        review: 'Aside from all the lorem ipsum bulls**t, this product is actually the best one of its kind. If you think that it is not, let please teach you how to be a buff Icelandic giant. Plot twist: you gotta deadlift like every other day.',
+    },
+];
+
+const ProductReview = ({ productId }: { productId: string }) => {
     const [startIndex, setStartIndex] = useState(0);
     const reviewsToShow = 2;
-    const { productId } = useProductPreview();
 
-    const [fakeReviews, setFakeReviews] = useState(true);
-    const [reviews, setReviews] = useState([
-        {
-            id: 1,
-            name: 'John Doe',
-            location: 'New York',
-            review: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-            stars: 4,
-        },
-        {
-            id: 2,
-            name: 'Jane Smith',
-            location: 'California',
-            stars: 4,
-            review: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-        },
-        {
-            id: 3,
-            name: 'Alice Johnson',
-            location: 'Texas',
-            stars: 4,
-            review: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-        },
-    ]);
+    const [reviews, setReviews] = useState<any>([]);
 
     const handleNext = () => {
         setStartIndex((prevIndex) => (prevIndex + 1) % reviews.length);
@@ -61,27 +65,57 @@ const ProductReview = () => {
                 product_id: productId,
             }
         );
-
-        if (res.data && res.data.length > 0) {
-            setReviews(
-                res.data.map((a: any) => {
-                    return {
-                        id: a.id,
-                        name:
-                            `${a.customer.first_name} ${a.customer.last_name}` ||
-                            'Anonymous Customer',
-                        location: 'US',
-                        review: a.content,
-                        stars: a.rating,
-                    };
-                })
-            );
-            setFakeReviews(false);
+        if (res.data) {
+            if (res.data.length < 2) {
+                console.log('setting ', [
+                    ...fakeReviews,
+                    ...res.data.map((a: any) => {
+                        return {
+                            id: a.id,
+                            name:
+                                `${a.customer.first_name} ${a.customer.last_name}` ||
+                                'Anonymous Customer',
+                            location: 'US',
+                            review: a.content,
+                            stars: a.rating,
+                        };
+                    }),
+                ]);
+                setReviews([
+                    ...fakeReviews,
+                    ...res.data.map((a: any) => {
+                        return {
+                            id: a.id,
+                            name:
+                                `${a.customer.first_name} ${a.customer.last_name}` ||
+                                'Anonymous Customer',
+                            location: 'US',
+                            review: a.content,
+                            stars: a.rating,
+                        };
+                    }),
+                ]);
+            } else {
+                setReviews([
+                    ...res.data.map((a: any) => {
+                        return {
+                            id: a.id,
+                            name:
+                                `${a.customer.first_name} ${a.customer.last_name}` ||
+                                'Anonymous Customer',
+                            location: 'US',
+                            review: a.content,
+                            stars: a.rating,
+                        };
+                    }),
+                ]);
+            }
         }
 
         return;
     };
 
+    console.log('product reviews are ', reviews);
     useEffect(() => {
         if (productId) {
             reviewDataFetcher();
@@ -118,20 +152,32 @@ const ProductReview = () => {
 
                 <Flex flexDirection={'column'} my="auto" overflow={'hidden'}>
                     <Text fontSize={'32px'} fontWeight={'bold'} color="white">
-                        {fakeReviews == true
-                            ? '4.96 - 312 Reviews'
-                            : `${reviews.reduce((a, b) => a + b.stars, 0) / reviews.length} - ${reviews.length} Reviews`}
+                        {reviews.length > 0 && (
+                            <>
+                                {renderStars(
+                                    reviews.reduce(
+                                        (a: any, b: any) => a + b.stars,
+                                        0
+                                    ) / reviews.length
+                                )}{' '}
+                                {reviews.length} Reviews
+                            </>
+                        )}
                     </Text>
                     <Flex mt="2rem" flexDirection="row" gap="26px">
-                        {displayedReviews.map((review) => (
-                            <ReviewCard
-                                key={review.id}
-                                name={review.name}
-                                location={review.location}
-                                review={review.review}
-                                stars={review.stars}
-                            />
-                        ))}
+                        {displayedReviews.map((review) => {
+                            if (review) {
+                                return (
+                                    <ReviewCard
+                                        key={review.id}
+                                        name={review.name}
+                                        location={review.location}
+                                        review={review.review}
+                                        stars={review.stars}
+                                    />
+                                );
+                            }
+                        })}
                     </Flex>
                 </Flex>
 

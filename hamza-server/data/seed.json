@@ -1,12 +1,6 @@
 {
     "store": {
-        "currencies": [
-            "eur",
-            "usd",
-            "eth",
-            "usdc",
-            "usdt"
-        ],
+        "currencies": ["eur", "usd", "eth", "usdc", "usdt"],
         "default_currency_code": "eth"
     },
     "users": [
@@ -23,37 +17,18 @@
             "name": "EU",
             "currency_code": "eth",
             "tax_rate": 0,
-            "payment_providers": [
-                "crypto"
-            ],
-            "fulfillment_providers": [
-                "manual"
-            ],
-            "countries": [
-                "gb",
-                "de",
-                "dk",
-                "se",
-                "fr",
-                "es",
-                "it"
-            ]
+            "payment_providers": ["crypto"],
+            "fulfillment_providers": ["manual"],
+            "countries": ["gb", "de", "dk", "se", "fr", "es", "it"]
         },
         {
             "id": "test-region-na",
             "name": "NA",
             "currency_code": "eth",
             "tax_rate": 0,
-            "payment_providers": [
-                "crypto"
-            ],
-            "fulfillment_providers": [
-                "manual"
-            ],
-            "countries": [
-                "us",
-                "ca"
-            ]
+            "payment_providers": ["crypto"],
+            "fulfillment_providers": ["manual"],
+            "countries": ["us", "ca"]
         }
     ],
     "shipping_options": [
@@ -202,7 +177,7 @@
             "description": "<li>M - W100 X D4.5 X H3.6 CMS.<li>L - W200 X D4.5 X H3.6 CMS.<li>S- W30 X D4.5 X H3.6 CMS.<li>S- W30 X D4.5 X H3.6 CMS.<li>NAME : Howet INDOOR/OUTDOOR WALL LAMP<li>CODE : WL-24D<li>SIZE :<li>S- W30 X D4.5 X H3.6 CMS.<li>M - W100 X D4.5 X H3.6 CMS.<li>L - W200 X D4.5 X H3.6 CMS.<li>COLOR : METAL BLACK<li>MATERIAL : HIGH QUALITY ALUMINIUM WITH WATERPROOF PROTECTIVE FILM<li>LIGHT SOURCE : LED 9W / 30W/ 60W",
             "handle": "lld_indout",
             "is_giftcard": false,
-            "weight": 260,
+            "weight": 70,
             "images": [
                 "https://images.hamza.biz/Legendary/indout/LLD_indout1.png",
                 "https://images.hamza.biz/Legendary/indout/lld_indout2.jpg",
@@ -213,9 +188,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -224,7 +197,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 61000000
+                            "amount": 6500000
                         },
                         {
                             "currency_code": "usdc",
@@ -268,9 +241,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -279,7 +250,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 62000000
+                            "amount": 6600000
                         },
                         {
                             "currency_code": "usdc",
@@ -312,7 +283,7 @@
             "description": "If you want to glam up your space for cheap, LED strip lighting is a tried-and-true option. Whether under your kitchen counter or your bed frame, these LEDs can reinvent any dark, boring space as a five-star hotel experience. With just the push of a button, most models can switch from classic white to a pop of pink or green. In just seconds, you’ll be mentally elsewhere without going anywhere at all.",
             "handle": "lld_led",
             "is_giftcard": false,
-            "weight": 260,
+            "weight": 69,
             "images": [
                 "https://images.hamza.biz/Legendary/mood/LLD_mood1.webp",
                 "https://images.hamza.biz/Legendary/mood/lld_mood2.jpeg",
@@ -323,9 +294,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -334,7 +303,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 31000000
+                            "amount": 3700000
                         },
                         {
                             "currency_code": "usdc",
@@ -367,7 +336,7 @@
             "description": "<li>Lighting Type: Ceiling Fan with Lights<li>Smart Equipment: No<li>Light Bulb Type: LED<li>Light Colour: Blue (10,000K)<li>Warranty Duration: 1 year<li>Warranty Type: 1 year<li>Ships From Overseas",
             "handle": "lld_wall",
             "is_giftcard": false,
-            "weight": 260,
+            "weight": 69,
             "images": [
                 "https://images.hamza.biz/Legendary/wall/wall1.jpeg",
                 "https://images.hamza.biz/Legendary/wall/wall2.jpeg",
@@ -378,9 +347,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -411,7 +378,7 @@
             ]
         },
         {
-            "title": "3D Infinity Mirror ",
+            "title": "3D Infinity Mirror",
             "categories": [
                 {
                     "id": "pcat_lighting"
@@ -422,7 +389,7 @@
             "description": "<li>Lamp Body Material: Glass,iron<li>Design Style: Modern<li>Shade material: Glass<li>Shade Shape: Novelty<li>Light Source: LED<li>Control Mode: APP Control, Remote Control<li>Model Number: CET-MM30<li>Input Voltage(V): 100-220V/50-60Hz<li>Certification: RoHS CCC, CE, FCC<li>Application: Bedroom<li>Lifespan (hours): 30000<li>Working Time (hours): 30000",
             "handle": "lld_infinity",
             "is_giftcard": false,
-            "weight": 260,
+            "weight": 69,
             "images": [
                 "https://images.hamza.biz/Legendary/infinity/lld_inf5.png",
                 "https://images.hamza.biz/Legendary/infinity/lld_inf1.png",
@@ -433,9 +400,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -444,7 +409,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1700000
+                            "amount": 2100000
                         },
                         {
                             "currency_code": "usdc",
@@ -466,7 +431,7 @@
             ]
         },
         {
-            "title": "12 Pack Black Recessed Lights 6 Inch, Dimmable ",
+            "title": "12 Pack Black Recessed Lights 6 Inch, Dimmable",
             "categories": [
                 {
                     "id": "pcat_lighting"
@@ -477,7 +442,7 @@
             "description": "<li>Exterior Outdoor <li>5CCT Selectable<li>12W, 120V, <li>IC Wet Rated, ETL",
             "handle": "lld_recessed",
             "is_giftcard": false,
-            "weight": 260,
+            "weight": 69,
             "images": [
                 "https://images.hamza.biz/Legendary/recessed/outdoor1.webp",
                 "https://images.hamza.biz/Legendary/recessed/outdoor2.jpg",
@@ -488,9 +453,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -499,7 +462,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1300000
+                            "amount": 1800000
                         },
                         {
                             "currency_code": "usdc",
@@ -532,17 +495,12 @@
             "description": "Industry-leading noise canceling with Dual Noise Sensor technology.Specific uses for product : Audio.Frequency Response : 4Hz-40,000Hz..Headphone Type : Closed, dynamic. Frequency Response : 4 Hz-40,000 Hz",
             "handle": "headphones",
             "is_giftcard": false,
-            "weight": 250,
-            "images": [
-                "https://images.hamza.biz/headphones.webp"
-            ],
+            "weight": 69,
+            "images": ["https://images.hamza.biz/headphones.webp"],
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black",
-                        "Silver"
-                    ]
+                    "values": ["Black", "Silver"]
                 }
             ],
             "variants": [
@@ -551,7 +509,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 68000000
+                            "amount": 5500000
                         },
                         {
                             "currency_code": "usdc",
@@ -585,16 +543,11 @@
             "handle": "headset_future",
             "is_giftcard": false,
             "weight": 300,
-            "images": [
-                "https://images.hamza.biz/dalle_black_vr.webp"
-            ],
+            "images": ["https://images.hamza.biz/dalle_black_vr.webp"],
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Sleek Black",
-                        "Space Gray"
-                    ]
+                    "values": ["Sleek Black", "Space Gray"]
                 }
             ],
             "variants": [
@@ -603,7 +556,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 68000000
+                            "amount": 4300000
                         },
                         {
                             "currency_code": "usdc",
@@ -637,16 +590,11 @@
             "handle": "headset_audio",
             "is_giftcard": false,
             "weight": 260,
-            "images": [
-                "https://images.hamza.biz/dalle_vr.webp"
-            ],
+            "images": ["https://images.hamza.biz/dalle_vr.webp"],
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Robot White",
-                        "Electronic Blue"
-                    ]
+                    "values": ["Robot White", "Electronic Blue"]
                 }
             ],
             "variants": [
@@ -655,7 +603,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 68000000
+                            "amount": 1000000
                         },
                         {
                             "currency_code": "usdc",
@@ -689,16 +637,11 @@
             "handle": "headset_sleek",
             "is_giftcard": false,
             "weight": 290,
-            "images": [
-                "https://images.hamza.biz/dalle_vr_2.webp"
-            ],
+            "images": ["https://images.hamza.biz/dalle_vr_2.webp"],
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Racing Red",
-                        "Midnight Black"
-                    ]
+                    "values": ["Racing Red", "Midnight Black"]
                 }
             ],
             "variants": [
@@ -707,7 +650,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 35000000
+                            "amount": 3500000
                         },
                         {
                             "currency_code": "usdc",
@@ -741,16 +684,11 @@
             "handle": "headset_aural",
             "is_giftcard": false,
             "weight": 275,
-            "images": [
-                "https://images.hamza.biz/dalle_vr_headset.webp"
-            ],
+            "images": ["https://images.hamza.biz/dalle_vr_headset.webp"],
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Galactic Black",
-                        "Stellar White"
-                    ]
+                    "values": ["Galactic Black", "Stellar White"]
                 }
             ],
             "variants": [
@@ -759,7 +697,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 8000000
+                            "amount": 3000000
                         },
                         {
                             "currency_code": "usdc",
@@ -793,16 +731,11 @@
             "handle": "headset_vision",
             "is_giftcard": false,
             "weight": 310,
-            "images": [
-                "https://images.hamza.biz/dalle_vr_headset3.webp"
-            ],
+            "images": ["https://images.hamza.biz/dalle_vr_headset3.webp"],
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Visionary Black",
-                        "Innovator Ivory"
-                    ]
+                    "values": ["Visionary Black", "Innovator Ivory"]
                 }
             ],
             "variants": [
@@ -811,7 +744,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 3000000
+                            "amount": 5200000
                         },
                         {
                             "currency_code": "usdc",
@@ -844,17 +777,12 @@
             "description": "The Echo Shade blends high-fidelity audio with a fashion-forward design, providing both style and substance.",
             "handle": "headset_echo",
             "is_giftcard": false,
-            "weight": 265,
-            "images": [
-                "https://images.hamza.biz/vr_3.webp"
-            ],
+            "weight": 69,
+            "images": ["https://images.hamza.biz/vr_3.webp"],
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Eclipse Black",
-                        "Solar White"
-                    ]
+                    "values": ["Eclipse Black", "Solar White"]
                 }
             ],
             "variants": [
@@ -863,7 +791,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 3000000
+                            "amount": 5000000
                         },
                         {
                             "currency_code": "usdc",
@@ -897,16 +825,11 @@
             "handle": "headset_nova",
             "is_giftcard": false,
             "weight": 285,
-            "images": [
-                "https://images.hamza.biz/sony_wh1000xm4.jpeg"
-            ],
+            "images": ["https://images.hamza.biz/sony_wh1000xm4.jpeg"],
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Nebula Navy",
-                        "Cosmic Chrome"
-                    ]
+                    "values": ["Nebula Navy", "Cosmic Chrome"]
                 }
             ],
             "variants": [
@@ -915,7 +838,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 3000000
+                            "amount": 5100000
                         },
                         {
                             "currency_code": "usdc",
@@ -958,19 +881,11 @@
             "options": [
                 {
                     "title": "Size",
-                    "values": [
-                        "S",
-                        "M",
-                        "L",
-                        "XL"
-                    ]
+                    "values": ["S", "M", "L", "XL"]
                 },
                 {
                     "title": "Color",
-                    "values": [
-                        "Black",
-                        "White"
-                    ]
+                    "values": ["Black", "White"]
                 }
             ],
             "variants": [
@@ -979,7 +894,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 3100000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1006,7 +921,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 3200000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1033,7 +948,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 3300000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1060,7 +975,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 2950000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1087,7 +1002,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 660000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1114,7 +1029,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 395000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1141,7 +1056,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 395000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1168,7 +1083,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 660000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1212,12 +1127,7 @@
             "options": [
                 {
                     "title": "Size",
-                    "values": [
-                        "S",
-                        "M",
-                        "L",
-                        "XL"
-                    ]
+                    "values": ["S", "M", "L", "XL"]
                 }
             ],
             "variants": [
@@ -1226,7 +1136,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 850000
+                            "amount": 1200000
                         },
                         {
                             "currency_code": "usdc",
@@ -1250,7 +1160,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 850000
+                            "amount": 1200000
                         },
                         {
                             "currency_code": "usdc",
@@ -1274,15 +1184,15 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 850000
+                            "amount": 1200000
                         },
                         {
                             "currency_code": "usdc",
-                            "amount": 8500
+                            "amount": 2950
                         },
                         {
                             "currency_code": "usdt",
-                            "amount": 8500
+                            "amount": 2950
                         }
                     ],
                     "options": [
@@ -1298,7 +1208,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 450000
+                            "amount": 1200000
                         },
                         {
                             "currency_code": "usdc",
@@ -1339,12 +1249,7 @@
             "options": [
                 {
                     "title": "Size",
-                    "values": [
-                        "S",
-                        "M",
-                        "L",
-                        "XL"
-                    ]
+                    "values": ["S", "M", "L", "XL"]
                 }
             ],
             "variants": [
@@ -1353,7 +1258,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 495000
+                            "amount": 1200000
                         },
                         {
                             "currency_code": "usdc",
@@ -1377,7 +1282,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 850000
+                            "amount": 1200000
                         },
                         {
                             "currency_code": "usdc",
@@ -1401,7 +1306,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 850000
+                            "amount": 1200000
                         },
                         {
                             "currency_code": "usdc",
@@ -1425,7 +1330,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 850000
+                            "amount": 1200000
                         },
                         {
                             "currency_code": "usdt",
@@ -1466,12 +1371,7 @@
             "options": [
                 {
                     "title": "Size",
-                    "values": [
-                        "S",
-                        "M",
-                        "L",
-                        "XL"
-                    ]
+                    "values": ["S", "M", "L", "XL"]
                 }
             ],
             "variants": [
@@ -1480,7 +1380,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 810000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1504,7 +1404,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 810000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1528,7 +1428,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 810000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1552,7 +1452,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 810000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -1596,12 +1496,7 @@
             "options": [
                 {
                     "title": "Size",
-                    "values": [
-                        "S",
-                        "M",
-                        "L",
-                        "XL"
-                    ]
+                    "values": ["S", "M", "L", "XL"]
                 }
             ],
             "variants": [
@@ -1610,7 +1505,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 120000
+                            "amount": 1400000
                         },
                         {
                             "currency_code": "usdt",
@@ -1634,7 +1529,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 120000
+                            "amount": 1400000
                         },
                         {
                             "currency_code": "usdc",
@@ -1658,7 +1553,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1200000
+                            "amount": 1400000
                         },
                         {
                             "currency_code": "usdt",
@@ -1682,7 +1577,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1200000
+                            "amount": 1400000
                         },
                         {
                             "currency_code": "usdc",
@@ -1726,12 +1621,7 @@
             "options": [
                 {
                     "title": "Size",
-                    "values": [
-                        "S",
-                        "M",
-                        "L",
-                        "XL"
-                    ]
+                    "values": ["S", "M", "L", "XL"]
                 }
             ],
             "variants": [
@@ -1740,7 +1630,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1200000
+                            "amount": 1400000
                         },
                         {
                             "currency_code": "usdc",
@@ -1764,7 +1654,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1200000
+                            "amount": 1400000
                         },
                         {
                             "currency_code": "usdc",
@@ -1788,7 +1678,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1200000
+                            "amount": 1400000
                         },
                         {
                             "currency_code": "usdc",
@@ -1812,7 +1702,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 1200000
+                            "amount": 1400000
                         },
                         {
                             "currency_code": "usdc",
@@ -1855,9 +1745,7 @@
             "options": [
                 {
                     "title": "Size",
-                    "values": [
-                        "One Size"
-                    ]
+                    "values": ["One Size"]
                 }
             ],
             "variants": [
@@ -1866,7 +1754,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 300000
+                            "amount": 400000
                         },
                         {
                             "currency_code": "usdc",
@@ -1910,9 +1798,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Silver"
-                    ]
+                    "values": ["Silver"]
                 }
             ],
             "variants": [
@@ -1921,7 +1807,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 41000000
+                            "amount": 4300000
                         },
                         {
                             "currency_code": "usdc",
@@ -1965,9 +1851,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Silver"
-                    ]
+                    "values": ["Silver"]
                 }
             ],
             "variants": [
@@ -1976,7 +1860,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 3800000
+                            "amount": 4300000
                         },
                         {
                             "currency_code": "usdc",
@@ -2020,9 +1904,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "White"
-                    ]
+                    "values": ["White"]
                 }
             ],
             "variants": [
@@ -2031,7 +1913,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 38000000
+                            "amount": 4300000
                         },
                         {
                             "currency_code": "usdc",
@@ -2075,9 +1957,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Silver"
-                    ]
+                    "values": ["Silver"]
                 }
             ],
             "variants": [
@@ -2086,7 +1966,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 68000000
+                            "amount": 7300000
                         },
                         {
                             "currency_code": "usdc",
@@ -2130,9 +2010,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "White"
-                    ]
+                    "values": ["White"]
                 }
             ],
             "variants": [
@@ -2141,7 +2019,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 48000000
+                            "amount": 4300000
                         },
                         {
                             "currency_code": "usdc",
@@ -2185,9 +2063,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -2196,7 +2072,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 48000000
+                            "amount": 4300000
                         },
                         {
                             "currency_code": "usdc",
@@ -2240,9 +2116,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Silver"
-                    ]
+                    "values": ["Silver"]
                 }
             ],
             "variants": [
@@ -2251,7 +2125,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 38000000
+                            "amount": 4300000
                         },
                         {
                             "currency_code": "usdc",
@@ -2295,9 +2169,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "White"
-                    ]
+                    "values": ["White"]
                 }
             ],
             "variants": [
@@ -2306,7 +2178,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 32000000
+                            "amount": 4200000
                         },
                         {
                             "currency_code": "usdc",
@@ -2350,9 +2222,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "White"
-                    ]
+                    "values": ["White"]
                 }
             ],
             "variants": [
@@ -2361,7 +2231,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 38000000
+                            "amount": 4300000
                         },
                         {
                             "currency_code": "usdc",
@@ -2405,9 +2275,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Red"
-                    ]
+                    "values": ["Red"]
                 }
             ],
             "variants": [
@@ -2416,7 +2284,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 31000000
+                            "amount": 4000000
                         },
                         {
                             "currency_code": "usdc",
@@ -2449,7 +2317,7 @@
             "description": "<li>Includes 2 minifigures: Gandalf the Grey and Frodo Baggins</li> <li>Collect an iconic scene from the The Lord of the Rings film series as you build the Shire with Gandalf the Grey and Frodo</li> <li>Accessories include book, staff, backpack and letter</li> <li>Collect the exclusive Gandalf the Grey minifigure</li>",
             "handle": "lotr_lego",
             "is_giftcard": false,
-            "weight": 249,
+            "weight": 69,
             "images": [
                 "https://images.hamza.biz/Lego/gandalf/gand_1.jpg",
                 "https://images.hamza.biz/Lego/gandalf/gand_2.jpg",
@@ -2459,9 +2327,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Brown"
-                    ]
+                    "values": ["Brown"]
                 }
             ],
             "variants": [
@@ -2470,7 +2336,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 31000000
+                            "amount": 4000000
                         },
                         {
                             "currency_code": "usdc",
@@ -2503,7 +2369,7 @@
             "description": "<li>Build a Middle-earth valley – Create and display a LEGO version of Rivendell with this THE LORD OF THE RINGS: RIVENDELL (10316) building model kit for adults</li> <li>6,167 pieces filled with movie magic– The set is an immersive project that’s bursting with details and references to The Lord of the Rings movie trilogy, which all fans will recognize</li> <li>Detailed decor – Details include Frodo's bedroom and Elrond's study, and the different sections can be displayed separately: for example, the Council of Elrond can be lifted off the main model</li> <li>Iconic characters – The building set features 15 minifigures, including legendary characters such as Frodo, Sam, Bilbo Baggins, Boromir, Gimli, Aragorn, Legolas and Gandalf the Grey</li> <li>Dimensions – The set measures over 15 in. (39 cm) high, 28.5 in. (72 cm) wide and 19.5 in. (50 cm) deep and splits into 3 sections: the tower, the council ring and the gazebo with river and bridge</li>",
             "handle": "riv_lego",
             "is_giftcard": false,
-            "weight": 249,
+            "weight": 70,
             "images": [
                 "https://images.hamza.biz/Lego/rivendell/riv_1.jpg",
                 "https://images.hamza.biz/Lego/rivendell/riv_2.jpg",
@@ -2514,9 +2380,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Green"
-                    ]
+                    "values": ["Green"]
                 }
             ],
             "variants": [
@@ -2525,7 +2389,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 31000000
+                            "amount": 4300000
                         },
                         {
                             "currency_code": "usdc",
@@ -2558,7 +2422,7 @@
             "description": "<li>Exciting Racing Action - Kids, car enthusiasts, and fans can relive epic races; the car model also makes an iconic display piece as part of a LEGO speed champions collection</li> <li>James Bond Minifigure - Includes a LEGO minifigure of James Bond in a cool black suit inspired by the 'No Time To Die' movie, plus a toy wrench accessory</li> <li>Interactive Building App - Comes with a LEGO building instructions app for smartphones and tablets, allowing kids to view the model from all angles as they build</li> <li>Perfect Gift for Fans - This iconic car model kit makes a great birthday, Christmas, or any occasion gift for kids aged 8+, car enthusiasts, and fans of James Bond movies</li> <li>Replica Aston Martin Car - Features a detailed model of James Bond's iconic gray Aston Martin with molded silver-spoke alloy wheel inserts and 4 license plates</li>",
             "handle": "aston_lego",
             "is_giftcard": false,
-            "weight": 249,
+            "weight": 69,
             "images": [
                 "https://images.hamza.biz/Lego/007/007_1.jpg",
                 "https://images.hamza.biz/Lego/007/007_2.jpg",
@@ -2569,9 +2433,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Silver"
-                    ]
+                    "values": ["Silver"]
                 }
             ],
             "variants": [
@@ -2580,7 +2442,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 48000000
+                            "amount": 4100000
                         },
                         {
                             "currency_code": "usdc",
@@ -2624,9 +2486,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Red"
-                    ]
+                    "values": ["Red"]
                 }
             ],
             "variants": [
@@ -2635,7 +2495,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4900000
+                            "amount": 7000000
                         },
                         {
                             "currency_code": "usdc",
@@ -2679,9 +2539,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Red"
-                    ]
+                    "values": ["Red"]
                 }
             ],
             "variants": [
@@ -2690,7 +2548,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 69000000
+                            "amount": 7000000
                         },
                         {
                             "currency_code": "usdc",
@@ -2723,7 +2581,7 @@
             "description": "<li>A celebration for race car fans – Pay tribute to 100 years of racing at Le Mans in 2023 with this authentic LEGO Technic PEUGEOT 9X8 24H Le Mans Hybrid Hypercar (42156) model building kit for adults</li> <li>Start your engines – Build the hybrid system including the detailed V6 piston engine. This impressive replica includes doors that open, front steering and suspension</li> <li>Recreate the iconic details – Add the finishing touches to this replica model with car decals and PEUGEOT sponsor logos to capture the iconic look of this legendary race car</li> <li>Drive through the night – The set includes LEGO Technic lights that glow in the dark to capture the atmosphere from a real 24-hour race</li> <li>1:10 Scale Car Model – Designed for adults and teens who love racing, this LEGO Technic buildable model measures over 5 in. (13 cm) high, 19.5 in. (50 cm) long and 9 in. (22 cm) wide</li> <li>A gift for car enthusiasts – Treat yourself or the car lover in your life to this creative building project. This collectible race car model looks great on display.</li>",
             "handle": "peugeot_lego",
             "is_giftcard": false,
-            "weight": 249,
+            "weight": 70,
             "images": [
                 "https://images.hamza.biz/Lego/peug/peug_1.jpg",
                 "https://images.hamza.biz/Lego/peug/peug_2.jpg",
@@ -2734,9 +2592,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Silver"
-                    ]
+                    "values": ["Silver"]
                 }
             ],
             "variants": [
@@ -2745,7 +2601,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 35000000
+                            "amount": 2000000
                         },
                         {
                             "currency_code": "usdc",
@@ -2778,7 +2634,7 @@
             "description": "<li>This LEGO set for adults features 2 buildable Porsche models designed especially for classic car fans and Porsche enthusiasts</li> <li>This car model building kit features the rear-mounted, air-cooled flat-six engine, working steering, gearstick, emergency brake and tilting seats</li> <li>The Porsche 911 Turbo model car features a wide rear axle, an integrated spoiler, plus a turbo-charged engine complete with intercooler</li> <li>The Porsche 911 Targa model car includes a removable roof that fits in the hood plus the iconic Targa bar with rear glass behind the driver</li>",
             "handle": "porsche_lego",
             "is_giftcard": false,
-            "weight": 249,
+            "weight": 70,
             "images": [
                 "https://images.hamza.biz/Lego/porsche/porsche_1.jpg",
                 "https://images.hamza.biz/Lego/porsche/porsche_2.jpg",
@@ -2789,9 +2645,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "White"
-                    ]
+                    "values": ["White"]
                 }
             ],
             "variants": [
@@ -2800,7 +2654,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 21000000
+                            "amount": 2100000
                         },
                         {
                             "currency_code": "usdc",
@@ -2844,9 +2698,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -2855,7 +2707,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 58000000
+                            "amount": 2100000
                         },
                         {
                             "currency_code": "usdc",
@@ -2899,9 +2751,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -2910,7 +2760,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 12000000
+                            "amount": 1000000
                         },
                         {
                             "currency_code": "usdc",
@@ -2954,9 +2804,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -2965,7 +2813,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 24000000
+                            "amount": 2000000
                         },
                         {
                             "currency_code": "usdc",
@@ -3009,9 +2857,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3020,7 +2866,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 28000000
+                            "amount": 2800000
                         },
                         {
                             "currency_code": "usdc",
@@ -3064,9 +2910,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3075,7 +2919,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 38000000
+                            "amount": 2800000
                         },
                         {
                             "currency_code": "usdc",
@@ -3118,9 +2962,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3129,7 +2971,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 48000000
+                            "amount": 4800000
                         },
                         {
                             "currency_code": "usdc",
@@ -3172,9 +3014,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3183,7 +3023,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 18000000
+                            "amount": 1800000
                         },
                         {
                             "currency_code": "usdc",
@@ -3227,9 +3067,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3238,7 +3076,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 50000000
+                            "amount": 5000000
                         },
                         {
                             "currency_code": "usdc",
@@ -3282,9 +3120,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Grey"
-                    ]
+                    "values": ["Grey"]
                 }
             ],
             "variants": [
@@ -3293,7 +3129,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4800000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -3337,9 +3173,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3348,7 +3182,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4800000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -3392,9 +3226,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3403,7 +3235,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4300000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
@@ -3447,9 +3279,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3458,7 +3288,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4500000
+                            "amount": 1300000
                         },
                         {
                             "currency_code": "usdc",
@@ -3502,9 +3332,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3513,7 +3341,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 6600000
+                            "amount": 2100000
                         },
                         {
                             "currency_code": "usdc",
@@ -3546,7 +3374,7 @@
             "description": "<li>Enter The Dark Souls Universe: Take On A Tabletop Reimagining Of One Of The Most Challenging Video Games Ever Made. The Gripping Battles And Brutal Difficulty Of The Acclaimed Dark Souls Video Games Come To Your Tabletop In An Action-Packed Cooperative Dungeon Crawl Roleplaying Board Game</li> <li>Challenges Ahead: Dark Souls: The Board Game Is About Fast Setup And Long Reveal. True To The Video Game, You'Ll Need To Be Strategic And Cleverly Manage Your Stamina To Survive. Learn When To Be Bold And When To Hold Back. And Prepare To Die</li> <li>Play As Iconic Characters: Take On A Role As A Knight, Warrior, Assassin, Or Herald And Figure Out How To Defeat The Undead Legions Before Confronting The Final Boss—Or Bosses. Prepare For A Fully Immersive Rpg</li> <li>What’S Included: 27 Finely Detailed World-Class Miniatures (Including Enemies, Mini Bosses And Main Bosses), 47 Tiles & Terrain, 75 Tokens & Dials, 250 Cards. This Game Delivers An Experience That Captures The Very Essence Of The Original Video Games</li>",
             "handle": "darksouls",
             "is_giftcard": false,
-            "weight": 249,
+            "weight": 69,
             "images": [
                 "https://images.hamza.biz/Board_Games/dark_souls/souls_1.jpg",
                 "https://images.hamza.biz/Board_Games/dark_souls/souls_2.jpg",
@@ -3557,9 +3385,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3568,7 +3394,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 6800000
+                            "amount": 2200000
                         },
                         {
                             "currency_code": "usdc",
@@ -3611,9 +3437,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3622,7 +3446,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4800000
+                            "amount": 2100000
                         },
                         {
                             "currency_code": "usdc",
@@ -3666,9 +3490,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3677,7 +3499,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4100000
+                            "amount": 2400000
                         },
                         {
                             "currency_code": "usdc",
@@ -3721,9 +3543,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3732,7 +3552,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4200000
+                            "amount": 1800000
                         },
                         {
                             "currency_code": "usdc",
@@ -3776,9 +3596,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3787,7 +3605,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 3800000
+                            "amount": 1400000
                         },
                         {
                             "currency_code": "usdc",
@@ -3831,9 +3649,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3842,15 +3658,15 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4400000
+                            "amount": 2000000
                         },
                         {
                             "currency_code": "usdc",
-                            "amount": 23000
+                            "amount": 6000
                         },
                         {
                             "currency_code": "usdt",
-                            "amount": 23000
+                            "amount": 6000
                         }
                     ],
                     "options": [
@@ -3886,9 +3702,7 @@
             "options": [
                 {
                     "title": "HyperX Pulsefire",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3897,15 +3711,15 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4400000
+                            "amount": 1010000
                         },
                         {
                             "currency_code": "usdc",
-                            "amount": 23000
+                            "amount": 30500
                         },
                         {
                             "currency_code": "usdt",
-                            "amount": 23000
+                            "amount": 30500
                         }
                     ],
                     "options": [
@@ -3930,7 +3744,7 @@
             "description": "<li> HyperX mechanical switches: The key switches are custom-designed to be a balance of responsiveness and accuracy, featuring a short travel time and low actuation force. They’re also reliable, rated for 80 million keypresses with no loss of quality. </li> <li> Full aircraft-grade aluminum body: The aluminum casing keeps the keyboard structurally sound and stable when the action gets intense and the game hangs in the balance; battle after battle, night after night. </li> <li> Compact, portable design with detachable USB Type-C cable: The small footprint gives you plenty of room for rapid mouse movements. It also has a detachable cable so it’s easy to take on the go. </li> <li> RGB backlit keys with radiant lighting effects: HyperX mechanical switches feature an exposed LED for brighter, more luminous RGB lighting. </li> <li> Advanced customization with HyperX NGENUITY Software: Customize Game Mode, take greater control over lighting effects, and set up your own macros. </li> <li> Three adjustable keyboard tilt angles: Adjust the two-step keyboard feet for three different angle settings (3°, 7°, or 11°), whichever makes your wrists the most comfortable. </li> <li> Onboard memory for three profiles: Create your own custom-designed lightshows, save them directly to the keyboard, and take them with you on the go. </li>",
             "handle": "hyper-x-keyboard",
             "is_giftcard": false,
-            "weight": 260,
+            "weight": 29,
             "images": [
                 "https://images.hamza.biz/gaming_store/3.1.png",
                 "https://images.hamza.biz/gaming_store/3.2.png",
@@ -3941,9 +3755,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3952,15 +3764,15 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4400000
+                            "amount": 1800000
                         },
                         {
                             "currency_code": "usdc",
-                            "amount": 23000
+                            "amount": 5900
                         },
                         {
                             "currency_code": "usdt",
-                            "amount": 23000
+                            "amount": 5900
                         }
                     ],
                     "options": [
@@ -3996,9 +3808,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -4007,15 +3817,15 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4400000
+                            "amount": 3900000
                         },
                         {
                             "currency_code": "usdc",
-                            "amount": 23000
+                            "amount": 12000
                         },
                         {
                             "currency_code": "usdt",
-                            "amount": 23000
+                            "amount": 12000
                         }
                     ],
                     "options": [
@@ -4051,9 +3861,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -4062,7 +3870,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4400000
+                            "amount": 5900000
                         },
                         {
                             "currency_code": "usdc",
@@ -4106,9 +3914,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -4117,15 +3923,15 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4400000
+                            "amount": 6900000
                         },
                         {
                             "currency_code": "usdc",
-                            "amount": 23000
+                            "amount": 21000
                         },
                         {
                             "currency_code": "usdt",
-                            "amount": 23000
+                            "amount": 21000
                         }
                     ],
                     "options": [
@@ -4161,9 +3967,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -4172,15 +3976,15 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4400000
+                            "amount": 6900000
                         },
                         {
                             "currency_code": "usdc",
-                            "amount": 23000
+                            "amount": 22000
                         },
                         {
                             "currency_code": "usdt",
-                            "amount": 23000
+                            "amount": 22000
                         }
                     ],
                     "options": [
@@ -4216,9 +4020,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -4227,15 +4029,15 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4400000
+                            "amount": 1100000
                         },
                         {
                             "currency_code": "usdc",
-                            "amount": 23000
+                            "amount": 13000
                         },
                         {
                             "currency_code": "usdt",
-                            "amount": 23000
+                            "amount": 13000
                         }
                     ],
                     "options": [
@@ -4271,9 +4073,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -4282,15 +4082,15 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 4400000
+                            "amount": 1800000
                         },
                         {
                             "currency_code": "usdc",
-                            "amount": 23000
+                            "amount": 6000
                         },
                         {
                             "currency_code": "usdt",
-                            "amount": 23000
+                            "amount": 6000
                         }
                     ],
                     "options": [

@@ -81,7 +81,10 @@ const EditReviewTemplate = () => {
                             <h1 className="text-xl font-semibold">
                                 {item?.title}
                             </h1>
-                            <p>{item?.description}</p>
+                            <p
+                                dangerouslySetInnerHTML={{
+                                    __html: item?.description ?? '',
+                                }}></p>
                         </div>
                     </div>
                     <div>
@@ -127,8 +130,9 @@ const EditReviewTemplate = () => {
                         Review has been submitted successfully!
                     </p>
                 </div>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 };
 
