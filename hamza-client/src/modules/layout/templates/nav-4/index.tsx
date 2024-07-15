@@ -8,11 +8,11 @@ import Image from 'next/image';
 import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
 import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
 //  Components
-import { WalletConnectButton } from './components/connect-button/connect-button';
+import { WalletConnectButton } from './connect-button/connect-button';
 import NavSearchBar from './components/nav-searchbar';
 import MobileMenu from './components/mobile-menu';
 import MobileNav from './components/mobile-nav';
-import MainMenu from './components/menu/main-menu';
+import MainMenu from './menu/main-menu';
 
 export default async function Nav() {
     return (

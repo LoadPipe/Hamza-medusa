@@ -4,7 +4,7 @@ import { Box, Button, Text, Flex, Image } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { formatAddress } from '@lib/util/format-address';
 import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
-import AccountMenu from '@modules/layout/templates/nav-4/components/menu/account-menu';
+import AccountMenu from '@modules/layout/templates/nav-4/menu/account-menu';
 import CartButton from '@modules/layout/components/cart-nav';
 
 //Todo: If chain unsupported?

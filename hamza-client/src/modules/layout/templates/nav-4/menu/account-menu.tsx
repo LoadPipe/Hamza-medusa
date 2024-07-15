@@ -30,8 +30,18 @@ const AccountMenu = () => {
                     borderWidth={'1px'}
                     backgroundColor={'transparent'}
                     cursor={'pointer'}
+                    _hover={{
+                        '.profile-icon': {
+                            color: 'primary.green.900',
+                        },
+                        borderColor: 'primary.green.900',
+                    }}
                 >
-                    <Flex alignSelf={'center'} color={'white'}>
+                    <Flex
+                        alignSelf={'center'}
+                        className="profile-icon"
+                        color={'white'}
+                    >
                         <CgProfile size={30} />
                     </Flex>
                 </MenuButton>

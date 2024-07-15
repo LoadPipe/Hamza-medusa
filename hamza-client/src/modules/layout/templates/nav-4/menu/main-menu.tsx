@@ -12,7 +12,7 @@ import {
 
 import { IoMdMenu } from 'react-icons/io';
 import Link from 'next/link';
-import NavLink from '../nav-link';
+import NavLink from '../components/nav-link';
 
 import {
     MdOutlinePeople,
