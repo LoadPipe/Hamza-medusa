@@ -8,6 +8,7 @@ import { Toast } from '@medusajs/ui';
 import { useRouter, useSearchParams } from 'next/navigation';
 import getGoogleOAuthURL from '@lib/util/google-url';
 import getTwitterOauthUrl from '@lib/util/twitter-url';
+import toast from 'react-hot-toast';
 
 const VerifyEmail = () => {
     const { authData, setCustomerAuthData } = useCustomerAuthStore();
@@ -30,10 +31,10 @@ const VerifyEmail = () => {
 
         let data = res.data;
         if (data.status == true) {
-            alert('Email sent successfully!!');
+            toast.success('Email sent successfully!!');
             router.replace('/');
         } else {
-            alert(data.message);
+            toast.error(data.message);
             return;
         }
     };
@@ -62,6 +63,7 @@ const VerifyEmail = () => {
                                 name="email"
                                 label="Your Email Address"
                                 value={email}
+                                type="email"
                                 onChange={(e) => {
                                     setEmail(e.target.value);
                                 }}

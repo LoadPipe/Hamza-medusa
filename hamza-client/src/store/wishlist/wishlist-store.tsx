@@ -99,7 +99,8 @@ const useWishlistStore = create<WishlistType>()(
             storage: createJSONStorage(() => localStorage),
             // Optional: You can trigger loadWishlist after the store has been rehydrated from localStorage
             onRehydrateStorage: () => (state, error) => {
-                // console.log('Rehydration process triggered');
+                console.log('Rehydration process triggered');
+                /*
                 if (error) {
                     console.error('Rehydration error:', error);
                     return;
@@ -144,6 +145,7 @@ const useWishlistStore = create<WishlistType>()(
                 } else {
                     console.log('No customer data found in local storage.');
                 }
+                */
             },
         }
     )

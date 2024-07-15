@@ -1,3 +1,4 @@
+'use client';
 import { extendTheme } from '@chakra-ui/react';
 import { Sora } from 'next/font/google';
 
