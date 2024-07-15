@@ -13,9 +13,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         const store_name = await productService.getStoreFromProduct(product_id);
         res.json(store_name);
     } catch (err) {
-        logger.error('Error fetching product reviews:', err);
+        logger.error('Error fetching store:', err);
         res.status(500).json({
-            error: 'Failed to fetch product reviews',
+            error: 'Failed to fetch store',
         });
     }
 };
