@@ -1,13 +1,6 @@
 'use client';
-
 import React from 'react';
-import {
-    Flex,
-    Input,
-    InputGroup,
-    InputLeftElement,
-    InputRightElement,
-} from '@chakra-ui/react';
+import { Flex, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
 import { FaSearch } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -33,7 +26,7 @@ const NavSearchBar = () => {
     }, [pathname]);
 
     return (
-        <>
+        <Flex width={'100%'} display={{ base: 'none', md: 'flex' }}>
             <InputGroup display={'flex'} mx="1rem">
                 <Input
                     width={'100%'}
@@ -72,7 +65,7 @@ const NavSearchBar = () => {
                     }}
                 />
             )}
-        </>
+        </Flex>
     );
 };
 

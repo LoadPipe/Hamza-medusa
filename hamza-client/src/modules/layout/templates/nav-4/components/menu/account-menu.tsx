@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { CgProfile } from 'react-icons/cg';
 import { MdOutlinePersonOutline } from 'react-icons/md';
 import { AiFillSetting } from 'react-icons/ai';
+import { AuthorizedAccount } from './components/authorized-account';
 
 const AccountMenu = () => {
     return (
@@ -60,7 +61,7 @@ const AccountMenu = () => {
                         <MenuItem
                             fontWeight={'600'}
                             mt="1rem"
-                            px="2rem"
+                            pl="1rem"
                             color={'white'}
                             backgroundColor={'black'}
                             _hover={{ color: 'primary.green.900' }}
@@ -84,7 +85,7 @@ const AccountMenu = () => {
                         <MenuItem
                             fontWeight={'600'}
                             mb="1rem"
-                            px="2rem"
+                            pl="1rem"
                             color={'white'}
                             backgroundColor={'black'}
                             _hover={{ color: 'primary.green.900' }}
@@ -97,19 +98,11 @@ const AccountMenu = () => {
                                 <AiFillSetting size={26} />
                             </Flex>
                             <Text fontWeight={'600'} ml="0.5rem">
-                                {' '}
                                 Settings
                             </Text>
                         </MenuItem>
                     </Link>
-                    <Box px={{ base: '2rem', md: 0 }}>
-                        <MenuDivider
-                            opacity={{ base: '0.5', md: '1' }}
-                            borderColor={'white'}
-                        />
-                    </Box>
-
-                    {/* <ConnectWalletLink /> */}
+                    <AuthorizedAccount />
                 </MenuList>
             </Menu>
         </Flex>
