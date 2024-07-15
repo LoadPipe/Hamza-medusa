@@ -9,13 +9,10 @@ import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import theme from '../styles/chakra-theme';
 import { Toaster } from 'react-hot-toast';
 import { Sora } from '@next/font/google';
-// TODO: Refactor using scaffold-eth-2 for proper layout.
 
 export const metadata: Metadata = {
     metadataBase: new URL(BASE_URL),
 };
-
-// Define your custom colors
 
 const sora = Sora({
     subsets: ['latin'],
