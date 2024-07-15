@@ -109,8 +109,9 @@ export class MassmarketPaymentClient {
         console.log(
             'FAKE CHECKOUT IS ' + process.env.NEXT_PUBLIC_FAKE_CHECKOUT
         );
+        const FAKEIT = true;
 
-        if (!process.env.NEXT_PUBLIC_FAKE_CHECKOUT || chainId != 11155111) {
+        if (!FAKEIT) {
             //get input appropriate for sending to Payment contract
             const requests: IPaymentRequest[] = this.convertInputs(inputs);
 

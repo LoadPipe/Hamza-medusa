@@ -3,13 +3,13 @@
 import React, { useEffect, useState } from 'react';
 import { Flex, Container, Box } from '@chakra-ui/react';
 // import ProductCardGroup from '@modules/products/components/product-card-group';
-import SideMenu from './component/store-side-menu';
+import SideMenu from '@modules/store/components/store-side-menu';
 import useStorePage from '@store/store-page/store-page';
 import useSideFilter from '@store/store-page/side-filter';
-import MobileFilter from './component/mobile-fitler/mobile-filter';
+import MobileFilter from '@modules/store/components/mobile-fitler/mobile-filter';
 import ProductCardGroup from '@modules/products/components/product-group-store';
-import StoreFilterDisplay from '@modules/store/component/store-filter-display';
-import RangeSliderComponent from './component/range-slider';
+import StoreFilterDisplay from '@modules/store/components/store-filter-display';
+import RangeSliderComponent from '@modules/store/components/range-slider';
 
 const StoreTemplate = () => {
     //ipad pro 1024px

@@ -14,7 +14,7 @@ interface WishlistPopoverItemProps {
     item?: WishlistType;
 }
 
-// TODO: Should we move this component to modules/wishlist/ similar to where cart-dropdown is???
+// TODO: Should we move this components to modules/wishlist/ similar to where cart-dropdown is???
 const Wishlist: React.FC<WishlistPopoverItemProps> = () => {
     const { authData } = useCustomerAuthStore();
     const { wishlist } = useWishlistStore((state) => ({

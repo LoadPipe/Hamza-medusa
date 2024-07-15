@@ -14,7 +14,7 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import StoreFilterDisplay from '@modules/store/component/store-filter-display';
+import StoreFilterDisplay from '@modules/store/components/store-filter-display';
 
 type Props = {
     vendorName: string;
