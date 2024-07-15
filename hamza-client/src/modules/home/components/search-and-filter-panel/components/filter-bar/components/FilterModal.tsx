@@ -24,7 +24,7 @@ import useSideFilter from '@store/store-page/side-filter';
 import useModalFilter from '@store/store-page/filter-modal';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
-import RangeSliderModal from '@modules/store-v2/component/mobile-fitler/components/range-slider-modal';
+import RangeSliderModal from '@modules/store/component/mobile-fitler/components/range-slider-modal';
 import vendors from '../../../data/data';
 interface FilterModalProps {
     isOpen: boolean;

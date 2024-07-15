@@ -8,7 +8,7 @@ import useStorePage from '@store/store-page/store-page';
 import useSideFilter from '@store/store-page/side-filter';
 import MobileFilter from './component/mobile-fitler/mobile-filter';
 import ProductCardGroup from '@modules/products/components/product-group-store';
-import StoreFilterDisplay from '@modules/store-v2/component/store-filter-display';
+import StoreFilterDisplay from '@modules/store/component/store-filter-display';
 import RangeSliderComponent from './component/range-slider';
 
 const StoreTemplate = () => {
