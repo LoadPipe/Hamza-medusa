@@ -6,6 +6,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const logger = req.scope.resolve('logger') as Logger;
 
     try {
+        logger.debug("/custom/store")
         const customers = await customerService.findAllCustomers();
         return res.json({ customers });
     } catch (error) {
@@ -15,17 +16,18 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 };
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const logger = req.scope.resolve('logger') as Logger;
-    const { wallet_address, signature } = readRequestBody(req.body, [
-        'wallet_address',
-        'signature',
-    ]);
-
-    if (!wallet_address) {
-        return res.status(400).json({ message: 'Wallet address is required' });
-    }
-    const customerService = req.scope.resolve('customerService');
-
     try {
+        logger.debug("/custom/store")
+        const { wallet_address, signature } = readRequestBody(req.body, [
+            'wallet_address',
+            'signature',
+        ]);
+
+        if (!wallet_address) {
+            return res.status(400).json({ message: 'Wallet address is required' });
+        }
+        const customerService = req.scope.resolve('customerService');
+
         const isVerified = await customerService.verifyWalletSignature(
             wallet_address,
             signature
