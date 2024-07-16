@@ -22,8 +22,8 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
         () => {
             const url =
                 vendorName === 'All'
-                    ? `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/store/custom/all-products`
-                    : `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/store/custom/products?store_name=${vendorName}`;
+                    ? `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products`
+                    : `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products?store_name=${vendorName}`;
 
             return axios.get(url);
         }
@@ -114,66 +114,66 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
                 {isLoading
                     ? renderSkeletons(8) // Render 8 skeletons while loading
                     : filteredProducts.map((product: any, index: number) => {
-                          const variantPrices = product.variants
-                              .map((variant: any) => variant.prices)
-                              .flat();
+                        const variantPrices = product.variants
+                            .map((variant: any) => variant.prices)
+                            .flat();
 
-                          const selectedPrice =
-                              variantPrices.find(
-                                  (p: any) =>
-                                      p.currency_code ===
-                                      preferred_currency_code
-                              ) ?? variantPrices[0];
-                          const productPricing = formatCryptoPrice(
-                              selectedPrice?.amount ?? 0,
-                              preferred_currency_code as string
-                          );
-                          const reviewCounter = product.reviews.length;
-                          const totalRating = product.reviews.reduce(
-                              (acc: number, review: any) => acc + review.rating,
-                              0
-                          );
-                          const avgRating = totalRating / reviewCounter;
-                          const roundedAvgRating = parseFloat(
-                              avgRating.toFixed(2)
-                          );
+                        const selectedPrice =
+                            variantPrices.find(
+                                (p: any) =>
+                                    p.currency_code ===
+                                    preferred_currency_code
+                            ) ?? variantPrices[0];
+                        const productPricing = formatCryptoPrice(
+                            selectedPrice?.amount ?? 0,
+                            preferred_currency_code as string
+                        );
+                        const reviewCounter = product.reviews.length;
+                        const totalRating = product.reviews.reduce(
+                            (acc: number, review: any) => acc + review.rating,
+                            0
+                        );
+                        const avgRating = totalRating / reviewCounter;
+                        const roundedAvgRating = parseFloat(
+                            avgRating.toFixed(2)
+                        );
 
-                          const variantID = product.variants[0].id;
-                          return (
-                              <GridItem
-                                  key={index}
-                                  minH={'243.73px'}
-                                  //   maxW={{ base: '100%', md: '295px' }}
-                                  h={{ base: '100%', md: '399px' }}
-                                  w="100%"
-                              >
-                                  <ProductCardStore
-                                      key={index}
-                                      productHandle={products[index].handle}
-                                      reviewCount={reviewCounter}
-                                      totalRating={avgRating}
-                                      variantID={variantID}
-                                      countryCode={product.countryCode}
-                                      productName={product.title}
-                                      productPrice={productPricing}
-                                      currencyCode={
-                                          preferred_currency_code ?? 'usdc'
-                                      }
-                                      imageSrc={product.thumbnail}
-                                      hasDiscount={product.is_giftcard}
-                                      discountValue={product.discountValue}
-                                      productId={product.id}
-                                      inventory={
-                                          product.variants[0].inventory_quantity
-                                      }
-                                      allow_backorder={
-                                          product.variants[0].allow_backorder
-                                      }
-                                      storeId={product.store_id}
-                                  />
-                              </GridItem>
-                          );
-                      })}
+                        const variantID = product.variants[0].id;
+                        return (
+                            <GridItem
+                                key={index}
+                                minH={'243.73px'}
+                                //   maxW={{ base: '100%', md: '295px' }}
+                                h={{ base: '100%', md: '399px' }}
+                                w="100%"
+                            >
+                                <ProductCardStore
+                                    key={index}
+                                    productHandle={products[index].handle}
+                                    reviewCount={reviewCounter}
+                                    totalRating={avgRating}
+                                    variantID={variantID}
+                                    countryCode={product.countryCode}
+                                    productName={product.title}
+                                    productPrice={productPricing}
+                                    currencyCode={
+                                        preferred_currency_code ?? 'usdc'
+                                    }
+                                    imageSrc={product.thumbnail}
+                                    hasDiscount={product.is_giftcard}
+                                    discountValue={product.discountValue}
+                                    productId={product.id}
+                                    inventory={
+                                        product.variants[0].inventory_quantity
+                                    }
+                                    allow_backorder={
+                                        product.variants[0].allow_backorder
+                                    }
+                                    storeId={product.store_id}
+                                />
+                            </GridItem>
+                        );
+                    })}
             </Grid>
         </Box>
     );

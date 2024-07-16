@@ -15,9 +15,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         const reviews = await productReviewService.getReviewCount(product_id);
         res.json(reviews);
     } catch (err) {
-        logger.error('Error fetching product reviews:', err);
+        logger.error('Error fetching product review count:', err);
         res.status(500).json({
-            error: 'Failed to fetch product reviews',
+            error: 'Failed to fetch product review count',
         });
     }
 };
