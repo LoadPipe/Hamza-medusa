@@ -107,7 +107,7 @@ export default class ConfirmationTokenService extends TransactionBaseService {
         //sending email for the confirmation
         await this.eventBus_.emit([
             {
-                data: { email: tokenCheck.email_address },
+                data: { email: tokenCheck.email_address, id: customerData.id },
                 eventName: 'customer.verified',
             },
         ]);
