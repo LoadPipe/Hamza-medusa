@@ -197,7 +197,7 @@ const MainMenu = () => {
                         <MenuItem
                             fontWeight={'600'}
                             pl="1rem"
-                            mb="1.5rem"
+                            mb="1rem"
                             color={'white'}
                             backgroundColor={'black'}
                             _hover={{ color: 'primary.green.900' }}
