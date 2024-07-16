@@ -27,7 +27,7 @@ const NavSearchBar = () => {
 
     return (
         <Flex width={'100%'} display={{ base: 'none', md: 'flex' }}>
-            <InputGroup display={'flex'} mx="1rem">
+            <InputGroup display={isHomePage ? 'none' : 'block'} mx="1rem">
                 <Input
                     width={'100%'}
                     height={'80px'}

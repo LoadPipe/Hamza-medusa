@@ -16,6 +16,7 @@ import { CgProfile } from 'react-icons/cg';
 import { MdOutlinePersonOutline } from 'react-icons/md';
 import { AiFillSetting } from 'react-icons/ai';
 import { AuthorizedAccount } from './components/authorized-account';
+import CartButton from '../cart-button';
 
 const AccountMenu = () => {
     return (
@@ -30,12 +31,12 @@ const AccountMenu = () => {
                     borderWidth={'1px'}
                     backgroundColor={'transparent'}
                     cursor={'pointer'}
-                    _hover={{
-                        '.profile-icon': {
-                            color: 'primary.green.900',
-                        },
-                        borderColor: 'primary.green.900',
-                    }}
+                    // _hover={{
+                    //     '.profile-icon': {
+                    //         color: 'primary.green.900',
+                    //     },
+                    //     borderColor: 'primary.green.900',
+                    // }}
                 >
                     <Flex
                         alignSelf={'center'}

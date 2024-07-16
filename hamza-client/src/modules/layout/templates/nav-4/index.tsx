@@ -8,11 +8,12 @@ import Image from 'next/image';
 import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
 import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
 //  Components
-import { WalletConnectButton } from './connect-button/connect-button';
+import { WalletConnectButton } from './connect-button/components/connect-button';
 import NavSearchBar from './components/nav-searchbar';
 import MobileMenu from './components/mobile-menu';
 import MobileNav from './components/mobile-nav';
 import MainMenu from './menu/main-menu';
+import ConnectWallet from './connect-button';
 
 export default async function Nav() {
     return (
@@ -65,7 +66,7 @@ export default async function Nav() {
 
                     <MainMenu />
 
-                    <WalletConnectButton />
+                    <ConnectWallet />
                 </Flex>
             </Flex>
         </Flex>
