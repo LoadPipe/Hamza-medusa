@@ -6,8 +6,8 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import StoreFilterDisplay from '@modules/store-v2/component/store-filter-display';
-import ProductCardStore from '@modules/store-v2/component/product-card';
+import StoreFilterDisplay from '@modules/store/components/store-filter-display';
+import ProductCardStore from '@modules/store/components/product-card';
 
 type Props = {
     vendorName: string;
@@ -22,7 +22,7 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
         () => {
             const url =
                 vendorName === 'All'
-                    ? `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/all-products`
+                    ? `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products`
                     : `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products?store_name=${vendorName}`;
 
             return axios.get(url);

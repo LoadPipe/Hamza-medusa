@@ -15,9 +15,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         const reviews = await productReviewService.getAverageRating(product_id);
         res.json(reviews);
     } catch (err) {
-        logger.error('Error fetching product reviews:', err);
+        logger.error('Error fetching average rating:', err);
         res.status(500).json({
-            error: 'Failed to fetch product reviews',
+            error: 'Failed to fetch average rating',
         });
     }
 };

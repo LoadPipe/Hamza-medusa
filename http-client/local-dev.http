@@ -24,7 +24,7 @@ GET http://localhost:9000/custom/store/products?store_name=Medusa Merch
 Content-Type: application/json
 
 ### Get All products yayayay
-GET http://localhost:9000/custom/store/all-products
+GET http://localhost:9000/custom/store/products
 Content-Type: application/json
 
 

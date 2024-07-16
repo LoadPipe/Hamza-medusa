@@ -14,24 +14,30 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         //get store by name
         const storeService: StoreService = req.scope.resolve('storeService');
-        if (!req.query.store_name || !req.query.store_name.length)
-            return res.status(400).json({ message: 'Missing store_name' });
-
-        const store = await storeService.getStoreByName(
-            req.query.store_name.toString()
-        );
-
-        // Simple error handing
-        if (!store) {
-            return res.status(404).json({ message: 'Store not found' });
-        }
-
-        // Chain query to get products
         const productService: ProductService =
             req.scope.resolve('productService');
 
-        const list_products =
-            await productService.getProductsFromStoreWithPrices(store.id);
+        let list_products = [];
+        if (req.query.store_name && req.query.store_name.length) {
+
+            const store = await storeService.getStoreByName(
+                req.query.store_name.toString()
+            );
+
+            // Simple error handing
+            if (!store) {
+                return res.status(404).json({ message: 'Store not found' });
+            }
+
+            // Chain query to get products
+            list_products =
+                await productService.getProductsFromStoreWithPrices(store.id);
+        }
+        else {
+            list_products =
+                await productService.getAllProductsFromStoreWithPrices();
+        }
+
         return res.json(list_products);
     } catch (error) {
         logger.error(error);

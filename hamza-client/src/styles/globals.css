@@ -11,7 +11,7 @@
     @apply bg-gray-800;
 }
 
-.font-sora {
+/* .font-sora {
     font-family: 'Sora', sans-serif;
 }
 
@@ -31,11 +31,7 @@ h4,
 h5,
 h6 {
     font-family: 'Sora', sans-serif;
-}
-
-button {
-    font-family: 'Sora', sans-serif !important;
-}
+} */
 
 @layer utilities {
     /* Chrome, Safari and Opera */

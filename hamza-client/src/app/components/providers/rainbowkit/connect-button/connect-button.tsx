@@ -16,7 +16,7 @@ export const WalletConnectButton = () => {
                 authenticationStatus,
                 mounted,
             }) => {
-                // Ensure the component is ready and not in a loading state
+                // Ensure the components is ready and not in a loading state
                 const ready = mounted && authenticationStatus !== 'loading';
                 const connected =
                     ready &&
@@ -87,11 +87,11 @@ export const WalletConnectButton = () => {
                                         alignSelf={'center'}
                                         backgroundColor={'#2C272D'}
                                     >
-                                        {chain.iconUrl && (
+                                        {chain?.iconUrl && (
                                             <Image
                                                 alignSelf={'center'}
                                                 alt={`${chain.name ?? 'Chain'} icon`}
-                                                src={chain.iconUrl}
+                                                src={chain?.iconUrl}
                                             />
                                         )}
                                     </Box>

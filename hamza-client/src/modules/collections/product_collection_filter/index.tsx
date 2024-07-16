@@ -7,13 +7,8 @@ import LocalizedClientLink from '@modules/common/components/localized-client-lin
 import axios from 'axios';
 import { SimpleGrid } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-//import PreviewPrice from '@modules/products/components/product-preview/price';
-//import { ProductPreviewType } from 'types/global';
-//import { getProductPrice } from '@lib/util/get-product-price';
-//import { useProducts } from 'medusa-react';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-// TODO: Refactor goals to use <Suspense .. /> to wrap collection && <SkeletonProductGrid /> for loading state
 
 type Props = {
     vendorName: string;
