@@ -1,7 +1,7 @@
 # Custom API Routes
 
 You may define custom API Routes by putting files in the `/api` directory that export functions returning an express router or a collection of express routers.
-Medusa supports adding custom API Routes using a file based approach. This means that you can add files in the `/api` directory and the files path will be used as the API Route path. For example, if you add a file called `/api/store/custom/route.ts` it will be available on the `/store/custom` API Route.
+Medusa supports adding custom API Routes using a file based approach. This means that you can add files in the `/api` directory and the files path will be used as the API Route path. For example, if you add a file called `/api/custom/store/route.ts` it will be available on the `/custom/store` API Route.
 
 ```ts
 import type { MedusaRequest, MedusaResponse } from "@medusajs/medusa";
@@ -93,7 +93,7 @@ export async function GET(req: MedusaRequest, res: MedusaResponse) {
 
 ## Middleware
 
-You can apply middleware to your routes by creating a file called `/api/middlewares.ts`. This file should export a configuration object with what middleware you want to apply to which routes. For example, if you want to apply a custom middleware function to the `/store/custom` route, you can do so by adding the following to your `/api/middlewares.ts` file:
+You can apply middleware to your routes by creating a file called `/api/middlewares.ts`. This file should export a configuration object with what middleware you want to apply to which routes. For example, if you want to apply a custom middleware function to the `/custom/store` route, you can do so by adding the following to your `/api/middlewares.ts` file:
 
 ```ts
 import type {
@@ -115,7 +115,7 @@ async function logger(
 export const config: MiddlewaresConfig = {
   routes: [
     {
-      matcher: "/store/custom",
+      matcher: "/custom/store",
       middlewares: [logger],
     },
   ],
@@ -130,7 +130,7 @@ You might only want to apply middleware to certain HTTP methods. You can do so b
 export const config: MiddlewaresConfig = {
   routes: [
     {
-      matcher: "/store/custom",
+      matcher: "/custom/store",
       method: "GET",
       middlewares: [logger],
     },
@@ -157,7 +157,7 @@ export const config: MiddlewaresConfig = {
   routes: [
     {
       method: "POST",
-      matcher: "/store/custom",
+      matcher: "/custom/store",
       middlewares: [urlencoded()],
     },
   ],

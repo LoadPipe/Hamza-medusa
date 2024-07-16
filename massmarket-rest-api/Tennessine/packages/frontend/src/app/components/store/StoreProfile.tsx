@@ -29,7 +29,7 @@ const StoreProfile = ({ close }: { close: () => void }) => {
           <p className="font-sans">General</p>
           <section className="text-sm flex flex-col gap-4">
             <div>
-              {/* FIXME: make this text area into reusuable component */}
+              {/* FIXME: make this text area into reusuable components */}
               <section className="mt-4">
                 <form
                   className="flex flex-col"

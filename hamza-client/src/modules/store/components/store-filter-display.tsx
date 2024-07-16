@@ -13,7 +13,7 @@ const StoreFilterDisplay = () => {
     const [isClient, setIsClient] = useState(false);
     const [startIdx, setStartIdx] = useState(0); // State to keep track of the starting index of visible vendors
 
-    // Ensure that the component knows when it's running on the client
+    // Ensure that the components knows when it's running on the client
     useEffect(() => {
         setIsClient(true);
     }, []);

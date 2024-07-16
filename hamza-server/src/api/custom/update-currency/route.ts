@@ -2,6 +2,7 @@ import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import { readRequestBody } from '../../../utils/request-body';
 import CustomerService from '../../../services/customer';
 
+//TODO: updates should be PUT 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const customerService: CustomerService =
         req.scope.resolve('customerService');

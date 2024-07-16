@@ -8,20 +8,28 @@ import { User } from '../models/user';
 import StoreRepository from '../repositories/store';
 import axios from 'axios';
 import { UpdateStoreInput as MedusaUpdateStoreInput } from '@medusajs/medusa/dist/types/store';
+import { UpdateProductInput as MedusaUpdateProductInput } from '@medusajs/medusa/dist/types/product';
+import ProductRepository from '@medusajs/medusa/dist/repositories/product';
 
 type UpdateStoreInput = MedusaUpdateStoreInput & {
     massmarket_keycard?: string;
     massmarket_store_id?: string;
 };
 
+type UpdateProductInput = MedusaUpdateProductInput & {
+    store_id?: string;
+};
+
 class StoreService extends MedusaStoreService {
     static LIFE_TIME = Lifetime.SCOPED;
+    protected readonly productRepository_: typeof ProductRepository;
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly logger: Logger;
 
     constructor(container) {
         super(container);
         this.storeRepository_ = container.storeRepository;
+        this.productRepository_ = container.productRepository;
         this.logger = container.logger;
     }
 
@@ -63,19 +71,14 @@ class StoreService extends MedusaStoreService {
         this.logger.debug(
             'Fetching products from collection: ' + collectionListUrl
         );
-        let updateProductUrl = `http://localhost:9000/routes/products`;
         try {
             // Get a list of products belonging to a collection
             const collectionListResponse = await axios.get(collectionListUrl);
             const products = collectionListResponse.data.products;
 
             // Map `each` product to a `POST` request to update product with `store_id`
-            const updatePromises = products.map((product) => {
-                const body = {
-                    product_id: product.id,
-                    store_id: store.id,
-                };
-                return axios.post(updateProductUrl, body);
+            const updatePromises: Promise<void>[] = products.map((product) => {
+                this.productRepository_.save({ id: product.id, store_id: store.id })
             });
 
             await Promise.all(updatePromises);
