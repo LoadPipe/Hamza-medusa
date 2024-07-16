@@ -46,7 +46,7 @@ export const WalletConnectButton = ({
                             >
                                 <AccountMenu />
 
-                                <Flex alignSelf={'center'} ml="1rem">
+                                <Flex alignSelf={'center'} ml="0.75rem">
                                     <LocalizedClientLink href="/cart">
                                         <Flex
                                             position="relative"

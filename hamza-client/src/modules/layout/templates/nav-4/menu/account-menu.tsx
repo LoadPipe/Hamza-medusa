@@ -16,8 +16,17 @@ import { CgProfile } from 'react-icons/cg';
 import { MdOutlinePersonOutline } from 'react-icons/md';
 import { AiFillSetting } from 'react-icons/ai';
 import { AuthorizedAccount } from './components/authorized-account';
+import useWishlistStore from '@store/wishlist/wishlist-store';
 
 const AccountMenu = () => {
+    const { wishlist } = useWishlistStore((state) => ({
+        wishlist: state.wishlist,
+    }));
+    const totalItems =
+        wishlist?.products?.reduce((acc: any, item: any) => {
+            return acc + 1;
+        }, 0) || 0;
+
     return (
         <Flex display={{ base: 'none', md: 'flex' }} height={'100%'}>
             <Menu placement="bottom-end">
@@ -30,6 +39,7 @@ const AccountMenu = () => {
                     borderWidth={'1px'}
                     backgroundColor={'transparent'}
                     cursor={'pointer'}
+                    position="relative"
                     _hover={{
                         '.profile-icon': {
                             color: 'primary.green.900',
@@ -46,6 +56,24 @@ const AccountMenu = () => {
                     >
                         <CgProfile size={30} />
                     </Flex>
+                    {totalItems > 0 && (
+                        <Flex
+                            position="absolute"
+                            top="0px"
+                            right="0px"
+                            width="20px"
+                            height="20px"
+                            borderRadius="full"
+                            backgroundColor="#EB4C60"
+                            justifyContent="center"
+                            alignItems="center"
+                            fontSize="10px"
+                            color="white"
+                            fontWeight="700"
+                        >
+                            <Text fontSize={'10px'}>{totalItems}</Text>
+                        </Flex>
+                    )}
                 </MenuButton>
                 <MenuList
                     marginTop={'1rem'}
