@@ -57,8 +57,7 @@ const MainMenu = () => {
                 <MenuList
                     marginTop={'1rem'}
                     pb={'0px'}
-                    borderTopRadius={'0px'}
-                    borderBottomRadius={'16px'}
+                    borderRadius={'16px'}
                     borderColor={{
                         base: 'transparent',
                         md: 'white',
