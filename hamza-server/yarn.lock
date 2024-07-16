@@ -11367,10 +11367,10 @@ medusa-core-utils@1.2.2, medusa-core-utils@^1.2.0, medusa-core-utils@^1.2.1, med
   dependencies:
     awilix "^8.0.0"
 
-medusa-events-webhooks@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/medusa-events-webhooks/-/medusa-events-webhooks-1.0.6.tgz#03c07e4990b4c8bb4d3b9555ed901e7fd0a69208"
-  integrity sha512-2ArgGSsJZsE9Y74dDsJj9qBnct8LNH+1nBc1QvDgrB7Toib5AbCO0Zm/VI017FtZOeMWr8UuRHX56dn9BE2Vmw==
+medusa-events-webhooks@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/medusa-events-webhooks/-/medusa-events-webhooks-1.1.2.tgz#d2b0eb5ac000d9b6ae112f8693cbe0092ad0a9a3"
+  integrity sha512-t0DKcZD7X5312mFDZmMj+be0HEuBu1Tby4gBklK6cAfQstUNrgERDgFbE19eizmC3IHlmQwxsugjFzyZ/D5vtQ==
   dependencies:
     "@medusajs/admin" "^7.1.10"
     "@medusajs/admin-ui" "2.1.11"
