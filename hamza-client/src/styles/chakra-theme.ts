@@ -1,5 +1,8 @@
 'use client';
 import { extendTheme } from '@chakra-ui/react';
+import { Sora } from 'next/font/google';
+
+const sora = Sora({ weight: ['400', '600', '700'], subsets: ['latin'] });
 
 const colors = {
     primary: {
@@ -107,23 +110,11 @@ const colors = {
 
 const theme = extendTheme({
     colors,
-    styles: {
-        global: {
-            // These styles are applied to the 'html' and 'body' elements
-            'html, body': {
-                fontFamily: `'Sora', sans-serif`,
-            },
-        },
-    },
     fonts: {
-        body: `'Sora', sans-serif`,
-        heading: `'Sora', sans-serif`,
+        body: sora.style.fontFamily,
     },
     components: {
         Heading: {
-            baseStyle: {
-                fontFamily: 'heading',
-            },
             sizes: {
                 h1: {
                     fontSize: '2rem',
