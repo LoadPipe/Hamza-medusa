@@ -7,6 +7,7 @@ import Image from 'next/image';
 // Images
 import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
 import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
+import HamzaTitle2 from '../../../../../public/images/logo/nav-logo.svg';
 //  Components
 import { WalletConnectButton } from './connect-button/components/connect-button';
 import NavSearchBar from './components/nav-searchbar';
@@ -46,14 +47,17 @@ export default async function Nav() {
                     <LocalizedClientLink href="/">
                         <Flex width={'190px'} marginLeft="auto" flexShrink={0}>
                             <Image
-                                className="w-[22.92px] h-[33px] md:w-[47.34px] md:h-[67px]"
+                                className="w-[22.92px] h-[33px] md:w-[49px] md:h-[71px]"
+                                style={{
+                                    alignSelf: 'center',
+                                }}
                                 src={HamzaLogo}
                                 alt="Hamza"
                             />
 
                             <Image
-                                src={HamzaTitle}
-                                className="w-[60.73px] h-[11.59px] md:w-[125.42px] md:h-[23.07px] ml-[0.5rem] md:ml-[1rem]"
+                                src={HamzaTitle2}
+                                className="w-[60.73px] h-[11.59px] md:w-[125.42px] md:h-[106px] ml-[0.5rem] md:ml-[1rem]"
                                 style={{
                                     alignSelf: 'center',
                                 }}
