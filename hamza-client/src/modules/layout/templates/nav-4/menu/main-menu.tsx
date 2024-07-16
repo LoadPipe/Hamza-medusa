@@ -20,6 +20,7 @@ import {
     MdOutlineSell,
     MdOutlineHelpCenter,
     MdOutlineFiberSmartRecord,
+    MdOutlineLibraryBooks,
 } from 'react-icons/md';
 import { FaHome } from 'react-icons/fa';
 
@@ -153,6 +154,25 @@ const MainMenu = () => {
                             <Text ml="0.5rem"> Market</Text>
                         </MenuItem>
                     </NavLink>
+
+                    <a target="_blank" href="https://blog.hamza.biz/blog/">
+                        <MenuItem
+                            fontWeight={'600'}
+                            pl="1rem"
+                            color={'white'}
+                            backgroundColor={'black'}
+                            _hover={{ color: 'primary.green.900' }}
+                        >
+                            <Flex
+                                w="30px"
+                                justifyContent={'center'}
+                                alignItems={'center'}
+                            >
+                                <MdOutlineLibraryBooks size={28} />
+                            </Flex>
+                            <Text ml="0.5rem">Blog</Text>
+                        </MenuItem>
+                    </a>
 
                     <a target="_blank" href="https://blog.hamza.biz/about/">
                         <MenuItem
