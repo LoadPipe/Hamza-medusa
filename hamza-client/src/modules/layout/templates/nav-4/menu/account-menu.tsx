@@ -94,10 +94,7 @@ const AccountMenu = () => {
                             borderColor={'white'}
                         />
                     </Box>
-                    <Link
-                        href={`https://blog.hamza.biz/merchant/`}
-                        target="_blank"
-                    >
+                    <Link href={`/account`} target="_blank">
                         <MenuItem
                             fontWeight={'600'}
                             mt="1rem"
