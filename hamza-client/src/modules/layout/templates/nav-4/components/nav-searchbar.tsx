@@ -1,11 +1,20 @@
 'use client';
 import React from 'react';
-import { Flex, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
+import {
+    Box,
+    Flex,
+    Input,
+    InputGroup,
+    InputLeftElement,
+    InputRightElement,
+} from '@chakra-ui/react';
 import { FaSearch } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import SearchModal from '@modules/search/templates/search-modal';
 import { getRegion } from 'app/actions';
+import fslash from '../.../../../../../../../public/images/nav/search/fslash.svg';
+import Image from 'next/image';
 
 const NavSearchBar = () => {
     const [searchOpened, setSearchOpened] = useState(false);
@@ -27,7 +36,11 @@ const NavSearchBar = () => {
 
     return (
         <Flex width={'100%'} display={{ base: 'none', md: 'flex' }}>
-            <InputGroup display={isHomePage ? 'none' : 'block'} mx="1rem">
+            <InputGroup
+                display={isHomePage ? 'none' : 'flex'}
+                mx="1rem"
+                alignItems={'center'}
+            >
                 <Input
                     width={'100%'}
                     height={'80px'}
@@ -49,7 +62,6 @@ const NavSearchBar = () => {
                 />
                 <InputLeftElement
                     height="100%"
-                    display="flex"
                     alignItems="center"
                     pointerEvents="none"
                     ml="1rem"
@@ -57,6 +69,26 @@ const NavSearchBar = () => {
                 >
                     <FaSearch color="white" />
                 </InputLeftElement>
+                <InputRightElement height="100%" mr="1rem">
+                    <Flex
+                        borderRadius={'10px'}
+                        height="47px"
+                        width="45px"
+                        justifyContent={'center'}
+                        alignItems="center"
+                        alignSelf={'center'}
+                        backgroundColor={'#272727'}
+                    >
+                        <Image
+                            src={fslash}
+                            alt="slash"
+                            style={{
+                                width: '11.39px',
+                                height: '27.72px',
+                            }}
+                        />
+                    </Flex>
+                </InputRightElement>
             </InputGroup>
             {searchOpened && (
                 <SearchModal
