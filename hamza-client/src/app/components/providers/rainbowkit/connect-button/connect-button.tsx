@@ -87,11 +87,11 @@ export const WalletConnectButton = () => {
                                         alignSelf={'center'}
                                         backgroundColor={'#2C272D'}
                                     >
-                                        {chain.iconUrl && (
+                                        {chain?.iconUrl && (
                                             <Image
                                                 alignSelf={'center'}
                                                 alt={`${chain.name ?? 'Chain'} icon`}
-                                                src={chain.iconUrl}
+                                                src={chain?.iconUrl}
                                             />
                                         )}
                                     </Box>
