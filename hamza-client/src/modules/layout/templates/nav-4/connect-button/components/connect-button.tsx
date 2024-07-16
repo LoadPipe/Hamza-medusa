@@ -3,7 +3,6 @@
 import { Button, Flex, Text } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import AccountMenu from '@modules/layout/templates/nav-4/menu/account-menu';
-import CartButton from '../../cart-button';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { Cart } from '@medusajs/medusa';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
