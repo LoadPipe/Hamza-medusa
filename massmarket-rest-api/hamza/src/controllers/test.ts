@@ -147,7 +147,7 @@ export const testController = {
 
                 return await RelayClientWrapper.createAndInitializeStore(
                     `relay-beta.mass.market/v2`,
-                    '0x65c1196c888ae6bb110077201346dfe426b220ce1d49a366102a2d85e7ad0e35'
+                    '0x000'
                 );
             },
             201
@@ -168,13 +168,13 @@ export const testController = {
                 */
                 const rc = new RelayClientWrapper(
                     `relay-beta.mass.market/v2`,
-                    '0x805e83d38d5c946bc1559f7d80ce94bce13a4cc0ec4640426bc81835f5958a57',
-                    '0x0000000000000000000000000000000000000000000000000000000000000007',
+                    '0x000',
+                    '0x000',
                     false
                 );
 
                 await rc.enrollKeycard(
-                    '0x65c1196c888ae6bb110077201346dfe426b220ce1d49a366102a2d85e7ad0e35'
+                    '0x000'
                 );
             },
             201
