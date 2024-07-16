@@ -24,7 +24,7 @@ export const AuthorizedAccount = () => {
                             justifyContent={'center'}
                             alignSelf={'center'}
                         >
-                            {chain.iconUrl && (
+                            {chain?.iconUrl && (
                                 <Image
                                     alignSelf={'center'}
                                     alt={`${chain.name ?? 'Chain'} icon`}
@@ -34,7 +34,7 @@ export const AuthorizedAccount = () => {
                         </Box>
 
                         <Text ml="1rem" alignSelf={'center'} color="#8C8C8C">
-                            {formatAddress(account.address)}
+                            {formatAddress(account?.address ?? '')}
                         </Text>
 
                         <Box
