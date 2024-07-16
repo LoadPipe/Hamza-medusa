@@ -36,8 +36,20 @@ const MainMenu = () => {
                     borderWidth={'1px'}
                     backgroundColor={'transparent'}
                     cursor={'pointer'}
+                    _hover={{
+                        '.menu-icon': {
+                            color: 'primary.green.900',
+                            transition: 'color 0.3s ease-in-out',
+                        },
+                        borderColor: 'primary.green.900',
+                        transition: 'border-color 0.3s ease-in-out',
+                    }}
                 >
-                    <Flex alignSelf={'center'} color={'white'}>
+                    <Flex
+                        className="menu-icon"
+                        alignSelf={'center'}
+                        color={'white'}
+                    >
                         <IoMdMenu size={30} />
                     </Flex>
                 </MenuButton>

@@ -31,12 +31,14 @@ const AccountMenu = () => {
                     borderWidth={'1px'}
                     backgroundColor={'transparent'}
                     cursor={'pointer'}
-                    // _hover={{
-                    //     '.profile-icon': {
-                    //         color: 'primary.green.900',
-                    //     },
-                    //     borderColor: 'primary.green.900',
-                    // }}
+                    _hover={{
+                        '.profile-icon': {
+                            color: 'primary.green.900',
+                            transition: 'color 0.3s ease-in-out',
+                        },
+                        borderColor: 'primary.green.900',
+                        transition: 'border-color 0.3s ease-in-out',
+                    }}
                 >
                     <Flex
                         alignSelf={'center'}

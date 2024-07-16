@@ -2,7 +2,6 @@ import { LineItem } from '@medusajs/medusa';
 
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 
-import CartDropdown from './components/cart-button';
 import { WalletConnectButton } from './components/connect-button';
 
 const fetchCart = async () => {

@@ -63,6 +63,13 @@ export const WalletConnectButton = ({
                                                 flexDirection={'row'}
                                                 alignSelf={'center'}
                                                 color={'white'}
+                                                _hover={{
+                                                    '.cart-icon': {
+                                                        color: 'primary.green.900',
+                                                        transition:
+                                                            'color 0.3s ease-in-out',
+                                                    },
+                                                }}
                                             >
                                                 <HiOutlineShoppingCart
                                                     className="cart-icon"
