@@ -136,7 +136,7 @@ export const config: MiddlewaresConfig = {
             matcher: '/custom/*',
             middlewares: [
                 cors({
-                    origin: '*',
+                    origin: [STORE_CORS],
                     credentials: true,
                 }),
             ],
