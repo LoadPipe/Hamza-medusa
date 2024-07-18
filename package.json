@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+    "husky": "^9.1.1",
+    "prettier": "^3.3.3"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "build": "cd hamza-server && yarn run build && cd .. && cd hamza-client && yarn run build",
+    "prettier" : "prettier --write ."
+  },
+  "name": "hamza-medusa",
+  "version": "1.0.0",
+  "description": "",
+  "devDependencies": {},
+  "author": "",
+  "license": "ISC"
+}
