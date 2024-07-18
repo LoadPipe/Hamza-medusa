@@ -1,6 +1,6 @@
 // __mocks__/productService.ts
 class ProductService {
-    async getAllProductsFromStoreWithPrices() {
+    public async getAllProductsFromStoreWithPrices() {
         console.log('Mock getAllProductsFromStoreWithPrices called');
         return [
             {
