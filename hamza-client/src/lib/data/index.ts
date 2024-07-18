@@ -75,6 +75,19 @@ export async function getVendors() {
     }
 }
 
+// Get Vendor Products
+export async function getProductsByVendor(vendorName: string) {
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/store/products?store_name=${vendorName}`
+        );
+        return response.data.products;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
 // Cart actions
 export async function createCart(data = {}) {
     const headers = getMedusaHeaders(['cart']);
