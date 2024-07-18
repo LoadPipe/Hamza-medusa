@@ -104,6 +104,7 @@ export const config: MiddlewaresConfig = {
                         STORE_CORS,
                         'http://localhost:7001',
                         'http://localhost:7000',
+                        'http://localhost:9000', // TEST ENV
                     ],
                     credentials: true,
                 }),
