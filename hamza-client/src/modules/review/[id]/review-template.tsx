@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import useItemStore from '@store/review/review-store';
 import { Button } from '@medusajs/ui';
+import { createReview } from '@lib/data';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -43,15 +44,17 @@ const ReviewTemplate = () => {
             return;
         }
 
+        const data = {
+            customer_id: item?.customer_id,
+            product_id: item?.variant_id,
+            rating: rating,
+            content: review,
+            title: 'Review for ' + item?.title, // Assuming a title is needed
+            order_id: item?.order_id,
+        };
+
         try {
-            await axios.post(`${BACKEND_URL}/custom/review`, {
-                customer_id: item?.customer_id,
-                product_id: item?.variant_id,
-                rating: rating,
-                content: review,
-                title: 'Review for ' + item?.title, // Assuming a title is needed
-                order_id: item?.order_id,
-            });
+            await createReview(data);
             setReview('');
             setRating(0);
             setSubmissionSuccess(true); // Update the state to indicate success
@@ -85,7 +88,8 @@ const ReviewTemplate = () => {
                             <p
                                 dangerouslySetInnerHTML={{
                                     __html: item?.description ?? '',
-                                }}></p>
+                                }}
+                            ></p>
                         </div>
                     </div>
                     <div>

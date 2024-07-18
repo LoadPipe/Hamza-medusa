@@ -75,6 +75,35 @@ export async function getVendors() {
     }
 }
 
+// Get Vendor Store by slug
+export async function getVendorStoreBySlug(store_name: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/vendors/vendor-store`,
+            {
+                params: {
+                    store_name: store_name,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
+// Set a review
+export async function createReview(data: any) {
+    try {
+        const response = await axios.post(`${BACKEND_URL}/custom/review`, data);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
 // Get Vendor Products
 export async function getProductsByVendor(vendorName: string) {
     try {
