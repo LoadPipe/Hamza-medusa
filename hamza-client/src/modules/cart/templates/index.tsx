@@ -40,8 +40,15 @@ const CartTemplate = ({
             >
                 <Box width="1,258px" pb="5rem" pt="2rem">
                     {cart?.items.length ? (
-                        <div className="grid grid-cols-1 small:grid-cols-[1fr_360px] gap-x-40">
-                            <div className="flex flex-col bg-black py-6 gap-y-6 text-white">
+                        <Flex flexDirection={'row'} gap="26px">
+                            <Box
+                                width={'825px'}
+                                height={'540px'}
+                                borderRadius={'16px'}
+                                backgroundColor={'#121212'}
+                                px="40px"
+                                py="10px"
+                            >
                                 {!customer && (
                                     <>
                                         <SignInPrompt />
@@ -49,6 +56,7 @@ const CartTemplate = ({
                                     </>
                                 )}
                                 <Text
+                                    mt="1rem"
                                     fontWeight={600}
                                     fontSize={'18px'}
                                     color="primary.green.900"
@@ -59,19 +67,12 @@ const CartTemplate = ({
                                     region={cart?.region}
                                     items={cart?.items}
                                 />
-                            </div>
-                            <div className="relative">
-                                <div className="flex flex-col gap-y-8 sticky top-12 bg-black text-white">
-                                    {cart && cart.region && (
-                                        <>
-                                            <div className="bg-black py-6 text-white">
-                                                <Summary cart={cart} />
-                                            </div>
-                                        </>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
+                            </Box>
+
+                            <Box>
+                                {cart && cart.region && <Summary cart={cart} />}
+                            </Box>
+                        </Flex>
                     ) : (
                         <div>
                             <EmptyCartMessage />
