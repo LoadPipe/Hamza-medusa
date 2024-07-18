@@ -8,6 +8,7 @@ import { Toast } from '@medusajs/ui';
 import { useRouter, useSearchParams } from 'next/navigation';
 import getGoogleOAuthURL from '@lib/util/google-url';
 import getTwitterOauthUrl from '@lib/util/twitter-url';
+import Image from 'next/image';
 import toast from 'react-hot-toast';
 
 const VerifyEmail = () => {
@@ -81,7 +82,7 @@ const VerifyEmail = () => {
                         <div className="buttons flex flex-col space-y-2 w-full">
                             <a href={getGoogleOAuthURL(authParams)}>
                                 <button className="px-4 py-2 w-full border flex gap-2 border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-300 hover:shadow transition duration-150">
-                                    <img
+                                    <Image
                                         className="w-6 h-6"
                                         src="https://www.svgrepo.com/show/475656/google-color.svg"
                                         loading="lazy"

@@ -170,7 +170,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
 
             if (showPopup) {
                 setCartModalOpen(true);
-                setTimeout(() => { setCartModalOpen(false); }, 3000);
+                setTimeout(() => {
+                    setCartModalOpen(false);
+                }, 3000);
             }
         } catch (error) {
             console.error('Error adding to cart:', error);
@@ -188,7 +190,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
             console.log('white list config ', whitelist_config);
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                    whitelist_config.whitelisted_stores.includes(data.data)
+                whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -466,6 +468,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                     borderColor={'primary.yellow.900'}
                     backgroundColor={'transparent'}
                     mt="1rem"
+                    data-cy="add-to-cart-button"
                     fontSize={{ base: '12px', md: '18px' }}
                     _hover={{
                         color: 'black',
@@ -476,8 +479,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                     {!inStock && isWhitelisted
                         ? 'Add to cart'
                         : inStock
-                            ? 'Add to Cart'
-                            : 'Out of Stock'}
+                          ? 'Add to Cart'
+                          : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs text-white px-4 py-2">
