@@ -10,6 +10,8 @@ type ProductSelector = {
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const logger = req.scope.resolve('logger') as Logger;
     try {
+        logger.debug("/custom/store/products")
+
         //get store by name
         const storeService: StoreService = req.scope.resolve('storeService');
         const productService: ProductService =

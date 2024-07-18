@@ -8,6 +8,12 @@
       "path": "./packages/schema"
     },
     {
+      "path": "./packages/utils"
+    },
+    {
+      "path": "./packages/blockchain"
+    },
+    {
       "path": "./packages/client"
     },
     {

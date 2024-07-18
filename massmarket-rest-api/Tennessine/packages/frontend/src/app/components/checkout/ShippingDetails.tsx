@@ -1,15 +1,24 @@
 "use client";
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import Button from "@/app/common/components/Button";
 
-const ShippingDetails = ({ checkout }: { checkout: () => void }) => {
-  const [city, setCity] = useState("");
-  const [address, setAddress] = useState("");
-  const [name, setName] = useState("");
-  const [zip, setZip] = useState("");
-  const [country, setCountry] = useState("");
-  const [number, setNumber] = useState("");
-  console.log({ city, name, address, zip, country, number });
+const ShippingDetails = ({
+  checkout,
+  setCity,
+  setName,
+  setAddress,
+  setZip,
+  setCountry,
+  setNumber,
+}: {
+  checkout: () => void;
+  setCity: Dispatch<SetStateAction<string>>;
+  setName: Dispatch<SetStateAction<string>>;
+  setAddress: Dispatch<SetStateAction<string>>;
+  setZip: Dispatch<SetStateAction<string>>;
+  setCountry: Dispatch<SetStateAction<string>>;
+  setNumber: Dispatch<SetStateAction<string>>;
+}) => {
   return (
     <div className="mt-4 flex flex-col gap-4">
       <form

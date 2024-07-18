@@ -1,0 +1,7 @@
+{
+  "extends": ["@massmarket/tsconfig/base.json"],
+  "include": ["./index.ts"],
+  "compilerOptions": {
+    "outDir": "./dist"
+  }
+}

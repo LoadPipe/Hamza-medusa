@@ -17,13 +17,13 @@ const ProgressBar = ({
       <div className="flex items-center	self-stretch mt-10 w-full mb-2">
         {allSteps.map((step, i) => {
           return i === allSteps.length - 1 ? (
-            <div>
+            <div key={i}>
               <div
                 className={`${round} ${currentStep === i ? active : inactive}`}
               />
             </div>
           ) : (
-            <div className="flex items-center	self-stretch w-full">
+            <div key={i} className="flex items-center	self-stretch w-full">
               <div
                 className={`${round} ${currentStep === i ? active : inactive}`}
               />

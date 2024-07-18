@@ -48,9 +48,9 @@ export const productsController = {
                     }
 
                     //TODO: better success check
-                    console.log('returning ', output);
                     output.success =
                         output.productIds.length == input.products.length;
+                    console.log('returning ', output);
                 }
 
                 return output;

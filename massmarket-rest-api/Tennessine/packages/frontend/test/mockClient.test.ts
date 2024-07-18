@@ -22,11 +22,10 @@ import { storeReducer, updateStoreDataAction } from "@/reducers/storeReducer";
 
 describe("mockclient", async () => {
   const client = new MockClient();
-  let storeData = { name: "", profilePictureUrl: "" };
+  let storeData = { name: "", profilePictureUrl: "", baseCurrencyAddr: null };
   let products = new Map();
   let allTags = new Map();
   let orderItems = new Map();
-  let etErc20Addr: null | `0x${string}` = null;
   let publishedTagId = null;
   const events = [];
   let finalizedOrders = new Map();
@@ -40,10 +39,6 @@ describe("mockclient", async () => {
   function setOrderItems(action: allOrderActions) {
     orderItems = orderReducer(orderItems, action);
   }
-  function setErc20Addr(add: `0x${string}` | null) {
-    etErc20Addr = add;
-    console.log(`setErc20Addr set to: ${etErc20Addr}`);
-  }
   function setPublishedTagId(id: `0x${string}` | null) {
     publishedTagId = id;
     console.log(`publishedTagId set to: ${publishedTagId}`);
@@ -55,6 +50,7 @@ describe("mockclient", async () => {
     pubKeys = pubKeyReducer(pubKeys, action);
   }
   function setStoreData(action: updateStoreDataAction) {
+    //@ts-expect-error FIXME
     storeData = storeReducer(storeData, action);
   }
 
@@ -67,7 +63,6 @@ describe("mockclient", async () => {
       productsDispatch,
       tagsDisaptch,
       setOrderItems,
-      setErc20Addr,
       setPublishedTagId,
       setFinalizedOrders,
       setPubKeys,

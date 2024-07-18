@@ -23,6 +23,10 @@ export function random32BytesHex() {
   return bytesToHex(randomBytes(32));
 }
 
+export function randomAddress() {
+  return bytesToHex(randomBytes(20));
+}
+
 export function hexToBase64(hex: string) {
   const u8 = new Uint8Array(toBytes(hex));
   return Buffer.from(u8).toString("base64");

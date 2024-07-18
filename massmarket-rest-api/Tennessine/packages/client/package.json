@@ -2,10 +2,12 @@
   "name": "@massmarket/client",
   "dependencies": {
     "@massmarket/contracts": "workspace:*",
+    "@massmarket/blockchain": "workspace:*",
+    "@massmarket/utils": "workspace:*",
     "abitype": "^1.0.1",
     "buffer": "^6.0.3",
     "isows": "^1.0.3",
-    "viem": "^2.16.2"
+    "viem": "^2.16.3"
   },
   "devDependencies": {
     "@massmarket/schema": "workspace:*",
@@ -37,6 +39,10 @@
     ".": {
       "types": "./dist/src/index.d.ts",
       "default": "./dist/src/index.js"
+    },
+    "./*": {
+      "types": "./dist/src/*.d.ts",
+      "default": "./dist/src/*.js"
     }
   }
 }

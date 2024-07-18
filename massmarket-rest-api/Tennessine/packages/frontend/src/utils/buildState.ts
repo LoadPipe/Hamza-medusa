@@ -28,7 +28,12 @@ import {
   SET_ORDER,
   finalizedOrderActions,
 } from "@/reducers/finalizedOrderReducers";
-import { SET_STORE_DATA, updateStoreDataAction } from "@/reducers/storeReducer";
+import {
+  SET_STORE_DATA,
+  updateStoreDataAction,
+  UPDATE_STORE_PIC,
+  UPDATE_BASE_CURRENCY,
+} from "@/reducers/storeReducer";
 import { ADD_KC_PUBKEY, pubKeyAction } from "@/reducers/KCPubKeysReducers";
 import { Dispatch } from "react";
 import schema from "@massmarket/schema";
@@ -40,7 +45,6 @@ export const buildState = (
   productsDispatch: Dispatch<updateProductAction | productAction>,
   tagsDisaptch: Dispatch<allTagsAction>,
   setOrderItems: Dispatch<allOrderActions>,
-  setErc20Addr: Dispatch<`0x${string}` | null>,
   setPublishedTagId: Dispatch<TagId>,
   setFinalizedOrders: Dispatch<finalizedOrderActions>,
   setPubKeys: Dispatch<pubKeyAction>,
@@ -52,27 +56,31 @@ export const buildState = (
     setPublishedTagId(bytesToHex(sm.publishedTagId!));
     setStoreData({
       type: SET_STORE_DATA,
-      payload: { name: sm.name!, profilePictureUrl: sm.profilePictureUrl! },
+      payload: {
+        name: sm.name!,
+        profilePictureUrl: sm.profilePictureUrl!,
+        baseCurrencyAddr: null,
+      },
     });
   } else if (event.updateShopManifest) {
     const um = event.updateShopManifest;
-    if (um.addErc20Addr) {
-      console.log(
-        `Adding erc20 ${bytesToHex(um.addErc20Addr)} to payment options`,
-      );
-      setErc20Addr(bytesToHex(um.addErc20Addr));
-    } else if (um.removeErc20Addr) {
-      console.log(
-        `Removing erc20 ${bytesToHex(um.removeErc20Addr)} from payment options`,
-      );
-      setErc20Addr(null);
+    if (um.profilePictureUrl) {
+      setStoreData({
+        type: UPDATE_STORE_PIC,
+        payload: { profilePictureUrl: um.profilePictureUrl! },
+      });
     }
-
     if (um.publishedTagId) {
       console.log(
         `Resetting published tag id to: ${bytesToHex(um.publishedTagId)}`,
       );
       setPublishedTagId(bytesToHex(um.publishedTagId));
+    }
+    if (um.setBaseCurrency) {
+      setStoreData({
+        type: UPDATE_BASE_CURRENCY,
+        payload: { baseCurrencyAddr: bytesToHex(um.setBaseCurrency.tokenAddr) },
+      });
     }
   } else if (event.createItem) {
     const _meta = parseMetadata(event.createItem.metadata!);
@@ -165,7 +173,7 @@ export const buildState = (
       });
   } else if (event.createOrder) {
     const orderId = bytesToHex(event.createOrder.eventId!);
-    const signature = bytesToHex(event.signature!);
+    const signature = "0x0";
     setOrderItems({
       type: SET_ORDER_SIG,
       payload: {
@@ -212,13 +220,12 @@ export const buildState = (
         salesTax: salesTax || null,
         total: total || null,
         subTotal: subTotal || null,
-        totalInCrypto: totalInCrypto || null,
+        totalInCrypto: bytesToHex(totalInCrypto) || null,
       };
-
       setFinalizedOrders({
         type: SET_ORDER,
         payload: {
-          eventId: bytesToHex(eventId!),
+          orderId: bytesToHex(eventId!),
           order: orderObj,
         },
       });
