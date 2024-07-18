@@ -117,6 +117,24 @@ export async function getProductsByVendor(vendorName: string) {
     }
 }
 
+// Get All Product reviews
+export async function getAllProductReviews(customer_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/review/all-customer-reviews`,
+            { customer_id: customer_id },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching reviews:', error);
+    }
+}
+
 // Cart actions
 export async function createCart(data = {}) {
     const headers = getMedusaHeaders(['cart']);

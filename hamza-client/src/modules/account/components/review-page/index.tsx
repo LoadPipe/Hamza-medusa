@@ -16,6 +16,7 @@ import { Region } from '@medusajs/medusa';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import axios from 'axios';
 import { format } from 'date-fns';
+import { getAllProductReviews } from '@lib/data';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -27,16 +28,10 @@ const ReviewPage = ({ region }: { region: Region }) => {
         if (authData.customer_id) {
             const fetchReviews = async () => {
                 try {
-                    const response = await axios.post(
-                        `${BACKEND_URL}/custom/review/all-customer-reviews`,
-                        { customer_id: authData.customer_id },
-                        {
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        }
+                    const response = await getAllProductReviews(
+                        authData.customer_id as string
                     );
-                    setReviews(response.data);
+                    setReviews(response);
                 } catch (error) {
                     console.error('Error fetching reviews:', error);
                 }
