@@ -1,3 +1,4 @@
+import { Box } from '@chakra-ui/react';
 import { LineItem, Region } from '@medusajs/medusa';
 import { Heading, Table } from '@medusajs/ui';
 
@@ -15,12 +16,7 @@ type ItemsTemplateProps = {
 
 const ItemsTemplate = ({ items, region }: ItemsTemplateProps) => {
     return (
-        <div className="bg-black">
-            <div className="pb-3 flex items-center">
-                <Heading className="text-[2rem] leading-[2.75rem] text-white">
-                    Cart
-                </Heading>
-            </div>
+        <Box width="705px">
             <Table className="p-8">
                 <Table.Header className="w-full text-white">
                     <Table.Row className="txt-medium-plus bg-black">
@@ -57,7 +53,7 @@ const ItemsTemplate = ({ items, region }: ItemsTemplateProps) => {
                           })}
                 </Table.Body>
             </Table>
-        </div>
+        </Box>
     );
 };
 
