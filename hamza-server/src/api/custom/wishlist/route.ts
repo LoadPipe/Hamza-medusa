@@ -15,6 +15,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     try {
         const wishlist = await wishlistService.retrieve(customer_id);
+        logger.debug(JSON.stringify(wishlist));
         res.json(wishlist);
     } catch (err) {
         if (err.message.includes('not found')) {
