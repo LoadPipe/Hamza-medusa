@@ -1,0 +1,24 @@
+{
+  "name": "@massmarket/blockchain",
+  "version": "1.0.0",
+  "description": "Blockchain client",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@massmarket/tsconfig": "workspace:*"
+  },
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@massmarket/contracts": "workspace:*",
+    "@massmarket/utils": "workspace:*",
+    "viem": "^2.16.3",
+    "vitest": "^1.6.0"
+  }
+}

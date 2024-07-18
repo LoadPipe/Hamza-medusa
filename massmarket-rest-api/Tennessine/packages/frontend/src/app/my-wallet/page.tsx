@@ -20,7 +20,7 @@ const MyWallet = () => {
   const { balance, walletAddress } = useMyContext();
   const { db } = useStoreContext();
   const router = useRouter();
-  const { setIsAuthenticated } = useAuth();
+  const { setIsConnected } = useAuth();
 
   useEffect(() => {
     if (walletAddress) {
@@ -36,7 +36,7 @@ const MyWallet = () => {
   };
   const logout = () => {
     db.clear();
-    setIsAuthenticated(IStatus.Pending);
+    setIsConnected(IStatus.Pending);
     localStorage.clear();
     router.push("/");
   };

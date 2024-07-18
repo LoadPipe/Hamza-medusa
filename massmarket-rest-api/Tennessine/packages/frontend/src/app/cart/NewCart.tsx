@@ -73,7 +73,7 @@ const NewCart = ({ next }: { next: () => void }) => {
             />
             <h4>{item.price}</h4>
           </div>
-          <input type="checkbox" checked />
+          {/* <input type="checkbox" checked /> */}
         </div>
       );
     });

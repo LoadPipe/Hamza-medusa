@@ -11,6 +11,7 @@ export const SET_ALL_ORDER_ITEMS = "SET_ALL_ORDER_ITEMS";
 export const UPDATE_ORDER_STATUS = "UPDATE_ORDER_STATUS";
 export const UPDATE_ORDER_HASH = "UPDATE_ORDER_HASH";
 export const SET_ORDER_SIG = "SET_ORDER_SIG";
+export const CLEAR_ALL_ORDERS = "CLEAR_ALL_ORDERS";
 
 type orderAction = {
   type: "REMOVE_ORDER_ITEM";
@@ -24,12 +25,16 @@ type clearAction = {
   type: "CLEAR_ORDER";
   payload: { orderId: OrderId };
 };
-type setAllITems = {
-  type: "SET_ALL_ORDER_ITEMS";
-  payload: {
-    allOrderItems: Map<OrderId, { [key: ItemId]: number }>;
-  };
-};
+type setAllITems =
+  | {
+      type: "SET_ALL_ORDER_ITEMS";
+      payload: {
+        allOrderItems: Map<OrderId, { [key: ItemId]: number }>;
+      };
+    }
+  | {
+      type: "CLEAR_ALL_ORDERS";
+    };
 type statusUpdate = {
   type: "UPDATE_ORDER_STATUS";
   payload: {
@@ -75,6 +80,9 @@ export const orderReducer = (
 ): Map<OrderId, OrderState> => {
   const _state = new Map(state);
   switch (action.type) {
+    case CLEAR_ALL_ORDERS:
+      _state.clear();
+      return _state;
     case UPDATE_ORDER_ITEM:
       _state.set(
         action.payload.orderId,

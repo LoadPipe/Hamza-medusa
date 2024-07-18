@@ -8,11 +8,13 @@ import { type PublicClient } from "viem";
 import { IProduct, ITag, IStatus, IRelay } from "@/types";
 import { Level } from "level";
 import { RelayClient, WalletClientWithAccount } from "@massmarket/client";
+import { updateStoreDataAction } from "@/reducers/storeReducer";
 
 export type ItemId = `0x${string}`;
 export type TagId = `0x${string}`;
 export type OrderId = `0x${string}`;
 export type EventId = `0x${string}`;
+export type ShopId = `0x${string}`;
 
 export type FinalizedOrderState = {
   erc20Addr: `0x${string}` | null;
@@ -28,7 +30,11 @@ export type UpdateItemProps = {
   value: number | { title: string; description: string; image: string };
 };
 
-export type storeState = { name: string; profilePictureUrl: string };
+export type storeState = {
+  name: string;
+  profilePictureUrl: string;
+  baseCurrencyAddr: `0x${string}` | null;
+};
 
 export type ItemState = { [key: ItemId]: number };
 export type OrderState = {
@@ -42,7 +48,7 @@ export type IRelayWriteResponse = {
 };
 
 export type ClientContext = {
-  keyCardEnrolled: `0x${string}` | null;
+  keyCardEnrolled: boolean;
   walletAddress: `0x${string}` | null;
   clientWallet: WalletClientWithAccount | null;
   balance: string | null;
@@ -51,12 +57,17 @@ export type ClientContext = {
   relayClient: RelayClient | null;
   publicClient: PublicClient | null;
   inviteSecret: `0x${string}` | null;
-  setKeyCardEnrolled: Dispatch<SetStateAction<`0x${string}` | null>>;
+  shopId: ShopId;
+  setShopId: Dispatch<SetStateAction<ShopId>>;
+  setKeyCardEnrolled: Dispatch<SetStateAction<boolean>>;
   setInviteSecret: Dispatch<SetStateAction<`0x${string}` | null>>;
   setWallet: Dispatch<SetStateAction<WalletClientWithAccount | null>>;
   getTokenInformation: (
     d: `0x${string}`,
   ) => Promise<{ name: string; symbol: string; decimals: number }>;
+  checkPermissions: () => Promise<boolean>;
+  setRelayClient: Dispatch<SetStateAction<RelayClient | null>>;
+  createNewRelayClient: () => RelayClient | null;
 };
 
 export type StoreContent = {
@@ -104,6 +115,7 @@ export type StoreContent = {
   setErc20Addr: (erc20: `0x${string}`) => void;
   setPublishedTagId: (id: TagId) => void;
   setOrderId: (orderId: OrderId | null) => void;
+  setStoreData: Dispatch<updateStoreDataAction>;
 };
 
 export type ProductsMap = Map<ItemId, IProduct>;

@@ -21,13 +21,13 @@ import {
   newProductReducer,
   initialState,
   newProductActions,
+  EDIT_DESC,
 } from "@/reducers/productReducers";
 import { SELECT_TAG, selectedTagReducer } from "@/reducers/tagReducers";
 import { useStoreContext } from "@/context/StoreContext";
 import ProductsTags from "@/app/components/products/ProductTags";
 import { useRouter, useSearchParams } from "next/navigation";
 import { IProduct, ITag, ItemId, TagId } from "@/types";
-import { createQueryString } from "@/app/utils";
 import ErrorMessage from "@/app/common/components/ErrorMessage";
 import VisibilitySlider from "@/app/components/products/VisibilitySlider";
 import SecondaryButton from "@/app/common/components/SecondaryButton";
@@ -43,6 +43,9 @@ const AddProductView = () => {
   const [price, setPrice] = useState<string>(productInView?.price || "");
   const [title, setTitle] = useState<string>(
     productInView?.metadata?.name || "",
+  );
+  const [description, setDescription] = useState<string>(
+    productInView?.metadata?.description || "",
   );
   const [stockQty, setStockQty] = useState(productInView?.stockQty || "0");
   const [editedPrice, setEditedPrice] = useState(false);
@@ -165,9 +168,7 @@ const AddProductView = () => {
       if (res.error) {
         setError(res.error);
       } else {
-        router.push(
-          `/products?${createQueryString("success", "true", searchParams)}`,
-        );
+        router.push(`/products`);
       }
     }
   };
@@ -184,6 +185,14 @@ const AddProductView = () => {
     updateNewProduct({
       type: EDIT_TITLE,
       payload: { name: e.target.value },
+    });
+  };
+  const handleDescriptionChange = (e: ChangeEvent<HTMLInputElement>) => {
+    checkIfMetadata();
+    setDescription(e.target.value);
+    updateNewProduct({
+      type: EDIT_DESC,
+      payload: { description: e.target.value },
     });
   };
 
@@ -206,9 +215,9 @@ const AddProductView = () => {
   const handleStockChange = (e: ChangeEvent<HTMLInputElement>) => {
     const _units = e.target.value;
     if (_units && !Number(_units)) {
-      setStockQty("0");
+      setStockQty(0);
     } else {
-      setStockQty(Number(e.target.value) || "0");
+      setStockQty(Number(e.target.value) || 0);
       updateNewProduct({
         type: EDIT_UNIT,
         payload: { unit: Number(e.target.value) },
@@ -277,6 +286,21 @@ const AddProductView = () => {
                 id="title"
                 name="title"
                 onChange={(e) => handleTitleChange(e)}
+              />
+            </form>
+            <form
+              className="flex flex-col"
+              onSubmit={(e) => {
+                e.preventDefault();
+              }}
+            >
+              <label htmlFor="description">description</label>
+              <input
+                value={description}
+                className="border-2 border-solid mt-1 p-3 rounded-2xl"
+                id="description"
+                name="description"
+                onChange={(e) => handleDescriptionChange(e)}
               />
             </form>
             <div className="flex flex-col">
