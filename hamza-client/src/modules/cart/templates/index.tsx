@@ -40,34 +40,51 @@ const CartTemplate = ({
             >
                 <Box width="1,258px" pb="5rem" pt="2rem">
                     {cart?.items.length ? (
-                        <Flex flexDirection={'row'} gap="26px">
-                            <Box
-                                width={'825px'}
-                                height={'540px'}
-                                borderRadius={'16px'}
-                                backgroundColor={'#121212'}
-                                px="40px"
-                                py="10px"
-                            >
-                                {!customer && (
-                                    <>
-                                        <SignInPrompt />
-                                        <Divider />
-                                    </>
-                                )}
-                                <Text
-                                    mt="1rem"
-                                    fontWeight={600}
-                                    fontSize={'18px'}
-                                    color="primary.green.900"
+                        <Flex flexDirection={'row'} gap="32px">
+                            <Flex flexDirection={'column'} gap="32px">
+                                <Box
+                                    width={'825px'}
+                                    height={'540px'}
+                                    borderRadius={'16px'}
+                                    backgroundColor={'#121212'}
+                                    px="40px"
+                                    py="10px"
                                 >
-                                    Product Details
-                                </Text>
-                                <ItemsTemplate
-                                    region={cart?.region}
-                                    items={cart?.items}
-                                />
-                            </Box>
+                                    {!customer && (
+                                        <>
+                                            <SignInPrompt />
+                                            <Divider />
+                                        </>
+                                    )}
+                                    <Text
+                                        mt="1rem"
+                                        fontWeight={600}
+                                        fontSize={'18px'}
+                                        color="primary.green.900"
+                                    >
+                                        Product Details
+                                    </Text>
+                                    <ItemsTemplate
+                                        region={cart?.region}
+                                        items={cart?.items}
+                                    />
+                                </Box>
+                                <Box
+                                    width={'825px'}
+                                    height={'240px'}
+                                    borderRadius={'16px'}
+                                    backgroundColor={'#121212'}
+                                >
+                                    <Text
+                                        mt="1rem"
+                                        fontWeight={600}
+                                        fontSize={'18px'}
+                                        color="primary.green.900"
+                                    >
+                                        Shipping Address
+                                    </Text>
+                                </Box>
+                            </Flex>
 
                             <Box>
                                 {cart && cart.region && <Summary cart={cart} />}
