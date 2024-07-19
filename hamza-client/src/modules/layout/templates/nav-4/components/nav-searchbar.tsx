@@ -84,7 +84,7 @@ const NavSearchBar = () => {
                             alt="slash"
                             style={{
                                 width: '11.39px',
-                                height: '27.72px',
+                                height: 'auto',
                             }}
                         />
                     </Flex>

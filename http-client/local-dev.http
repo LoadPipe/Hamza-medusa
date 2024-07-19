@@ -264,7 +264,7 @@ POST http://localhost:9000/custom/vendors/vendor-store
 Content-Type: application/json
 
 {
-  "store_name": "Goblin Store"
+  "store_name": "Legos"
 }
 
 
