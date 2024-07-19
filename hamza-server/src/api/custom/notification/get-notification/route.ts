@@ -1,6 +1,7 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import CustomerNotificationService from '../../../../services/customer-notification';
 import { readRequestBody } from '../../../../utils/request-body';
+import { RouteHandler } from '../../../route-handler';
 
 //TODO: this looks like it should be GET 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {

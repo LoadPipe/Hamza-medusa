@@ -1,6 +1,7 @@
 import { MedusaRequest, MedusaResponse } from '@medusajs/medusa';
 import jwt from 'jsonwebtoken';
 import CustomerRepository from '../../../repositories/customer';
+import { RouteHandler } from '../../route-handler';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     try {

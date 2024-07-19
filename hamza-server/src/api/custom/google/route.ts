@@ -7,6 +7,7 @@ import type {
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import CustomerRepository from '../../../repositories/customer';
+import { RouteHandler } from '../../route-handler';
 
 interface GoogleTokensResult {
     access_token: string;

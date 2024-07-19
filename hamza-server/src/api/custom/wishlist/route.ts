@@ -1,6 +1,7 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import WishlistService from 'src/services/wishlist';
 import { readRequestBody } from '../../../utils/request-body';
+import { RouteHandler } from '../../route-handler';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const logger = req.scope.resolve('logger') as Logger;

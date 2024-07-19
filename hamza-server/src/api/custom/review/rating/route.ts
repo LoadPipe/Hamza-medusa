@@ -1,6 +1,7 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import ProductReviewService from '../../../../services/product-review';
 import { readRequestBody } from '../../../../utils/request-body';
+import { RouteHandler } from '../../../route-handler';
 
 export const PATCH = async (req: MedusaRequest, res: MedusaResponse) => {
     const logger = req.scope.resolve('logger') as Logger;
@@ -16,11 +17,11 @@ export const PATCH = async (req: MedusaRequest, res: MedusaResponse) => {
 
     logger.debug(
         'product_id: ' +
-            product_id +
-            'rating: ' +
-            rating +
-            'customer_id: ' +
-            customer_id
+        product_id +
+        'rating: ' +
+        rating +
+        'customer_id: ' +
+        customer_id
     );
 
     try {

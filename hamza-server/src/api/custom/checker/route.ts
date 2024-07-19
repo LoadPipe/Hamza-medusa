@@ -3,7 +3,8 @@ import { generateNonce } from 'siwe';
 import { RouteHandler } from '../../route-handler';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
-    const handler = new RouteHandler(req, res, 'GET', '/checker');
+    const handler = new RouteHandler(req, res, 'GET', '/custom/checker');
+
     handler.handle(() => {
         const nonce = generateNonce();
         handler.logger.debug('nonce: ' + nonce);
@@ -13,21 +14,4 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             message: nonce,
         });
     });
-
-    /*
-    try {
-        const nonce = generateNonce();
-        logger.debug('nonce: ' + nonce);
-        logger.debug('typeof nonce: ' + typeof nonce);
-
-        return res.json({
-            message: nonce,
-        });
-    } catch (error) {
-        logger.error(error);
-        return res
-            .status(500)
-            .json({ message: 'Internal server error', error: error.message });
-    }
-    */
 };

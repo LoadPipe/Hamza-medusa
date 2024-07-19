@@ -1,6 +1,7 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import { readRequestBody } from '../../../utils/request-body';
 import { LineItemService } from '@medusajs/medusa';
+import { RouteHandler } from '../../route-handler';
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: LineItemService = req.scope.resolve('lineItemService');

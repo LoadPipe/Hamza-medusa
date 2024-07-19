@@ -1,6 +1,7 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import ProductService from 'src/services/product';
 import { readRequestBody } from '../../../utils/request-body';
+import { RouteHandler } from '../../route-handler';
 
 //TODO: should this not just be GET /store?
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {

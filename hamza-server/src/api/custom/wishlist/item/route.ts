@@ -1,6 +1,7 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import WishlistService from '../../../../services/wishlist';
 import { readRequestBody } from '../../../../utils/request-body';
+import { RouteHandler } from '../../../route-handler';
 
 // ADD Wishlist `item` by customer_id
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {

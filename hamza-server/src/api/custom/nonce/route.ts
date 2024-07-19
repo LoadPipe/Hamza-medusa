@@ -1,6 +1,7 @@
 import { SiweMessage, generateNonce } from 'siwe';
 import { ConfigModule } from '@medusajs/medusa';
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
+import { RouteHandler } from '../../route-handler';
 
 type MyConfigModule = ConfigModule & {
     projectConfig: {

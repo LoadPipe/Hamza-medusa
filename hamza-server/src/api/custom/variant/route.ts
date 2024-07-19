@@ -3,7 +3,6 @@ import ProductVariantService from '../../../services/product-variant';
 import { RouteHandler } from '../../route-handler';
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
-    const logger = req.scope.resolve('logger') as Logger;
     const productVariantService: ProductVariantService = req.scope.resolve(
         'productVariantService'
     );
@@ -52,5 +51,5 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             error: 'Failed to update variant',
         });
     }
-        */
+*/
 };

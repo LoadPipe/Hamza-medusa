@@ -7,6 +7,7 @@ import { readRequestBody } from '../../../utils/request-body';
 import CustomerWalletAddressRepository from '../../../repositories/customer-wallet-address';
 import { Customer } from 'src/models/customer';
 import { WhiteListRepository } from '../../../repositories/whitelist';
+import { RouteHandler } from '../../route-handler';
 // Using Auth from SIWE example: https://github.com/spruceid/siwe-quickstart/blob/main/02_backend/src/index.js
 
 // TODO: So once the user has been verified, we can use the CustomerService.create() method to create/login the user.

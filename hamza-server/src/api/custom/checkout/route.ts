@@ -19,7 +19,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'GET', '/checkout', ['cart_id']
+        req, res, 'GET', '/custom/checkout', ['cart_id']
     );
 
     await handler.handle(async () => {

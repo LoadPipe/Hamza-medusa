@@ -8,6 +8,7 @@ export class RouteHandler {
     route: string;
     request: MedusaRequest;
     response: MedusaResponse;
+    onError: (err: any) => void = null;
 
     constructor(
         req: MedusaRequest,
@@ -35,6 +36,8 @@ export class RouteHandler {
             const errorInfo = `ERROR ${this.method} ${this.route}: ${err}`;
             this.logger.error(errorInfo);
             this.response.status(500).json(errorInfo);
+            if (this.onError)
+                this.onError(err);
         }
     }
 }

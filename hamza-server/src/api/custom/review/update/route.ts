@@ -1,6 +1,7 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import ProductReviewService from '../../../../services/product-review';
 import { readRequestBody } from '../../../../utils/request-body';
+import { RouteHandler } from '../../../route-handler';
 
 //TODO: update routes should be PUT instead of POST (and don't need their own folders)
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {

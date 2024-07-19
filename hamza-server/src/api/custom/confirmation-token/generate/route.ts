@@ -8,7 +8,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         req.scope.resolve('confirmationTokenService');
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'POST', '/confirmation-token/generate', ['email', 'customer_id']
+        req, res, 'POST', '/custom/confirmation-token/generate', ['email', 'customer_id']
     );
 
     await handler.handle(async () => {
@@ -18,24 +18,4 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         });
         return res.send({ status: true });
     });
-
-    /*
-    const logger = req.scope.resolve('logger') as Logger;
-    try {
-        let { email, customer_id } = readRequestBody(req.body, [
-            'email',
-            'customer_id',
-        ]);
-        let confirmationTokenService: ConfirmationTokenService =
-            req.scope.resolve('confirmationTokenService');
-        await confirmationTokenService.createConfirmationToken({
-            customer_id,
-            email,
-        });
-        return res.send({ status: true });
-    } catch (e) {
-        logger.error('error in generating token ', e);
-        return res.send({ status: false, message: e.message });
-    }
-    */
 };
