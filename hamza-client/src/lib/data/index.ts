@@ -251,7 +251,7 @@ export async function orderStatus(order_id: string) {
                 order_id: order_id,
             }
         );
-        return response;
+        return response.data;
     } catch (error) {
         console.error('Error fetching order status:', error);
     }

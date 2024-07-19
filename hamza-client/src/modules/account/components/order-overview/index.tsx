@@ -131,7 +131,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                         const statusRes = await orderStatus(order.id);
                         return {
                             orderId: order.id,
-                            status: statusRes.data.order,
+                            status: statusRes.order,
                         };
                     } catch (error) {
                         console.error(
