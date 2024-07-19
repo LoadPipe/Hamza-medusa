@@ -229,6 +229,50 @@ export async function orderInformation(cart_id: string) {
     }
 }
 
+export async function orderDetails(customer_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/order/customer-orders`,
+            {
+                customer_id: customer_id,
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error('Error fetching order details:', error);
+    }
+}
+
+export async function orderStatus(order_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/order/status`,
+            {
+                order_id: order_id,
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error('Error fetching order status:', error);
+    }
+}
+
+export async function cancelOrder(order_id: string) {
+    try {
+        const response = await axios.delete(
+            `${BACKEND_URL}/custom/order/cancel`,
+            {
+                params: {
+                    order_id: order_id,
+                },
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error('Error cancelling order:', error);
+    }
+}
+
 // Cart actions
 export async function createCart(data = {}) {
     const headers = getMedusaHeaders(['cart']);

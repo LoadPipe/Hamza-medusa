@@ -1,13 +1,18 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Order } from '@medusajs/medusa';
 import OrderCard from '../order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
-import { getVendors, orderInformation } from '@lib/data';
+import {
+    getVendors,
+    orderInformation,
+    orderDetails,
+    orderStatus,
+    cancelOrder,
+} from '@lib/data';
 import {
     Button,
     Modal,
@@ -88,12 +93,9 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const { data } = await axios.post(
-                    `${MEDUSA_SERVER_URL}/custom/order`,
-                    {
-                        cart_id: orders[0].cart_id,
-                    }
-                );
+                const { data } = (await orderInformation(
+                    orders[0].customer_id
+                )) as any;
                 setDetailedOrders(data.order);
             } catch (error) {
                 console.error('Error fetching orders: ', error);
@@ -102,7 +104,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
 
         const fetchAll = async () => {
             try {
-                const { data } = (await orderInformation(
+                const { data } = (await orderDetails(
                     orders[0].customer_id
                 )) as any;
                 console.log(
@@ -126,14 +128,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                 orders.map(async (order, index) => {
                     console.log(`Fetching status for order ${order.id}`);
                     try {
-                        const statusRes = await axios.get(
-                            `${MEDUSA_SERVER_URL}/custom/order/status`,
-                            {
-                                params: {
-                                    order_id: order.id,
-                                },
-                            }
-                        );
+                        const statusRes = await orderStatus(order.id);
                         return {
                             orderId: order.id,
                             status: statusRes.data.order,
@@ -180,9 +175,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
         if (!selectedOrderId) return;
 
         try {
-            await axios.delete(`${MEDUSA_SERVER_URL}/custom/order/cancel`, {
-                params: { order_id: selectedOrderId },
-            });
+            await cancelOrder(selectedOrderId);
             setOrderStatuses((prevStatuses) => ({
                 ...prevStatuses,
                 [selectedOrderId]: 'canceled',
