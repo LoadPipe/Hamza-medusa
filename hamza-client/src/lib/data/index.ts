@@ -329,6 +329,17 @@ export async function getInventoryCount(variant_id: string) {
     }
 }
 
+export async function getStore(product_id: string) {
+    try {
+        const response = await axios.post(`${BACKEND_URL}/custom/get-store`, {
+            product_id: product_id,
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching store name:', error);
+    }
+}
+
 // Cart actions
 export async function createCart(data = {}) {
     const headers = getMedusaHeaders(['cart']);

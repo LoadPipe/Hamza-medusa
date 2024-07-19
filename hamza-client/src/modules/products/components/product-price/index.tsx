@@ -18,7 +18,7 @@ import {
 } from '@lib/util/get-product-price';
 import { RegionInfo } from 'types/global';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import { averageRatings, reviewCounter } from '@lib/data';
+import { averageRatings, reviewCounter, getStore } from '@lib/data';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -64,15 +64,9 @@ export default function ProductPrice({
 
         const getStoreName = async () => {
             try {
-                const response = await axios.post(
-                    `${BACKEND_URL}/custom/get-store`,
-                    {
-                        product_id: product.id,
-                    },
-                    { headers: { 'Content-Type': 'application/json' } }
-                );
-                console.log(`STORE NAME is ${response.data}`);
-                setStoreName(response.data);
+                const response = await getStore(product.id as string);
+                console.log(`STORE NAME is ${response}`);
+                setStoreName(response);
             } catch (error) {
                 console.error('Failed to fetch store name:', error);
             }
