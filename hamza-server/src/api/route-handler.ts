@@ -27,7 +27,7 @@ export class RouteHandler {
         }
     }
 
-    public async handle(fn) {
+    public async handle(fn: (_this?: RouteHandler) => void) {
         try {
             this.logger.info(`******* ROUTE-HANDLER ********* ${this.method} ${this.route}`);
             await fn(this);
