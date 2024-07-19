@@ -273,6 +273,48 @@ export async function cancelOrder(order_id: string) {
     }
 }
 
+export async function averageRatings(product_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/review/average`,
+            {
+                product_id: product_id,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching average rating:', error);
+    }
+}
+
+export async function reviewCounter(product_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/review/count`,
+            {
+                product_id: product_id,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching review count:', error);
+    }
+}
+
+export async function reviewResponse(product_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/review/all-reviews`,
+            {
+                product_id: product_id,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching review response:', error);
+    }
+}
+
 // Cart actions
 export async function createCart(data = {}) {
     const headers = getMedusaHeaders(['cart']);
