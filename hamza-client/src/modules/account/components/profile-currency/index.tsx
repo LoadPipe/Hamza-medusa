@@ -1,17 +1,14 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Select } from '@chakra-ui/react';
 import { Customer } from '@medusajs/medusa';
-import axios from 'axios';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { setCurrency } from '@lib/data';
 
 type MyInformationProps = {
     customer: Omit<Customer, 'password_hash'>;
 };
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
 const ProfileCurrency: React.FC<MyInformationProps> = ({ customer }) => {
     // State to store the current currency

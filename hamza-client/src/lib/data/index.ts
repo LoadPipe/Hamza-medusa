@@ -351,6 +351,34 @@ export async function setCurrency(newCurrency: string, customer_id: string) {
     }
 }
 
+export async function vendorProducts(store_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/vendors/vendor-products`,
+            {
+                store_id: store_id,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching vendor products:', error);
+    }
+}
+
+export async function vendorReviews(store_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/vendors/vendor-reviews`,
+            {
+                store_id: store_id,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching vendor reviews:', error);
+    }
+}
+
 // Cart actions
 export async function createCart(data = {}) {
     const headers = getMedusaHeaders(['cart']);
