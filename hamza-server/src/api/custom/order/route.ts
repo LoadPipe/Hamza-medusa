@@ -7,6 +7,16 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: LineItemService = req.scope.resolve('lineItemService');
     const logger: Logger = req.scope.resolve('logger');
 
+    // const handler = new RouteHandler(req, res, 'POST', '/custom/order', [
+    //     'cart_id',
+    // ]);
+
+    // await handler.handle(async () => {
+    //     const order = await orderService.list({ cart_id });
+
+    //     res.status(200).json({ order });
+    // });
+
     const { cart_id } = readRequestBody(req.query, ['cart_id']);
 
     try {
