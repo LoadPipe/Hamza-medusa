@@ -135,6 +135,20 @@ export async function getAllProductReviews(customer_id: string) {
     }
 }
 
+export async function checkReviewsExistence(order_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/review/exists`,
+            {
+                order_id: order_id,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching reviews:', error);
+    }
+}
+
 // Cart actions
 export async function createCart(data = {}) {
     const headers = getMedusaHeaders(['cart']);
