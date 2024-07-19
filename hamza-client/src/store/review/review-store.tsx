@@ -1,5 +1,5 @@
 // store/itemStore.ts (or .js if you prefer, but .ts is recommended for TypeScript)
-import create from 'zustand';
+import { create } from 'zustand';
 
 // Define the item interface as before
 export interface Item {

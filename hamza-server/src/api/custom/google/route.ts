@@ -127,7 +127,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         await eventBus_.emit([
             {
-                data: { email: user.email },
+                data: { email: user.email, id: decoded.customer_id },
                 eventName: 'customer.verified',
             },
         ]);
