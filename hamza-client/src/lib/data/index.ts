@@ -315,6 +315,20 @@ export async function reviewResponse(product_id: string) {
     }
 }
 
+export async function getInventoryCount(variant_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/variant/count`,
+            {
+                variant_id: variant_id,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching inventory count:', error);
+    }
+}
+
 // Cart actions
 export async function createCart(data = {}) {
     const headers = getMedusaHeaders(['cart']);
