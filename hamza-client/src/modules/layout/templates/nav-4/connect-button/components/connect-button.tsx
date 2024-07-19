@@ -13,8 +13,6 @@ export const WalletConnectButton = ({
 }: {
     cart?: Omit<Cart, 'beforeInsert' | 'afterLoad'> | null;
 }) => {
-    console.log('Cart State:', cartState);
-
     return (
         <ConnectButton.Custom>
             {({

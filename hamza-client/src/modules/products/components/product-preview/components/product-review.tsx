@@ -12,6 +12,7 @@ import {
     TiStarHalfOutline,
     TiStarOutline,
 } from 'react-icons/ti';
+import { allReviews } from '@lib/data';
 
 const fakeReviews = [
     {
@@ -59,17 +60,12 @@ const ProductReview = ({ productId }: { productId: string }) => {
     ];
 
     const reviewDataFetcher = async () => {
-        let res = await axios.post(
-            `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/review/all-reviews`,
-            {
-                product_id: productId,
-            }
-        );
-        if (res.data) {
-            if (res.data.length < 2) {
+        let res = await allReviews(productId);
+        if (res) {
+            if (res.length < 2) {
                 console.log('setting ', [
                     ...fakeReviews,
-                    ...res.data.map((a: any) => {
+                    ...res.map((a: any) => {
                         return {
                             id: a.id,
                             name:
@@ -83,7 +79,7 @@ const ProductReview = ({ productId }: { productId: string }) => {
                 ]);
                 setReviews([
                     ...fakeReviews,
-                    ...res.data.map((a: any) => {
+                    ...res.map((a: any) => {
                         return {
                             id: a.id,
                             name:
@@ -97,7 +93,7 @@ const ProductReview = ({ productId }: { productId: string }) => {
                 ]);
             } else {
                 setReviews([
-                    ...res.data.map((a: any) => {
+                    ...res.map((a: any) => {
                         return {
                             id: a.id,
                             name:

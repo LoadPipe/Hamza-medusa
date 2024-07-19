@@ -1,10 +1,9 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Button } from '@medusajs/ui';
 import { Box, Grid, GridItem, Heading, Text } from '@chakra-ui/react'; // Import Chakra UI components
-const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 import Thumbnail from '@modules/products/components/thumbnail';
+import { vendorProducts, vendorReviews } from '@lib/data';
 
 const VendorTemplate = ({ vendors }: any) => {
     const [selectedVendor, setSelectedVendor] = useState(vendors[1]); // Set the second vendor as default selected
@@ -22,14 +21,8 @@ const VendorTemplate = ({ vendors }: any) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.post(
-                    `${BACKEND_URL}/custom/vendors/vendor-products`,
-                    {
-                        store_id: selectedVendor.id,
-                    }
-                );
-                const data = response.data;
-                setProducts(response.data); // Set the fetched products to state
+                const response = await vendorProducts(selectedVendor.id);
+                setProducts(response); // Set the fetched products to state
                 // console.log(`Response ${JSON.stringify(data)}`);
             } catch (error) {
                 console.log(`Error ${error}`);
@@ -38,16 +31,8 @@ const VendorTemplate = ({ vendors }: any) => {
 
         const fetchReviewStats = async () => {
             try {
-                const response = await axios.post(
-                    `${BACKEND_URL}/custom/vendors/vendor-reviews`,
-                    {
-                        store_id: selectedVendor.id,
-                    }
-                );
-                // console.log(
-                //     `Review stats are ${JSON.stringify(response.data)}`
-                // );
-                setReviewStats(response.data);
+                const response = await vendorReviews(selectedVendor.id);
+                setReviewStats(response);
             } catch (error) {
                 console.log(`Error fetching review stats: ${error}`);
             }
