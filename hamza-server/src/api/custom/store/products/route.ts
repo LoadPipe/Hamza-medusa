@@ -17,6 +17,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     await handler.handle(async () => {
         //get store by name
+        console.log(req.query.store_name);
 
         let list_products = [];
         if (req.query.store_name && req.query.store_name.length) {

@@ -149,7 +149,6 @@ async function updateStoreForMM(
 }
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
-    const userService = req.scope.resolve('userService');
     const storeService = req.scope.resolve('storeService');
     const storeRepository = req.scope.resolve('storeRepository');
     const productService = req.scope.resolve('productService');

@@ -34,7 +34,7 @@ export class RouteHandler {
         }
         catch (err: any) {
             const errorInfo = `ERROR ${this.method} ${this.route}: ${err}`;
-            this.logger.error(errorInfo);
+            this.logger.error({ message: errorInfo });
             this.response.status(500).json(errorInfo);
             if (this.onError)
                 this.onError(err);

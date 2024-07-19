@@ -1,21 +1,17 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
-import { readRequestBody } from '../../../../utils/request-body';
 import ProductService from '../../../../services/product';
 import { RouteHandler } from '../../../route-handler';
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
-    const logger = req.scope.resolve('logger') as Logger;
     const productService: ProductService = req.scope.resolve('productService');
 
-    const { store_id } = readRequestBody(req.body, ['store_id']);
-    // logger.log('store_id: ' + store_id); // Potential source of the error
-    try {
-        const products = await productService.getProductsFromReview(store_id);
+    const handler = new RouteHandler(
+        req, res, 'POST', '/custom/vendors/vendor-reviews', ['store_id']
+    );
+
+    await handler.handle(async () => {
+        //TODO: are these products being returned?
+        const products = await productService.getProductsFromReview(handler.inputParams.store_id);
         res.json(products);
-    } catch (err) {
-        // logger.error('Error fetching stores:', err);
-        res.status(500).json({
-            error: 'Failed to fetch stores',
-        });
-    }
+    });
 };

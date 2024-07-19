@@ -93,7 +93,15 @@ async function getGoogleUser({
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const logger = req.scope.resolve('logger') as Logger;
 
-    try {
+    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/google');
+
+    handler.onError = (err: any) => {
+        return res.redirect(
+            `${process.env.STORE_URL}/account/profile?verify=false&error=true`
+        );
+    };
+
+    await handler.handle(async () => {
         logger.debug(`google oauth cookies: ${JSON.stringify(req.cookies)}`);
         let decoded: any = jwt.decode(req.cookies['_medusa_jwt']);
         logger.debug(
@@ -134,14 +142,5 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         ]);
 
         return res.redirect(`${process.env.STORE_URL}/account?verify=true`);
-    } catch (err) {
-        logger.error('Error authorizing google:', err);
-        return res.redirect(
-            `${process.env.STORE_URL}/account/profile?verify=false&error=true`
-        );
-
-        //res.status(500).json({
-        //    error: 'Failed to authorize with google',
-        //});
-    }
+    });
 };

@@ -58,14 +58,11 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 //TODO: is this GET route used?
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const customerService = req.scope.resolve('customerService');
-    const logger = req.scope.resolve('logger') as Logger;
 
-    try {
+    const handler = new RouteHandler(req, res, 'GET', '/custom/wallet');
+
+    await handler.handle(async () => {
         const customer = await customerService.generateNonce();
         return res.json({ nonce: customer });
-    } catch (error) {
-        return res.status(500).json({
-            message: 'Internal server error',
-        });
-    }
+    });
 };

@@ -3,7 +3,6 @@ import { SiweMessage } from 'siwe';
 import CustomerRepository from '../../../repositories/customer';
 import AuthService from '../../../../src/services/auth';
 import CustomerService from '../../../../src/services/customer';
-import { readRequestBody } from '../../../utils/request-body';
 import CustomerWalletAddressRepository from '../../../repositories/customer-wallet-address';
 import { Customer } from 'src/models/customer';
 import { WhiteListRepository } from '../../../repositories/whitelist';
@@ -13,19 +12,19 @@ import { RouteHandler } from '../../route-handler';
 // TODO: So once the user has been verified, we can use the CustomerService.create() method to create/login the user.
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
-    const logger: Logger = req.scope.resolve('logger');
-    try {
+    const customerService: CustomerService =
+        req.scope.resolve('customerService');
+    const authService: AuthService = req.scope.resolve('authService');
+
+    const handler = new RouteHandler(
+        req, res, 'POST', '/custom/verify', ['message', 'signature',]
+    );
+
+    await handler.handle(async () => {
         //get the service instances
-        const customerService: CustomerService =
-            req.scope.resolve('customerService');
-        const authService: AuthService = req.scope.resolve('authService');
         let created = false;
 
-        //read request
-        const { message, signature } = readRequestBody(req.body, [
-            'message',
-            'signature',
-        ]);
+        const { message, signature } = handler.inputParams;
 
         const wallet_address = message.address;
 
@@ -44,19 +43,19 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             wallet_address: wallet_address,
         };
 
-        logger.debug('customer input is ' + customerInputData);
+        handler.logger.debug('customer input is ' + customerInputData);
         //verify the signature
         const siweMessage = new SiweMessage(message);
         let siweResponse = await siweMessage.verify({ signature });
-        logger.debug('siwe response is ' + siweResponse);
+        handler.logger.debug('siwe response is ' + siweResponse);
         if (!siweResponse.success) {
             throw new Error('Error in validating wallet address signature');
         }
 
-        logger.debug('customer data is ' + checkCustomerWithWalletAddress);
+        handler.logger.debug('customer data is ' + checkCustomerWithWalletAddress);
         let newCustomerData: Customer;
         if (!checkCustomerWithWalletAddress) {
-            logger.debug('creating new customer ');
+            handler.logger.debug('creating new customer ');
             await customerService.create(customerInputData);
             newCustomerData = await CustomerRepository.findOne({
                 where: { email: customerInputData.email.toLowerCase() },
@@ -70,7 +69,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 customerInputData.password,
                 customerInputData.wallet_address
             );
-            logger.debug('auth result is ' + authResult);
+            handler.logger.debug('auth result is ' + authResult);
             if (!authResult.success) {
                 throw new Error('Error in verifying email and password');
             }
@@ -79,7 +78,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         let whitelistStatus = await WhiteListRepository.find({
             where: { wallet_address: customerInputData.wallet_address },
         });
-        logger.debug('whitelist status is ' + whitelistStatus);
+        handler.logger.debug('whitelist status is ' + whitelistStatus);
 
         let body = {
             customer_id:
@@ -102,8 +101,5 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             },
         };
         res.send({ status: true, data: body });
-    } catch (e) {
-        logger.error('error in verifying user login ', e);
-        res.send({ status: false, message: e.message });
-    }
+    });
 };

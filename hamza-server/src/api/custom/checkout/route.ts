@@ -1,6 +1,5 @@
 import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import OrderService from '../../../services/order';
-import { readRequestBody } from '../../../utils/request-body';
 import { RouteHandler } from '../../route-handler';
 
 interface ICheckoutData {
@@ -73,37 +72,24 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
-    const logger: Logger = req.scope.resolve('logger');
-    //const { cart_id, transaction_id, payer_address, escrow_contract_address } =
-    //    req.body;
-    const {
-        cartProducts,
-        cart_id,
-        transaction_id,
-        payer_address,
-        escrow_contract_address = [],
-    } = readRequestBody(req.body, [
-        'cartProducts',
+
+
+    const handler: RouteHandler = new RouteHandler(
+        req, res, 'POST', '/custom/checkout', ['cartProducts',
         'cart_id',
         'transaction_id',
         'payer_address',
-        'escrow_contract_address',
+        'escrow_contract_address'
     ]);
 
-    try {
-        logger.debug(
-            `Cart in the route: ${cartProducts} ${typeof cartProducts}`
-        );
+    await handler.handle(async () => {
         await orderService.finalizeCheckout(
-            cartProducts,
-            cart_id,
-            transaction_id,
-            payer_address,
-            escrow_contract_address
+            handler.inputParams.cartProducts,
+            handler.inputParams.cart_id,
+            handler.inputParams.transaction_id,
+            handler.inputParams.payer_address,
+            handler.inputParams.escrow_contract_address
         );
         res.send(true);
-    } catch (e) {
-        logger.error(e);
-        res.send({ message: e.message });
-    }
+    });
 };
