@@ -7,7 +7,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const productVariantService: ProductVariantService = req.scope.resolve(
         'productVariantService'
     );
-    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/store', ['variant_id']);
+    const handler: RouteHandler = new RouteHandler(req, res, 'POST', '/custom/variant/count', ['variant_id']);
 
     await handler.handle(async () => {
         const variant = await productVariantService.checkInventory(

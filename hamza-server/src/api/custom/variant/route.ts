@@ -7,7 +7,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         'productVariantService'
     );
 
-    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/store', [
+    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/variant', [
         'variant_id',
         'reduction_quantity',
     ]);

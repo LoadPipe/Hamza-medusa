@@ -5,9 +5,13 @@ import { RouteHandler } from '../../route-handler';
 
 //TODO: should this not just be GET /store?
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
-    const logger = req.scope.resolve('logger') as Logger;
     const productService: ProductService = req.scope.resolve('productService');
 
+    const handler: RouteHandler = new RouteHandler(
+        req, res, 'POST', '/custom/get-store', ['product_id']
+    );
+
+    const logger = req.scope.resolve('logger') as Logger;
     const { product_id } = readRequestBody(req.body, ['product_id']);
     logger.debug(`Product ID is: ${product_id}`);
 

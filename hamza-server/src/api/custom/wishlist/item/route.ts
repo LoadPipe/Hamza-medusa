@@ -5,15 +5,23 @@ import { RouteHandler } from '../../../route-handler';
 
 // ADD Wishlist `item` by customer_id
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
-    const logger = req.scope.resolve('logger') as Logger;
     const wishlistService: WishlistService =
         req.scope.resolve('wishlistService');
 
-    const { customer_id, product_id } = readRequestBody(req.body, [
+    const handler = new RouteHandler(req, res, 'POST', '/custom/wishlist/item', [
         'customer_id',
         'product_id',
     ]);
 
+    await handler.handle(async () => {
+        const wishlist = await wishlistService.addWishItem(
+            handler.inputParams.customer_id,
+            handler.inputParams.product_id
+        );
+        res.json(wishlist);
+    });
+
+    /*
     try {
         const wishlist = await wishlistService.addWishItem(
             customer_id,
@@ -24,6 +32,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         logger.error('Add wishlist item error: ', err);
         res.status(500).send('Internal Server Error');
     }
+    */
 };
 
 export const DELETE = async (req: MedusaRequest, res: MedusaResponse) => {

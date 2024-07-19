@@ -5,7 +5,7 @@ import { RouteHandler } from '../../../route-handler';
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const handler = new RouteHandler(
-        req, res, 'POST', '/order/customer-orders', ['customer_id']
+        req, res, 'POST', '/custom/order/customer-orders', ['customer_id']
     );
 
     await handler.handle(async () => {

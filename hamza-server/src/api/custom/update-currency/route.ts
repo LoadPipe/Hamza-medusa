@@ -8,7 +8,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         req.scope.resolve('customerService');
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'GET', '/store', ['customer_id', 'preferred_currency']
+        req, res, 'POST', '/custom/update-currency', ['customer_id', 'preferred_currency']
     );
 
     await handler.handle(async () => {

@@ -29,7 +29,7 @@ export class RouteHandler {
 
     public async handle(fn) {
         try {
-            this.logger.info(`${this.method} ${this.route}`);
+            this.logger.info(`******* ROUTE-HANDLER ********* ${this.method} ${this.route}`);
             await fn(this);
         }
         catch (err: any) {

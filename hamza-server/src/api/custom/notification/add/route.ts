@@ -3,22 +3,31 @@ import CustomerNotificationService from '../../../../services/customer-notificat
 import { readRequestBody } from '../../../../utils/request-body';
 import { RouteHandler } from '../../../route-handler';
 
-//TODO: this looks like it should be GET 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const customerNotificationService: CustomerNotificationService =
         req.scope.resolve('customerNotificationService');
+
+    const handler: RouteHandler = new RouteHandler(
+        req, res, 'POST', '/custom/notification/add', ['customer_id', 'notification_type']
+    );
+
     const logger: Logger = req.scope.resolve('logger');
 
-    const { customer_id } = readRequestBody(req.body, ['customer_id']);
-    if (!customer_id) {
+    const { customer_id, notification_type } = readRequestBody(req.body, [
+        'customer_id',
+        'notification_type',
+    ]);
+    if (!customer_id || !notification_type) {
         return res.status(400).json({
             message: 'customer_id and notification_type are required',
         });
     }
 
     try {
-        const types =
-            await customerNotificationService.getNotifications(customer_id);
+        const types = await customerNotificationService.addOrUpdateNotification(
+            customer_id,
+            notification_type
+        );
 
         res.status(200).json({ types });
     } catch (err) {

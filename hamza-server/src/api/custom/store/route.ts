@@ -5,7 +5,7 @@ import { RouteHandler } from '../../route-handler';
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const customerService = req.scope.resolve('customerService');
 
-    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/store');
+    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/store');
 
     await handler.handle(async () => {
 
@@ -22,7 +22,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     }
 };
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
-    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/store');
+    const handler: RouteHandler = new RouteHandler(req, res, 'POST', '/custom/store');
 
     await handler.handle(async () => {
 
