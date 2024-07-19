@@ -340,6 +340,17 @@ export async function getStore(product_id: string) {
     }
 }
 
+export async function setCurrency(newCurrency: string, customer_id: string) {
+    try {
+        await axios.post(`${BACKEND_URL}/custom/update-currency`, {
+            customer_id: customer_id,
+            preferred_currency: newCurrency,
+        });
+    } catch (error) {
+        console.error('Error updating currency', error);
+    }
+}
+
 // Cart actions
 export async function createCart(data = {}) {
     const headers = getMedusaHeaders(['cart']);

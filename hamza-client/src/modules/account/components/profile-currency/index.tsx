@@ -5,6 +5,7 @@ import { Select } from '@chakra-ui/react';
 import { Customer } from '@medusajs/medusa';
 import axios from 'axios';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { setCurrency } from '@lib/data';
 
 type MyInformationProps = {
     customer: Omit<Customer, 'password_hash'>;
@@ -22,13 +23,7 @@ const ProfileCurrency: React.FC<MyInformationProps> = ({ customer }) => {
         console.log(`Currency updated to ${newCurrency}`);
         console.log(`Customer is ${customer.id}`);
         try {
-            await axios.post(
-                `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/update-currency`,
-                {
-                    customer_id: customer.id,
-                    preferred_currency: newCurrency,
-                }
-            );
+            await setCurrency(customer.id, newCurrency);
             setCustomerPreferredCurrency(newCurrency);
         } catch (error) {
             console.error('Error updating currency', error);
@@ -54,9 +49,24 @@ const ProfileCurrency: React.FC<MyInformationProps> = ({ customer }) => {
                 onChange={handleCurrencyChange}
                 color={'white'}
             >
-                <option value="usdc" style={{ backgroundColor: 'black', color: 'white' }}>USDC</option>
-                <option value="usdt" style={{ backgroundColor: 'black', color: 'white' }}>USDT</option>
-                <option value="eth" style={{ backgroundColor: 'black', color: 'white' }}>ETH</option>
+                <option
+                    value="usdc"
+                    style={{ backgroundColor: 'black', color: 'white' }}
+                >
+                    USDC
+                </option>
+                <option
+                    value="usdt"
+                    style={{ backgroundColor: 'black', color: 'white' }}
+                >
+                    USDT
+                </option>
+                <option
+                    value="eth"
+                    style={{ backgroundColor: 'black', color: 'white' }}
+                >
+                    ETH
+                </option>
             </Select>
         </div>
     );
