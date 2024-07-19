@@ -286,7 +286,7 @@ Content-Type: application/json
 
 
 ### Create Notification Types
-POST http://localhost:9000/custom/notification/add-notification
+POST http://localhost:9000/custom/notification/add
 Content-Type: application/json
 
 {
@@ -296,7 +296,7 @@ Content-Type: application/json
 
 
 ### GET All Notifications for Customer
-POST http://localhost:9000/custom/notification/get-notification
+POST http://localhost:9000/custom/notification/get
 Content-Type: application/json
 
 {
@@ -305,7 +305,7 @@ Content-Type: application/json
 
 
 ### Remove All Notifications for Customer
-DELETE http://localhost:9000/custom/notification/remove-notification
+DELETE http://localhost:9000/custom/notification/remove
 Content-Type: application/json
 
 {
