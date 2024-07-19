@@ -180,6 +180,44 @@ export async function getNotifications(customer_id: string) {
     }
 }
 
+export async function removeNotifications(customer_id: string) {
+    try {
+        const response = await axios.delete(
+            `${BACKEND_URL}/custom/notification/remove-notification`,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: JSON.stringify({
+                    customer_id: customer_id,
+                    notification_type: 'none',
+                }),
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error removing notification preferences:', error);
+    }
+}
+
+export async function addNotifications(
+    customer_id: string,
+    notification_type: string
+) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/notification/add-notification`,
+            {
+                customer_id: customer_id,
+                notification_type: notification_type,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error adding notification preferences:', error);
+    }
+}
+
 // Cart actions
 export async function createCart(data = {}) {
     const headers = getMedusaHeaders(['cart']);

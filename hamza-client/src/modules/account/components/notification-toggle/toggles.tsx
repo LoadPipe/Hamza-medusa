@@ -16,7 +16,11 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { getNotifications } from '@lib/data';
+import {
+    addNotifications,
+    getNotifications,
+    removeNotifications,
+} from '@lib/data';
 
 const ToggleNotifications = ({ region }: { region: Region }) => {
     const [selectedNotifications, setSelectedNotifications] = useState([]);
@@ -69,34 +73,13 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
         try {
             if (selectedNotifications.includes('none' as never)) {
                 // Call the delete route if 'none' is selected
-                await fetch(
-                    `${BACKEND_URL}/custom/notification/remove-notification`,
-                    {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            customer_id: authData.customer_id,
-                            notification_type: 'none',
-                        }),
-                    }
-                );
+                await removeNotifications(authData.customer_id);
             } else {
                 // Call the add/update route with the selected notifications
                 const notificationsString = selectedNotifications.join(', ');
-                await fetch(
-                    `${BACKEND_URL}/custom/notification/add-notification`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            customer_id: authData.customer_id,
-                            notification_type: notificationsString,
-                        }),
-                    }
+                await addNotifications(
+                    authData.customer_id,
+                    notificationsString
                 );
             }
             toast.success('Notification preferences saved!', {});
