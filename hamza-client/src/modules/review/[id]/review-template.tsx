@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import useItemStore from '@store/review/review-store';
 import { Button } from '@medusajs/ui';
-import { createReview } from '@lib/data';
+import { createReview, checkReviewsExistence } from '@lib/data';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -25,11 +25,8 @@ const ReviewTemplate = () => {
 
     const checkReviewExistence = async () => {
         try {
-            const response = await axios.post(
-                `${BACKEND_URL}/custom/review/exists`,
-                {
-                    order_id: item?.order_id,
-                }
+            const response = await checkReviewsExistence(
+                item?.order_id as string
             );
             // console.log(`Can submit? ${response.data}`);
             setCanSubmit(response.data); // Assuming API returns { exists: true/false }
