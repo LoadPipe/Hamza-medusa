@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ReviewCardMobile from './review-card-mobile';
 import { Text, Flex, Box } from '@chakra-ui/react';
 import axios from 'axios';
+import { reviewResponse } from '@lib/data';
 
 const fakeReviews = [
     {
@@ -29,18 +30,13 @@ const fakeReviews = [
 const ProductReviewMobile = ({ productId }: { productId: string }) => {
     const [reviews, setReviews] = useState<any>([]);
     const reviewDataFetcher = async () => {
-        let res = await axios.post(
-            `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/review/all-reviews`,
-            {
-                product_id: productId,
-            }
-        );
+        let res = await reviewResponse(productId);
 
-        if (res.data) {
-            if (res.data.length < 2) {
+        if (res) {
+            if (res.length < 2) {
                 setReviews([
                     ...fakeReviews,
-                    ...res.data.map((a: any) => {
+                    ...res.map((a: any) => {
                         return {
                             id: a.id,
                             name:
@@ -54,7 +50,7 @@ const ProductReviewMobile = ({ productId }: { productId: string }) => {
                 ]);
             } else {
                 setReviews([
-                    ...res.data.map((a: any) => {
+                    ...res.map((a: any) => {
                         return {
                             id: a.id,
                             name:
