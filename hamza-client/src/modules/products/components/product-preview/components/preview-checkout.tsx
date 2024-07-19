@@ -22,6 +22,7 @@ import {
     TiStarOutline,
 } from 'react-icons/ti';
 import CartPopup from '../../cart-popup';
+import { averageRatings, reviewCounter } from '@lib/data';
 
 const MEDUSA_SERVER_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -67,17 +68,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
 
     useEffect(() => {
         const fetchProductReview = async () => {
-            const averageRatingResponse = await axios.post(
-                `${MEDUSA_SERVER_URL}/custom/review/average`,
-                { product_id: productId }
-            );
-            const reviewCountResponse = await axios.post(
-                `${MEDUSA_SERVER_URL}/custom/review/count`,
-                { product_id: productId }
-            );
+            const averageRatingResponse = await averageRatings(product_id);
+            const reviewCountResponse = await reviewCounter(product_id);
 
-            setAverageRating(averageRatingResponse.data);
-            setReviewCount(reviewCountResponse.data);
+            setAverageRating(averageRatingResponse);
+            setReviewCount(reviewCountResponse);
         };
 
         fetchProductReview();
