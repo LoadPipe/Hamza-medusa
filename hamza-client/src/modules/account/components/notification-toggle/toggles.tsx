@@ -31,7 +31,7 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                 );
                 try {
                     const response = await axios.post(
-                        `${BACKEND_URL}/custom/notification/get-notification`,
+                        `${BACKEND_URL}/custom/notification/get`,
                         { customer_id: authData.customer_id },
                         {
                             headers: {
@@ -76,7 +76,7 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
             if (selectedNotifications.includes('none' as never)) {
                 // Call the delete route if 'none' is selected
                 await fetch(
-                    `${BACKEND_URL}/custom/notification/remove-notification`,
+                    `${BACKEND_URL}/custom/notification/remove`,
                     {
                         method: 'DELETE',
                         headers: {
@@ -92,7 +92,7 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                 // Call the add/update route with the selected notifications
                 const notificationsString = selectedNotifications.join(', ');
                 await fetch(
-                    `${BACKEND_URL}/custom/notification/add-notification`,
+                    `${BACKEND_URL}/custom/notification/add`,
                     {
                         method: 'POST',
                         headers: {
