@@ -1,6 +1,10 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import { readRequestBody } from '../utils/request-body';
 
+/**
+ * Provides uniformity of logging and exception handling for all API routes.
+ * Should be used for handling all api routes.
+ */
 export class RouteHandler {
     logger: Logger;
     inputParams: any;
