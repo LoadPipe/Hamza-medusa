@@ -5,28 +5,29 @@ import { RouteHandler } from '../../route-handler';
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: LineItemService = req.scope.resolve('lineItemService');
-    const logger: Logger = req.scope.resolve('logger');
 
-    // const handler = new RouteHandler(req, res, 'POST', '/custom/order', [
-    //     'cart_id',
-    // ]);
+    const handler = new RouteHandler(req, res, 'POST', '/custom/order', [
+        'cart_id',
+    ]);
 
-    // await handler.handle(async () => {
+    await handler.handle(async () => {
+        const order = await orderService.list({
+            cart_id: handler.inputParams.cart_id,
+        });
+
+        res.status(200).json({ order });
+    });
+
+    // const { cart_id } = readRequestBody(req.query, ['cart_id']);
+
+    // try {
     //     const order = await orderService.list({ cart_id });
 
     //     res.status(200).json({ order });
-    // });
-
-    const { cart_id } = readRequestBody(req.query, ['cart_id']);
-
-    try {
-        const order = await orderService.list({ cart_id });
-
-        res.status(200).json({ order });
-    } catch (err) {
-        logger.error('Error retrieving order', err);
-        res.status(500).json({
-            error: 'Failed to retrieve order',
-        });
-    }
+    // } catch (err) {
+    //     logger.error('Error retrieving order', err);
+    //     res.status(500).json({
+    //         error: 'Failed to retrieve order',
+    //     });
+    // }
 };
