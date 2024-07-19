@@ -73,36 +73,6 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
         try {
             if (selectedNotifications.includes('none' as never)) {
                 // Call the delete route if 'none' is selected
-<<<<<<< HEAD
-                await fetch(
-                    `${BACKEND_URL}/custom/notification/remove`,
-                    {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            customer_id: authData.customer_id,
-                            notification_type: 'none',
-                        }),
-                    }
-                );
-            } else {
-                // Call the add/update route with the selected notifications
-                const notificationsString = selectedNotifications.join(', ');
-                await fetch(
-                    `${BACKEND_URL}/custom/notification/add`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            customer_id: authData.customer_id,
-                            notification_type: notificationsString,
-                        }),
-                    }
-=======
                 await removeNotifications(authData.customer_id);
             } else {
                 // Call the add/update route with the selected notifications
@@ -110,7 +80,6 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                 await addNotifications(
                     authData.customer_id,
                     notificationsString
->>>>>>> staging
                 );
             }
             toast.success('Notification preferences saved!', {});
