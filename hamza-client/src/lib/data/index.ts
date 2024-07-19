@@ -218,6 +218,17 @@ export async function addNotifications(
     }
 }
 
+export async function orderInformation(cart_id: string) {
+    try {
+        const response = await axios.post(`${BACKEND_URL}/custom/order`, {
+            cart_id: cart_id,
+        });
+        return response;
+    } catch (error) {
+        console.error('Error fetching order information:', error);
+    }
+}
+
 // Cart actions
 export async function createCart(data = {}) {
     const headers = getMedusaHeaders(['cart']);
