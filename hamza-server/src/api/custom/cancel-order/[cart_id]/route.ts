@@ -1,6 +1,6 @@
 import { MedusaRequest, MedusaResponse } from '@medusajs/medusa';
 import OrderService from '../../../../services/order';
-import { RouteHandler } from 'src/api/route-handler';
+import { RouteHandler } from '../../../route-handler';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const handler =

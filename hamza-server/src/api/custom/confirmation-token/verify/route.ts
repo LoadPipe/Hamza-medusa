@@ -1,6 +1,6 @@
 import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import ConfirmationTokenService from '../../../../services/confirmation-token';
-import { RouteHandler } from 'src/api/route-handler';
+import { RouteHandler } from '../../../route-handler';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     let confirmationTokenService: ConfirmationTokenService =

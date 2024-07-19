@@ -1,8 +1,15 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import { readRequestBody } from '../../../utils/request-body';
+import { RouteHandler } from '../../route-handler';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const customerService = req.scope.resolve('customerService');
+
+    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/store');
+
+    await handler.handle(async () => {
+
+    });
     const logger = req.scope.resolve('logger') as Logger;
 
     try {
@@ -15,6 +22,11 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     }
 };
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
+    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/store');
+
+    await handler.handle(async () => {
+
+    });
     const logger = req.scope.resolve('logger') as Logger;
     try {
         logger.debug("/custom/store")
