@@ -68,8 +68,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
 
     useEffect(() => {
         const fetchProductReview = async () => {
-            const averageRatingResponse = await averageRatings(product_id);
-            const reviewCountResponse = await reviewCounter(product_id);
+            const averageRatingResponse = await averageRatings(productId);
+            const reviewCountResponse = await reviewCounter(productId);
 
             setAverageRating(averageRatingResponse);
             setReviewCount(reviewCountResponse);
