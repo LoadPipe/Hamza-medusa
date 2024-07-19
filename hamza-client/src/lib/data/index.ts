@@ -163,6 +163,23 @@ export async function allReviews(product_id: string) {
     }
 }
 
+export async function getNotifications(customer_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/notification/get-notification`,
+            { customer_id: customer_id },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        return response.data.types;
+    } catch (error) {
+        console.error('Error fetching notification preferences:', error);
+    }
+}
+
 // Cart actions
 export async function createCart(data = {}) {
     const headers = getMedusaHeaders(['cart']);

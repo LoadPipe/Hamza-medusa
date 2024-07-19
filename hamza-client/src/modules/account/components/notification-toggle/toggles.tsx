@@ -16,6 +16,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import { getNotifications } from '@lib/data';
 
 const ToggleNotifications = ({ region }: { region: Region }) => {
     const [selectedNotifications, setSelectedNotifications] = useState([]);
@@ -30,18 +31,11 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                     `Customer ID in notification toggle: ${authData.customer_id}`
                 );
                 try {
-                    const response = await axios.post(
-                        `${BACKEND_URL}/custom/notification/get-notification`,
-                        { customer_id: authData.customer_id },
-                        {
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        }
+                    const response = await getNotifications(
+                        authData.customer_id
                     );
-                    console.log('Notification Data:', response.data.types);
-                    const notifications = response.data.types;
-                    setSelectedNotifications(notifications);
+                    console.log('Notification Data:', response);
+                    setSelectedNotifications(response);
                 } catch (error) {
                     console.error(
                         'Error fetching notification preferences:',
