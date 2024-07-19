@@ -7,7 +7,7 @@ import OrderCard from '../order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
-import { getVendors } from '@lib/data/index';
+import { getVendors, orderInformation } from '@lib/data';
 import {
     Button,
     Modal,
@@ -102,12 +102,9 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
 
         const fetchAll = async () => {
             try {
-                const { data } = await axios.post(
-                    `${MEDUSA_SERVER_URL}/custom/order/customer-orders`,
-                    {
-                        customer_id: orders[0].customer_id,
-                    }
-                );
+                const { data } = (await orderInformation(
+                    orders[0].customer_id
+                )) as any;
                 console.log(
                     `fetching all data in new style ${JSON.stringify(data.order.orders)}`
                 );

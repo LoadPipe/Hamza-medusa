@@ -16,6 +16,11 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import {
+    addNotifications,
+    getNotifications,
+    removeNotifications,
+} from '@lib/data';
 
 const ToggleNotifications = ({ region }: { region: Region }) => {
     const [selectedNotifications, setSelectedNotifications] = useState([]);
@@ -30,18 +35,11 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                     `Customer ID in notification toggle: ${authData.customer_id}`
                 );
                 try {
-                    const response = await axios.post(
-                        `${BACKEND_URL}/custom/notification/get-notification`,
-                        { customer_id: authData.customer_id },
-                        {
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        }
+                    const response = await getNotifications(
+                        authData.customer_id
                     );
-                    console.log('Notification Data:', response.data.types);
-                    const notifications = response.data.types;
-                    setSelectedNotifications(notifications);
+                    console.log('Notification Data:', response);
+                    setSelectedNotifications(response);
                 } catch (error) {
                     console.error(
                         'Error fetching notification preferences:',
@@ -75,34 +73,13 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
         try {
             if (selectedNotifications.includes('none' as never)) {
                 // Call the delete route if 'none' is selected
-                await fetch(
-                    `${BACKEND_URL}/custom/notification/remove-notification`,
-                    {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            customer_id: authData.customer_id,
-                            notification_type: 'none',
-                        }),
-                    }
-                );
+                await removeNotifications(authData.customer_id);
             } else {
                 // Call the add/update route with the selected notifications
                 const notificationsString = selectedNotifications.join(', ');
-                await fetch(
-                    `${BACKEND_URL}/custom/notification/add-notification`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            customer_id: authData.customer_id,
-                            notification_type: notificationsString,
-                        }),
-                    }
+                await addNotifications(
+                    authData.customer_id,
+                    notificationsString
                 );
             }
             toast.success('Notification preferences saved!', {});

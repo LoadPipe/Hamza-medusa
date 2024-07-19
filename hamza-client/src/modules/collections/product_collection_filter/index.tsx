@@ -9,6 +9,7 @@ import { SimpleGrid } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { getProductsByVendor } from '@lib/data';
 
 type Props = {
     vendorName: string;
@@ -18,9 +19,10 @@ const ProductCollections = ({ vendorName }: Props) => {
     const { data, error, isLoading } = useQuery(
         ['products', { vendor: vendorName }],
         () =>
-            axios.get(
-                `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products?store_name=${vendorName}`
-            )
+            getProductsByVendor(vendorName).catch((err) => {
+                console.log(err);
+                return null;
+            })
     );
 
     const { authData, preferred_currency_code } = useCustomerAuthStore();
@@ -80,8 +82,8 @@ const ProductCollections = ({ vendorName }: Props) => {
 
                                                 {authData.status ==
                                                     'authenticated' &&
-                                                    preferred_currency_code &&
-                                                    preferredPrice ? (
+                                                preferred_currency_code &&
+                                                preferredPrice ? (
                                                     <>
                                                         {' '}
                                                         {formatCryptoPrice(
