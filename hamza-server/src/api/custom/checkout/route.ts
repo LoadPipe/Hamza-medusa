@@ -18,11 +18,11 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'GET', '/custom/checkout', ['cart_id']
+        req, res, 'GET', '/custom/checkout'
     );
 
     await handler.handle(async () => {
-        const orders = await orderService.getOrdersForCart(handler.inputParams.cart_id.toString());
+        const orders = await orderService.getOrdersForCart(req.query.cart_id.toString());
         const output: ICheckoutData[] = [];
         orders.forEach((o) => {
             output.push({
