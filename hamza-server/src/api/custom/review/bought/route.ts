@@ -1,30 +1,22 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import ProductReviewService from 'src/services/product-review';
 import { readRequestBody } from '../../../../utils/request-body';
+import { RouteHandler } from '../../../route-handler';
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
-    const logger = req.scope.resolve('logger') as Logger;
     const productReviewService: ProductReviewService = req.scope.resolve(
         'productReviewService'
     );
 
-    const { customer_id, product_id } = readRequestBody(req.body, [
-        'customer_id',
-        'product_id',
+    const handler: RouteHandler = new RouteHandler(req, res, 'POST', '/custom/review/bought', [
+        'product_id', 'customer_id'
     ]);
-    logger.debug(
-        `Customer ID is: ${customer_id} and Product ID is: ${product_id}`
-    );
-    try {
+
+    await handler.handle(async () => {
         const verify = await productReviewService.customerHasBoughtProduct(
-            customer_id,
-            product_id
+            handler.inputParams.customer_id,
+            handler.inputParams.product_id
         );
         res.json(verify);
-    } catch (err) {
-        logger.error('Error fetching product verification:', err);
-        res.status(500).json({
-            error: 'Failed to verify customer',
-        });
-    }
+    });
 };

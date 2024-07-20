@@ -166,7 +166,7 @@ export async function allReviews(product_id: string) {
 export async function getNotifications(customer_id: string) {
     try {
         const response = await axios.post(
-            `${BACKEND_URL}/custom/notification/get-notification`,
+            `${BACKEND_URL}/custom/notification/get`,
             { customer_id: customer_id },
             {
                 headers: {
@@ -183,7 +183,7 @@ export async function getNotifications(customer_id: string) {
 export async function removeNotifications(customer_id: string) {
     try {
         const response = await axios.delete(
-            `${BACKEND_URL}/custom/notification/remove-notification`,
+            `${BACKEND_URL}/custom/notification/remove`,
             {
                 headers: {
                     'Content-Type': 'application/json',
@@ -206,7 +206,7 @@ export async function addNotifications(
 ) {
     try {
         const response = await axios.post(
-            `${BACKEND_URL}/custom/notification/add-notification`,
+            `${BACKEND_URL}/custom/notification/add`,
             {
                 customer_id: customer_id,
                 notification_type: notification_type,

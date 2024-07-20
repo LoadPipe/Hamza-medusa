@@ -1,4 +1,5 @@
 import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
+import { RouteHandler } from '../../../route-handler';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const userService = req.scope.resolve('userService');
@@ -6,9 +7,12 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const productCollectionService = req.scope.resolve(
         'productCollectionService'
     );
-    const logger = req.scope.resolve('logger') as Logger;
 
-    try {
+    const handler: RouteHandler = new RouteHandler(
+        req, res, 'GET', '/admin/custom/user'
+    );
+
+    await handler.handle(async () => {
         const user0 = await userService.create(
             {
                 email: 'medusaVendor@hamza.com',
@@ -279,10 +283,5 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             store9,
             store10,
         });
-    } catch (error) {
-        logger.error(error);
-        return res
-            .status(500)
-            .json({ message: 'Internal server error', error: error.message });
-    }
+    });
 };
