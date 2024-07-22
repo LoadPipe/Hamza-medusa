@@ -3,6 +3,7 @@ import { readRequestBody } from '../../../../utils/request-body';
 import OrderService from '../../../../services/order';
 import { RouteHandler } from '../../../route-handler';
 
+//CANCELs an order, given its order id
 //TODO: does not need to be DELETE (cancelling is not deleting)
 export const DELETE = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');

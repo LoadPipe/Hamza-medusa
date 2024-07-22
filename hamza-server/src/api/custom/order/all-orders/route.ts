@@ -4,6 +4,7 @@ import OrderService from '../../../../services/order';
 import { RouteHandler } from '../../../route-handler';
 
 //TODO: why is this post?
+//GET all order for cart (given a cart id) 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
 

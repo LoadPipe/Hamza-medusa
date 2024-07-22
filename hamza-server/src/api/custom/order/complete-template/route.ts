@@ -3,6 +3,7 @@ import { readRequestBody } from '../../../../utils/request-body';
 import OrderService from '../../../../services/order';
 import { RouteHandler } from '../../../route-handler';
 
+//COMPLETEs an order or set of orders, given a cart id
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
 
