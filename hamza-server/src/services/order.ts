@@ -255,7 +255,32 @@ export default class OrderService extends MedusaOrderService {
     }
 
     async getCustomerOrderBuckets(customerId: string): Promise<OrderBucketList>{
-        return {};
+        const buckets = await Promise.all([
+            this.getCustomerOrdersByStatus({paymentStatus: PaymentStatus.AWAITING}),
+            this.getCustomerOrdersByStatus({paymentStatus: PaymentStatus.CAPTURED, fulfillmentStatus: FulfillmentStatus.DOOP}),
+            this.getCustomerOrdersByStatus({paymentStatus: PaymentStatus.CAPTURED, fulfillmentStatus: FulfillmentStatus.SHIPPED}),
+            this.getCustomerOrdersByStatus({orderStatus: OrderStatus.COMPLETE, fulfillmentStatus: FulfillmentStatus.COMPLETE}),
+            this.getCustomerOrdersByStatus({orderStatus: OrderStatus.CANCELED}),
+            this.getCustomerOrdersByStatus({paymentStatus: PaymentStatus.REFUNDED})
+        ]);
+
+        const output = {
+            'ToPay': buckets[0],
+            'ToShip': buckets[1],
+            'ToReceive': buckets[2],
+            'Completed': buckets[3],
+            'Cancelled': buckets[4],
+            'Refunded': buckets[5]
+        };
+
+        return output;
+    }
+
+    private async getCustomerOrdersByStatus(statusParams: {
+            orderStatus?: OrderStatus, paymentStatus?: PaymentStatus, fulfillmentStatus?:FulfillmentStatus
+        }): Promise<Order[]> 
+    {
+        return [];
     }
 
     private getPostCheckoutUpdateInventoryPromises(
