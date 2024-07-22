@@ -251,17 +251,23 @@ export default class OrderService extends MedusaOrderService {
     }
 
     async getCustomerOrders(customerId: string): Promise<Order[]>{
-        return [];
+        return await this.orderRepository_.find({
+            where: {
+                customer_id: customerId,
+                status: Not(OrderStatus.ARCHIVED),
+            },
+            relations: ['cart.items', 'cart', 'cart.items.variant.product'],
+        });
     }
 
     async getCustomerOrderBuckets(customerId: string): Promise<OrderBucketList>{
         const buckets = await Promise.all([
-            this.getCustomerOrdersByStatus({paymentStatus: PaymentStatus.AWAITING}),
-            this.getCustomerOrdersByStatus({paymentStatus: PaymentStatus.CAPTURED, fulfillmentStatus: FulfillmentStatus.DOOP}),
-            this.getCustomerOrdersByStatus({paymentStatus: PaymentStatus.CAPTURED, fulfillmentStatus: FulfillmentStatus.SHIPPED}),
-            this.getCustomerOrdersByStatus({orderStatus: OrderStatus.COMPLETE, fulfillmentStatus: FulfillmentStatus.COMPLETE}),
-            this.getCustomerOrdersByStatus({orderStatus: OrderStatus.CANCELED}),
-            this.getCustomerOrdersByStatus({paymentStatus: PaymentStatus.REFUNDED})
+            this.getCustomerOrdersByStatus(customerId, {paymentStatus: PaymentStatus.AWAITING}),
+            this.getCustomerOrdersByStatus(customerId, {paymentStatus: PaymentStatus.CAPTURED, fulfillmentStatus: FulfillmentStatus.DOOP}),
+            this.getCustomerOrdersByStatus(customerId, {paymentStatus: PaymentStatus.CAPTURED, fulfillmentStatus: FulfillmentStatus.SHIPPED}),
+            this.getCustomerOrdersByStatus(customerId, {orderStatus: OrderStatus.COMPLETE, fulfillmentStatus: FulfillmentStatus.COMPLETE}),
+            this.getCustomerOrdersByStatus(customerId, {orderStatus: OrderStatus.CANCELED}),
+            this.getCustomerOrdersByStatus(customerId, {paymentStatus: PaymentStatus.REFUNDED})
         ]);
 
         const output = {
@@ -276,11 +282,32 @@ export default class OrderService extends MedusaOrderService {
         return output;
     }
 
-    private async getCustomerOrdersByStatus(statusParams: {
+    private async getCustomerOrdersByStatus(customerId: string, statusParams: {
             orderStatus?: OrderStatus, paymentStatus?: PaymentStatus, fulfillmentStatus?:FulfillmentStatus
         }): Promise<Order[]> 
     {
-        return [];
+        const where: {customer_id: string, status?: any, payment_status?: any, fulfillment_status?: any} = {
+            customer_id: customerId,
+            status: Not(OrderStatus.ARCHIVED),
+
+        };
+
+        if (statusParams.orderStatus) {
+            where.status = And([Not(OrderStatus.ARCHIVED), statusParams.orderStatus]);
+        }
+        
+        if (statusParams.paymentStatus) {
+            where.payment_status = statusParams.paymentStatus;
+        }
+        
+        if (statusParams.fulfillmentStatus) {
+            where.fulfillment_status = statusParams.fulfillmentStatus;
+        }
+
+        return await this.orderRepository_.find({
+            where,
+            relations: ['cart.items', 'cart', 'cart.items.variant.product'],
+        });
     }
 
     private getPostCheckoutUpdateInventoryPromises(
