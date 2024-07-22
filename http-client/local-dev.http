@@ -369,3 +369,7 @@ Content-Type: application/json
 {
   "cart_id": "cart_01J1AD0YVD46WW4JWWNE33G2SX"
 }
+
+### GET Request to cancel order
+GET http://localhost:9000/custom/cancel-order/cart_01J3CF7DMR72ZS436EM0NYDCGW
+Content-Type: application/json
