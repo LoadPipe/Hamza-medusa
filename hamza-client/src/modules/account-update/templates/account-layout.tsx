@@ -8,6 +8,8 @@ import { Customer } from '@medusajs/medusa';
 import axios from 'axios';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
+import { Flex, Box } from '@chakra-ui/react';
+
 interface AccountLayoutProps {
     customer: Omit<Customer, 'password_hash'> | null;
     children: React.ReactNode;
@@ -37,13 +39,13 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
     }, [authData.status]);
 
     return (
-        <div className="font-sora flex-1 small:py-12  text-white">
-            <div className="flex-1 content-container h-full max-w-5xl mx-auto flex flex-col">
-                <div className="grid grid-cols-1  small:grid-cols-[240px_1fr] py-12">
+        <Flex width={'100vw'} justifyContent={'center'}>
+            <Flex maxW={'1280px'} justifyContent={'center'}>
+                <Flex width={'1258px'} gap={'16px'} my="2rem">
                     <div>{customer && <AccountNav customer={customer} />}</div>
                     <div className="flex-1">{children}</div>
-                </div>
-                <div className="flex flex-col small:flex-row items-end justify-between small:border-t border-gray-200 py-12 gap-8">
+                </Flex>
+                {/* <div className="flex flex-col small:flex-row items-end justify-between small:border-t border-gray-200 py-12 gap-8">
                     <div>
                         <h3 className="text-xl-semi mb-4">Got questions?</h3>
                         <span className="txt-medium">
@@ -56,9 +58,9 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
                             Customer Service
                         </UnderlineLink>
                     </div>
-                </div>
-            </div>
-        </div>
+                </div> */}
+            </Flex>
+        </Flex>
     );
 };
 
