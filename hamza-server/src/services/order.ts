@@ -23,6 +23,9 @@ type InjectDependencies = {
     lineItemService: LineItemService;
 };
 
+type OrderBucketList = 
+    {[key:string]: Order[]}
+
 export default class OrderService extends MedusaOrderService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
 
@@ -245,6 +248,14 @@ export default class OrderService extends MedusaOrderService {
         } catch (e) {
             this.logger.error(`Error fetching store from order: ${e}`);
         }
+    }
+
+    async getCustomerOrders(customerId: string): Promise<Order[]>{
+        return [];
+    }
+
+    async getCustomerOrderBuckets(customerId: string): Promise<OrderBucketList>{
+        return {};
     }
 
     private getPostCheckoutUpdateInventoryPromises(

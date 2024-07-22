@@ -34,14 +34,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         }
         else {
             if (handler.inputParams.buckets) {
-                const orders = []; //await orderService.getOrderBucketsForCustomer(handler.inputParams.customer_id);
+                const orders = await orderService.getCustomerOrders(handler.inputParams.customer_id);
                 res.status(200).json({ orders });
             } else {
-                const orders = {
-                    'ToPay': [],
-                    'ToReceive': []
-                    //.. etc
-                }; //await orderService.getOrdersForCustomer(handler.inputParams.customer_id);
+                const orders = await orderService.getCustomerOrderBuckets(handler.inputParams.customer_id);
                 res.status(200).json({ orders });
             }
         }
