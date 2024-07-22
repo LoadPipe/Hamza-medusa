@@ -17,15 +17,4 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         res.status(200).json({ order });
     });
-
-    // try {
-    //     const order = await orderService.orderStatus(order_id);
-
-    //     res.status(200).json({ order });
-    // } catch (err) {
-    //     logger.error('Error retrieving order', err);
-    //     res.status(500).json({
-    //         error: 'Failed to retrieve order',
-    //     });
-    // }
 };
