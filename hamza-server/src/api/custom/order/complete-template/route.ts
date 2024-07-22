@@ -15,18 +15,4 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
         res.status(200).json({ cart });
     });
-
-    /*
-    const { cart_id } = readRequestBody(req.body, ['cart_id']);
-
-    try {
-        const cart = await orderService.completeOrderTemplate(cart_id);
-
-        res.status(200).json({ cart });
-    } catch (err) {
-        res.status(500).json({
-            error: 'Failed to retrieve order',
-        });
-    }
-    */
 };
