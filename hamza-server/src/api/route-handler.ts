@@ -26,22 +26,32 @@ export class RouteHandler {
         this.route = route;
         this.request = req;
         this.response = res;
+        this.inputParams = {};
+
         if (inputFieldNames?.length) {
             this.inputParams = readRequestBody(req.body, inputFieldNames);
+        }
+
+        // Extract parameters from URL
+        if (req.params) {
+            this.inputParams = { ...this.inputParams, ...req.params };
         }
     }
 
     public async handle(fn: (_this?: RouteHandler) => void) {
         try {
-            this.logger.info(`******* ROUTE-HANDLER ********* ${this.method} ${this.route}`);
+            this.logger.info(
+                `******* ROUTE-HANDLER ********* ${this.method} ${this.route}`
+            );
+            this.logger.debug(
+                `Input Params: ${JSON.stringify(this.inputParams)}`
+            );
             await fn(this);
-        }
-        catch (err: any) {
+        } catch (err: any) {
             const errorInfo = `ERROR ${this.method} ${this.route}: ${err}`;
             this.logger.error({ message: errorInfo });
             this.response.status(500).json(errorInfo);
-            if (this.onError)
-                this.onError(err);
+            if (this.onError) this.onError(err);
         }
     }
 }
