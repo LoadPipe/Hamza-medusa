@@ -5,10 +5,13 @@ import ProfileBillingAddress from '@modules/account/components/profile-billing-a
 import ProfileEmail from '@modules/account/components/profile-email';
 import ProfileName from '@modules/account/components/profile-name';
 import ProfilePassword from '@modules/account/components/profile-password';
-
-import { getCustomer, listRegions } from '@lib/data';
-import { notFound } from 'next/navigation';
 import ProfileCurrency from '@modules/account/components/profile-currency';
+
+import { getCustomer, listRegions, updateCustomer } from '@lib/data';
+import { notFound } from 'next/navigation';
+import { Flex, Button, Text, Box } from '@chakra-ui/react';
+import ProfileForm from './profile-form/profile-form';
+import ProfileImage from './profile-image/profile-image';
 
 export const metadata: Metadata = {
     title: 'Profile',
@@ -21,38 +24,25 @@ export default async function Profile() {
 
     if (!customer || !regions) {
         notFound();
+    } else {
+        console.log(customer);
     }
 
     return (
-        <div className="w-full bg-black text-white p-8">
-            <div className="mb-8 flex flex-col gap-y-4">
-                <h1 className="text-2xl-semi">Profile</h1>
-                <p className="text-base-regular">
-                    View and update your profile information, including your
-                    name and preferred checkout currency.
-                </p>
-            </div>
-            <div className="flex flex-col gap-y-8 w-full">
-                <ProfileName customer={customer} />
-                <Divider />
-
-                {!customer.email.includes('@evm.blockchain') && (
-                    <>
-                        <ProfileEmail customer={customer} />
-                        <Divider />
-                    </>
-                )}
-                {/*<ProfilePhone customer={customer} />*/}
-                <ProfileCurrency customer={customer} />
-                <Divider />
-                {/*<ProfilePassword customer={customer} />*/}
-                {/*<Divider />*/}
-                <ProfileBillingAddress customer={customer} regions={regions} />
-            </div>
-        </div>
+        <Flex
+            backgroundColor={'#121212'}
+            flexDirection={'column'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            color={'white'}
+            height={'739px'}
+            borderRadius={'12px'}
+            gap={'10px'}
+        >
+            {/* Avatar update / remove */}
+            <ProfileImage />
+            {/* Profile Form */}
+            <ProfileForm customer={customer} />
+        </Flex>
     );
 }
-
-const Divider = () => {
-    return <div className="w-full h-px bg-gray-200" />;
-};

@@ -61,6 +61,7 @@
         "react-icons": "^5.0.1",
         "react-instantsearch-hooks-web": "^6.29.0",
         "react-intersection-observer": "^9.3.4",
+        "react-phone-number-input": "^3.4.3",
         "sharp": "^0.33.2",
         "siwe": "^2.1.4",
         "tailwindcss-radix": "^2.8.0",
