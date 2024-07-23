@@ -41,6 +41,7 @@ const customStyles = css`
 
 const ProfilePhoneInput = (props: any) => {
     const [value, setValue] = useState();
+    console.log(value);
     return (
         <FormControl id="phone" isRequired>
             <Text
