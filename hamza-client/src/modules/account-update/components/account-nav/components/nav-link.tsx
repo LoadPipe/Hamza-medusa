@@ -16,12 +16,13 @@ const NavLink = ({ href, route, title }: AccountNavLinkProps) => {
             <Flex
                 borderRadius={'8px'}
                 width={'245px'}
+                height={'56px'}
                 padding="16px"
                 color={active ? 'black' : 'white'}
                 backgroundColor={active ? 'primary.green.900' : 'transparent'}
                 alignItems={'center'}
             >
-                <Text fontSize={'18px'} fontWeight={600}>
+                <Text my="auto" fontSize={'18px'} fontWeight={600}>
                     {title}
                 </Text>
             </Flex>

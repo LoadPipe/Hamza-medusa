@@ -24,7 +24,7 @@ export default async function Profile() {
     }
 
     return (
-        <div className="w-full bg-black text-white p-8">
+        <div className="w-full bg-[#121212] text-white p-8">
             <div className="mb-8 flex flex-col gap-y-4">
                 <h1 className="text-2xl-semi">Profile</h1>
                 <p className="text-base-regular">
