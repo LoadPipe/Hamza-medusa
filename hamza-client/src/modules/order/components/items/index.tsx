@@ -1,8 +1,19 @@
-import { Table } from '@medusajs/ui';
+import {
+    Table,
+    Thead,
+    Tbody,
+    Tr,
+    Th,
+    Td,
+    Image,
+    TableContainer,
+    Button,
+    Box,
+    Text,
+} from '@chakra-ui/react';
+
 import Divider from '@modules/common/components/divider';
-import Thumbnail from '@modules/products/components/thumbnail';
 import React, { useState } from 'react';
-import { Button } from '@medusajs/ui';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import itemStore, { Item } from '@store/review/review-store';
 import axios from 'axios';
@@ -84,52 +95,64 @@ const Items: React.FC<Props> = ({ items, handles }) => {
     };
 
     return (
-        <div className="flex flex-col">
+        <Box className="flex flex-col bg-black">
             <Divider className="!mb-0" />
-            <Table className="m-4">
-                <Table.Body>
-                    {Object.entries(items).map(([id, cartItems], cartIndex) =>
-                        cartItems.map((item: any, itemIndex) => (
-                            <Table.Row key={item.id}>
-                                <Button
-                                    className="m-2"
-                                    onClick={() => handleItemClick(item)}
-                                >
-                                    Review
-                                </Button>
-
-                                <Table.Cell>
-                                    <div className="flex items-center">
-                                        <p className="text-sm font-semibold">
-                                            Item ID: {item.id}
-                                        </p>
-                                    </div>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <div className="flex items-center">
-                                        <p className="text-sm font-semibold">
-                                            Quantity: {item.quantity}
-                                        </p>
-                                    </div>
-                                </Table.Cell>
-                                <Table.Cell>
-                                    <LocalizedClientLink
-                                        href={`/products/${handles.order[itemIndex]}`} // Use handles array to index handle
-                                    >
-                                        <Thumbnail
-                                            thumbnail={item.thumbnail}
-                                            images={[]}
-                                            size="small"
-                                        />
-                                        {item.title}
-                                    </LocalizedClientLink>
-                                </Table.Cell>
-                            </Table.Row>
-                        ))
-                    )}
-                </Table.Body>
-            </Table>
-        </div>
+            <TableContainer>
+                <Table variant="simple" colorScheme="blackAlpha">
+                    <Tbody>
+                        {Object.entries(items).map(
+                            ([id, cartItems], cartIndex) =>
+                                cartItems.map((item, itemIndex) => (
+                                    <Tr key={item.id}>
+                                        <Td>
+                                            <Button
+                                                m={2}
+                                                onClick={() =>
+                                                    handleItemClick(item)
+                                                }
+                                            >
+                                                Review
+                                            </Button>
+                                        </Td>
+                                        <Td>
+                                            <Text
+                                                fontSize="sm"
+                                                fontWeight="semibold"
+                                            >
+                                                Item ID: {item.id}
+                                            </Text>
+                                        </Td>
+                                        <Td>
+                                            <Text
+                                                fontSize="sm"
+                                                fontWeight="semibold"
+                                            >
+                                                Quantity: {item.quantity}
+                                            </Text>
+                                        </Td>
+                                        <Td>
+                                            <LocalizedClientLink
+                                                href={`/products/${handles[itemIndex]}`}
+                                            >
+                                                <Image
+                                                    src={item.thumbnail}
+                                                    width={{
+                                                        base: '60px',
+                                                        md: '120px',
+                                                    }}
+                                                    alt={`Thumbnail of ${item.title}`}
+                                                    size="small"
+                                                />
+                                                {item.title}
+                                            </LocalizedClientLink>
+                                        </Td>
+                                    </Tr>
+                                ))
+                        )}
+                    </Tbody>
+                </Table>
+            </TableContainer>
+        </Box>
     );
 };
 
