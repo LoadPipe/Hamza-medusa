@@ -8,6 +8,7 @@ import ProfilePassword from '@modules/account/components/profile-password';
 
 import { getCustomer, listRegions } from '@lib/data';
 import { notFound } from 'next/navigation';
+import { Flex, Box, Button, Text } from '@chakra-ui/react';
 import ProfileCurrency from '@modules/account/components/profile-currency';
 
 export const metadata: Metadata = {
@@ -24,14 +25,46 @@ export default async function Profile() {
     }
 
     return (
-        <div className="w-full bg-[#121212] text-white p-8">
-            <div className="mb-8 flex flex-col gap-y-4">
-                <h1 className="text-2xl-semi">Profile</h1>
-                <p className="text-base-regular">
-                    View and update your profile information, including your
-                    name and preferred checkout currency.
-                </p>
-            </div>
+        <Flex
+            backgroundColor={'#121212'}
+            flexDirection={'column'}
+            color={'white'}
+            padding={'10px'}
+            gap={'10px'}
+        >
+            <Flex gap="18px" flexDirection={'column'}>
+                <Flex gap={'15px'}>
+                    <Button
+                        backgroundColor={'primary.indigo.900'}
+                        color={'white'}
+                        borderRadius={'37px'}
+                        fontSize={'18px'}
+                        fontWeight={600}
+                        height={'47px'}
+                    >
+                        Change Photo
+                    </Button>
+                    <Button
+                        backgroundColor={'primary.indigo.900'}
+                        color={'white'}
+                        borderRadius={'37px'}
+                        fontSize={'18px'}
+                        fontWeight={600}
+                        height={'47px'}
+                    >
+                        Remove Photo
+                    </Button>
+                </Flex>
+                <Text color={'#555555'}>
+                    At least 125 x 125 px PNG or JPG file. 1 MB maximum file
+                    size
+                </Text>
+            </Flex>
+
+            <Flex>
+                <Text color={'primary.indigo.900'}>Personal Information</Text>
+            </Flex>
+
             <div className="flex flex-col gap-y-8 w-full">
                 <ProfileName customer={customer} />
                 <Divider />
@@ -49,7 +82,7 @@ export default async function Profile() {
                 {/*<Divider />*/}
                 <ProfileBillingAddress customer={customer} regions={regions} />
             </div>
-        </div>
+        </Flex>
     );
 }
 
