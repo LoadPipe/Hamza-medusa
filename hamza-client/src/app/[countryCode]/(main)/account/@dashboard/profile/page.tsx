@@ -9,9 +9,9 @@ import ProfileCurrency from '@modules/account/components/profile-currency';
 
 import { getCustomer, listRegions } from '@lib/data';
 import { notFound } from 'next/navigation';
-import { Flex, Button, Text } from '@chakra-ui/react';
+import { Flex, Button, Text, Box } from '@chakra-ui/react';
 import ProfileInput from './components/profile-input';
-import PhoneInput from './components/phone-input';
+import ProfilePhoneInput from './components/phone-input';
 
 export const metadata: Metadata = {
     title: 'Profile',
@@ -37,38 +37,46 @@ export default async function Profile() {
             borderRadius={'12px'}
             gap={'10px'}
         >
-            <Flex
-                gap="18px"
-                flexDirection={'column'}
-                maxW={'858px'}
-                width={'100%'}
-            >
-                <Flex gap={'15px'}>
-                    <Button
-                        backgroundColor={'primary.indigo.900'}
-                        color={'white'}
-                        borderRadius={'37px'}
-                        fontSize={'18px'}
-                        fontWeight={600}
-                        height={'47px'}
-                    >
-                        Change Photo
-                    </Button>
-                    <Button
-                        backgroundColor={'primary.indigo.900'}
-                        color={'white'}
-                        borderRadius={'37px'}
-                        fontSize={'18px'}
-                        fontWeight={600}
-                        height={'47px'}
-                    >
-                        Remove Photo
-                    </Button>
+            <Flex maxW={'858px'} width={'100%'}>
+                <Flex
+                    width={'151.5px'}
+                    height={'151.5px'}
+                    borderRadius={'full'}
+                    backgroundColor={'white'}
+                />
+                <Flex
+                    alignSelf={'center'}
+                    ml="2rem"
+                    gap="18px"
+                    flexDirection={'column'}
+                >
+                    <Flex gap={'15px'}>
+                        <Button
+                            backgroundColor={'primary.indigo.900'}
+                            color={'white'}
+                            borderRadius={'37px'}
+                            fontSize={'18px'}
+                            fontWeight={600}
+                            height={'47px'}
+                        >
+                            Change Photo
+                        </Button>
+                        <Button
+                            backgroundColor={'primary.indigo.900'}
+                            color={'white'}
+                            borderRadius={'37px'}
+                            fontSize={'18px'}
+                            fontWeight={600}
+                            height={'47px'}
+                        >
+                            Remove Photo
+                        </Button>
+                    </Flex>
+                    <Text color={'#555555'}>
+                        At least 125 x 125 px PNG or JPG file. 1 MB maximum file
+                        size
+                    </Text>
                 </Flex>
-                <Text color={'#555555'}>
-                    At least 125 x 125 px PNG or JPG file. 1 MB maximum file
-                    size
-                </Text>
             </Flex>
 
             {/* Input personal information */}
@@ -100,7 +108,7 @@ export default async function Profile() {
                 </Flex>
 
                 {/* Phone input */}
-                <PhoneInput label="phone number" />
+                <ProfilePhoneInput label="phone number" />
                 <Button
                     backgroundColor={'primary.indigo.900'}
                     color={'white'}
