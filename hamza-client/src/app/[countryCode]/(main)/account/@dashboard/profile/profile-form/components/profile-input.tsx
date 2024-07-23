@@ -2,7 +2,6 @@
 
 import {
     Flex,
-    Text,
     Input,
     FormControl,
     FormLabel,
@@ -13,9 +12,10 @@ import useProfile from '@store/profile/profile';
 
 interface ProfileInputProps {
     label: string;
+    placeholder: string;
 }
 
-const ProfileInput: React.FC<ProfileInputProps> = ({ label }) => {
+const ProfileInput: React.FC<ProfileInputProps> = ({ label, placeholder }) => {
     const { firstName, lastName, email, setFirstName, setLastName, setEmail } =
         useProfile();
     const [error, setError] = useState<string | null>(null);
@@ -67,6 +67,7 @@ const ProfileInput: React.FC<ProfileInputProps> = ({ label }) => {
                 <Input
                     borderRadius={'12px'}
                     height={'52px'}
+                    placeholder={placeholder}
                     backgroundColor={'#020202'}
                     border={'none'}
                     type={label.toLowerCase() === 'email' ? 'email' : 'text'}

@@ -5,7 +5,12 @@ import ProfileInput from './components/profile-input';
 import ProfilePhoneInput from './components/phone-input';
 import useProfile from '@store/profile/profile';
 
-const ProfileForm = () => {
+type Customer = {
+    first_name: string;
+    last_name: string;
+    email: string;
+};
+const ProfileForm = ({ customer }: { customer: Customer }) => {
     const { firstName, lastName, email, phoneNumber } = useProfile();
     const handleSubmit = () => {
         // Perform form submission or validation logic here
@@ -16,6 +21,7 @@ const ProfileForm = () => {
             phoneNumber,
         });
     };
+    console.log(customer.first_name);
     return (
         <Flex
             mt={'2rem'}
@@ -34,14 +40,23 @@ const ProfileForm = () => {
 
             {/* First and last name input */}
             <Flex gap={'15px'}>
-                <ProfileInput label="first name" />
-                <ProfileInput label="last name" />
+                <ProfileInput
+                    placeholder={customer.first_name}
+                    label="first name"
+                />
+                <ProfileInput
+                    placeholder={customer.last_name}
+                    label="last name"
+                />
             </Flex>
 
             {/* Birthdate and Email input */}
             <Flex gap={'15px'}>
-                <ProfileInput label="birth date" />
-                <ProfileInput label="email" />
+                <ProfileInput
+                    placeholder={customer.first_name}
+                    label="birth date"
+                />
+                <ProfileInput placeholder={customer.email} label="email" />
             </Flex>
 
             {/* Phone input */}

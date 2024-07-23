@@ -24,6 +24,8 @@ export default async function Profile() {
 
     if (!customer || !regions) {
         notFound();
+    } else {
+        console.log(customer);
     }
 
     return (
@@ -40,7 +42,7 @@ export default async function Profile() {
             {/* Avatar update / remove */}
             <ProfileImage />
             {/* Profile Form */}
-            <ProfileForm />
+            <ProfileForm customer={customer} />
         </Flex>
     );
 }
