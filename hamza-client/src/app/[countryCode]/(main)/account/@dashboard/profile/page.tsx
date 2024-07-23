@@ -58,6 +58,7 @@ export default async function Profile() {
                             fontSize={'18px'}
                             fontWeight={600}
                             height={'47px'}
+                            width={'190px'}
                         >
                             Change Photo
                         </Button>
@@ -68,6 +69,7 @@ export default async function Profile() {
                             fontSize={'18px'}
                             fontWeight={600}
                             height={'47px'}
+                            width={'190px'}
                         >
                             Remove Photo
                         </Button>

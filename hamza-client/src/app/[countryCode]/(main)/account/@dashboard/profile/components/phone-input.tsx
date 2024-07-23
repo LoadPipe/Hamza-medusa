@@ -24,6 +24,8 @@ const customStyles = css`
         border-radius: 0 12px 12px 0;
     }
     .PhoneInputCountry {
+        padding-left: 9px;
+        margin: 0px;
         width: 51px;
         background-color: #272727;
         border-radius: 12px 0 0 12px;
