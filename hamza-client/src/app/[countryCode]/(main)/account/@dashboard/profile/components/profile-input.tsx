@@ -14,6 +14,7 @@ const ProfileInput = (props: any) => {
             </Text>
             <Input
                 borderRadius={'12px'}
+                height={'52px'}
                 backgroundColor={'#020202'}
                 border={'none'}
             />

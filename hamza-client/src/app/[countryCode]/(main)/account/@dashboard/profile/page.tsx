@@ -110,6 +110,7 @@ export default async function Profile() {
                 {/* Phone input */}
                 <ProfilePhoneInput label="phone number" />
                 <Button
+                    mt="0.5rem"
                     backgroundColor={'primary.indigo.900'}
                     color={'white'}
                     borderRadius={'37px'}

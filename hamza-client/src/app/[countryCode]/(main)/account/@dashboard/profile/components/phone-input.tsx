@@ -13,7 +13,10 @@ import {
 
 import React, { useState } from 'react';
 import 'react-phone-number-input/style.css';
-import PhoneInput from 'react-phone-number-input';
+import PhoneInput, {
+    formatPhoneNumber,
+    formatPhoneNumberIntl,
+} from 'react-phone-number-input';
 import { css } from '@emotion/react';
 
 const customStyles = css`
@@ -22,7 +25,7 @@ const customStyles = css`
     }
     .PhoneInputInput {
         width: 420px;
-        height: 40px;
+        height: 52px;
         padding: 10px;
         font-size: 16px;
         background-color: #020202;
@@ -50,6 +53,8 @@ const ProfilePhoneInput = (props: any) => {
             </Text>
             <Box css={customStyles}>
                 <PhoneInput
+                    international
+                    withCountryCallingCode
                     value={value}
                     onChange={setValue}
                     defaultCountry="US"
