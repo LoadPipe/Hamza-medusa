@@ -292,14 +292,14 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                                         item.variant?.product?.handle || 'N/A'
                                     }
                                 />
-                                {/*<LocalizedClientLink*/}
-                                {/*    href={`/account/orders/details/${item.order_ids[0]}`} // Ensure order_ids exists*/}
-                                {/*    passHref*/}
-                                {/*>*/}
-                                {/*    <Button colorScheme="blue">*/}
-                                {/*        See details*/}
-                                {/*    </Button>*/}
-                                {/*</LocalizedClientLink>*/}
+                                <LocalizedClientLink
+                                    href={`/account/orders/details/${order.id}`} // Ensure order_ids exists
+                                    passHref
+                                >
+                                    <Button colorScheme="blue">
+                                        See details
+                                    </Button>
+                                </LocalizedClientLink>
                                 {orderStatuses[order.cart_id] === 'canceled' ? (
                                     <Button colorScheme="red" ml={4} isDisabled>
                                         Cancellation Requested
