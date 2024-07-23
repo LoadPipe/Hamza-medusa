@@ -127,10 +127,19 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
             </Flex>
 
             <Flex justifyContent="flex-end" mt={2}>
-                <Button colorScheme="blue" mr={2}>
+                <Button
+                    variant="outline"
+                    colorScheme="white"
+                    borderRadius={'37px'}
+                >
                     Buy Again
                 </Button>
-                <Button colorScheme="blue" mr={2}>
+                <Button
+                    ml={2}
+                    variant="outline"
+                    colorScheme="white"
+                    borderRadius={'37px'}
+                >
                     Contact Seller
                 </Button>
             </Flex>

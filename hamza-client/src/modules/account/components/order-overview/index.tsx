@@ -290,7 +290,11 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                                     href={`/account/orders/details/${order.id}`} // Ensure order_ids exists
                                     passHref
                                 >
-                                    <Button colorScheme="blue">
+                                    <Button
+                                        variant="outline"
+                                        colorScheme="white"
+                                        borderRadius={'37px'}
+                                    >
                                         See details
                                     </Button>
                                 </LocalizedClientLink>
@@ -300,8 +304,9 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                                     </Button>
                                 ) : (
                                     <Button
-                                        variant="solid"
-                                        colorScheme="blue"
+                                        variant="outline"
+                                        colorScheme="white"
+                                        borderRadius={'37px'}
                                         ml={4}
                                         onClick={() => openModal(order.cart_id)}
                                     >
