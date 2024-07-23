@@ -2,19 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import {
-    Checkbox,
     Stack,
-    CheckboxGroup,
+    Switch,
     FormControl,
     FormLabel,
-    Radio,
     RadioGroup,
     Button,
+    Flex,
 } from '@chakra-ui/react';
 import { Region } from '@medusajs/medusa';
-const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import axios from 'axios';
 import toast from 'react-hot-toast';
 import {
     addNotifications,
@@ -101,59 +98,88 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                 Email notifications
             </FormLabel>
             <Stack spacing={3}>
-                <Checkbox
-                    value="orderShipped"
-                    isChecked={selectedNotifications.includes(
-                        'orderShipped' as never
-                    )}
-                    onChange={handleCheckboxChange}
-                >
-                    Notify when order shipped
-                </Checkbox>
-                <Checkbox
-                    value="newProduct"
-                    isChecked={selectedNotifications.includes(
-                        'newProduct' as never
-                    )}
-                    onChange={handleCheckboxChange}
-                >
-                    Notify when followed sellers post a new product
-                </Checkbox>
-                <Checkbox
-                    value="orderStatusChanged"
-                    isChecked={selectedNotifications.includes(
-                        'orderStatusChanged' as never
-                    )}
-                    onChange={handleCheckboxChange}
-                >
-                    Notify when order status changed
-                </Checkbox>
-                <Checkbox
-                    value="promotions"
-                    isChecked={selectedNotifications.includes(
-                        'promotions' as never
-                    )}
-                    onChange={handleCheckboxChange}
-                >
-                    Notify for promotions/discounts
-                </Checkbox>
-                <Checkbox
-                    value="surveys"
-                    isChecked={selectedNotifications.includes(
-                        'surveys' as never
-                    )}
-                    onChange={handleCheckboxChange}
-                >
-                    Notify for surveys
-                </Checkbox>
-                <Checkbox
-                    value="none"
-                    isChecked={selectedNotifications.includes('none' as never)}
-                    onChange={handleCheckboxChange}
-                >
-                    No notifications (when this is checked, other checkboxes are
-                    cleared)
-                </Checkbox>
+                <Flex>
+                    <Switch
+                        value="orderShipped"
+                        isChecked={selectedNotifications.includes(
+                            'orderShipped' as never
+                        )}
+                        mr={4}
+                        colorScheme="primary.green"
+                        onChange={handleCheckboxChange}
+                    ></Switch>
+                    <FormLabel>Notify when order shipped</FormLabel>
+                </Flex>
+
+                <Flex>
+                    <Switch
+                        value="newProduct"
+                        isChecked={selectedNotifications.includes(
+                            'newProduct' as never
+                        )}
+                        mr={4}
+                        colorScheme="primary.green"
+                        onChange={handleCheckboxChange}
+                    ></Switch>
+                    <FormLabel>
+                        Notify when followed sellers post a new product
+                    </FormLabel>
+                </Flex>
+
+                <Flex>
+                    <Switch
+                        value="orderStatusChanged"
+                        isChecked={selectedNotifications.includes(
+                            'orderStatusChanged' as never
+                        )}
+                        mr={4}
+                        colorScheme="primary.green"
+                        onChange={handleCheckboxChange}
+                    ></Switch>
+                    <FormLabel> Notify when order status changed</FormLabel>
+                </Flex>
+
+                <Flex>
+                    <Switch
+                        value="promotions"
+                        isChecked={selectedNotifications.includes(
+                            'promotions' as never
+                        )}
+                        mr={4}
+                        colorScheme="primary.green"
+                        onChange={handleCheckboxChange}
+                    ></Switch>
+                    <FormLabel>Notify for promotions/discounts</FormLabel>
+                </Flex>
+
+                <Flex>
+                    <Switch
+                        value="surveys"
+                        isChecked={selectedNotifications.includes(
+                            'surveys' as never
+                        )}
+                        mr={4}
+                        colorScheme="primary.green"
+                        onChange={handleCheckboxChange}
+                    ></Switch>
+                    <FormLabel>Notify for surveys</FormLabel>
+                </Flex>
+
+                <Flex>
+                    <Switch
+                        value="none"
+                        isChecked={selectedNotifications.includes(
+                            'none' as never
+                        )}
+                        mr={4}
+                        colorScheme="primary.green"
+                        onChange={handleCheckboxChange}
+                    ></Switch>
+                    <FormLabel>
+                        No notifications (when this is checked, other checkboxes
+                        are cleared)
+                    </FormLabel>
+                </Flex>
             </Stack>
             <FormLabel
                 fontWeight={'bold'}
@@ -164,15 +190,44 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
             >
                 Push Notifications:
             </FormLabel>
+            <FormLabel mb={8}>
+                Get push notifications to find out what’s going on when you’re
+                offline
+            </FormLabel>
             <RadioGroup
+                mb={8}
                 value={notificationMethod}
                 onChange={setNotificationMethod}
             >
-                <Stack spacing={3} direction="row">
-                    <Radio value="sms">SMS</Radio>
-                    <Radio value="email">Email</Radio>
-                    <Radio value="line">LINE</Radio>
-                    <Radio value="whatsapp">WhatsApp</Radio>
+                <Stack spacing={3} direction="column">
+                    <Switch
+                        colorScheme="primary.green"
+                        onChange={handleCheckboxChange}
+                        value="sms"
+                    >
+                        SMS
+                    </Switch>
+                    <Switch
+                        onChange={handleCheckboxChange}
+                        colorScheme="primary.green"
+                        value="email"
+                    >
+                        Email
+                    </Switch>
+                    <Switch
+                        onChange={handleCheckboxChange}
+                        colorScheme="primary.green"
+                        value="line"
+                    >
+                        LINE
+                    </Switch>
+                    <Switch
+                        onChange={handleCheckboxChange}
+                        colorScheme="primary.green"
+                        value="whatsapp"
+                    >
+                        WhatsApp
+                    </Switch>
                 </Stack>
             </RadioGroup>
             <Button
