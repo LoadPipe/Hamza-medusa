@@ -10,6 +10,7 @@ import { getCustomer, listRegions } from '@lib/data';
 import { notFound } from 'next/navigation';
 import { Flex, Box, Button, Text, Input } from '@chakra-ui/react';
 import ProfileCurrency from '@modules/account/components/profile-currency';
+import ProfileInput from './components/profile-input';
 
 export const metadata: Metadata = {
     title: 'Profile',
@@ -78,84 +79,15 @@ export default async function Profile() {
                     </Text>
 
                     <Flex gap={'15px'}>
-                        <Flex
-                            flexDirection={'column'}
-                            maxW={'420px'}
-                            width={'100%'}
-                        >
-                            <Text fontSize={'12px'} pl="1rem" mb={'8px'}>
-                                FIRST NAME
-                            </Text>
-                            <Input
-                                borderRadius={'12px'}
-                                backgroundColor={'#020202'}
-                                border={'none'}
-                            />
-                        </Flex>
-
-                        <Flex
-                            flexDirection={'column'}
-                            maxW={'420px'}
-                            width={'100%'}
-                        >
-                            <Text fontSize={'12px'} pl="1rem" mb={'8px'}>
-                                LAST NAME
-                            </Text>
-                            <Input
-                                maxW={'420px'}
-                                width={'100%'}
-                                borderRadius={'12px'}
-                                backgroundColor={'#020202'}
-                                border={'none'}
-                            />
-                        </Flex>
+                        <ProfileInput label="first name" />
+                        <ProfileInput label="last name" />
                     </Flex>
 
                     <Flex gap={'15px'}>
-                        <Flex
-                            flexDirection={'column'}
-                            maxW={'420px'}
-                            width={'100%'}
-                        >
-                            <Text fontSize={'12px'} pl="1rem" mb={'8px'}>
-                                BIRTH DATE
-                            </Text>
-                            <Input
-                                borderRadius={'12px'}
-                                backgroundColor={'#020202'}
-                                border={'none'}
-                            />
-                        </Flex>
-
-                        <Flex
-                            flexDirection={'column'}
-                            maxW={'420px'}
-                            width={'100%'}
-                        >
-                            <Text fontSize={'12px'} pl="1rem" mb={'8px'}>
-                                EMAIL
-                            </Text>
-                            <Input
-                                borderRadius={'12px'}
-                                backgroundColor={'#020202'}
-                                border={'none'}
-                            />
-                        </Flex>
+                        <ProfileInput label="birth date" />
+                        <ProfileInput label="email" />
                     </Flex>
-                    <Flex
-                        flexDirection={'column'}
-                        maxW={'420px'}
-                        width={'100%'}
-                    >
-                        <Text fontSize={'12px'} pl="1rem" mb={'8px'}>
-                            PHONE NUMBER
-                        </Text>
-                        <Input
-                            borderRadius={'12px'}
-                            backgroundColor={'#020202'}
-                            border={'none'}
-                        />
-                    </Flex>
+                    <ProfileInput label="phone number" />
                 </Flex>
             </Flex>
         </Flex>
