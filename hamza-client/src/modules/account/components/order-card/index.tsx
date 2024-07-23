@@ -22,6 +22,9 @@ type Order = {
     thumbnail: string;
     title: string;
     description: string;
+    variant: {
+        product_id: string;
+    };
     region: {
         id: string;
         name: string;
@@ -34,9 +37,6 @@ type OrderCardProps = {
 };
 
 const OrderCard = ({ order, handle }: OrderCardProps) => {
-    if (!order) {
-        return <div>Loading...</div>; // Display loading message if order is undefined
-    }
     const [vendor, setVendor] = useState('');
     const orderString = typeof order.currency_code;
     console.log(
@@ -60,6 +60,10 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
 
         fetchVendor();
     }, [order]);
+
+    if (!order) {
+        return <div>Loading...</div>; // Display loading message if order is undefined
+    }
     return (
         <Box
             bg={'black'}

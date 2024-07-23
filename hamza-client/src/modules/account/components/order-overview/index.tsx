@@ -238,11 +238,6 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
         return;
     };
 
-    // console.log('groupedByCartId: ', groupedByCartId);
-    // customerOrder?.map((order: any) => {
-    //     console.log('Customer Order: ', order);
-    // });
-
     if (isLoading) {
         return <div>Loading...</div>; // Loading indicator
     }
@@ -268,20 +263,19 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                 >
                     <div className="p-4 bg-gray-700">
                         Cart ID {order.cart_id} - Total Items:{' '}
-                        {order.cart?.items?.length || 0} // Correcting path to
-                        items and providing a fallback
+                        {order.cart?.items?.length || 0}
                         <span
                             className="pl-2 text-blue-400 underline underline-offset-1 cursor-pointer"
                             onClick={() =>
                                 handleReorder(order.cart?.items || [])
-                            } // Ensuring items array is passed correctly
+                            }
                         >
                             Re-order
                         </span>
                     </div>
                     {order.cart?.items?.map(
                         (
-                            item // Adjusting the map to the correct path
+                            item: any // Adjusting the map to the correct path
                         ) => (
                             <div key={item.id}>
                                 item: {item.id} <br />
