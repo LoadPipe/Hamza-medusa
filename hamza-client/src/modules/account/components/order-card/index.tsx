@@ -102,8 +102,8 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
                 />
 
                 <Box flex="1">
-                    <Flex justifyContent="space-between" alignItems="center">
-                        <Flex direction="column" mt={2}>
+                    <Flex justifyContent="space-between">
+                        <Flex direction="column">
                             <Text fontWeight="bold" fontSize="lg">
                                 {order.title}
                             </Text>
