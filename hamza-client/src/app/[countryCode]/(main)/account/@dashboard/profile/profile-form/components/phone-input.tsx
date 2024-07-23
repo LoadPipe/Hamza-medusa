@@ -7,6 +7,7 @@ import 'react-phone-number-input/style.css';
 import PhoneInput, {
     formatPhoneNumber,
     formatPhoneNumberIntl,
+    Value,
 } from 'react-phone-number-input';
 import { css } from '@emotion/react';
 
@@ -33,7 +34,7 @@ const customStyles = css`
 `;
 
 const ProfilePhoneInput = (props: any) => {
-    const [value, setValue] = useState();
+    const [value, setValue] = useState<string | undefined>();
     console.log(value);
     return (
         <FormControl id="phone" isRequired>
