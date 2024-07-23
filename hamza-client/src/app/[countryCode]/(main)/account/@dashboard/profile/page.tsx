@@ -11,6 +11,7 @@ import { getCustomer, listRegions } from '@lib/data';
 import { notFound } from 'next/navigation';
 import { Flex, Button, Text } from '@chakra-ui/react';
 import ProfileInput from './components/profile-input';
+import PhoneInput from './components/phone-input';
 
 export const metadata: Metadata = {
     title: 'Profile',
@@ -71,7 +72,6 @@ export default async function Profile() {
             </Flex>
 
             {/* Input personal information */}
-
             <Flex
                 mt={'2rem'}
                 flexDirection={'column'}
@@ -87,16 +87,20 @@ export default async function Profile() {
                     Personal Information
                 </Text>
 
+                {/* First and last name input */}
                 <Flex gap={'15px'}>
                     <ProfileInput label="first name" />
                     <ProfileInput label="last name" />
                 </Flex>
 
+                {/* Birthdate and Email input */}
                 <Flex gap={'15px'}>
                     <ProfileInput label="birth date" />
                     <ProfileInput label="email" />
                 </Flex>
-                <ProfileInput label="phone number" />
+
+                {/* Phone input */}
+                <PhoneInput label="phone number" />
                 <Button
                     backgroundColor={'primary.indigo.900'}
                     color={'white'}
