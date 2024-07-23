@@ -1,15 +1,6 @@
 'use client';
 
-import {
-    Flex,
-    Text,
-    Input,
-    InputLeftAddon,
-    InputGroup,
-    FormControl,
-    FormLabel,
-    Box,
-} from '@chakra-ui/react';
+import { Text, FormControl, Box } from '@chakra-ui/react';
 
 import React, { useState } from 'react';
 import 'react-phone-number-input/style.css';

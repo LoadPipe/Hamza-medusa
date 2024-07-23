@@ -1,16 +1,16 @@
 'use client';
 
 import { Flex, Text, Input } from '@chakra-ui/react';
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, ChangeEvent, useEffect } from 'react';
+import useProfile from '@store/profile/profile';
 
 interface ProfileInputProps {
     label: string;
 }
 
 const ProfileInput: React.FC<ProfileInputProps> = ({ label }) => {
-    const [firstName, setFirstName] = useState<string>('');
-    const [lastName, setLastName] = useState<string>('');
-    const [email, setEmail] = useState<string>('');
+    const { firstName, lastName, email, setFirstName, setLastName, setEmail } =
+        useProfile();
 
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
@@ -29,6 +29,12 @@ const ProfileInput: React.FC<ProfileInputProps> = ({ label }) => {
                 break;
         }
     };
+
+    useEffect(() => {
+        console.log('First Name:', firstName);
+        console.log('Last Name:', lastName);
+        console.log('Email:', email);
+    }, [firstName, lastName, email]);
 
     return (
         <Flex flexDirection={'column'} maxW={'420px'} width={'100%'}>
