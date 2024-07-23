@@ -1,11 +1,18 @@
-import { useMemo } from 'react';
-import { Button } from '@medusajs/ui';
-
 import Thumbnail from '@modules/products/components/thumbnail';
 import { formatAmount } from '@lib/util/prices';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 
+import {
+    Box,
+    Flex,
+    Text,
+    Button,
+    Image,
+    Link,
+    useColorModeValue,
+} from '@chakra-ui/react';
 // Update the type definitions to reflect the structure of the received order
 type OrderDetails = {
     thumbnail: string;
@@ -40,6 +47,8 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
     if (!order) {
         return <div>Loading...</div>; // Display loading message if order is undefined
     }
+    const textColor = useColorModeValue('gray.800', 'white');
+    const borderColor = useColorModeValue('gray.200', 'gray.700');
     // console.log(`Order Card information is: ${JSON.stringify(order)}`);
     const orderString = typeof order.currency_code;
     // console.log(
@@ -49,38 +58,56 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
     console.log(`Product details ${JSON.stringify(handle)} `);
 
     return (
-        <div className="flex flex-col">
-            {' '}
-            <div>
-                <h3>{order.title}</h3>
-                <p>{order.description}</p>
-                {/* Add other order details here */}
-            </div>
-            <div className="flex items-center divide-x divide-gray-200 text-small-regular text-white">
-                <span className="pr-2">
-                    {new Date(order.created_at).toDateString()}
-                </span>
-                <span className="px-2">
-                    {formatCryptoPrice(order.unit_price, order.currency_code)}{' '}
-                    {order.currency_code}
-                </span>
-                <span className="pl-2">{order.quantity} items</span>{' '}
-                {/* Static '1 item' since there are no items array */}
-            </div>
-            <div className="my-4">
-                <LocalizedClientLink href={`/products/${handle}`}>
-                    <Thumbnail
-                        thumbnail={order.thumbnail}
-                        images={[]}
-                        size={'small'}
+        <Box
+            bg={useColorModeValue('white', 'gray.800')}
+            p={5}
+            rounded="lg"
+            shadow="base"
+        >
+            <Flex alignItems="center" justifyContent="space-between">
+                <Box flexShrink={0}>
+                    <Image
+                        borderRadius="lg"
+                        width={{ base: 24, md: 48 }}
+                        src={order.thumbnail}
+                        alt={`Thumbnail of ${order.title}`}
                     />
-                </LocalizedClientLink>
-                <div className="text-small-regular text-white mt-2">
-                    <span className="font-semibold">{order.title}</span>
-                    <p>{order.description}</p>
-                </div>
-            </div>
-        </div>
+                </Box>
+                <Box flex="1" ml={5}>
+                    <Text fontWeight="bold" fontSize="lg" color={textColor}>
+                        {order.title}
+                    </Text>
+                    <Text fontSize="sm" color={textColor}>
+                        {order.description}
+                    </Text>
+                    <Flex align="center" mt={2}>
+                        <Text
+                            fontSize="sm"
+                            color={textColor}
+                            pr={2}
+                            borderRight="1px"
+                            borderColor={borderColor}
+                        >
+                            {new Date(order.created_at).toLocaleDateString()}
+                        </Text>
+                        <Text fontSize="sm" color={textColor} px={2}>
+                            {order.unit_price} {order.currency_code}
+                        </Text>
+                        <Text fontSize="sm" color={textColor} pl={2}>
+                            {order.quantity} items
+                        </Text>
+                    </Flex>
+                </Box>
+                <Flex alignItems="center">
+                    <Button colorScheme="blue" mr={2}>
+                        Buy Again
+                    </Button>
+                    <Link href={`/contact-seller/${order.id}`} isExternal>
+                        Contact Seller <ExternalLinkIcon mx="2px" />
+                    </Link>
+                </Flex>
+            </Flex>
+        </Box>
     );
 };
 
