@@ -92,7 +92,14 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
 
     return (
         <FormControl>
-            <FormLabel>Notification Preferences</FormLabel>
+            <FormLabel
+                fontWeight={'bold'}
+                fontSize="lg"
+                mb={4}
+                color={'primary.green.900'}
+            >
+                Email notifications
+            </FormLabel>
             <Stack spacing={3}>
                 <Checkbox
                     value="orderShipped"
@@ -148,7 +155,15 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                     cleared)
                 </Checkbox>
             </Stack>
-            <FormLabel mt={4}>Notify by:</FormLabel>
+            <FormLabel
+                fontWeight={'bold'}
+                fontSize="lg"
+                mt={8}
+                mb={4}
+                color={'primary.green.900'}
+            >
+                Push Notifications:
+            </FormLabel>
             <RadioGroup
                 value={notificationMethod}
                 onChange={setNotificationMethod}
@@ -160,7 +175,11 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                     <Radio value="whatsapp">WhatsApp</Radio>
                 </Stack>
             </RadioGroup>
-            <Button mt={4} colorScheme="teal" onClick={handleSave}>
+            <Button
+                mt={4}
+                backgroundColor={'primary.green.900'}
+                onClick={handleSave}
+            >
                 Save
             </Button>
         </FormControl>

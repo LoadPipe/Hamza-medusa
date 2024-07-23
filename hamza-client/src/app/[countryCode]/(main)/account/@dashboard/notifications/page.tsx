@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-
+import { Text } from '@chakra-ui/react';
 import Notification from '@modules/account/components/notifications';
 
 import { getCustomer } from '@lib/data';
@@ -28,10 +28,12 @@ export default async function Notifications() {
     return (
         <div className="w-full bg-black text-white p-8">
             <div className="mb-8 flex flex-col gap-y-4">
-                <h1 className="text-2xl-semi">Notifications</h1>
+                <Text className="text-2xl-semi" color={'primary.indigo.900'}>
+                    Notification Setting
+                </Text>
                 <p className="text-base-regular">
-                    View and update your notifications, you can toggle them on
-                    or off. Saving your notifications will make them available
+                    Select the kinds of notifications you get about your
+                    activities and recommendations.
                 </p>
             </div>
             <Notification customer={customer} region={region} />
