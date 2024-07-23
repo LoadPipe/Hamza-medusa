@@ -148,6 +148,11 @@ const Items: React.FC<Props> = ({ items, handles }) => {
                                     <Tr key={`review-${item.id}`}>
                                         <Td colSpan={3}>
                                             <Button
+                                                variant="solid"
+                                                backgroundColor={
+                                                    'primary.indigo.900'
+                                                }
+                                                borderRadius={'37px'}
                                                 m={2}
                                                 onClick={() =>
                                                     handleItemClick(item)
