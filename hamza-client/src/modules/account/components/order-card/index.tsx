@@ -73,7 +73,25 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
             shadow="base"
             maxWidth="1000px"
             m="auto"
+            mt={2}
         >
+            <Flex alignItems="center" mb={2}>
+                <Text
+                    fontSize={{ base: '14px', md: '24px' }}
+                    fontWeight="bold"
+                    noOfLines={1}
+                >
+                    {vendor}
+                </Text>
+                <Flex
+                    display={{ base: 'none', md: 'flex' }}
+                    ml={2}
+                    alignItems="center"
+                >
+                    <FaCheckCircle color="#3196DF" />
+                </Flex>
+            </Flex>
+
             <Flex alignItems="center" justifyContent="space-between">
                 <Image
                     borderRadius="lg"
@@ -84,22 +102,6 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
                 />
 
                 <Box flex="1">
-                    <Flex flex="1">
-                        <Text
-                            fontSize={{ base: '14px', md: '24px' }}
-                            fontWeight="bold"
-                            noOfLines={1}
-                        >
-                            {vendor}
-                        </Text>
-                        <Flex
-                            display={{ base: 'none', md: 'flex' }}
-                            ml={2}
-                            alignItems="center"
-                        >
-                            <FaCheckCircle color="#3196DF" />
-                        </Flex>
-                    </Flex>
                     <Flex justifyContent="space-between" alignItems="center">
                         <Flex direction="column" mt={2}>
                             <Text fontWeight="bold" fontSize="lg">
