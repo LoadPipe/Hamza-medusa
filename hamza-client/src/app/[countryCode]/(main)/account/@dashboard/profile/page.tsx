@@ -5,11 +5,11 @@ import ProfileBillingAddress from '@modules/account/components/profile-billing-a
 import ProfileEmail from '@modules/account/components/profile-email';
 import ProfileName from '@modules/account/components/profile-name';
 import ProfilePassword from '@modules/account/components/profile-password';
+import ProfileCurrency from '@modules/account/components/profile-currency';
 
 import { getCustomer, listRegions } from '@lib/data';
 import { notFound } from 'next/navigation';
-import { Flex, Box, Button, Text, Input } from '@chakra-ui/react';
-import ProfileCurrency from '@modules/account/components/profile-currency';
+import { Flex, Button, Text } from '@chakra-ui/react';
 import ProfileInput from './components/profile-input';
 
 export const metadata: Metadata = {
@@ -29,11 +29,19 @@ export default async function Profile() {
         <Flex
             backgroundColor={'#121212'}
             flexDirection={'column'}
+            justifyContent={'center'}
+            alignItems={'center'}
             color={'white'}
-            padding={'10px'}
+            height={'739px'}
+            borderRadius={'12px'}
             gap={'10px'}
         >
-            <Flex gap="18px" flexDirection={'column'}>
+            <Flex
+                gap="18px"
+                flexDirection={'column'}
+                maxW={'858px'}
+                width={'100%'}
+            >
                 <Flex gap={'15px'}>
                     <Button
                         backgroundColor={'primary.indigo.900'}
@@ -63,32 +71,43 @@ export default async function Profile() {
             </Flex>
 
             {/* Input personal information */}
-            <Flex justifyContent={'center'} alignItems={'center'}>
-                <Flex
-                    flexDirection={'column'}
-                    maxW={'858px'}
-                    width={'100%'}
-                    gap={'23px'}
+
+            <Flex
+                mt={'2rem'}
+                flexDirection={'column'}
+                maxW={'858px'}
+                width={'100%'}
+                gap={'23px'}
+            >
+                <Text
+                    fontSize={'18px'}
+                    fontWeight={600}
+                    color={'primary.indigo.900'}
                 >
-                    <Text
-                        fontSize={'18px'}
-                        fontWeight={600}
-                        color={'primary.indigo.900'}
-                    >
-                        Personal Information
-                    </Text>
+                    Personal Information
+                </Text>
 
-                    <Flex gap={'15px'}>
-                        <ProfileInput label="first name" />
-                        <ProfileInput label="last name" />
-                    </Flex>
-
-                    <Flex gap={'15px'}>
-                        <ProfileInput label="birth date" />
-                        <ProfileInput label="email" />
-                    </Flex>
-                    <ProfileInput label="phone number" />
+                <Flex gap={'15px'}>
+                    <ProfileInput label="first name" />
+                    <ProfileInput label="last name" />
                 </Flex>
+
+                <Flex gap={'15px'}>
+                    <ProfileInput label="birth date" />
+                    <ProfileInput label="email" />
+                </Flex>
+                <ProfileInput label="phone number" />
+                <Button
+                    backgroundColor={'primary.indigo.900'}
+                    color={'white'}
+                    borderRadius={'37px'}
+                    fontSize={'18px'}
+                    fontWeight={600}
+                    height={'47px'}
+                    width={'190px'}
+                >
+                    Update
+                </Button>
             </Flex>
         </Flex>
     );
