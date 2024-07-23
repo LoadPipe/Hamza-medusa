@@ -10,8 +10,8 @@ import ProfileCurrency from '@modules/account/components/profile-currency';
 import { getCustomer, listRegions } from '@lib/data';
 import { notFound } from 'next/navigation';
 import { Flex, Button, Text, Box } from '@chakra-ui/react';
-import ProfileInput from './components/profile-input';
-import ProfilePhoneInput from './components/phone-input';
+import ProfileForm from './profile-form/profile-form';
+import ProfileImage from './profile-image/profile-image';
 
 export const metadata: Metadata = {
     title: 'Profile',
@@ -37,93 +37,10 @@ export default async function Profile() {
             borderRadius={'12px'}
             gap={'10px'}
         >
-            <Flex maxW={'858px'} width={'100%'}>
-                <Flex
-                    width={'151.5px'}
-                    height={'151.5px'}
-                    borderRadius={'full'}
-                    backgroundColor={'white'}
-                />
-                <Flex
-                    alignSelf={'center'}
-                    ml="2rem"
-                    gap="18px"
-                    flexDirection={'column'}
-                >
-                    <Flex gap={'15px'}>
-                        <Button
-                            backgroundColor={'primary.indigo.900'}
-                            color={'white'}
-                            borderRadius={'37px'}
-                            fontSize={'18px'}
-                            fontWeight={600}
-                            height={'47px'}
-                            width={'190px'}
-                        >
-                            Change Photo
-                        </Button>
-                        <Button
-                            backgroundColor={'primary.indigo.900'}
-                            color={'white'}
-                            borderRadius={'37px'}
-                            fontSize={'18px'}
-                            fontWeight={600}
-                            height={'47px'}
-                            width={'190px'}
-                        >
-                            Remove Photo
-                        </Button>
-                    </Flex>
-                    <Text color={'#555555'}>
-                        At least 125 x 125 px PNG or JPG file. 1 MB maximum file
-                        size
-                    </Text>
-                </Flex>
-            </Flex>
-
-            {/* Input personal information */}
-            <Flex
-                mt={'2rem'}
-                flexDirection={'column'}
-                maxW={'858px'}
-                width={'100%'}
-                gap={'23px'}
-            >
-                <Text
-                    fontSize={'18px'}
-                    fontWeight={600}
-                    color={'primary.indigo.900'}
-                >
-                    Personal Information
-                </Text>
-
-                {/* First and last name input */}
-                <Flex gap={'15px'}>
-                    <ProfileInput label="first name" />
-                    <ProfileInput label="last name" />
-                </Flex>
-
-                {/* Birthdate and Email input */}
-                <Flex gap={'15px'}>
-                    <ProfileInput label="birth date" />
-                    <ProfileInput label="email" />
-                </Flex>
-
-                {/* Phone input */}
-                <ProfilePhoneInput label="phone number" />
-                <Button
-                    mt="0.5rem"
-                    backgroundColor={'primary.indigo.900'}
-                    color={'white'}
-                    borderRadius={'37px'}
-                    fontSize={'18px'}
-                    fontWeight={600}
-                    height={'47px'}
-                    width={'190px'}
-                >
-                    Update
-                </Button>
-            </Flex>
+            {/* Avatar update / remove */}
+            <ProfileImage />
+            {/* Profile Form */}
+            <ProfileForm />
         </Flex>
     );
 }

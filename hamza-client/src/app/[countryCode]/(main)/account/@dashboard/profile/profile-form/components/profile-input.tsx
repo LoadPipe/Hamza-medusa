@@ -8,7 +8,7 @@ import {
     FormLabel,
     FormErrorMessage,
 } from '@chakra-ui/react';
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import useProfile from '@store/profile/profile';
 
 interface ProfileInputProps {
@@ -47,11 +47,11 @@ const ProfileInput: React.FC<ProfileInputProps> = ({ label }) => {
         }
     };
 
-    useEffect(() => {
-        console.log('First Name:', firstName);
-        console.log('Last Name:', lastName);
-        console.log('Email:', email);
-    }, [firstName, lastName, email]);
+    // useEffect(() => {
+    //     console.log('First Name:', firstName);
+    //     console.log('Last Name:', lastName);
+    //     console.log('Email:', email);
+    // }, [firstName, lastName, email]);
 
     return (
         <Flex flexDirection={'column'} maxW={'420px'} width={'100%'}>
