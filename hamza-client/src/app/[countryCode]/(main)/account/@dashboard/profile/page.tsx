@@ -7,7 +7,7 @@ import ProfileName from '@modules/account/components/profile-name';
 import ProfilePassword from '@modules/account/components/profile-password';
 import ProfileCurrency from '@modules/account/components/profile-currency';
 
-import { getCustomer, listRegions } from '@lib/data';
+import { getCustomer, listRegions, updateCustomer } from '@lib/data';
 import { notFound } from 'next/navigation';
 import { Flex, Button, Text, Box } from '@chakra-ui/react';
 import ProfileForm from './profile-form/profile-form';

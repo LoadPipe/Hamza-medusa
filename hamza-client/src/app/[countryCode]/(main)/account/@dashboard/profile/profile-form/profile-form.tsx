@@ -4,24 +4,33 @@ import { Flex, Button, Text } from '@chakra-ui/react';
 import ProfileInput from './components/profile-input';
 import ProfilePhoneInput from './components/phone-input';
 import useProfile from '@store/profile/profile';
+import { updateCustomer } from '@lib/data';
+import { customerKeys } from 'medusa-react';
 
 type Customer = {
+    id: string;
     first_name: string;
     last_name: string;
     email: string;
 };
 const ProfileForm = ({ customer }: { customer: Customer }) => {
     const { firstName, lastName, email, phoneNumber } = useProfile();
-    const handleSubmit = () => {
-        // Perform form submission or validation logic here
-        console.log('Form Submitted', {
-            firstName,
-            lastName,
-            email,
-            phoneNumber,
-        });
+    const handleSubmit = async () => {
+        try {
+            const updatedCustomer = {
+                first_name: firstName,
+                last_name: 'boy',
+                email: 'johnbajada01@gmail.com',
+            };
+            await updateCustomer(updatedCustomer);
+            alert('Profile updated successfully');
+            console.log(customer);
+        } catch (error) {
+            alert('Failed to update profile');
+            console.error('Error updating profile:', error);
+        }
     };
-    console.log(customer.first_name);
+
     return (
         <Flex
             mt={'2rem'}
