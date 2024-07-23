@@ -261,24 +261,24 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                     key={order.id} // Changed from cart_id to id since it's more reliable and unique
                     className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
                 >
-                    <div className="p-4 bg-gray-700">
-                        Cart ID {order.cart_id} - Total Items:{' '}
-                        {order.cart?.items?.length || 0}
-                        <span
-                            className="pl-2 text-blue-400 underline underline-offset-1 cursor-pointer"
-                            onClick={() =>
-                                handleReorder(order.cart?.items || [])
-                            }
-                        >
-                            Re-order
-                        </span>
-                    </div>
+                    {/*<div className="p-4 bg-gray-700">*/}
+                    {/*    Cart ID {order.cart_id} - Total Items:{' '}*/}
+                    {/*    {order.cart?.items?.length || 0}*/}
+                    {/*    <span*/}
+                    {/*        className="pl-2 text-blue-400 underline underline-offset-1 cursor-pointer"*/}
+                    {/*        onClick={() =>*/}
+                    {/*            handleReorder(order.cart?.items || [])*/}
+                    {/*        }*/}
+                    {/*    >*/}
+                    {/*        Re-order*/}
+                    {/*    </span>*/}
+                    {/*</div>*/}
                     {order.cart?.items?.map(
                         (
                             item: any // Adjusting the map to the correct path
                         ) => (
                             <div key={item.id}>
-                                item: {item.id} <br />
+                                {/*item: {item.id} <br />*/}
                                 <OrderCard
                                     key={item.id}
                                     order={item}

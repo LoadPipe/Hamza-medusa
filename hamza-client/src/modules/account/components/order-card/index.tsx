@@ -84,33 +84,32 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
                 />
 
                 <Box flex="1">
+                    <Flex flex="1">
+                        <Text
+                            fontSize={{ base: '14px', md: '24px' }}
+                            fontWeight="bold"
+                            noOfLines={1}
+                        >
+                            {vendor}
+                        </Text>
+                        <Flex
+                            display={{ base: 'none', md: 'flex' }}
+                            ml={2}
+                            alignItems="center"
+                        >
+                            <FaCheckCircle color="#3196DF" />
+                        </Flex>
+                    </Flex>
                     <Flex justifyContent="space-between" alignItems="center">
-                        <Flex alignItems="center">
-                            <Text
-                                fontSize={{ base: '14px', md: '24px' }}
-                                fontWeight="bold"
-                                noOfLines={1}
-                            >
-                                {vendor}
+                        <Flex direction="column" mt={2}>
+                            <Text fontWeight="bold" fontSize="lg">
+                                {order.title}
                             </Text>
-                            <Flex
-                                display={{ base: 'none', md: 'flex' }}
-                                ml={2}
-                                alignItems="center"
-                            >
-                                <FaCheckCircle color="#3196DF" />
-                            </Flex>
+                            <Text fontSize="sm">{order.description}</Text>
                         </Flex>
                         <Text fontSize="md" fontWeight="semibold">
                             {order.unit_price} {order.currency_code}
                         </Text>
-                    </Flex>
-
-                    <Flex direction="column" mt={2}>
-                        <Text fontWeight="bold" fontSize="lg">
-                            {order.title}
-                        </Text>
-                        <Text fontSize="sm">{order.description}</Text>
                     </Flex>
 
                     <Flex
