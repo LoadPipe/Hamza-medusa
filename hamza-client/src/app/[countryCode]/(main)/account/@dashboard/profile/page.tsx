@@ -8,7 +8,7 @@ import ProfilePassword from '@modules/account/components/profile-password';
 
 import { getCustomer, listRegions } from '@lib/data';
 import { notFound } from 'next/navigation';
-import { Flex, Box, Button, Text } from '@chakra-ui/react';
+import { Flex, Box, Button, Text, Input } from '@chakra-ui/react';
 import ProfileCurrency from '@modules/account/components/profile-currency';
 
 export const metadata: Metadata = {
@@ -61,31 +61,103 @@ export default async function Profile() {
                 </Text>
             </Flex>
 
-            <Flex>
-                <Text color={'primary.indigo.900'}>Personal Information</Text>
+            {/* Input personal information */}
+            <Flex justifyContent={'center'} alignItems={'center'}>
+                <Flex
+                    flexDirection={'column'}
+                    maxW={'858px'}
+                    width={'100%'}
+                    gap={'23px'}
+                >
+                    <Text
+                        fontSize={'18px'}
+                        fontWeight={600}
+                        color={'primary.indigo.900'}
+                    >
+                        Personal Information
+                    </Text>
+
+                    <Flex gap={'15px'}>
+                        <Flex
+                            flexDirection={'column'}
+                            maxW={'420px'}
+                            width={'100%'}
+                        >
+                            <Text fontSize={'12px'} pl="1rem" mb={'8px'}>
+                                FIRST NAME
+                            </Text>
+                            <Input
+                                borderRadius={'12px'}
+                                backgroundColor={'#020202'}
+                                border={'none'}
+                            />
+                        </Flex>
+
+                        <Flex
+                            flexDirection={'column'}
+                            maxW={'420px'}
+                            width={'100%'}
+                        >
+                            <Text fontSize={'12px'} pl="1rem" mb={'8px'}>
+                                LAST NAME
+                            </Text>
+                            <Input
+                                maxW={'420px'}
+                                width={'100%'}
+                                borderRadius={'12px'}
+                                backgroundColor={'#020202'}
+                                border={'none'}
+                            />
+                        </Flex>
+                    </Flex>
+
+                    <Flex gap={'15px'}>
+                        <Flex
+                            flexDirection={'column'}
+                            maxW={'420px'}
+                            width={'100%'}
+                        >
+                            <Text fontSize={'12px'} pl="1rem" mb={'8px'}>
+                                BIRTH DATE
+                            </Text>
+                            <Input
+                                borderRadius={'12px'}
+                                backgroundColor={'#020202'}
+                                border={'none'}
+                            />
+                        </Flex>
+
+                        <Flex
+                            flexDirection={'column'}
+                            maxW={'420px'}
+                            width={'100%'}
+                        >
+                            <Text fontSize={'12px'} pl="1rem" mb={'8px'}>
+                                EMAIL
+                            </Text>
+                            <Input
+                                borderRadius={'12px'}
+                                backgroundColor={'#020202'}
+                                border={'none'}
+                            />
+                        </Flex>
+                    </Flex>
+                    <Flex
+                        flexDirection={'column'}
+                        maxW={'420px'}
+                        width={'100%'}
+                    >
+                        <Text fontSize={'12px'} pl="1rem" mb={'8px'}>
+                            PHONE NUMBER
+                        </Text>
+                        <Input
+                            borderRadius={'12px'}
+                            backgroundColor={'#020202'}
+                            border={'none'}
+                        />
+                    </Flex>
+                </Flex>
             </Flex>
-
-            <div className="flex flex-col gap-y-8 w-full">
-                <ProfileName customer={customer} />
-                <Divider />
-
-                {!customer.email.includes('@evm.blockchain') && (
-                    <>
-                        <ProfileEmail customer={customer} />
-                        <Divider />
-                    </>
-                )}
-                {/*<ProfilePhone customer={customer} />*/}
-                <ProfileCurrency customer={customer} />
-                <Divider />
-                {/*<ProfilePassword customer={customer} />*/}
-                {/*<Divider />*/}
-                <ProfileBillingAddress customer={customer} regions={regions} />
-            </div>
         </Flex>
     );
 }
-
-const Divider = () => {
-    return <div className="w-full h-px bg-gray-200" />;
-};
