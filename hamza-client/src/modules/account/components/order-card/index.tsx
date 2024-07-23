@@ -1,12 +1,9 @@
-import { useMemo } from 'react';
-import { Button } from '@medusajs/ui';
-
-import Thumbnail from '@modules/products/components/thumbnail';
 import { formatAmount } from '@lib/util/prices';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import LocalizedClientLink from '@modules/common/components/localized-client-link';
-
-// Update the type definitions to reflect the structure of the received order
+import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
+import { FaCheckCircle } from 'react-icons/fa';
+import React, { useEffect, useState } from 'react';
+import { getStoreName } from '@lib/data';
 type OrderDetails = {
     thumbnail: string;
     title: string;
@@ -25,6 +22,9 @@ type Order = {
     thumbnail: string;
     title: string;
     description: string;
+    variant: {
+        product_id: string;
+    };
     region: {
         id: string;
         name: string;
@@ -37,50 +37,104 @@ type OrderCardProps = {
 };
 
 const OrderCard = ({ order, handle }: OrderCardProps) => {
+    const [vendor, setVendor] = useState('');
+    const orderString = typeof order.currency_code;
+    console.log(
+        `Order Card details ${JSON.stringify(order.variant.product_id)}`
+    );
+    console.log(`Product details ${JSON.stringify(handle)} `);
+
+    useEffect(() => {
+        // Fetch Vendor Name from product.id
+        const fetchVendor = async () => {
+            try {
+                const data = await getStoreName(
+                    order.variant.product_id as string
+                );
+                // console.log(`Vendor: ${data}`);
+                setVendor(data);
+            } catch (error) {
+                console.error('Error fetching vendor: ', error);
+            }
+        };
+
+        fetchVendor();
+    }, [order]);
+
     if (!order) {
         return <div>Loading...</div>; // Display loading message if order is undefined
     }
-    // console.log(`Order Card information is: ${JSON.stringify(order)}`);
-    const orderString = typeof order.currency_code;
-    // console.log(
-    //     `Order Unit Price ${order.unit_price} and Currency Code ${order.currency_code} ${orderString}`
-    // );
-    console.log(`Order Card details ${JSON.stringify(order)}`);
-    console.log(`Product details ${JSON.stringify(handle)} `);
-
     return (
-        <div className="flex flex-col">
-            {' '}
-            <div>
-                <h3>{order.title}</h3>
-                <p>{order.description}</p>
-                {/* Add other order details here */}
-            </div>
-            <div className="flex items-center divide-x divide-gray-200 text-small-regular text-white">
-                <span className="pr-2">
-                    {new Date(order.created_at).toDateString()}
-                </span>
-                <span className="px-2">
-                    {formatCryptoPrice(order.unit_price, order.currency_code)}{' '}
-                    {order.currency_code}
-                </span>
-                <span className="pl-2">{order.quantity} items</span>{' '}
-                {/* Static '1 item' since there are no items array */}
-            </div>
-            <div className="my-4">
-                <LocalizedClientLink href={`/products/${handle}`}>
-                    <Thumbnail
-                        thumbnail={order.thumbnail}
-                        images={[]}
-                        size={'small'}
-                    />
-                </LocalizedClientLink>
-                <div className="text-small-regular text-white mt-2">
-                    <span className="font-semibold">{order.title}</span>
-                    <p>{order.description}</p>
-                </div>
-            </div>
-        </div>
+        <Box
+            bg={'black'}
+            color={'white'}
+            p={4}
+            rounded="lg"
+            shadow="base"
+            maxWidth="1000px"
+            m="auto"
+        >
+            <Flex alignItems="center" justifyContent="space-between">
+                <Image
+                    borderRadius="lg"
+                    width={{ base: '60px', md: '120px' }}
+                    src={order.thumbnail}
+                    alt={`Thumbnail of ${order.title}`}
+                    mr={4}
+                />
+
+                <Box flex="1">
+                    <Flex justifyContent="space-between" alignItems="center">
+                        <Flex alignItems="center">
+                            <Text
+                                fontSize={{ base: '14px', md: '24px' }}
+                                fontWeight="bold"
+                                noOfLines={1}
+                            >
+                                {vendor}
+                            </Text>
+                            <Flex
+                                display={{ base: 'none', md: 'flex' }}
+                                ml={2}
+                                alignItems="center"
+                            >
+                                <FaCheckCircle color="#3196DF" />
+                            </Flex>
+                        </Flex>
+                        <Text fontSize="md" fontWeight="semibold">
+                            {order.unit_price} {order.currency_code}
+                        </Text>
+                    </Flex>
+
+                    <Flex direction="column" mt={2}>
+                        <Text fontWeight="bold" fontSize="lg">
+                            {order.title}
+                        </Text>
+                        <Text fontSize="sm">{order.description}</Text>
+                    </Flex>
+
+                    <Flex
+                        justifyContent="space-between"
+                        alignItems="center"
+                        mt={2}
+                    >
+                        <Text fontSize="sm">
+                            {new Date(order.created_at).toLocaleDateString()}
+                        </Text>
+                        <Text fontSize="sm">{order.quantity} item(s)</Text>
+                    </Flex>
+                </Box>
+            </Flex>
+
+            <Flex justifyContent="flex-end" mt={2}>
+                <Button colorScheme="blue" mr={2}>
+                    Buy Again
+                </Button>
+                <Button colorScheme="blue" mr={2}>
+                    Contact Seller
+                </Button>
+            </Flex>
+        </Box>
     );
 };
 
