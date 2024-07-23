@@ -96,23 +96,37 @@ const Items: React.FC<Props> = ({ items, handles }) => {
 
     return (
         <Box className="flex flex-col bg-black">
-            <Divider className="!mb-0" />
             <TableContainer>
                 <Table variant="simple" colorScheme="blackAlpha">
                     <Tbody>
-                        {Object.entries(items).map(
-                            ([id, cartItems], cartIndex) =>
-                                cartItems.map((item, itemIndex) => (
-                                    <Tr key={item.id}>
-                                        <Td>
-                                            <Button
-                                                m={2}
-                                                onClick={() =>
-                                                    handleItemClick(item)
-                                                }
+                        {Object.entries(items).map(([id, cartItems]) =>
+                            cartItems.map((item, itemIndex) => (
+                                <>
+                                    <Tr key={`title-${item.id}`}>
+                                        <Td colSpan={3}>
+                                            <LocalizedClientLink
+                                                href={`/products/${handles[itemIndex]}`}
                                             >
-                                                Review
-                                            </Button>
+                                                <Text
+                                                    fontSize="lg"
+                                                    fontWeight="semibold"
+                                                >
+                                                    {item.title}
+                                                </Text>
+                                            </LocalizedClientLink>
+                                        </Td>
+                                    </Tr>
+                                    <Tr key={`image-${item.id}`}>
+                                        <Td>
+                                            <Image
+                                                src={item.thumbnail}
+                                                boxSize={{
+                                                    base: '60px',
+                                                    md: '180px',
+                                                }}
+                                                objectFit="cover"
+                                                alt={`Thumbnail of ${item.title}`}
+                                            />
                                         </Td>
                                         <Td>
                                             <Text
@@ -130,24 +144,21 @@ const Items: React.FC<Props> = ({ items, handles }) => {
                                                 Quantity: {item.quantity}
                                             </Text>
                                         </Td>
-                                        <Td>
-                                            <LocalizedClientLink
-                                                href={`/products/${handles[itemIndex]}`}
+                                    </Tr>
+                                    <Tr key={`review-${item.id}`}>
+                                        <Td colSpan={3}>
+                                            <Button
+                                                m={2}
+                                                onClick={() =>
+                                                    handleItemClick(item)
+                                                }
                                             >
-                                                <Image
-                                                    src={item.thumbnail}
-                                                    width={{
-                                                        base: '60px',
-                                                        md: '120px',
-                                                    }}
-                                                    alt={`Thumbnail of ${item.title}`}
-                                                    size="small"
-                                                />
-                                                {item.title}
-                                            </LocalizedClientLink>
+                                                Review
+                                            </Button>
                                         </Td>
                                     </Tr>
-                                ))
+                                </>
+                            ))
                         )}
                     </Tbody>
                 </Table>
