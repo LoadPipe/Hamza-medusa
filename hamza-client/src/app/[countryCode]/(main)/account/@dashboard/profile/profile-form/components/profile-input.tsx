@@ -7,8 +7,7 @@ import {
     FormLabel,
     FormErrorMessage,
 } from '@chakra-ui/react';
-import React, { ChangeEvent, useEffect, useState } from 'react';
-import useProfile from '@store/profile/profile';
+import React, { ChangeEvent } from 'react';
 
 interface ProfileInputProps {
     label: string;
@@ -23,8 +22,6 @@ const ProfileInput: React.FC<ProfileInputProps> = ({
     value,
     setValue,
 }) => {
-    const [valueInput, setValueInput] = useState('');
-
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
         setValue(value);

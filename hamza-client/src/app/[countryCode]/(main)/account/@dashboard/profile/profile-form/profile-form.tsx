@@ -13,21 +13,35 @@ type Customer = {
     phone: string;
 };
 const ProfileForm = ({ customer }: { customer: Customer }) => {
+    // Hooks
     const [firstNameValue, setFirstNameValue] = useState(customer.first_name);
     const [lastNameValue, setLastNameValue] = useState(customer.last_name);
-    const { firstName, lastName, setFirstName, setLastName } = useProfile();
+    const [emailValue, setEmailValue] = useState(customer.email);
+    // Global States
+    const { firstName, lastName, email, setFirstName, setLastName, setEmail } =
+        useProfile();
 
+    useEffect(() => {
+        setFirstName(firstNameValue);
+        setLastName(lastNameValue);
+        setEmail(emailValue);
+    }, []);
+
+    // Update Global States
     const updateGlobalProfileStates = async () => {
         setFirstName(firstNameValue);
         setLastName(lastNameValue);
+        setEmail(emailValue);
     };
 
+    // Handle Submit
     const handleSubmit = async () => {
         try {
             await updateGlobalProfileStates();
             const updatedCustomer = {
                 first_name: firstNameValue,
                 last_name: lastNameValue,
+                email: emailValue,
             };
             await updateCustomer(updatedCustomer);
             await alert('Profile updated successfully');
@@ -71,8 +85,14 @@ const ProfileForm = ({ customer }: { customer: Customer }) => {
 
             {/* Birthdate and Email input */}
             <Flex gap={'15px'}>
+                <ProfileInput
+                    placeholder={email}
+                    label="email"
+                    value={emailValue}
+                    setValue={setEmailValue}
+                />
                 {/* <ProfilePhoneInput label="phone number" />
-                <ProfileInput placeholder={customer.email} label="email" /> */}
+                // <ProfileInput placeholder={customer.email} label="email" /> */}
             </Flex>
 
             {/* Phone input */}
