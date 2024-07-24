@@ -36,6 +36,14 @@ const ProfileForm = ({ customer }: { customer: Customer }) => {
 
     // Handle Submit
     const handleSubmit = async () => {
+        if (
+            firstNameValue === '' ||
+            lastNameValue === '' ||
+            emailValue === ''
+        ) {
+            alert('Some fields are empty');
+            return;
+        }
         try {
             await updateGlobalProfileStates();
             const updatedCustomer = {
