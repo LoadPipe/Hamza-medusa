@@ -26,7 +26,7 @@ const ReviewTemplate = () => {
         // console.log(`Checking ${item?.title} if we can submit?`);
     }, [item]);
 
-    const checkReviewExistence = async (orderId) => {
+    const checkReviewExistence = async (orderId: string) => {
         try {
             const response = await checkReviewsExistence(orderId);
             // console.log(`Can submit? ${response.data}`);
