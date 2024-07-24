@@ -9,7 +9,7 @@ import {
     useRouter,
     useSearchParams,
 } from 'next/navigation';
-import { Flex, Box } from '@chakra-ui/react';
+import { Flex, Box, Button, Text } from '@chakra-ui/react';
 import ChevronDown from '@modules/common/icons/chevron-down';
 import { signOut } from '@modules/account/actions';
 import User from '@modules/common/icons/user';
@@ -31,7 +31,7 @@ const AccountNav = ({
     const { countryCode } = useParams();
     const { setCustomerAuthData, authData } = useCustomerAuthStore();
     const router = useRouter();
-    const handleLogout = async () => {
+    const handleLogout = () => {
         setCustomerAuthData({
             customer_id: '',
             is_verified: false,
@@ -193,7 +193,28 @@ const AccountNav = ({
                     route={route!}
                     title={'Reviews'}
                 />
-                <NavLink href="/" route={route!} title={'Logout'} />
+                <Box
+                    as="button"
+                    textAlign={'left'}
+                    borderRadius={'8px'}
+                    width={'245px'}
+                    height={'56px'}
+                    padding="16px"
+                    bg="transparent"
+                    borderColor="#ccd0d5"
+                    color="white"
+                    _active={{
+                        bg: 'primary.green.900',
+                        color: 'black',
+                        transform: 'scale(0.98)',
+                        borderColor: '#bec3c9',
+                    }}
+                    onClick={handleLogout}
+                >
+                    <Text my="auto" fontSize={'18px'} fontWeight={600}>
+                        Logout
+                    </Text>
+                </Box>
             </Flex>
         </div>
     );
