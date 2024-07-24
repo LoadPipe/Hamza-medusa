@@ -1,14 +1,25 @@
-import { Button, Flex, Text } from '@chakra-ui/react';
-import React from 'react';
+'use client';
 
-const ProfileImage = () => {
+import { Button, Flex, Text, Image } from '@chakra-ui/react';
+import React from 'react';
+// import { Avatar } from '@medusajs/ui';
+import { Avatar } from '@chakra-ui/react';
+
+type Customer = {
+    first_name: string;
+    last_name: string;
+};
+
+const ProfileImage = ({ customer }: { customer: Customer }) => {
     return (
         <Flex maxW={'858px'} width={'100%'}>
-            <Flex
+            <Avatar
+                name={`${customer.first_name} ${customer.last_name}`}
+                size="2xl"
+                // src="https://bit.ly/ryan-florence"
                 width={'151.5px'}
                 height={'151.5px'}
-                borderRadius={'full'}
-                backgroundColor={'white'}
+                bgColor={'primary.green.900'}
             />
             <Flex
                 alignSelf={'center'}
@@ -17,7 +28,7 @@ const ProfileImage = () => {
                 flexDirection={'column'}
             >
                 <Flex gap={'15px'}>
-                    <Button
+                    {/* <Button
                         backgroundColor={'primary.indigo.900'}
                         color={'white'}
                         borderRadius={'37px'}
@@ -27,8 +38,8 @@ const ProfileImage = () => {
                         width={'190px'}
                     >
                         Change Photo
-                    </Button>
-                    <Button
+                    </Button> */}
+                    {/* <Button
                         backgroundColor={'primary.indigo.900'}
                         color={'white'}
                         borderRadius={'37px'}
@@ -38,12 +49,12 @@ const ProfileImage = () => {
                         width={'190px'}
                     >
                         Remove Photo
-                    </Button>
+                    </Button> */}
                 </Flex>
-                <Text color={'#555555'}>
+                {/* <Text color={'#555555'}>
                     At least 125 x 125 px PNG or JPG file. 1 MB maximum file
                     size
-                </Text>
+                </Text> */}
             </Flex>
         </Flex>
     );

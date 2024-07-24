@@ -84,15 +84,12 @@ const ProfileForm = ({ customer }: { customer: Customer }) => {
 
             {/* Birthdate and Email input */}
             <Flex gap={'15px'}>
-                <ProfileInput
-                    placeholder={customer.first_name}
-                    label="birth date"
-                />
+                <ProfilePhoneInput label="phone number" />
                 <ProfileInput placeholder={customer.email} label="email" />
             </Flex>
 
             {/* Phone input */}
-            <ProfilePhoneInput label="phone number" />
+
             <Button
                 mt="0.5rem"
                 backgroundColor={'primary.indigo.900'}

@@ -40,7 +40,7 @@ export default async function Profile() {
             gap={'10px'}
         >
             {/* Avatar update / remove */}
-            <ProfileImage />
+            <ProfileImage customer={customer} />
             {/* Profile Form */}
             <ProfileForm customer={customer} />
         </Flex>
