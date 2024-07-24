@@ -1,5 +1,5 @@
 import { getCustomer } from '@lib/data';
-import AccountLayout from '@modules/account/templates/account-layout';
+import AccountLayout from '@modules/account-update/templates/account-layout';
 
 export default async function AccountPageLayout({
     dashboard,

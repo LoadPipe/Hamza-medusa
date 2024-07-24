@@ -237,7 +237,7 @@ export async function orderDetails(customer_id: string) {
                 customer_id: customer_id,
             }
         );
-        return response;
+        return response.data.orders.orders;
     } catch (error) {
         console.error('Error fetching order details:', error);
     }
@@ -254,6 +254,7 @@ export async function orderStatus(order_id: string) {
         return response.data;
     } catch (error) {
         console.error('Error fetching order status:', error);
+        return [];
     }
 }
 

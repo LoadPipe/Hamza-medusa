@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import useItemStore from '@store/review/review-store';
-import { Button } from '@medusajs/ui';
+import { Button } from '@chakra-ui/react';
 import { createReview, checkReviewsExistence } from '@lib/data';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
@@ -69,7 +69,7 @@ const ReviewTemplate = () => {
     ];
 
     return (
-        <div className="p-4 bg-white shadow-md rounded-lg text-black">
+        <div className="p-4 bg-black shadow-md rounded-lg text-white">
             {!submissionSuccess ? (
                 <>
                     <div className="flex items-center mb-4">
@@ -118,7 +118,9 @@ const ReviewTemplate = () => {
                             onChange={(e) => setReview(e.target.value)}
                         />
                         <Button
-                            className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                            variant="solid"
+                            backgroundColor={'primary.indigo.900'}
+                            borderRadius={'37px'}
                             onClick={submitReview}
                             disabled={rating === 0 || review.trim() === ''}
                         >
