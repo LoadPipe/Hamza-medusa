@@ -28,26 +28,24 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
 
     return (
         <div>
-            <Text className="mt-2 text-black">
+            <Text className="mt-2">
                 Order date: {new Date(order.created_at).toDateString()}
             </Text>
-            <Text className="mt-2 text-black ">
-                Order number: {order.display_id}
-            </Text>
-            <Text className="mt-2 text-black">Order ID: {order.id}</Text>
+            <Text className="mt-2">Order number: {order.display_id}</Text>
+            <Text className="mt-2">Order ID: {order.id}</Text>
 
             <div className="flex items-center text-compact-small gap-x-4 mt-4">
                 {showStatus && (
                     <>
-                        <Text className="text-black">
+                        <Text className="">
                             Order status:{' '}
-                            <span className="text-ui-fg-subtle ">
+                            <span className="">
                                 {formatStatus(order.fulfillment_status)}
                             </span>
                         </Text>
-                        <Text className="text-black">
+                        <Text className="">
                             Payment status:{' '}
-                            <span className="text-ui-fg-subtle ">
+                            <span className="">
                                 {formatStatus(order.payment_status)}
                             </span>
                         </Text>

@@ -128,7 +128,7 @@ const OrderDetailsTemplate: React.FC<OrderDetailsTemplateProps> = ({
     );
 
     return (
-        <div className="flex flex-col justify-center gap-y-4 ">
+        <div className="flex flex-col justify-center gap-y-4 bg-black text-white p-4">
             <div className="flex gap-2 justify-between items-center">
                 <h1 className="text-2xl-semi">Order details</h1>
                 <LocalizedClientLink
@@ -138,10 +138,10 @@ const OrderDetailsTemplate: React.FC<OrderDetailsTemplateProps> = ({
                     <XMark /> Back to overview
                 </LocalizedClientLink>
             </div>
-            <div className="flex flex-col gap-4 h-full bg-white w-full p-8">
+            <div className="flex flex-col gap-4 h-full w-full p-8">
                 <OrderDetails order={order} showStatus />
                 <h3
-                    className="text-lg text-black"
+                    className="text-lg"
                     onClick={navigateToVendor}
                     tabIndex={0} // This makes the element focusable
                 >

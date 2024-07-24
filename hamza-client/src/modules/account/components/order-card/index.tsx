@@ -73,7 +73,25 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
             shadow="base"
             maxWidth="1000px"
             m="auto"
+            mt={2}
         >
+            <Flex alignItems="center" mb={2}>
+                <Text
+                    fontSize={{ base: '14px', md: '24px' }}
+                    fontWeight="bold"
+                    noOfLines={1}
+                >
+                    {vendor}
+                </Text>
+                <Flex
+                    display={{ base: 'none', md: 'flex' }}
+                    ml={2}
+                    alignItems="center"
+                >
+                    <FaCheckCircle color="#3196DF" />
+                </Flex>
+            </Flex>
+
             <Flex alignItems="center" justifyContent="space-between">
                 <Image
                     borderRadius="lg"
@@ -84,33 +102,16 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
                 />
 
                 <Box flex="1">
-                    <Flex justifyContent="space-between" alignItems="center">
-                        <Flex alignItems="center">
-                            <Text
-                                fontSize={{ base: '14px', md: '24px' }}
-                                fontWeight="bold"
-                                noOfLines={1}
-                            >
-                                {vendor}
+                    <Flex justifyContent="space-between">
+                        <Flex direction="column">
+                            <Text fontWeight="bold" fontSize="lg">
+                                {order.title}
                             </Text>
-                            <Flex
-                                display={{ base: 'none', md: 'flex' }}
-                                ml={2}
-                                alignItems="center"
-                            >
-                                <FaCheckCircle color="#3196DF" />
-                            </Flex>
+                            <Text fontSize="sm">{order.description}</Text>
                         </Flex>
                         <Text fontSize="md" fontWeight="semibold">
                             {order.unit_price} {order.currency_code}
                         </Text>
-                    </Flex>
-
-                    <Flex direction="column" mt={2}>
-                        <Text fontWeight="bold" fontSize="lg">
-                            {order.title}
-                        </Text>
-                        <Text fontSize="sm">{order.description}</Text>
                     </Flex>
 
                     <Flex
@@ -127,10 +128,19 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
             </Flex>
 
             <Flex justifyContent="flex-end" mt={2}>
-                <Button colorScheme="blue" mr={2}>
+                <Button
+                    variant="outline"
+                    colorScheme="white"
+                    borderRadius={'37px'}
+                >
                     Buy Again
                 </Button>
-                <Button colorScheme="blue" mr={2}>
+                <Button
+                    ml={2}
+                    variant="outline"
+                    colorScheme="white"
+                    borderRadius={'37px'}
+                >
                     Contact Seller
                 </Button>
             </Flex>
