@@ -9,6 +9,7 @@ import {
     RadioGroup,
     Button,
     Flex,
+    Box,
 } from '@chakra-ui/react';
 import { Region } from '@medusajs/medusa';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
@@ -22,8 +23,15 @@ import {
 const ToggleNotifications = ({ region }: { region: Region }) => {
     const [selectedNotifications, setSelectedNotifications] = useState([]);
     const [notificationMethod, setNotificationMethod] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
 
     const { authData } = useCustomerAuthStore();
+
+    const disabledStyles = {
+        backgroundColor: 'gray.100',
+        borderColor: 'gray.100',
+        color: 'gray.500',
+    };
 
     useEffect(() => {
         if (authData.customer_id) {
@@ -50,6 +58,7 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
 
     const handleCheckboxChange = (event: any) => {
         const value = event.target.value;
+        setIsSaving(true);
         if (value === 'none') {
             setSelectedNotifications(['none' as never]);
         } else {
@@ -80,6 +89,7 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                 );
             }
             toast.success('Notification preferences saved!', {});
+            setIsSaving(false); // Reset isSaving to false after saving...
             console.log('Selected Notifications:', selectedNotifications);
             console.log('Notification Method:', notificationMethod);
         } catch (error) {
@@ -234,13 +244,21 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                     </Switch>
                 </Stack>
             </RadioGroup>
-            <Button
+            <Box
+                as="button"
                 mt={4}
+                borderRadius={'37px'}
                 backgroundColor={'primary.green.900'}
+                fontSize={'18px'}
+                fontWeight={600}
+                height={'47px'}
+                width={'190px'}
                 onClick={handleSave}
+                disabled={!isSaving}
+                _disabled={disabledStyles}
             >
                 Save
-            </Button>
+            </Box>
         </FormControl>
     );
 };
