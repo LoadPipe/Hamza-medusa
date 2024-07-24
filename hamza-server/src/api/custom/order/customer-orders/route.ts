@@ -1,4 +1,4 @@
-import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
+import type { MedusaRequest, MedusaResponse, Logger, CustomerService } from '@medusajs/medusa';
 import OrderService from '../../../../services/order';
 import { RouteHandler } from '../../../route-handler';
 
@@ -27,22 +27,25 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     await handler.handle(async () => {
         const orderService: OrderService = req.scope.resolve('orderService');
+        const customerService: CustomerService = req.scope.resolve('customerService');
 
         //validate 
         if (!req.query.customer_id?.length) {
-            res.status(400).json({message: 'customer_id is required'});
+            res.status(400).json({ message: 'customer_id is required' });
         }
         else {
-            if (handler.inputParams.buckets) {
-                const orders = []; //await orderService.getOrderBucketsForCustomer(handler.inputParams.customer_id);
-                res.status(200).json({ orders });
-            } else {
-                const orders = {
-                    'ToPay': [],
-                    'ToReceive': []
-                    //.. etc
-                }; //await orderService.getOrdersForCustomer(handler.inputParams.customer_id);
-                res.status(200).json({ orders });
+            //check for existence of customer 
+            if (!customerService.retrieve(handler.inputParams.customer_id)) {
+                res.status(404).json({ message: `Customer id ${handler.inputParams.customer_id} not found` });
+            }
+            else {
+                if (handler.inputParams.buckets) {
+                    const orders = await orderService.getCustomerOrderBuckets(handler.inputParams.customer_id);
+                    res.status(200).json({ orders });
+                } else {
+                    const orders = await orderService.getCustomerOrders(handler.inputParams.customer_id);
+                    res.status(200).json({ orders });
+                }
             }
         }
     });

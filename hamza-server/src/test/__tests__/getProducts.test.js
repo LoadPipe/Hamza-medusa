@@ -10,7 +10,6 @@ describe('All Products test suite', () => {
     it('should call mock product array', async () => {
         const products =
             await productService.getAllProductsFromStoreWithPrices();
-        console.log(products);
         expect(products).toEqual([
             {
                 store_id: '',
