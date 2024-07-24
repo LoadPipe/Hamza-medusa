@@ -93,7 +93,7 @@ const AccountMenu = () => {
                             borderColor={'white'}
                         />
                     </Box>
-                    <Link href={`/account`} target="_blank">
+                    <Link href={`/account`}>
                         <MenuItem
                             fontWeight={'600'}
                             mt="1rem"

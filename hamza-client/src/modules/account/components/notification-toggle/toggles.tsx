@@ -208,42 +208,42 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                 Get push notifications to find out what’s going on when you’re
                 offline
             </FormLabel>
-            <RadioGroup
-                mb={8}
-                value={notificationMethod}
-                onChange={setNotificationMethod}
-            >
-                <Stack spacing={3} direction="column">
-                    <Switch
-                        colorScheme="primary.green"
-                        onChange={handleCheckboxChange}
-                        value="sms"
-                    >
-                        SMS
-                    </Switch>
-                    <Switch
-                        onChange={handleCheckboxChange}
-                        colorScheme="primary.green"
-                        value="email"
-                    >
-                        Email
-                    </Switch>
-                    <Switch
-                        onChange={handleCheckboxChange}
-                        colorScheme="primary.green"
-                        value="line"
-                    >
-                        LINE
-                    </Switch>
-                    <Switch
-                        onChange={handleCheckboxChange}
-                        colorScheme="primary.green"
-                        value="whatsapp"
-                    >
-                        WhatsApp
-                    </Switch>
-                </Stack>
-            </RadioGroup>
+            <Stack spacing={3} direction="column">
+                <Switch
+                    isChecked={selectedNotifications.includes('sms' as never)}
+                    colorScheme="primary.green"
+                    onChange={handleCheckboxChange}
+                    value="sms"
+                >
+                    SMS
+                </Switch>
+                <Switch
+                    isChecked={selectedNotifications.includes('email' as never)}
+                    onChange={handleCheckboxChange}
+                    colorScheme="primary.green"
+                    value="email"
+                >
+                    Email
+                </Switch>
+                <Switch
+                    isChecked={selectedNotifications.includes('line' as never)}
+                    onChange={handleCheckboxChange}
+                    colorScheme="primary.green"
+                    value="line"
+                >
+                    LINE
+                </Switch>
+                <Switch
+                    isChecked={selectedNotifications.includes(
+                        'whatsapp' as never
+                    )}
+                    onChange={handleCheckboxChange}
+                    colorScheme="primary.green"
+                    value="whatsapp"
+                >
+                    WhatsApp
+                </Switch>
+            </Stack>
             <Box
                 as="button"
                 mt={4}
