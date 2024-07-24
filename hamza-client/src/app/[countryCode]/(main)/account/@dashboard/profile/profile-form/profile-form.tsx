@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Flex, Button, Text } from '@chakra-ui/react';
 import ProfileInput from './components/profile-input';
 import ProfilePhoneInput from './components/phone-input';
@@ -13,41 +13,46 @@ type Customer = {
     phone: string;
 };
 const ProfileForm = ({ customer }: { customer: Customer }) => {
-    const {
-        firstName,
-        lastName,
-        email,
-        phoneNumber,
-        setFirstName,
-        setLastName,
-        setEmail,
-        setPhoneNumber,
-    } = useProfile();
+    // Hooks
+    const [firstNameValue, setFirstNameValue] = useState(customer.first_name);
+    const [lastNameValue, setLastNameValue] = useState(customer.last_name);
+    const [emailValue, setEmailValue] = useState(customer.email);
+    // Global States
+    const { firstName, lastName, email, setFirstName, setLastName, setEmail } =
+        useProfile();
 
-    const clearStates = async () => {
-        setFirstName('');
-        setLastName('');
-        setEmail('');
-        setPhoneNumber('');
+    useEffect(() => {
+        setFirstName(firstNameValue);
+        setLastName(lastNameValue);
+        setEmail(emailValue);
+    }, []);
+
+    // Update Global States
+    const updateGlobalProfileStates = async () => {
+        setFirstName(firstNameValue);
+        setLastName(lastNameValue);
+        setEmail(emailValue);
     };
 
+    // Handle Submit
     const handleSubmit = async () => {
-        if (!firstName && !lastName && !email && !phoneNumber) {
-            alert('No changes');
+        if (
+            firstNameValue === '' ||
+            lastNameValue === '' ||
+            emailValue === ''
+        ) {
+            alert('Some fields are empty');
             return;
         }
-
         try {
+            await updateGlobalProfileStates();
             const updatedCustomer = {
-                first_name: firstName || customer.first_name,
-                last_name: lastName || customer.last_name,
-                email: email || customer.email,
-                phone: phoneNumber || customer.phone,
+                first_name: firstNameValue,
+                last_name: lastNameValue,
+                email: emailValue,
             };
             await updateCustomer(updatedCustomer);
-            console.log(customer);
-            alert('Profile updated successfully');
-            clearStates();
+            await alert('Profile updated successfully');
         } catch (error) {
             alert('Failed to update profile');
             console.error('Error updating profile:', error);
@@ -73,28 +78,35 @@ const ProfileForm = ({ customer }: { customer: Customer }) => {
             {/* First and last name input */}
             <Flex gap={'15px'}>
                 <ProfileInput
-                    placeholder={customer.first_name}
+                    placeholder={firstName}
                     label="first name"
+                    value={firstNameValue}
+                    setValue={setFirstNameValue}
                 />
                 <ProfileInput
-                    placeholder={customer.last_name}
-                    label="last name"
+                    placeholder={lastName}
+                    label="first name"
+                    value={lastNameValue}
+                    setValue={setLastNameValue}
                 />
             </Flex>
 
             {/* Birthdate and Email input */}
             <Flex gap={'15px'}>
                 <ProfileInput
-                    placeholder={customer.first_name}
-                    label="birth date"
+                    placeholder={email}
+                    label="email"
+                    value={emailValue}
+                    setValue={setEmailValue}
                 />
-                <ProfileInput placeholder={customer.email} label="email" />
+                {/* <ProfilePhoneInput label="phone number" />
+                // <ProfileInput placeholder={customer.email} label="email" /> */}
             </Flex>
 
             {/* Phone input */}
-            <ProfilePhoneInput label="phone number" />
+
             <Button
-                mt="0.5rem"
+                mt="1rem"
                 backgroundColor={'primary.indigo.900'}
                 color={'white'}
                 borderRadius={'37px'}

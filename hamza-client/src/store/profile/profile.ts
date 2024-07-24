@@ -22,6 +22,13 @@ const useProfile = create<ProfileState>((set) => ({
     setLastName: (lastName: string) => set({ lastName }),
     setEmail: (email: string) => set({ email }),
     setPhoneNumber: (phoneNumber: string) => set({ phoneNumber }),
+    clearProfile: () =>
+        set({
+            firstName: '',
+            lastName: '',
+            email: '',
+            phoneNumber: '',
+        }),
 }));
 
 export default useProfile;
