@@ -17,6 +17,7 @@ class WishlistService extends TransactionBaseService {
     }
 
     async create(customer_id) {
+        const wishlistRepository = this.activeManager_.getRepository(Wishlist);
         return await this.atomicPhase_(async (transactionManager) => {
             if (!customer_id) {
                 throw new MedusaError(
@@ -25,20 +26,16 @@ class WishlistService extends TransactionBaseService {
                 );
             }
 
-            const wishlistRepository =
-                this.activeManager_.getRepository(Wishlist);
-
             // Check if a wishlist-dropdown already exists for the customer_id
-            const existingWishlist = await wishlistRepository.findOne({
-                where: {
-                    customer_id: customer_id,
-                },
+            const [wishlist] = await wishlistRepository.find({
+                where: { customer_id },
+                relations: ['items', 'items.product'],
             });
 
-            if (existingWishlist) {
+            if (wishlist) {
                 // Wishlist already exists, return it
                 this.logger.debug('Wishlist already exists for this customer');
-                return existingWishlist;
+                return wishlist;
             }
 
             const payload = {
@@ -60,29 +57,6 @@ class WishlistService extends TransactionBaseService {
             }
 
             return null;
-        });
-    }
-
-    async retrieve(customer_id) {
-        const wishlistRepository = this.activeManager_.getRepository(Wishlist);
-        return await this.atomicPhase_(async (transactionManager) => {
-            const [wishlist] = await wishlistRepository.find({
-                where: { customer_id },
-                relations: ['items', 'items.product'],
-            });
-
-            if (!wishlist) {
-                try {
-                    const newWishlist = await this.create(customer_id);
-                    return newWishlist;
-                } catch (e: any) {
-                    throw new MedusaError(
-                        MedusaError.Types.NOT_FOUND,
-                        `Wishlist with customer_id ${customer_id} was not found`
-                    );
-                }
-            }
-            return wishlist;
         });
     }
 
