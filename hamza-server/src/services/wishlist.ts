@@ -47,7 +47,6 @@ class WishlistService extends TransactionBaseService {
 
             //check for existing customer
             if (await this.customerExists(customer_id)) {
-
                 const createdWishlist = wishlistRepository.create(payload);
                 const savedWishList =
                     await wishlistRepository.save(createdWishlist);
@@ -73,10 +72,15 @@ class WishlistService extends TransactionBaseService {
             });
 
             if (!wishlist) {
-                throw new MedusaError(
-                    MedusaError.Types.NOT_FOUND,
-                    `Wishlist with customer_id ${customer_id} was not found`
-                );
+                try {
+                    const newWishlist = await this.create(customer_id);
+                    return newWishlist;
+                } catch (e: any) {
+                    throw new MedusaError(
+                        MedusaError.Types.NOT_FOUND,
+                        `Wishlist with customer_id ${customer_id} was not found`
+                    );
+                }
             }
             return wishlist;
         });
@@ -168,8 +172,7 @@ class WishlistService extends TransactionBaseService {
         try {
             const customer = await this.customerService.retrieve(customerId);
             return customer ? true : false;
-        }
-        catch (e: any) {
+        } catch (e: any) {
             return false;
         }
     }
