@@ -108,12 +108,28 @@ const colors = {
     },
 };
 
+const disabledStyles = {
+    backgroundColor: 'gray.100',
+    borderColor: 'gray.100',
+    color: 'gray.500',
+};
+
 const theme = extendTheme({
     colors,
     fonts: {
         body: sora.style.fontFamily,
     },
     components: {
+        Button: {
+            variants: {
+                _disabled: {
+                    ...disabledStyles,
+                },
+                _hover: {
+                    ...disabledStyles,
+                },
+            },
+        },
         Heading: {
             sizes: {
                 h1: {

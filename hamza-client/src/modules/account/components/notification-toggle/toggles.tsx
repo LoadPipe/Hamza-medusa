@@ -28,9 +28,9 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
     const { authData } = useCustomerAuthStore();
 
     const disabledStyles = {
-        backgroundColor: 'gray.100',
-        borderColor: 'gray.100',
-        color: 'gray.500',
+        backgroundColor: 'gray.600',
+        borderColor: 'gray.600',
+        color: 'gray.700',
     };
 
     useEffect(() => {
