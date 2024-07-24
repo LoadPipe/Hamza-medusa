@@ -193,11 +193,7 @@ const AccountNav = ({
                     route={route!}
                     title={'Reviews'}
                 />
-                <NavLink
-                    href="/account/logout"
-                    route={route!}
-                    title={'Logout'}
-                />
+                <NavLink href="/" route={route!} title={'Logout'} />
             </Flex>
         </div>
     );
