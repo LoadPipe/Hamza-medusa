@@ -97,6 +97,10 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
             >
                 Email notifications
             </FormLabel>
+            <FormLabel mb={8}>
+                Get emails to find out what’s going on when you’re not online.
+                You can turn these off.
+            </FormLabel>
             <Stack spacing={3}>
                 <Flex>
                     <Switch

@@ -27,7 +27,7 @@ export default async function Notifications() {
 
     return (
         <div className="w-full bg-black text-white p-8">
-            <div className="mb-8 flex flex-col gap-y-4">
+            <div className="mb-8 flex flex-col">
                 <Text className="text-2xl-semi" color={'primary.indigo.900'}>
                     Notification Setting
                 </Text>
