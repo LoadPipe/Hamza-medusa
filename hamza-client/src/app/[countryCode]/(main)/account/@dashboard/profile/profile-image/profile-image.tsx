@@ -1,9 +1,10 @@
 'use client';
 
 import { Button, Flex, Text, Image } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 // import { Avatar } from '@medusajs/ui';
 import { Avatar } from '@chakra-ui/react';
+import useProfile from '@store/profile/profile';
 
 type Customer = {
     first_name: string;
@@ -11,10 +12,16 @@ type Customer = {
 };
 
 const ProfileImage = ({ customer }: { customer: Customer }) => {
+    const { firstName, lastName, setFirstName, setLastName } = useProfile();
+
+    useEffect(() => {
+        setFirstName(customer.first_name);
+        setLastName(customer.last_name);
+    }, [customer, setFirstName, setLastName]);
     return (
         <Flex maxW={'858px'} width={'100%'}>
             <Avatar
-                name={`${customer.first_name} ${customer.last_name}`}
+                name={`${firstName} ${lastName}`}
                 size="2xl"
                 // src="https://bit.ly/ryan-florence"
                 width={'151.5px'}
