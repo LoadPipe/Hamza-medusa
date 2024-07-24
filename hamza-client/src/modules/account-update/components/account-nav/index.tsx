@@ -31,7 +31,7 @@ const AccountNav = ({
     const { countryCode } = useParams();
     const { setCustomerAuthData, authData } = useCustomerAuthStore();
     const router = useRouter();
-    const handleLogout = () => {
+    const handleLogout = async () => {
         setCustomerAuthData({
             customer_id: '',
             is_verified: false,
@@ -42,7 +42,6 @@ const AccountNav = ({
         Cookies.remove('_medusa_jwt');
         Cookies.remove('_medusa_cart_id');
         router.replace('/');
-        return;
     };
 
     useEffect(() => {
