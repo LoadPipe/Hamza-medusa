@@ -16,15 +16,24 @@ import { LineItemService } from '@medusajs/medusa';
 import { Order } from '../models/order';
 import { Payment } from '../models/payment';
 import { Lifetime } from 'awilix';
-import { In, Not } from 'typeorm';
+import { And, In, Not } from 'typeorm';
+
+export enum OrderBucketType {
+    TO_PAY = 1,
+    TO_SHIP = 2,
+    TO_RECEIVE = 3,
+    COMPLETED = 4,
+    CANCELLED = 5,
+    REFUNDED = 6
+}
 
 type InjectDependencies = {
     idempotencyKeyService: IdempotencyKeyService;
     lineItemService: LineItemService;
 };
 
-type OrderBucketList = 
-    {[key:string]: Order[]}
+type OrderBucketList =
+    { [key: string]: Order[] }
 
 export default class OrderService extends MedusaOrderService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
@@ -250,7 +259,7 @@ export default class OrderService extends MedusaOrderService {
         }
     }
 
-    async getCustomerOrders(customerId: string): Promise<Order[]>{
+    async getCustomerOrders(customerId: string): Promise<Order[]> {
         return await this.orderRepository_.find({
             where: {
                 customer_id: customerId,
@@ -260,14 +269,14 @@ export default class OrderService extends MedusaOrderService {
         });
     }
 
-    async getCustomerOrderBuckets(customerId: string): Promise<OrderBucketList>{
+    async getCustomerOrderBuckets(customerId: string): Promise<OrderBucketList> {
         const buckets = await Promise.all([
-            this.getCustomerOrdersByStatus(customerId, {paymentStatus: PaymentStatus.AWAITING}),
-            this.getCustomerOrdersByStatus(customerId, {paymentStatus: PaymentStatus.CAPTURED, fulfillmentStatus: FulfillmentStatus.DOOP}),
-            this.getCustomerOrdersByStatus(customerId, {paymentStatus: PaymentStatus.CAPTURED, fulfillmentStatus: FulfillmentStatus.SHIPPED}),
-            this.getCustomerOrdersByStatus(customerId, {orderStatus: OrderStatus.COMPLETE, fulfillmentStatus: FulfillmentStatus.COMPLETE}),
-            this.getCustomerOrdersByStatus(customerId, {orderStatus: OrderStatus.CANCELED}),
-            this.getCustomerOrdersByStatus(customerId, {paymentStatus: PaymentStatus.REFUNDED})
+            this.getCustomerOrderBucket(customerId, OrderBucketType.TO_PAY),
+            this.getCustomerOrderBucket(customerId, OrderBucketType.TO_SHIP),
+            this.getCustomerOrderBucket(customerId, OrderBucketType.TO_RECEIVE),
+            this.getCustomerOrderBucket(customerId, OrderBucketType.COMPLETED),
+            this.getCustomerOrderBucket(customerId, OrderBucketType.CANCELLED),
+            this.getCustomerOrderBucket(customerId, OrderBucketType.REFUNDED),
         ]);
 
         const output = {
@@ -282,24 +291,42 @@ export default class OrderService extends MedusaOrderService {
         return output;
     }
 
+    async getCustomerOrderBucket(customerId: string, bucketType: OrderBucketType): Promise<Order[]> {
+        switch (bucketType) {
+            case OrderBucketType.TO_PAY:
+                return await this.getCustomerOrdersByStatus(customerId, { paymentStatus: PaymentStatus.AWAITING });
+            case OrderBucketType.TO_SHIP:
+                return await this.getCustomerOrdersByStatus(customerId, { paymentStatus: PaymentStatus.CAPTURED, fulfillmentStatus: FulfillmentStatus.NOT_FULFILLED });
+            case OrderBucketType.TO_RECEIVE:
+                return await this.getCustomerOrdersByStatus(customerId, { paymentStatus: PaymentStatus.CAPTURED, fulfillmentStatus: FulfillmentStatus.SHIPPED });
+            case OrderBucketType.COMPLETED:
+                return await this.getCustomerOrdersByStatus(customerId, { orderStatus: OrderStatus.COMPLETED, fulfillmentStatus: FulfillmentStatus.FULFILLED });
+            case OrderBucketType.CANCELLED:
+                return await this.getCustomerOrdersByStatus(customerId, { orderStatus: OrderStatus.CANCELED });
+            case OrderBucketType.REFUNDED:
+                return await this.getCustomerOrdersByStatus(customerId, { paymentStatus: PaymentStatus.REFUNDED });
+        }
+
+        return [];
+    }
+
     private async getCustomerOrdersByStatus(customerId: string, statusParams: {
-            orderStatus?: OrderStatus, paymentStatus?: PaymentStatus, fulfillmentStatus?:FulfillmentStatus
-        }): Promise<Order[]> 
-    {
-        const where: {customer_id: string, status?: any, payment_status?: any, fulfillment_status?: any} = {
+        orderStatus?: OrderStatus, paymentStatus?: PaymentStatus, fulfillmentStatus?: FulfillmentStatus
+    }): Promise<Order[]> {
+        const where: { customer_id: string, status?: any, payment_status?: any, fulfillment_status?: any } = {
             customer_id: customerId,
             status: Not(OrderStatus.ARCHIVED),
 
         };
 
         if (statusParams.orderStatus) {
-            where.status = And([Not(OrderStatus.ARCHIVED), statusParams.orderStatus]);
+            where.status = statusParams.orderStatus;
         }
-        
+
         if (statusParams.paymentStatus) {
             where.payment_status = statusParams.paymentStatus;
         }
-        
+
         if (statusParams.fulfillmentStatus) {
             where.fulfillment_status = statusParams.fulfillmentStatus;
         }
