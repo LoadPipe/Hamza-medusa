@@ -35,15 +35,15 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         }
         else {
             //check for existence of customer 
-            if (!customerService.retrieve(handler.inputParams.customer_id)) {
-                res.status(404).json({ message: `Customer id ${handler.inputParams.customer_id} not found` });
+            if (!(await customerService.retrieve(req.query.customer_id.toString()))) {
+                res.status(404).json({ message: `Customer id ${req.query.customer_id.toString()} not found` });
             }
             else {
-                if (handler.inputParams.buckets) {
-                    const orders = await orderService.getCustomerOrderBuckets(handler.inputParams.customer_id);
+                if (req.query.buckets) {
+                    const orders = await orderService.getCustomerOrderBuckets(req.query.customer_id.toString());
                     res.status(200).json({ orders });
                 } else {
-                    const orders = await orderService.getCustomerOrders(handler.inputParams.customer_id);
+                    const orders = await orderService.getCustomerOrders(req.query.customer_id.toString());
                     res.status(200).json({ orders });
                 }
             }
