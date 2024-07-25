@@ -60,6 +60,27 @@ type WishlistProps = OrderProps & {
     id: string;
 };
 
+const commonButtonStyles = {
+    borderRadius: '8px',
+    width: '146px',
+    height: '56px',
+    padding: '16px',
+    bg: 'transparent',
+    borderColor: '#ccd0d5',
+    color: 'white',
+    _hover: {
+        // Assuming you want hover effects as well
+        bg: 'gray.200',
+        color: 'black',
+    },
+    _active: {
+        bg: 'primary.green.900',
+        color: 'black',
+        transform: 'scale(0.98)',
+        borderColor: '#bec3c9',
+    },
+};
+
 const OrderOverview = ({ orders }: { orders: Order[] }) => {
     // Initialize state with the correct type
     const [detailedOrders, setDetailedOrders] = useState<DetailedOrder[]>([]);
@@ -258,14 +279,12 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
     return (
         <div className="flex flex-col gap-y-8 w-full bg-black text-white p-8">
             <ButtonGroup isAttached variant="outline">
-                <Button colorScheme="teal" borderRadius="0">
-                    All Orders
-                </Button>
-                <Button borderRadius="0">Processing</Button>
-                <Button borderRadius="0">Shipped</Button>
-                <Button borderRadius="0">Delivered</Button>
-                <Button borderRadius="0">Cancelled</Button>
-                <Button borderRadius="0">Refund</Button>
+                <Button {...commonButtonStyles}>All Orders</Button>
+                <Button {...commonButtonStyles}>Processing</Button>
+                <Button {...commonButtonStyles}>Shipped</Button>
+                <Button {...commonButtonStyles}>Delivered</Button>
+                <Button {...commonButtonStyles}>Cancelled</Button>
+                <Button {...commonButtonStyles}>Refund</Button>
             </ButtonGroup>
             {customerOrder.map((order) => (
                 <div
