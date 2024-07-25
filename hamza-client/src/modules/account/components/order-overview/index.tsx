@@ -282,12 +282,12 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
         <Box
             display="flex"
             flexDirection="column"
-            gap="8"
+            gap="4"
             width="full"
             color="white"
             p="8"
         >
-            <ButtonGroup isAttached>
+            <ButtonGroup isAttached justifyContent={'center'}>
                 <Button {...commonButtonStyles}>All Orders</Button>
                 <Button {...commonButtonStyles}>Processing</Button>
                 <Button {...commonButtonStyles}>Shipped</Button>
