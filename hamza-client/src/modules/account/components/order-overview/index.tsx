@@ -15,6 +15,7 @@ import {
 } from '@lib/data';
 import {
     Button,
+    ButtonGroup,
     Modal,
     ModalOverlay,
     ModalContent,
@@ -256,6 +257,16 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
 
     return (
         <div className="flex flex-col gap-y-8 w-full bg-black text-white p-8">
+            <ButtonGroup isAttached variant="outline">
+                <Button colorScheme="teal" borderRadius="0">
+                    All Orders
+                </Button>
+                <Button borderRadius="0">Processing</Button>
+                <Button borderRadius="0">Shipped</Button>
+                <Button borderRadius="0">Delivered</Button>
+                <Button borderRadius="0">Cancelled</Button>
+                <Button borderRadius="0">Refund</Button>
+            </ButtonGroup>
             {customerOrder.map((order) => (
                 <div
                     key={order.id} // Changed from cart_id to id since it's more reliable and unique
