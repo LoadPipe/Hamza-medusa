@@ -27,6 +27,7 @@ import {
     FormControl,
     FormErrorMessage,
     Box,
+    Flex,
 } from '@chakra-ui/react';
 
 // Define a type that extends the Order type with any additional data
@@ -278,7 +279,16 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
     }
 
     return (
-        <div className="flex flex-col gap-y-8 w-full bg-black text-white p-8">
+        <Box
+            display="flex"
+            flexDirection="column"
+            gap="8"
+            width="full"
+            backgroundColor="black"
+            color="white"
+            p="8"
+        >
+            {' '}
             <ButtonGroup isAttached>
                 <Button {...commonButtonStyles}>All Orders</Button>
                 <Button {...commonButtonStyles}>Processing</Button>
@@ -393,7 +403,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </div>
+        </Box>
     );
 };
 
