@@ -85,7 +85,7 @@ const ProfileForm = ({ customer }: { customer: Customer }) => {
                 />
                 <ProfileInput
                     placeholder={lastName}
-                    label="first name"
+                    label="last name"
                     value={lastNameValue}
                     setValue={setLastNameValue}
                 />
