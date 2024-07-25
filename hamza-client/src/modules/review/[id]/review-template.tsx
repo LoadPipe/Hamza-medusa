@@ -17,17 +17,18 @@ const ReviewTemplate = () => {
 
     const item = useItemStore((state) => state.item);
 
+    console.log(`Item is ${JSON.stringify(item)}`);
     // console.log(`item info ${JSON.stringify(item)}`);
     useEffect(() => {
-        checkReviewExistence();
+        if (item && item.order_id) {
+            checkReviewExistence(item.order_id);
+        }
         // console.log(`Checking ${item?.title} if we can submit?`);
     }, [item]);
 
-    const checkReviewExistence = async () => {
+    const checkReviewExistence = async (orderId: string) => {
         try {
-            const response = await checkReviewsExistence(
-                item?.order_id as string
-            );
+            const response = await checkReviewsExistence(orderId);
             // console.log(`Can submit? ${response.data}`);
             setCanSubmit(response.data); // Assuming API returns { exists: true/false }
         } catch (error) {
@@ -36,7 +37,7 @@ const ReviewTemplate = () => {
     };
 
     const submitReview = async () => {
-        if (!canSubmit) {
+        if (canSubmit) {
             alert('Review already exists for this order.');
             return;
         }
