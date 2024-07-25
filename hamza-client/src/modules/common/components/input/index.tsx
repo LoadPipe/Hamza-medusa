@@ -1,5 +1,6 @@
 import { Label } from '@medusajs/ui';
 import React, { useEffect, useImperativeHandle, useState } from 'react';
+import { Input as ChakraInput } from '@chakra-ui/react';
 
 import Eye from '@modules/common/icons/eye';
 import EyeOff from '@modules/common/icons/eye-off';
@@ -46,6 +47,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                         name={name}
                         placeholder=" "
                         required={required}
+                        style={{
+                            backgroundColor: '#020202',
+                            border: 'none',
+                            color: 'white',
+                        }}
                         className="pt-4 pb-1 block w-full h-11 px-4 mt-0  border rounded-md appearance-none focus:outline-none focus:ring-0 "
                         {...props}
                         ref={inputRef}
@@ -53,10 +59,13 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                     <label
                         htmlFor={name}
                         onClick={() => inputRef.current?.focus()}
+                        style={{ color: '#555555' }}
                         className="flex items-center justify-center mx-3 px-1 transition-all absolute duration-300 top-3 -z-1 origin-0 "
                     >
                         {label}
-                        {required && <span className="text-rose-500">*</span>}
+                        {required && (
+                            <span className="text-rose-500 ml-1">*</span>
+                        )}
                     </label>
                     {type === 'password' && (
                         <button

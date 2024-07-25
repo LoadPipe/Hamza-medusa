@@ -1,12 +1,11 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-
 import AddressBook from '@modules/account/components/address-book';
-
 import { getCustomer } from '@lib/data';
-
 import { getRegion } from 'app/actions';
 import { headers } from 'next/headers';
+
+import { Flex, Text, Box } from '@chakra-ui/react';
 
 export const metadata: Metadata = {
     title: 'Addresses',
@@ -26,10 +25,15 @@ export default async function Addresses() {
     }
 
     return (
-        <div className="w-full bg-black text-white p-8">
+        <div
+            className="w-full bg-[#121212] text-white p-8"
+            style={{ borderRadius: '16px' }}
+        >
             <div className="mb-8 flex flex-col gap-y-4">
-                <h1 className="text-2xl-semi">Shipping Addresses</h1>
-                <p className="text-base-regular">
+                <Text color={'primary.indigo.900'} className="text-2xl-semi">
+                    Shipping Addresses
+                </Text>
+                <p style={{ color: '#555555' }} className="text-base-regular">
                     View and update your shipping addresses, you can add as many
                     as you like. Saving your addresses will make them available
                     during checkout.
