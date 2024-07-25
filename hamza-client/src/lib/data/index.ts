@@ -260,6 +260,23 @@ export async function orderBucket(customer_id: string) {
     }
 }
 
+export async function singleBucket(customer_id: string, bucket: number) {
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/order/customer-order`,
+            {
+                params: {
+                    customer_id: customer_id,
+                    bucket: bucket,
+                },
+            }
+        );
+        return response.data.orders;
+    } catch (error) {
+        console.error('Error fetching single bucket:', error);
+    }
+}
+
 export async function orderStatus(order_id: string) {
     try {
         const response = await axios.post(
