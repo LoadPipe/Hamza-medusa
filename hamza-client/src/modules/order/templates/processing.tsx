@@ -7,6 +7,11 @@ import LocalizedClientLink from '@modules/common/components/localized-client-lin
 const Processing = ({ orders }: { orders: any[] }) => {
     const [customerId, setCustomerId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [cancelReason, setCancelReason] = useState('');
+    const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
+
     const [customerOrder, setCustomerOrder] = useState<any[] | null>(null);
     const [orderStatuses, setOrderStatuses] = useState<{
         [key: string]: string;

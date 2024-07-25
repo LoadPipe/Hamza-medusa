@@ -5,6 +5,8 @@ import OrderCard from '@modules/account/components/order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 type OrderType = {
     id: string;
+    cart: any;
+    cart_id: string;
     // include other order properties here
 };
 interface OrderState {

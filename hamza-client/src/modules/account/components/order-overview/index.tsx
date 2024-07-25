@@ -226,7 +226,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
 
         return;
     };
-    const handleTabChange = (tab) => {
+    const handleTabChange = (tab: any) => {
         setActiveTab(tab);
     };
     return (
