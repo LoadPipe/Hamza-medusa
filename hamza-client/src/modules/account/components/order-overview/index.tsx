@@ -284,11 +284,9 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
             flexDirection="column"
             gap="8"
             width="full"
-            backgroundColor="black"
             color="white"
             p="8"
         >
-            {' '}
             <ButtonGroup isAttached>
                 <Button {...commonButtonStyles}>All Orders</Button>
                 <Button {...commonButtonStyles}>Processing</Button>
