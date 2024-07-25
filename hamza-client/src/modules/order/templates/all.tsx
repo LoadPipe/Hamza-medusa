@@ -3,7 +3,18 @@ import { orderBucket, orderDetails, singleBucket } from '@lib/data';
 import { Box, Button } from '@chakra-ui/react';
 import OrderCard from '@modules/account/components/order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-
+type OrderType = {
+    id: string;
+    // include other order properties here
+};
+interface OrderState {
+    ToPay: OrderType[];
+    ToShip: OrderType[];
+    ToReceive: OrderType[];
+    Completed: OrderType[];
+    Cancelled: OrderType[];
+    Refunded: OrderType[];
+}
 const All = ({ orders }: { orders: any[] }) => {
     const [customerId, setCustomerId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -12,7 +23,14 @@ const All = ({ orders }: { orders: any[] }) => {
     const [cancelReason, setCancelReason] = useState('');
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
 
-    const [customerOrder, setCustomerOrder] = useState<any[] | null>(null);
+    const [customerOrder, setCustomerOrder] = useState<OrderState | null>({
+        ToPay: [],
+        ToShip: [],
+        ToReceive: [],
+        Completed: [],
+        Cancelled: [],
+        Refunded: [],
+    });
     const [orderStatuses, setOrderStatuses] = useState<{
         [key: string]: string;
     }>({});
@@ -42,9 +60,9 @@ const All = ({ orders }: { orders: any[] }) => {
         setIsLoading(true);
         try {
             const bucket = await orderBucket(customerId);
-            console.log(`ALL BUCKETS ${bucket}`);
-            if (Array.isArray(bucket)) {
-                setCustomerOrder(bucket);
+            console.log(`ALL BUCKETS ${bucket.ToPay}`);
+            if (bucket && bucket.length > 0) {
+                setCustomerOrder(bucket.ToPay);
             } else {
                 console.error('Expected an array but got:', bucket);
                 setCustomerOrder([]);

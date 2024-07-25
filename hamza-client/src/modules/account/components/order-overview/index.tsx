@@ -141,7 +141,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
     const renderTabContent = () => {
         switch (activeTab) {
             case TABS.ALL:
-                return <All />;
+                return <All orders={orders} />;
             case TABS.PROCESSING:
                 return <Processing orders={orders} />;
             case TABS.SHIPPED:
