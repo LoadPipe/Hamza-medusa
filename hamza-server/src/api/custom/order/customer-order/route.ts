@@ -37,9 +37,12 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                     message: `Customer id ${req.query.customer_id.toString()} not found`,
                 });
             } else {
-                if (req.query.buckets) {
-                    const orders = await orderService.getCustomerOrderBuckets(
-                        req.query.customer_id.toString()
+                if (req.query.bucket) {
+                    const bucketValue = parseInt(req.query.bucket.toString());
+                    const customer_id = req.query.customer_id.toString();
+                    const orders = await orderService.getCustomerOrderBucket(
+                        customer_id,
+                        bucketValue
                     );
                     res.status(200).json({ orders });
                 } else {

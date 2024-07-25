@@ -375,6 +375,14 @@ GET http://localhost:9000/custom/cancel-order/cart_01J3CF7DMR72ZS436EM0NYDCGW
 Content-Type: application/json
 
 
+### Get Specific Customers All Orders METHOD: listCustomerOrders() in order.ts
+GET http://localhost:9000/custom/order/customer-orders?customer_id=cus_01J3CF43WK0QT2591VHG9JT07E&buckets=true
+Content-Type: application/json
+
+
+### Get Single BUCKET
+GET http://localhost:9000/custom/order/customer-order?customer_id=cus_01J3CF43WK0QT2591VHG9JT07E&bucket=1
+
 ### PUT cart_id to payment_session record 
 PUT http://localhost:9000/custom/payment-session
 Content-Type: application/json
