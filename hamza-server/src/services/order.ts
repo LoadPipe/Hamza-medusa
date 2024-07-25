@@ -19,6 +19,8 @@ import { Lifetime } from 'awilix';
 import { And, In, Not } from 'typeorm';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
+// In medusa we have these 5 DEFAULT order.STATUS's {PENDING, COMPLETED, ARCHIVED, CANCELED, REQUIRES_ACTION}
+// In this case PENDING will be {PROCESSING}
 export enum OrderBucketType {
     TO_PAY = 1,
     TO_SHIP = 2,
