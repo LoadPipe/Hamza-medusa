@@ -8,11 +8,10 @@ import { Toast } from '@medusajs/ui';
 import { useRouter, useSearchParams } from 'next/navigation';
 import getGoogleOAuthURL from '@lib/util/google-url';
 import getTwitterOauthUrl from '@lib/util/twitter-url';
-import Image from 'next/image';
 import toast from 'react-hot-toast';
 import { FcGoogle } from 'react-icons/fc';
 import { FaTwitter, FaDiscord } from 'react-icons/fa';
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex, Text, Heading } from '@chakra-ui/react';
 
 const VerifyEmail = () => {
     const { authData, setCustomerAuthData } = useCustomerAuthStore();
@@ -47,9 +46,12 @@ const VerifyEmail = () => {
         <div className="layout-base bg-black flex justify-center min-h-screen">
             <div className="flex flex-col items-center w-full">
                 <div className="my-8">
-                    <h1 className="font-semibold text-4xl text-white text-center">
+                    <Text
+                        color={'primary.indigo.900'}
+                        className="font-semibold text-4xl  text-center"
+                    >
                         Account Verification
-                    </h1>
+                    </Text>
                 </div>
                 {searchParams.get('auth_error') == 'true' && (
                     <div>An error occurred during verification</div>
@@ -74,7 +76,7 @@ const VerifyEmail = () => {
                             />
                             <button
                                 type="submit"
-                                className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                                className="w-full text-white bg-[#7B61FF] hover:bg-[#624DCC] focus:ring-4 focus:outline-none focus:ring-[#7B61FF] font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                             >
                                 Verify
                             </button>
@@ -104,6 +106,7 @@ const VerifyEmail = () => {
                                     <Flex>
                                         <Flex padding={'5px'}>
                                             <FaTwitter
+                                                color="#1DA1F2"
                                                 size={20}
                                                 style={{ alignSelf: 'center' }}
                                             />
@@ -122,6 +125,7 @@ const VerifyEmail = () => {
                                     <Flex>
                                         <Flex padding={'5px'}>
                                             <FaDiscord
+                                                color="#5865F2"
                                                 size={20}
                                                 style={{ alignSelf: 'center' }}
                                             />
