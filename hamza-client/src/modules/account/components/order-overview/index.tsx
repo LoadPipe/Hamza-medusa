@@ -65,8 +65,8 @@ const commonButtonStyles = {
     width: '146px',
     height: '56px',
     padding: '16px',
-    bg: 'transparent',
-    borderColor: '#ccd0d5',
+    bg: 'gray.900',
+    borderColor: 'transparent',
     color: 'white',
     _hover: {
         // Assuming you want hover effects as well
