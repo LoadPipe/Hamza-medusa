@@ -59,17 +59,45 @@ const All = ({ orders }: { orders: any[] }) => {
     const fetchAllOrders = async (customerId: string) => {
         setIsLoading(true);
         try {
-            const bucket = await orderBucket(customerId);
-            console.log(`ALL BUCKETS ${bucket.ToPay}`);
-            if (bucket && bucket.length > 0) {
-                setCustomerOrder(bucket.ToPay);
+            const response = await orderBucket(customerId);
+            console.log(`ALL BUCKETS`, response);
+
+            console.log(`ToPay BUCKET ${response.ToPay}`);
+            // Check if the response is valid and has the expected structure
+            if (response && typeof response === 'object') {
+                setCustomerOrder({
+                    ToPay: response.ToPay || [],
+                    ToShip: response.ToShip || [],
+                    ToReceive: response.ToReceive || [],
+                    Completed: response.Completed || [],
+                    Cancelled: response.Cancelled || [],
+                    Refunded: response.Refunded || [],
+                });
             } else {
-                console.error('Expected an array but got:', bucket);
-                setCustomerOrder([]);
+                console.error(
+                    'Expected an object with order arrays but got:',
+                    response
+                );
+                // Maintain the structure of customerOrder even in error cases
+                setCustomerOrder({
+                    ToPay: [],
+                    ToShip: [],
+                    ToReceive: [],
+                    Completed: [],
+                    Cancelled: [],
+                    Refunded: [],
+                });
             }
         } catch (error) {
-            console.error('Error fetching processing orders:', error);
-            setCustomerOrder([]);
+            console.error('Error fetching order buckets:', error);
+            setCustomerOrder({
+                ToPay: [],
+                ToShip: [],
+                ToReceive: [],
+                Completed: [],
+                Cancelled: [],
+                Refunded: [],
+            });
         }
         setIsLoading(false);
     };
@@ -78,8 +106,8 @@ const All = ({ orders }: { orders: any[] }) => {
         <div>
             {/* Processing-specific content */}
             <h1>Processing Orders</h1>
-            {customerOrder && customerOrder.length > 0 ? (
-                customerOrder.map((order) => (
+            {customerOrder && customerOrder.ToPay.length > 0 ? (
+                customerOrder.ToPay.map((order) => (
                     <div
                         key={order.id} // Changed from cart_id to id since it's more reliable and unique
                         className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
