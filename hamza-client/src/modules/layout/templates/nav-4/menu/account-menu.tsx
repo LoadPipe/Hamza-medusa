@@ -114,10 +114,7 @@ const AccountMenu = () => {
                             </Text>
                         </MenuItem>
                     </Link>
-                    <Link
-                        href={`https://blog.hamza.biz/affiliate/`}
-                        target="_blank"
-                    >
+                    <Link href={`/account`}>
                         <MenuItem
                             fontWeight={'600'}
                             mb="1rem"
