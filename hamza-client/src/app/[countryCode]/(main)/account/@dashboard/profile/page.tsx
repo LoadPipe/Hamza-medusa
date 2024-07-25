@@ -35,8 +35,8 @@ export default async function Profile() {
             justifyContent={'center'}
             alignItems={'center'}
             color={'white'}
-            height={'739px'}
             borderRadius={'12px'}
+            py={'5rem'}
             gap={'10px'}
         >
             {/* Avatar update / remove */}
