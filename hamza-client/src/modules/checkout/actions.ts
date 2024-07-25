@@ -173,7 +173,7 @@ export async function setPaymentMethod(providerId: string) {
         revalidateTag('cart');
         return cart;
     } catch (error: any) {
-        console.log(`IS THIS THE RUNNING ERROR`);
+        console.log(error);
         throw error;
     }
 }

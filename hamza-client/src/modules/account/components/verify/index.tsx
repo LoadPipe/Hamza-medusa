@@ -43,7 +43,7 @@ const VerifyEmail = () => {
     };
 
     return (
-        <div className="layout-base bg-black flex justify-center min-h-screen">
+        <Flex>
             <div className="flex flex-col items-center w-full">
                 <div className="my-8">
                     <Text
@@ -140,7 +140,7 @@ const VerifyEmail = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </Flex>
     );
 };
 

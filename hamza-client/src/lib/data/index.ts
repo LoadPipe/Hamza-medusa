@@ -532,12 +532,34 @@ export async function deleteDiscount(cartId: string, code: string) {
         });
 }
 
-export async function createPaymentSessions(cartId: string) {
-    const headers = getMedusaHeaders(['cart']);
+export async function updatePaymentSession(cartId: string, paymentSessionId: string | undefined, providerId: string) {
+    console.log(`updatePaymentSession(${cartId}, ${paymentSessionId}, ${providerId})`)
+    if (paymentSessionId) {
+        try {
+            const response = await axios.put(
+                `${BACKEND_URL}/custom/payment-session`,
+                {
+                    cart_id: cartId,
+                    payment_session_id: paymentSessionId
+                }
+            );
+            return response.data;
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    }
+}
 
+export async function createPaymentSessions(cartId: string, providerId: string = 'crypto') {
+    console.log(`createPaymentSessions(${cartId})`);
+    const headers = getMedusaHeaders(['cart']);
     return medusaClient.carts
         .createPaymentSessions(cartId, headers)
-        .then(({ cart }) => cart)
+        .then(({ cart }) => {
+            updatePaymentSession(cartId, cart?.payment_session?.id, providerId,);
+            return cart;
+        })
         .catch((err) => {
             console.log(err);
             return null;
@@ -552,11 +574,13 @@ export async function setPaymentSession({
     providerId: string;
 }) {
     const headers = getMedusaHeaders(['cart']);
-
     return medusaClient.carts
         .setPaymentSession(cartId, { provider_id: providerId }, headers)
+        //.createPaymentSessions(cartId, { provider_id: providerId })
         .then(({ cart }) => cart)
-        .catch((err) => medusaError(err));
+        .catch((err) => {
+            medusaError(err);
+        });
 }
 
 export async function completeCart(cartId: string) {
