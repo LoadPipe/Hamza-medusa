@@ -114,6 +114,26 @@ const AccountMenu = () => {
                             </Text>
                         </MenuItem>
                     </Link>
+                    <Link href={`/verify-email`}>
+                        <MenuItem
+                            fontWeight={'600'}
+                            pl="1rem"
+                            color={'white'}
+                            backgroundColor={'black'}
+                            _hover={{ color: 'primary.green.900' }}
+                        >
+                            <Flex
+                                w={'30px'}
+                                alignContent={'center'}
+                                justifyContent={'center'}
+                            >
+                                <MdOutlineShield size={29} />
+                            </Flex>
+                            <Text fontWeight={'600'} ml="0.5rem">
+                                Verify Account
+                            </Text>
+                        </MenuItem>
+                    </Link>
                     <Link href={`/account`}>
                         <MenuItem
                             fontWeight={'600'}
