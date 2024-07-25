@@ -118,9 +118,13 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
         setIsLoading(true);
         try {
             const response = await orderDetails(customerId);
-            console.log(`Response is ${JSON.stringify(response)}`);
-            console.log(typeof response);
-            console.log(response);
+            // console.log(`Response is ${JSON.stringify(response)}`);
+            // console.log(typeof response);
+            // console.log(response);
+
+            const bucket = await orderBucket(customerId);
+            console.log(`Bucket is ${JSON.stringify(bucket)}`);
+
             if (response && Array.isArray(response)) {
                 setCustomerOrder(response);
             } else {

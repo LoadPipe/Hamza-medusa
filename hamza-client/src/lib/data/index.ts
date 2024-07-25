@@ -248,8 +248,10 @@ export async function orderBucket(customer_id: string) {
         const response = await axios.get(
             `${BACKEND_URL}/custom/order/customer-orders`,
             {
-                customer_id: customer_id,
-                buckets: true,
+                params: {
+                    customer_id: customer_id,
+                    buckets: true,
+                },
             }
         );
         return response.data.orders;
