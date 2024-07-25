@@ -26,6 +26,7 @@ import {
     Textarea,
     FormControl,
     FormErrorMessage,
+    Box,
 } from '@chakra-ui/react';
 
 // Define a type that extends the Order type with any additional data
@@ -278,7 +279,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
 
     return (
         <div className="flex flex-col gap-y-8 w-full bg-black text-white p-8">
-            <ButtonGroup isAttached variant="outline">
+            <ButtonGroup isAttached>
                 <Button {...commonButtonStyles}>All Orders</Button>
                 <Button {...commonButtonStyles}>Processing</Button>
                 <Button {...commonButtonStyles}>Shipped</Button>
@@ -307,7 +308,13 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                         (
                             item: any // Adjusting the map to the correct path
                         ) => (
-                            <div key={item.id}>
+                            <Box
+                                key={item.id}
+                                bg={'#272727'}
+                                p={4}
+                                m={2}
+                                rounded="lg"
+                            >
                                 {/*item: {item.id} <br />*/}
                                 <OrderCard
                                     key={item.id}
@@ -343,7 +350,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                                         Request Cancellation
                                     </Button>
                                 )}
-                            </div>
+                            </Box>
                         )
                     )}
                 </div>

@@ -66,7 +66,7 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
     }
     return (
         <Box
-            bg={'black'}
+            // bg={'#272727'}
             color={'white'}
             p={4}
             rounded="lg"
