@@ -373,3 +373,12 @@ Content-Type: application/json
 ### GET Request to cancel order
 GET http://localhost:9000/custom/cancel-order/cart_01J3CF7DMR72ZS436EM0NYDCGW
 Content-Type: application/json
+
+
+### PUT cart_id to payment_session record 
+PUT http://localhost:9000/custom/payment-session
+Content-Type: application/json
+{
+  "cart_id": "cart_01J3M8J8V2SB9MQY6M13D0Y291",
+  "payment_session_id": "ps_01J3M8JRV4050QQCK59NE75MQZ"
+}
