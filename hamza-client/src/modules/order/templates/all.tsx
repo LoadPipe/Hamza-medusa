@@ -107,7 +107,7 @@ const All = ({ orders }: { orders: any[] }) => {
     return (
         <div>
             {/* Processing-specific content */}
-            <h1>Processing Orders</h1>
+            <h1>All Orders</h1>
             {customerOrder && customerOrder.ToPay.length > 0 ? (
                 customerOrder.ToPay.map((order) => (
                     <div
