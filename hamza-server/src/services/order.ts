@@ -18,6 +18,7 @@ import { Payment } from '../models/payment';
 import { Lifetime } from 'awilix';
 import { And, In, Not } from 'typeorm';
 
+// Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
 export enum OrderBucketType {
     TO_PAY = 1,
     TO_SHIP = 2,
