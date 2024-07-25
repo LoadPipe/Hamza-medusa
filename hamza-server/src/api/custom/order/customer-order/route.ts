@@ -7,14 +7,6 @@ import type {
 import OrderService from '../../../../services/order';
 import { RouteHandler } from '../../../route-handler';
 
-export enum OrderBucketType {
-    TO_PAY = 1,
-    TO_SHIP = 2,
-    SHIPPED = 3,
-    COMPLETED = 4,
-    CANCELLED = 5,
-    REFUNDED = 6,
-}
 //GETs all of a customer's orders, including past orders, cancelled orders, etc.
 //if 'buckets' is passed as FALSE, will just return a straight array of orders, regardless of status
 //if 'buckets' is passed as TRUE, will return orders grouped into buckets
