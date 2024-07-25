@@ -5,7 +5,7 @@ import { Plus } from '@medusajs/icons';
 import { Button, Heading } from '@medusajs/ui';
 import { useEffect, useState } from 'react';
 import { useFormState } from 'react-dom';
-import { Flex, Box } from '@chakra-ui/react';
+import { Flex, Box, Text } from '@chakra-ui/react';
 
 import useToggleState from '@lib/hooks/use-toggle-state';
 import CountrySelect from '@modules/checkout/components/country-select';
@@ -129,15 +129,57 @@ const AddAddress = ({ region }: { region: Region }) => {
                     </Modal.Body>
                     <Modal.Footer>
                         <div className="flex gap-3 mt-6">
-                            <Button
+                            {/* <Button
                                 type="reset"
                                 variant="secondary"
                                 onClick={close}
+                                style={{
+                                    backgroundColor: '#7B61FF',
+                                    fontSize: '16px',
+                                }}
                                 className="h-10"
                             >
-                                Cancel
-                            </Button>
-                            <SubmitButton>Save</SubmitButton>
+                                <Text alignSelf={'center'}>Cancel</Text>
+                            </Button> */}
+                            <Flex
+                                backgroundColor={'#7B61FF'}
+                                className="h-10"
+                                width={'80px'}
+                                justifyContent={'center'}
+                                borderRadius={'5px'}
+                                cursor={'pointer'}
+                                onClick={close}
+                            >
+                                <Text
+                                    fontWeight={600}
+                                    alignSelf={'center'}
+                                    color={'white'}
+                                >
+                                    Cancel
+                                </Text>
+                            </Flex>
+                            <SubmitButton>
+                                <Flex
+                                    border={'1px'}
+                                    borderRadius={'5px'}
+                                    width={'80px'}
+                                    justifyContent={'center'}
+                                    borderColor={'#7B61FF'}
+                                    className="h-10"
+                                    px="0.7rem"
+                                    alignItems={'center'}
+                                >
+                                    <Text
+                                        fontWeight={600}
+                                        style={{
+                                            color: '#7B61FF',
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        Save
+                                    </Text>
+                                </Flex>
+                            </SubmitButton>
                         </div>
                     </Modal.Footer>
                 </form>
