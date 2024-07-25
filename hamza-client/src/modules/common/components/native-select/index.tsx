@@ -63,10 +63,14 @@ const NativeSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
                         ref={innerRef}
                         defaultValue={defaultValue}
                         {...props}
-                        style={{ color: '#555555' }}
+                        style={{ color: '#555555', marginLeft: 'auto' }}
                         className="appearance-none flex-1 bg-transparent border-none px-4 py-2.5 transition-colors duration-150 outline-none "
                     >
-                        <option disabled value="">
+                        <option
+                            style={{ marginLeft: 'auto' }}
+                            disabled
+                            value=""
+                        >
                             {placeholder}
                         </option>
                         {children}
