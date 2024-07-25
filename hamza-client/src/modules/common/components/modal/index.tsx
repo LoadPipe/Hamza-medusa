@@ -88,7 +88,7 @@ const Title: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <div className="text-large-semi">{children}</div>
             <div>
                 <button onClick={close}>
-                    <X size={20} />
+                    <X size={20} color="#555555" />
                 </button>
             </div>
         </Dialog.Title>

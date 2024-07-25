@@ -47,6 +47,10 @@ const NativeSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
                 <div
                     onFocus={() => innerRef.current?.focus()}
                     onBlur={() => innerRef.current?.blur()}
+                    style={{
+                        backgroundColor: '#020202',
+                        borderColor: '#555555',
+                    }}
                     className={clx(
                         'relative flex items-center text-base-regular border border-ui-border-base bg-ui-bg-subtle rounded-md ',
                         className,
@@ -59,6 +63,7 @@ const NativeSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
                         ref={innerRef}
                         defaultValue={defaultValue}
                         {...props}
+                        style={{ color: '#555555' }}
                         className="appearance-none flex-1 bg-transparent border-none px-4 py-2.5 transition-colors duration-150 outline-none "
                     >
                         <option disabled value="">
