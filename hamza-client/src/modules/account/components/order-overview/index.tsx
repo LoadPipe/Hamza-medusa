@@ -6,6 +6,13 @@ import OrderCard from '../order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
+import Refund from '../../../order/templates/refund';
+import Delivered from '../../../order/templates/delivered';
+import Processing from '../../../order/templates/processing';
+import Shipped from '../../../order/templates/shipped';
+import All from '../../../order/templates/all';
+import Cancelled from '../../../order/templates/cancelled';
+
 import {
     getVendors,
     orderInformation,
@@ -84,6 +91,22 @@ const commonButtonStyles = {
     },
 };
 
+enum OrderBucketType {
+    TO_PAY = 1,
+    TO_SHIP = 2,
+    SHIPPED = 3,
+    COMPLETED = 4,
+    CANCELLED = 5,
+    REFUNDED = 6,
+}
+const TABS = {
+    ALL: 'All Orders',
+    PROCESSING: 'Processing',
+    SHIPPED: 'Shipped',
+    DELIVERED: 'Delivered',
+    CANCELLED: 'Cancelled',
+    REFUND: 'Refund',
+};
 const OrderOverview = ({ orders }: { orders: Order[] }) => {
     // Initialize state with the correct type
     const [detailedOrders, setDetailedOrders] = useState<DetailedOrder[]>([]);
@@ -97,6 +120,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
     const [customerId, setCustomerId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [activeTab, setActiveTab] = useState(TABS.ALL);
 
     const openModal = (orderId: string) => {
         setSelectedOrderId(orderId);
@@ -113,6 +137,25 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
     if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY) countryCode = 'us';
 
     const router = useRouter();
+
+    const renderTabContent = () => {
+        switch (activeTab) {
+            case TABS.ALL:
+                return <All />;
+            case TABS.PROCESSING:
+                return <Processing />;
+            case TABS.SHIPPED:
+                return <Shipped />;
+            case TABS.DELIVERED:
+                return <Delivered />;
+            case TABS.CANCELLED:
+                return <Cancelled />;
+            case TABS.REFUND:
+                return <Refund />;
+            default:
+                return <div>Select a tab to view orders.</div>;
+        }
+    };
 
     const fetchAllOrders = async (customerId: string) => {
         setIsLoading(true);
@@ -187,7 +230,9 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
 
         return;
     };
-
+    const handleTabChange = (tab) => {
+        setActiveTab(tab);
+    };
     return (
         <Box
             display="flex"
@@ -197,14 +242,19 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
             color="white"
             p="8"
         >
-            <ButtonGroup isAttached justifyContent={'center'}>
-                <Button {...commonButtonStyles}>All Orders</Button>
-                <Button {...commonButtonStyles}>Processing</Button>
-                <Button {...commonButtonStyles}>Shipped</Button>
-                <Button {...commonButtonStyles}>Delivered</Button>
-                <Button {...commonButtonStyles}>Cancelled</Button>
-                <Button {...commonButtonStyles}>Refund</Button>
+            <ButtonGroup isAttached justifyContent="center">
+                {Object.values(TABS).map((tab) => (
+                    <Button
+                        key={tab}
+                        onClick={() => handleTabChange(tab)}
+                        {...commonButtonStyles}
+                        isActive={activeTab === tab}
+                    >
+                        {tab}
+                    </Button>
+                ))}
             </ButtonGroup>
+            {renderTabContent()}
             {customerOrder && customerOrder.length > 0 ? (
                 customerOrder.map((order) => (
                     <div
