@@ -318,7 +318,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                         ) => (
                             <Box
                                 key={item.id}
-                                bg={'#272727'}
+                                bg="rgba(39, 39, 39, 0.3)"
                                 p={4}
                                 m={2}
                                 rounded="lg"

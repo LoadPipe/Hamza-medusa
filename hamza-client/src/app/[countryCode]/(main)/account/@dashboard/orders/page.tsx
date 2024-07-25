@@ -17,7 +17,7 @@ export default async function Orders() {
     }
     // 121212
     return (
-        <Box width="full" bg="#121212" color="white">
+        <Box width="full" bg="#121212" color="white" rounded={'lg'}>
             <Box display="flex" flexDirection="column">
                 {/*<Text fontWeight={'bold'} fontSize="lg">*/}
                 {/*    Orders*/}
