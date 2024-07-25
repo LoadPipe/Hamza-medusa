@@ -243,6 +243,21 @@ export async function orderDetails(customer_id: string) {
     }
 }
 
+export async function orderBucket(customer_id: string) {
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/order/customer-orders`,
+            {
+                customer_id: customer_id,
+                buckets: true,
+            }
+        );
+        return response.data.orders;
+    } catch (error) {
+        console.error('Error fetching order bucket:', error);
+    }
+}
+
 export async function orderStatus(order_id: string) {
     try {
         const response = await axios.post(
