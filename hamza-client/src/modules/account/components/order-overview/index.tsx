@@ -267,22 +267,6 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
         return;
     };
 
-    if (isLoading) {
-        return <div>Loading...</div>; // Loading indicator
-    }
-
-    if (customerOrder === null || customerOrder.length === 0) {
-        return (
-            <div className="flex flex-col items-center w-full bg-black text-white p-8">
-                <h2>Nothing to see here</h2>
-                <p>You don't have any orders yet, let us change that :)</p>
-                <LocalizedClientLink href="/" passHref>
-                    <Button>Continue shopping</Button>
-                </LocalizedClientLink>
-            </div>
-        );
-    }
-
     return (
         <Box
             display="flex"
@@ -300,74 +284,92 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                 <Button {...commonButtonStyles}>Cancelled</Button>
                 <Button {...commonButtonStyles}>Refund</Button>
             </ButtonGroup>
-            {customerOrder.map((order) => (
-                <div
-                    key={order.id} // Changed from cart_id to id since it's more reliable and unique
-                    className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
-                >
-                    {/*<div className="p-4 bg-gray-700">*/}
-                    {/*    Cart ID {order.cart_id} - Total Items:{' '}*/}
-                    {/*    {order.cart?.items?.length || 0}*/}
-                    {/*    <span*/}
-                    {/*        className="pl-2 text-blue-400 underline underline-offset-1 cursor-pointer"*/}
-                    {/*        onClick={() =>*/}
-                    {/*            handleReorder(order.cart?.items || [])*/}
-                    {/*        }*/}
-                    {/*    >*/}
-                    {/*        Re-order*/}
-                    {/*    </span>*/}
-                    {/*</div>*/}
-                    {order.cart?.items?.map(
-                        (
-                            item: any // Adjusting the map to the correct path
-                        ) => (
-                            <Box
-                                key={item.id}
-                                bg="rgba(39, 39, 39, 0.3)"
-                                p={4}
-                                m={2}
-                                rounded="lg"
-                            >
-                                {/*item: {item.id} <br />*/}
-                                <OrderCard
+            {customerOrder && customerOrder.length > 0 ? (
+                customerOrder.map((order) => (
+                    <div
+                        key={order.id} // Changed from cart_id to id since it's more reliable and unique
+                        className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
+                    >
+                        {/*<div className="p-4 bg-gray-700">*/}
+                        {/*    Cart ID {order.cart_id} - Total Items:{' '}*/}
+                        {/*    {order.cart?.items?.length || 0}*/}
+                        {/*    <span*/}
+                        {/*        className="pl-2 text-blue-400 underline underline-offset-1 cursor-pointer"*/}
+                        {/*        onClick={() =>*/}
+                        {/*            handleReorder(order.cart?.items || [])*/}
+                        {/*        }*/}
+                        {/*    >*/}
+                        {/*        Re-order*/}
+                        {/*    </span>*/}
+                        {/*</div>*/}
+                        {order.cart?.items?.map(
+                            (
+                                item: any // Adjusting the map to the correct path
+                            ) => (
+                                <Box
                                     key={item.id}
-                                    order={item}
-                                    handle={
-                                        item.variant?.product?.handle || 'N/A'
-                                    }
-                                />
-                                <LocalizedClientLink
-                                    href={`/account/orders/details/${order.id}`} // Ensure order_ids exists
-                                    passHref
+                                    bg="rgba(39, 39, 39, 0.3)"
+                                    p={4}
+                                    m={2}
+                                    rounded="lg"
                                 >
-                                    <Button
-                                        variant="outline"
-                                        colorScheme="white"
-                                        borderRadius={'37px'}
+                                    {/*item: {item.id} <br />*/}
+                                    <OrderCard
+                                        key={item.id}
+                                        order={item}
+                                        handle={
+                                            item.variant?.product?.handle ||
+                                            'N/A'
+                                        }
+                                    />
+                                    <LocalizedClientLink
+                                        href={`/account/orders/details/${order.id}`} // Ensure order_ids exists
+                                        passHref
                                     >
-                                        See details
-                                    </Button>
-                                </LocalizedClientLink>
-                                {orderStatuses[order.cart_id] === 'canceled' ? (
-                                    <Button colorScheme="red" ml={4} isDisabled>
-                                        Cancellation Requested
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        variant="outline"
-                                        colorScheme="white"
-                                        borderRadius={'37px'}
-                                        ml={4}
-                                        onClick={() => openModal(order.cart_id)}
-                                    >
-                                        Request Cancellation
-                                    </Button>
-                                )}
-                            </Box>
-                        )
-                    )}
+                                        <Button
+                                            variant="outline"
+                                            colorScheme="white"
+                                            borderRadius={'37px'}
+                                        >
+                                            See details
+                                        </Button>
+                                    </LocalizedClientLink>
+                                    {orderStatuses[order.cart_id] ===
+                                    'canceled' ? (
+                                        <Button
+                                            colorScheme="red"
+                                            ml={4}
+                                            isDisabled
+                                        >
+                                            Cancellation Requested
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            variant="outline"
+                                            colorScheme="white"
+                                            borderRadius={'37px'}
+                                            ml={4}
+                                            onClick={() =>
+                                                openModal(order.cart_id)
+                                            }
+                                        >
+                                            Request Cancellation
+                                        </Button>
+                                    )}
+                                </Box>
+                            )
+                        )}
+                    </div>
+                ))
+            ) : (
+                <div className="flex flex-col items-center w-full bg-black text-white p-8">
+                    <h2>Nothing to see here</h2>
+                    <p>You don't have any orders yet, let us change that :)</p>
+                    <LocalizedClientLink href="/" passHref>
+                        <Button>Continue shopping</Button>
+                    </LocalizedClientLink>
                 </div>
-            ))}
+            )}
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 <ModalOverlay />
                 <ModalContent>
