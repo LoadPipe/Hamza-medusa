@@ -3,27 +3,21 @@ import React, { useEffect, useState } from 'react';
 import { Flex, Button, Text } from '@chakra-ui/react';
 import ProfileInput from './components/profile-input';
 import ProfilePhoneInput from './components/phone-input';
-import useProfile from '@store/profile/profile';
 import { updateCustomer } from '@lib/data';
 import { getCustomer } from '@lib/data';
 import ProfileImage from './components/profile-image';
 
-type Customer = {
-    first_name: string;
-    last_name: string;
-    email: string;
-    phone: string;
-};
 const ProfileForm = () => {
     // Hooks Form
-    const [firstNameValue, setFirstNameValue] = useState('');
-    const [lastNameValue, setLastNameValue] = useState('');
-    const [emailValue, setEmailValue] = useState('');
-    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [firstNameValue, setFirstNameValue] = useState<string>('');
+    const [lastNameValue, setLastNameValue] = useState<string>('');
+    const [emailValue, setEmailValue] = useState<string>('');
+    const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
     // Hooks Avatar
-    const [avatarFirstName, setAvatarFirstName] = useState('');
-    const [avatarLastName, setAvatarLastName] = useState('');
+    const [avatarFirstName, setAvatarFirstName] = useState<string>('');
+    const [avatarLastName, setAvatarLastName] = useState<string>('');
 
+    //  Fetch customer and update hook states
     useEffect(() => {
         const fetchCustomer = async () => {
             try {
@@ -101,7 +95,7 @@ const ProfileForm = () => {
                 />
             </Flex>
 
-            {/* Birthdate and Email input */}
+            {/* Email input */}
             <Flex gap={'15px'}>
                 <ProfileInput
                     placeholder={emailValue}
@@ -109,11 +103,7 @@ const ProfileForm = () => {
                     value={emailValue}
                     setValue={setEmailValue}
                 />
-                {/* <ProfilePhoneInput label="phone number" />
-                // <ProfileInput placeholder={customer.email} label="email" /> */}
             </Flex>
-
-            {/* Phone input */}
 
             <Button
                 mt="1rem"
