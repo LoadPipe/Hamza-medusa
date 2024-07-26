@@ -41,6 +41,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
             addressId: address.id,
         }
     );
+    console.log(formState.success);
 
     const close = () => {
         setSuccessState(false);

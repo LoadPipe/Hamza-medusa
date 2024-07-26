@@ -13,6 +13,7 @@ import Input from '@modules/common/components/input';
 import Modal from '@modules/common/components/modal';
 import { SubmitButton } from '@modules/checkout/components/submit-button';
 import { addCustomerShippingAddress } from '@modules/account/actions';
+import toast from 'react-hot-toast';
 
 const AddAddress = ({ region }: { region: Region }) => {
     const [successState, setSuccessState] = useState(false);
@@ -30,6 +31,7 @@ const AddAddress = ({ region }: { region: Region }) => {
 
     useEffect(() => {
         if (successState) {
+            toast.success('Address added!');
             close();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
