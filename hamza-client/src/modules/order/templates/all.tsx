@@ -204,7 +204,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                 p={8}
                             >
                                 <Text fontSize="xl" fontWeight="bold">
-                                    You don't have any Processed Orders yet.
+                                    You don't have any Processing Orders yet.
                                 </Text>
                             </Box>
                         )}

@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import Review from '@modules/account/components/reviews';
-
+import { Text, Box } from '@chakra-ui/react';
 import { getCustomer } from '@lib/data';
 
 import { getRegion } from 'app/actions';
@@ -26,12 +26,13 @@ export default async function Reviews() {
     }
 
     return (
-        <div className="w-full bg-black text-white p-8">
-            <div className="mb-8 flex flex-col gap-y-4">
-                <h1 className="text-2xl-semi">Reviews</h1>
-                <p className="text-base-regular">View your reviews</p>
-            </div>
-            <Review customer={customer} region={region} />
-        </div>
+        <Box bg={'rgba(18, 18, 18, 0.9)'} p={8}>
+            <Box dir={'col'} mb={'8'} gap={'4'}>
+                <Text className="text-2xl-semi" color={'primary.indigo.900'}>
+                    My Reviews
+                </Text>
+                <Review customer={customer} region={region} />
+            </Box>
+        </Box>
     );
 }
