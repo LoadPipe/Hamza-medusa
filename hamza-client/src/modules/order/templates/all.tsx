@@ -10,10 +10,9 @@ type OrderType = {
     // include other order properties here
 };
 interface OrderState {
-    ToPay: OrderType[];
-    ToShip: OrderType[];
-    ToReceive: OrderType[];
-    Completed: OrderType[];
+    Processing: OrderType[];
+    Shipped: OrderType[];
+    Delivered: OrderType[];
     Cancelled: OrderType[];
     Refunded: OrderType[];
 }
@@ -26,10 +25,9 @@ const All = ({ orders }: { orders: any[] }) => {
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
 
     const [customerOrder, setCustomerOrder] = useState<OrderState | null>({
-        ToPay: [],
-        ToShip: [],
-        ToReceive: [],
-        Completed: [],
+        Processing: [],
+        Shipped: [],
+        Delivered: [],
         Cancelled: [],
         Refunded: [],
     });
@@ -68,10 +66,9 @@ const All = ({ orders }: { orders: any[] }) => {
             // Check if the response is valid and has the expected structure
             if (response && typeof response === 'object') {
                 setCustomerOrder({
-                    ToPay: response.ToPay || [],
-                    ToShip: response.ToShip || [],
-                    ToReceive: response.ToReceive || [],
-                    Completed: response.Completed || [],
+                    Processing: response.Processing || [],
+                    Shipped: response.Shipped || [],
+                    Delivered: response.Delivered || [],
                     Cancelled: response.Cancelled || [],
                     Refunded: response.Refunded || [],
                 });
@@ -82,10 +79,9 @@ const All = ({ orders }: { orders: any[] }) => {
                 );
                 // Maintain the structure of customerOrder even in error cases
                 setCustomerOrder({
-                    ToPay: [],
-                    ToShip: [],
-                    ToReceive: [],
-                    Completed: [],
+                    Processing: [],
+                    Shipped: [],
+                    Delivered: [],
                     Cancelled: [],
                     Refunded: [],
                 });
@@ -93,10 +89,9 @@ const All = ({ orders }: { orders: any[] }) => {
         } catch (error) {
             console.error('Error fetching order buckets:', error);
             setCustomerOrder({
-                ToPay: [],
-                ToShip: [],
-                ToReceive: [],
-                Completed: [],
+                Processing: [],
+                Shipped: [],
+                Delivered: [],
                 Cancelled: [],
                 Refunded: [],
             });
@@ -108,8 +103,8 @@ const All = ({ orders }: { orders: any[] }) => {
         <div>
             {/* Processing-specific content */}
             <h1>All Orders</h1>
-            {customerOrder && customerOrder.ToPay.length > 0 ? (
-                customerOrder.ToPay.map((order) => (
+            {customerOrder && customerOrder.Processing.length > 0 ? (
+                customerOrder.Processing.map((order) => (
                     <div
                         key={order.id} // Changed from cart_id to id since it's more reliable and unique
                         className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
