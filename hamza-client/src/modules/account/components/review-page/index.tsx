@@ -132,7 +132,12 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                     <Text p={'2'} fontSize="sm">
                                         {renderStars(review.rating)}
                                     </Text>
-                                    <Text fontSize="sm" bg={'black'} p={4}>
+                                    <Text
+                                        fontSize="sm"
+                                        bg={'black'}
+                                        m={2}
+                                        p={8}
+                                    >
                                         {review.content}
                                     </Text>
                                 </Box>
