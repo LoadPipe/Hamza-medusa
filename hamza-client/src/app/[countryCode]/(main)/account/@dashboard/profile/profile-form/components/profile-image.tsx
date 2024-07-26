@@ -3,7 +3,6 @@
 import { Button, Flex, Text, Image } from '@chakra-ui/react';
 import React from 'react';
 import { Avatar } from '@chakra-ui/react';
-import { getCustomer, listRegions, updateCustomer } from '@lib/data';
 
 type Profile = {
     firstName: string;

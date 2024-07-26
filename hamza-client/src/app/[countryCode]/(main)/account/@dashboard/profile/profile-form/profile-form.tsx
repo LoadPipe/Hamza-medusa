@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { Flex, Button, Text } from '@chakra-ui/react';
 import ProfileInput from './components/profile-input';
-import ProfilePhoneInput from './components/phone-input';
 import { updateCustomer } from '@lib/data';
 import { getCustomer } from '@lib/data';
 import ProfileImage from './components/profile-image';
