@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import Review from '@modules/account/components/reviews';
-
+import { Text } from '@chakra-ui/react';
 import { getCustomer } from '@lib/data';
 
 import { getRegion } from 'app/actions';
@@ -28,8 +28,9 @@ export default async function Reviews() {
     return (
         <div className="w-full bg-black text-white p-8">
             <div className="mb-8 flex flex-col gap-y-4">
-                <h1 className="text-2xl-semi">Reviews</h1>
-                <p className="text-base-regular">View your reviews</p>
+                <Text className="text-2xl-semi" color={'primary.indigo.900'}>
+                    My Reviews
+                </Text>
             </div>
             <Review customer={customer} region={region} />
         </div>
