@@ -1,20 +1,17 @@
 import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import { generateNonce } from 'siwe';
+import { RouteHandler } from '../../route-handler';
 
-export const GET = (req: MedusaRequest, res: MedusaResponse) => {
-    const logger = req.scope.resolve('logger') as Logger;
-    try {
+export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
+    const handler = new RouteHandler(req, res, 'GET', '/custom/checker');
+
+    handler.handle(() => {
         const nonce = generateNonce();
-        logger.debug('nonce: ' + nonce);
-        logger.debug('typeof nonce: ' + typeof nonce);
+        handler.logger.debug('nonce: ' + nonce);
+        handler.logger.debug('typeof nonce: ' + typeof nonce);
 
-        return res.json({
+        res.json({
             message: nonce,
         });
-    } catch (error) {
-        logger.error(error);
-        return res
-            .status(500)
-            .json({ message: 'Internal server error', error: error.message });
-    }
+    });
 };

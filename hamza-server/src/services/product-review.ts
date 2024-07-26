@@ -51,11 +51,28 @@ class ProductReviewService extends TransactionBaseService {
         return !!productReview;
     }
 
-    async customerHasLeftReview(order_id) {
+    async customerHasLeftReview(order_id, customer_id, variant_id) {
         const productReviewRepository =
             this.activeManager_.getRepository(ProductReview);
+        let productId: string;
+        try {
+            const variantProduct = await this.productVariantRepository_.findOne(
+                {
+                    where: { id: variant_id }, // Assuming product_id is the ID of the variant
+                }
+            );
+
+            if (!variantProduct) {
+                throw new Error('Product variant not found');
+            }
+
+            productId = variantProduct.product_id; // This assumes that variantProduct actually contains a product_id
+        } catch (e) {
+            this.logger.error(`Error fetching product variant: ${e}`);
+            throw e; // Rethrow or handle the error appropriately
+        }
         const productReviews = await productReviewRepository.find({
-            where: { order_id: order_id },
+            where: { order_id: order_id, customer_id, product_id: productId },
         });
         this.logger.debug(`productReviews: ${JSON.stringify(productReviews)}`);
 

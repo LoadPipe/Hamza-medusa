@@ -16,12 +16,26 @@ import { LineItemService } from '@medusajs/medusa';
 import { Order } from '../models/order';
 import { Payment } from '../models/payment';
 import { Lifetime } from 'awilix';
-import { In, Not } from 'typeorm';
+import { And, In, Not } from 'typeorm';
+
+// Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
+// In medusa we have these 5 DEFAULT order.STATUS's {PENDING, COMPLETED, ARCHIVED, CANCELED, REQUIRES_ACTION}
+// In this case PENDING will be {PROCESSING}
+// REFACTOR {TO_PAY, TO_SHIP} is now under {PROCESSING} umbrella
+export enum OrderBucketType {
+    PROCESSING = 1,
+    SHIPPED = 2,
+    DELIVERED = 3,
+    CANCELLED = 4,
+    REFUNDED = 5,
+}
 
 type InjectDependencies = {
     idempotencyKeyService: IdempotencyKeyService;
     lineItemService: LineItemService;
 };
+
+type OrderBucketList = { [key: string]: Order[] };
 
 export default class OrderService extends MedusaOrderService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
@@ -223,6 +237,15 @@ export default class OrderService extends MedusaOrderService {
         return order.status;
     }
 
+    async changeFulfillmentStatus(orderId: string, status: FulfillmentStatus) {
+        const order = await this.orderRepository_.findOne({
+            where: { id: orderId },
+        });
+        order.fulfillment_status = status;
+        await this.orderRepository_.save(order);
+        return order;
+    }
+
     async cancelOrderFromCart(cart_id: string) {
         await this.orderRepository_.update(
             { status: OrderStatus.PENDING, cart: { id: cart_id } },
@@ -245,6 +268,106 @@ export default class OrderService extends MedusaOrderService {
         } catch (e) {
             this.logger.error(`Error fetching store from order: ${e}`);
         }
+    }
+
+    async getCustomerOrders(customerId: string): Promise<Order[]> {
+        return await this.orderRepository_.find({
+            where: {
+                customer_id: customerId,
+                status: Not(OrderStatus.ARCHIVED),
+            },
+            relations: ['cart.items', 'cart', 'cart.items.variant.product'],
+        });
+    }
+
+    async getCustomerOrderBuckets(
+        customerId: string
+    ): Promise<OrderBucketList> {
+        const buckets = await Promise.all([
+            this.getCustomerOrderBucket(customerId, OrderBucketType.PROCESSING),
+            this.getCustomerOrderBucket(customerId, OrderBucketType.SHIPPED),
+            this.getCustomerOrderBucket(customerId, OrderBucketType.DELIVERED),
+            this.getCustomerOrderBucket(customerId, OrderBucketType.CANCELLED),
+            this.getCustomerOrderBucket(customerId, OrderBucketType.REFUNDED),
+        ]);
+
+        const output = {
+            Processing: buckets[0],
+            Shipped: buckets[1],
+            Delivered: buckets[2],
+            Cancelled: buckets[3],
+            Refunded: buckets[4],
+        };
+
+        return output;
+    }
+
+    async getCustomerOrderBucket(
+        customerId: string,
+        bucketType: OrderBucketType
+    ): Promise<Order[]> {
+        switch (bucketType) {
+            case OrderBucketType.PROCESSING:
+                return await this.getCustomerOrdersByStatus(customerId, {
+                    fulfillmentStatus: FulfillmentStatus.NOT_FULFILLED,
+                });
+            case OrderBucketType.SHIPPED:
+                return await this.getCustomerOrdersByStatus(customerId, {
+                    paymentStatus: PaymentStatus.AWAITING,
+                    fulfillmentStatus: FulfillmentStatus.SHIPPED,
+                });
+            case OrderBucketType.DELIVERED:
+                return await this.getCustomerOrdersByStatus(customerId, {
+                    orderStatus: OrderStatus.COMPLETED,
+                    fulfillmentStatus: FulfillmentStatus.FULFILLED,
+                });
+            case OrderBucketType.CANCELLED:
+                return await this.getCustomerOrdersByStatus(customerId, {
+                    orderStatus: OrderStatus.CANCELED,
+                });
+            case OrderBucketType.REFUNDED:
+                return await this.getCustomerOrdersByStatus(customerId, {
+                    paymentStatus: PaymentStatus.REFUNDED,
+                });
+        }
+
+        return [];
+    }
+
+    private async getCustomerOrdersByStatus(
+        customerId: string,
+        statusParams: {
+            orderStatus?: OrderStatus;
+            paymentStatus?: PaymentStatus;
+            fulfillmentStatus?: FulfillmentStatus;
+        }
+    ): Promise<Order[]> {
+        const where: {
+            customer_id: string;
+            status?: any;
+            payment_status?: any;
+            fulfillment_status?: any;
+        } = {
+            customer_id: customerId,
+            status: Not(OrderStatus.ARCHIVED),
+        };
+
+        if (statusParams.orderStatus) {
+            where.status = statusParams.orderStatus;
+        }
+
+        if (statusParams.paymentStatus) {
+            where.payment_status = statusParams.paymentStatus;
+        }
+
+        if (statusParams.fulfillmentStatus) {
+            where.fulfillment_status = statusParams.fulfillmentStatus;
+        }
+
+        return await this.orderRepository_.find({
+            where,
+            relations: ['cart.items', 'cart', 'cart.items.variant.product'],
+        });
     }
 
     private getPostCheckoutUpdateInventoryPromises(
@@ -331,65 +454,32 @@ export default class OrderService extends MedusaOrderService {
 
     async listCustomerOrders(
         customerId: string
-    ): Promise<{ orders: any[]; uniqueCartIds: string[]; cartCount: number }> {
+    ): Promise<{ orders: any[]; cartCount: number }> {
         const orders = await this.orderRepository_.find({
             where: {
                 customer_id: customerId,
                 status: Not(OrderStatus.ARCHIVED),
             },
             select: ['id', 'cart_id'], // Select id and cart_id
-            relations: ['cart.items', 'cart', 'cart.items.variant.product'],
+            // relations: ['cart.items', 'cart.items.variant'],
         });
 
-        console.log(`Orders Line item? ${JSON.stringify(orders)}`);
+        // console.log(`Orders Line item? ${JSON.stringify(orders)}`);
+        const cartCount = orders.length;
 
-        // Create a map to group orders by cart_id
-        const groupedOrders = orders.reduce((acc, order) => {
-            const cartId = order.cart_id;
-            if (!acc[cartId]) {
-                acc[cartId] = {
-                    cart_id: cartId,
-                    order_ids: new Set(),
-                    items: {},
-                };
-            }
-
-            acc[cartId].order_ids.add(order.id); // Add order ID to the set
-
-            order.cart.items.forEach((item) => {
-                const itemId = item.id;
-                if (!acc[cartId].items[itemId]) {
-                    acc[cartId].items[itemId] = {
-                        ...item,
-                        order_ids: new Set(),
-                    };
-                }
-
-                acc[cartId].items[itemId].order_ids.add(order.id);
+        let newOrderList = [];
+        for (const order of orders) {
+            const orderWithItems = await this.orderRepository_.findOne({
+                where: {
+                    id: order.id,
+                },
+                relations: ['cart.items', 'cart.items.variant.product'],
             });
+            newOrderList.push(orderWithItems);
+        }
 
-            return acc;
-        }, {});
-
-        const result = Object.values(groupedOrders).map((group: any) => {
-            return {
-                cart_id: group.cart_id,
-                order_ids: Array.from(group.order_ids), // Include order_ids in the result
-                items: Object.values(group.items).map((item: any) => ({
-                    ...item,
-                    order_ids: Array.from(item.order_ids),
-                })),
-            };
-        });
-
-        const uniqueCartIds = Object.keys(groupedOrders);
-        const cartCount = uniqueCartIds.length;
-
-        return {
-            orders: result,
-            uniqueCartIds,
-            cartCount,
-        };
+        // return { orders: orders, array: newOrderList };
+        return { orders: newOrderList, cartCount: cartCount };
     }
 
     async orderDetails(cartId: string) {

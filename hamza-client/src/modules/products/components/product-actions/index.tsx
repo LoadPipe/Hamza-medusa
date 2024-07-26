@@ -20,6 +20,7 @@ import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutatio
 import Medusa from '@medusajs/medusa-js';
 import useWishlistStore from '@store/wishlist/wishlist-store';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { getInventoryCount } from '@lib/data';
 
 type ProductActionsProps = {
     product: PricedProduct;
@@ -64,12 +65,9 @@ export default function ProductActions({
         const fetchInventoryCount = async () => {
             setLoading(true);
             try {
-                const response = await axios.post(
-                    `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/variant/count`,
-                    { variant_id }
-                );
+                const response = await getInventoryCount(variant_id);
                 console.log('Response is', JSON.stringify(response));
-                setInventoryCount(response.data.variant);
+                setInventoryCount(response.variant);
             } catch (error) {
                 console.error('Error fetching inventory count:', error);
                 setError('Failed to fetch inventory count');
@@ -181,19 +179,19 @@ export default function ProductActions({
         // console.log('toggle wishlist-dropdown item', product);
         wishlist.products.find((a) => a.id == product.id)
             ? removeWishlistItemMutation.mutate({
-                id: product.id!,
-                description: product.description!,
-                handle: product.handle!,
-                thumbnail: product.thumbnail!,
-                title: product.title!,
-            })
+                  id: product.id!,
+                  description: product.description!,
+                  handle: product.handle!,
+                  thumbnail: product.thumbnail!,
+                  title: product.title!,
+              })
             : addWishlistItemMutation.mutate({
-                id: product.id!,
-                description: product.description!,
-                handle: product.handle!,
-                thumbnail: product.thumbnail!,
-                title: product.title!,
-            });
+                  id: product.id!,
+                  description: product.description!,
+                  handle: product.handle!,
+                  thumbnail: product.thumbnail!,
+                  title: product.title!,
+              });
     };
 
     const whitelistedProductHandler = async () => {
@@ -206,7 +204,7 @@ export default function ProductActions({
         if (data.status == true) {
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                    whitelist_config.whitelisted_stores.includes(data.data)
+                whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -275,10 +273,10 @@ export default function ProductActions({
                     {!variant
                         ? 'Select variant'
                         : !inStock && isWhitelisted
+                          ? 'Add to Cart'
+                          : inStock
                             ? 'Add to Cart'
-                            : inStock
-                                ? 'Add to Cart'
-                                : 'Out of Stock'}
+                            : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs">

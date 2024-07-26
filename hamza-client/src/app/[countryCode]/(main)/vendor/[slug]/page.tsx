@@ -37,6 +37,7 @@ import {
     FormErrorMessage,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import { getVendorStoreBySlug } from '@lib/data';
 import { format } from 'date-fns';
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 

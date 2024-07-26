@@ -1,4 +1,5 @@
-import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
+import { MedusaRequest, MedusaResponse, Logger, Product } from '@medusajs/medusa';
+import { RouteHandler } from '../../../route-handler';
 //import { RelayClientWrapper } from '../../../../massmarket/client';
 
 const productsToIds = {
@@ -114,9 +115,6 @@ const storesToIds = {
     },
 };
 
-/*
-
-*/
 
 async function updateStoreForMM(
     storeRepository,
@@ -149,13 +147,15 @@ async function updateStoreForMM(
 }
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
-    const userService = req.scope.resolve('userService');
     const storeService = req.scope.resolve('storeService');
     const storeRepository = req.scope.resolve('storeRepository');
     const productService = req.scope.resolve('productService');
-    const logger = req.scope.resolve('logger') as Logger;
 
-    try {
+    const handler: RouteHandler = new RouteHandler(
+        req, res, 'POST', '/admin/custom/massmarket',
+    );
+
+    await handler.handle(async () => {
         const stores = await storeService.getStores();
         for (let store of stores) {
             await updateStoreForMM(
@@ -167,10 +167,5 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         }
 
         return res.json({ ok: true });
-    } catch (error) {
-        logger.error(error);
-        return res
-            .status(500)
-            .json({ message: 'Internal server error', error: error.message });
-    }
+    });
 };

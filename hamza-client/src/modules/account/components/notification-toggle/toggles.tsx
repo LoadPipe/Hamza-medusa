@@ -2,26 +2,36 @@
 
 import React, { useState, useEffect } from 'react';
 import {
-    Checkbox,
     Stack,
-    CheckboxGroup,
+    Switch,
     FormControl,
     FormLabel,
-    Radio,
     RadioGroup,
     Button,
+    Flex,
+    Box,
 } from '@chakra-ui/react';
 import { Region } from '@medusajs/medusa';
-const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import axios from 'axios';
 import toast from 'react-hot-toast';
+import {
+    addNotifications,
+    getNotifications,
+    removeNotifications,
+} from '@lib/data';
 
 const ToggleNotifications = ({ region }: { region: Region }) => {
     const [selectedNotifications, setSelectedNotifications] = useState([]);
     const [notificationMethod, setNotificationMethod] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
 
     const { authData } = useCustomerAuthStore();
+
+    const disabledStyles = {
+        backgroundColor: 'gray.600',
+        borderColor: 'gray.600',
+        color: 'gray.700',
+    };
 
     useEffect(() => {
         if (authData.customer_id) {
@@ -30,18 +40,11 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                     `Customer ID in notification toggle: ${authData.customer_id}`
                 );
                 try {
-                    const response = await axios.post(
-                        `${BACKEND_URL}/custom/notification/get-notification`,
-                        { customer_id: authData.customer_id },
-                        {
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        }
+                    const response = await getNotifications(
+                        authData.customer_id
                     );
-                    console.log('Notification Data:', response.data.types);
-                    const notifications = response.data.types;
-                    setSelectedNotifications(notifications);
+                    console.log('Notification Data:', response);
+                    setSelectedNotifications(response);
                 } catch (error) {
                     console.error(
                         'Error fetching notification preferences:',
@@ -55,6 +58,7 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
 
     const handleCheckboxChange = (event: any) => {
         const value = event.target.value;
+        setIsSaving(true);
         if (value === 'none') {
             setSelectedNotifications(['none' as never]);
         } else {
@@ -75,37 +79,17 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
         try {
             if (selectedNotifications.includes('none' as never)) {
                 // Call the delete route if 'none' is selected
-                await fetch(
-                    `${BACKEND_URL}/custom/notification/remove-notification`,
-                    {
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            customer_id: authData.customer_id,
-                            notification_type: 'none',
-                        }),
-                    }
-                );
+                await removeNotifications(authData.customer_id);
             } else {
                 // Call the add/update route with the selected notifications
                 const notificationsString = selectedNotifications.join(', ');
-                await fetch(
-                    `${BACKEND_URL}/custom/notification/add-notification`,
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            customer_id: authData.customer_id,
-                            notification_type: notificationsString,
-                        }),
-                    }
+                await addNotifications(
+                    authData.customer_id,
+                    notificationsString
                 );
             }
             toast.success('Notification preferences saved!', {});
+            setIsSaving(false); // Reset isSaving to false after saving...
             console.log('Selected Notifications:', selectedNotifications);
             console.log('Notification Method:', notificationMethod);
         } catch (error) {
@@ -115,77 +99,166 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
 
     return (
         <FormControl>
-            <FormLabel>Notification Preferences</FormLabel>
-            <Stack spacing={3}>
-                <Checkbox
-                    value="orderShipped"
-                    isChecked={selectedNotifications.includes(
-                        'orderShipped' as never
-                    )}
-                    onChange={handleCheckboxChange}
-                >
-                    Notify when order shipped
-                </Checkbox>
-                <Checkbox
-                    value="newProduct"
-                    isChecked={selectedNotifications.includes(
-                        'newProduct' as never
-                    )}
-                    onChange={handleCheckboxChange}
-                >
-                    Notify when followed sellers post a new product
-                </Checkbox>
-                <Checkbox
-                    value="orderStatusChanged"
-                    isChecked={selectedNotifications.includes(
-                        'orderStatusChanged' as never
-                    )}
-                    onChange={handleCheckboxChange}
-                >
-                    Notify when order status changed
-                </Checkbox>
-                <Checkbox
-                    value="promotions"
-                    isChecked={selectedNotifications.includes(
-                        'promotions' as never
-                    )}
-                    onChange={handleCheckboxChange}
-                >
-                    Notify for promotions/discounts
-                </Checkbox>
-                <Checkbox
-                    value="surveys"
-                    isChecked={selectedNotifications.includes(
-                        'surveys' as never
-                    )}
-                    onChange={handleCheckboxChange}
-                >
-                    Notify for surveys
-                </Checkbox>
-                <Checkbox
-                    value="none"
-                    isChecked={selectedNotifications.includes('none' as never)}
-                    onChange={handleCheckboxChange}
-                >
-                    No notifications (when this is checked, other checkboxes are
-                    cleared)
-                </Checkbox>
-            </Stack>
-            <FormLabel mt={4}>Notify by:</FormLabel>
-            <RadioGroup
-                value={notificationMethod}
-                onChange={setNotificationMethod}
+            <FormLabel
+                fontWeight={'bold'}
+                fontSize="lg"
+                mb={4}
+                color={'primary.green.900'}
             >
-                <Stack spacing={3} direction="row">
-                    <Radio value="sms">SMS</Radio>
-                    <Radio value="email">Email</Radio>
-                    <Radio value="line">LINE</Radio>
-                    <Radio value="whatsapp">WhatsApp</Radio>
-                </Stack>
-            </RadioGroup>
-            <Button mt={4} colorScheme="teal" onClick={handleSave}>
+                Email notifications
+            </FormLabel>
+            <FormLabel mb={8}>
+                Get emails to find out what’s going on when you’re not online.
+                You can turn these off.
+            </FormLabel>
+            <Stack spacing={3}>
+                <Flex>
+                    <Switch
+                        value="orderShipped"
+                        isChecked={selectedNotifications.includes(
+                            'orderShipped' as never
+                        )}
+                        mr={4}
+                        colorScheme="primary.green"
+                        onChange={handleCheckboxChange}
+                    ></Switch>
+                    <FormLabel>Notify when order shipped</FormLabel>
+                </Flex>
+
+                <Flex>
+                    <Switch
+                        value="newProduct"
+                        isChecked={selectedNotifications.includes(
+                            'newProduct' as never
+                        )}
+                        mr={4}
+                        colorScheme="primary.green"
+                        onChange={handleCheckboxChange}
+                    ></Switch>
+                    <FormLabel>
+                        Notify when followed sellers post a new product
+                    </FormLabel>
+                </Flex>
+
+                <Flex>
+                    <Switch
+                        value="orderStatusChanged"
+                        isChecked={selectedNotifications.includes(
+                            'orderStatusChanged' as never
+                        )}
+                        mr={4}
+                        colorScheme="primary.green"
+                        onChange={handleCheckboxChange}
+                    ></Switch>
+                    <FormLabel> Notify when order status changed</FormLabel>
+                </Flex>
+
+                <Flex>
+                    <Switch
+                        value="promotions"
+                        isChecked={selectedNotifications.includes(
+                            'promotions' as never
+                        )}
+                        mr={4}
+                        colorScheme="primary.green"
+                        onChange={handleCheckboxChange}
+                    ></Switch>
+                    <FormLabel>Notify for promotions/discounts</FormLabel>
+                </Flex>
+
+                <Flex>
+                    <Switch
+                        value="surveys"
+                        isChecked={selectedNotifications.includes(
+                            'surveys' as never
+                        )}
+                        mr={4}
+                        colorScheme="primary.green"
+                        onChange={handleCheckboxChange}
+                    ></Switch>
+                    <FormLabel>Notify for surveys</FormLabel>
+                </Flex>
+
+                <Flex>
+                    <Switch
+                        value="none"
+                        isChecked={selectedNotifications.includes(
+                            'none' as never
+                        )}
+                        mr={4}
+                        colorScheme="primary.green"
+                        onChange={handleCheckboxChange}
+                    ></Switch>
+                    <FormLabel>
+                        No notifications (when this is checked, other checkboxes
+                        are cleared)
+                    </FormLabel>
+                </Flex>
+            </Stack>
+            <FormLabel
+                fontWeight={'bold'}
+                fontSize="lg"
+                mt={8}
+                mb={4}
+                color={'primary.green.900'}
+            >
+                Push Notifications:
+            </FormLabel>
+            <FormLabel mb={8}>
+                Get push notifications to find out what’s going on when you’re
+                offline
+            </FormLabel>
+            <Stack spacing={3} direction="column">
+                <Switch
+                    isChecked={selectedNotifications.includes('sms' as never)}
+                    colorScheme="primary.green"
+                    onChange={handleCheckboxChange}
+                    value="sms"
+                >
+                    SMS
+                </Switch>
+                <Switch
+                    isChecked={selectedNotifications.includes('email' as never)}
+                    onChange={handleCheckboxChange}
+                    colorScheme="primary.green"
+                    value="email"
+                >
+                    Email
+                </Switch>
+                <Switch
+                    isChecked={selectedNotifications.includes('line' as never)}
+                    onChange={handleCheckboxChange}
+                    colorScheme="primary.green"
+                    value="line"
+                >
+                    LINE
+                </Switch>
+                <Switch
+                    isChecked={selectedNotifications.includes(
+                        'whatsapp' as never
+                    )}
+                    onChange={handleCheckboxChange}
+                    colorScheme="primary.green"
+                    value="whatsapp"
+                >
+                    WhatsApp
+                </Switch>
+            </Stack>
+            <Box
+                as="button"
+                mt={4}
+                borderRadius={'37px'}
+                backgroundColor={'primary.green.900'}
+                fontSize={'18px'}
+                fontWeight={600}
+                height={'47px'}
+                width={'190px'}
+                onClick={handleSave}
+                disabled={!isSaving}
+                _disabled={disabledStyles}
+            >
                 Save
-            </Button>
+            </Box>
         </FormControl>
     );
 };

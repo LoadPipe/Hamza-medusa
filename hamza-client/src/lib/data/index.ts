@@ -75,6 +75,356 @@ export async function getVendors() {
     }
 }
 
+// Get Vendor Store by slug
+export async function getVendorStoreBySlug(store_name: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/vendors/vendor-store`,
+            {
+                params: {
+                    store_name: store_name,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
+// Set a review
+export async function createReview(data: any) {
+    try {
+        const response = await axios.post(`${BACKEND_URL}/custom/review`, data);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
+// Get Vendor Products
+export async function getProductsByVendor(vendorName: string) {
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/store/products?store_name=${vendorName}`
+        );
+        return response.data.products;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+// Get All Product reviews
+export async function getAllProductReviews(customer_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/review/all-customer-reviews`,
+            { customer_id: customer_id },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching reviews:', error);
+    }
+}
+
+export async function checkReviewsExistence(order_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/review/exists`,
+            {
+                order_id: order_id,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching reviews:', error);
+    }
+}
+
+export async function allReviews(product_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/review/all-reviews`,
+            {
+                product_id: product_id,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching reviews:', error);
+    }
+}
+
+export async function getNotifications(customer_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/notification/get`,
+            { customer_id: customer_id },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        return response.data.types;
+    } catch (error) {
+        console.error('Error fetching notification preferences:', error);
+    }
+}
+
+export async function removeNotifications(customer_id: string) {
+    try {
+        const response = await axios.delete(
+            `${BACKEND_URL}/custom/notification/remove`,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: JSON.stringify({
+                    customer_id: customer_id,
+                    notification_type: 'none',
+                }),
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error removing notification preferences:', error);
+    }
+}
+
+export async function addNotifications(
+    customer_id: string,
+    notification_type: string
+) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/notification/add`,
+            {
+                customer_id: customer_id,
+                notification_type: notification_type,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error adding notification preferences:', error);
+    }
+}
+
+export async function orderInformation(cart_id: string) {
+    try {
+        const response = await axios.post(`${BACKEND_URL}/custom/order`, {
+            cart_id: cart_id,
+        });
+        return response;
+    } catch (error) {
+        console.error('Error fetching order information:', error);
+    }
+}
+
+export async function orderDetails(customer_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/order/customer-orders`,
+            {
+                customer_id: customer_id,
+            }
+        );
+        return response.data.orders.orders;
+    } catch (error) {
+        console.error('Error fetching order details:', error);
+    }
+}
+
+export async function orderBucket(customer_id: string) {
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/order/customer-orders`,
+            {
+                params: {
+                    customer_id: customer_id,
+                    buckets: true,
+                },
+            }
+        );
+        return response.data.orders;
+    } catch (error) {
+        console.error('Error fetching order bucket:', error);
+    }
+}
+
+export async function singleBucket(customer_id: string, bucket: number) {
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/order/customer-order`,
+            {
+                params: {
+                    customer_id: customer_id,
+                    bucket: bucket,
+                },
+            }
+        );
+        return response.data.orders;
+    } catch (error) {
+        console.error('Error fetching single bucket:', error);
+    }
+}
+
+export async function orderStatus(order_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/order/status`,
+            {
+                order_id: order_id,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching order status:', error);
+        return [];
+    }
+}
+
+export async function cancelOrder(order_id: string) {
+    try {
+        const response = await axios.delete(
+            `${BACKEND_URL}/custom/order/cancel`,
+            {
+                params: {
+                    order_id: order_id,
+                },
+            }
+        );
+        return response;
+    } catch (error) {
+        console.error('Error cancelling order:', error);
+    }
+}
+
+export async function averageRatings(product_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/review/average`,
+            {
+                product_id: product_id,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching average rating:', error);
+    }
+}
+
+export async function reviewCounter(product_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/review/count`,
+            {
+                product_id: product_id,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching review count:', error);
+    }
+}
+
+export async function reviewResponse(product_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/review/all-reviews`,
+            {
+                product_id: product_id,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching review response:', error);
+    }
+}
+
+export async function getInventoryCount(variant_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/variant/count`,
+            {
+                variant_id: variant_id,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching inventory count:', error);
+    }
+}
+
+export async function getStore(product_id: string) {
+    try {
+        const response = await axios.post(`${BACKEND_URL}/custom/get-store`, {
+            product_id: product_id,
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching store name:', error);
+    }
+}
+
+export async function setCurrency(newCurrency: string, customer_id: string) {
+    try {
+        await axios.post(`${BACKEND_URL}/custom/update-currency`, {
+            customer_id: customer_id,
+            preferred_currency: newCurrency,
+        });
+    } catch (error) {
+        console.error('Error updating currency', error);
+    }
+}
+
+export async function vendorProducts(store_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/vendors/vendor-products`,
+            {
+                store_id: store_id,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching vendor products:', error);
+    }
+}
+
+export async function vendorReviews(store_id: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/vendors/vendor-reviews`,
+            {
+                store_id: store_id,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching vendor reviews:', error);
+    }
+}
+
+export async function getStoreName(product_id: string) {
+    try {
+        const response = await axios.post(`${BACKEND_URL}/custom/get-store`, {
+            product_id: product_id,
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching store name:', error);
+    }
+}
+
 // Cart actions
 export async function createCart(data = {}) {
     const headers = getMedusaHeaders(['cart']);
@@ -182,12 +532,34 @@ export async function deleteDiscount(cartId: string, code: string) {
         });
 }
 
-export async function createPaymentSessions(cartId: string) {
-    const headers = getMedusaHeaders(['cart']);
+export async function updatePaymentSession(cartId: string, paymentSessionId: string | undefined, providerId: string) {
+    console.log(`updatePaymentSession(${cartId}, ${paymentSessionId}, ${providerId})`)
+    if (paymentSessionId) {
+        try {
+            const response = await axios.put(
+                `${BACKEND_URL}/custom/payment-session`,
+                {
+                    cart_id: cartId,
+                    payment_session_id: paymentSessionId
+                }
+            );
+            return response.data;
+        } catch (error) {
+            console.log(error);
+            return null;
+        }
+    }
+}
 
+export async function createPaymentSessions(cartId: string, providerId: string = 'crypto') {
+    console.log(`createPaymentSessions(${cartId})`);
+    const headers = getMedusaHeaders(['cart']);
     return medusaClient.carts
         .createPaymentSessions(cartId, headers)
-        .then(({ cart }) => cart)
+        .then(({ cart }) => {
+            updatePaymentSession(cartId, cart?.payment_session?.id, providerId,);
+            return cart;
+        })
         .catch((err) => {
             console.log(err);
             return null;
@@ -202,11 +574,13 @@ export async function setPaymentSession({
     providerId: string;
 }) {
     const headers = getMedusaHeaders(['cart']);
-
     return medusaClient.carts
         .setPaymentSession(cartId, { provider_id: providerId }, headers)
+        //.createPaymentSessions(cartId, { provider_id: providerId })
         .then(({ cart }) => cart)
-        .catch((err) => medusaError(err));
+        .catch((err) => {
+            medusaError(err);
+        });
 }
 
 export async function completeCart(cartId: string) {

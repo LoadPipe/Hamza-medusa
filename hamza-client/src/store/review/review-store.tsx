@@ -1,5 +1,6 @@
 // store/itemStore.ts (or .js if you prefer, but .ts is recommended for TypeScript)
-import create from 'zustand';
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 // Define the item interface as before
 export interface Item {
@@ -38,9 +39,17 @@ interface ItemState {
 }
 
 // Create the store using the defined types
-const useItemStore = create<ItemState>((set) => ({
-    item: null, // Initial state
-    setItem: (item) => set({ item }), // Action to update the item
-}));
+const useItemStore = create<ItemState>()(
+    persist(
+        (set) => ({
+            item: null, // Initial state
+            setItem: (item) => set({ item }), // Action to update the item
+        }),
+        {
+            name: 'item-storage',
+            storage: createJSONStorage(() => localStorage),
+        }
+    )
+);
 
 export default useItemStore;

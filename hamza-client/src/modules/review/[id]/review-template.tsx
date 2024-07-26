@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import useItemStore from '@store/review/review-store';
-import { Button } from '@medusajs/ui';
+import { Button } from '@chakra-ui/react';
+import { createReview, checkReviewsExistence } from '@lib/data';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -16,20 +17,18 @@ const ReviewTemplate = () => {
 
     const item = useItemStore((state) => state.item);
 
+    console.log(`Item is ${JSON.stringify(item)}`);
     // console.log(`item info ${JSON.stringify(item)}`);
     useEffect(() => {
-        checkReviewExistence();
+        if (item && item.order_id) {
+            checkReviewExistence(item.order_id);
+        }
         // console.log(`Checking ${item?.title} if we can submit?`);
     }, [item]);
 
-    const checkReviewExistence = async () => {
+    const checkReviewExistence = async (orderId: string) => {
         try {
-            const response = await axios.post(
-                `${BACKEND_URL}/custom/review/exists`,
-                {
-                    order_id: item?.order_id,
-                }
-            );
+            const response = await checkReviewsExistence(orderId);
             // console.log(`Can submit? ${response.data}`);
             setCanSubmit(response.data); // Assuming API returns { exists: true/false }
         } catch (error) {
@@ -38,20 +37,22 @@ const ReviewTemplate = () => {
     };
 
     const submitReview = async () => {
-        if (!canSubmit) {
+        if (canSubmit) {
             alert('Review already exists for this order.');
             return;
         }
 
+        const data = {
+            customer_id: item?.customer_id,
+            product_id: item?.variant_id,
+            rating: rating,
+            content: review,
+            title: 'Review for ' + item?.title, // Assuming a title is needed
+            order_id: item?.order_id,
+        };
+
         try {
-            await axios.post(`${BACKEND_URL}/custom/review`, {
-                customer_id: item?.customer_id,
-                product_id: item?.variant_id,
-                rating: rating,
-                content: review,
-                title: 'Review for ' + item?.title, // Assuming a title is needed
-                order_id: item?.order_id,
-            });
+            await createReview(data);
             setReview('');
             setRating(0);
             setSubmissionSuccess(true); // Update the state to indicate success
@@ -69,7 +70,7 @@ const ReviewTemplate = () => {
     ];
 
     return (
-        <div className="p-4 bg-white shadow-md rounded-lg text-black">
+        <div className="p-4 bg-black shadow-md rounded-lg text-white">
             {!submissionSuccess ? (
                 <>
                     <div className="flex items-center mb-4">
@@ -85,7 +86,8 @@ const ReviewTemplate = () => {
                             <p
                                 dangerouslySetInnerHTML={{
                                     __html: item?.description ?? '',
-                                }}></p>
+                                }}
+                            ></p>
                         </div>
                     </div>
                     <div>
@@ -117,7 +119,9 @@ const ReviewTemplate = () => {
                             onChange={(e) => setReview(e.target.value)}
                         />
                         <Button
-                            className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                            variant="solid"
+                            backgroundColor={'primary.indigo.900'}
+                            borderRadius={'37px'}
                             onClick={submitReview}
                             disabled={rating === 0 || review.trim() === ''}
                         >

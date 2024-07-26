@@ -16,6 +16,7 @@ import {
     StackDivider,
     Box,
 } from '@chakra-ui/react';
+import { averageRatings, reviewResponse, reviewCounter } from '@lib/data';
 
 const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
@@ -51,26 +52,17 @@ const ProductReview: React.FC<ProductReviewProps> = ({
     useEffect(() => {
         const fetchReviewData = async () => {
             // API calls remain the same
-            const averageRatingResponse = await axios.post(
-                `${MEDUSA_SERVER_URL}/custom/review/average`,
-                { product_id: product.id }
-            );
-            const reviewCountResponse = await axios.post(
-                `${MEDUSA_SERVER_URL}/custom/review/count`,
-                { product_id: product.id }
-            );
-            const reviewsResponse = await axios.post(
-                `${MEDUSA_SERVER_URL}/custom/review/all-reviews`,
-                { product_id: product.id }
-            );
+            const averageRatingResponse = await averageRatings(product.id);
+            const reviewCountResponse = await reviewCounter(product.id);
+            const reviewsResponse = await reviewResponse(product.id);
 
-            setAverageRating(averageRatingResponse.data);
-            setReviewCount(reviewCountResponse.data);
-            setReviews(reviewsResponse.data);
+            setAverageRating(averageRatingResponse);
+            setReviewCount(reviewCountResponse);
+            setReviews(reviewsResponse);
 
             // Initialize the rating distribution to ensure all ratings from 1 to 5 are accounted for
             const initialRatingDistribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-            const distribution = reviewsResponse.data.reduce(
+            const distribution = reviewsResponse.reduce(
                 (acc: { [key: string]: any }, review: any) => {
                     acc[review.rating] = (acc[review.rating] || 0) + 1;
                     return acc;

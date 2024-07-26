@@ -7,6 +7,7 @@ import type {
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import CustomerRepository from '../../../repositories/customer';
+import { RouteHandler } from '../../route-handler';
 
 interface GoogleTokensResult {
     access_token: string;
@@ -92,7 +93,15 @@ async function getGoogleUser({
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const logger = req.scope.resolve('logger') as Logger;
 
-    try {
+    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/google');
+
+    handler.onError = (err: any) => {
+        return res.redirect(
+            `${process.env.STORE_URL}/account/profile?verify=false&error=true`
+        );
+    };
+
+    await handler.handle(async () => {
         logger.debug(`google oauth cookies: ${JSON.stringify(req.cookies)}`);
         let decoded: any = jwt.decode(req.cookies['_medusa_jwt']);
         logger.debug(
@@ -127,20 +136,11 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         await eventBus_.emit([
             {
-                data: { email: user.email },
+                data: { email: user.email, id: decoded.customer_id },
                 eventName: 'customer.verified',
             },
         ]);
 
         return res.redirect(`${process.env.STORE_URL}/account?verify=true`);
-    } catch (err) {
-        logger.error('Error authorizing google:', err);
-        return res.redirect(
-            `${process.env.STORE_URL}/account/profile?verify=false&error=true`
-        );
-
-        //res.status(500).json({
-        //    error: 'Failed to authorize with google',
-        //});
-    }
+    });
 };

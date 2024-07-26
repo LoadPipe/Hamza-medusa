@@ -1,6 +1,6 @@
 import MedusaCTA from '@modules/layout/components/medusa-cta';
 import React from 'react';
-import Nav from 'modules/layout/templates/nav';
+import Nav from '@modules/layout/templates/nav-4';
 import Footer from '@modules/layout/templates/footer';
 
 export default function CheckoutLayout({
