@@ -50,6 +50,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
 
     useEffect(() => {
         if (successState) {
+            toast.success('Address updated!');
             close();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
