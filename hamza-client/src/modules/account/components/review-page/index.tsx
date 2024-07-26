@@ -54,48 +54,58 @@ const ReviewPage = ({ region }: { region: Region }) => {
                     <CardHeader>
                         <Heading size="md">My Product Reviews</Heading>
                     </CardHeader>
-                    <CardBody>
-                        <Stack divider={<StackDivider />} spacing={4}>
-                            {reviews.map((review: any) => (
-                                <Box key={review.id}>
-                                    <Text fontSize="16px">
-                                        <Text as="span" color="#555555">
-                                            Purchase Date:{' '}
-                                        </Text>
-                                        {format(
-                                            new Date(review.created_at),
-                                            'PPP'
-                                        )}
+                    <Stack divider={<StackDivider />} spacing={4}>
+                        {reviews.map((review: any) => (
+                            <CardBody key={review.id}>
+                                <Text fontSize="16px">
+                                    <Text as="span" color="#555555">
+                                        Purchase Date:{' '}
                                     </Text>
-                                    <div className="flex flex-row space-x-2 items-center">
-                                        <Text
-                                            fontSize={'18px'}
-                                            fontWeight={'bold'}
-                                            textTransform="uppercase"
+                                    {format(new Date(review.created_at), 'PPP')}
+                                </Text>
+                                <div className="flex flex-row space-x-2 items-center">
+                                    <Text
+                                        fontSize={'18px'}
+                                        fontWeight={'bold'}
+                                        textTransform="uppercase"
+                                    >
+                                        {review.title}
+                                    </Text>
+                                    {review.order_id && (
+                                        <Link
+                                            href={`/account/editreview/${review.order_id}`}
                                         >
-                                            {review.title}
-                                        </Text>
-                                        {review.order_id && (
-                                            <Link
-                                                href={`/account/editreview/${review.order_id}`}
-                                            >
-                                                <EditIcon className="cursor-pointer" />
-                                            </Link>
-                                        )}
-                                    </div>
-                                    {/*<Text fontSize="sm">*/}
-                                    {/*    Customer ID: {review.customer_id}*/}
-                                    {/*</Text>*/}
-                                    <Text fontSize="sm">
-                                        Rating: {review.rating} / 5
+                                            <EditIcon className="cursor-pointer" />
+                                        </Link>
+                                    )}
+                                </div>
+                                {/*<Text fontSize="sm">*/}
+                                {/*    Customer ID: {review.customer_id}*/}
+                                {/*</Text>*/}
+                                <Box m={'4'}>
+                                    <Text
+                                        mb={'2'}
+                                        fontSize={'16px'}
+                                        fontWeight={'bold'}
+                                        color={'rgba(85, 85, 85, 0.6)'}
+                                    >
+                                        Your Product rating and review
                                     </Text>
-                                    <Text fontSize="sm">
-                                        Review: {review.content}
+                                    <Text p={'4'} fontSize="sm">
+                                        {review.rating} / 5
+                                    </Text>
+                                    <Text
+                                        fontSize="sm"
+                                        bg={'black'}
+                                        m={4}
+                                        p={4}
+                                    >
+                                        {review.content}
                                     </Text>
                                 </Box>
-                            ))}
-                        </Stack>
-                    </CardBody>
+                            </CardBody>
+                        ))}
+                    </Stack>
                     <CardFooter />
                 </>
             )}
