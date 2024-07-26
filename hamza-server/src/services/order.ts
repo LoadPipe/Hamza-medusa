@@ -21,13 +21,13 @@ import { And, In, Not } from 'typeorm';
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
 // In medusa we have these 5 DEFAULT order.STATUS's {PENDING, COMPLETED, ARCHIVED, CANCELED, REQUIRES_ACTION}
 // In this case PENDING will be {PROCESSING}
+// REFACTOR {TO_PAY, TO_SHIP} is now under {PROCESSING} umbrella
 export enum OrderBucketType {
-    TO_PAY = 1,
-    TO_SHIP = 2,
-    SHIPPED = 3,
-    COMPLETED = 4,
-    CANCELLED = 5,
-    REFUNDED = 6,
+    PROCESSING = 1,
+    SHIPPED = 2,
+    DELIVERED = 3,
+    CANCELLED = 4,
+    REFUNDED = 5,
 }
 
 type InjectDependencies = {
@@ -237,6 +237,15 @@ export default class OrderService extends MedusaOrderService {
         return order.status;
     }
 
+    async changeFulfillmentStatus(orderId: string, status: FulfillmentStatus) {
+        const order = await this.orderRepository_.findOne({
+            where: { id: orderId },
+        });
+        order.fulfillment_status = status;
+        await this.orderRepository_.save(order);
+        return order;
+    }
+
     async cancelOrderFromCart(cart_id: string) {
         await this.orderRepository_.update(
             { status: OrderStatus.PENDING, cart: { id: cart_id } },
@@ -275,21 +284,19 @@ export default class OrderService extends MedusaOrderService {
         customerId: string
     ): Promise<OrderBucketList> {
         const buckets = await Promise.all([
-            this.getCustomerOrderBucket(customerId, OrderBucketType.TO_PAY),
-            this.getCustomerOrderBucket(customerId, OrderBucketType.TO_SHIP),
+            this.getCustomerOrderBucket(customerId, OrderBucketType.PROCESSING),
             this.getCustomerOrderBucket(customerId, OrderBucketType.SHIPPED),
-            this.getCustomerOrderBucket(customerId, OrderBucketType.COMPLETED),
+            this.getCustomerOrderBucket(customerId, OrderBucketType.DELIVERED),
             this.getCustomerOrderBucket(customerId, OrderBucketType.CANCELLED),
             this.getCustomerOrderBucket(customerId, OrderBucketType.REFUNDED),
         ]);
 
         const output = {
-            ToPay: buckets[0],
-            ToShip: buckets[1],
-            ToReceive: buckets[2],
-            Completed: buckets[3],
-            Cancelled: buckets[4],
-            Refunded: buckets[5],
+            Processing: buckets[0],
+            Shipped: buckets[1],
+            Delivered: buckets[2],
+            Cancelled: buckets[3],
+            Refunded: buckets[4],
         };
 
         return output;
@@ -300,21 +307,16 @@ export default class OrderService extends MedusaOrderService {
         bucketType: OrderBucketType
     ): Promise<Order[]> {
         switch (bucketType) {
-            case OrderBucketType.TO_PAY:
+            case OrderBucketType.PROCESSING:
                 return await this.getCustomerOrdersByStatus(customerId, {
-                    paymentStatus: PaymentStatus.AWAITING,
-                });
-            case OrderBucketType.TO_SHIP:
-                return await this.getCustomerOrdersByStatus(customerId, {
-                    paymentStatus: PaymentStatus.CAPTURED,
-                    fulfillmentStatus: FulfillmentStatus.NOT_FULFILLED,
+                    paymentStatus: PaymentStatus.NOT_PAID,
                 });
             case OrderBucketType.SHIPPED:
                 return await this.getCustomerOrdersByStatus(customerId, {
-                    paymentStatus: PaymentStatus.CAPTURED,
+                    paymentStatus: PaymentStatus.AWAITING,
                     fulfillmentStatus: FulfillmentStatus.SHIPPED,
                 });
-            case OrderBucketType.COMPLETED:
+            case OrderBucketType.DELIVERED:
                 return await this.getCustomerOrdersByStatus(customerId, {
                     orderStatus: OrderStatus.COMPLETED,
                     fulfillmentStatus: FulfillmentStatus.FULFILLED,

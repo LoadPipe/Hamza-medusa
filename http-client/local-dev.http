@@ -386,7 +386,18 @@ GET http://localhost:9000/custom/order/customer-order?customer_id=cus_01J3CF43WK
 ### PUT cart_id to payment_session record 
 PUT http://localhost:9000/custom/payment-session
 Content-Type: application/json
+
 {
   "cart_id": "cart_01J3M8J8V2SB9MQY6M13D0Y291",
   "payment_session_id": "ps_01J3M8JRV4050QQCK59NE75MQZ"
+}
+
+
+### Change Order Status for Development
+PUT http://localhost:9000/custom/order/change-status
+Content-Type: application/json
+
+{
+  "order_id": "order_01J3FN3JXTGQ90KA2XQG1DYFJD",
+  "status": "shipped"
 }
