@@ -117,7 +117,7 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
                             </Text>
                             <Text fontSize="sm">{order.description}</Text>
                         </Flex>
-                        <Text fontSize="md" fontWeight="semibold">
+                        <Text fontSize="24px" fontWeight="semibold">
                             {getAmount(order.unit_price)} {order.currency_code}
                         </Text>
                     </Flex>
