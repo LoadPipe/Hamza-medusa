@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { PencilSquare as Edit, Trash } from '@medusajs/icons';
-import { Button, Heading, Text, clx } from '@medusajs/ui';
+import { Button, Heading, clx } from '@medusajs/ui';
 import { Address, Region } from '@medusajs/medusa';
 
 import useToggleState from '@lib/hooks/use-toggle-state';
@@ -17,6 +17,7 @@ import Spinner from '@modules/common/icons/spinner';
 import { useFormState } from 'react-dom';
 import { SubmitButton } from '@modules/checkout/components/submit-button';
 import toast from 'react-hot-toast';
+import { Flex, Text } from '@chakra-ui/react';
 
 type EditAddressProps = {
     region: Region;
@@ -127,7 +128,9 @@ const EditAddress: React.FC<EditAddressProps> = ({
 
             <Modal isOpen={state} close={close}>
                 <Modal.Title>
-                    <Heading className="mb-2">Edit address</Heading>
+                    <Heading style={{ color: '#7B61FF' }} className="mb-2">
+                        Edit Address
+                    </Heading>
                 </Modal.Title>
                 <form action={formAction}>
                     <Modal.Body>
@@ -217,15 +220,47 @@ const EditAddress: React.FC<EditAddressProps> = ({
                     </Modal.Body>
                     <Modal.Footer>
                         <div className="flex gap-3 mt-6">
-                            <Button
-                                type="reset"
-                                variant="secondary"
-                                onClick={close}
+                            <Flex
+                                backgroundColor={'#7B61FF'}
                                 className="h-10"
+                                width={'80px'}
+                                justifyContent={'center'}
+                                borderRadius={'5px'}
+                                cursor={'pointer'}
+                                onClick={close}
                             >
-                                Cancel
-                            </Button>
-                            <SubmitButton>Save</SubmitButton>
+                                <Text
+                                    fontWeight={600}
+                                    alignSelf={'center'}
+                                    color={'white'}
+                                >
+                                    Cancel
+                                </Text>
+                            </Flex>
+                            {/* <SubmitButton>Save</SubmitButton> */}
+
+                            <SubmitButton>
+                                <Flex
+                                    border={'1px'}
+                                    borderRadius={'5px'}
+                                    width={'80px'}
+                                    justifyContent={'center'}
+                                    borderColor={'#7B61FF'}
+                                    className="h-10"
+                                    px="0.7rem"
+                                    alignItems={'center'}
+                                >
+                                    <Text
+                                        fontWeight={600}
+                                        style={{
+                                            color: '#7B61FF',
+                                            fontSize: '16px',
+                                        }}
+                                    >
+                                        Save
+                                    </Text>
+                                </Flex>
+                            </SubmitButton>
                         </div>
                     </Modal.Footer>
                 </form>

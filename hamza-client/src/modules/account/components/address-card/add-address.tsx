@@ -55,7 +55,7 @@ const AddAddress = ({ region }: { region: Region }) => {
 
             <Modal isOpen={state} close={close}>
                 <Modal.Title>
-                    <Heading style={{ color: '#7B61FF' }} className="mb-4">
+                    <Heading style={{ color: '#7B61FF' }} className="mb-2">
                         Add New Address
                     </Heading>
                 </Modal.Title>
