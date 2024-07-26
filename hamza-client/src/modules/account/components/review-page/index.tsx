@@ -58,13 +58,23 @@ const ReviewPage = ({ region }: { region: Region }) => {
                         <Stack divider={<StackDivider />} spacing={4}>
                             {reviews.map((review: any) => (
                                 <Box key={review.id}>
+                                    <Text fontSize="16px">
+                                        <Text as="span" color="#555555">
+                                            Purchase Date:{' '}
+                                        </Text>
+                                        {format(
+                                            new Date(review.created_at),
+                                            'PPP'
+                                        )}
+                                    </Text>
                                     <div className="flex flex-row space-x-2 items-center">
-                                        <Heading
-                                            size="xs"
+                                        <Text
+                                            fontSize={'18px'}
+                                            fontWeight={'bold'}
                                             textTransform="uppercase"
                                         >
                                             {review.title}
-                                        </Heading>
+                                        </Text>
                                         {review.order_id && (
                                             <Link
                                                 href={`/account/editreview/${review.order_id}`}
@@ -73,21 +83,14 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                             </Link>
                                         )}
                                     </div>
-                                    <Text fontSize="sm">
-                                        Customer ID: {review.customer_id}
-                                    </Text>
+                                    {/*<Text fontSize="sm">*/}
+                                    {/*    Customer ID: {review.customer_id}*/}
+                                    {/*</Text>*/}
                                     <Text fontSize="sm">
                                         Rating: {review.rating} / 5
                                     </Text>
                                     <Text fontSize="sm">
                                         Review: {review.content}
-                                    </Text>
-                                    <Text fontSize="sm">
-                                        Date:{' '}
-                                        {format(
-                                            new Date(review.created_at),
-                                            'PPP'
-                                        )}
                                     </Text>
                                 </Box>
                             ))}
