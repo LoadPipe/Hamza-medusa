@@ -21,15 +21,19 @@ const ProfileForm = () => {
         const fetchCustomer = async () => {
             try {
                 const customer = await getCustomer();
-                setFirstNameValue(customer.first_name);
-                setLastNameValue(customer.last_name);
-                setAvatarFirstName(customer.first_name);
-                setAvatarLastName(customer.last_name);
-                setEmailValue(
-                    customer.email.includes('@evm.blockchain')
-                        ? ''
-                        : customer.email
-                );
+                if (customer === null) {
+                    return;
+                } else {
+                    setFirstNameValue(customer.first_name);
+                    setLastNameValue(customer.last_name);
+                    setAvatarFirstName(customer.first_name);
+                    setAvatarLastName(customer.last_name);
+                    setEmailValue(
+                        customer.email.includes('@evm.blockchain')
+                            ? ''
+                            : customer.email
+                    );
+                }
             } catch (error) {
                 console.error('Error fetching customer data:', error);
             }
