@@ -22,7 +22,6 @@ const ProfileInput: React.FC<ProfileInputProps> = ({
     value,
     setValue,
 }) => {
-    const [isEmail, setIsEmail] = useState(false);
     const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
         setValue(value);

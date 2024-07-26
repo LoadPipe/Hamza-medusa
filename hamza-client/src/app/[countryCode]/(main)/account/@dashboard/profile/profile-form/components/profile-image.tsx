@@ -1,23 +1,16 @@
 'use client';
 
 import { Button, Flex, Text, Image } from '@chakra-ui/react';
-import React, { useEffect } from 'react';
-// import { Avatar } from '@medusajs/ui';
+import React from 'react';
 import { Avatar } from '@chakra-ui/react';
-import useProfile from '@store/profile/profile';
 
-type Customer = {
-    first_name: string;
-    last_name: string;
+type Profile = {
+    firstName: string;
+    lastName: string;
 };
 
-const ProfileImage = ({ customer }: { customer: Customer }) => {
-    const { firstName, lastName, setFirstName, setLastName } = useProfile();
-
-    useEffect(() => {
-        setFirstName(customer.first_name);
-        setLastName(customer.last_name);
-    }, [customer, setFirstName, setLastName]);
+// Props get passed from form into image component
+const ProfileImage: React.FC<Profile> = ({ firstName, lastName }) => {
     return (
         <Flex maxW={'858px'} width={'100%'}>
             <Avatar
