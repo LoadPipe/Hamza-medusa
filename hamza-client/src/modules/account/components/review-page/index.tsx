@@ -43,7 +43,12 @@ const ReviewPage = ({ region }: { region: Region }) => {
     }, [authData.status]);
 
     return (
-        <Card>
+        <Card
+            width={'900px'}
+            bg={'rgba(18, 18, 18, 0.9)'}
+            p={8}
+            textColor={'white'}
+        >
             {reviews.length > 0 && (
                 <>
                     <CardHeader>
