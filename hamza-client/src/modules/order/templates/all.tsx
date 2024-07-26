@@ -103,9 +103,11 @@ const All = ({ orders }: { orders: any[] }) => {
         <Box>
             {customerOrder && customerOrder.Processing.length > 0 ? (
                 customerOrder.Processing.map((order) => (
-                    <div
-                        key={order.id} // Changed from cart_id to id since it's more reliable and unique
-                        className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
+                    <Box
+                        key={order.id}
+                        borderBottom={'1px'}
+                        borderColor="gray.200"
+                        pb={'6'}
                     >
                         {/*<div className="p-4 bg-gray-700">*/}
                         {/*    Cart ID {order.cart_id} - Total Items:{' '}*/}
@@ -176,7 +178,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                 </Box>
                             )
                         )}
-                    </div>
+                    </Box>
                 ))
             ) : (
                 <Box
