@@ -11,6 +11,8 @@ import {
     Stack,
     StackDivider,
     CardFooter,
+    ButtonGroup,
+    Button,
 } from '@chakra-ui/react';
 import { Region } from '@medusajs/medusa';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
@@ -19,8 +21,33 @@ import { format } from 'date-fns';
 import { getAllProductReviews } from '@lib/data';
 import { EditIcon } from '@chakra-ui/icons';
 import Link from 'next/link';
+import {
+    TiStarFullOutline,
+    TiStarHalfOutline,
+    TiStarOutline,
+} from 'react-icons/ti';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
+const commonButtonStyles = {
+    borderRadius: '8px',
+    width: '415px',
+    height: '56px',
+    padding: '16px',
+    bg: 'gray.900',
+    borderColor: 'transparent',
+    color: 'white',
+    _hover: {
+        // Assuming you want hover effects as well
+        bg: 'gray.200',
+        color: 'black',
+    },
+    _active: {
+        bg: 'primary.green.900',
+        color: 'black',
+        transform: 'scale(0.98)',
+        borderColor: '#bec3c9',
+    },
+};
+import { renderStars } from '@modules/products/components/product-preview/components/review-card';
 
 const ReviewPage = ({ region }: { region: Region }) => {
     const [reviews, setReviews] = useState([]);
@@ -49,6 +76,12 @@ const ReviewPage = ({ region }: { region: Region }) => {
             p={8}
             textColor={'white'}
         >
+            <ButtonGroup isAttached justifyContent="center">
+                <Button {...commonButtonStyles}>Pending Reviews</Button>
+                <Button isActive={true} {...commonButtonStyles}>
+                    Review Archives
+                </Button>
+            </ButtonGroup>
             {reviews.length > 0 && (
                 <>
                     <CardHeader>
@@ -75,31 +108,31 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                         <Link
                                             href={`/account/editreview/${review.order_id}`}
                                         >
-                                            <EditIcon className="cursor-pointer" />
+                                            <Text
+                                                color={'primary.green.900'}
+                                                fontSize={'12px'}
+                                            >
+                                                Update Review
+                                            </Text>
                                         </Link>
                                     )}
                                 </div>
                                 {/*<Text fontSize="sm">*/}
                                 {/*    Customer ID: {review.customer_id}*/}
                                 {/*</Text>*/}
-                                <Box m={'4'}>
+                                <Box my={'4'}>
                                     <Text
                                         mb={'2'}
                                         fontSize={'16px'}
                                         fontWeight={'bold'}
                                         color={'rgba(85, 85, 85, 0.6)'}
                                     >
-                                        Your Product rating and review
+                                        Your Product rating & review:
                                     </Text>
-                                    <Text p={'4'} fontSize="sm">
-                                        {review.rating} / 5
+                                    <Text p={'2'} fontSize="sm">
+                                        {renderStars(review.rating)}
                                     </Text>
-                                    <Text
-                                        fontSize="sm"
-                                        bg={'black'}
-                                        m={4}
-                                        p={4}
-                                    >
+                                    <Text fontSize="sm" bg={'black'} p={4}>
                                         {review.content}
                                     </Text>
                                 </Box>
