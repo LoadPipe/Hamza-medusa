@@ -309,11 +309,11 @@ export default class OrderService extends MedusaOrderService {
         switch (bucketType) {
             case OrderBucketType.PROCESSING:
                 return await this.getCustomerOrdersByStatus(customerId, {
-                    paymentStatus: PaymentStatus.AWAITING,
+                    paymentStatus: PaymentStatus.NOT_PAID,
                 });
             case OrderBucketType.SHIPPED:
                 return await this.getCustomerOrdersByStatus(customerId, {
-                    paymentStatus: PaymentStatus.CAPTURED,
+                    paymentStatus: PaymentStatus.AWAITING,
                     fulfillmentStatus: FulfillmentStatus.SHIPPED,
                 });
             case OrderBucketType.DELIVERED:
