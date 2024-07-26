@@ -9,9 +9,8 @@ import ProfileCurrency from '@modules/account/components/profile-currency';
 
 import { getCustomer, listRegions, updateCustomer } from '@lib/data';
 import { notFound } from 'next/navigation';
-import { Flex, Button, Text, Box } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import ProfileForm from './profile-form/profile-form';
-import ProfileImage from './profile-image/profile-image';
 
 export const metadata: Metadata = {
     title: 'Profile',
@@ -24,8 +23,6 @@ export default async function Profile() {
 
     if (!customer || !regions) {
         notFound();
-    } else {
-        console.log(customer);
     }
 
     return (
@@ -39,10 +36,8 @@ export default async function Profile() {
             py={'5rem'}
             gap={'10px'}
         >
-            {/* Avatar update / remove */}
-            <ProfileImage customer={customer} />
             {/* Profile Form */}
-            <ProfileForm customer={customer} />
+            <ProfileForm />
         </Flex>
     );
 }

@@ -5,6 +5,8 @@ import ProfileInput from './components/profile-input';
 import ProfilePhoneInput from './components/phone-input';
 import useProfile from '@store/profile/profile';
 import { updateCustomer } from '@lib/data';
+import { getCustomer } from '@lib/data';
+import ProfileImage from './components/profile-image';
 
 type Customer = {
     first_name: string;
@@ -12,52 +14,50 @@ type Customer = {
     email: string;
     phone: string;
 };
-const ProfileForm = ({ customer }: { customer: Customer }) => {
-    // Hooks
-    const [firstNameValue, setFirstNameValue] = useState(customer.first_name);
-    const [lastNameValue, setLastNameValue] = useState(customer.last_name);
-    const [emailValue, setEmailValue] = useState(
-        customer.email.includes('@evm.blockchain') ? '' : customer.email
-    );
-    // Global States
-    const { firstName, lastName, email, setFirstName, setLastName, setEmail } =
-        useProfile();
+const ProfileForm = () => {
+    // Hooks Form
+    const [firstNameValue, setFirstNameValue] = useState('');
+    const [lastNameValue, setLastNameValue] = useState('');
+    const [emailValue, setEmailValue] = useState('');
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    // Hooks Avatar
+    const [avatarFirstName, setAvatarFirstName] = useState('');
+    const [avatarLastName, setAvatarLastName] = useState('');
 
     useEffect(() => {
-        setFirstName(firstNameValue);
-        setLastName(lastNameValue);
-        setEmail(emailValue);
-    }, []);
+        const fetchCustomer = async () => {
+            try {
+                const customer = await getCustomer();
+                setFirstNameValue(customer.first_name);
+                setLastNameValue(customer.last_name);
+                setAvatarFirstName(customer.first_name);
+                setAvatarLastName(customer.last_name);
+                setEmailValue(
+                    customer.email.includes('@evm.blockchain')
+                        ? ''
+                        : customer.email
+                );
+            } catch (error) {
+                console.error('Error fetching customer data:', error);
+            }
+        };
 
-    // Update Global States
-    const updateGlobalProfileStates = async () => {
-        setFirstName(firstNameValue);
-        setLastName(lastNameValue);
-        setEmail(emailValue);
-    };
+        fetchCustomer();
+    }, [isSubmitted]);
 
-    // Handle Submit
     const handleSubmit = async () => {
         if (firstNameValue === '' || lastNameValue === '') {
             alert('First name and last name fields are required');
             return;
         }
         try {
-            if (emailValue === '') {
-                const updatedCustomer = {
-                    first_name: firstNameValue,
-                    last_name: lastNameValue,
-                };
-                await updateCustomer(updatedCustomer);
-            } else {
-                const updatedCustomer = {
-                    first_name: firstNameValue,
-                    last_name: lastNameValue,
-                    email: emailValue,
-                };
-                await updateCustomer(updatedCustomer);
-            }
-            await updateGlobalProfileStates();
+            const updatedCustomer = {
+                first_name: firstNameValue,
+                last_name: lastNameValue,
+                ...(emailValue && { email: emailValue }),
+            };
+            await updateCustomer(updatedCustomer);
+            setIsSubmitted((prev) => !prev); // Toggle the state to trigger useEffect
             alert('Profile updated successfully');
         } catch (error) {
             alert('Failed to update profile');
@@ -73,6 +73,10 @@ const ProfileForm = ({ customer }: { customer: Customer }) => {
             width={'100%'}
             gap={'23px'}
         >
+            <ProfileImage
+                firstName={avatarFirstName}
+                lastName={avatarLastName}
+            />
             <Text
                 fontSize={'18px'}
                 fontWeight={600}
