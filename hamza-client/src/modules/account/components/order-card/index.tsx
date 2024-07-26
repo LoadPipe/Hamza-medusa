@@ -44,6 +44,14 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
     );
     console.log(`Product details ${JSON.stringify(handle)} `);
 
+    const getAmount = (amount?: number | null) => {
+        if (amount === null || amount === undefined) {
+            return;
+        }
+
+        return formatCryptoPrice(amount, order.currency_code || 'ETH');
+    };
+
     useEffect(() => {
         // Fetch Vendor Name from product.id
         const fetchVendor = async () => {
@@ -110,7 +118,7 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
                             <Text fontSize="sm">{order.description}</Text>
                         </Flex>
                         <Text fontSize="md" fontWeight="semibold">
-                            {order.unit_price} {order.currency_code}
+                            {getAmount(order.unit_price)} {order.currency_code}
                         </Text>
                     </Flex>
 
