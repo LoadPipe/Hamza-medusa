@@ -13,6 +13,7 @@ import Input from '@modules/common/components/input';
 import Modal from '@modules/common/components/modal';
 import { SubmitButton } from '@modules/checkout/components/submit-button';
 import { addCustomerShippingAddress } from '@modules/account/actions';
+import toast from 'react-hot-toast';
 
 const AddAddress = ({ region }: { region: Region }) => {
     const [successState, setSuccessState] = useState(false);
@@ -30,6 +31,7 @@ const AddAddress = ({ region }: { region: Region }) => {
 
     useEffect(() => {
         if (successState) {
+            toast.success('Address added!');
             close();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -53,14 +55,14 @@ const AddAddress = ({ region }: { region: Region }) => {
 
             <Modal isOpen={state} close={close}>
                 <Modal.Title>
-                    <Heading style={{ color: '#7B61FF' }} className="mb-4">
+                    <Heading style={{ color: '#7B61FF' }} className="mb-2">
                         Add New Address
                     </Heading>
                 </Modal.Title>
                 <form action={formAction}>
                     <Modal.Body>
                         <Flex flexDir={'column'} className="gap-y-2">
-                            <div className="grid grid-cols-2 gap-x-2">
+                            <div className="grid grid-cols-2 gap-x-2 mt-4">
                                 <Input
                                     label="First name"
                                     name="first_name"

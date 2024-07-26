@@ -5,8 +5,11 @@ import ProfileInput from './components/profile-input';
 import { updateCustomer } from '@lib/data';
 import { getCustomer } from '@lib/data';
 import ProfileImage from './components/profile-image';
+import toast from 'react-hot-toast';
 
 const ProfileForm = () => {
+    // Todo: disable submiting if fields have not been changed
+    // Todo: add error message on input
     // Hooks Form
     const [firstNameValue, setFirstNameValue] = useState<string>('');
     const [lastNameValue, setLastNameValue] = useState<string>('');
@@ -44,7 +47,7 @@ const ProfileForm = () => {
 
     const handleSubmit = async () => {
         if (firstNameValue === '' || lastNameValue === '') {
-            alert('First name and last name fields are required');
+            toast.error('Field can not be empty');
             return;
         }
         try {
@@ -55,10 +58,9 @@ const ProfileForm = () => {
             };
             await updateCustomer(updatedCustomer);
             setIsSubmitted((prev) => !prev); // Toggle the state to trigger useEffect
-            alert('Profile updated successfully');
+            toast.success('Profile updated successfully');
         } catch (error) {
-            alert('Failed to update profile');
-            console.error('Error updating profile:', error);
+            toast.error('Failed to update profile');
         }
     };
 
