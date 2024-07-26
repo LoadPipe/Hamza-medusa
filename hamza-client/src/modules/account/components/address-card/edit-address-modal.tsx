@@ -16,6 +16,7 @@ import {
 import Spinner from '@modules/common/icons/spinner';
 import { useFormState } from 'react-dom';
 import { SubmitButton } from '@modules/checkout/components/submit-button';
+import toast from 'react-hot-toast';
 
 type EditAddressProps = {
     region: Region;
@@ -62,6 +63,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
     const removeAddress = async () => {
         setRemoving(true);
         await deleteCustomerShippingAddress(address.id);
+        toast.success('Address removed!');
         setRemoving(false);
     };
 
