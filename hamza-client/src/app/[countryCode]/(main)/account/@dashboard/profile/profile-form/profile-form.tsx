@@ -16,7 +16,9 @@ const ProfileForm = ({ customer }: { customer: Customer }) => {
     // Hooks
     const [firstNameValue, setFirstNameValue] = useState(customer.first_name);
     const [lastNameValue, setLastNameValue] = useState(customer.last_name);
-    const [emailValue, setEmailValue] = useState(customer.email);
+    const [emailValue, setEmailValue] = useState(
+        customer.email.includes('@evm.blockchain') ? '' : customer.email
+    );
     // Global States
     const { firstName, lastName, email, setFirstName, setLastName, setEmail } =
         useProfile();
@@ -36,23 +38,27 @@ const ProfileForm = ({ customer }: { customer: Customer }) => {
 
     // Handle Submit
     const handleSubmit = async () => {
-        if (
-            firstNameValue === '' ||
-            lastNameValue === '' ||
-            emailValue === ''
-        ) {
-            alert('Some fields are empty');
+        if (firstNameValue === '' || lastNameValue === '') {
+            alert('First name and last name fields are required');
             return;
         }
         try {
+            if (emailValue === '') {
+                const updatedCustomer = {
+                    first_name: firstNameValue,
+                    last_name: lastNameValue,
+                };
+                await updateCustomer(updatedCustomer);
+            } else {
+                const updatedCustomer = {
+                    first_name: firstNameValue,
+                    last_name: lastNameValue,
+                    email: emailValue,
+                };
+                await updateCustomer(updatedCustomer);
+            }
             await updateGlobalProfileStates();
-            const updatedCustomer = {
-                first_name: firstNameValue,
-                last_name: lastNameValue,
-                email: emailValue,
-            };
-            await updateCustomer(updatedCustomer);
-            await alert('Profile updated successfully');
+            alert('Profile updated successfully');
         } catch (error) {
             alert('Failed to update profile');
             console.error('Error updating profile:', error);
@@ -78,13 +84,13 @@ const ProfileForm = ({ customer }: { customer: Customer }) => {
             {/* First and last name input */}
             <Flex gap={'15px'}>
                 <ProfileInput
-                    placeholder={firstName}
+                    placeholder={firstNameValue}
                     label="first name"
                     value={firstNameValue}
                     setValue={setFirstNameValue}
                 />
                 <ProfileInput
-                    placeholder={lastName}
+                    placeholder={lastNameValue}
                     label="last name"
                     value={lastNameValue}
                     setValue={setLastNameValue}
@@ -94,7 +100,7 @@ const ProfileForm = ({ customer }: { customer: Customer }) => {
             {/* Birthdate and Email input */}
             <Flex gap={'15px'}>
                 <ProfileInput
-                    placeholder={email}
+                    placeholder={emailValue}
                     label="email"
                     value={emailValue}
                     setValue={setEmailValue}
