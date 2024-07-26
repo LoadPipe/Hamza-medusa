@@ -237,6 +237,15 @@ export default class OrderService extends MedusaOrderService {
         return order.status;
     }
 
+    async changeFulfillmentStatus(orderId: string, status: FulfillmentStatus) {
+        const order = await this.orderRepository_.findOne({
+            where: { id: orderId },
+        });
+        order.fulfillment_status = status;
+        await this.orderRepository_.save(order);
+        return order;
+    }
+
     async cancelOrderFromCart(cart_id: string) {
         await this.orderRepository_.update(
             { status: OrderStatus.PENDING, cart: { id: cart_id } },
