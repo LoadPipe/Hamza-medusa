@@ -134,7 +134,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
                 </Modal.Title>
                 <form action={formAction}>
                     <Modal.Body>
-                        <div className="grid grid-cols-1 gap-y-2">
+                        <div className="grid grid-cols-1 gap-y-2 mt-4">
                             <div className="grid grid-cols-2 gap-x-2">
                                 <Input
                                     label="First name"

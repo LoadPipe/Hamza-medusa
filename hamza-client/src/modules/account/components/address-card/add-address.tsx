@@ -62,7 +62,7 @@ const AddAddress = ({ region }: { region: Region }) => {
                 <form action={formAction}>
                     <Modal.Body>
                         <Flex flexDir={'column'} className="gap-y-2">
-                            <div className="grid grid-cols-2 gap-x-2">
+                            <div className="grid grid-cols-2 gap-x-2 mt-4">
                                 <Input
                                     label="First name"
                                     name="first_name"
