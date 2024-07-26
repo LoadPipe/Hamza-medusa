@@ -199,7 +199,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                 flexDirection="column"
                                 alignItems="center"
                                 width="full"
-                                bg="black"
+                                bg="rgba(39, 39, 39, 0.3)"
                                 color="white"
                                 p={8}
                             >
@@ -306,7 +306,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                 flexDirection="column"
                                 alignItems="center"
                                 width="full"
-                                bg="black"
+                                bg="rgba(39, 39, 39, 0.3)"
                                 color="white"
                                 p={8}
                             >
@@ -412,7 +412,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                 flexDirection="column"
                                 alignItems="center"
                                 width="full"
-                                bg="black"
+                                bg="rgba(39, 39, 39, 0.3)"
                                 color="white"
                                 p={8}
                             >
@@ -624,7 +624,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                 flexDirection="column"
                                 alignItems="center"
                                 width="full"
-                                bg="black"
+                                bg="rgba(39, 39, 39, 0.3)"
                                 color="white"
                                 p={8}
                             >
@@ -641,7 +641,7 @@ const All = ({ orders }: { orders: any[] }) => {
                     flexDirection="column"
                     alignItems="center"
                     width="full"
-                    bg="black"
+                    bg="rgba(39, 39, 39, 0.3)"
                     color="white"
                     p={8}
                 >
