@@ -77,6 +77,8 @@ const Items: React.FC<Props> = ({ items, handles }) => {
                 `${BACKEND_URL}/custom/review/exists`,
                 {
                     order_id: item?.order_id,
+                    customer_id: item.customer_id,
+                    variant_id: item.variant_id,
                 }
             );
             const reviewExists = response.data; // Assuming response directly returns true/false

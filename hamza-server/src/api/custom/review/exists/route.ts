@@ -8,13 +8,20 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         'productReviewService'
     );
 
-    const handler: RouteHandler = new RouteHandler(req, res, 'POST', '/custom/review/exists', [
-        'order_id'
-    ]);
+    const handler: RouteHandler = new RouteHandler(
+        req,
+        res,
+        'POST',
+        '/custom/review/exists',
+        ['order_id', 'customer_id', 'variant_id']
+    );
 
     await handler.handle(async () => {
-        const verify =
-            await productReviewService.customerHasLeftReview(handler.inputParams.order_id);
+        const verify = await productReviewService.customerHasLeftReview(
+            handler.inputParams.order_id,
+            handler.inputParams.customer_id,
+            handler.inputParams.variant_id
+        );
         res.json(verify);
     });
 };
