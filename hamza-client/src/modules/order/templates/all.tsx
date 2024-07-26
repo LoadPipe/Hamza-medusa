@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { orderBucket, orderDetails, singleBucket } from '@lib/data';
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Button, Text } from '@chakra-ui/react';
 import OrderCard from '@modules/account/components/order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 type OrderType = {
@@ -100,9 +100,7 @@ const All = ({ orders }: { orders: any[] }) => {
     };
 
     return (
-        <div>
-            {/* Processing-specific content */}
-            <h1>All Orders</h1>
+        <Box>
             {customerOrder && customerOrder.Processing.length > 0 ? (
                 customerOrder.Processing.map((order) => (
                     <div
@@ -181,15 +179,29 @@ const All = ({ orders }: { orders: any[] }) => {
                     </div>
                 ))
             ) : (
-                <div className="flex flex-col items-center w-full bg-black text-white p-8">
-                    <h2>Nothing to see here</h2>
-                    <p>You don't have any orders yet, let us change that :)</p>
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="center"
+                    width="full"
+                    bg="black"
+                    color="white"
+                    p={8}
+                >
+                    <Text fontSize="xl" fontWeight="bold">
+                        Nothing to see here
+                    </Text>
+                    <Text>
+                        You don't have any orders yet, let us change that :)
+                    </Text>
                     <LocalizedClientLink href="/" passHref>
-                        <Button>Continue shopping</Button>
+                        <Button m={8} colorScheme="whiteAlpha">
+                            Continue shopping
+                        </Button>
                     </LocalizedClientLink>
-                </div>
+                </Box>
             )}
-        </div>
+        </Box>
     );
 };
 
