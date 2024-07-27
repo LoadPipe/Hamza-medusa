@@ -101,14 +101,23 @@ const ProfileForm = () => {
             </Flex>
 
             {/* Email input */}
-            <Flex gap={'15px'}>
-                <ProfileInput
-                    placeholder={emailValue}
-                    label="email"
-                    value={emailValue}
-                    setValue={setEmailValue}
-                />
-            </Flex>
+            {emailValue?.length > 0 &&
+                <>
+                    <Text
+                        fontSize={'18px'}
+                        fontWeight={600}
+                        color={'primary.indigo.900'}
+                    >
+                        Email
+                    </Text>
+                    <Text
+                        fontSize={'16px'}
+                        fontWeight={600}
+                    >
+                        {emailValue}
+                    </Text>
+                </>
+            }
 
             <Button
                 mt="1rem"
