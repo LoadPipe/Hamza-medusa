@@ -171,11 +171,18 @@ class ProductReviewService extends TransactionBaseService {
     async getAllCustomerReviews(customer_id) {
         const productReviewRepository =
             this.activeManager_.getRepository(ProductReview);
-        const reviews = await productReviewRepository.find({
-            where: { customer_id },
-        });
 
-        if (!reviews) {
+        const reviews = await productReviewRepository
+            .createQueryBuilder('review')
+            .leftJoinAndSelect('review.product', 'product')
+            .select([
+                'review', // Assuming you want the review's ID; add other review fields as needed
+                'product.thumbnail', // This specifies that only the thumbnail field from the product should be included
+            ])
+            .where('review.customer_id = :customer_id', { customer_id })
+            .getMany();
+
+        if (!reviews.length) {
             throw new Error('No reviews found');
         }
 
