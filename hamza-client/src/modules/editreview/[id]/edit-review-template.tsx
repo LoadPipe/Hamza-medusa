@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import useItemStore from '@store/review/review-store';
 import { Button } from '@medusajs/ui';
+import { checkCustomerReviewExistence } from '@lib/data';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -19,14 +20,9 @@ const EditReviewTemplate = (item: any) => {
                 `orderID is ${item?.order_id} and variantID is ${item?.variant_id}`
             );
             try {
-                const response = await axios.get(
-                    `${BACKEND_URL}/custom/review/existing`,
-                    {
-                        params: {
-                            variant_id: item?.variant_id,
-                            order_id: item?.order_id,
-                        },
-                    }
+                const response = await checkCustomerReviewExistence(
+                    item.variant_id,
+                    item.order_id
                 );
                 const { content, rating } = response.data; // Assuming your backend returns review content and rating
                 setReview(content || ''); // If content is null or undefined, set it to an empty string

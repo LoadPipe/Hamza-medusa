@@ -100,6 +100,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                 </Text>
                                 <div className="flex flex-row space-x-2 items-center">
                                     <Image
+                                        rounded={'lg'}
                                         width={'72px'}
                                         height={'72px'}
                                         src={review.product.thumbnail}
@@ -141,6 +142,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                         {renderStars(review.rating)}
                                     </Text>
                                     <Text
+                                        rounded={'lg'}
                                         fontSize="sm"
                                         bg={'black'}
                                         m={2}
