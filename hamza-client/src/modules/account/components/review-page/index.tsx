@@ -120,6 +120,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                 {/*<Text fontSize="sm">*/}
                                 {/*    Customer ID: {review.customer_id}*/}
                                 {/*</Text>*/}
+                                {/*<Box>{review}</Box>*/}
                                 <Box my={'4'}>
                                     <Text
                                         mb={'2'}

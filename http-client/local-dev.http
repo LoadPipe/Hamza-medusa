@@ -273,12 +273,8 @@ Content-Type: application/json
 }
 
 ### Get Specific Customer All Reviews
-POST http://localhost:9000/custom/review/all-customer-reviews
+GET http://localhost:9000/custom/review/all-customer-reviews?customer_id=cus_01J3CF43WK0QT2591VHG9JT07E
 Content-Type: application/json
-
-{
-  "customer_id": "cus_01J0QK65HY311HDHQKN5W042GZ"
-}
 
 
 ### Create Notification Types

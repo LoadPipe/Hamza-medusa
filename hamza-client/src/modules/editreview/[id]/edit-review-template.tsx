@@ -7,15 +7,12 @@ import { Button } from '@medusajs/ui';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
-const EditReviewTemplate = () => {
+const EditReviewTemplate = (item: any) => {
     const [review, setReview] = useState('');
     const [rating, setRating] = useState(0);
     const [hovered, setHovered] = useState(0);
     const [submissionSuccess, setSubmissionSuccess] = useState(false);
 
-    const item = useItemStore((state) => state.item);
-    // TODO: Pass Variant_ID and Order_ID to useEffect, if item exists, then populate the placeholder for the review details
-    // console.log(`item info ${JSON.stringify(item)}`);
     useEffect(() => {
         const fetchReviewDetails = async () => {
             console.log(
