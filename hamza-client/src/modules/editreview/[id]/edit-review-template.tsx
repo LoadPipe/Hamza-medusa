@@ -18,12 +18,17 @@ const EditReviewTemplate = () => {
     // console.log(`item info ${JSON.stringify(item)}`);
     useEffect(() => {
         const fetchReviewDetails = async () => {
+            console.log(
+                `orderID is ${item?.order_id} and variantID is ${item?.variant_id}`
+            );
             try {
-                const response = await axios.post(
+                const response = await axios.get(
                     `${BACKEND_URL}/custom/review/existing`,
                     {
-                        order_id: item?.order_id,
-                        product_id: item?.variant_id,
+                        params: {
+                            variant_id: item?.variant_id,
+                            order_id: item?.order_id,
+                        },
                     }
                 );
                 const { content, rating } = response.data; // Assuming your backend returns review content and rating
@@ -84,7 +89,8 @@ const EditReviewTemplate = () => {
                             <p
                                 dangerouslySetInnerHTML={{
                                     __html: item?.description ?? '',
-                                }}></p>
+                                }}
+                            ></p>
                         </div>
                     </div>
                     <div>
@@ -130,9 +136,8 @@ const EditReviewTemplate = () => {
                         Review has been submitted successfully!
                     </p>
                 </div>
-            )
-            }
-        </div >
+            )}
+        </div>
     );
 };
 

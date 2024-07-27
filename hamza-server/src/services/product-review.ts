@@ -86,13 +86,13 @@ class ProductReviewService extends TransactionBaseService {
         return false;
     }
 
-    async getSpecificReview(order_id, product_id) {
+    async getSpecificReview(order_id: string, variant_id: string) {
         let productId;
 
         try {
             const variantProduct = await this.productVariantRepository_.findOne(
                 {
-                    where: { id: product_id }, // Assuming product_id is the ID of the variant
+                    where: { id: variant_id }, // Assuming product_id is the ID of the variant
                 }
             );
 
@@ -106,6 +106,8 @@ class ProductReviewService extends TransactionBaseService {
             throw e; // Rethrow or handle the error appropriately
         }
 
+        console.log(`ProductID is ${productId}`);
+
         // Ensure productId was successfully retrieved before proceeding
         if (!productId) {
             throw new Error('Unable to retrieve product ID for the review');
@@ -118,6 +120,10 @@ class ProductReviewService extends TransactionBaseService {
                 where: { order_id, product_id: productId },
             });
 
+            console.log(`ProductReview is ${JSON.stringify(productReview)}`);
+            if (productReview === undefined) {
+                return { content: '', rating: 0 };
+            }
             const { content, rating } = productReview;
 
             return { content, rating };
