@@ -13,6 +13,7 @@ import {
     CardFooter,
     ButtonGroup,
     Button,
+    Image,
 } from '@chakra-ui/react';
 import { Region } from '@medusajs/medusa';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
@@ -61,6 +62,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
                         authData.customer_id as string
                     );
                     setReviews(response);
+                    console.log('Reviews:', JSON.stringify(response));
                 } catch (error) {
                     console.error('Error fetching reviews:', error);
                 }
@@ -97,6 +99,11 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                     {format(new Date(review.created_at), 'PPP')}
                                 </Text>
                                 <div className="flex flex-row space-x-2 items-center">
+                                    <Image
+                                        width={'72px'}
+                                        height={'72px'}
+                                        src={review.product.thumbnail}
+                                    />
                                     <Text
                                         fontSize={'18px'}
                                         fontWeight={'bold'}
