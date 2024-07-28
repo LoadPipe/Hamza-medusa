@@ -21,6 +21,7 @@ import axios from 'axios';
 import { format } from 'date-fns';
 import { getAllProductReviews } from '@lib/data';
 import { EditIcon } from '@chakra-ui/icons';
+import EditReviewTemplate from '@modules/editreview/[id]/edit-review-template';
 import Link from 'next/link';
 import {
     TiStarFullOutline,

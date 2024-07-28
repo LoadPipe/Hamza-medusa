@@ -1,10 +1,11 @@
-import { TransactionBaseService, Logger } from '@medusajs/medusa';
+import { TransactionBaseService, Logger, OrderStatus } from '@medusajs/medusa';
 import { Lifetime } from 'awilix';
 import { ProductReviewRepository } from '../repositories/product-review';
 import { ProductReview } from '../models/product-review';
 import { Customer } from '../models/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import { Product } from '../models/product';
+import { Not } from 'typeorm';
 
 class ProductReviewService extends TransactionBaseService {
     static LIFE_TIME = Lifetime.SCOPED;
@@ -51,7 +52,11 @@ class ProductReviewService extends TransactionBaseService {
         return !!productReview;
     }
 
-    async customerHasLeftReview(order_id, customer_id, variant_id) {
+    async customerHasLeftReview(
+        order_id: string,
+        customer_id: string,
+        variant_id: string
+    ) {
         const productReviewRepository =
             this.activeManager_.getRepository(ProductReview);
         let productId: string;
@@ -86,38 +91,13 @@ class ProductReviewService extends TransactionBaseService {
         return false;
     }
 
-    async getSpecificReview(order_id: string, variant_id: string) {
-        let productId;
-
-        try {
-            const variantProduct = await this.productVariantRepository_.findOne(
-                {
-                    where: { id: variant_id }, // Assuming product_id is the ID of the variant
-                }
-            );
-
-            if (!variantProduct) {
-                throw new Error('Product variant not found');
-            }
-
-            productId = variantProduct.product_id; // This assumes that variantProduct actually contains a product_id
-        } catch (e) {
-            this.logger.error(`Error fetching product variant: ${e}`);
-            throw e; // Rethrow or handle the error appropriately
-        }
-
-        console.log(`ProductID is ${productId}`);
-
-        // Ensure productId was successfully retrieved before proceeding
-        if (!productId) {
-            throw new Error('Unable to retrieve product ID for the review');
-        }
-
+    async getSpecificReview(order_id: string, product_id: string) {
+        console.log(`ProductID is ${product_id}`);
         try {
             const productReviewRepository =
                 this.activeManager_.getRepository(ProductReview);
             const productReview = await productReviewRepository.findOne({
-                where: { order_id, product_id: productId },
+                where: { order_id, product_id: product_id },
             });
 
             console.log(`ProductReview is ${JSON.stringify(productReview)}`);
@@ -133,7 +113,41 @@ class ProductReviewService extends TransactionBaseService {
         }
     }
 
-    async getReviews(product_id) {
+    // Get all customer products that haven't been reviewed
+    // Add thumbnail
+    // Add Store Logo
+    async getNotReviewed(customer_id: string, product_id: string) {
+        const productReviewRepository =
+            this.activeManager_.getRepository(ProductReview);
+
+        const notReviewedProducts = await productReviewRepository
+            .createQueryBuilder('review')
+            .leftJoinAndSelect('review.product', 'product')
+            .leftJoinAndSelect('review.order', 'order')
+            .leftJoinAndSelect('order.store', 'store')
+            .select([
+                'review',
+                'product.thumbnail',
+                'store.icon',
+                'order.status',
+            ])
+            .where('review.customer_id = :customer_id', { customer_id })
+            // .andWhere('review.product_id = :product_id', { product_id })
+            .andWhere('order.status != :status', { status: 'archived' })
+            .getMany();
+
+        if (!notReviewedProducts || notReviewedProducts.length === 0) {
+            throw new Error('No reviews found');
+        }
+
+        return notReviewedProducts.map((review) => ({
+            review,
+            store_logo: review.order.store.icon,
+            thumbnail: review.product.thumbnail,
+        }));
+    }
+
+    async getReviews(product_id: string) {
         const productReviewRepository =
             this.activeManager_.getRepository(ProductReview);
         const reviews = await productReviewRepository.find({

@@ -3,12 +3,23 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import useItemStore from '@store/review/review-store';
-import { Button } from '@medusajs/ui';
 import { checkCustomerReviewExistence } from '@lib/data';
+import {
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalCloseButton,
+    Button,
+    Image,
+    Text,
+    Box,
+} from '@chakra-ui/react';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
-const EditReviewTemplate = (item: any) => {
+const EditReviewTemplate = ({ review: any, isOpen, onClose }) => {
     const [review, setReview] = useState('');
     const [rating, setRating] = useState(0);
     const [hovered, setHovered] = useState(0);
@@ -17,12 +28,12 @@ const EditReviewTemplate = (item: any) => {
     useEffect(() => {
         const fetchReviewDetails = async () => {
             console.log(
-                `orderID is ${item?.order_id} and variantID is ${item?.variant_id}`
+                `orderID is ${review?.order_id} and variantID is ${review?.variant_id}`
             );
             try {
                 const response = await checkCustomerReviewExistence(
-                    item.variant_id,
-                    item.order_id
+                    review.product_id,
+                    review.order_id
                 );
                 const { content, rating } = response.data; // Assuming your backend returns review content and rating
                 setReview(content || ''); // If content is null or undefined, set it to an empty string
@@ -66,71 +77,101 @@ const EditReviewTemplate = (item: any) => {
     ];
 
     return (
-        <div className="p-4 bg-white shadow-md rounded-lg text-black">
-            {!submissionSuccess ? (
-                <>
-                    <div className="flex items-center mb-4">
-                        <img
-                            src={item?.thumbnail}
-                            alt={item?.title}
-                            className="w-24 h-24 mr-4"
-                        />
-                        <div>
-                            <h1 className="text-xl font-semibold">
-                                {item?.title}
-                            </h1>
-                            <p
-                                dangerouslySetInnerHTML={{
-                                    __html: item?.description ?? '',
-                                }}
-                            ></p>
-                        </div>
-                    </div>
-                    <div>
-                        <div className="flex items-center mb-2">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                                <button
-                                    key={star}
-                                    className={`text-2xl ${star <= (hovered || rating) ? 'text-yellow-500' : 'text-gray-400'}`}
-                                    onMouseEnter={() => setHovered(star)}
-                                    onMouseLeave={() => setHovered(0)}
-                                    onClick={() => {
-                                        setRating(star);
-                                        setHovered(star);
-                                    }}
-                                >
-                                    ★
-                                </button>
-                            ))}
-                            <span className="ml-2 text-sm font-medium text-black self-center">
-                                {ratingDescriptions[rating - 1] || ''}
-                            </span>
-                        </div>
-                        <p className="text-black">Review Detail</p>
-                        <textarea
-                            className="w-full p-2 border rounded text-black"
-                            rows={4}
-                            placeholder="What do you think of this product?"
-                            value={review}
-                            onChange={(e) => setReview(e.target.value)}
-                        />
-                        <Button
-                            className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                            onClick={submitReview}
-                            disabled={rating === 0 || review.trim() === ''}
-                        >
-                            Submit Review
-                        </Button>
-                    </div>
-                </>
-            ) : (
-                <div className="text-center p-4">
-                    <p className="text-green-500">
-                        Review has been submitted successfully!
-                    </p>
-                </div>
-            )}
-        </div>
+        <Modal isOpen={isOpen} onClose={onClose} isCentered>
+            <ModalOverlay />
+            <ModalContent>
+                <ModalHeader>Edit Review</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                    {!submissionSuccess ? (
+                        <>
+                            <Box className="flex items-center mb-4">
+                                <Image
+                                    src={item?.thumbnail}
+                                    alt={item?.title}
+                                    boxSize="96px"
+                                    mr="4"
+                                />
+                                <Box>
+                                    <Text fontSize="xl" fontWeight="semibold">
+                                        {item?.title}
+                                    </Text>
+                                    <Text
+                                        dangerouslySetInnerHTML={{
+                                            __html: item?.description ?? '',
+                                        }}
+                                    ></Text>
+                                </Box>
+                            </Box>
+                            <Box>
+                                <Box className="flex items-center mb-2">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                        <Button
+                                            key={star}
+                                            size="lg"
+                                            variant={
+                                                star <= (hovered || rating)
+                                                    ? 'solid'
+                                                    : 'ghost'
+                                            }
+                                            colorScheme={
+                                                star <= (hovered || rating)
+                                                    ? 'yellow'
+                                                    : 'gray'
+                                            }
+                                            onClick={() => {
+                                                setRating(star);
+                                                setHovered(star);
+                                            }}
+                                            onMouseEnter={() =>
+                                                setHovered(star)
+                                            }
+                                            onMouseLeave={() => setHovered(0)}
+                                        >
+                                            ★
+                                        </Button>
+                                    ))}
+                                    <Text
+                                        ml="2"
+                                        fontSize="sm"
+                                        fontWeight="medium"
+                                    >
+                                        {ratingDescriptions[rating - 1] || ''}
+                                    </Text>
+                                </Box>
+                                <Text fontSize="md" fontWeight="bold">
+                                    Review Detail
+                                </Text>
+                                <textarea
+                                    className="w-full p-2 border rounded text-black"
+                                    rows={4}
+                                    placeholder="What do you think of this product?"
+                                    value={review}
+                                    onChange={(e) => setReview(e.target.value)}
+                                />
+                            </Box>
+                        </>
+                    ) : (
+                        <Text className="text-center p-4 text-green-500">
+                            Review has been submitted successfully!
+                        </Text>
+                    )}
+                </ModalBody>
+                <ModalFooter>
+                    <Button
+                        colorScheme="blue"
+                        mr={3}
+                        onClick={submitReview}
+                        disabled={rating === 0 || review.trim() === ''}
+                    >
+                        Submit Review
+                    </Button>
+                    <Button variant="ghost" onClick={onClose}>
+                        Close
+                    </Button>
+                </ModalFooter>
+            </ModalContent>
+        </Modal>
     );
 };
 

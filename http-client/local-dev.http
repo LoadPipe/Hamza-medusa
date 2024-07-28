@@ -229,7 +229,7 @@ Content-Type: application/json
 }
 
 ### Return review and rating of existing product
-GET http://localhost:9000/custom/review/existing?order_id=order_01J3FN3JXTRMS41FGPMXTK2N9Y&variant_id=variant_01J3CF1H1N7AMP69R1M214WK0W
+GET http://localhost:9000/custom/review/existing?order_id=order_01J3CK60MX8XGWW52W4X0AZTSX&product_id=prod_01J3CF1GXW1C0QSSMPBQR04GBK
 Content-Type: application/json
 
 
@@ -393,3 +393,7 @@ Content-Type: application/json
   "order_id": "order_01J3FN3JXTGQ90KA2XQG1DYFJD",
   "status": "shipped"
 }
+
+
+### Get Customer Orders without reviews.
+GET http://localhost:9000/custom/review/get-customer-not-reviewed?customer_id=cus_01J3CF43WK0QT2591VHG9JT07E&product_id=prod_01J3CF1GXW1C0QSSMPBQR04GBK
