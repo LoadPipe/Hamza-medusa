@@ -116,7 +116,7 @@ class ProductReviewService extends TransactionBaseService {
     // Get all customer products that haven't been reviewed
     // Add thumbnail
     // Add Store Logo
-    async getNotReviewed(customer_id: string, product_id: string) {
+    async getNotReviewed(customer_id: string) {
         const productReviewRepository =
             this.activeManager_.getRepository(ProductReview);
 

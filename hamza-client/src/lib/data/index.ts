@@ -168,6 +168,22 @@ export async function checkCustomerReviewExistence(
     }
 }
 
+export async function getNotReviewed(customer_id: string) {
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/review/get-customer-not-reviewed`,
+            {
+                params: {
+                    customer_id: customer_id,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching reviews:', error);
+    }
+}
+
 export async function allReviews(product_id: string) {
     try {
         const response = await axios.post(

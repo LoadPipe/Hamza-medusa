@@ -396,4 +396,4 @@ Content-Type: application/json
 
 
 ### Get Customer Orders without reviews.
-GET http://localhost:9000/custom/review/get-customer-not-reviewed?customer_id=cus_01J3CF43WK0QT2591VHG9JT07E&product_id=prod_01J3CF1GXW1C0QSSMPBQR04GBK
+GET http://localhost:9000/custom/review/get-customer-not-reviewed?customer_id=cus_01J3CF43WK0QT2591VHG9JT07E
