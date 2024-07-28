@@ -26,9 +26,13 @@ export default async function Reviews() {
     }
 
     return (
-        <Box bg={'rgba(18, 18, 18, 0.9)'} p={8}>
+        <Box>
             <Box dir={'col'} mb={'8'} gap={'4'}>
-                <Text className="text-2xl-semi" color={'primary.indigo.900'}>
+                <Text
+                    mb={'4'}
+                    className="text-2xl-semi"
+                    color={'primary.indigo.900'}
+                >
                     My Reviews
                 </Text>
                 <Review customer={customer} region={region} />
