@@ -64,11 +64,14 @@ const CartTemplate = ({
                                     >
                                         Product Details
                                     </Text>
+                                    {/* Cart Items */}
                                     <ItemsTemplate
                                         region={cart?.region}
                                         items={cart?.items}
                                     />
                                 </Box>
+
+                                {/* Shipping Address */}
                                 <Box
                                     width={'825px'}
                                     height={'240px'}
