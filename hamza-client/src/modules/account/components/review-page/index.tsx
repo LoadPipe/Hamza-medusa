@@ -10,6 +10,7 @@ import {
     CardBody,
     Stack,
     StackDivider,
+    useDisclosure,
     CardFooter,
     ButtonGroup,
     Button,
@@ -54,6 +55,8 @@ import { renderStars } from '@modules/products/components/product-preview/compon
 const ReviewPage = ({ region }: { region: Region }) => {
     const [reviews, setReviews] = useState([]);
     const { authData } = useCustomerAuthStore();
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [selectedReview, setSelectedReview] = useState(null);
 
     useEffect(() => {
         if (authData.status == 'authenticated') {
@@ -71,6 +74,11 @@ const ReviewPage = ({ region }: { region: Region }) => {
             fetchReviews();
         }
     }, [authData.status]);
+
+    const handleReviewEdit = (review) => {
+        setSelectedReview(review);
+        onOpen();
+    };
 
     return (
         <Card
@@ -114,16 +122,14 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                         {review.title}
                                     </Text>
                                     {review.order_id && (
-                                        <Link
-                                            href={`/account/editreview/${review.order_id}`}
+                                        <Button
+                                            onClick={() =>
+                                                handleReviewEdit(review)
+                                            }
+                                            colorScheme="green"
                                         >
-                                            <Text
-                                                color={'primary.green.900'}
-                                                fontSize={'12px'}
-                                            >
-                                                Update Review
-                                            </Text>
-                                        </Link>
+                                            Update Review
+                                        </Button>
                                     )}
                                 </div>
                                 {/*<Text fontSize="sm">*/}
@@ -157,6 +163,13 @@ const ReviewPage = ({ region }: { region: Region }) => {
                     </Stack>
                     <CardFooter />
                 </>
+            )}
+            {selectedReview && (
+                <EditReviewTemplate
+                    review={selectedReview}
+                    isOpen={isOpen}
+                    onClose={onClose}
+                />
             )}
         </Card>
     );

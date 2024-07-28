@@ -385,6 +385,30 @@ export async function reviewResponse(product_id: string) {
     }
 }
 
+export async function updateProductReview(
+    product_id: string,
+    review: string,
+    rating: number,
+    customer_id: string,
+    order_id: string
+) {
+    try {
+        const response = await axios.put(
+            `${BACKEND_URL}/custom/review/update`,
+            {
+                product_id: product_id,
+                reviewUpdates: review,
+                ratingUpdates: rating,
+                customer_id: customer_id,
+                order_id: order_id,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error updating product review:', error);
+    }
+}
+
 export async function getInventoryCount(variant_id: string) {
     try {
         const response = await axios.post(

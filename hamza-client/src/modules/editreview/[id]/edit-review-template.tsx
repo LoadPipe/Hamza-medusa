@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import useItemStore from '@store/review/review-store';
-import { checkCustomerReviewExistence } from '@lib/data';
 import {
     Modal,
     ModalOverlay,
@@ -16,54 +14,43 @@ import {
     Text,
     Box,
 } from '@chakra-ui/react';
+import { updateProductReview } from '@lib/data';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
-const EditReviewTemplate = ({ review: any, isOpen, onClose }) => {
-    const [review, setReview] = useState('');
-    const [rating, setRating] = useState(0);
+const EditReviewTemplate = ({ review, isOpen, onClose }) => {
+    const [currentReview, setCurrentReview] = useState(review.content || '');
+    const [rating, setRating] = useState(review.rating || 0);
     const [hovered, setHovered] = useState(0);
     const [submissionSuccess, setSubmissionSuccess] = useState(false);
 
     useEffect(() => {
-        const fetchReviewDetails = async () => {
-            console.log(
-                `orderID is ${review?.order_id} and variantID is ${review?.variant_id}`
-            );
-            try {
-                const response = await checkCustomerReviewExistence(
-                    review.product_id,
-                    review.order_id
-                );
-                const { content, rating } = response.data; // Assuming your backend returns review content and rating
-                setReview(content || ''); // If content is null or undefined, set it to an empty string
-                setRating(rating || 0); // If rating is null or undefined, set it to 0
-            } catch (error) {
-                alert('Failed to check review existence: ' + error);
-            }
-        };
-
-        if (item) {
-            fetchReviewDetails();
-        }
-    }, [item]);
+        // No need to fetch details if they are already passed as props
+        console.log(`Review issss?D: ${JSON.stringify(review)}`);
+    }, [review]);
 
     const submitReview = async () => {
-        // console.log(
-        //     `customer_id: ${item?.customer_id}, product_id: ${item?.variant_id}, rating: ${rating}, content: ${review}, order_id: ${item?.order_id}`
-        // );
         try {
-            await axios.post(`${BACKEND_URL}/custom/review/update`, {
-                customer_id: item?.customer_id,
-                product_id: item?.variant_id,
-                ratingUpdates: rating,
-                reviewUpdates: review,
-                order_id: item?.order_id,
-            });
-            setReview('');
-            setRating(0);
-            setSubmissionSuccess(true); // Update the state to indicate success
+            // Ensure that the parameters are passed in the correct order as expected by the updateProductReview function
+            const response = await updateProductReview(
+                review.product_id, // product_id
+                currentReview, // review
+                rating, // rating
+                review.customer_id, // customer_id
+                review.order_id // order_id
+            );
+
+            if (response) {
+                setCurrentReview('');
+                setRating(0);
+                setSubmissionSuccess(true); // Update the state to indicate success
+                console.log('Review updated successfully');
+            } else {
+                console.error('Failed to update review');
+                alert('Failed to update review');
+            }
         } catch (error) {
+            console.error('Failed to submit review: ', error);
             alert('Failed to submit review: ' + error);
         }
     };
@@ -80,25 +67,25 @@ const EditReviewTemplate = ({ review: any, isOpen, onClose }) => {
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>Edit Review</ModalHeader>
+                <ModalHeader>Edit Your Review</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
                     {!submissionSuccess ? (
                         <>
                             <Box className="flex items-center mb-4">
                                 <Image
-                                    src={item?.thumbnail}
-                                    alt={item?.title}
+                                    src={review.thumbnail}
+                                    alt={review.title}
                                     boxSize="96px"
                                     mr="4"
                                 />
                                 <Box>
                                     <Text fontSize="xl" fontWeight="semibold">
-                                        {item?.title}
+                                        {review.title}
                                     </Text>
                                     <Text
                                         dangerouslySetInnerHTML={{
-                                            __html: item?.description ?? '',
+                                            __html: review.description || '',
                                         }}
                                     ></Text>
                                 </Box>
@@ -119,10 +106,7 @@ const EditReviewTemplate = ({ review: any, isOpen, onClose }) => {
                                                     ? 'yellow'
                                                     : 'gray'
                                             }
-                                            onClick={() => {
-                                                setRating(star);
-                                                setHovered(star);
-                                            }}
+                                            onClick={() => setRating(star)}
                                             onMouseEnter={() =>
                                                 setHovered(star)
                                             }
@@ -146,8 +130,10 @@ const EditReviewTemplate = ({ review: any, isOpen, onClose }) => {
                                     className="w-full p-2 border rounded text-black"
                                     rows={4}
                                     placeholder="What do you think of this product?"
-                                    value={review}
-                                    onChange={(e) => setReview(e.target.value)}
+                                    value={currentReview}
+                                    onChange={(e) =>
+                                        setCurrentReview(e.target.value)
+                                    }
                                 />
                             </Box>
                         </>
@@ -157,19 +143,17 @@ const EditReviewTemplate = ({ review: any, isOpen, onClose }) => {
                         </Text>
                     )}
                 </ModalBody>
-                <ModalFooter>
-                    <Button
-                        colorScheme="blue"
-                        mr={3}
-                        onClick={submitReview}
-                        disabled={rating === 0 || review.trim() === ''}
-                    >
-                        Submit Review
-                    </Button>
-                    <Button variant="ghost" onClick={onClose}>
-                        Close
-                    </Button>
-                </ModalFooter>
+                <Button
+                    colorScheme="blue"
+                    mr={3}
+                    onClick={submitReview}
+                    disabled={rating === 0 || currentReview.trim() === ''}
+                >
+                    Submit Review
+                </Button>
+                <Button variant="ghost" onClick={onClose}>
+                    Close
+                </Button>
             </ModalContent>
         </Modal>
     );

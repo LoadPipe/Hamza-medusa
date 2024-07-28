@@ -255,71 +255,92 @@ class ProductReviewService extends TransactionBaseService {
         return await productReviewRepository.save(existingReview);
     }
 
+    // async updateProduct(
+    //     product_id,
+    //     reviewUpdates,
+    //     ratingUpdates,
+    //     customer_id,
+    //     order_id
+    // ) {
+    //     const productReviewRepository =
+    //         this.activeManager_.getRepository(ProductReview);
+    //
+    //     let productId;
+    //
+    //     try {
+    //         const variantProduct = await this.productVariantRepository_.findOne(
+    //             {
+    //                 where: { id: product_id }, // Assuming product_id is the ID of the variant
+    //             }
+    //         );
+    //
+    //         if (!variantProduct) {
+    //             throw new Error('Product variant not found');
+    //         }
+    //
+    //         productId = variantProduct.product_id; // This assumes that variantProduct actually contains a product_id
+    //     } catch (e) {
+    //         this.logger.error(`Error fetching product variant: ${e}`);
+    //         throw e; // Rethrow or handle the error appropriately
+    //     }
+    //
+    //     // Ensure productId was successfully retrieved before proceeding
+    //     if (!productId) {
+    //         throw new Error('Unable to retrieve product ID for the review');
+    //     }
+    //
+    //     const existingReview = await productReviewRepository.findOne({
+    //         where: { product_id: productId, customer_id, order_id },
+    //     });
+    //
+    //     this.logger.debug(`existingReview: ${existingReview.content}`);
+    //
+    //     if (!existingReview) {
+    //         throw new Error('Review not found'); // Proper error handling if the review doesn't exist
+    //     }
+    //
+    //     existingReview.content = reviewUpdates;
+    //     existingReview.rating = ratingUpdates;
+    //
+    //     return await productReviewRepository.save(existingReview);
+    // }
+
     async updateProduct(
-        product_id,
-        reviewUpdates,
-        ratingUpdates,
-        customer_id,
-        order_id
+        product_id: string,
+        review: string,
+        rating: number,
+        customer_id: string,
+        order_id: string
     ) {
         const productReviewRepository =
             this.activeManager_.getRepository(ProductReview);
 
-        let productId;
-
-        try {
-            const variantProduct = await this.productVariantRepository_.findOne(
-                {
-                    where: { id: product_id }, // Assuming product_id is the ID of the variant
-                }
-            );
-
-            if (!variantProduct) {
-                throw new Error('Product variant not found');
-            }
-
-            productId = variantProduct.product_id; // This assumes that variantProduct actually contains a product_id
-        } catch (e) {
-            this.logger.error(`Error fetching product variant: ${e}`);
-            throw e; // Rethrow or handle the error appropriately
-        }
-
-        // Ensure productId was successfully retrieved before proceeding
-        if (!productId) {
-            throw new Error('Unable to retrieve product ID for the review');
-        }
-
         const existingReview = await productReviewRepository.findOne({
-            where: { product_id: productId, customer_id, order_id },
+            where: {
+                product_id: product_id,
+                customer_id: customer_id,
+                order_id: order_id,
+            },
         });
 
-        this.logger.debug(`existingReview: ${existingReview.content}`);
-
+        this.logger.debug(
+            `Searching for review with Product ID: ${product_id}, Customer ID: ${customer_id}, Order ID: ${order_id}`
+        );
         if (!existingReview) {
-            throw new Error('Review not found'); // Proper error handling if the review doesn't exist
+            this.logger.error('Review not found');
+            throw new Error('Review not found');
+        } else {
+            this.logger.debug(
+                `Found review with Rating: ${existingReview.rating}`
+            );
         }
-
-        existingReview.content = reviewUpdates;
-        existingReview.rating = ratingUpdates;
-
-        return await productReviewRepository.save(existingReview);
-    }
-
-    async updateProductRating(product_id, rating, customer_id) {
-        const productReviewRepository =
-            this.activeManager_.getRepository(ProductReview);
-
-        const existingReview = await productReviewRepository.findOne({
-            where: { product_id, customer_id },
-        });
-
-        this.logger.debug(`existingReview: ${existingReview.rating}`);
 
         if (!existingReview) {
             throw new Error('Review not found'); // Proper error handling if the review doesn't exist
         }
 
         existingReview.rating = rating;
+        existingReview.content = review;
 
         return await productReviewRepository.save(existingReview);
     }

@@ -191,15 +191,15 @@ Content-Type: application/json
 }
 
 ### Update Product
-POST http://localhost:9000/custom/review/update
+PUT http://localhost:9000/custom/review/update
 Content-Type: application/json
 
 {
-  "customer_id": "cus_01HZGXW2JCY41TTZFSE256EDT4",
-  "product_id": "prod_01HZGXK5K93QD6132PNESEYBVS",
+  "customer_id": "cus_01J3CF43WK0QT2591VHG9JT07E",
+  "product_id": "prod_01J3CF1GXW1C0QSSMPBQR04GBK",
   "ratingUpdates": 10,
   "reviewUpdates": "CONTENT CONTENRT",
-  "order_id": "order_01HZGXXX8V51W8XQBTH7YPWTPP"
+  "order_id": "order_01J3CK60MX8XGWW52W4X0AZTSX"
 }
 
 
