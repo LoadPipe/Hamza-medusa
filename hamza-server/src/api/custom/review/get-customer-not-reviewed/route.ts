@@ -1,11 +1,9 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
-import ProductReviewService from 'src/services/product-review';
+import OrderService from 'src/services/order';
 import { RouteHandler } from '../../../route-handler';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
-    const productReviewService: ProductReviewService = req.scope.resolve(
-        'productReviewService'
-    );
+    const orderService: OrderService = req.scope.resolve('OrderService');
 
     const handler: RouteHandler = new RouteHandler(
         req,
@@ -16,10 +14,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        const reviews = await productReviewService.getNotReviewed(
-            handler.inputParams.customer_id,
-            handler.inputParams.order_id,
-            handler.inputParams.product_id
+        const reviews = await orderService.getNotReviewedOrders(
+            handler.inputParams.customer_id
         );
         res.json(reviews);
     });

@@ -2,6 +2,7 @@ import { TransactionBaseService, Logger, OrderStatus } from '@medusajs/medusa';
 import { Lifetime } from 'awilix';
 import { ProductReviewRepository } from '../repositories/product-review';
 import { ProductReview } from '../models/product-review';
+import { Order } from '../models/order';
 import { Customer } from '../models/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import { Product } from '../models/product';
@@ -111,40 +112,6 @@ class ProductReviewService extends TransactionBaseService {
             this.logger.error(`Error fetching specific review: ${e}`);
             throw e;
         }
-    }
-
-    // Get all customer products that haven't been reviewed
-    // Add thumbnail
-    // Add Store Logo
-    async getNotReviewed(customer_id: string) {
-        const productReviewRepository =
-            this.activeManager_.getRepository(ProductReview);
-
-        const notReviewedProducts = await productReviewRepository
-            .createQueryBuilder('review')
-            .leftJoinAndSelect('review.product', 'product')
-            .leftJoinAndSelect('review.order', 'order')
-            .leftJoinAndSelect('order.store', 'store')
-            .select([
-                'review',
-                'product.thumbnail',
-                'store.icon',
-                'order.status',
-            ])
-            .where('review.customer_id = :customer_id', { customer_id })
-            // .andWhere('review.product_id = :product_id', { product_id })
-            .andWhere('order.status != :status', { status: 'archived' })
-            .getMany();
-
-        if (!notReviewedProducts || notReviewedProducts.length === 0) {
-            throw new Error('No reviews found');
-        }
-
-        return notReviewedProducts.map((review) => ({
-            review,
-            store_logo: review.order.store.icon,
-            thumbnail: review.product.thumbnail,
-        }));
     }
 
     async getReviews(product_id: string) {
