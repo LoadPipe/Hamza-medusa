@@ -32,23 +32,29 @@ const CartTemplate = ({
     };
 
     return (
-        <Flex width={'100%'} justifyContent="center" alignItems={'center'}>
-            <Flex
-                width={'1280px'}
-                justifyContent="center"
-                alignItems={'center'}
-            >
+        <Flex
+            width={'1280px'}
+            mx="auto"
+            justifyContent="center"
+            alignItems={'center'}
+        >
+            {cart?.items.length ? (
                 <Box width="1,258px" pb="5rem" pt="2rem">
-                    {cart?.items.length ? (
-                        <Flex flexDirection={'row'} gap="32px">
-                            <Flex flexDirection={'column'} gap="32px">
-                                <Box
-                                    width={'825px'}
-                                    height={'540px'}
-                                    borderRadius={'16px'}
-                                    backgroundColor={'#121212'}
-                                    px="40px"
-                                    py="10px"
+                    <Flex flexDirection={'row'} gap="32px">
+                        <Flex flexDirection={'column'} gap="32px">
+                            <Flex
+                                width={'825px'}
+                                borderRadius={'16px'}
+                                backgroundColor={'#121212'}
+                                px="40px"
+                                py="10px"
+                                justifyContent="center"
+                            >
+                                <Flex
+                                    maxW={'705px'}
+                                    height={'460px'}
+                                    width={'100%'}
+                                    flexDirection={'column'}
                                 >
                                     {!customer && (
                                         <>
@@ -69,37 +75,37 @@ const CartTemplate = ({
                                         region={cart?.region}
                                         items={cart?.items}
                                     />
-                                </Box>
-
-                                {/* Shipping Address */}
-                                <Box
-                                    width={'825px'}
-                                    height={'240px'}
-                                    borderRadius={'16px'}
-                                    backgroundColor={'#121212'}
-                                >
-                                    <Text
-                                        mt="1rem"
-                                        fontWeight={600}
-                                        fontSize={'18px'}
-                                        color="primary.green.900"
-                                    >
-                                        Shipping Address
-                                    </Text>
-                                </Box>
+                                </Flex>
                             </Flex>
 
-                            <Box>
-                                {cart && cart.region && <Summary cart={cart} />}
+                            {/* Shipping Address */}
+                            <Box
+                                width={'825px'}
+                                height={'240px'}
+                                borderRadius={'16px'}
+                                backgroundColor={'#121212'}
+                            >
+                                <Text
+                                    mt="1rem"
+                                    fontWeight={600}
+                                    fontSize={'18px'}
+                                    color="primary.green.900"
+                                >
+                                    Shipping Address
+                                </Text>
                             </Box>
                         </Flex>
-                    ) : (
-                        <div>
-                            <EmptyCartMessage />
-                        </div>
-                    )}
+
+                        <Box>
+                            {cart && cart.region && <Summary cart={cart} />}
+                        </Box>
+                    </Flex>
                 </Box>
-            </Flex>
+            ) : (
+                <div>
+                    <EmptyCartMessage />
+                </div>
+            )}
         </Flex>
     );
 };

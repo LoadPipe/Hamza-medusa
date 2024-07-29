@@ -70,12 +70,13 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
                             color={'white'}
                             fontSize={'18px'}
                             fontWeight={600}
+                            mb="auto"
                         >
                             {item.title}
                         </Text>
                         <LineItemOptions variant={item.variant} />
                         <Flex mt="auto">
-                            {/* {type === 'preview' && (
+                            {type === 'preview' && (
                                 <Flex>
                                     <Text>{item.quantity}x </Text>
                                     <LineItemUnitPrice
@@ -84,7 +85,7 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
                                         style="tight"
                                     />
                                 </Flex>
-                            )} */}
+                            )}
                             <LineItemPrice
                                 item={item}
                                 region={region}
@@ -96,7 +97,7 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
                     {/* What does full mean */}
                     {type === 'full' && (
                         <Flex ml="auto" mb="auto" flexDirection={'column'}>
-                            <Flex ml="auto">
+                            <Flex ml="auto" mb="1.25rem">
                                 <DeleteButton id={item.id} />
                             </Flex>
                             <CartItemSelect
@@ -104,7 +105,7 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
                                 onChange={(value) =>
                                     changeQuantity(parseInt(value.target.value))
                                 }
-                                className="w-14 h-10 p-4 mt-2"
+                                className="w-14 h-10 p-4"
                             >
                                 {Array.from(
                                     {
