@@ -61,7 +61,7 @@ interface IPaymentGroupData {
  *
  * @author John R. Kosinski
  */
-class FakeCartCompletionStrategy extends AbstractCartCompletionStrategy {
+class FakeCartCompletionStrategy {
     protected readonly idempotencyKeyService: IdempotencyKeyService;
     protected readonly cartService: CartService;
     protected readonly productService: ProductService;

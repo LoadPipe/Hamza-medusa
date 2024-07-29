@@ -61,7 +61,7 @@ interface IPaymentGroupData {
  *
  * @author John R. Kosinski
  */
-class SwitchCartCompletionStrategy extends AbstractCartCompletionStrategy {
+class SwitchCartCompletionStrategy {
     protected readonly idempotencyKeyService: IdempotencyKeyService;
     protected readonly cartService: CartService;
     protected readonly productService: ProductService;

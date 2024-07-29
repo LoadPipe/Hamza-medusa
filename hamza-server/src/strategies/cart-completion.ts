@@ -24,6 +24,7 @@ import { PaymentDataInput } from '@medusajs/medusa/dist/services/payment';
 import { RequestContext } from '@medusajs/medusa/dist/types/request';
 import PaymentRepository from '@medusajs/medusa/dist/repositories/payment';
 
+const MASSMARKET_THING = process.env.MASSMARKET_THING;
 type InjectedDependencies = {
     idempotencyKeyService: IdempotencyKeyService;
     productService: ProductService;
@@ -72,21 +73,26 @@ class CartCompletionStrategy extends AbstractCartCompletionStrategy {
         idempotencyKey: IdempotencyKey,
         context: RequestContext
     ): Promise<CartCompletionResponse> {
-        switch (process.env.MASSMARKET_THING) {
-            case 'MASSMARKET':
-                return this.massMarketStrategy.complete(
-                    cartId,
-                    idempotencyKey,
-                    context
-                );
-
-            case 'SWITCH':
-                return this.switchStrategy.complete(
-                    cartId,
-                    idempotencyKey,
-                    context
-                );
-        }
+        return await this.massMarketStrategy.complete(
+            cartId,
+            idempotencyKey,
+            context
+        );
+        // switch (process.env.MASSMARKET_THING) {
+        //     case 'true':
+        //         return await this.massMarketStrategy.complete(
+        //             cartId,
+        //             idempotencyKey,
+        //             contextww
+        //         );
+        //
+        //     case 'SWITCH':
+        //         return await this.switchStrategy.complete(
+        //             cartId,
+        //             idempotencyKey,
+        //             context
+        //         );
+        // }
     }
 }
 
