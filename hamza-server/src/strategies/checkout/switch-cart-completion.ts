@@ -49,6 +49,20 @@ interface IPaymentGroupData {
     store?: Store;
 }
 
+<<<<<<< HEAD
+=======
+/**
+ * @name CartCompletionStrategy
+ *
+ * @description Defines a Cart completion strategy which is called when the cart's complete
+ * method is called (on the client side). Breaks up cart items into multiple payments,
+ * for each unique store-currency pair; creates payments and orders for each. This is
+ * made specifically for our use case of crypto payments in (potentially) multiple currencies,
+ * including native & token currencies.
+ *
+ * @author John R. Kosinski
+ */
+>>>>>>> 27c9906087376a5314ac3882e64c139ad09758f3
 class SwitchCartCompletionStrategy {
     protected readonly idempotencyKeyService: IdempotencyKeyService;
     protected readonly cartService: CartService;

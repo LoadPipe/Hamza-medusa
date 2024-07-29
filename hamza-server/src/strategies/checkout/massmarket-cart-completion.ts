@@ -71,16 +71,16 @@ class MassMarketCartCompletionStrategy {
     protected readonly lineItemRepository: typeof LineItemRepository;
     protected readonly logger: Logger;
 
-    constructor(...args) {
-        this.idempotencyKeyService = args[0].idempotencyKeyService;
-        this.cartService = args[0].cartService;
-        this.productService = args[0].productService;
-        this.paymentService = args[0].paymentService;
-        this.orderService = args[0].orderService;
-        this.paymentRepository = args[0].paymentRepository;
-        this.orderRepository = args[0].orderRepository;
-        this.lineItemRepository = args[0].lineItemRepository;
-        this.logger = args[0].logger;
+    constructor(container) {
+        this.idempotencyKeyService = container.idempotencyKeyService;
+        this.cartService = container.cartService;
+        this.paymentService = container.paymentService;
+        this.productService = container.productService;
+        this.orderService = container.orderService;
+        this.paymentRepository = container.paymentRepository;
+        this.orderRepository = container.orderRepository;
+        this.lineItemRepository = container.lineItemRepository;
+        this.logger = container.logger;
     }
 
     /**
@@ -100,6 +100,8 @@ class MassMarketCartCompletionStrategy {
         idempotencyKey: IdempotencyKey,
         context: RequestContext
     ): Promise<CartCompletionResponse> {
+        console.log(`I guess this error is the one which is running..`);
+
         try {
             //get the cart
             const cart = await this.cartService.retrieve(cartId, {
@@ -169,6 +171,7 @@ class MassMarketCartCompletionStrategy {
             };
 
             //return an error response
+            console.log(`I guess this error is the one which is running..`);
             this.logger.debug(response);
             return response;
         }
