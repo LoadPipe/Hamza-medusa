@@ -1,6 +1,5 @@
 import {
     AbstractCartCompletionStrategy,
-    Cart,
     CartCompletionResponse,
     IdempotencyKey,
     IdempotencyKeyService,
@@ -15,12 +14,6 @@ import MassMarketCartCompletionStrategy from './checkout/massmarket-cart-complet
 import SwitchCartCompletionStrategy from './checkout/switch-cart-completion';
 import OrderService from '../services/order';
 import { PaymentService } from '@medusajs/medusa/dist/services';
-import { Payment } from '../models/payment';
-import { Order } from '../models/order';
-import { Product } from '../models/product';
-import { Store } from '../models/store';
-import { LineItem } from '../models/line-item';
-import { PaymentDataInput } from '@medusajs/medusa/dist/services/payment';
 import { RequestContext } from '@medusajs/medusa/dist/types/request';
 import PaymentRepository from '@medusajs/medusa/dist/repositories/payment';
 
@@ -74,19 +67,25 @@ class CartCompletionStrategy extends AbstractCartCompletionStrategy {
     ): Promise<CartCompletionResponse> {
         switch (process.env.MASSMARKET_THING) {
             case 'MASSMARKET':
-                return this.massMarketStrategy.complete(
+                return await this.massMarketStrategy.complete(
                     cartId,
                     idempotencyKey,
                     context
                 );
 
             case 'SWITCH':
-                return this.switchStrategy.complete(
+                return await this.switchStrategy.complete(
                     cartId,
                     idempotencyKey,
                     context
                 );
         }
+
+        return await this.switchStrategy.complete(
+            cartId,
+            idempotencyKey,
+            context
+        );
     }
 }
 

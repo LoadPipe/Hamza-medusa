@@ -1,5 +1,4 @@
 import {
-    AbstractCartCompletionStrategy,
     Cart,
     CartCompletionResponse,
     IdempotencyKey,
@@ -50,18 +49,7 @@ interface IPaymentGroupData {
     store?: Store;
 }
 
-/**
- * @name CartCompletionStrategy
- *
- * @description Defines a Cart completion strategy which is called when the cart's complete
- * method is called (on the client side). Breaks up cart items into multiple payments,
- * for each unique store-currency pair; creates payments and orders for each. This is
- * made specifically for our use case of crypto payments in (potentially) multiple currencies,
- * including native & token currencies.
- *
- * @author John R. Kosinski
- */
-class SwitchCartCompletionStrategy extends AbstractCartCompletionStrategy {
+class SwitchCartCompletionStrategy {
     protected readonly idempotencyKeyService: IdempotencyKeyService;
     protected readonly cartService: CartService;
     protected readonly productService: ProductService;
@@ -83,7 +71,6 @@ class SwitchCartCompletionStrategy extends AbstractCartCompletionStrategy {
         lineItemRepository,
         logger,
     }: InjectedDependencies) {
-        super(arguments[0]);
         this.idempotencyKeyService = idempotencyKeyService;
         this.cartService = cartService;
         this.paymentService = paymentService;
