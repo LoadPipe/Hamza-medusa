@@ -10,7 +10,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         req,
         res,
         'GET',
-        '/custom/payment-mode',
+        '/custom/config',
         ['payment_mode']
     );
 

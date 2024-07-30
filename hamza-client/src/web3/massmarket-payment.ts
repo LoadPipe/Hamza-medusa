@@ -24,7 +24,6 @@ export class MassmarketPaymentClient {
     escrowAddress: HexString;
     paymentContract: ethers.Contract;
     provider: ethers.Provider;
-    paymentMode: string;
     signer: ethers.Signer;
     tokens: { [id: string]: ethers.Contract } = {};
 
@@ -36,14 +35,12 @@ export class MassmarketPaymentClient {
         provider: ethers.Provider,
         signer: ethers.Signer,
         address: HexString,
-        paymentMode: string,
         escrowAddress: HexString
     ) {
         this.provider = provider;
         this.signer = signer;
         this.contractAddress = address;
         this.escrowAddress = escrowAddress;
-        this.paymentMode = paymentMode;
 
         this.paymentContract = new ethers.Contract(
             this.contractAddress,

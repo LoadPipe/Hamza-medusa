@@ -71,7 +71,7 @@ class CartCompletionStrategy extends AbstractCartCompletionStrategy {
         context: RequestContext
     ): Promise<CartCompletionResponse> {
         const paymentMode = Config.getPaymentMode();
-        console.log('PAYMENT_MODE', paymentMode);
+        // console.log('PAYMENT_MODE', paymentMode);
         switch (paymentMode) {
             case 'MASSMARKET':
                 return await this.massMarketStrategy.complete(

@@ -146,9 +146,7 @@ const CryptoPaymentButton = ({
 
     // Get the PAYMENT_MODE from the server
     const getPaymentMode = async () => {
-        const response = await axios.get(
-            `${MEDUSA_SERVER_URL}/custom/payment-mode`
-        );
+        const response = await axios.get(`${MEDUSA_SERVER_URL}/custom/config`);
         console.log(`getPaymentMode Response ${JSON.stringify(response.data)}`);
         return response.data ? response.data : null;
     };
@@ -190,8 +188,7 @@ const CryptoPaymentButton = ({
                         provider,
                         signer,
                         paymentContractAddr,
-                        escrow_contract_address,
-                        paymentMode.paymentMode
+                        escrow_contract_address
                     );
 
                 console.log('payment address:', paymentContractAddr);
