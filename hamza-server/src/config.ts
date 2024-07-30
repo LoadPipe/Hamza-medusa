@@ -8,4 +8,17 @@ export class Config {
         console.log('getPaymentMode Procd');
         return process.env.PAYMENT_MODE;
     }
+    public static getStoreUrl(): string {
+        return process.env.STORE_URL || 'http://localhost:8000';
+    }
+
+    public static getAllConfigs() {
+        return {
+            paymentMode: this.getPaymentMode(),
+            storeUrl: this.getStoreUrl(),
+            // Random mock data
+            configStuff: true,
+            grog: 'full',
+        };
+    }
 }

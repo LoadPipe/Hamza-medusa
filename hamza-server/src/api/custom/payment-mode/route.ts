@@ -15,7 +15,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        const paymentMode = Config.getPaymentMode();
+        const paymentMode = Config.getAllConfigs();
         if (!paymentMode) {
             return res.status(400).send({ message: 'Payment mode not found' });
         }
