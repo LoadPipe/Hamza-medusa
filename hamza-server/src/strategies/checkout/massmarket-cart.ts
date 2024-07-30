@@ -100,8 +100,6 @@ class MassMarketCartStrategy {
         idempotencyKey: IdempotencyKey,
         context: RequestContext
     ): Promise<CartCompletionResponse> {
-        console.log(`I guess this error is the one which is running..`);
-
         try {
             //get the cart
             const cart = await this.cartService.retrieve(cartId, {

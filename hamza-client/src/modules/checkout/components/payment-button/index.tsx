@@ -151,6 +151,26 @@ const CryptoPaymentButton = ({
      * @returns {transaction_id, payer_address, escrow_contract_address, success }
      */
     const doWalletPayment = async (data: any) => {
+        console.log('DOES THIS RUN?');
+        try {
+            const response = await axios.get(
+                `${MEDUSA_SERVER_URL}/custom/payment-mode`
+            );
+
+            if (response.status === 200 && response.data) {
+                // If there is data and the request was successful, log the payment mode
+                console.log(
+                    `Payment_MODE in client SET: ${response.data.payment_mode}`
+                );
+            } else {
+                // Handle cases where the data might not be in the expected format
+                console.log('No payment mode data was received.');
+            }
+        } catch (error) {
+            // Handle possible errors in the request
+            console.error('Failed to fetch payment mode:', error);
+        }
+
         try {
             //get provider and such
             const rawchainId = await window.ethereum?.request({
@@ -260,9 +280,13 @@ const CryptoPaymentButton = ({
      * @param cartId
      */
     const completeCheckout = async (cartId: string) => {
+        console.log(`COMPLETE CHECKOUT RUNNING`);
         //retrieve data (cart id, currencies, amounts etc.) that will be needed for wallet checkout
         const data: CheckoutData = await retrieveCheckoutData(cartId);
         console.log('got checkout data', data);
+
+        const paymentMode = await getPaymentMode();
+        console.log('payment mode', paymentMode);
 
         if (data) {
             //this sends the payment to the wallet for on-chain processing
