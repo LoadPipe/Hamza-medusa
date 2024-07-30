@@ -1,7 +1,10 @@
-import * as process from 'node:process';
+import dotenv from 'dotenv';
+dotenv.config();
 
-class Config {
-    public static get(): Config {
-        return process.env.MASSMARKET_THING;
+// config.ts
+export class Config {
+    public static getPaymentMode(): string | undefined {
+        console.log('getPaymentMode Procd');
+        return process.env.PAYMENT_MODE;
     }
 }
