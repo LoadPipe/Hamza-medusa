@@ -5,10 +5,12 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import { FaArrowRightLong } from 'react-icons/fa6';
 import { SwitchNetwork } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 
+const enableSwitch: boolean = process.env.NEXT_PUBLIC_FORCE_SWITCH_BLOCKCHAIN == '1';
+
 const HeroBanner = () => {
     return (
         <>
-            <SwitchNetwork enabled={false} />
+            <SwitchNetwork enabled={enableSwitch} />
             <Flex
                 mt="2rem"
                 justifyContent={'center'}

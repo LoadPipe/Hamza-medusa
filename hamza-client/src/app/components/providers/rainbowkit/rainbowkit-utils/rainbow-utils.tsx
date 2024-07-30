@@ -80,7 +80,7 @@ type SwitchNetworkProps = {
 };
 
 export function getAllowedChainsFromConfig() {
-    let chains = process.env.ALLOWED_BLOCKCHAINS;
+    let chains = process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS;
     if (!chains?.length)
         chains = '1'; ///default to mainnet
 
