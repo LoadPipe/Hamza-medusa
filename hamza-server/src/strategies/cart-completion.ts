@@ -10,8 +10,9 @@ import {
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 import * as process from 'node:process';
-import MassMarketCartCompletionStrategy from './checkout/massmarket-cart-completion';
-import SwitchCartCompletionStrategy from './checkout/switch-cart-completion';
+import MassMarketCartStrategy from './checkout/massmarket-cart';
+import SwitchCartStrategy from './checkout/switch-cart';
+import FakeCartStrategy from './checkout/fake-cart';
 import OrderService from '../services/order';
 import { PaymentService } from '@medusajs/medusa/dist/services';
 import { RequestContext } from '@medusajs/medusa/dist/types/request';
@@ -42,15 +43,17 @@ class CartCompletionStrategy extends AbstractCartCompletionStrategy {
     protected readonly orderRepository: typeof OrderRepository;
     protected readonly lineItemRepository: typeof LineItemRepository;
     protected readonly logger: Logger;
-    private massMarketStrategy: MassMarketCartCompletionStrategy;
-    private switchStrategy: SwitchCartCompletionStrategy;
+    private massMarketStrategy: MassMarketCartStrategy;
+    private switchStrategy: SwitchCartStrategy;
+    private fakeStrategy: FakeCartStrategy;
 
     constructor(deps: InjectedDependencies) {
         super(deps); // Call the superclass constructor if needed and pass any required parameters explicitly if it requires any.
 
         // Assuming both strategies need the same dependencies as this class, pass them directly.
-        this.massMarketStrategy = new MassMarketCartCompletionStrategy(deps);
-        this.switchStrategy = new SwitchCartCompletionStrategy(deps);
+        this.massMarketStrategy = new MassMarketCartStrategy(deps);
+        this.switchStrategy = new SwitchCartStrategy(deps);
+        this.fakeStrategy = new FakeCartStrategy(deps);
 
         // Initialize all services and repositories provided in deps directly
         this.idempotencyKeyService = deps.idempotencyKeyService;
@@ -80,6 +83,13 @@ class CartCompletionStrategy extends AbstractCartCompletionStrategy {
 
             case 'SWITCH':
                 return await this.switchStrategy.complete(
+                    cartId,
+                    idempotencyKey,
+                    context
+                );
+            default:
+                'FAKE';
+                return await this.fakeStrategy.complete(
                     cartId,
                     idempotencyKey,
                     context

@@ -49,8 +49,6 @@ interface IPaymentGroupData {
     store?: Store;
 }
 
-<<<<<<< HEAD
-=======
 /**
  * @name CartCompletionStrategy
  *
@@ -62,8 +60,7 @@ interface IPaymentGroupData {
  *
  * @author John R. Kosinski
  */
->>>>>>> 27c9906087376a5314ac3882e64c139ad09758f3
-class SwitchCartCompletionStrategy {
+class MassMarketCartStrategy {
     protected readonly idempotencyKeyService: IdempotencyKeyService;
     protected readonly cartService: CartService;
     protected readonly productService: ProductService;
@@ -74,26 +71,16 @@ class SwitchCartCompletionStrategy {
     protected readonly lineItemRepository: typeof LineItemRepository;
     protected readonly logger: Logger;
 
-    constructor({
-        idempotencyKeyService,
-        productService,
-        paymentService,
-        cartService,
-        orderService,
-        paymentRepository,
-        orderRepository,
-        lineItemRepository,
-        logger,
-    }: InjectedDependencies) {
-        this.idempotencyKeyService = idempotencyKeyService;
-        this.cartService = cartService;
-        this.paymentService = paymentService;
-        this.productService = productService;
-        this.orderService = orderService;
-        this.paymentRepository = paymentRepository;
-        this.orderRepository = orderRepository;
-        this.lineItemRepository = lineItemRepository;
-        this.logger = logger;
+    constructor(container) {
+        this.idempotencyKeyService = container.idempotencyKeyService;
+        this.cartService = container.cartService;
+        this.paymentService = container.paymentService;
+        this.productService = container.productService;
+        this.orderService = container.orderService;
+        this.paymentRepository = container.paymentRepository;
+        this.orderRepository = container.orderRepository;
+        this.lineItemRepository = container.lineItemRepository;
+        this.logger = container.logger;
     }
 
     /**
@@ -113,6 +100,8 @@ class SwitchCartCompletionStrategy {
         idempotencyKey: IdempotencyKey,
         context: RequestContext
     ): Promise<CartCompletionResponse> {
+        console.log(`I guess this error is the one which is running..`);
+
         try {
             //get the cart
             const cart = await this.cartService.retrieve(cartId, {
@@ -182,6 +171,7 @@ class SwitchCartCompletionStrategy {
             };
 
             //return an error response
+            console.log(`I guess this error is the one which is running..`);
             this.logger.debug(response);
             return response;
         }
@@ -413,4 +403,4 @@ function stringToHex(input: string): HexString {
     return `0x${hexString}`;
 }
 
-export default SwitchCartCompletionStrategy;
+export default MassMarketCartStrategy;

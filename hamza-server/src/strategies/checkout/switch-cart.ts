@@ -49,8 +49,6 @@ interface IPaymentGroupData {
     store?: Store;
 }
 
-<<<<<<< HEAD
-=======
 /**
  * @name CartCompletionStrategy
  *
@@ -62,8 +60,7 @@ interface IPaymentGroupData {
  *
  * @author John R. Kosinski
  */
->>>>>>> 27c9906087376a5314ac3882e64c139ad09758f3
-class FakeCartCompletionStrategy {
+class SwitchCartStrategy {
     protected readonly idempotencyKeyService: IdempotencyKeyService;
     protected readonly cartService: CartService;
     protected readonly productService: ProductService;
@@ -413,4 +410,4 @@ function stringToHex(input: string): HexString {
     return `0x${hexString}`;
 }
 
-export default FakeCartCompletionStrategy;
+export default SwitchCartStrategy;
