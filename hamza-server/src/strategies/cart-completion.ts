@@ -20,7 +20,6 @@ import PaymentRepository from '@medusajs/medusa/dist/repositories/payment';
 import { Config } from '../config';
 const PAYMENT_MODE = process.env.PAYMENT_MODE;
 
-const MASSMARKET_THING = process.env.MASSMARKET_THING;
 type InjectedDependencies = {
     idempotencyKeyService: IdempotencyKeyService;
     productService: ProductService;

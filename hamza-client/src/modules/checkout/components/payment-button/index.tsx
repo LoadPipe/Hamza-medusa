@@ -149,7 +149,8 @@ const CryptoPaymentButton = ({
         const response = await axios.get(
             `${MEDUSA_SERVER_URL}/custom/payment-mode`
         );
-        return response.status == 200 && response.data ? response.data : {};
+        console.log(`getPaymentMode Response ${response.data}`);
+        return response.data ? response.data : null;
     };
 
     /**
