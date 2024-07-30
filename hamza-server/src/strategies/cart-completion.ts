@@ -69,7 +69,7 @@ class CartCompletionStrategy extends AbstractCartCompletionStrategy {
         idempotencyKey: IdempotencyKey,
         context: RequestContext
     ): Promise<CartCompletionResponse> {
-        const paymentMode = 'FAKE'; //Config.getPaymentMode();
+        const paymentMode = Config.getPaymentMode();
         this.logger.debug(`CartCompletionStrategy: payment mode is ${paymentMode}`);
 
         switch (paymentMode) {
