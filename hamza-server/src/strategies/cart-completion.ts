@@ -19,7 +19,6 @@ import { RequestContext } from '@medusajs/medusa/dist/types/request';
 import PaymentRepository from '@medusajs/medusa/dist/repositories/payment';
 import { Config } from '../config';
 const PAYMENT_MODE = process.env.PAYMENT_MODE;
-import axios from 'axios';
 
 const MASSMARKET_THING = process.env.MASSMARKET_THING;
 type InjectedDependencies = {
