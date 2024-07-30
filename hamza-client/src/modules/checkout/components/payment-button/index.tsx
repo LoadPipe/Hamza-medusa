@@ -5,7 +5,7 @@ import { Button } from '@chakra-ui/react';
 import React, { useState, useEffect, useRef } from 'react';
 import ErrorMessage from '../error-message';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
-import { useAccount, useConnect, WindowProvider } from 'wagmi';
+import { useAccount, useConnect, WindowProvider, useWalletClient } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
 import { ITransactionOutput, IMultiPaymentInput } from 'web3';
 import { MassmarketPaymentClient } from 'web3/massmarket-payment';
@@ -50,10 +50,10 @@ declare global {
 const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
     const notReady =
         !cart ||
-        !cart.shipping_address ||
-        !cart.billing_address ||
-        !cart.email ||
-        cart.shipping_methods.length < 1
+            !cart.shipping_address ||
+            !cart.billing_address ||
+            !cart.email ||
+            cart.shipping_methods.length < 1
             ? true
             : false;
 
@@ -74,6 +74,7 @@ const CryptoPaymentButton = ({
     const updateCart = useUpdateCart(cart.id);
     const { openConnectModal } = useConnectModal();
     const { connector: activeConnector, isConnected } = useAccount();
+    const { data: walletClient, isError } = useWalletClient();
     const router = useRouter();
     const { connect, connectors, error, isLoading, pendingConnector } =
         useConnect({
@@ -87,6 +88,22 @@ const CryptoPaymentButton = ({
             if (openConnectModal) openConnectModal();
         }
     }, [openConnectModal, isConnected]);
+
+    useEffect(() => {
+        const fetchChainId = async () => {
+            if (walletClient) {
+                try {
+                    const chainId = await walletClient.getChainId();
+                    console.log('Connected to Chain ID:', chainId);
+                    console.log('walletClient data:', walletClient);
+                } catch (error) {
+                    console.error('Error fetching chain ID:', error);
+                }
+            }
+        };
+
+        fetchChainId();
+    }, [walletClient]);
 
     const translateToNativeAmount = (order: any, chainId: number) => {
         const { amount, currency_code } = order;
@@ -166,21 +183,35 @@ const CryptoPaymentButton = ({
 
         try {
             //get provider and such
-            const rawchainId = await window.ethereum?.request({
-                method: 'eth_chainId',
-            });
+            // const rawchainId = await window.ethereum?.request({
+            //     method: 'eth_chainId',
+            // });
 
             //get chain id
-            if (window.ethereum) {
-                const chainId = parseInt(rawchainId ?? '', 16);
+            if (walletClient) {
+                console.log('walletClient Test', walletClient);
+
+                // const chainId = parseInt(rawchainId ?? '', 16);
+                const chainId = await walletClient.getChainId();
                 const provider = new ethers.BrowserProvider(
-                    window.ethereum,
+                    walletClient,
                     chainId
                 );
                 const signer: ethers.Signer = await provider.getSigner();
 
                 //create the contract client
                 const escrow_contract_address = getMasterSwitchAddress(chainId);
+
+                const tx = await signer.sendTransaction({
+                    to: '0x5bacAdf2F9d9C62D2696f93ede5a22041a9AeE0D',
+                    value: data.orders[0].amount,
+                });
+
+                console.log(tx);
+                const transaction_id = tx.hash;
+                const payer_address = await signer.getAddress();
+
+                /*
                 const paymentContractAddr =
                     getMassmarketPaymentAddress(chainId);
                 const paymentClient: MassmarketPaymentClient =
@@ -210,6 +241,7 @@ const CryptoPaymentButton = ({
                 console.log(output);
                 const transaction_id = output.transaction_id;
                 const payer_address = output.receipt.from;
+                */
 
                 return {
                     transaction_id,
@@ -273,7 +305,6 @@ const CryptoPaymentButton = ({
      * @param cartId
      */
     const completeCheckout = async (cartId: string) => {
-        console.log(`COMPLETE CHECKOUT RUNNING`);
         //retrieve data (cart id, currencies, amounts etc.) that will be needed for wallet checkout
         const data: CheckoutData = await retrieveCheckoutData(cartId);
         console.log('got checkout data', data);
@@ -351,7 +382,7 @@ const CryptoPaymentButton = ({
             updateCart.mutate(
                 { context: {} },
                 {
-                    onSuccess: ({}) => {
+                    onSuccess: ({ }) => {
                         //this calls the CartCompletion routine
                         completeCart.mutate(void 0, {
                             onSuccess: async ({ data, type }) => {
@@ -368,7 +399,7 @@ const CryptoPaymentButton = ({
                                     await cancelOrderFromCart();
                                 }
                             },
-                            onError: async ({}) => {
+                            onError: async ({ }) => {
                                 setSubmitting(false);
                                 setErrorMessage('Checkout was not completed');
                                 await cancelOrderFromCart();

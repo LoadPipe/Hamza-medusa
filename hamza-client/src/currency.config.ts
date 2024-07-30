@@ -68,6 +68,30 @@ const chainConfig: any = {
             },
         },
     },
+    10: {
+        chain_name: 'optimism',
+        usdc: {
+            contract_address: '0x0',
+            precision: {
+                db: 2,
+                native: 6,
+            },
+        },
+        usdt: {
+            contract_address: '0x0',
+            precision: {
+                db: 2,
+                native: 6,
+            },
+        },
+        eth: {
+            contract_address: '0x0000000000000000000000000000000000000000',
+            precision: {
+                db: 8,
+                native: 18,
+            },
+        },
+    },
 };
 
 const getCurrencyAddress = (currencyId: string, chainId: number = 1) =>

@@ -103,21 +103,22 @@ const AccountNav = ({
                                         </>
                                     </LocalizedClientLink>
                                 </li>
-
-                                <li>
-                                    <LocalizedClientLink
-                                        href="/account/profile"
-                                        className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
-                                    >
-                                        <>
-                                            <div className="flex items-center gap-x-2">
-                                                <User size={20} />
-                                                <span>Verify</span>
-                                            </div>
-                                            <ChevronDown className="transform -rotate-90" />
-                                        </>
-                                    </LocalizedClientLink>
-                                </li>
+                                {authData.is_verified === false && (
+                                    <li>
+                                        <LocalizedClientLink
+                                            href="/account/profile"
+                                            className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
+                                        >
+                                            <>
+                                                <div className="flex items-center gap-x-2">
+                                                    <User size={20} />
+                                                    <span>Verify</span>
+                                                </div>
+                                                <ChevronDown className="transform -rotate-90" />
+                                            </>
+                                        </LocalizedClientLink>
+                                    </li>
+                                )}
 
                                 {authData.is_verified && (
                                     <li>
