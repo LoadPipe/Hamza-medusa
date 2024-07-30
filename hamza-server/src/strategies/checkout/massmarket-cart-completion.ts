@@ -1,5 +1,4 @@
 import {
-    AbstractCartCompletionStrategy,
     Cart,
     CartCompletionResponse,
     IdempotencyKey,

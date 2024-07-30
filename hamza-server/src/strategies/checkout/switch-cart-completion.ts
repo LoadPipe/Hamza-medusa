@@ -1,5 +1,4 @@
 import {
-    AbstractCartCompletionStrategy,
     Cart,
     CartCompletionResponse,
     IdempotencyKey,
@@ -50,6 +49,8 @@ interface IPaymentGroupData {
     store?: Store;
 }
 
+<<<<<<< HEAD
+=======
 /**
  * @name CartCompletionStrategy
  *
@@ -61,6 +62,7 @@ interface IPaymentGroupData {
  *
  * @author John R. Kosinski
  */
+>>>>>>> 27c9906087376a5314ac3882e64c139ad09758f3
 class SwitchCartCompletionStrategy {
     protected readonly idempotencyKeyService: IdempotencyKeyService;
     protected readonly cartService: CartService;
@@ -83,7 +85,6 @@ class SwitchCartCompletionStrategy {
         lineItemRepository,
         logger,
     }: InjectedDependencies) {
-        super(arguments[0]);
         this.idempotencyKeyService = idempotencyKeyService;
         this.cartService = cartService;
         this.paymentService = paymentService;
