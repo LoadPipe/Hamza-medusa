@@ -148,14 +148,14 @@ class CartCompletionStrategy extends AbstractCartCompletionStrategy {
 
             //send checkout to massmarket stores
             //TODO: be able to handle one store checkout failure, while the other succeed
-            const checkoutResults: CheckoutResult[] =
+            /*const checkoutResults: CheckoutResult[] =
                 await this.doMassMarketCheckouts(storeGroups, orders);
 
             this.logger.debug(
                 `Got checkout results ${JSON.stringify(checkoutResults)}`
             );
             await this.updateOrderForMassMarket(checkoutResults);
-
+            */
             //create & return the response
             const response: CartCompletionResponse = {
                 response_code: 200,
