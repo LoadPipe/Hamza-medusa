@@ -14,7 +14,7 @@ const chainConfig: any = {
             address: '0x3d9DbbD22E4903274171ED3e94F674Bb52bCF015',
         },
         lite_switch: {
-            address: '0x76d9f186e3C43bF21B76406c20B67FC98A16FE04'
+            address: '0x671C78C756d67F972AE254B92174818148A8B405'
         }
     },
     11155420: {
@@ -55,9 +55,9 @@ const chainConfig: any = {
     },
 };
 
-const getCurrencyAddress = (currencyId: string, chainId: number = 1) =>
+const getContractAddress = (contractId: string, chainId: number = 1) =>
     chainConfig[chainId]
-        ? chainConfig[chainId][currencyId]?.contract_address ?? ''
+        ? chainConfig[chainId][contractId]?.address ?? ''
         : '';
 
 const getMasterSwitchAddress = (chainId: number = 1) =>
@@ -70,4 +70,4 @@ const getMassmarketPaymentAddress = (chainId: number = 1) =>
         ? chainConfig[chainId]?.massmarket_payment?.address
         : undefined;
 
-export { getMasterSwitchAddress, getMassmarketPaymentAddress };
+export { getContractAddress, getMasterSwitchAddress, getMassmarketPaymentAddress };
