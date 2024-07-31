@@ -79,15 +79,26 @@ type SwitchNetworkProps = {
     enabled: boolean;
 };
 
+export function getAllowedChainsFromConfig() {
+    let chains = process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS;
+    if (!chains?.length)
+        chains = '1'; ///default to mainnet
+
+    const split: any[] = chains.split(',');
+    split.forEach((v, i) => split[i] = parseInt(v.trim()));
+    console.log("allowed blockchains: ", split);
+    return split;
+}
+
 export const SwitchNetwork = ({ enabled }: SwitchNetworkProps) => {
     const { chain } = useNetwork();
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const voidFunction = () => {};
+    const voidFunction = () => { };
 
-    const requiredChains = [11155111]; // Sepolia and Optimism Sepolia
+    const requiredChains = getAllowedChainsFromConfig();
 
     useEffect(() => {
         onOpen();
@@ -105,7 +116,7 @@ export const SwitchNetwork = ({ enabled }: SwitchNetworkProps) => {
 
     if (enabled) {
         return (
-            <Modal isOpen={isOpen} onClose={() => {}}>
+            <Modal isOpen={isOpen} onClose={() => { }}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Switch Network</ModalHeader>
