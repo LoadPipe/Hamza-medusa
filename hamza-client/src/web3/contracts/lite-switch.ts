@@ -154,7 +154,7 @@ export class LiteSwitchClient {
      */
     private async approveAllTokens(
         spender: string,
-        inputs: IMultiPaymentInput[]
+        inputs: ISwitchMultiPaymentInput[]
     ): Promise<void> {
         const tokenAmounts = this.getTokensAndAmounts(inputs);
 

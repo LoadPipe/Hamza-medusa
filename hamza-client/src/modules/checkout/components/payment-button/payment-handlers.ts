@@ -28,7 +28,7 @@ export type WalletPaymentResponse = {
 export interface IWalletPaymentHandler {
     doWalletPayment(
         provider: ethers.Provider | null,
-        signer: ethers.Signer,
+        signer: ethers.Signer | null,
         chainId: any,
         data: any
     ): Promise<WalletPaymentResponse>;
@@ -52,7 +52,7 @@ function getTokenContract(signer: ethers.Signer, address: string): ethers.Contra
 export class MassmarketWalletPaymentHandler implements IWalletPaymentHandler {
     async doWalletPayment(
         provider: ethers.Provider | null,
-        signer: ethers.Signer,
+        signer: ethers.Signer | null,
         chainId: any,
         data: any
     ): Promise<WalletPaymentResponse> {
@@ -60,7 +60,7 @@ export class MassmarketWalletPaymentHandler implements IWalletPaymentHandler {
         let transaction_id = '';
         let payer_address = '';
 
-        if (provider) {
+        if (provider && signer) {
             const paymentContractAddr =
                 getMassmarketPaymentAddress(chainId);
             const paymentClient: MassmarketPaymentClient =
@@ -154,18 +154,24 @@ export class MassmarketWalletPaymentHandler implements IWalletPaymentHandler {
 export class FakeWalletPaymentHandler implements IWalletPaymentHandler {
     async doWalletPayment(
         provider: ethers.Provider | null,
-        signer: ethers.Signer,
+        signer: ethers.Signer | null,
         chainId: any,
         data: any
     ): Promise<WalletPaymentResponse> {
-        const tx = await signer.sendTransaction({
-            to: '0x5bacAdf2F9d9C62D2696f93ede5a22041a9AeE0D',
-            value: data.orders[0].amount,
-        });
+        let transaction_id = '';
+        let payer_address = '';
 
-        console.log(tx);
-        const transaction_id = tx.hash;
-        const payer_address = await signer.getAddress();
+        if (signer) {
+            const tx = await signer.sendTransaction({
+                to: '0x5bacAdf2F9d9C62D2696f93ede5a22041a9AeE0D',
+                value: data.orders[0].amount,
+            });
+
+            console.log(tx);
+            transaction_id = tx.hash;
+            payer_address = await signer.getAddress();
+
+        }
 
         return {
             escrow_contract_address: '0x0',
@@ -250,7 +256,7 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
 export class SwitchWalletPaymentHandler implements IWalletPaymentHandler {
     async doWalletPayment(
         provider: ethers.Provider | null,
-        signer: ethers.Signer,
+        signer: ethers.Signer | null,
         chainId: any,
         data: any
     ): Promise<WalletPaymentResponse> {
@@ -270,7 +276,7 @@ export class SwitchWalletPaymentHandler implements IWalletPaymentHandler {
 export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
     async doWalletPayment(
         provider: ethers.Provider | null,
-        signer: ethers.Signer,
+        signer: ethers.Signer | null,
         chainId: any,
         data: any
     ): Promise<WalletPaymentResponse> {
@@ -279,34 +285,37 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
 
         const paymentGroups = this.createPaymentGroups(data, chainId);
         let transaction_id = '';
+        let payer_address = '';
 
-        for (const currency in paymentGroups) {
-            let tx: ethers.TransactionResponse | null = null;
+        if (signer) {
+            for (const currency in paymentGroups) {
+                let tx: ethers.TransactionResponse | null = null;
 
-            //handle native payment
-            if (currency === ethers.ZeroAddress) {
-                tx = await signer.sendTransaction({
-                    to: recipient,
-                    value: data.orders[0].amount,
-                });
-            }
+                //handle native payment
+                if (currency === ethers.ZeroAddress) {
+                    tx = await signer.sendTransaction({
+                        to: recipient,
+                        value: data.orders[0].amount,
+                    });
+                }
 
-            //handle token payment 
-            else {
-                const token = getTokenContract(signer, currency);
-                if (token) {
-                    tx = await token.transfer(recipient, paymentGroups[currency]);
+                //handle token payment 
+                else {
+                    const token = getTokenContract(signer, currency);
+                    if (token) {
+                        tx = await token.transfer(recipient, paymentGroups[currency]);
+                    }
+                }
+
+                //wait for tx to be confirmed 
+                if (tx) {
+                    transaction_id = tx.hash;
+                    await tx.wait();
                 }
             }
 
-            //wait for tx to be confirmed 
-            if (tx) {
-                transaction_id = tx.hash;
-                await tx.wait();
-            }
+            payer_address = await signer.getAddress();
         }
-
-        const payer_address = await signer.getAddress();
 
         return {
             escrow_contract_address: '0x0',
