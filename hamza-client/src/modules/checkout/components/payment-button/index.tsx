@@ -4,7 +4,7 @@ import {
     IWalletPaymentHandler,
     FakeWalletPaymentHandler,
     MassmarketWalletPaymentHandler,
-    SwitchWalletPaymentHandler
+    SwitchWalletPaymentHandler,
 } from './payment-handlers';
 import { Button } from '@chakra-ui/react';
 import React, { useState, useEffect, useRef } from 'react';
@@ -21,7 +21,6 @@ import {
     getMassmarketPaymentAddress,
     getMasterSwitchAddress,
 } from 'contracts.config';
-
 
 //TODO: we need a global common function to replace this
 const MEDUSA_SERVER_URL =
@@ -53,10 +52,10 @@ declare global {
 const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
     const notReady =
         !cart ||
-            !cart.shipping_address ||
-            !cart.billing_address ||
-            !cart.email ||
-            cart.shipping_methods.length < 1
+        !cart.shipping_address ||
+        !cart.billing_address ||
+        !cart.email ||
+        cart.shipping_methods.length < 1
             ? true
             : false;
 
@@ -97,8 +96,8 @@ const CryptoPaymentButton = ({
             if (walletClient) {
                 try {
                     const chainId = await walletClient.getChainId();
-                    console.log('Connected to Chain ID:', chainId);
-                    console.log('walletClient data:', walletClient);
+                    // console.log('Connected to Chain ID:', chainId);
+                    // console.log('walletClient data:', walletClient);
                 } catch (error) {
                     console.error('Error fetching chain ID:', error);
                 }
@@ -147,12 +146,9 @@ const CryptoPaymentButton = ({
             let provider: ethers.BrowserProvider;
 
             if (walletClient) {
-                console.log("WALLET CLIENT")
+                // console.log('WALLET CLIENT');
                 chainId = await walletClient.getChainId();
-                provider = new ethers.BrowserProvider(
-                    walletClient,
-                    chainId
-                );
+                provider = new ethers.BrowserProvider(walletClient, chainId);
                 signer = await provider.getSigner();
             } else {
                 //TODO: get provider, chain id & signer from window.ethereum
@@ -161,7 +157,12 @@ const CryptoPaymentButton = ({
             }
 
             //get the handler to return value
-            return await handler.doWalletPayment(provider, signer, chainId, data);
+            return await handler.doWalletPayment(
+                provider,
+                signer,
+                chainId,
+                data
+            );
         } catch (e) {
             console.error('error has occured during transaction', e);
             setErrorMessage('Checkout was not completed.');
@@ -176,7 +177,6 @@ const CryptoPaymentButton = ({
         try {
             //get chain id
             if (walletClient) {
-
                 // const chainId = parseInt(rawchainId ?? '', 16);
                 const chainId = await walletClient.getChainId();
                 const provider = new ethers.BrowserProvider(
@@ -193,7 +193,7 @@ const CryptoPaymentButton = ({
                     value: data.orders[0].amount,
                 });
 
-                console.log(tx);
+                // console.log(tx);
                 const transaction_id = tx.hash;
                 const payer_address = await signer.getAddress();
 
@@ -291,17 +291,13 @@ const CryptoPaymentButton = ({
      * @param cartId
      */
     const completeCheckout = async (cartId: string) => {
-        console.log(`COMPLETE CHECKOUT RUNNING`);
         //retrieve data (cart id, currencies, amounts etc.) that will be needed for wallet checkout
         const data: CheckoutData = await retrieveCheckoutData(cartId);
-        console.log('got checkout data', data);
 
         if (data) {
             //this sends the payment to the wallet for on-chain processing
             const output = await doWalletPayment(data);
-            console.log(
-                `${JSON.stringify(cartRef)} cartref ${cartRef.current} ${typeof cartRef.current}`
-            );
+
             //finalize the checkout, if wallet payment was successful
             if (output?.success) {
                 const response = await axios.post(
@@ -315,7 +311,6 @@ const CryptoPaymentButton = ({
                     }
                 );
 
-                console.log(response.status);
                 //TODO: examine response
 
                 //country code needed for redirect (get before killing cart)
@@ -347,7 +342,6 @@ const CryptoPaymentButton = ({
             let response = await axios.get(
                 `${MEDUSA_SERVER_URL}/custom/cancel-order/${cart.id}`
             );
-            console.log(response);
             return;
         } catch (e) {
             console.log('error in cancelling order ', e);
@@ -369,7 +363,7 @@ const CryptoPaymentButton = ({
             updateCart.mutate(
                 { context: {} },
                 {
-                    onSuccess: ({ }) => {
+                    onSuccess: ({}) => {
                         //this calls the CartCompletion routine
                         completeCart.mutate(void 0, {
                             onSuccess: async ({ data, type }) => {
@@ -386,7 +380,7 @@ const CryptoPaymentButton = ({
                                     await cancelOrderFromCart();
                                 }
                             },
-                            onError: async ({ }) => {
+                            onError: async ({}) => {
                                 setSubmitting(false);
                                 setErrorMessage('Checkout was not completed');
                                 await cancelOrderFromCart();
