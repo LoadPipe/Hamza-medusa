@@ -1,0 +1,235 @@
+{
+    "store": {
+        "currencies": [
+            "eur",
+            "usd",
+            "eth",
+            "usdc",
+            "usdt"
+        ],
+        "default_currency_code": "eth"
+    },
+    "users": [
+        {
+            "email": "admin@medusa-test.com",
+            "password": "supersecret",
+            "role": "admin",
+            "wallet_address": "0x84318B362Cf6a7DBc46655bF66dF3B5e2a17eb9A"
+        }
+    ],
+    "regions": [
+        {
+            "id": "test-region-eu",
+            "name": "EU",
+            "currency_code": "eth",
+            "tax_rate": 0,
+            "payment_providers": [
+                "crypto"
+            ],
+            "fulfillment_providers": [
+                "manual"
+            ],
+            "countries": [
+                "gb",
+                "de",
+                "dk",
+                "se",
+                "fr",
+                "es",
+                "it"
+            ]
+        },
+        {
+            "id": "test-region-na",
+            "name": "NA",
+            "currency_code": "eth",
+            "tax_rate": 0,
+            "payment_providers": [
+                "crypto"
+            ],
+            "fulfillment_providers": [
+                "manual"
+            ],
+            "countries": [
+                "us",
+                "ca"
+            ]
+        }
+    ],
+    "shipping_options": [
+        {
+            "name": "PostFake Standard",
+            "region_id": "test-region-eu",
+            "provider_id": "manual",
+            "data": {
+                "id": "manual-fulfillment"
+            },
+            "price_type": "flat_rate",
+            "amount": 1000
+        },
+        {
+            "name": "PostFake Express",
+            "region_id": "test-region-eu",
+            "provider_id": "manual",
+            "data": {
+                "id": "manual-fulfillment"
+            },
+            "price_type": "flat_rate",
+            "amount": 1500
+        },
+        {
+            "name": "PostFake Return",
+            "region_id": "test-region-eu",
+            "provider_id": "manual",
+            "data": {
+                "id": "manual-fulfillment"
+            },
+            "price_type": "flat_rate",
+            "is_return": true,
+            "amount": 1000
+        },
+        {
+            "name": "I want to return it myself",
+            "region_id": "test-region-eu",
+            "provider_id": "manual",
+            "data": {
+                "id": "manual-fulfillment"
+            },
+            "price_type": "flat_rate",
+            "is_return": true,
+            "amount": 0
+        },
+        {
+            "name": "FakeEx Standard",
+            "region_id": "test-region-na",
+            "provider_id": "manual",
+            "data": {
+                "id": "manual-fulfillment"
+            },
+            "price_type": "flat_rate",
+            "amount": 0
+        },
+        {
+            "name": "FakeEx Express",
+            "region_id": "test-region-na",
+            "provider_id": "manual",
+            "data": {
+                "id": "manual-fulfillment"
+            },
+            "price_type": "flat_rate",
+            "amount": 0
+        },
+        {
+            "name": "FakeEx Return",
+            "region_id": "test-region-na",
+            "provider_id": "manual",
+            "data": {
+                "id": "manual-fulfillment"
+            },
+            "price_type": "flat_rate",
+            "is_return": true,
+            "amount": 0
+        },
+        {
+            "name": "I want to return it myself",
+            "region_id": "test-region-na",
+            "provider_id": "manual",
+            "data": {
+                "id": "manual-fulfillment"
+            },
+            "price_type": "flat_rate",
+            "is_return": true,
+            "amount": 0
+        }
+    ],
+    "product_collections": [
+        {
+            "id": "pcol_01HRVF8HCVY8B00RF5S54THTPC",
+            "title": "Other Items",
+            "handle": "pcol_01HRVF8HCVY8B00RF5S54THTPC"
+        }
+    ],
+    "product_tags": [
+        {
+            "id": "ptag_01",
+            "value": "gluten_tag"
+        }
+    ],
+    "product_tag": [
+        {
+            "id": "ptag_02",
+            "value": "gluten_tag2"
+        }
+    ],
+    "products": [
+        {
+            "title": "INDOOR/OUTDOOR WALL LAMP M - W100 X D4",
+            "categories": [
+                {
+                    "id": "pcat_merch"
+                }
+            ],
+            "collection_id": "pcol_01HRVF8HCVY8B00RF5S54THTPC",
+            "subtitle": "For stunning indoor & outdoor ambience, this light comes with high-quality Langdon fixtures, a light design, and durable stricture framing.",
+            "description": "<li>M - W100 X D4.5 X H3.6 CMS.<li>L - W200 X D4.5 X H3.6 CMS.<li>S- W30 X D4.5 X H3.6 CMS.<li>S- W30 X D4.5 X H3.6 CMS.<li>NAME : Howet INDOOR/OUTDOOR WALL LAMP<li>CODE : WL-24D<li>SIZE :<li>S- W30 X D4.5 X H3.6 CMS.<li>M - W100 X D4.5 X H3.6 CMS.<li>L - W200 X D4.5 X H3.6 CMS.<li>COLOR : METAL BLACK<li>MATERIAL : HIGH QUALITY ALUMINIUM WITH WATERPROOF PROTECTIVE FILM<li>LIGHT SOURCE : LED 9W / 30W/ 60W",
+            "handle": "lld_indout",
+            "is_giftcard": false,
+            "weight": 70,
+            "images": [
+                "https://images.hamza.biz/Legendary/indout/LLD_indout1.png",
+                "https://images.hamza.biz/Legendary/indout/lld_indout2.jpg",
+                "https://images.hamza.biz/Legendary/indout/lld_indout3.jpg",
+                "https://images.hamza.biz/Legendary/indout/lld_indout4.jpg",
+                "https://images.hamza.biz/Legendary/indout/lld_indout5.jpg"
+            ],
+            "options": [
+                {
+                    "title": "Color",
+                    "values": [
+                        "Black"
+                    ]
+                }
+            ],
+            "variants": [
+                {
+                    "title": "White",
+                    "prices": [
+                        {
+                            "currency_code": "eth",
+                            "amount": 6500000
+                        },
+                        {
+                            "currency_code": "usdc",
+                            "amount": 21100
+                        },
+                        {
+                            "currency_code": "usdt",
+                            "amount": 21100
+                        }
+                    ],
+                    "options": [
+                        {
+                            "value": "Black"
+                        }
+                    ],
+                    "inventory_quantity": 75,
+                    "manage_inventory": true
+                }
+            ]
+        }
+    ],
+    "categories": [
+        {
+            "id": "pcat_merch",
+            "name": "Merch",
+            "rank": 0,
+            "category_children": [],
+            "handle": "merch"
+        }
+    ],
+    "publishable_api_keys": [
+        {
+            "title": "Development"
+        }
+    ]
+}
