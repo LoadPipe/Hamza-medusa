@@ -5,6 +5,7 @@ import {
     FakeWalletPaymentHandler,
     MassmarketWalletPaymentHandler,
     SwitchWalletPaymentHandler,
+    LiteSwitchWalletPaymentHandler,
     DirectWalletPaymentHandler
 } from './payment-handlers';
 import { Button } from '@chakra-ui/react';
@@ -144,7 +145,7 @@ const CryptoPaymentButton = ({
                 handler = new DirectWalletPaymentHandler();
                 break;
             case 'SWITCH':
-                handler = new SwitchWalletPaymentHandler();
+                handler = new LiteSwitchWalletPaymentHandler();
                 break;
         }
 
@@ -177,89 +178,6 @@ const CryptoPaymentButton = ({
             setErrorMessage('Checkout was not completed.');
             setSubmitting(false);
         }
-    };
-
-    //TODO: remove this when ready
-    const _doWalletPayment = async (data: any) => {
-        const paymentMode = await getPaymentMode();
-
-        try {
-            //get chain id
-            if (walletClient) {
-                // const chainId = parseInt(rawchainId ?? '', 16);
-                const chainId = await walletClient.getChainId();
-                const provider = new ethers.BrowserProvider(
-                    walletClient,
-                    chainId
-                );
-                const signer: ethers.Signer = await provider.getSigner();
-
-                //create the contract client
-                const escrow_contract_address = getMasterSwitchAddress(chainId);
-
-                const tx = await signer.sendTransaction({
-                    to: '0x5bacAdf2F9d9C62D2696f93ede5a22041a9AeE0D',
-                    value: data.orders[0].amount,
-                });
-
-                // console.log(tx);
-                const transaction_id = tx.hash;
-                const payer_address = await signer.getAddress();
-
-                /*
-                const paymentContractAddr =
-                    getMassmarketPaymentAddress(chainId);
-                const paymentClient: MassmarketPaymentClient =
-                    new MassmarketPaymentClient(
-                        provider,
-                        signer,
-                        paymentContractAddr,
-                        escrow_contract_address
-                    );
-    
-                console.log('payment address:', paymentContractAddr);
-                console.log('escrow address:', escrow_contract_address);
-    
-                //create the inputs
-                const paymentInput: IMultiPaymentInput[] =
-                    await createPaymentInput(
-                        data,
-                        await signer.getAddress(),
-                        chainId
-                    );
-    
-                console.log('payment input: ', paymentInput);
-    
-                //send payment to contract
-                const output = await paymentClient.pay(paymentInput);
-    
-                console.log(output);
-                const transaction_id = output.transaction_id;
-                const payer_address = output.receipt.from;
-                */
-
-                return {
-                    transaction_id,
-                    payer_address,
-                    escrow_contract_address,
-                    success:
-                        transaction_id && transaction_id.length ? true : false,
-                };
-            } else {
-                return {
-                    transaction_id: '0x21',
-                    payer_address: '0x32',
-                    escrow_contract_address: '0x42',
-                    success: true,
-                };
-            }
-        } catch (e) {
-            console.error('error has occured during transaction', e);
-            setErrorMessage('Checkout was not completed.');
-            setSubmitting(false);
-        }
-
-        return {};
     };
 
     /**

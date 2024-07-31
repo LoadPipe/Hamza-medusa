@@ -55,9 +55,9 @@ const chainConfig: any = {
     },
 };
 
-const getCurrencyAddress = (currencyId: string, chainId: number = 1) =>
+const getContractAddress = (contractId: string, chainId: number = 1) =>
     chainConfig[chainId]
-        ? chainConfig[chainId][currencyId]?.contract_address ?? ''
+        ? chainConfig[chainId][contractId]?.address ?? ''
         : '';
 
 const getMasterSwitchAddress = (chainId: number = 1) =>
@@ -70,4 +70,4 @@ const getMassmarketPaymentAddress = (chainId: number = 1) =>
         ? chainConfig[chainId]?.massmarket_payment?.address
         : undefined;
 
-export { getMasterSwitchAddress, getMassmarketPaymentAddress };
+export { getContractAddress, getMasterSwitchAddress, getMassmarketPaymentAddress };

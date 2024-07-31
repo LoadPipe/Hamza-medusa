@@ -1,7 +1,7 @@
 'use client';
 
 import { ITransactionOutput, IMultiPaymentInput } from 'web3';
-import { MassmarketPaymentClient } from 'web3/massmarket-payment';
+import { MassmarketPaymentClient } from 'web3/contracts/massmarket-payment';
 import { ethers, BigNumberish, TransactionResponse } from 'ethers';
 import { getCurrencyPrecision } from 'currency.config';
 import {
@@ -9,7 +9,10 @@ import {
     getMasterSwitchAddress,
 } from 'contracts.config';
 import { getCurrencyAddress } from 'currency.config';
+import { getContractAddress } from 'contracts.config';
 import { erc20abi } from '../../../../web3/abi/erc20-abi';
+import { LiteSwitchClient } from 'web3/contracts/lite-switch';
+import { ISwitchMultiPaymentInput } from 'web3';
 
 export type WalletPaymentResponse = {
     transaction_id: string;
@@ -160,6 +163,63 @@ export class FakeWalletPaymentHandler implements IWalletPaymentHandler {
     }
 }
 
+export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
+    async doWalletPayment(
+        provider: ethers.Provider,
+        signer: ethers.Signer,
+        chainId: any,
+        data: any
+    ): Promise<WalletPaymentResponse> {
+        const contractAddress = getContractAddress('lite_switch', chainId);
+        const client: LiteSwitchClient = new LiteSwitchClient(
+            provider,
+            signer,
+            contractAddress
+        );
+
+        const payer_address = await signer.getAddress();
+        const inputs = this.createPaymentInput(data, payer_address);
+
+        const tx = await client.placeMultiplePayments(inputs, false);
+        const transaction_id = tx.transaction_id;
+
+        return {
+            escrow_contract_address: contractAddress,
+            payer_address,
+            transaction_id,
+            success:
+                transaction_id && transaction_id.length ? true : false,
+        };
+    }
+
+    private createPaymentInput(
+        data: any,
+        payer: string
+    ) {
+        if (data.orders) {
+            const paymentInput: ISwitchMultiPaymentInput[] = [];
+            data.orders.forEach((o: any) => {
+                const input: ISwitchMultiPaymentInput = {
+                    currency: o.currency_code,
+                    receiver: o.wallet_address,
+                    payments: [
+                        {
+                            id: 1, //o.order_id,
+                            payer: payer,
+                            receiver: o.wallet_address,
+                            amount: o.amount,
+                        },
+                    ],
+                };
+                paymentInput.push(input);
+            });
+
+            return paymentInput;
+        }
+        return [];
+    }
+}
+
 export class SwitchWalletPaymentHandler implements IWalletPaymentHandler {
     async doWalletPayment(
         provider: ethers.Provider,
@@ -184,7 +244,7 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
         data: any
     ): Promise<WalletPaymentResponse> {
         console.log('DirectWalletPaymentHandler.doWalletPayment');
-        const recipient: string = '0x5bacAdf2F9d9C62D2696f93ede5a22041a9AeE0D';
+        const recipient: string = getContractAddress('lite_switch', chainId);
 
         const paymentGroups = this.createPaymentGroups(data, chainId);
         let transaction_id = '';
@@ -234,7 +294,9 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
 
         if (data.orders) {
             data.orders.forEach((o: any) => {
-                const currency = getCurrencyAddress(o.currency_code, chainId);
+                let currency = getCurrencyAddress(o.currency_code, chainId);
+                if (!currency?.length) currency = ethers.ZeroAddress;
+
                 let amount = o.amount;
 
                 if (output[currency])
