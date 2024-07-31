@@ -71,14 +71,14 @@ const chainConfig: any = {
     10: {
         chain_name: 'optimism',
         usdc: {
-            contract_address: '0x0',
+            contract_address: '0x0b2c639c533813f4aa9d7837caf62653d097ff85',
             precision: {
                 db: 2,
                 native: 6,
             },
         },
         usdt: {
-            contract_address: '0x0',
+            contract_address: '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58',
             precision: {
                 db: 2,
                 native: 6,
