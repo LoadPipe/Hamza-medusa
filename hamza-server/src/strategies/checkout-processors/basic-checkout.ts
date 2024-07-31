@@ -25,6 +25,9 @@ export interface IPaymentGroupData {
     store?: Store;
 }
 
+/**
+ * Does basic checkout; can be used as a base class or by itself. 
+ */
 export class BasicCheckoutProcessor {
     protected readonly idempotencyKeyService: IdempotencyKeyService;
     protected readonly cartService: CartService;

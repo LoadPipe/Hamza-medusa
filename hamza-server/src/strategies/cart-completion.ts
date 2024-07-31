@@ -70,10 +70,10 @@ class CartCompletionStrategy extends AbstractCartCompletionStrategy {
         idempotencyKey: IdempotencyKey,
         context: RequestContext
     ): Promise<CartCompletionResponse> {
-        const paymentMode = Config.getPaymentMode();
-        this.logger.debug(`CartCompletionStrategy: payment mode is ${paymentMode}`);
+        const checkoutMode = Config.getCheckoutMode();
+        this.logger.debug(`CartCompletionStrategy: payment mode is ${checkoutMode}`);
 
-        switch (paymentMode) {
+        switch (checkoutMode) {
             case 'MASSMARKET':
                 return await this.massMarketProcessor.complete(
                     cartId

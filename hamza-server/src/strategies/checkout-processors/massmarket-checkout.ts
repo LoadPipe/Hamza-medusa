@@ -7,11 +7,21 @@ import {
 } from '../../massmarket-client/rest-client';
 import { In } from 'typeorm';
 import { getCurrencyAddress } from '../../currency.config';
-import { stringToHex } from './utils';
+
+type HexString = `0x${string}`;
+
+//TODO: this should actually be a global util
+function stringToHex(input: string): HexString {
+    const hexString = input.startsWith('0x') ? input.substring(2) : input;
+    return `0x${hexString}`;
+}
 
 type CheckoutResult = CheckoutOutput & { medusaOrderId: string };
 
-
+/**
+ * Does massmarket checkout; extends BasicCheckout and adds some stuff of its own that is 
+ * specific to Massmarket.
+ */
 class MassMarketCheckoutProcessor extends BasicCheckoutProcessor {
 
     constructor(container) {

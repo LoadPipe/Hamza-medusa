@@ -118,11 +118,10 @@ const CryptoPaymentButton = ({
         }))
     );
 
-    // Get the PAYMENT_MODE from the server
-    const getPaymentMode = async () => {
+    // Get the prescribed checkout mode from the server
+    const getCheckoutMode = async () => {
         const response = await axios.get(`${MEDUSA_SERVER_URL}/custom/config`);
-        // console.log(`getPaymentMode Response ${JSON.stringify(response.data)}`);
-        return response.data?.paymentMode?.trim()?.toUpperCase();
+        return response.data?.checkoutMode?.trim()?.toUpperCase();
     };
 
     /**
@@ -132,12 +131,12 @@ const CryptoPaymentButton = ({
      * @returns {transaction_id, payer_address, escrow_contract_address, success }
      */
     const doWalletPayment = async (data: any) => {
-        const paymentMode = await getPaymentMode();
-        console.log('payment mode is', paymentMode);
+        const checkoutMode = await getCheckoutMode();
+        console.log('checkout mode is', checkoutMode);
 
         //select the right handler based on payment mode
         let handler: IWalletPaymentHandler = new FakeWalletPaymentHandler();
-        switch (paymentMode?.toUpperCase()) {
+        switch (checkoutMode?.toUpperCase()) {
             case 'MASSMARKET':
                 handler = new MassmarketWalletPaymentHandler();
                 break;
@@ -152,8 +151,8 @@ const CryptoPaymentButton = ({
         try {
             //get chain id, provider, and signer to pass to handler
             let chainId;
-            let signer: ethers.Signer;
-            let provider: ethers.BrowserProvider;
+            let signer: ethers.Signer | null = null;
+            let provider: ethers.BrowserProvider | null = null;
 
             if (walletClient) {
                 // console.log('WALLET CLIENT');
@@ -162,8 +161,10 @@ const CryptoPaymentButton = ({
                 signer = await provider.getSigner();
             } else {
                 //TODO: get provider, chain id & signer from window.ethereum
-                provider = new ethers.BrowserProvider(window.ethereum);
-                signer = await provider.getSigner();
+                if (window.ethereum?.providers) {
+                    provider = new ethers.BrowserProvider(window.ethereum?.providers[0]);
+                    signer = await provider.getSigner();
+                }
             }
 
             //get the handler to return value

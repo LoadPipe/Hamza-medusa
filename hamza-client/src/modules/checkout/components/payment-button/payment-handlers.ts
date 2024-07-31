@@ -21,16 +21,18 @@ export type WalletPaymentResponse = {
     success: boolean;
 };
 
+/**
+ * Interface for a wallet payment handling strategy. The right strategy will be chosen based on 
+ * the checkout mode that's prescribed by the server. 
+ */
 export interface IWalletPaymentHandler {
     doWalletPayment(
-        provider: ethers.Provider,
+        provider: ethers.Provider | null,
         signer: ethers.Signer,
         chainId: any,
         data: any
     ): Promise<WalletPaymentResponse>;
 }
-
-
 
 /**
  * Gets the token contract corresponding to the given address, and stores it
@@ -43,45 +45,52 @@ function getTokenContract(signer: ethers.Signer, address: string): ethers.Contra
     return new ethers.Contract(address, erc20abi, signer);
 }
 
-
+/**
+ * Wallet payment handler for use with the Massmarket checkout mode. It calls to the 
+ * Massmarket smart contract to process a payment. 
+ */
 export class MassmarketWalletPaymentHandler implements IWalletPaymentHandler {
     async doWalletPayment(
-        provider: ethers.Provider,
+        provider: ethers.Provider | null,
         signer: ethers.Signer,
         chainId: any,
         data: any
     ): Promise<WalletPaymentResponse> {
         const escrow_contract_address = getMasterSwitchAddress(chainId);
+        let transaction_id = '';
+        let payer_address = '';
 
-        const paymentContractAddr =
-            getMassmarketPaymentAddress(chainId);
-        const paymentClient: MassmarketPaymentClient =
-            new MassmarketPaymentClient(
-                provider,
-                signer,
-                paymentContractAddr,
-                escrow_contract_address
-            );
+        if (provider) {
+            const paymentContractAddr =
+                getMassmarketPaymentAddress(chainId);
+            const paymentClient: MassmarketPaymentClient =
+                new MassmarketPaymentClient(
+                    provider,
+                    signer,
+                    paymentContractAddr,
+                    escrow_contract_address
+                );
 
-        console.log('payment address:', paymentContractAddr);
-        console.log('escrow address:', escrow_contract_address);
+            console.log('payment address:', paymentContractAddr);
+            console.log('escrow address:', escrow_contract_address);
 
-        //create the inputs
-        const paymentInput: IMultiPaymentInput[] =
-            await this.createPaymentInput(
-                data,
-                await signer.getAddress(),
-                chainId
-            );
+            //create the inputs
+            const paymentInput: IMultiPaymentInput[] =
+                await this.createPaymentInput(
+                    data,
+                    await signer.getAddress(),
+                    chainId
+                );
 
-        console.log('payment input: ', paymentInput);
+            console.log('payment input: ', paymentInput);
 
-        //send payment to contract
-        const output = await paymentClient.pay(paymentInput);
+            //send payment to contract
+            const output = await paymentClient.pay(paymentInput);
 
-        console.log(output);
-        const transaction_id = output.transaction_id;
-        const payer_address = output.receipt.from;
+            console.log(output);
+            transaction_id = output.transaction_id;
+            payer_address = output.receipt.from;
+        }
 
         return {
             transaction_id,
@@ -137,9 +146,14 @@ export class MassmarketWalletPaymentHandler implements IWalletPaymentHandler {
     };
 }
 
+/**
+ * Wallet payment handler for 'fake' checkout strategy, which is just a mimic of an 
+ * actual checkout but disregards real amounts, seller wallets, etc. Just for show.
+ * Does interact with the wallet though. 
+ */
 export class FakeWalletPaymentHandler implements IWalletPaymentHandler {
     async doWalletPayment(
-        provider: ethers.Provider,
+        provider: ethers.Provider | null,
         signer: ethers.Signer,
         chainId: any,
         data: any
@@ -163,25 +177,34 @@ export class FakeWalletPaymentHandler implements IWalletPaymentHandler {
     }
 }
 
+/**
+ * Wallet payment handler for 'switch' checkout strategy, using the 'lite' version 
+ * of the switch. 
+ */
 export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
     async doWalletPayment(
-        provider: ethers.Provider,
+        provider: ethers.Provider | null,
         signer: ethers.Signer,
         chainId: any,
         data: any
     ): Promise<WalletPaymentResponse> {
         const contractAddress = getContractAddress('lite_switch', chainId);
-        const client: LiteSwitchClient = new LiteSwitchClient(
-            provider,
-            signer,
-            contractAddress
-        );
+        let transaction_id = '';
+        let payer_address = '';
 
-        const payer_address = await signer.getAddress();
-        const inputs = this.createPaymentInput(data, payer_address);
+        if (provider) {
+            const client: LiteSwitchClient = new LiteSwitchClient(
+                provider,
+                signer,
+                contractAddress
+            );
 
-        const tx = await client.placeMultiplePayments(inputs, false);
-        const transaction_id = tx.transaction_id;
+            payer_address = await signer.getAddress();
+            const inputs = this.createPaymentInput(data, payer_address);
+
+            const tx = await client.placeMultiplePayments(inputs, false);
+            transaction_id = tx.transaction_id;
+        }
 
         return {
             escrow_contract_address: contractAddress,
@@ -220,9 +243,13 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
     }
 }
 
+/**
+ * Wallet payment handler for 'switch' checkout strategy, sends payment to the Hamza
+ * 'switch' escrow contract. 
+ */
 export class SwitchWalletPaymentHandler implements IWalletPaymentHandler {
     async doWalletPayment(
-        provider: ethers.Provider,
+        provider: ethers.Provider | null,
         signer: ethers.Signer,
         chainId: any,
         data: any
@@ -236,9 +263,13 @@ export class SwitchWalletPaymentHandler implements IWalletPaymentHandler {
     }
 }
 
+/**
+ * Wallet payment handler for 'direct' checkout strategy, sends payment directly to an 
+ * address. 
+ */
 export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
     async doWalletPayment(
-        provider: ethers.Provider,
+        provider: ethers.Provider | null,
         signer: ethers.Signer,
         chainId: any,
         data: any

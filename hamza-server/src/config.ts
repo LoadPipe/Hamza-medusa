@@ -1,11 +1,12 @@
 export class Config {
-    public static getPaymentMode(): string | undefined {
-        return process.env.PAYMENT_MODE?.trim()?.toUpperCase();
+    public static getCheckoutMode(): string | undefined {
+        return 'DIRECT';
+        return process.env.CHECKOUT_MODE?.trim()?.toUpperCase();
     }
 
     public static getAllConfigs() {
         return {
-            paymentMode: this.getPaymentMode(),
+            checkoutMode: this.getCheckoutMode(),
             // Random mock data
             configStuff: true,
             grog: 'full',
