@@ -1,7 +1,6 @@
 import {
     Cart,
     CartCompletionResponse,
-    IdempotencyKey,
     IdempotencyKeyService,
     ProductService,
     CartService,
@@ -11,32 +10,22 @@ import OrderService from '../../services/order';
 import { PaymentService } from '@medusajs/medusa/dist/services';
 import { Payment } from '../../models/payment';
 import { Order } from '../../models/order';
-import { Product } from '../../models/product';
 import { Store } from '../../models/store';
 import { LineItem } from '../../models/line-item';
 import { PaymentDataInput } from '@medusajs/medusa/dist/services/payment';
 import PaymentRepository from '@medusajs/medusa/dist/repositories/payment';
-import {
-    CheckoutOutput,
-    MassMarketClient,
-} from '../../massmarket-client/rest-client';
-import { In } from 'typeorm';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
-import { getCurrencyAddress } from '../../currency.config';
-import { stringToHex } from './utils';
 
 
-type CheckoutResult = CheckoutOutput & { medusaOrderId: string };
-
-interface IPaymentGroupData {
+export interface IPaymentGroupData {
     items: LineItem[];
     total: bigint;
     currency_code: string;
     store?: Store;
 }
 
-class MassMarketCartStrategy {
+export class BasicCheckoutProcessor {
     protected readonly idempotencyKeyService: IdempotencyKeyService;
     protected readonly cartService: CartService;
     protected readonly productService: ProductService;
@@ -46,6 +35,11 @@ class MassMarketCartStrategy {
     protected readonly orderRepository: typeof OrderRepository;
     protected readonly lineItemRepository: typeof LineItemRepository;
     protected readonly logger: Logger;
+    protected cart: Cart = null;
+    protected cartId: string = '';
+    protected payments: Payment[] = [];
+    protected paymentGroups: IPaymentGroupData[] = [];
+    protected orders: Order[] = [];
 
     constructor(container) {
         this.idempotencyKeyService = container.idempotencyKeyService;
@@ -67,68 +61,19 @@ class MassMarketCartStrategy {
      * - an order is created for each payment.
      *
      * @param cartId
-     * @param idempotencyKey
-     * @param context
-     * @returns
+     * @returns CartCompletionResponse
      */
     async complete(
         cartId: string
     ): Promise<CartCompletionResponse> {
         try {
-            //get the cart
-            const cart = await this.cartService.retrieve(cartId, {
-                relations: [
-                    'items.variant.product.store',
-                    'items.variant.prices', //TODO: we need prices?
-                ],
-            });
+            this.cartId = cartId;
+            this.logger.debug(`CheckoutProcessor: cart id is ${this.cartId}`);
 
-            //group payments by store
-            const storeGroups: IPaymentGroupData[] = this.groupByStore(cart);
-
-            //create payments; one per group
-            const payments: Payment[] = await this.createCartPayments(
-                cart,
-                storeGroups
-            );
-
-            //create orders; one per payment
-            const orders = await this.createOrdersForPayments(
-                cart,
-                payments,
-                storeGroups
-            );
-
-            //there should be the same number of orders as groups
-            if (orders.length != storeGroups.length)
-                throw new Error(
-                    'inconsistency between payment groups and orders'
-                );
-
-            //save/update payments with order ids
-            await this.updatePaymentFromOrder(payments, orders);
-
-            //send checkout to massmarket stores
-            //TODO: be able to handle one store checkout failure, while the other succeed
-            const checkoutResults: CheckoutResult[] =
-                await this.doMassMarketCheckouts(storeGroups, orders);
-
-            this.logger.debug(
-                `Got checkout results ${JSON.stringify(checkoutResults)}`
-            );
-            await this.updateOrderForMassMarket(checkoutResults);
+            await this.doCheckoutSteps();
 
             //create & return the response
-            const response: CartCompletionResponse = {
-                response_code: 200,
-                response_body: {
-                    payment_count: payments.length,
-                    message: 'payment successful',
-                    payments,
-                    orders,
-                    cart_id: cartId,
-                },
-            };
+            const response: CartCompletionResponse = this.getSuccessResponse();
 
             return response;
         } catch (e) {
@@ -148,7 +93,97 @@ class MassMarketCartStrategy {
         }
     }
 
-    private createPaymentInput(
+    /**
+     * Override this to change the steps or the order of the steps. 
+     */
+    protected async doCheckoutSteps(): Promise<void> {
+
+        //get the cart
+        await this.doRetrieveCart();
+
+        //group payments by store
+        await this.doCreateGroups();
+
+        //create payments; one per group
+        await this.doCreatePayments();
+
+        //create orders; one per payment
+        await this.doCreateOrders();
+
+        //safety check: there should be the same number of orders as groups
+        if (this.orders.length != this.paymentGroups.length)
+            throw new Error(
+                'inconsistency between payment groups and orders'
+            );
+
+        //save/update payments with order ids
+        await this.updatePaymentFromOrder(this.payments, this.orders);
+    }
+
+    /**
+     * Override this to change how the cart gets retrieved.
+     */
+    protected async doRetrieveCart(): Promise<void> {
+        this.logger.debug(`CheckoutProcessor: retrieving cart ${this.cartId}`);
+        this.cart = await this.cartService.retrieve(this.cartId, {
+            relations: [
+                'items.variant.product.store',
+                'items.variant.prices', //TODO: we need prices?
+            ],
+        });
+    }
+
+    /**
+     * Override this to change how payments get grouped. 
+     */
+    protected async doCreateGroups(): Promise<void> {
+        this.logger.debug(`CheckoutProcessor: creating payment groups`);
+        this.paymentGroups = this.groupByStore(this.cart);
+    }
+
+    /**
+     * Override this to change how payments get created. 
+     */
+    protected async doCreatePayments(): Promise<void> {
+        this.logger.debug(`CheckoutProcessor: creating payments`);
+        this.payments = await this.createCartPayments(
+            this.cart,
+            this.paymentGroups
+        );
+    }
+
+    /**
+     * Override this to change how orders get created. 
+     */
+    protected async doCreateOrders(): Promise<void> {
+        this.logger.debug(`CheckoutProcessor: creating orders`);
+        this.orders = await this.createOrdersForPayments(
+            this.cart,
+            this.payments,
+            this.paymentGroups
+        );
+    }
+
+    /**
+     * Override this to change how a successful response is constructed. 
+     */
+    protected getSuccessResponse(): CartCompletionResponse {
+        const response = {
+            response_code: 200,
+            response_body: {
+                payment_count: this.payments.length,
+                message: 'payment successful',
+                payments: this.payments,
+                orders: this.orders,
+                cart_id: this.cartId,
+            },
+        };
+
+        this.logger.debug(`CheckoutProcessor: returning response ${response}`);
+        return response;
+    }
+
+    protected createPaymentInput(
         cart: Cart,
         storeGroup: IPaymentGroupData
     ): PaymentDataInput {
@@ -174,7 +209,7 @@ class MassMarketCartStrategy {
         return output;
     }
 
-    private groupByStore(cart: Cart): IPaymentGroupData[] {
+    protected groupByStore(cart: Cart): IPaymentGroupData[] {
         //temp holding for groups
         const storeGroups: { [key: string]: IPaymentGroupData } = {};
 
@@ -202,13 +237,13 @@ class MassMarketCartStrategy {
         return Object.keys(storeGroups).map((key) => storeGroups[key]);
     }
 
-    private async createCartPayments(
+    protected async createCartPayments(
         cart: Cart,
-        storeGroups: IPaymentGroupData[]
+        paymentGroups: IPaymentGroupData[]
     ): Promise<Payment[]> {
         //for each unique group, make payment input to create a payment
         const paymentInputs: PaymentDataInput[] = [];
-        storeGroups.forEach((group) => {
+        paymentGroups.forEach((group) => {
             paymentInputs.push(this.createPaymentInput(cart, group));
         });
 
@@ -222,10 +257,10 @@ class MassMarketCartStrategy {
         return payments;
     }
 
-    private async createOrdersForPayments(
+    protected async createOrdersForPayments(
         cart: Cart,
         payments: Payment[],
-        storeGroups: IPaymentGroupData[]
+        paymentGroups: IPaymentGroupData[]
     ): Promise<Order[]> {
         const promises: Promise<Order>[] = [];
         for (let i = 0; i < payments.length; i++) {
@@ -233,7 +268,7 @@ class MassMarketCartStrategy {
                 this.orderService.createFromPayment(
                     cart,
                     payments[i],
-                    storeGroups[i].store?.id
+                    paymentGroups[i].store?.id
                 )
             );
         }
@@ -241,7 +276,7 @@ class MassMarketCartStrategy {
         return await Promise.all(promises);
     }
 
-    private async updatePaymentFromOrder(
+    protected async updatePaymentFromOrder(
         payments: Payment[],
         orders: Order[]
     ): Promise<void> {
@@ -267,106 +302,4 @@ class MassMarketCartStrategy {
         }
         await Promise.all(promises);
     }
-
-    private async doMassMarketCheckouts(
-        storeGroups: IPaymentGroupData[],
-        orders: Order[]
-    ): Promise<CheckoutResult[]> {
-        this.logger.debug(`prepping ${orders.length} orders for checkout`);
-        try {
-            //prepare each order for checkout
-            for (let n = 0; n < orders.length; n++) {
-                const order = orders[n];
-                let lineItems = storeGroups[n].items;
-
-                //TODO: is this necessary?
-                lineItems = await this.lineItemRepository.find({
-                    where: { id: In(lineItems.map((i) => i.id)) },
-                    relations: ['variant.product', 'order'],
-                });
-
-                //TODO: is this necessary?
-                orders = await this.orderRepository.find({
-                    where: { id: In(orders.map((o) => o.id)) },
-                    relations: ['store'],
-                });
-            }
-        } catch (e) {
-            this.logger.error(`Error ${e}`);
-        }
-        this.logger.debug('prepped orders for checkout');
-
-        //call checkout for each store
-        const client = new MassMarketClient();
-        const output: CheckoutResult[] = [];
-        for (let n = 0; n < storeGroups.length; n++) {
-            const group = storeGroups[n];
-
-            //create the input for checkout, for each store group
-            const checkoutInputs = [];
-            for (const item of group.items) {
-                const prod: Product = item.variant.product;
-
-                if (prod.massmarket_prod_id?.length) {
-                    checkoutInputs.push({
-                        productId: prod.massmarket_prod_id,
-                        quantity: item.quantity,
-                    });
-                }
-            }
-
-            //get payment currency address
-            let currencyAddress = getCurrencyAddress(
-                group.currency_code,
-                11155111
-            );
-            if (currencyAddress) {
-                if (currencyAddress === '0x0' || currencyAddress === '')
-                    currencyAddress = undefined;
-            }
-            //massmarket checkout for a store group
-            const checkout = await client.checkout(
-                stringToHex(group.store?.massmarket_store_id),
-                stringToHex(group.store?.massmarket_keycard),
-                currencyAddress,
-                checkoutInputs
-            );
-
-            this.logger.debug(
-                'got checkout results:' + JSON.stringify(checkout)
-            );
-            this.logger.debug(orders.length);
-
-            //save the output
-            output.push({
-                ...checkout,
-                medusaOrderId: orders[n].id,
-            });
-        }
-
-        return output;
-    }
-
-    private async updateOrderForMassMarket(checkoutResults: CheckoutResult[]) {
-        const promises: Promise<Order>[] = [];
-        for (const r of checkoutResults) {
-            this.logger.debug(
-                'saving order ' + r.paymentId + ', ' + r.medusaOrderId
-            );
-            promises.push(
-                this.orderRepository.save({
-                    id: r.medusaOrderId,
-                    massmarket_order_id: r.orderHash,
-                    massmarket_ttl: r.ttl,
-                    massmarket_amount: r.amount,
-                })
-            );
-        }
-
-        this.logger.debug('saving the orders from checkout...');
-        await Promise.all(promises);
-        this.logger.debug('...saved the orders from checkout');
-    }
 }
-
-export default MassMarketCartStrategy;

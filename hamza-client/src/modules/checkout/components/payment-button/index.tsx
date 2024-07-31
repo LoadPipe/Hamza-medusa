@@ -5,6 +5,7 @@ import {
     FakeWalletPaymentHandler,
     MassmarketWalletPaymentHandler,
     SwitchWalletPaymentHandler,
+    DirectWalletPaymentHandler
 } from './payment-handlers';
 import { Button } from '@chakra-ui/react';
 import React, { useState, useEffect, useRef } from 'react';
@@ -52,10 +53,10 @@ declare global {
 const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
     const notReady =
         !cart ||
-        !cart.shipping_address ||
-        !cart.billing_address ||
-        !cart.email ||
-        cart.shipping_methods.length < 1
+            !cart.shipping_address ||
+            !cart.billing_address ||
+            !cart.email ||
+            cart.shipping_methods.length < 1
             ? true
             : false;
 
@@ -120,7 +121,7 @@ const CryptoPaymentButton = ({
     const getPaymentMode = async () => {
         const response = await axios.get(`${MEDUSA_SERVER_URL}/custom/config`);
         // console.log(`getPaymentMode Response ${JSON.stringify(response.data)}`);
-        return response.data ? response.data : null;
+        return response.data?.paymentMode?.trim()?.toUpperCase();
     };
 
     /**
@@ -131,12 +132,20 @@ const CryptoPaymentButton = ({
      */
     const doWalletPayment = async (data: any) => {
         const paymentMode = await getPaymentMode();
+        console.log('payment mode is', paymentMode);
 
         //select the right handler based on payment mode
         let handler: IWalletPaymentHandler = new FakeWalletPaymentHandler();
-        switch (paymentMode) {
+        switch (paymentMode?.toUpperCase()) {
             case 'MASSMARKET':
                 handler = new MassmarketWalletPaymentHandler();
+                break;
+            case 'DIRECT':
+                handler = new DirectWalletPaymentHandler();
+                break;
+            case 'SWITCH':
+                handler = new SwitchWalletPaymentHandler();
+                break;
         }
 
         try {
@@ -363,7 +372,7 @@ const CryptoPaymentButton = ({
             updateCart.mutate(
                 { context: {} },
                 {
-                    onSuccess: ({}) => {
+                    onSuccess: ({ }) => {
                         //this calls the CartCompletion routine
                         completeCart.mutate(void 0, {
                             onSuccess: async ({ data, type }) => {
@@ -380,7 +389,7 @@ const CryptoPaymentButton = ({
                                     await cancelOrderFromCart();
                                 }
                             },
-                            onError: async ({}) => {
+                            onError: async ({ }) => {
                                 setSubmitting(false);
                                 setErrorMessage('Checkout was not completed');
                                 await cancelOrderFromCart();

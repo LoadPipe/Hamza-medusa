@@ -1,7 +1,7 @@
-import { CheckoutProcessorBase } from './checkout-processor-base';
+import { BasicCheckoutProcessor } from './basic-checkout';
 
 
-class SwitchCheckoutProcessor extends CheckoutProcessorBase {
+class SwitchCheckoutProcessor extends BasicCheckoutProcessor {
     constructor(container) {
         super(container);
     }

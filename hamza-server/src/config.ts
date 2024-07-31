@@ -1,7 +1,6 @@
 export class Config {
     public static getPaymentMode(): string | undefined {
-        return 'FAKE';
-        return process.env.PAYMENT_MODE;
+        return process.env.PAYMENT_MODE?.trim()?.toUpperCase();
     }
 
     public static getAllConfigs() {

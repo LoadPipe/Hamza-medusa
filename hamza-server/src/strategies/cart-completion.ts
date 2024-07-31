@@ -9,14 +9,14 @@ import {
 } from '@medusajs/medusa';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
-import MassMarketCartStrategy from './checkout-processors/massmarket-cart';
 import OrderService from '../services/order';
 import { PaymentService } from '@medusajs/medusa/dist/services';
 import { RequestContext } from '@medusajs/medusa/dist/types/request';
 import PaymentRepository from '@medusajs/medusa/dist/repositories/payment';
 import { Config } from '../config';
 import SwitchCheckoutProcessor from './checkout-processors/switch-checkout';
-import FakeCheckoutProcessor from './checkout-processors/fake-checkout';
+import { BasicCheckoutProcessor } from './checkout-processors/basic-checkout';
+import MassMarketCheckoutProcessor from './checkout-processors/massmarket-checkout';
 
 type InjectedDependencies = {
     idempotencyKeyService: IdempotencyKeyService;
@@ -40,17 +40,18 @@ class CartCompletionStrategy extends AbstractCartCompletionStrategy {
     protected readonly orderRepository: typeof OrderRepository;
     protected readonly lineItemRepository: typeof LineItemRepository;
     protected readonly logger: Logger;
-    private massMarketStrategy: MassMarketCartStrategy;
+    //private massMarketStrategy: MassMarketCartStrategy;
+    private massMarketProcessor: MassMarketCheckoutProcessor;
     private switchProcessor: SwitchCheckoutProcessor;
-    private fakeProcessor: FakeCheckoutProcessor;
+    private basicProcessor: BasicCheckoutProcessor;
 
     constructor(deps: InjectedDependencies) {
         super(deps); // Call the superclass constructor if needed and pass any required parameters explicitly if it requires any.
 
         // Assuming both strategies need the same dependencies as this class, pass them directly.
-        this.massMarketStrategy = new MassMarketCartStrategy(deps);
+        this.massMarketProcessor = new MassMarketCheckoutProcessor(deps);
         this.switchProcessor = new SwitchCheckoutProcessor(deps);
-        this.fakeProcessor = new FakeCheckoutProcessor(deps);
+        this.basicProcessor = new BasicCheckoutProcessor(deps);
 
         // Initialize all services and repositories provided in deps directly
         this.idempotencyKeyService = deps.idempotencyKeyService;
@@ -74,7 +75,7 @@ class CartCompletionStrategy extends AbstractCartCompletionStrategy {
 
         switch (paymentMode) {
             case 'MASSMARKET':
-                return await this.massMarketStrategy.complete(
+                return await this.massMarketProcessor.complete(
                     cartId
                 );
 
@@ -82,9 +83,13 @@ class CartCompletionStrategy extends AbstractCartCompletionStrategy {
                 return await this.switchProcessor.complete(
                     cartId
                 );
+            case 'DIRECT':
+                return await this.basicProcessor.complete(
+                    cartId
+                );
             default:
                 'FAKE';
-                return await this.fakeProcessor.complete(
+                return await this.basicProcessor.complete(
                     cartId
                 );
         }

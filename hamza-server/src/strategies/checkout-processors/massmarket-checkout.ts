@@ -1,4 +1,4 @@
-import { CheckoutProcessorBase, IPaymentGroupData } from './checkout-processor-base';
+import { BasicCheckoutProcessor, IPaymentGroupData } from './basic-checkout';
 import { Order } from '../../models/order';
 import { Product } from '../../models/product';
 import {
@@ -12,7 +12,7 @@ import { stringToHex } from './utils';
 type CheckoutResult = CheckoutOutput & { medusaOrderId: string };
 
 
-class MassMarketCheckoutProcessor extends CheckoutProcessorBase {
+class MassMarketCheckoutProcessor extends BasicCheckoutProcessor {
 
     constructor(container) {
         super(container);
