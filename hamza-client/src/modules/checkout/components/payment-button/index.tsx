@@ -121,7 +121,7 @@ const CryptoPaymentButton = ({
     // Get the prescribed checkout mode from the server
     const getCheckoutMode = async () => {
         const response = await axios.get(`${MEDUSA_SERVER_URL}/custom/config`);
-        return response.data?.checkoutMode?.trim()?.toUpperCase();
+        return response.data?.checkout_mode?.trim()?.toUpperCase();
     };
 
     /**

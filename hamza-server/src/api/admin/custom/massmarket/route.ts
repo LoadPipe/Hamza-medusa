@@ -1,6 +1,6 @@
 import { MedusaRequest, MedusaResponse, Logger, Product } from '@medusajs/medusa';
 import { RouteHandler } from '../../../route-handler';
-import { Config } from 'prettier';
+import { Config } from '../../../../config';
 
 const productsToIds = {
     //Medusa Merch
@@ -156,7 +156,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        if (process.env.DATASEED != 'alt1') {
+        if (Config.dataSeed != 'alt1') {
             const stores = await storeService.getStores();
             for (let store of stores) {
                 await updateStoreForMM(

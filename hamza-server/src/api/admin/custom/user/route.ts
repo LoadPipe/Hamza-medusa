@@ -1,5 +1,6 @@
 import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import { RouteHandler } from '../../../route-handler';
+import { Config } from '../../../../config';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const userService = req.scope.resolve('userService');
@@ -12,7 +13,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         req, res, 'GET', '/admin/custom/user'
     );
 
-    if (process.env.DATASEED == 'alt1') {
+    if (Config.dataSeed != 'alt1') {
         await handler.handle(async () => {
             const user0 = await userService.create(
                 {
