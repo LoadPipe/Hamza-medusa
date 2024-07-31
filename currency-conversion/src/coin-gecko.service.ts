@@ -2,9 +2,16 @@ import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 
+interface CacheEntry {
+  value: number; // Assuming conversion rates are numbers
+  timestamp: number;
+}
+
 @Injectable()
 export class CoinGeckoService {
   private readonly logger = new Logger(CoinGeckoService.name);
+  private cache: { [key: string]: CacheEntry } = {};
+  private readonly cacheDuration = 300000; // Cache duration in milliseconds (5 minutes)
 
   // Correct contract addresses
   private readonly USDT = '0xdac17f958d2ee523a2206206994597c13d831ec7';
@@ -61,10 +68,28 @@ export class CoinGeckoService {
     contractAddress: string,
     vsCurrency: string,
   ): Promise<number> {
+    const cacheKey = `${contractAddress}-${vsCurrency}`;
+    const cachedData = this.cache[cacheKey];
+    const currentTime = new Date().getTime();
+
+    // Check if data is in cache and not expired
+    if (cachedData && currentTime - cachedData.timestamp < this.cacheDuration) {
+      return cachedData.value;
+    }
+
+    // If not in cache or cache is expired, fetch new data
     const url = `https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=${contractAddress}&vs_currencies=${vsCurrency}`;
     try {
       const response = await firstValueFrom(this.httpService.get(url));
-      return response.data[contractAddress][vsCurrency];
+      const newValue = response.data[contractAddress][vsCurrency];
+
+      // Update cache with new value
+      this.cache[cacheKey] = {
+        value: newValue,
+        timestamp: currentTime,
+      };
+
+      return newValue;
     } catch (error) {
       this.logger.error(`Error fetching data for ${contractAddress}`, error);
       throw new Error(
