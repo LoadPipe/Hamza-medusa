@@ -57,13 +57,12 @@ export class MassmarketPaymentClient {
         const chainId = parseInt(
             (await this.provider.getNetwork()).chainId.toString()
         );
-        console.log(`chainID is ${chainId}`);
 
         //for wrong chain, just doing a very very fake checkout for now !
         const FAKE_IT = true;
         // if (chainId != 11155111 || process.env.NEXT_PUBLIC_FAKE_CHECKOUT) {
         if (!FAKE_IT) {
-            console.log('doing fake checkout');
+            // console.log('doing fake checkout');
             return {
                 transaction_id: '0x00001',
                 tx: { id: '0x00001', hash: '0x00001' },
@@ -100,7 +99,7 @@ export class MassmarketPaymentClient {
 
         //get total native amount
         const nativeTotal: BigNumberish = this.getNativeTotal(inputs);
-        console.log('native amount:', nativeTotal);
+        // console.log('native amount:', nativeTotal);
 
         //default values, used for fake checkout
         let from = await this.signer.getAddress();
@@ -108,21 +107,17 @@ export class MassmarketPaymentClient {
         let receipt: any = { from, to };
         let txHash: any = '0x0';
 
-        console.log(
-            'FAKE CHECKOUT IS ' + process.env.NEXT_PUBLIC_FAKE_CHECKOUT
-        );
-
         if (!process.env.NEXT_PUBLIC_FAKE_CHECKOUT || chainId != 11155111) {
             //get input appropriate for sending to Payment contract
             const requests: IPaymentRequest[] = this.convertInputs(inputs);
 
-            console.log('sending requests: ', requests, nativeTotal);
+            // console.log('sending requests: ', requests, nativeTotal);
 
             if (requests.length) {
-                console.log(
-                    'paymentId',
-                    BigInt(await this.getPaymentId(requests[0])).toString(16)
-                );
+                // console.log(
+                //     'paymentId',
+                //     BigInt(await this.getPaymentId(requests[0])).toString(16)
+                // );
                 const permits: string[] = [];
                 for (let i = 0; i < requests.length; i++) {
                     permits.push('0x');
@@ -296,7 +291,7 @@ export class MassmarketPaymentClient {
         // Convert amount to bigint for comparison and arithmetic, assuming it could be string, number, or bigint already
         // BigNumber instances (from ethers.js or similar libraries) should be converted to string or number before passing to this function
         let bigintAmount = BigInt(amount);
-        console.log(`allowance of ${tokenAddr} for ${spender} is ${allowance}`);
+        // console.log(`allowance of ${tokenAddr} for ${spender} is ${allowance}`);
 
         if (allowance > 0) {
             amount =
@@ -305,9 +300,9 @@ export class MassmarketPaymentClient {
 
         // Approve if necessary
         if (bigintAmount > 0) {
-            console.log(
-                `approving ${bigintAmount} of ${tokenAddr} for ${spender}`
-            );
+            // console.log(
+            //     `approving ${bigintAmount} of ${tokenAddr} for ${spender}`
+            // );
             const tx = await token.approve(spender, bigintAmount.toString()); // Convert bigint back to string for the smart contract call
             await tx.wait();
             await this.provider.waitForTransaction(tx.hash, 1);

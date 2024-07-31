@@ -169,7 +169,6 @@ class MassMarketCartStrategy {
             };
 
             //return an error response
-            console.log(`I guess this error is the one which is running..`);
             this.logger.debug(response);
             return response;
         }

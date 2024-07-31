@@ -147,7 +147,7 @@ const CryptoPaymentButton = ({
     // Get the PAYMENT_MODE from the server
     const getPaymentMode = async () => {
         const response = await axios.get(`${MEDUSA_SERVER_URL}/custom/config`);
-        console.log(`getPaymentMode Response ${JSON.stringify(response.data)}`);
+        // console.log(`getPaymentMode Response ${JSON.stringify(response.data)}`);
         return response.data ? response.data : null;
     };
 
@@ -158,11 +158,7 @@ const CryptoPaymentButton = ({
      * @returns {transaction_id, payer_address, escrow_contract_address, success }
      */
     const doWalletPayment = async (data: any) => {
-        console.log('DOES THIS RUN?');
         const paymentMode = await getPaymentMode();
-        if (paymentMode.data) {
-            console.log('PAYMENT MODE', paymentMode.data);
-        }
 
         try {
             //get provider and such
@@ -191,8 +187,8 @@ const CryptoPaymentButton = ({
                         escrow_contract_address
                     );
 
-                console.log('payment address:', paymentContractAddr);
-                console.log('escrow address:', escrow_contract_address);
+                // console.log('payment address:', paymentContractAddr);
+                // console.log('escrow address:', escrow_contract_address);
 
                 //create the inputs
                 const paymentInput: IMultiPaymentInput[] =
@@ -202,12 +198,9 @@ const CryptoPaymentButton = ({
                         chainId
                     );
 
-                console.log('payment input: ', paymentInput);
-
                 //send payment to contract
                 const output = await paymentClient.pay(paymentInput);
 
-                console.log(output);
                 const transaction_id = output.transaction_id;
                 const payer_address = output.receipt.from;
 
@@ -273,17 +266,13 @@ const CryptoPaymentButton = ({
      * @param cartId
      */
     const completeCheckout = async (cartId: string) => {
-        console.log(`COMPLETE CHECKOUT RUNNING`);
         //retrieve data (cart id, currencies, amounts etc.) that will be needed for wallet checkout
         const data: CheckoutData = await retrieveCheckoutData(cartId);
-        console.log('got checkout data', data);
 
         if (data) {
             //this sends the payment to the wallet for on-chain processing
             const output = await doWalletPayment(data);
-            console.log(
-                `${JSON.stringify(cartRef)} cartref ${cartRef.current} ${typeof cartRef.current}`
-            );
+
             //finalize the checkout, if wallet payment was successful
             if (output.success) {
                 const response = await axios.post(
@@ -297,7 +286,6 @@ const CryptoPaymentButton = ({
                     }
                 );
 
-                console.log(response.status);
                 //TODO: examine response
 
                 //country code needed for redirect (get before killing cart)
@@ -329,7 +317,6 @@ const CryptoPaymentButton = ({
             let response = await axios.get(
                 `${MEDUSA_SERVER_URL}/custom/cancel-order/${cart.id}`
             );
-            console.log(response);
             return;
         } catch (e) {
             console.log('error in cancelling order ', e);
