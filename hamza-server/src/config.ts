@@ -1,6 +1,5 @@
 export class Config {
     public static getCheckoutMode(): string | undefined {
-        return 'DIRECT';
         return process.env.CHECKOUT_MODE?.trim()?.toUpperCase();
     }
 
