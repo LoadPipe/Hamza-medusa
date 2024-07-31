@@ -17,8 +17,10 @@ import { MdOutlinePersonOutline, MdOutlineShield } from 'react-icons/md';
 import { AiFillSetting } from 'react-icons/ai';
 import { AuthorizedAccount } from './components/authorized-account';
 import useWishlistStore from '@store/wishlist/wishlist-store';
+import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
 const AccountMenu = () => {
+    const { authData } = useCustomerAuthStore();
     const { wishlist } = useWishlistStore((state) => ({
         wishlist: state.wishlist,
     }));
@@ -114,26 +116,28 @@ const AccountMenu = () => {
                             </Text>
                         </MenuItem>
                     </Link>
-                    <Link href={`/verify-email`}>
-                        <MenuItem
-                            fontWeight={'600'}
-                            pl="1rem"
-                            color={'white'}
-                            backgroundColor={'black'}
-                            _hover={{ color: 'primary.green.900' }}
-                        >
-                            <Flex
-                                w={'30px'}
-                                alignContent={'center'}
-                                justifyContent={'center'}
+                    {authData.is_verified === false && (
+                        <Link href={`/verify-email`}>
+                            <MenuItem
+                                fontWeight={'600'}
+                                pl="1rem"
+                                color={'white'}
+                                backgroundColor={'black'}
+                                _hover={{ color: 'primary.green.900' }}
                             >
-                                <MdOutlineShield size={29} />
-                            </Flex>
-                            <Text fontWeight={'600'} ml="0.5rem">
-                                Verify Account
-                            </Text>
-                        </MenuItem>
-                    </Link>
+                                <Flex
+                                    w={'30px'}
+                                    alignContent={'center'}
+                                    justifyContent={'center'}
+                                >
+                                    <MdOutlineShield size={29} />
+                                </Flex>
+                                <Text fontWeight={'600'} ml="0.5rem">
+                                    Verify Account
+                                </Text>
+                            </MenuItem>
+                        </Link>
+                    )}
                     <Link href={`/account`}>
                         <MenuItem
                             fontWeight={'600'}

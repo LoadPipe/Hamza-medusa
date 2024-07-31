@@ -13,6 +13,9 @@ const chainConfig: any = {
         massmarket_payment: {
             address: '0x3d9DbbD22E4903274171ED3e94F674Bb52bCF015',
         },
+        lite_switch: {
+            address: '0x76d9f186e3C43bF21B76406c20B67FC98A16FE04'
+        }
     },
     11155420: {
         chain_name: 'op-sepolia',
@@ -22,6 +25,9 @@ const chainConfig: any = {
         massmarket_payment: {
             address: '0x0',
         },
+        lite_switch: {
+            address: '0x0'
+        }
     },
     1: {
         chain_name: 'mainnet',
@@ -31,6 +37,21 @@ const chainConfig: any = {
         massmarket_payment: {
             address: '0x0',
         },
+        lite_switch: {
+            address: '0x0'
+        }
+    },
+    10: {
+        chain_name: 'optimism',
+        master_switch: {
+            address: '',
+        },
+        massmarket_payment: {
+            address: '0x0',
+        },
+        lite_switch: {
+            address: '0x0'
+        }
     },
 };
 

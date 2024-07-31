@@ -15,7 +15,6 @@ import { Product } from '../../models/product';
 import { Store } from '../../models/store';
 import { LineItem } from '../../models/line-item';
 import { PaymentDataInput } from '@medusajs/medusa/dist/services/payment';
-import { RequestContext } from '@medusajs/medusa/dist/types/request';
 import PaymentRepository from '@medusajs/medusa/dist/repositories/payment';
 import {
     CheckoutOutput,
@@ -25,22 +24,10 @@ import { In } from 'typeorm';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 import { getCurrencyAddress } from '../../currency.config';
+import { stringToHex } from './utils';
 
-type HexString = `0x${string}`;
 
 type CheckoutResult = CheckoutOutput & { medusaOrderId: string };
-
-type InjectedDependencies = {
-    idempotencyKeyService: IdempotencyKeyService;
-    productService: ProductService;
-    paymentService: PaymentService;
-    cartService: CartService;
-    orderService: OrderService;
-    paymentRepository: typeof PaymentRepository;
-    orderRepository: typeof OrderRepository;
-    lineItemRepository: typeof LineItemRepository;
-    logger: Logger;
-};
 
 interface IPaymentGroupData {
     items: LineItem[];
@@ -49,17 +36,6 @@ interface IPaymentGroupData {
     store?: Store;
 }
 
-/**
- * @name CartCompletionStrategy
- *
- * @description Defines a Cart completion strategy which is called when the cart's complete
- * method is called (on the client side). Breaks up cart items into multiple payments,
- * for each unique store-currency pair; creates payments and orders for each. This is
- * made specifically for our use case of crypto payments in (potentially) multiple currencies,
- * including native & token currencies.
- *
- * @author John R. Kosinski
- */
 class MassMarketCartStrategy {
     protected readonly idempotencyKeyService: IdempotencyKeyService;
     protected readonly cartService: CartService;
@@ -96,9 +72,7 @@ class MassMarketCartStrategy {
      * @returns
      */
     async complete(
-        cartId: string,
-        idempotencyKey: IdempotencyKey,
-        context: RequestContext
+        cartId: string
     ): Promise<CartCompletionResponse> {
         try {
             //get the cart
@@ -393,11 +367,6 @@ class MassMarketCartStrategy {
         await Promise.all(promises);
         this.logger.debug('...saved the orders from checkout');
     }
-}
-
-function stringToHex(input: string): HexString {
-    const hexString = input.startsWith('0x') ? input.substring(2) : input;
-    return `0x${hexString}`;
 }
 
 export default MassMarketCartStrategy;
