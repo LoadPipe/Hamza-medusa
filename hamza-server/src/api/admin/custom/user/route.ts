@@ -39,7 +39,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 user9,
                 'Hamza Official',
                 'pcol_01HRVF8HCVY8B00RF5S54THTPC',
-                'https://images.hamza.biz/Legendary/mood/LLD_mood1.webp'
+                'https://images.hamza.biz/Hamza/logo.png'
             );
 
             await productCollectionService.update(
