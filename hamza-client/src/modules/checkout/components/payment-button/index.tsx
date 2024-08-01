@@ -256,7 +256,7 @@ const CryptoPaymentButton = ({
                 );
             } else {
                 setSubmitting(false);
-                setErrorMessage('Checkout was not completed.');
+                setErrorMessage(output?.message ? output.message : 'Checkout was not completed.');
                 await cancelOrderFromCart();
             }
         } else {

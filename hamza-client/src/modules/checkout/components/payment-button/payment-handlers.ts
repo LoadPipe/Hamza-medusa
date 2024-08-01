@@ -18,6 +18,7 @@ export type WalletPaymentResponse = {
     transaction_id: string;
     payer_address: string;
     escrow_contract_address: string;
+    message?: string;
     success: boolean;
 };
 
@@ -43,6 +44,25 @@ export interface IWalletPaymentHandler {
  */
 function getTokenContract(signer: ethers.Signer, address: string): ethers.Contract {
     return new ethers.Contract(address, erc20abi, signer);
+}
+
+async function checkSenderBalance(
+    provider: ethers.Provider,
+    signer: ethers.Signer,
+    chainId: any,
+    currencyCode: string,
+    amount: BigNumberish
+): Promise<boolean> {
+    const address = await signer.getAddress();
+    const currencyAddress = getCurrencyAddress(currencyCode, chainId);
+    if (currencyAddress == ethers.ZeroAddress) {
+        return ethers.toBigInt(amount) <= (await provider.getBalance(address));
+    } else {
+        const token = getTokenContract(signer, currencyAddress);
+        const balance = await token.balanceOf(address);
+        return (balance >= ethers.toBigInt(amount));
+    }
+    return false;
 }
 
 /**
@@ -207,6 +227,7 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
 
             payer_address = await signer.getAddress();
             const inputs = this.createPaymentInput(data, payer_address, chainId);
+            console.log('sending payments: ', inputs);
 
             const tx = await client.placeMultiplePayments(inputs, false);
             transaction_id = tx.transaction_id;
@@ -293,35 +314,44 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
     ): Promise<WalletPaymentResponse> {
         console.log('DirectWalletPaymentHandler.doWalletPayment');
         const recipient: string = getContractAddress('dao', chainId);
-        const amount = data.orders[0].amount;
         console.log('dao address is ', recipient);
-        console.log('amount is', amount);
-        console.log('currency is', amount);
 
         const paymentGroups = this.createPaymentGroups(data, chainId);
         let transaction_id = '';
         let payer_address = '';
 
-        if (signer) {
+        if (signer && provider) {
             for (const currency in paymentGroups) {
                 let tx: ethers.TransactionResponse | null = null;
+                const amount = this.translateToNativeAmount(
+                    currency,
+                    paymentGroups[currency],
+                    chainId
+                );
+                console.log('amount is', amount);
+
+                //check balance first 
+                if (!(await checkSenderBalance(provider, signer, chainId, currency, amount))) {
+                    return {
+                        escrow_contract_address: '0x0',
+                        transaction_id,
+                        payer_address,
+                        success: false,
+                        message: 'Insufficient balance'
+                    }
+                }
 
                 //handle native payment
                 if (currency === 'eth') {
                     tx = await signer.sendTransaction({
                         to: recipient,
-                        value: data.orders[0].amount,
+                        value: amount,
                     });
                 }
 
                 //handle token payment 
                 else {
                     const currencyAddr = getCurrencyAddress(currency, chainId);
-                    const amount = this.translateToNativeAmount(
-                        currency,
-                        paymentGroups[currency],
-                        chainId
-                    );
                     const token = getTokenContract(signer, currencyAddr);
                     console.log(`calling ${currencyAddr}.transfer(${recipient}, ${amount})`);
 
@@ -374,6 +404,9 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
     }
 
     private translateToNativeAmount(currency: string, amount: BigNumberish, chainId: number) {
+        if (currency === 'eth')
+            return amount;
+
         const precision = getCurrencyPrecision(currency, chainId);
         const adjustmentFactor = Math.pow(10, precision.native - precision.db);
         const nativeAmount = BigInt(amount) * BigInt(adjustmentFactor);
