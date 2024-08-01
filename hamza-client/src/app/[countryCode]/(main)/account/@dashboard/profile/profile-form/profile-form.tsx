@@ -6,6 +6,9 @@ import { updateCustomer } from '@lib/data';
 import { getCustomer } from '@lib/data';
 import ProfileImage from './components/profile-image';
 import toast from 'react-hot-toast';
+import ProfileCurrency from '@modules/account/components/profile-currency';
+import { setCurrency } from '@lib/data';
+import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
 const ProfileForm = () => {
     // Todo: disable submiting if fields have not been changed
@@ -15,6 +18,9 @@ const ProfileForm = () => {
     const [lastNameValue, setLastNameValue] = useState<string>('');
     const [emailValue, setEmailValue] = useState<string>('');
     const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+    const [customerId, setCustomerId] = useState<string>('');
+    const { preferred_currency_code, setCustomerPreferredCurrency } =
+        useCustomerAuthStore();
     // Hooks Avatar
     const [avatarFirstName, setAvatarFirstName] = useState<string>('');
     const [avatarLastName, setAvatarLastName] = useState<string>('');
@@ -31,6 +37,7 @@ const ProfileForm = () => {
                     setLastNameValue(customer.last_name);
                     setAvatarFirstName(customer.first_name);
                     setAvatarLastName(customer.last_name);
+                    setCustomerId(customer.id);
                     setEmailValue(
                         customer.email.includes('@evm.blockchain')
                             ? ''
@@ -57,6 +64,9 @@ const ProfileForm = () => {
                 ...(emailValue && { email: emailValue }),
             };
             await updateCustomer(updatedCustomer);
+            if (preferred_currency_code) {
+                await setCurrency(preferred_currency_code, customerId);
+            }
             setIsSubmitted((prev) => !prev); // Toggle the state to trigger useEffect
             toast.success('Profile updated successfully');
         } catch (error) {
@@ -66,7 +76,6 @@ const ProfileForm = () => {
 
     return (
         <Flex
-            mt={'2rem'}
             flexDirection={'column'}
             maxW={'858px'}
             width={'100%'}
@@ -100,24 +109,27 @@ const ProfileForm = () => {
                 />
             </Flex>
 
-            {/* Email input */}
-            {emailValue?.length > 0 &&
-                <>
-                    <Text
-                        fontSize={'18px'}
-                        fontWeight={600}
-                        color={'primary.indigo.900'}
-                    >
-                        Email
-                    </Text>
-                    <Text
-                        fontSize={'16px'}
-                        fontWeight={600}
-                    >
-                        {emailValue}
-                    </Text>
-                </>
-            }
+            <Flex gap={'15px'}>
+                <ProfileCurrency
+                    preferred_currency_code={preferred_currency_code}
+                    setCustomerPreferredCurrency={setCustomerPreferredCurrency}
+                />
+                {/* Email input */}
+                {emailValue?.length > 0 && (
+                    <>
+                        <Text
+                            fontSize={'18px'}
+                            fontWeight={600}
+                            color={'primary.indigo.900'}
+                        >
+                            Email
+                        </Text>
+                        <Text fontSize={'16px'} fontWeight={600}>
+                            {emailValue}
+                        </Text>
+                    </>
+                )}
+            </Flex>
 
             <Button
                 mt="1rem"
