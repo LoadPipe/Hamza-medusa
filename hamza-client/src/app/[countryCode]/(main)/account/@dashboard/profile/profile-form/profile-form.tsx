@@ -64,7 +64,9 @@ const ProfileForm = () => {
                 ...(emailValue && { email: emailValue }),
             };
             await updateCustomer(updatedCustomer);
-            await setCurrency(preferred_currency_code, customerId);
+            if (preferred_currency_code) {
+                await setCurrency(preferred_currency_code, customerId);
+            }
             setIsSubmitted((prev) => !prev); // Toggle the state to trigger useEffect
             toast.success('Profile updated successfully');
         } catch (error) {
