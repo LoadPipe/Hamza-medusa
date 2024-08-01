@@ -64,7 +64,7 @@ const ProductReview = ({ productId }: { productId: string }) => {
         if (res) {
             if (res.length < 2) {
                 console.log('setting ', [
-                    ...fakeReviews,
+                    //...fakeReviews,
                     ...res.map((a: any) => {
                         return {
                             id: a.id,
@@ -78,7 +78,7 @@ const ProductReview = ({ productId }: { productId: string }) => {
                     }),
                 ]);
                 setReviews([
-                    ...fakeReviews,
+                    //...fakeReviews,
                     ...res.map((a: any) => {
                         return {
                             id: a.id,

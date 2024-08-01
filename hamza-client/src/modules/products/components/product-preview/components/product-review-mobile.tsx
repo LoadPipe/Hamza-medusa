@@ -35,7 +35,7 @@ const ProductReviewMobile = ({ productId }: { productId: string }) => {
         if (res) {
             if (res.length < 2) {
                 setReviews([
-                    ...fakeReviews,
+                    //...fakeReviews,
                     ...res.map((a: any) => {
                         return {
                             id: a.id,
