@@ -25,34 +25,6 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         }
         res.json({ success: true, message: 'Authentication successful' });
     });
-
-
-    /*
-    logger.debug(
-        `Received for verification: ${{
-            signature,
-            message,
-        }}`
-    );
-
-    try {
-        const isVerified = await customerService.verifyWalletSignature(
-            signature,
-            message
-        );
-        logger.debug('Verification result:' + isVerified);
-
-        if (!isVerified) {
-            return res
-                .status(401)
-                .json({ success: false, message: 'Authentication failed' });
-        }
-        res.json({ success: true, message: 'Authentication successful' });
-    } catch (error) {
-        logger.error('Error verifying wallet signature', error);
-        return res.status(500).json({ message: 'Internal server error' });
-    }
-    */
 };
 
 //TODO: is this GET route used?
