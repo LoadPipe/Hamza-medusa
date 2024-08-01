@@ -282,6 +282,9 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
     ): Promise<WalletPaymentResponse> {
         console.log('DirectWalletPaymentHandler.doWalletPayment');
         const recipient: string = getContractAddress('dao', chainId);
+        const amount = data.orders[0].amount;
+        console.log('dao address is ', recipient);
+        console.log('amount is', amount);
 
         const paymentGroups = this.createPaymentGroups(data, chainId);
         let transaction_id = '';
