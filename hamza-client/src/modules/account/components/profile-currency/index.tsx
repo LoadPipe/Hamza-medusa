@@ -1,16 +1,7 @@
 'use client';
 
 import React from 'react';
-import {
-    Flex,
-    FormLabel,
-    Select,
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuItem,
-} from '@chakra-ui/react';
-import { ChevronDownIcon } from '@chakra-ui/icons';
+import { Flex, FormLabel, Select } from '@chakra-ui/react';
 
 type ProfileCurrencyProps = {
     preferred_currency_code: string | null;
