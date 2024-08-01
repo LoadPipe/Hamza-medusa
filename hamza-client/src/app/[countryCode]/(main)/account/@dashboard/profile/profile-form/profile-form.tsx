@@ -76,7 +76,6 @@ const ProfileForm = () => {
 
     return (
         <Flex
-            mt={'2rem'}
             flexDirection={'column'}
             maxW={'858px'}
             width={'100%'}
