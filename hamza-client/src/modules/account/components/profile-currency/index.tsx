@@ -1,7 +1,16 @@
 'use client';
 
 import React from 'react';
-import { Select } from '@chakra-ui/react';
+import {
+    Flex,
+    FormLabel,
+    Select,
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+} from '@chakra-ui/react';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 
 type ProfileCurrencyProps = {
     preferred_currency_code: string | null;
@@ -20,11 +29,20 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
     };
 
     return (
-        <div className="currency-dropdown grid grid-cols-2 gap-x-4">
-            <label htmlFor="currency-select">Preferred payment currency:</label>
+        <Flex flexDirection={'column'} maxW={'420px'} width={'100%'}>
+            <FormLabel
+                textTransform={'uppercase'}
+                fontSize={'12px'}
+                pl="1rem"
+                mb={'8px'}
+            >
+                Preferred payment currency
+            </FormLabel>
             <Select
-                className="bg-black"
-                id="currency-select"
+                borderRadius={'12px'}
+                height={'52px'}
+                backgroundColor={'#020202'}
+                border={'none'}
                 value={preferred_currency_code!}
                 onChange={handleCurrencyChange}
                 color={'white'}
@@ -48,7 +66,7 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
                     ETH
                 </option>
             </Select>
-        </div>
+        </Flex>
     );
 };
 

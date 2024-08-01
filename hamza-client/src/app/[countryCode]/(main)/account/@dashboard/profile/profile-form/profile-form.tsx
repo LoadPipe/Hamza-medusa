@@ -110,26 +110,27 @@ const ProfileForm = () => {
                 />
             </Flex>
 
-            <ProfileCurrency
-                preferred_currency_code={preferred_currency_code}
-                setCustomerPreferredCurrency={setCustomerPreferredCurrency}
-            />
-
-            {/* Email input */}
-            {emailValue?.length > 0 && (
-                <>
-                    <Text
-                        fontSize={'18px'}
-                        fontWeight={600}
-                        color={'primary.indigo.900'}
-                    >
-                        Email
-                    </Text>
-                    <Text fontSize={'16px'} fontWeight={600}>
-                        {emailValue}
-                    </Text>
-                </>
-            )}
+            <Flex gap={'15px'}>
+                <ProfileCurrency
+                    preferred_currency_code={preferred_currency_code}
+                    setCustomerPreferredCurrency={setCustomerPreferredCurrency}
+                />
+                {/* Email input */}
+                {emailValue?.length > 0 && (
+                    <>
+                        <Text
+                            fontSize={'18px'}
+                            fontWeight={600}
+                            color={'primary.indigo.900'}
+                        >
+                            Email
+                        </Text>
+                        <Text fontSize={'16px'} fontWeight={600}>
+                            {emailValue}
+                        </Text>
+                    </>
+                )}
+            </Flex>
 
             <Button
                 mt="1rem"
