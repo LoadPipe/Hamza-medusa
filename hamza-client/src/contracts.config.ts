@@ -3,11 +3,15 @@ interface Currency {
     precision: number;
 }
 
+/*
+Mainnet eth:0x20823791a73f283d20B1cde299E738D5783499d8
+Optimism: 0x214bef460Fda073a328aD02371C48E69Bd13442B'
+*/
+
 const chainConfig: any = {
     11155111: {
         chain_name: 'sepolia',
         master_switch: {
-            //address: '0x0Ac64d6d09bB3B7ab6999f9BE3b9f017220fb1e9',
             address: '0x74b7284836F753101bD683C3843e95813b381f18',
         },
         massmarket_payment: {
@@ -15,6 +19,9 @@ const chainConfig: any = {
         },
         lite_switch: {
             address: '0x671C78C756d67F972AE254B92174818148A8B405'
+        },
+        dao: {
+            address: '0x8bA35513C3F5ac659907D222e3DaB38b20f8F52A'
         }
     },
     11155420: {
@@ -27,6 +34,9 @@ const chainConfig: any = {
         },
         lite_switch: {
             address: '0x0'
+        },
+        dao: {
+            address: '0x8bA35513C3F5ac659907D222e3DaB38b20f8F52A'
         }
     },
     1: {
@@ -39,6 +49,9 @@ const chainConfig: any = {
         },
         lite_switch: {
             address: '0x0'
+        },
+        dao: {
+            address: '0x20823791a73f283d20B1cde299E738D5783499d8'
         }
     },
     10: {
@@ -51,6 +64,9 @@ const chainConfig: any = {
         },
         lite_switch: {
             address: '0x0'
+        },
+        dao: {
+            address: '0x214bef460Fda073a328aD02371C48E69Bd13442B'
         }
     },
 };
