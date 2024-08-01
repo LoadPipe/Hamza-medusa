@@ -196,7 +196,7 @@
                     "prices": [
                         {
                             "currency_code": "eth",
-                            "amount": 270
+                            "amount": 3200
                         },
                         {
                             "currency_code": "usdc",
