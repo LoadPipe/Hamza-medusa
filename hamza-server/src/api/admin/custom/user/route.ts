@@ -13,7 +13,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         req, res, 'GET', '/admin/custom/user'
     );
 
-    if (Config.dataSeed != 'alt1') {
+    if (Config.dataSeed == 'alt1') {
         await handler.handle(async () => {
             const user0 = await userService.create(
                 {
@@ -27,9 +27,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
             const user9 = await userService.create(
                 {
-                    email: 'jern@javels.com',
-                    first_name: 'Jern',
-                    last_name: 'Javels',
+                    email: 'support@hamza.biz',
+                    first_name: 'Hamza',
+                    last_name: 'Official Shop',
                     wallet_address: '0x4fBCF49cC0f91d66Bc5bBbE931913D8709592012',
                 },
                 'password'
@@ -37,8 +37,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
             const store9 = await storeService.createStore(
                 user9,
-                'Legendary Light Design',
-                'pcol_lighting',
+                'Hamza Official',
+                'pcol_01HRVF8HCVY8B00RF5S54THTPC',
                 'https://images.hamza.biz/Legendary/mood/LLD_mood1.webp'
             );
 
