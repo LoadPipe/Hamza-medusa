@@ -28,7 +28,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
     useEffect(() => {
         console.log('Orders received in Processing:', orders);
         if (orders && orders.length > 0) {
-            const customer_id = orders[0].customer_id;
+            const customer_id = orders[0]?.customer_id;
             console.log(
                 `Running fetchAllOrders with customerID ${customer_id}`
             );
