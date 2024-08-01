@@ -22,9 +22,12 @@ const FilterBar = () => {
         setStartIdx(nextIndex);
     };
 
-    const visibleVendors = vendors
+    let visibleVendors = vendors
         .slice(startIdx, startIdx + 6)
         .concat(vendors.slice(0, Math.max(0, 6 - (vendors.length - startIdx))));
+
+    if (vendors.length == 1)
+        visibleVendors = [visibleVendors[0]]
 
     return (
         <Flex
