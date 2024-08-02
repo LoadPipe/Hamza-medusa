@@ -134,7 +134,6 @@ export const SwitchNetwork = ({ enabled }: Props) => {
 
     const setSwitchNetwork = () => {
         let allowed = getAllowedChainsFromConfig()[0];
-        console.log('ALLOWED CHAIN: ', allowed);
         setPreferredChainID(allowed);
         setPreferredChainName(getChainName(allowed));
     };
@@ -145,7 +144,8 @@ export const SwitchNetwork = ({ enabled }: Props) => {
             if (walletClient && enabled) {
                 try {
                     const chainId = await walletClient.getChainId();
-                    console.log('actual chain id is ', chainId);
+                    console.log(`connected chain id is ${chainId}, preferred chain is ${preferredChainID}`);
+
                     if (chainId === preferredChainID) {
                         setOpenModal(false);
                     } else {
