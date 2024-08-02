@@ -11,7 +11,7 @@ const enableSwitch: boolean =
 const HeroBanner = () => {
     return (
         <>
-            <SwitchNetwork enabled={true} />
+            <SwitchNetwork />
             <Flex
                 mt="2rem"
                 justifyContent={'center'}

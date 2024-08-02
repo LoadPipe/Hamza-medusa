@@ -11,7 +11,12 @@ import {
     metaMaskWallet,
     walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
-import { configureChains, createConfig, useWalletClient } from 'wagmi';
+import {
+    configureChains,
+    createConfig,
+    useAccount,
+    useWalletClient,
+} from 'wagmi';
 import {
     mainnet,
     optimismSepolia,
@@ -92,7 +97,13 @@ export function getAllowedChainsFromConfig() {
     return split;
 }
 
-export const SwitchNetwork = ({ enabled }: SwitchNetworkProps) => {
+export const SwitchNetwork = () => {
+    // Modal Hook
+    const [openModal, setOpenModal] = useState(false);
+    // Wagmi Hooks
+    const { isConnected } = useAccount();
+    const { data: walletClient, isError } = useWalletClient();
+
     const { chain } = useNetwork();
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
@@ -103,74 +114,74 @@ export const SwitchNetwork = ({ enabled }: SwitchNetworkProps) => {
     const requiredChains = getAllowedChainsFromConfig();
 
     useEffect(() => {
-        onOpen();
-    }, [onOpen]);
-
-    useEffect(() => {
-        if (enabled) {
-            if (chain && requiredChains.includes(chain.id)) {
-                onClose();
-            } else {
-                onOpen();
+        const fetchChainId = async () => {
+            if (walletClient) {
+                try {
+                    const chainId = await walletClient.getChainId();
+                    if (chainId === 11155111) {
+                        setOpenModal(false);
+                    } else {
+                        setOpenModal(true);
+                    }
+                } catch (error) {
+                    console.error('Error fetching chain ID:', error);
+                }
             }
-        }
-    }, [chain, onClose, onOpen, requiredChains]);
+        };
+        fetchChainId();
+    }, [walletClient]);
 
-    if (enabled) {
-        return (
-            <Modal isOpen={isOpen} onClose={() => {}}>
-                <ModalOverlay />
-                <ModalContent
-                    alignItems={'center'}
-                    borderRadius={'16px'}
-                    backgroundColor={'#121212'}
-                    border={'1px'}
-                    borderColor={'white'}
-                >
-                    <ModalBody width={'100%'} py="1.5rem">
-                        <Flex
-                            flexDirection={'column'}
-                            gap={'16px'}
-                            alignItems={'center'}
+    return (
+        <Modal isOpen={openModal} onClose={() => {}}>
+            <ModalOverlay />
+            <ModalContent
+                alignItems={'center'}
+                borderRadius={'16px'}
+                backgroundColor={'#121212'}
+                border={'1px'}
+                borderColor={'white'}
+            >
+                <ModalBody width={'100%'} py="1.5rem">
+                    <Flex
+                        flexDirection={'column'}
+                        gap={'16px'}
+                        alignItems={'center'}
+                    >
+                        <Text
+                            fontSize={'2rem'}
+                            color={'white'}
+                            fontWeight={300}
                         >
-                            <Text
-                                fontSize={'2rem'}
-                                color={'white'}
-                                fontWeight={300}
-                            >
-                                Unsupported Network
-                            </Text>
-                            <Text color={'white'}>
-                                Hamza currently only supports Sepolia. Switch to
-                                Sepolia to continue using Hamza
-                            </Text>
-                            <Button
-                                backgroundColor={'primary.indigo.900'}
-                                color={'white'}
-                                height={'38px'}
-                                borderRadius={'full'}
-                                width="100%"
-                                disabled={!switchNetwork || isLoading}
-                                onClick={() =>
-                                    switchNetwork
-                                        ? switchNetwork(11155111)
-                                        : voidFunction()
-                                }
-                            >
-                                Switch to Sepolia
-                            </Button>
-                        </Flex>
-                        {error && <p>Error: {error.message}</p>}
-                        {isLoading && pendingChainId && (
-                            <p>Switching to chain ID {pendingChainId}...</p>
-                        )}
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
-        );
-    } else {
-        return <></>;
-    }
+                            Unsupported Network
+                        </Text>
+                        <Text color={'white'}>
+                            Hamza currently only supports Sepolia. Switch to
+                            Sepolia to continue using Hamza
+                        </Text>
+                        <Button
+                            backgroundColor={'primary.indigo.900'}
+                            color={'white'}
+                            height={'38px'}
+                            borderRadius={'full'}
+                            width="100%"
+                            disabled={!switchNetwork || isLoading}
+                            onClick={() =>
+                                switchNetwork
+                                    ? switchNetwork(11155111)
+                                    : voidFunction()
+                            }
+                        >
+                            Switch to Sepolia
+                        </Button>
+                    </Flex>
+                    {error && <p>Error: {error.message}</p>}
+                    {isLoading && pendingChainId && (
+                        <p>Switching to chain ID {pendingChainId}...</p>
+                    )}
+                </ModalBody>
+            </ModalContent>
+        </Modal>
+    );
 };
 // const { connectors } = getDefaultWallets({
 //     appName: 'op_sep',
