@@ -77,6 +77,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
 
     const handleReviewEdit = (review) => {
         setSelectedReview(review);
+        console.log(`selected review modal`);
         onOpen();
     };
 

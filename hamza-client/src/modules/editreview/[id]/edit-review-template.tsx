@@ -27,6 +27,7 @@ const EditReviewTemplate = ({ review, isOpen, onClose }) => {
     useEffect(() => {
         // No need to fetch details if they are already passed as props
         console.log(`Review issss?D: ${JSON.stringify(review)}`);
+        setRating(review.rating);
     }, [review]);
 
     const submitReview = async () => {
@@ -63,6 +64,13 @@ const EditReviewTemplate = ({ review, isOpen, onClose }) => {
         'Delighted',
     ];
 
+    // Modifying this ternary is very easy, probably should do that, but
+    // first we need to find out wtf is going on with this `Update Review` button
+    // why does the star MAPPING keep showing 4/5 stars, how is it being passed/?????
+    // FOUND IT, ok....
+    /**
+     * 1. The Star is ONLY being updated on page RENDER!
+     * **/
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
@@ -92,7 +100,7 @@ const EditReviewTemplate = ({ review, isOpen, onClose }) => {
                             </Box>
                             <Box>
                                 <Box className="flex items-center mb-2">
-                                    {[1, 2, 3, 4, 5].map((star) => (
+                                    {[1, 2, 3, 4, 5].map((star: number) => (
                                         <Button
                                             key={star}
                                             size="lg"
