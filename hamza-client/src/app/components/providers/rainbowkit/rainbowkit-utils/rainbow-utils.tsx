@@ -129,9 +129,10 @@ export const SwitchNetwork = () => {
     }, [walletClient]);
 
     return (
-        <Modal isOpen={openModal} onClose={() => {}}>
+        <Modal isOpen={openModal} onClose={() => {}} isCentered>
             <ModalOverlay />
             <ModalContent
+                justifyContent={'center'}
                 alignItems={'center'}
                 borderRadius={'16px'}
                 backgroundColor={'#121212'}
@@ -162,6 +163,13 @@ export const SwitchNetwork = () => {
                             borderRadius={'full'}
                             width="100%"
                             disabled={!switchNetwork || isLoading}
+                            _hover={{
+                                backgroundColor: 'primary.indigo.800',
+                                transition: 'background-color 0.3s ease-in-out',
+                            }}
+                            _focus={{
+                                boxShadow: 'none',
+                            }}
                             onClick={() =>
                                 switchNetwork
                                     ? switchNetwork(11155111)
