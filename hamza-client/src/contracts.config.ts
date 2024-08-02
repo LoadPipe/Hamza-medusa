@@ -3,11 +3,6 @@ interface Currency {
     precision: number;
 }
 
-/*
-Mainnet eth:0x20823791a73f283d20B1cde299E738D5783499d8
-Optimism: 0x214bef460Fda073a328aD02371C48E69Bd13442B'
-*/
-
 const chainConfig: any = {
     11155111: {
         chain_name: 'sepolia',
