@@ -453,7 +453,8 @@ export default class OrderService extends MedusaOrderService {
     }
 
     async getNotReviewedOrders(customer_id: string) {
-        const notReviewedOrders = await this.orderRepository_
+        const orderRepository = this.activeManager_.getRepository(Order);
+        const notReviewedOrders = await orderRepository
             .createQueryBuilder('order')
             .leftJoinAndSelect('order.products', 'product')
             .leftJoinAndSelect('order.store', 'store')

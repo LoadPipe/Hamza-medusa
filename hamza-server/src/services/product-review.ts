@@ -3,6 +3,7 @@ import { Lifetime } from 'awilix';
 import { ProductReviewRepository } from '../repositories/product-review';
 import { ProductReview } from '../models/product-review';
 import { Order } from '../models/order';
+import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import { Customer } from '../models/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import { Product } from '../models/product';
@@ -12,12 +13,14 @@ class ProductReviewService extends TransactionBaseService {
     static LIFE_TIME = Lifetime.SCOPED;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly productReviewRepository_: typeof ProductReviewRepository;
+    protected readonly orderRepository_: typeof OrderRepository;
     protected readonly logger: Logger;
 
     constructor(container) {
         super(container);
         this.productVariantRepository_ = container.productVariantRepository;
         this.productReviewRepository_ = container.productReviewRepository;
+        this.orderRepository_ = container.orderRepository;
         this.logger = container.logger;
     }
 
@@ -90,6 +93,46 @@ class ProductReviewService extends TransactionBaseService {
         }
 
         return false;
+    }
+
+    // Order has no relations to product ...
+
+    /*
+    TODO: ACTION: GET all product ORDERS that have NO reviews
+    * */
+    async getNotReviewedOrders(customer_id: string) {
+        const orderRepository = this.activeManager_.getRepository(Order);
+        const notReviewedOrders = await orderRepository
+            .createQueryBuilder('order')
+            .leftJoinAndSelect('order.products', 'product')
+            .leftJoinAndSelect('order.store', 'store')
+            .leftJoin(
+                'order.reviews',
+                'review',
+                'review.customer_id = :customer_id',
+                { customer_id }
+            )
+            .select([
+                'order.id',
+                'order.status',
+                'product.thumbnail',
+                // 'store.icon',
+            ])
+            .where('order.customer_id = :customer_id', { customer_id })
+            .andWhere('review.id IS NULL') // Ensures that the order has no reviews
+            .andWhere('order.status != :status', { status: 'archived' })
+            .getMany();
+
+        if (!notReviewedOrders || notReviewedOrders.length === 0) {
+            throw new Error('No unreviewed orders found');
+        }
+
+        return notReviewedOrders.map((order) => ({
+            order_id: order.id,
+            status: order.status,
+            // store_logo: order.store.icon,
+            // thumbnails: order.products.map((product) => product.thumbnail), // Assuming multiple products can be in one order
+        }));
     }
 
     async getSpecificReview(order_id: string, product_id: string) {
