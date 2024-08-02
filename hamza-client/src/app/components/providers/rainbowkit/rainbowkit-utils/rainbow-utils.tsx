@@ -177,7 +177,7 @@ export const SwitchNetwork = () => {
                                     : voidFunction()
                             }
                         >
-                            Switch to Sepolia
+                            Switch to Optimism
                         </Button>
                     </Flex>
                     {/* {error && <p>Error: {error.message}</p>}
