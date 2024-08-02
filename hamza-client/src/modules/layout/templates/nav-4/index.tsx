@@ -28,6 +28,7 @@ export default async function Nav() {
             backgroundColor={'#020202'}
         >
             <MobileNav />
+
             <Flex
                 display={{ base: 'none', md: 'flex' }}
                 h={'87px'}
