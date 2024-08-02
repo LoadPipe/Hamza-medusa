@@ -161,6 +161,7 @@ export const SwitchNetwork = () => {
                             height={'38px'}
                             borderRadius={'full'}
                             width="100%"
+                            disabled={!switchNetwork || isLoading}
                             onClick={() =>
                                 switchNetwork
                                     ? switchNetwork(11155111)
