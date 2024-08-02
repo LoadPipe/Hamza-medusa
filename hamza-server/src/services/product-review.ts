@@ -100,26 +100,35 @@ class ProductReviewService extends TransactionBaseService {
     /*
     TODO: ACTION: GET all product ORDERS that have NO reviews
     * */
+    // const notReviewedOrders = await orderRepository
+    //     .createQueryBuilder('order')
+    //     .leftJoinAndSelect('order.products', 'product')
+    //     .leftJoinAndSelect('order.store', 'store')
+    //     .leftJoin(
+    //         'order.reviews',
+    //         'review',
+    //         'review.customer_id = :customer_id',
+    //         { customer_id }
+    //     )
+    //     .select([
+    //         'order.id',
+    //         'order.status',
+    //         'product.thumbnail',
+    //         // 'store.icon',
+    //     ])
+    //     .where('order.customer_id = :customer_id', { customer_id })
+    //     .andWhere('review.id IS NULL') // Ensures that the order has no reviews
+    //     .andWhere('order.status != :status', { status: 'archived' })
+    //     .getMany();
+    // TODO: We're getting all the NON Archived orders here, next step is to use this list and IF order_id not in product_review table, RETURN IT... this will get the non reviewed orders...
     async getNotReviewedOrders(customer_id: string) {
         const orderRepository = this.activeManager_.getRepository(Order);
+        const productReviewRepository =
+            this.activeManager_.getRepository(ProductReview);
         const notReviewedOrders = await orderRepository
             .createQueryBuilder('order')
-            .leftJoinAndSelect('order.products', 'product')
-            .leftJoinAndSelect('order.store', 'store')
-            .leftJoin(
-                'order.reviews',
-                'review',
-                'review.customer_id = :customer_id',
-                { customer_id }
-            )
-            .select([
-                'order.id',
-                'order.status',
-                'product.thumbnail',
-                // 'store.icon',
-            ])
+            .select(['order.id', 'order.status'])
             .where('order.customer_id = :customer_id', { customer_id })
-            .andWhere('review.id IS NULL') // Ensures that the order has no reviews
             .andWhere('order.status != :status', { status: 'archived' })
             .getMany();
 
@@ -127,11 +136,23 @@ class ProductReviewService extends TransactionBaseService {
             throw new Error('No unreviewed orders found');
         }
 
+        // TODO: return all order_id's
+        const reviews = await productReviewRepository
+            .createQueryBuilder('review')
+            .select([
+                'review.order_id', // Assuming you want the review's ID; add other review fields as needed
+            ])
+            .where('review.customer_id = :customer_id', { customer_id })
+            .getMany();
+
+        console.log(`Reviews order_id's ${JSON.stringify(reviews)}`);
+
+        const notReviewedArray = notReviewedOrders.map((order) => ({
+            order_id: order.id,
+        }));
+
         return notReviewedOrders.map((order) => ({
             order_id: order.id,
-            status: order.status,
-            // store_logo: order.store.icon,
-            // thumbnails: order.products.map((product) => product.thumbnail), // Assuming multiple products can be in one order
         }));
     }
 
