@@ -169,6 +169,7 @@ export const SwitchNetwork = () => {
                             }}
                             _focus={{
                                 boxShadow: 'none',
+                                outline: 'none',
                             }}
                             onClick={() =>
                                 switchNetwork
