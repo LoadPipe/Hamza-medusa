@@ -50,7 +50,7 @@ const chainConfig: any = {
             address: '0x0',
         },
         lite_switch: {
-            address: '0x0'
+            address: '0xa8866FF28D26cdf312e5C902e8BFDbCf663a36ce'
         }
     },
 };
