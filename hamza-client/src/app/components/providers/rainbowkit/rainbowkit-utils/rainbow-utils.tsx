@@ -107,7 +107,7 @@ export const SwitchNetwork = () => {
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
 
-    const voidFunction = () => {};
+    const voidFunction = () => { };
 
     useEffect(() => {
         const fetchChainId = async () => {
@@ -129,7 +129,7 @@ export const SwitchNetwork = () => {
     }, [walletClient]);
 
     return (
-        <Modal isOpen={openModal} onClose={() => {}} isCentered>
+        <Modal isOpen={openModal} onClose={() => { }} isCentered>
             <ModalOverlay />
             <ModalContent
                 justifyContent={'center'}
@@ -153,8 +153,8 @@ export const SwitchNetwork = () => {
                             Unsupported Network
                         </Text>
                         <Text color={'white'}>
-                            Hamza currently only supports Sepolia. Switch to
-                            Sepolia to continue using Hamza
+                            Hamza currently only supports Optimism. Switch to
+                            Optimism to continue using Hamza
                         </Text>
                         <Button
                             backgroundColor={'primary.indigo.900'}
@@ -173,7 +173,7 @@ export const SwitchNetwork = () => {
                             }}
                             onClick={() =>
                                 switchNetwork
-                                    ? switchNetwork(11155111)
+                                    ? switchNetwork(parseInt(process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS || '11155111'))
                                     : voidFunction()
                             }
                         >
@@ -186,7 +186,7 @@ export const SwitchNetwork = () => {
                     )} */}
                 </ModalBody>
             </ModalContent>
-        </Modal>
+        </Modal >
     );
 };
 // const { connectors } = getDefaultWallets({
