@@ -11,7 +11,7 @@ import {
     metaMaskWallet,
     walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
-import { configureChains, createConfig } from 'wagmi';
+import { configureChains, createConfig, useWalletClient } from 'wagmi';
 import {
     mainnet,
     optimismSepolia,
@@ -26,6 +26,8 @@ import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import {
+    Box,
+    Flex,
     Button,
     Modal,
     ModalOverlay,
@@ -33,6 +35,7 @@ import {
     ModalHeader,
     ModalBody,
     useDisclosure,
+    Text,
 } from '@chakra-ui/react';
 // import sepoliaImage from '../../../../../../public/images/sepolia/sepolia.webp';
 
@@ -81,12 +84,11 @@ type SwitchNetworkProps = {
 
 export function getAllowedChainsFromConfig() {
     let chains = process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS;
-    if (!chains?.length)
-        chains = '1'; ///default to mainnet
+    if (!chains?.length) chains = '1'; ///default to mainnet
 
     const split: any[] = chains.split(',');
-    split.forEach((v, i) => split[i] = parseInt(v.trim()));
-    console.log("allowed blockchains: ", split);
+    split.forEach((v, i) => (split[i] = parseInt(v.trim())));
+    console.log('allowed blockchains: ', split);
     return split;
 }
 
@@ -96,7 +98,7 @@ export const SwitchNetwork = ({ enabled }: SwitchNetworkProps) => {
         useSwitchNetwork();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const voidFunction = () => { };
+    const voidFunction = () => {};
 
     const requiredChains = getAllowedChainsFromConfig();
 
@@ -116,22 +118,48 @@ export const SwitchNetwork = ({ enabled }: SwitchNetworkProps) => {
 
     if (enabled) {
         return (
-            <Modal isOpen={isOpen} onClose={() => { }}>
+            <Modal isOpen={isOpen} onClose={() => {}}>
                 <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>Switch Network</ModalHeader>
-                    <ModalBody>
-                        <p>The currently selected chain is not supported!</p>
-                        <Button
-                            disabled={!switchNetwork || isLoading}
-                            onClick={() =>
-                                switchNetwork
-                                    ? switchNetwork(11155111)
-                                    : voidFunction()
-                            }
+                <ModalContent
+                    alignItems={'center'}
+                    borderRadius={'16px'}
+                    backgroundColor={'#121212'}
+                    border={'1px'}
+                    borderColor={'white'}
+                >
+                    <ModalBody width={'100%'} py="1.5rem">
+                        <Flex
+                            flexDirection={'column'}
+                            gap={'16px'}
+                            alignItems={'center'}
                         >
-                            Switch to Sepolia testnet
-                        </Button>
+                            <Text
+                                fontSize={'2rem'}
+                                color={'white'}
+                                fontWeight={300}
+                            >
+                                Unsupported Network
+                            </Text>
+                            <Text color={'white'}>
+                                Hamza currently only supports Sepolia. Switch to
+                                Sepolia to continue using Hamza
+                            </Text>
+                            <Button
+                                backgroundColor={'primary.indigo.900'}
+                                color={'white'}
+                                height={'38px'}
+                                borderRadius={'full'}
+                                width="100%"
+                                disabled={!switchNetwork || isLoading}
+                                onClick={() =>
+                                    switchNetwork
+                                        ? switchNetwork(11155111)
+                                        : voidFunction()
+                                }
+                            >
+                                Switch to Sepolia
+                            </Button>
+                        </Flex>
                         {error && <p>Error: {error.message}</p>}
                         {isLoading && pendingChainId && (
                             <p>Switching to chain ID {pendingChainId}...</p>
