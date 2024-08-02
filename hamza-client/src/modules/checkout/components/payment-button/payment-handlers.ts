@@ -271,9 +271,6 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
     }
 
     private translateToNativeAmount(currency: string, amount: BigNumberish, chainId: number) {
-        if (currency === 'eth')
-            return amount;
-
         const precision = getCurrencyPrecision(currency, chainId);
         const adjustmentFactor = Math.pow(10, precision.native - precision.db);
         const nativeAmount = BigInt(amount) * BigInt(adjustmentFactor);
@@ -404,8 +401,6 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
     }
 
     private translateToNativeAmount(currency: string, amount: BigNumberish, chainId: number) {
-        if (currency === 'eth')
-            return amount;
 
         const precision = getCurrencyPrecision(currency, chainId);
         const adjustmentFactor = Math.pow(10, precision.native - precision.db);
