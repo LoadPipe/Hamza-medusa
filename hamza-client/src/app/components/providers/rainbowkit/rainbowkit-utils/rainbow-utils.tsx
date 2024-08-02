@@ -101,6 +101,9 @@ export function getAllowedChainsFromConfig() {
 export const SwitchNetwork = () => {
     // Modal Hook
     const [openModal, setOpenModal] = useState(false);
+    const [preferredChainName, setPreferredChainName] = useState('');
+    const [preferredChainID, setPreferredChainID] = useState(0);
+
     // Wagmi Hooks
     const { data: walletClient, isError } = useWalletClient();
     // Env data
@@ -131,15 +134,23 @@ export const SwitchNetwork = () => {
     };
 
     const setSwitchNetwork = () => {
-        if (process.env.NODE_ENV === 'development') {
-            return 11155111; // Sepolia Chain ID
-        } else if (process.env.NODE_ENV === 'production') {
-            return 10; // Optimism Chain ID
+        let environment = process.env.NODE_ENV;
+        console.log('env', environment);
+        if (environment === 'development') {
+            setPreferredChainName('Sepolia');
+            setPreferredChainID(11155111);
+            return;
+        } else if (environment === 'production') {
+            setPreferredChainName('Optimism');
+            setPreferredChainID(10);
+            return;
         }
-        return 10; // Default to Optimism
+        setPreferredChainName('Optimism');
+        setPreferredChainID(10);
     };
 
     useEffect(() => {
+        setSwitchNetwork();
         const fetchChainId = async () => {
             if (walletClient) {
                 try {
@@ -182,8 +193,9 @@ export const SwitchNetwork = () => {
                             Unsupported Network
                         </Text>
                         <Text color={'white'}>
-                            Hamza currently only supports Sepolia. Switch to
-                            Sepolia to continue using Hamza
+                            Hamza currently only supports {preferredChainName}.
+                            Switch to {preferredChainName} to continue using
+                            Hamza
                         </Text>
                         <Button
                             backgroundColor={'primary.indigo.900'}
@@ -202,11 +214,11 @@ export const SwitchNetwork = () => {
                             }}
                             onClick={() =>
                                 switchNetwork
-                                    ? switchNetwork(setSwitchNetwork())
+                                    ? switchNetwork(preferredChainID)
                                     : voidFunction()
                             }
                         >
-                            Switch to Sepolia
+                            Switch to {preferredChainName}
                         </Button>
                     </Flex>
                     {/* {error && <p>Error: {error.message}</p>}
