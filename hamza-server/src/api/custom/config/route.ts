@@ -14,10 +14,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        const checkoutMode = Config.getAllConfigs();
-        if (!checkoutMode) {
-            return res.status(400).send({ message: 'Checkout mode not found' });
+        const cfg = Config.allConfig;
+        if (!cfg) {
+            return res.status(400).send({ message: 'Config not found' });
         }
-        return res.status(200).send(checkoutMode);
+        return res.status(200).send(cfg);
     });
 };

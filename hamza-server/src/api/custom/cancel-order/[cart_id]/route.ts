@@ -2,6 +2,7 @@ import { MedusaRequest, MedusaResponse } from '@medusajs/medusa';
 import OrderService from '../../../../services/order';
 import { RouteHandler } from '../../../route-handler';
 
+//TODO: should be under /order
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     let orderService: OrderService = req.scope.resolve('orderService');
 

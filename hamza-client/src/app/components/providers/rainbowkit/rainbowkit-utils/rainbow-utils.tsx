@@ -93,8 +93,12 @@ export function getAllowedChainsFromConfig() {
     return split;
 }
 
+type Props = {
+    enabled: boolean
+}
+
 // Add NEXT_PUBLIC_ALLOWED_BLOCKCHAINS = 11155111 to env
-export const SwitchNetwork = () => {
+export const SwitchNetwork = ({ enabled }: Props) => {
     // Modal Hook
     const [openModal, setOpenModal] = useState(false);
     const [preferredChainName, setPreferredChainName] = useState('');
@@ -106,51 +110,43 @@ export const SwitchNetwork = () => {
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
 
-    const voidFunction = () => {};
+    const voidFunction = () => { };
 
-    const checkForAllowedChain = (chainId: Number) => {
+    //TODO: move this to a chain config or something
+    const getChainName = (chainId: number) => {
         switch (chainId) {
             case 10:
-                // Optimism
-                return 10;
+                return 'Optimism';
             case 11155111:
                 // Sepolia
-                return 11155111;
+                return 'Sepolia';
             case 11155420:
                 //  Op-Sepolia
-                return 11155420;
+                return 'Op-Sepolia';
             case 1:
                 //  Eth Main
-                return 1;
+                return 'Ethereum Mainnet';
             default:
                 //  Sepolia
-                return 11155111;
+                return 'Unknown';
         }
-    };
+    }
 
     const setSwitchNetwork = () => {
-        let environment = process.env.NODE_ENV;
-        console.log('env', environment);
-        if (environment === 'development') {
-            setPreferredChainName('Sepolia');
-            setPreferredChainID(11155111);
-            return;
-        } else if (environment === 'production') {
-            setPreferredChainName('Optimism');
-            setPreferredChainID(10);
-            return;
-        }
-        setPreferredChainName('Optimism');
-        setPreferredChainID(10);
+        let allowed = getAllowedChainsFromConfig()[0];
+        setPreferredChainID(allowed);
+        setPreferredChainName(getChainName(allowed));
     };
 
     useEffect(() => {
         setSwitchNetwork();
         const fetchChainId = async () => {
-            if (walletClient) {
+            if (walletClient && enabled) {
                 try {
                     const chainId = await walletClient.getChainId();
-                    if (chainId === checkForAllowedChain(chainId)) {
+                    console.log(`connected chain id is ${chainId}, preferred chain is ${preferredChainID}`);
+
+                    if (chainId === preferredChainID) {
                         setOpenModal(false);
                     } else {
                         setOpenModal(true);
@@ -164,7 +160,7 @@ export const SwitchNetwork = () => {
     }, [walletClient]);
 
     return (
-        <Modal isOpen={openModal} onClose={() => {}} isCentered>
+        <Modal isOpen={openModal} onClose={() => { }} isCentered>
             <ModalOverlay />
             <ModalContent
                 justifyContent={'center'}
