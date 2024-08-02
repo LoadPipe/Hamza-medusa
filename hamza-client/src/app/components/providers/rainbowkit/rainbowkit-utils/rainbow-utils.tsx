@@ -93,8 +93,12 @@ export function getAllowedChainsFromConfig() {
     return split;
 }
 
+type Props = {
+    enabled: boolean
+}
+
 // Add NEXT_PUBLIC_ALLOWED_BLOCKCHAINS = 11155111 to env
-export const SwitchNetwork = () => {
+export const SwitchNetwork = ({ enabled }: Props) => {
     // Modal Hook
     const [openModal, setOpenModal] = useState(false);
     const [preferredChainName, setPreferredChainName] = useState('');
@@ -138,7 +142,7 @@ export const SwitchNetwork = () => {
     useEffect(() => {
         setSwitchNetwork();
         const fetchChainId = async () => {
-            if (walletClient) {
+            if (walletClient && enabled) {
                 try {
                     const chainId = await walletClient.getChainId();
                     console.log('actual chain id is ', chainId);
@@ -214,7 +218,7 @@ export const SwitchNetwork = () => {
                     )} */}
                 </ModalBody>
             </ModalContent>
-        </Modal >
+        </Modal>
     );
 };
 // const { connectors } = getDefaultWallets({
