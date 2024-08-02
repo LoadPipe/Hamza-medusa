@@ -101,13 +101,10 @@ export const SwitchNetwork = () => {
     // Modal Hook
     const [openModal, setOpenModal] = useState(false);
     // Wagmi Hooks
-    const { isConnected } = useAccount();
     const { data: walletClient, isError } = useWalletClient();
 
-    const { chain } = useNetwork();
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
-    const { isOpen, onOpen, onClose } = useDisclosure();
 
     const voidFunction = () => {};
 
@@ -174,10 +171,10 @@ export const SwitchNetwork = () => {
                             Switch to Sepolia
                         </Button>
                     </Flex>
-                    {error && <p>Error: {error.message}</p>}
+                    {/* {error && <p>Error: {error.message}</p>}
                     {isLoading && pendingChainId && (
                         <p>Switching to chain ID {pendingChainId}...</p>
-                    )}
+                    )} */}
                 </ModalBody>
             </ModalContent>
         </Modal>
