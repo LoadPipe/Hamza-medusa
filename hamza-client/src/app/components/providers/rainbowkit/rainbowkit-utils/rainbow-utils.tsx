@@ -83,10 +83,6 @@ export const { chains, publicClient, webSocketPublicClient } = configureChains(
     ]
 );
 
-type SwitchNetworkProps = {
-    enabled: boolean;
-};
-
 export function getAllowedChainsFromConfig() {
     let chains = process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS;
     if (!chains?.length) chains = '1'; ///default to mainnet
@@ -101,6 +97,9 @@ export function getAllowedChainsFromConfig() {
 export const SwitchNetwork = () => {
     // Modal Hook
     const [openModal, setOpenModal] = useState(false);
+    const [preferredChainName, setPreferredChainName] = useState('');
+    const [preferredChainID, setPreferredChainID] = useState(0);
+
     // Wagmi Hooks
     const { data: walletClient, isError } = useWalletClient();
 
@@ -109,13 +108,49 @@ export const SwitchNetwork = () => {
 
     const voidFunction = () => { };
 
+    const checkForAllowedChain = (chainId: Number) => {
+        switch (chainId) {
+            case 10:
+                // Optimism
+                return 10;
+            case 11155111:
+                // Sepolia
+                return 11155111;
+            case 11155420:
+                //  Op-Sepolia
+                return 11155420;
+            case 1:
+                //  Eth Main
+                return 1;
+            default:
+                //  Sepolia
+                return 11155111;
+        }
+    };
+
+    const setSwitchNetwork = () => {
+        let environment = process.env.NODE_ENV;
+        console.log('env', environment);
+        if (environment === 'development') {
+            setPreferredChainName('Sepolia');
+            setPreferredChainID(11155111);
+            return;
+        } else if (environment === 'production') {
+            setPreferredChainName('Optimism');
+            setPreferredChainID(10);
+            return;
+        }
+        setPreferredChainName('Optimism');
+        setPreferredChainID(10);
+    };
+
     useEffect(() => {
+        setSwitchNetwork();
         const fetchChainId = async () => {
-            let allowedChain = process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS;
             if (walletClient) {
                 try {
                     const chainId = await walletClient.getChainId();
-                    if (chainId === Number(allowedChain)) {
+                    if (chainId === checkForAllowedChain(chainId)) {
                         setOpenModal(false);
                     } else {
                         setOpenModal(true);
@@ -153,8 +188,9 @@ export const SwitchNetwork = () => {
                             Unsupported Network
                         </Text>
                         <Text color={'white'}>
-                            Hamza currently only supports Optimism. Switch to
-                            Optimism to continue using Hamza
+                            Hamza currently only supports {preferredChainName}.
+                            Switch to {preferredChainName} to continue using
+                            Hamza
                         </Text>
                         <Button
                             backgroundColor={'primary.indigo.900'}
@@ -173,11 +209,11 @@ export const SwitchNetwork = () => {
                             }}
                             onClick={() =>
                                 switchNetwork
-                                    ? switchNetwork(parseInt(process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS || '11155111'))
+                                    ? switchNetwork(preferredChainID)
                                     : voidFunction()
                             }
                         >
-                            Switch to Optimism
+                            Switch to {preferredChainName}
                         </Button>
                     </Flex>
                     {/* {error && <p>Error: {error.message}</p>}
