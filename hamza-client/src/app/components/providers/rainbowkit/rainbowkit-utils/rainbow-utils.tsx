@@ -97,12 +97,12 @@ export function getAllowedChainsFromConfig() {
     return split;
 }
 
+// Add NEXT_PUBLIC_ALLOWED_BLOCKCHAINS = 11155111 to env
 export const SwitchNetwork = () => {
     // Modal Hook
     const [openModal, setOpenModal] = useState(false);
     // Wagmi Hooks
     const { data: walletClient, isError } = useWalletClient();
-    // Add NEXT_PUBLIC_ALLOWED_BLOCKCHAINS = 11155111 to env
 
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
