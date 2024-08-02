@@ -103,7 +103,7 @@ export const SwitchNetwork = () => {
     // Wagmi Hooks
     const { data: walletClient, isError } = useWalletClient();
     // Add NEXT_PUBLIC_ALLOWED_BLOCKCHAINS = 11155111 to env
-    let chains = process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS || 0;
+
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
 
@@ -111,10 +111,11 @@ export const SwitchNetwork = () => {
 
     useEffect(() => {
         const fetchChainId = async () => {
+            let allowedChain = process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS;
             if (walletClient) {
                 try {
                     const chainId = await walletClient.getChainId();
-                    if (chainId === chains) {
+                    if (chainId === Number(allowedChain)) {
                         setOpenModal(false);
                     } else {
                         setOpenModal(true);
