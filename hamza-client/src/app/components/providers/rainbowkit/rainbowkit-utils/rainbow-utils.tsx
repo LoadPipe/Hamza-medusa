@@ -108,40 +108,31 @@ export const SwitchNetwork = () => {
 
     const voidFunction = () => { };
 
-    const checkForAllowedChain = (chainId: Number) => {
+    //TODO: move this to a chain config or something
+    const getChainName = (chainId: number) => {
         switch (chainId) {
             case 10:
-                // Optimism
-                return 10;
+                return 'Optimism';
             case 11155111:
                 // Sepolia
-                return 11155111;
+                return 'Sepolia';
             case 11155420:
                 //  Op-Sepolia
-                return 11155420;
+                return 'Op-Sepolia';
             case 1:
                 //  Eth Main
-                return 1;
+                return 'Ethereum Mainnet';
             default:
                 //  Sepolia
-                return 11155111;
+                return 'Unknown';
         }
-    };
+    }
 
     const setSwitchNetwork = () => {
-        let environment = process.env.NODE_ENV;
-        console.log('env', environment);
-        if (environment === 'development') {
-            setPreferredChainName('Sepolia');
-            setPreferredChainID(11155111);
-            return;
-        } else if (environment === 'production') {
-            setPreferredChainName('Optimism');
-            setPreferredChainID(10);
-            return;
-        }
-        setPreferredChainName('Optimism');
-        setPreferredChainID(10);
+        let allowed = getAllowedChainsFromConfig()[0];
+        console.log('ALLOWED CHAIN: ', allowed);
+        setPreferredChainID(allowed);
+        setPreferredChainName(getChainName(allowed));
     };
 
     useEffect(() => {
@@ -150,7 +141,8 @@ export const SwitchNetwork = () => {
             if (walletClient) {
                 try {
                     const chainId = await walletClient.getChainId();
-                    if (chainId === checkForAllowedChain(chainId)) {
+                    console.log('actual chain id is ', chainId);
+                    if (chainId === preferredChainID) {
                         setOpenModal(false);
                     } else {
                         setOpenModal(true);
