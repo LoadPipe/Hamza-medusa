@@ -103,19 +103,48 @@ export const SwitchNetwork = () => {
     const [openModal, setOpenModal] = useState(false);
     // Wagmi Hooks
     const { data: walletClient, isError } = useWalletClient();
+    // Env data
 
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
 
     const voidFunction = () => {};
 
+    const checkForAllowedChain = (chainId: Number) => {
+        switch (chainId) {
+            case 10:
+                // Optimism
+                return 10;
+            case 11155111:
+                // Sepolia
+                return 11155111;
+            case 11155420:
+                //  Op-Sepolia
+                return 11155420;
+            case 1:
+                //  Eth Main
+                return 1;
+            default:
+                //  Sepolia
+                return 11155111;
+        }
+    };
+
+    const setSwitchNetwork = () => {
+        if (process.env.NODE_ENV === 'development') {
+            return 11155111; // Sepolia Chain ID
+        } else if (process.env.NODE_ENV === 'production') {
+            return 10; // Optimism Chain ID
+        }
+        return 10; // Default to Optimism
+    };
+
     useEffect(() => {
         const fetchChainId = async () => {
-            let allowedChain = process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS;
             if (walletClient) {
                 try {
                     const chainId = await walletClient.getChainId();
-                    if (chainId === Number(allowedChain)) {
+                    if (chainId === checkForAllowedChain(chainId)) {
                         setOpenModal(false);
                     } else {
                         setOpenModal(true);
@@ -173,7 +202,7 @@ export const SwitchNetwork = () => {
                             }}
                             onClick={() =>
                                 switchNetwork
-                                    ? switchNetwork(11155111)
+                                    ? switchNetwork(setSwitchNetwork())
                                     : voidFunction()
                             }
                         >
