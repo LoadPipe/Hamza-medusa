@@ -57,25 +57,26 @@ const ReviewPage = ({ region }: { region: Region }) => {
     const { authData } = useCustomerAuthStore();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [selectedReview, setSelectedReview] = useState(null);
-
+    const fetchReviews = async () => {
+        try {
+            const response = await getAllProductReviews(
+                authData.customer_id as string
+            );
+            setReviews(response);
+            console.log('Reviews:', JSON.stringify(response));
+        } catch (error) {
+            console.error('Error fetching reviews:', error);
+        }
+    };
     useEffect(() => {
+        console.log(`trigger outter GETTER`);
         if (authData.status == 'authenticated') {
-            const fetchReviews = async () => {
-                try {
-                    const response = await getAllProductReviews(
-                        authData.customer_id as string
-                    );
-                    setReviews(response);
-                    console.log('Reviews:', JSON.stringify(response));
-                } catch (error) {
-                    console.error('Error fetching reviews:', error);
-                }
-            };
+            console.log(`trigger AUTHENTICATED GETTER`);
             fetchReviews();
         }
     }, [authData.status]);
 
-    const handleReviewEdit = (review) => {
+    const handleReviewEdit = (review: any) => {
         setSelectedReview(review);
         console.log(`selected review modal`);
         onOpen();
@@ -133,10 +134,6 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                         </Button>
                                     )}
                                 </div>
-                                {/*<Text fontSize="sm">*/}
-                                {/*    Customer ID: {review.customer_id}*/}
-                                {/*</Text>*/}
-                                {/*<Box>{review}</Box>*/}
                                 <Box my={'4'}>
                                     <Text
                                         mb={'2'}
