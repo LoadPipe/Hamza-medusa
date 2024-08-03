@@ -6,6 +6,7 @@ import AccountMenu from '@modules/layout/templates/nav-4/menu/account-menu';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { Cart } from '@medusajs/medusa';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
+import { SwitchNetwork } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 
 //Todo: If chain unsupported?
 export const WalletConnectButton = ({
@@ -43,7 +44,7 @@ export const WalletConnectButton = ({
                                 alignItems={'center'}
                             >
                                 <AccountMenu />
-
+                                <SwitchNetwork enabled={true} />
                                 <Flex alignSelf={'center'} ml="1rem">
                                     <LocalizedClientLink href="/cart">
                                         <Flex

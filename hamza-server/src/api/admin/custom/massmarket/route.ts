@@ -1,6 +1,6 @@
 import { MedusaRequest, MedusaResponse, Logger, Product } from '@medusajs/medusa';
 import { RouteHandler } from '../../../route-handler';
-//import { RelayClientWrapper } from '../../../../massmarket/client';
+import { Config } from '../../../../config';
 
 const productsToIds = {
     //Medusa Merch
@@ -156,14 +156,16 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        const stores = await storeService.getStores();
-        for (let store of stores) {
-            await updateStoreForMM(
-                storeRepository,
-                productService,
-                store.id,
-                store.name
-            );
+        if (Config.dataSeed != 'alt1') {
+            const stores = await storeService.getStores();
+            for (let store of stores) {
+                await updateStoreForMM(
+                    storeRepository,
+                    productService,
+                    store.id,
+                    store.name
+                );
+            }
         }
 
         return res.json({ ok: true });

@@ -11,7 +11,12 @@ import {
     metaMaskWallet,
     walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
-import { configureChains, createConfig } from 'wagmi';
+import {
+    configureChains,
+    createConfig,
+    useAccount,
+    useWalletClient,
+} from 'wagmi';
 import {
     mainnet,
     optimismSepolia,
@@ -26,6 +31,8 @@ import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import {
+    Box,
+    Flex,
     Button,
     Modal,
     ModalOverlay,
@@ -33,6 +40,7 @@ import {
     ModalHeader,
     ModalBody,
     useDisclosure,
+    Text,
 } from '@chakra-ui/react';
 // import sepoliaImage from '../../../../../../public/images/sepolia/sepolia.webp';
 
@@ -75,74 +83,143 @@ export const { chains, publicClient, webSocketPublicClient } = configureChains(
     ]
 );
 
-type SwitchNetworkProps = {
-    enabled: boolean;
-};
-
 export function getAllowedChainsFromConfig() {
     let chains = process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS;
-    if (!chains?.length)
-        chains = '1'; ///default to mainnet
+    if (!chains?.length) chains = '1'; ///default to mainnet
 
     const split: any[] = chains.split(',');
-    split.forEach((v, i) => split[i] = parseInt(v.trim()));
-    console.log("allowed blockchains: ", split);
+    split.forEach((v, i) => (split[i] = parseInt(v.trim())));
+    console.log('allowed blockchains: ', split);
     return split;
 }
 
-export const SwitchNetwork = ({ enabled }: SwitchNetworkProps) => {
-    const { chain } = useNetwork();
+type Props = {
+    enabled: boolean
+}
+
+// Add NEXT_PUBLIC_ALLOWED_BLOCKCHAINS = 11155111 to env
+export const SwitchNetwork = ({ enabled }: Props) => {
+    // Modal Hook
+    const [openModal, setOpenModal] = useState(false);
+    const [preferredChainName, setPreferredChainName] = useState('');
+    const [preferredChainID, setPreferredChainID] = useState(0);
+
+    // Wagmi Hooks
+    const { data: walletClient, isError } = useWalletClient();
+
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
-    const { isOpen, onOpen, onClose } = useDisclosure();
 
     const voidFunction = () => { };
 
-    const requiredChains = getAllowedChainsFromConfig();
-
-    useEffect(() => {
-        onOpen();
-    }, [onOpen]);
-
-    useEffect(() => {
-        if (enabled) {
-            if (chain && requiredChains.includes(chain.id)) {
-                onClose();
-            } else {
-                onOpen();
-            }
+    //TODO: move this to a chain config or something
+    const getChainName = (chainId: number) => {
+        switch (chainId) {
+            case 10:
+                return 'Optimism';
+            case 11155111:
+                // Sepolia
+                return 'Sepolia';
+            case 11155420:
+                //  Op-Sepolia
+                return 'Op-Sepolia';
+            case 1:
+                //  Eth Main
+                return 'Ethereum Mainnet';
+            default:
+                //  Sepolia
+                return 'Unknown';
         }
-    }, [chain, onClose, onOpen, requiredChains]);
+    }
 
-    if (enabled) {
-        return (
-            <Modal isOpen={isOpen} onClose={() => { }}>
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>Switch Network</ModalHeader>
-                    <ModalBody>
-                        <p>The currently selected chain is not supported!</p>
+    const setSwitchNetwork = () => {
+        let allowed = getAllowedChainsFromConfig()[0];
+        setPreferredChainID(allowed);
+        setPreferredChainName(getChainName(allowed));
+    };
+
+    useEffect(() => {
+        setSwitchNetwork();
+        const fetchChainId = async () => {
+            if (walletClient && enabled) {
+                try {
+                    const chainId = await walletClient.getChainId();
+                    console.log(`connected chain id is ${chainId}, preferred chain is ${preferredChainID}`);
+
+                    if (chainId === preferredChainID) {
+                        setOpenModal(false);
+                    } else {
+                        setOpenModal(true);
+                    }
+                } catch (error) {
+                    console.error('Error fetching chain ID:', error);
+                }
+            }
+        };
+        fetchChainId();
+    }, [walletClient]);
+
+    return (
+        <Modal isOpen={openModal} onClose={() => { }} isCentered>
+            <ModalOverlay />
+            <ModalContent
+                justifyContent={'center'}
+                alignItems={'center'}
+                borderRadius={'16px'}
+                backgroundColor={'#121212'}
+                border={'1px'}
+                borderColor={'white'}
+            >
+                <ModalBody width={'100%'} py="1.5rem">
+                    <Flex
+                        flexDirection={'column'}
+                        gap={'16px'}
+                        alignItems={'center'}
+                    >
+                        <Text
+                            fontSize={'2rem'}
+                            color={'white'}
+                            fontWeight={300}
+                        >
+                            Unsupported Network
+                        </Text>
+                        <Text color={'white'}>
+                            Hamza currently only supports {preferredChainName}.
+                            Switch to {preferredChainName} to continue using
+                            Hamza
+                        </Text>
                         <Button
+                            backgroundColor={'primary.indigo.900'}
+                            color={'white'}
+                            height={'38px'}
+                            borderRadius={'full'}
+                            width="100%"
                             disabled={!switchNetwork || isLoading}
+                            _hover={{
+                                backgroundColor: 'primary.indigo.800',
+                                transition: 'background-color 0.3s ease-in-out',
+                            }}
+                            _focus={{
+                                boxShadow: 'none',
+                                outline: 'none',
+                            }}
                             onClick={() =>
                                 switchNetwork
-                                    ? switchNetwork(11155111)
+                                    ? switchNetwork(preferredChainID)
                                     : voidFunction()
                             }
                         >
-                            Switch to Sepolia testnet
+                            Switch to {preferredChainName}
                         </Button>
-                        {error && <p>Error: {error.message}</p>}
-                        {isLoading && pendingChainId && (
-                            <p>Switching to chain ID {pendingChainId}...</p>
-                        )}
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
-        );
-    } else {
-        return <></>;
-    }
+                    </Flex>
+                    {/* {error && <p>Error: {error.message}</p>}
+                    {isLoading && pendingChainId && (
+                        <p>Switching to chain ID {pendingChainId}...</p>
+                    )} */}
+                </ModalBody>
+            </ModalContent>
+        </Modal>
+    );
 };
 // const { connectors } = getDefaultWallets({
 //     appName: 'op_sep',

@@ -19,6 +19,7 @@ import ConnectWallet from './connect-button';
 export default async function Nav() {
     return (
         <Flex
+            userSelect={'none'}
             zIndex={'2'}
             className="sticky top-0"
             width="100%"
@@ -28,6 +29,7 @@ export default async function Nav() {
             backgroundColor={'#020202'}
         >
             <MobileNav />
+
             <Flex
                 display={{ base: 'none', md: 'flex' }}
                 h={'87px'}

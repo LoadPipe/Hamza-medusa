@@ -29,7 +29,7 @@ const VendorBanner = (props: VendorProps) => {
             <Flex gap={{ base: '10px', md: '20px' }}>
                 <Flex flexShrink={0} alignSelf={'center'}>
                     <Image
-                        src="https://images.hamza.biz/Legendary/wall/wall1.jpeg"
+                        src="https://images.hamza.biz/Hamza/logo.png"
                         alt="Light Logo"
                         boxSize={{ base: '36.5px', md: '72px' }}
                         borderRadius="full"
