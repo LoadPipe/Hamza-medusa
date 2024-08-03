@@ -62,36 +62,7 @@ const ProductReview = ({ productId }: { productId: string }) => {
     const reviewDataFetcher = async () => {
         let res = await allReviews(productId);
         if (res) {
-            if (res.length < 2) {
-                console.log('setting ', [
-                    //...fakeReviews,
-                    ...res.map((a: any) => {
-                        return {
-                            id: a.id,
-                            name:
-                                `${a.customer.first_name} ${a.customer.last_name}` ||
-                                'Anonymous Customer',
-                            location: 'US',
-                            review: a.content,
-                            stars: a.rating,
-                        };
-                    }),
-                ]);
-                setReviews([
-                    //...fakeReviews,
-                    ...res.map((a: any) => {
-                        return {
-                            id: a.id,
-                            name:
-                                `${a.customer.first_name} ${a.customer.last_name}` ||
-                                'Anonymous Customer',
-                            location: 'US',
-                            review: a.content,
-                            stars: a.rating,
-                        };
-                    }),
-                ]);
-            } else {
+            if (reviews.length > 0) {
                 setReviews([
                     ...res.map((a: any) => {
                         return {
@@ -117,7 +88,7 @@ const ProductReview = ({ productId }: { productId: string }) => {
             reviewDataFetcher();
         }
     }, [productId]);
-    return (
+    return reviews.length > 0 ? (
         <Flex
             maxW="1280px"
             my="2rem"
@@ -191,7 +162,10 @@ const ProductReview = ({ productId }: { productId: string }) => {
                 </Flex>
             </Flex>
         </Flex>
-    );
+    ) : (<div><br />
+        <Text color='white'>
+            This product has no reviews or ratings
+        </Text><br /><br /></div>);
 };
 
 export default ProductReview;

@@ -33,36 +33,19 @@ const ProductReviewMobile = ({ productId }: { productId: string }) => {
         let res = await reviewResponse(productId);
 
         if (res) {
-            if (res.length < 2) {
-                setReviews([
-                    //...fakeReviews,
-                    ...res.map((a: any) => {
-                        return {
-                            id: a.id,
-                            name:
-                                `${a.customer.first_name} ${a.customer.last_name}` ||
-                                'Anonymous Customer',
-                            location: 'US',
-                            review: a.content,
-                            stars: a.rating,
-                        };
-                    }),
-                ]);
-            } else {
-                setReviews([
-                    ...res.map((a: any) => {
-                        return {
-                            id: a.id,
-                            name:
-                                `${a.customer.first_name} ${a.customer.last_name}` ||
-                                'Anonymous Customer',
-                            location: 'US',
-                            review: a.content,
-                            stars: a.rating,
-                        };
-                    }),
-                ]);
-            }
+            setReviews([
+                ...res.map((a: any) => {
+                    return {
+                        id: a.id,
+                        name:
+                            `${a.customer.first_name} ${a.customer.last_name}` ||
+                            'Anonymous Customer',
+                        location: 'US',
+                        review: a.content,
+                        stars: a.rating,
+                    };
+                }),
+            ]);
         }
 
         return;
@@ -74,7 +57,7 @@ const ProductReviewMobile = ({ productId }: { productId: string }) => {
             reviewDataFetcher();
         }
     }, [productId]);
-    return (
+    return reviews.length > 0 ? (
         <Flex
             maxW="1280px"
             width={'100%'}
@@ -101,7 +84,10 @@ const ProductReviewMobile = ({ productId }: { productId: string }) => {
                 </Flex>
             </Flex>
         </Flex>
-    );
+    ) : (<div><br />
+        <Text color='white'>
+            This product has no reviews or ratings
+        </Text><br /><br /></div>);
 };
 
 export default ProductReviewMobile;
