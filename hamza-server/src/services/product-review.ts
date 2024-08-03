@@ -7,7 +7,7 @@ import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import { Customer } from '../models/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import { Product } from '../models/product';
-import { Not } from 'typeorm';
+import { In, Not } from 'typeorm';
 
 class ProductReviewService extends TransactionBaseService {
     static LIFE_TIME = Lifetime.SCOPED;
@@ -97,63 +97,54 @@ class ProductReviewService extends TransactionBaseService {
 
     // Order has no relations to product ...
 
-    /*
-    TODO: ACTION: GET all product ORDERS that have NO reviews
-    * */
-    // const notReviewedOrders = await orderRepository
-    //     .createQueryBuilder('order')
-    //     .leftJoinAndSelect('order.products', 'product')
-    //     .leftJoinAndSelect('order.store', 'store')
-    //     .leftJoin(
-    //         'order.reviews',
-    //         'review',
-    //         'review.customer_id = :customer_id',
-    //         { customer_id }
-    //     )
-    //     .select([
-    //         'order.id',
-    //         'order.status',
-    //         'product.thumbnail',
-    //         // 'store.icon',
-    //     ])
-    //     .where('order.customer_id = :customer_id', { customer_id })
-    //     .andWhere('review.id IS NULL') // Ensures that the order has no reviews
-    //     .andWhere('order.status != :status', { status: 'archived' })
-    //     .getMany();
-    // TODO: We're getting all the NON Archived orders here, next step is to use this list and IF order_id not in product_review table, RETURN IT... this will get the non reviewed orders...
     async getNotReviewedOrders(customer_id: string) {
         const orderRepository = this.activeManager_.getRepository(Order);
         const productReviewRepository =
             this.activeManager_.getRepository(ProductReview);
-        const notReviewedOrders = await orderRepository
+
+        // Fetch all non-archived orders for the customer
+        const orders = await orderRepository
             .createQueryBuilder('order')
             .select(['order.id', 'order.status'])
             .where('order.customer_id = :customer_id', { customer_id })
             .andWhere('order.status != :status', { status: 'archived' })
             .getMany();
 
-        if (!notReviewedOrders || notReviewedOrders.length === 0) {
+        // If no orders are found, throw an error
+        if (!orders || orders.length === 0) {
             throw new Error('No unreviewed orders found');
         }
 
-        // TODO: return all order_id's
+        // Fetch all reviews for the customer
         const reviews = await productReviewRepository
             .createQueryBuilder('review')
-            .select([
-                'review.order_id', // Assuming you want the review's ID; add other review fields as needed
-            ])
+            .select('review.order_id')
             .where('review.customer_id = :customer_id', { customer_id })
             .getMany();
 
-        console.log(`Reviews order_id's ${JSON.stringify(reviews)}`);
+        // Extract order_ids from reviews
+        const reviewedOrderIds = reviews.map((review) => review.order_id);
 
-        const notReviewedArray = notReviewedOrders.map((order) => ({
-            order_id: order.id,
-        }));
+        // Filter the orders to find those not reviewed
+        const unreviewedOrderIds = orders
+            .filter((order) => !reviewedOrderIds.includes(order.id))
+            .map((order) => order.id);
 
-        return notReviewedOrders.map((order) => ({
-            order_id: order.id,
-        }));
+        if (unreviewedOrderIds.length === 0) {
+            throw new Error('No unreviewed orders left to fetch details for.');
+        }
+
+        // Fetch detailed information only for unreviewed orders
+        const unreviewedOrders = await orderRepository.find({
+            where: {
+                id: In(unreviewedOrderIds),
+                customer_id: customer_id,
+                status: Not(OrderStatus.ARCHIVED),
+            },
+            relations: ['cart.items', 'cart', 'cart.items.variant.product'],
+        });
+
+        return unreviewedOrders;
     }
 
     async getSpecificReview(order_id: string, product_id: string) {
