@@ -7,14 +7,14 @@ import {
 } from '@nestjs/common';
 import { CoinGeckoService } from './coin-gecko.service';
 
-@Controller('gecko')
+@Controller('convert')
 export class CoinGeckoController {
     constructor(private readonly coinGeckoService: CoinGeckoService) { }
 
     @Get('/convert')
     async convertCurrencies(
-        @Query('baseCurrency') baseCurrency: string,
-        @Query('conversionCurrency') conversionCurrency: string,
+        @Query('base') baseCurrency: string,
+        @Query('to') conversionCurrency: string,
     ): Promise<string> {
         if (!baseCurrency || !conversionCurrency) {
             throw new HttpException(
@@ -37,8 +37,8 @@ export class CoinGeckoController {
 
     @Get('/exch')
     async getExchangeRate(
-        @Query('baseCurrency') baseCurrency: string,
-        @Query('conversionCurrency') conversionCurrency: string,
+        @Query('base') baseCurrency: string,
+        @Query('to') conversionCurrency: string,
     ): Promise<number> {
         if (!baseCurrency || !conversionCurrency) {
             throw new HttpException(
