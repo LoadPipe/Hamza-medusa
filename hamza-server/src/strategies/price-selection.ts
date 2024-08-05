@@ -8,6 +8,7 @@ import {
     Store,
 } from '@medusajs/medusa';
 import ProductVariantRepository from '@medusajs/medusa/dist/repositories/product-variant';
+import { CurrencyConversionClient } from '../currency-conversion/rest-client';
 import { In } from 'typeorm';
 
 type InjectedDependencies = {
@@ -147,7 +148,48 @@ interface IPrice {
 }
 
 class PriceConverter {
+    restClient: CurrencyConversionClient = new CurrencyConversionClient();
+    cache: { [key: string]: { value: number, timestamp: number } } = {};
+    expirationSeconds: 60;
+
     async getPrice(price: IPrice): Promise<number> {
-        return price.baseAmount;
+        let rate: number = this.getFromCache(price);
+
+        if (!rate) {
+            rate = await this.getFromApi(price);
+            this.writeToCache(price, rate);
+        }
+
+        return (price.baseAmount * rate);
+    }
+
+    private async getFromApi(price: IPrice): Promise<number> {
+        return await this.restClient.getExchangeRate(price.baseCurrency, price.toCurrency);
+    }
+
+    private getFromCache(price: IPrice): number {
+        const key: string = this.getKey(price.baseCurrency, price.toCurrency);
+        if (this.cache[key] && (this.getTimestamp() - this.cache[key].timestamp >= this.expirationSeconds)) {
+            this.cache[key] = null;
+        }
+
+        return this.cache[key]?.value;
+    }
+
+    private writeToCache(price: IPrice, rate: number) {
+        const key: string = this.getKey(price.baseCurrency, price.toCurrency);
+        this.cache[key] = { value: rate, timestamp: this.getTimestamp() };
+    }
+
+    private hasCached(price: IPrice): boolean {
+        return (this.getFromCache(price) ? true : false);
+    }
+
+    private getKey(base: string, to: string): string {
+        return `${base.trim().toLowerCase()}-${to.trim().toLowerCase()}`;
+    }
+
+    private getTimestamp(): number {
+        return Date.now() / 1000;
     }
 }
