@@ -6,7 +6,7 @@ import {
     MassmarketWalletPaymentHandler,
     SwitchWalletPaymentHandler,
     LiteSwitchWalletPaymentHandler,
-    DirectWalletPaymentHandler
+    DirectWalletPaymentHandler,
 } from './payment-handlers';
 import { Button } from '@chakra-ui/react';
 import React, { useState, useEffect, useRef } from 'react';
@@ -54,10 +54,10 @@ declare global {
 const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
     const notReady =
         !cart ||
-            !cart.shipping_address ||
-            !cart.billing_address ||
-            !cart.email ||
-            cart.shipping_methods.length < 1
+        !cart.shipping_address ||
+        !cart.billing_address ||
+        !cart.email ||
+        cart.shipping_methods.length < 1
             ? true
             : false;
 
@@ -162,7 +162,9 @@ const CryptoPaymentButton = ({
             } else {
                 //TODO: get provider, chain id & signer from window.ethereum
                 if (window.ethereum?.providers) {
-                    provider = new ethers.BrowserProvider(window.ethereum?.providers[0]);
+                    provider = new ethers.BrowserProvider(
+                        window.ethereum?.providers[0]
+                    );
                     signer = await provider.getSigner();
                 }
             }
@@ -256,7 +258,11 @@ const CryptoPaymentButton = ({
                 );
             } else {
                 setSubmitting(false);
-                setErrorMessage(output?.message ? output.message : 'Checkout was not completed.');
+                setErrorMessage(
+                    output?.message
+                        ? output.message
+                        : 'Checkout was not completed.'
+                );
                 await cancelOrderFromCart();
             }
         } else {
@@ -286,12 +292,15 @@ const CryptoPaymentButton = ({
             setSubmitting(true);
 
             //here connect wallet and sign in, if not connected
-            connect();
+            // causes bug when connected with mobile
+            if (!isConnected) {
+                connect();
+            }
 
             updateCart.mutate(
                 { context: {} },
                 {
-                    onSuccess: ({ }) => {
+                    onSuccess: ({}) => {
                         //this calls the CartCompletion routine
                         completeCart.mutate(void 0, {
                             onSuccess: async ({ data, type }) => {
@@ -308,7 +317,7 @@ const CryptoPaymentButton = ({
                                     await cancelOrderFromCart();
                                 }
                             },
-                            onError: async ({ }) => {
+                            onError: async ({}) => {
                                 setSubmitting(false);
                                 setErrorMessage('Checkout was not completed');
                                 await cancelOrderFromCart();

@@ -94,15 +94,16 @@ export function getAllowedChainsFromConfig() {
 }
 
 type Props = {
-    enabled: boolean
-}
+    enabled: boolean;
+};
 
 // Add NEXT_PUBLIC_ALLOWED_BLOCKCHAINS = 11155111 to env
 export const SwitchNetwork = ({ enabled }: Props) => {
     // Modal Hook
     const [openModal, setOpenModal] = useState(false);
     const [preferredChainName, setPreferredChainName] = useState('');
-    const [preferredChainID, setPreferredChainID] = useState(0);
+    //sometimes not detecting environment correctly
+    const [preferredChainID, setPreferredChainID] = useState(11155111);
 
     // Wagmi Hooks
     const { data: walletClient, isError } = useWalletClient();
@@ -110,7 +111,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
 
-    const voidFunction = () => { };
+    const voidFunction = () => {};
 
     //TODO: move this to a chain config or something
     const getChainName = (chainId: number) => {
@@ -130,7 +131,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
                 //  Sepolia
                 return 'Unknown';
         }
-    }
+    };
 
     const setSwitchNetwork = () => {
         let allowed = getAllowedChainsFromConfig()[0];
@@ -140,11 +141,16 @@ export const SwitchNetwork = ({ enabled }: Props) => {
 
     useEffect(() => {
         setSwitchNetwork();
+    }, []);
+
+    useEffect(() => {
         const fetchChainId = async () => {
             if (walletClient && enabled) {
                 try {
                     const chainId = await walletClient.getChainId();
-                    console.log(`connected chain id is ${chainId}, preferred chain is ${preferredChainID}`);
+                    console.log(
+                        `connected chain id is ${chainId}, preferred chain is ${preferredChainID}`
+                    );
 
                     if (chainId === preferredChainID) {
                         setOpenModal(false);
@@ -160,7 +166,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     }, [walletClient]);
 
     return (
-        <Modal isOpen={openModal} onClose={() => { }} isCentered>
+        <Modal isOpen={openModal} onClose={() => {}} isCentered>
             <ModalOverlay />
             <ModalContent
                 justifyContent={'center'}
@@ -232,7 +238,7 @@ const connectors = connectorsForWallets([
         groupName: 'Recommended',
         wallets: [
             rainbowWallet({ projectId: PROJECT_ID, chains }),
-            coinbaseWallet({ appName: PROJECT_ID, chains }),
+            // coinbaseWallet({ appName: PROJECT_ID, chains }),
             metaMaskWallet({
                 projectId: PROJECT_ID,
                 chains,
@@ -241,14 +247,6 @@ const connectors = connectorsForWallets([
         ],
     },
 ]);
-
-// Metamask, Rainbow, Coinbase Wallet, remove `WalletConnect`
-// const connector = connectorsForWallets({
-//     appName: 'op_sep',
-//     projectId: PROJECT_ID,
-//     chains,
-//     wallets: [],
-// });
 
 // Config in v1.x.wagmi Client in 2.x.wagmi?
 export const config = createConfig({
