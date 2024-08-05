@@ -101,31 +101,124 @@ export class BuckyClient {
                 throw error;
             });
     }
+
+    async createOrder(orderDetails) {
+        const params = JSON.stringify(orderDetails);
+        const timestamp = Date.now();
+        const sign = this.generateSignature(params, timestamp);
+
+        return this.client
+            .post(
+                `/api/rest/v2/adapt/openapi/order/create?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                params
+            )
+            .then((response) => response.data)
+            .catch((error) => {
+                throw error;
+            });
+    }
+
+    async cancelOrder(orderId) {
+        const params = JSON.stringify({ orderId });
+        const timestamp = Date.now();
+        const sign = this.generateSignature(params, timestamp);
+
+        return this.client
+            .post(
+                `/api/rest/v2/adapt/openapi/order/cancel?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                params
+            )
+            .then((response) => response.data)
+            .catch((error) => {
+                throw error;
+            });
+    }
+
+    async getOrderDetails(orderId) {
+        const params = JSON.stringify({ orderId });
+        const timestamp = Date.now();
+        const sign = this.generateSignature(params, timestamp);
+
+        return this.client
+            .post(
+                `/api/rest/v2/adapt/openapi/order/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                params
+            )
+            .then((response) => response.data)
+            .catch((error) => {
+                throw error;
+            });
+    }
 }
 
 const buckyClient = new BuckyClient();
 
+// PRODUCT QUERIES
 // Call to get product details
-buckyClient
-    .getProductDetails('https://detail.1688.com/offer/592228806840.html')
-    .then((data) => console.log('Product Details:', data))
-    .catch((error) => console.error('Error fetching product details:', error));
+// buckyClient
+//     .getProductDetails('https://detail.1688.com/offer/592228806840.html')
+//     .then((data) => console.log('Product Details:', data))
+//     .catch((error) => console.error('Error fetching product details:', error));
+//
+// // Call to search products based on a keyword
+// buckyClient
+//     .searchProducts('cup', 1, 10)
+//     .then((data) => console.log('Search Results:', data))
+//     .catch((error) => console.error('Error searching products:', error));
+//
+// buckyClient
+//     .searchProductByImage('your_base64_encoded_image_here')
+//     .then((data) => console.log('Image Search Results:', data))
+//     .catch((error) => console.error('Error in image search:', error));
+//
+// // Call to list product categories in a tree structure
+// buckyClient
+//     .listProductCategories()
+//     .then((data) => console.log('Product Categories:', data))
+//     .catch((error) =>
+//         console.error('Error listing product categories:', error)
+//     );
 
-// Call to search products based on a keyword
-buckyClient
-    .searchProducts('cup', 1, 10)
-    .then((data) => console.log('Search Results:', data))
-    .catch((error) => console.error('Error searching products:', error));
+// ORDER QUERIES
+
+const createOrderData = {
+    partnerOrderNo: 'string',
+    partnerOrderNoName: 'string',
+    country: 'string',
+    countryCode: 'st',
+    province: 'string',
+    city: 'string',
+    detailAddress: 'string',
+    postCode: 'string',
+    contactName: 'string',
+    contactPhone: 'string',
+    email: 'string',
+    orderRemark: 'string',
+    productList: [
+        {
+            spuCode: 'string',
+            skuCode: 'string',
+            productCount: 100000,
+            platform: 'ALIBABA',
+            productPrice: 999999999,
+            productName: 'string',
+        },
+    ],
+};
 
 buckyClient
-    .searchProductByImage('your_base64_encoded_image_here')
-    .then((data) => console.log('Image Search Results:', data))
-    .catch((error) => console.error('Error in image search:', error));
+    .createOrder(createOrderData)
+    .then((data) => console.log('Order Created:', data))
+    .catch((error) => console.error('Error creating order:', error));
 
-// Call to list product categories in a tree structure
-buckyClient
-    .listProductCategories()
-    .then((data) => console.log('Product Categories:', data))
-    .catch((error) =>
-        console.error('Error listing product categories:', error)
-    );
+// // Call to cancel an order
+// buckyClient
+//     .cancelOrder('your_order_id_here')
+//     .then((data) => console.log('Order Cancelled:', data))
+//     .catch((error) => console.error('Error cancelling order:', error));
+//
+// // Call to get order details
+// buckyClient
+//     .getOrderDetails('your_order_id_here')
+//     .then((data) => console.log('Order Details:', data))
+//     .catch((error) => console.error('Error fetching order details:', error));
