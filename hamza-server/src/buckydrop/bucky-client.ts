@@ -42,11 +42,90 @@ export class BuckyClient {
                 throw error;
             });
     }
+
+    async searchProducts(
+        keyword: string,
+        currentPage: number = 1,
+        pageSize: number = 10
+    ): Promise<any> {
+        const params = JSON.stringify({
+            curent: currentPage, // Note the typo "curent" should be "current" if API docs are correct
+            size: pageSize,
+            item: { keyword: keyword },
+        });
+        const timestamp = Date.now();
+        const sign = this.generateSignature(params, timestamp);
+
+        return this.client
+            .post(
+                `/api/rest/v2/adapt/openapi/product/search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                params
+            )
+            .then((response) => response.data)
+            .catch((error) => {
+                throw error;
+            });
+    }
+
+    async searchProductByImage(base64Image, currentPage = 1, pageSize = 10) {
+        const params = JSON.stringify({
+            curent: currentPage,
+            size: pageSize,
+            item: { base64: base64Image },
+        });
+        const timestamp = Date.now();
+        const sign = this.generateSignature(params, timestamp);
+
+        return this.client
+            .post(
+                `/api/rest/v2/adapt/openapi/product/image-search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                params
+            )
+            .then((response) => response.data)
+            .catch((error) => {
+                throw error;
+            });
+    }
+
+    async listProductCategories() {
+        const params = ''; // Assuming no body is required
+        const timestamp = Date.now();
+        const sign = this.generateSignature(params, timestamp);
+
+        return this.client
+            .get(
+                `/api/rest/v2/adapt/openapi/product/category/list-tree?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`
+            )
+            .then((response) => response.data)
+            .catch((error) => {
+                throw error;
+            });
+    }
 }
 
-// Usage example (make sure to set the appropriate environment variables or default values)
 const buckyClient = new BuckyClient();
+
+// Call to get product details
 buckyClient
     .getProductDetails('https://detail.1688.com/offer/592228806840.html')
-    .then((data) => console.log(data))
-    .catch((error) => console.error(error));
+    .then((data) => console.log('Product Details:', data))
+    .catch((error) => console.error('Error fetching product details:', error));
+
+// Call to search products based on a keyword
+buckyClient
+    .searchProducts('cup', 1, 10)
+    .then((data) => console.log('Search Results:', data))
+    .catch((error) => console.error('Error searching products:', error));
+
+buckyClient
+    .searchProductByImage('your_base64_encoded_image_here')
+    .then((data) => console.log('Image Search Results:', data))
+    .catch((error) => console.error('Error in image search:', error));
+
+// Call to list product categories in a tree structure
+buckyClient
+    .listProductCategories()
+    .then((data) => console.log('Product Categories:', data))
+    .catch((error) =>
+        console.error('Error listing product categories:', error)
+    );
