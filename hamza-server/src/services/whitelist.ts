@@ -31,13 +31,13 @@ export default class WhiteListService extends TransactionBaseService {
         return;
     }
 
-    async getByStore(storeId: string, walletAddress: string) {
-        const whitelist = await this.whitelistRepository_.findOne({
+    async getByStore(storeId: string, walletAddress: string): Promise<WhiteList> {
+        return await this.whitelistRepository_.findOne({
             where: {
                 store_id: storeId,
                 wallet_address: walletAddress
             },
-            relations: ['customers']
+            relations: ['items']
         });
     }
 }

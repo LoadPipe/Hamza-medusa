@@ -8,9 +8,14 @@ export class CreateWhiteListTable2849489248999 implements MigrationInterface {
         await queryRunner.query(
             `CREATE TABLE "whitelist_items" ("id"  character varying NOT NULL, "whitelist_id" character varying NOT NULL, "customer_address" character varying NOT NULL, CONSTRAINT "PK_whitelist_item" PRIMARY KEY ("id"))`
         );
+        await queryRunner.query(
+            `ALTER TABLE "whitelist_items"
+                ADD CONSTRAINT "fk_whitelist" FOREIGN KEY ("whitelist_id") REFERENCES "white_list"("id")`,
+        );
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.dropTable('white_list');
+        await queryRunner.dropTable('whitelist_items');
     }
 }

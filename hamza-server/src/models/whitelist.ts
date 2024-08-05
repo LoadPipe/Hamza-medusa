@@ -30,10 +30,10 @@ export class WhiteList extends SoftDeletableEntity {
 @Unique(['whitelist_id', 'customer_address'])
 export class WhitelistItem extends BaseEntity {
     @Column()
-    wishlist_id: string;
+    whitelist_id: string;
 
     @ManyToOne(() => WhiteList, (whitelist) => whitelist.items)
-    @JoinColumn({ name: 'wishlist_id' })
+    @JoinColumn({ name: 'whitelist_id' })
     whitelist: WhiteList;
 
     @Column()
