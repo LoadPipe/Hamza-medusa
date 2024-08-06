@@ -27,6 +27,7 @@ export default async function Profile() {
 
     return (
         <Flex
+            width="100%"
             backgroundColor={'#121212'}
             flexDirection={'column'}
             justifyContent={'center'}
