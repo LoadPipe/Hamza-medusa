@@ -163,6 +163,17 @@ export class BuckyClient {
                 throw error;
             });
     }
+
+    async getLogisticsInfo(packageCode) {
+        const params = JSON.stringify({ packageCode });
+        // other setup like timestamp, appCode, sign, etc.
+        return this.client
+            .post(`/api/rest/v2/adapt/adaptation/logistics/query-info`, params)
+            .then((response) => response.data)
+            .catch((error) => {
+                throw error;
+            });
+    }
 }
 
 const buckyClient = new BuckyClient();
@@ -197,7 +208,7 @@ const buckyClient = new BuckyClient();
 
 const createOrderData = {
     partnerOrderNo: 'p010101j',
-    partnerOrderNoName: '0101',
+    partnerOrderNoName: '01012',
     country: 'string',
     countryCode: 'st',
     province: 'string',
@@ -236,3 +247,7 @@ buckyClient
 //     .getOrderDetails('your_order_id_here')
 //     .then((data) => console.log('Order Details:', data))
 //     .catch((error) => console.error('Error fetching order details:', error));
+
+// buckyClient.getLogisticsInfo('BXD1234567890')
+//     .then(data => console.log('Logistics Info:', data))
+//     .catch(error => console.error('Error getting logistics info:', error));
