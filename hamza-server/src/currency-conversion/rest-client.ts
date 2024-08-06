@@ -54,7 +54,7 @@ export class CurrencyConversionClient {
 
             switch (baseCurrency) {
                 case 'eth':
-                    return 2413.77;
+                    return 2517.26;
                 default:
                     return 0.00041;
             }

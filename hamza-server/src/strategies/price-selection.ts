@@ -149,7 +149,8 @@ interface IPrice {
     baseAmount: number;
 }
 
-class PriceConverter {
+//TODO: maybe find a better place for this class
+export class PriceConverter {
     restClient: CurrencyConversionClient = new CurrencyConversionClient();
     cache: { [key: string]: { value: number, timestamp: number } } = {};
     expirationSeconds: 60;
@@ -166,16 +167,15 @@ class PriceConverter {
         const basePrecision = getCurrencyPrecision(price.baseCurrency);
         const toPrecision = getCurrencyPrecision(price.toCurrency);
 
-        const baseFactor: BigNumberish = BigInt(Math.pow(10, basePrecision.native - basePrecision.db));
-        const toFactor: BigNumberish = BigInt(Math.pow(10, basePrecision.native));
-        const baseAmount: BigNumberish = BigInt(price.baseAmount) * baseFactor;
+        //convert the amount 
+        const baseFactor: number = Math.pow(10, basePrecision.db);
 
-        console.log('baseFactor', baseFactor);
-        console.log('toFactor', toFactor);
-        console.log('baseAmount', baseAmount);
-        const output = BigInt(this.multiply(baseAmount, rate));
-        console.log('output', output);
-        return parseInt(output.toString());
+        //console.log('price:', price);
+        //console.log('baseFactor:', baseFactor);
+        //console.log('basePrecision:', basePrecision);
+        const displayAmount = price.baseAmount / baseFactor;
+        //console.log('displayAmount:', displayAmount);
+        return Math.floor(displayAmount * rate * Math.pow(10, toPrecision.db));
     }
 
     private async getFromApi(price: IPrice): Promise<number> {
@@ -214,14 +214,5 @@ class PriceConverter {
 
     private getTimestamp(): number {
         return Date.now() / 1000;
-    }
-
-    private multiply(n: BigInt, f: number): BigNumberish {
-        //count the number of places after the decimal
-        const numPlaces = f.toString().length - f.toString().indexOf('.');
-        const factor: number = (Math.pow(10, numPlaces));
-        n = BigInt(n.toString()) * BigInt(factor);
-
-        return (BigInt(n.toString()) * BigInt(factor * f)) / BigInt(factor);
     }
 }
