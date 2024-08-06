@@ -58,7 +58,6 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
                     <AccountNav customer={customer} />
                     <Flex
                         ml={{ base: 0, md: 'auto' }}
-                        backgroundColor={'red'}
                         maxWidth={'927px'}
                         width={'100%'}
                     >

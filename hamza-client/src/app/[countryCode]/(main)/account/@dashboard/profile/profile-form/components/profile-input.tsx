@@ -28,7 +28,7 @@ const ProfileInput: React.FC<ProfileInputProps> = ({
     };
 
     return (
-        <Flex flexDirection={'column'} maxW={'420px'} width={'100%'}>
+        <Flex flexDirection={'column'} width={'100%'}>
             <FormControl>
                 <FormLabel
                     textTransform={'uppercase'}

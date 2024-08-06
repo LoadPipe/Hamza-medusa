@@ -20,7 +20,7 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
     };
 
     return (
-        <Flex flexDirection={'column'} maxW={'420px'} width={'100%'}>
+        <Flex flexDirection={'column'} width={'100%'}>
             <FormLabel
                 textTransform={'uppercase'}
                 fontSize={'12px'}

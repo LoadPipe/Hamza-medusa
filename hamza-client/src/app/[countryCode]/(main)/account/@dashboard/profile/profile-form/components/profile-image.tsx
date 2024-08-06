@@ -16,6 +16,7 @@ const ProfileImage: React.FC<Profile> = ({ firstName, lastName }) => {
             <Avatar
                 name={`${firstName} ${lastName}`}
                 size="2xl"
+                mx={{ base: 'auto', md: 0 }}
                 // src="https://bit.ly/ryan-florence"
                 width={'151.5px'}
                 height={'151.5px'}
