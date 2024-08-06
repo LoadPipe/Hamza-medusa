@@ -33,7 +33,7 @@ const ProfileInput: React.FC<ProfileInputProps> = ({
                 <FormLabel
                     textTransform={'uppercase'}
                     fontSize={'12px'}
-                    pl="1rem"
+                    ml={{ base: 0, md: '1rem' }}
                     mb={'8px'}
                 >
                     {label}

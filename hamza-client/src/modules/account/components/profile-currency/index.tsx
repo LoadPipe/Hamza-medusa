@@ -24,7 +24,7 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
             <FormLabel
                 textTransform={'uppercase'}
                 fontSize={'12px'}
-                pl="1rem"
+                ml={{ base: 0, md: '1rem' }}
                 mb={'8px'}
             >
                 Preferred payment currency
