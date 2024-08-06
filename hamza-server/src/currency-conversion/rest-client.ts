@@ -52,7 +52,7 @@ export class CurrencyConversionClient {
 
             if (baseCurrency === toCurrency) return 1;
 
-            //hard-coded for testing 
+            //hard-coded for testing
             switch (baseCurrency) {
                 case '0x0000000000000000000000000000000000000000':
                     return 2517.26;
