@@ -170,17 +170,20 @@ export class PriceConverter {
         //convert the amount 
         const baseFactor: number = Math.pow(10, basePrecision.db);
 
-        //console.log('price:', price);
-        //console.log('baseFactor:', baseFactor);
-        //console.log('basePrecision:', basePrecision);
+        console.log('price:', price);
+        console.log('baseFactor:', baseFactor);
+        console.log('basePrecision:', basePrecision);
+        console.log('toPrecision:', toPrecision);
+        console.log('rate:', rate);
         const displayAmount = price.baseAmount / baseFactor;
-        //console.log('displayAmount:', displayAmount);
-        return Math.floor(displayAmount * rate * Math.pow(10, toPrecision.db));
+        console.log('displayAmount:', displayAmount);
+        const output = Math.floor(displayAmount * rate * Math.pow(10, toPrecision.db));
+        console.log(output);
+        return output;
     }
 
     private async getFromApi(price: IPrice): Promise<number> {
         //convert to addresses 
-        //TODO: get chain id another way 
         const baseAddr = getCurrencyAddress(price.baseCurrency, 10);
         const toAddr = getCurrencyAddress(price.toCurrency, 10);
 
