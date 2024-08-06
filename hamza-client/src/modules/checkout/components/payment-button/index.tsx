@@ -54,10 +54,10 @@ declare global {
 const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
     const notReady =
         !cart ||
-        !cart.shipping_address ||
-        !cart.billing_address ||
-        !cart.email ||
-        cart.shipping_methods.length < 1
+            !cart.shipping_address ||
+            !cart.billing_address ||
+            !cart.email ||
+            cart.shipping_methods.length < 1
             ? true
             : false;
 
@@ -300,7 +300,7 @@ const CryptoPaymentButton = ({
             updateCart.mutate(
                 { context: {} },
                 {
-                    onSuccess: ({}) => {
+                    onSuccess: ({ }) => {
                         //this calls the CartCompletion routine
                         completeCart.mutate(void 0, {
                             onSuccess: async ({ data, type }) => {
@@ -317,9 +317,16 @@ const CryptoPaymentButton = ({
                                     await cancelOrderFromCart();
                                 }
                             },
-                            onError: async ({}) => {
+                            onError: async (e) => {
                                 setSubmitting(false);
-                                setErrorMessage('Checkout was not completed');
+                                if (e.message?.indexOf('status code 401') >= 0) {
+                                    setErrorMessage('Customer not whitelisted');
+                                }
+                                else {
+                                    setErrorMessage('Checkout was not completed');
+                                }
+
+                                //TODO: this is a really bad way to do this 
                                 await cancelOrderFromCart();
                             },
                         });
