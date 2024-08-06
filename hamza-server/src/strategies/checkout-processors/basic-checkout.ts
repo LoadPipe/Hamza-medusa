@@ -16,6 +16,9 @@ import { PaymentDataInput } from '@medusajs/medusa/dist/services/payment';
 import PaymentRepository from '@medusajs/medusa/dist/repositories/payment';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
+import WhiteListService from '../../services/whitelist';
+import StoreRepository from '../../repositories/store';
+import { WhiteList } from 'src/models/whitelist';
 
 
 export interface IPaymentGroupData {
@@ -34,9 +37,11 @@ export class BasicCheckoutProcessor {
     protected readonly productService: ProductService;
     protected readonly paymentService: PaymentService;
     protected readonly orderService: OrderService;
+    protected readonly whitelistService: WhiteListService;
     protected readonly paymentRepository: typeof PaymentRepository;
     protected readonly orderRepository: typeof OrderRepository;
     protected readonly lineItemRepository: typeof LineItemRepository;
+    protected readonly storeRepository: typeof StoreRepository;
     protected readonly logger: Logger;
     protected cart: Cart = null;
     protected cartId: string = '';
@@ -53,6 +58,8 @@ export class BasicCheckoutProcessor {
         this.paymentRepository = container.paymentRepository;
         this.orderRepository = container.orderRepository;
         this.lineItemRepository = container.lineItemRepository;
+        this.whitelistService = container.whitelistService;
+        this.storeRepository = container.storeRepository;
         this.logger = container.logger;
     }
 
@@ -80,8 +87,9 @@ export class BasicCheckoutProcessor {
 
             return response;
         } catch (e) {
+            this.logger.error(e);
             const response: CartCompletionResponse = {
-                response_code: 500,
+                response_code: e?.code ? e.code : 500,
                 response_body: {
                     payment_count: 0,
                     message: e.toString(),
@@ -91,7 +99,7 @@ export class BasicCheckoutProcessor {
             };
 
             //return an error response
-            this.logger.debug(response);
+            this.logger.debug(`checkout response is ${JSON.stringify(response)}`);
             return response;
         }
     }
@@ -103,6 +111,11 @@ export class BasicCheckoutProcessor {
 
         //get the cart
         await this.doRetrieveCart();
+
+        //restrict by whitelist 
+        if (await this.customerRestrictedByWhitelist()) {
+            throw { code: 401, message: 'Customer not Whitelisted' };
+        }
 
         //group payments by store
         await this.doCreateGroups();
@@ -132,8 +145,29 @@ export class BasicCheckoutProcessor {
             relations: [
                 'items.variant.product.store',
                 'items.variant.prices', //TODO: we need prices?
+                'customer'
             ],
         });
+    }
+
+    /**
+     * Override this to change how whitelist restriction is done.
+     */
+    //TODO: currently checks for one store, but should check ALL stores
+    protected async customerRestrictedByWhitelist(): Promise<boolean> {
+        this.logger.debug(`CheckoutProcessor: customerRestrictedByWhitelist ${this.cartId}`);
+        if (process.env.RESTRICT_WHITELIST_CHECKOUT) {
+            const store: Store = await this.getStore();
+
+            //check whitelist 
+            const whitelist: WhiteList[] = await this.whitelistService.getByStore(
+                store.id,
+                this.cart.customer.id
+            );
+            return whitelist?.length == 0;
+        }
+
+        return false;
     }
 
     /**
@@ -182,7 +216,7 @@ export class BasicCheckoutProcessor {
             },
         };
 
-        this.logger.debug(`CheckoutProcessor: returning response ${response}`);
+        this.logger.debug(`CheckoutProcessor: returning response ${JSON.stringify(response)}`);
         return response;
     }
 
@@ -210,6 +244,15 @@ export class BasicCheckoutProcessor {
         };
 
         return output;
+    }
+
+    //TODO: should get ALL stores 
+    protected async getStore(): Promise<Store> {
+        const storeId = this.cart.items[0]?.variant?.product?.store?.id;
+        if (storeId) {
+            return await this.storeRepository.findOne({ where: { id: storeId }, relations: ['owner'] })
+        }
+        return null;
     }
 
     protected groupByStore(cart: Cart): IPaymentGroupData[] {
