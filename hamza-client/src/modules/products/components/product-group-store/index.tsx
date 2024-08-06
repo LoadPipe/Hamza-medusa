@@ -118,12 +118,11 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
                             .map((variant: any) => variant.prices)
                             .flat();
 
-                        const selectedPrice =
-                            variantPrices.find(
-                                (p: any) =>
-                                    p.currency_code ===
-                                    preferred_currency_code
-                            ) ?? variantPrices[0];
+                        const selectedPrice = variantPrices.find(
+                            (p: any) =>
+                                p.currency_code ===
+                                preferred_currency_code
+                        ) ?? variantPrices.find((p: any) => p.currency_code === 'usdc');
                         const productPricing = formatCryptoPrice(
                             selectedPrice?.amount ?? 0,
                             preferred_currency_code as string
