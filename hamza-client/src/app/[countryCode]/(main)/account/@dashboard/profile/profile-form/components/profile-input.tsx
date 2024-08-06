@@ -39,6 +39,7 @@ const ProfileInput: React.FC<ProfileInputProps> = ({
                     {label}
                 </FormLabel>
                 <Input
+                    fontSize={{ base: '14px', md: '16px' }}
                     borderRadius={'12px'}
                     height={{ base: '50px', md: '52px' }}
                     placeholder={placeholder}

@@ -37,6 +37,7 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
                 value={preferred_currency_code!}
                 onChange={handleCurrencyChange}
                 color={'white'}
+                fontSize={'14px'}
             >
                 <option
                     value="usdc"
