@@ -22,7 +22,6 @@ import useWishlistStore from '@store/wishlist/wishlist-store';
 import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 import { getObjectFit } from '@modules/get-object-fit';
 
 interface ProductCardProps {

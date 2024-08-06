@@ -5,6 +5,7 @@ import {
     PriceSelectionResult,
     ProductVariant,
     Logger,
+    Store,
 } from '@medusajs/medusa';
 import ProductVariantRepository from '@medusajs/medusa/dist/repositories/product-variant';
 import { In } from 'typeorm';
@@ -87,17 +88,34 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
             string,
             PriceSelectionResult
         >();
+        const priceConverter: PriceConverter = new PriceConverter();
 
         //get the variant objects
         const variants: ProductVariant[] =
             await this.productVariantRepository_.find({
                 where: { id: In(variantIds) },
-                relations: ['product', 'prices'],
+                relations: ['product', 'prices', 'product.store'],
             });
+
+        //get the store 
+        const store: Store = variants[0].product.store;
 
         //if no preferred currency, just return all prices
         for (const v of variants) {
             let prices = v.prices;
+
+            //convert all currency prices according to base price
+            const baseCurrency = store?.default_currency_code;
+            const baseAmount = prices.find((p) => p.currency_code === baseCurrency)?.amount;
+            if (baseAmount && baseCurrency) {
+                for (let n = 0; n < prices.length; n++) {
+                    prices[n].amount = await priceConverter.getPrice({
+                        baseAmount,
+                        baseCurrency,
+                        toCurrency: prices[n].currency_code
+                    });
+                }
+            }
 
             //if preferred currency, filter out the non-matchers
             if (preferredCurrencyId) {
@@ -119,5 +137,17 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
         }
 
         return output;
+    }
+}
+
+interface IPrice {
+    baseCurrency: string;
+    toCurrency: string;
+    baseAmount: number;
+}
+
+class PriceConverter {
+    async getPrice(price: IPrice): Promise<number> {
+        return price.baseAmount;
     }
 }

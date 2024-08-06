@@ -261,7 +261,7 @@ const convertToLocale = ({
     locale = 'en-US',
 }): ConvertToLocaleParams => {
     if (typeof currency_code !== 'string' || !currency_code) {
-        currency_code = 'eth';
+        currency_code = 'usdc';
         /*
         console.error('Invalid or missing currency code', currency_code);
         return {
