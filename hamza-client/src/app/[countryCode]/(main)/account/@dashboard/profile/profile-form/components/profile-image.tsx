@@ -15,11 +15,11 @@ const ProfileImage: React.FC<Profile> = ({ firstName, lastName }) => {
         <Flex maxW={'858px'} width={'100%'}>
             <Avatar
                 name={`${firstName} ${lastName}`}
-                size="2xl"
+                size={{ base: 'xl', md: '2xl' }}
                 mx={{ base: 'auto', md: 0 }}
                 // src="https://bit.ly/ryan-florence"
-                width={'151.5px'}
-                height={'151.5px'}
+                width={{ base: '100px', md: '151.5px' }}
+                height={{ base: '100px', md: '151.5px' }}
                 bgColor={'primary.green.900'}
             />
             <Flex
