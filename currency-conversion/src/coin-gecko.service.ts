@@ -8,6 +8,7 @@ interface CacheEntry {
 }
 
 @Injectable()
+//TODO: rename 
 export class CoinGeckoService {
     private readonly logger = new Logger(CoinGeckoService.name);
     private cache: { [key: string]: CacheEntry } = {};
@@ -18,7 +19,11 @@ export class CoinGeckoService {
     private readonly USDC = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48';
     private readonly ETH = '0x0000000000000000000000000000000000000000'; // Placeholder for native ETH
 
-    constructor(private readonly httpService: HttpService) { }
+    constructor(private readonly httpService: HttpService) {
+        //cache here on startup 
+        //this.fetchConversionRate('eth', USDT'); //2517.34
+        //this.fetchConversionRate('eth', USDC'); //2517.331
+    }
 
     async convertCurrency(
         baseCurrency: string,
@@ -33,11 +38,15 @@ export class CoinGeckoService {
         }
     }
 
+    //this method will mainly be used 
     async getExchangeRate(
         baseCurrency: string,
         conversionCurrency: string,
     ): Promise<number> {
-        return 1;
+        // check for cached first 
+        // use the inverse if we have a reversed version of the pair already cached
+        // inverse of exchange rate: 1/rate (e.g. eth->usdc is 3000, usdc->eth is 1/3000)
+        return await this.fetchConversionRate(baseCurrency, conversionCurrency);
     }
 
     private async handleEthConversion(
