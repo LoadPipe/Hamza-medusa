@@ -24,7 +24,7 @@ export default class CartService extends MedusaCartService {
         config: { validateSalesChannels: boolean }
     ): Promise<void> {
         const cart: Cart = await this.retrieve(cartId, {
-            relations: ['customer'],
+            relations: ['customer', 'customer.walletAddresses'],
         });
 
         //get preferred currency from customer

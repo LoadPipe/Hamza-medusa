@@ -2,6 +2,7 @@ import { TransactionBaseService, Logger } from '@medusajs/medusa';
 import CustomerRepository from '../repositories/customer';
 import { WhiteListRepository } from '../repositories/whitelist';
 import { WhiteList } from '../models/whitelist';
+import { In } from 'typeorm';
 
 
 export default class WhiteListService extends TransactionBaseService {
@@ -31,13 +32,20 @@ export default class WhiteListService extends TransactionBaseService {
         return;
     }
 
-    async getByStore(storeId: string, walletAddress: string): Promise<WhiteList> {
-        return await this.whitelistRepository_.findOne({
-            where: {
-                store_id: storeId,
-                wallet_address: walletAddress
-            },
-            relations: ['items']
-        });
+    async getByStore(storeId: string, customerId: string): Promise<WhiteList[]> {
+        this.logger.debug(`getting whitelist ${storeId}, ${customerId}`);
+        const customer = await this.customerRepository_.findOne({ where: { id: customerId }, relations: ['walletAddresses'] })
+
+        if (customer && customer.walletAddresses) {
+            return await this.whitelistRepository_.find({
+                where: {
+                    store_id: storeId,
+                    wallet_address: In(customer.walletAddresses.map(w => w.wallet_address))
+                },
+                //relations: ['items']
+            });
+        }
+
+        return [];
     }
 }

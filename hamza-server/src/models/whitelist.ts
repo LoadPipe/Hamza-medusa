@@ -15,10 +15,10 @@ export class WhiteList extends SoftDeletableEntity {
     @Column()
     wallet_address: string;
 
-    @OneToMany(() => WhitelistItem, (whitelistItem) => whitelistItem.whitelist, {
-        onDelete: 'CASCADE',
-    })
-    items: WhitelistItem[];
+    //@OneToMany(() => WhitelistItem, (whitelistItem) => whitelistItem.whitelist, {
+    //    onDelete: 'CASCADE',
+    //})
+    //items: WhitelistItem[];
 
     @BeforeInsert()
     private beforeInsert(): void {
@@ -26,6 +26,7 @@ export class WhiteList extends SoftDeletableEntity {
     }
 }
 
+/*
 @Entity()
 @Unique(['whitelist_id', 'customer_address'])
 export class WhitelistItem extends BaseEntity {
@@ -38,5 +39,11 @@ export class WhitelistItem extends BaseEntity {
 
     @Column()
     customer_address: string;
+
+    @BeforeInsert()
+    private beforeInsert(): void {
+        this.id = generateEntityId(this.id, 'wi');
+    }
 }
+*/
 
