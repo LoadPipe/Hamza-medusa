@@ -5,6 +5,11 @@ const BUCKY_URL = process.env.BUCKY_URL || 'https://dev.buckydrop.com';
 const APP_CODE = process.env.APP_CODE || '0077651952683977';
 const APP_SECRET = process.env.APP_SECRET || 'b9486ca7a7654a8f863b3dfbd9e8c100';
 
+interface CancelOrderParams {
+    partnerOrderNo?: string;
+    orderNo?: string;
+}
+
 export class BuckyClient {
     private client: AxiosInstance;
 
@@ -118,15 +123,24 @@ export class BuckyClient {
             });
     }
 
-    async cancelOrder(orderId) {
-        const params = JSON.stringify({ orderId });
+    async cancelOrder(partnerOrderNo?: string, orderNo?: string) {
+        const bodyParams: CancelOrderParams = {};
+        if (partnerOrderNo) bodyParams.partnerOrderNo = partnerOrderNo;
+        if (orderNo) bodyParams.orderNo = orderNo;
+
+        const params = JSON.stringify(bodyParams);
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
 
         return this.client
             .post(
                 `/api/rest/v2/adapt/openapi/order/cancel?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                params
+                params,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
             )
             .then((response) => response.data)
             .catch((error) => {
@@ -182,8 +196,8 @@ const buckyClient = new BuckyClient();
 // ORDER QUERIES
 
 const createOrderData = {
-    partnerOrderNo: 'string',
-    partnerOrderNoName: 'string',
+    partnerOrderNo: 'p010101j',
+    partnerOrderNoName: '0101',
     country: 'string',
     countryCode: 'st',
     province: 'string',
@@ -213,10 +227,10 @@ buckyClient
 
 // // Call to cancel an order
 // buckyClient
-//     .cancelOrder('your_order_id_here')
+//     .cancelOrder('p010101', 'CO172290269356400001')
 //     .then((data) => console.log('Order Cancelled:', data))
 //     .catch((error) => console.error('Error cancelling order:', error));
-//
+
 // // Call to get order details
 // buckyClient
 //     .getOrderDetails('your_order_id_here')
