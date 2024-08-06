@@ -11,7 +11,7 @@ import HamzaTitle2 from '../../../../../public/images/logo/nav-logo.svg';
 //  Components
 import { WalletConnectButton } from './connect-button/components/connect-button';
 import NavSearchBar from './components/nav-searchbar';
-import MobileMenu from './components/mobile-menu';
+import MobileMenu from './menu/mobile-menu';
 import MobileNav from './components/mobile-nav';
 import MainMenu from './menu/main-menu';
 import ConnectWallet from './connect-button';
