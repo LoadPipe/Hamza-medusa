@@ -49,7 +49,7 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
             return;
         }
 
-        return formatCryptoPrice(amount, order.currency_code || 'ETH');
+        return formatCryptoPrice(amount, order.currency_code || 'USDC');
     };
 
     useEffect(() => {

@@ -140,7 +140,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                 selectedProductVariant &&
                 (selectedProductVariant.prices.find(
                     (p: any) =>
-                        p.currency_code === preferred_currency_code ?? 'usdt'
+                        p.currency_code === preferred_currency_code ?? 'usdc'
                 ) ??
                     selectedProductVariant.prices[0]);
             // console.log(`price is being set to ${price}`);
@@ -185,7 +185,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
             console.log('white list config ', whitelist_config);
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                whitelist_config.whitelisted_stores.includes(data.data)
+                    whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -474,8 +474,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                     {!inStock && isWhitelisted
                         ? 'Add to cart'
                         : inStock
-                          ? 'Add to Cart'
-                          : 'Out of Stock'}
+                            ? 'Add to Cart'
+                            : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs text-white px-4 py-2">

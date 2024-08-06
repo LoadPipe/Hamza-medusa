@@ -20,7 +20,7 @@ const Overview = ({ customer, orders }: OverviewProps) => {
             return;
         }
 
-        return formatCryptoPrice(amount, currency_code || 'ETH');
+        return formatCryptoPrice(amount, currency_code || 'USDC');
     };
 
     return (
