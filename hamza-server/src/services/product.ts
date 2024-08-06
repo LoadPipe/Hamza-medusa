@@ -2,6 +2,8 @@ import { Lifetime } from 'awilix';
 import {
     ProductService as MedusaProductService,
     Logger,
+    ProductVariant,
+    PriceSelectionResult,
 } from '@medusajs/medusa';
 import {
     CreateProductInput,
@@ -10,6 +12,10 @@ import {
 import { Product } from '../models/product';
 import logger from '@medusajs/medusa-cli/dist/reporter';
 import { StoreRepository } from '../repositories/store';
+import { PriceSelectionParams } from '@medusajs/medusa/dist/types/price-selection';
+import PriceSelectionStrategy from '../strategies/price-selection';
+import { ProductVariantRepository } from '../repositories/product-variant';
+import CustomerService from '../services/customer';
 
 export type UpdateProductProductVariantDTO = {
     id?: string;
@@ -46,11 +52,15 @@ class ProductService extends MedusaProductService {
     static LIFE_TIME = Lifetime.SCOPED;
     protected readonly logger: Logger;
     protected readonly storeRepository_: typeof StoreRepository;
+    protected readonly productVariantRepository_: typeof ProductVariantRepository;
+    protected readonly customerService_: CustomerService;
 
     constructor(container) {
         super(container);
         this.logger = container.logger;
         this.storeRepository_ = container.storeRepository;
+        this.productVariantRepository_ = container.productVariantRepository;
+        this.customerService_ = container.customerService;
     }
 
     async updateProduct(
@@ -65,16 +75,20 @@ class ProductService extends MedusaProductService {
     }
 
     async getProductsFromStoreWithPrices(storeId: string): Promise<Product[]> {
-        return this.productRepository_.find({
-            where: { store_id: storeId },
-            relations: ['variants.prices', 'reviews'],
-        });
+        return await this.convertPrices(
+            await this.productRepository_.find({
+                where: { store_id: storeId },
+                relations: ['variants.prices', 'reviews'],
+            })
+        );
     }
 
     async getAllProductsFromStoreWithPrices(): Promise<Product[]> {
-        const products = await this.productRepository_.find({
-            relations: ['variants.prices', 'reviews'],
-        });
+        const products = await this.convertPrices(
+            await this.productRepository_.find({
+                relations: ['variants.prices', 'reviews'],
+            })
+        );
 
         // Sort products so those with weight 69 come first
         const sortedProducts = products.sort((a, b) => {
@@ -202,6 +216,27 @@ class ProductService extends MedusaProductService {
             );
             throw new Error('Failed to fetch products from review.');
         }
+    }
+
+    //TODO: need a way to get the customer ID or preferred currency
+    private async convertPrices(products: Product[], customerId: string = ''): Promise<Product[]> {
+        for (const prod of products) {
+            for (const variant of prod.variants) {
+                const strategy: PriceSelectionStrategy = new PriceSelectionStrategy({
+                    customerService: this.customerService_,
+                    productVariantRepository: this.productVariantRepository_,
+                    logger: this.logger
+                });
+                const results = await strategy.calculateVariantPrice(
+                    [{ variantId: variant.id, quantity: 1 }],
+                    { customer_id: customerId }
+                );
+                if (results.has(variant.id))
+                    variant.prices = results.get(variant.id).prices;
+            }
+        }
+
+        return products
     }
 }
 
