@@ -16,6 +16,7 @@ import { PaymentDataInput } from '@medusajs/medusa/dist/services/payment';
 import PaymentRepository from '@medusajs/medusa/dist/repositories/payment';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
+import WhiteListService from '../../services/whitelist';
 
 
 export interface IPaymentGroupData {
@@ -34,6 +35,7 @@ export class BasicCheckoutProcessor {
     protected readonly productService: ProductService;
     protected readonly paymentService: PaymentService;
     protected readonly orderService: OrderService;
+    protected readonly whitelistService: WhiteListService;
     protected readonly paymentRepository: typeof PaymentRepository;
     protected readonly orderRepository: typeof OrderRepository;
     protected readonly lineItemRepository: typeof LineItemRepository;
@@ -53,6 +55,7 @@ export class BasicCheckoutProcessor {
         this.paymentRepository = container.paymentRepository;
         this.orderRepository = container.orderRepository;
         this.lineItemRepository = container.lineItemRepository;
+        this.whitelistService = container.whitelistService;
         this.logger = container.logger;
     }
 
@@ -104,6 +107,9 @@ export class BasicCheckoutProcessor {
         //get the cart
         await this.doRetrieveCart();
 
+        //restrict by whitelist 
+        await this.doRestrictByWhitelist();
+
         //group payments by store
         await this.doCreateGroups();
 
@@ -134,6 +140,19 @@ export class BasicCheckoutProcessor {
                 'items.variant.prices', //TODO: we need prices?
             ],
         });
+    }
+
+    /**
+     * Override this to change how whitelist restriction is done.
+     */
+    protected async doRestrictByWhitelist(): Promise<void> {
+        this.logger.debug(`CheckoutProcessor: doRestrictByWhitelist ${this.cartId}`);
+        const store: Store = this.getStore();
+
+        const whitelist = await this.whitelistService.getByStore(store.id, store.owner.wallet_address);
+        if (whitelist) {
+
+        }
     }
 
     /**
@@ -210,6 +229,10 @@ export class BasicCheckoutProcessor {
         };
 
         return output;
+    }
+
+    protected getStore(): Store {
+        return this.cart.items[0]?.variant?.product?.store;
     }
 
     protected groupByStore(cart: Cart): IPaymentGroupData[] {
