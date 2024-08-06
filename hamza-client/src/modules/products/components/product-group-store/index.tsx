@@ -6,7 +6,6 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import StoreFilterDisplay from '@modules/store/components/store-filter-display';
 import ProductCardStore from '@modules/store/components/product-card';
 
 type Props = {
