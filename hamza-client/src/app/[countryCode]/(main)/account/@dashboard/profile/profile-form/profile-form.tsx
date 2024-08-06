@@ -87,7 +87,7 @@ const ProfileForm = () => {
             />
 
             <Text
-                fontSize={'18px'}
+                fontSize={{ base: '16px', md: '18px' }}
                 fontWeight={600}
                 color={'primary.indigo.900'}
             >
@@ -140,10 +140,10 @@ const ProfileForm = () => {
                 backgroundColor={'primary.indigo.900'}
                 color={'white'}
                 borderRadius={'37px'}
-                fontSize={'18px'}
+                fontSize={{ base: '14px', md: '18px' }}
                 fontWeight={600}
-                height={'47px'}
-                width={'190px'}
+                height={{ base: '42px', md: '47px' }}
+                width={{ base: '100%', md: '190px' }}
                 onClick={handleSubmit}
             >
                 Update

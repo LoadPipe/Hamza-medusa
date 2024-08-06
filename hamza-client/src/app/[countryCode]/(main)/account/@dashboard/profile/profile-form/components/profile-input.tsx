@@ -40,7 +40,7 @@ const ProfileInput: React.FC<ProfileInputProps> = ({
                 </FormLabel>
                 <Input
                     borderRadius={'12px'}
-                    height={'52px'}
+                    height={{ base: '50px', md: '52px' }}
                     placeholder={placeholder}
                     backgroundColor={'#020202'}
                     border={'none'}

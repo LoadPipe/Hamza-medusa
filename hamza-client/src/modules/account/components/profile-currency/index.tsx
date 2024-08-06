@@ -31,7 +31,7 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
             </FormLabel>
             <Select
                 borderRadius={'12px'}
-                height={'52px'}
+                height={{ base: '50px', md: '52px' }}
                 backgroundColor={'#020202'}
                 border={'none'}
                 value={preferred_currency_code!}
