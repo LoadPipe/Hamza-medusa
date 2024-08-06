@@ -20,23 +20,24 @@ const ProfileCurrency: React.FC<ProfileCurrencyProps> = ({
     };
 
     return (
-        <Flex flexDirection={'column'} maxW={'420px'} width={'100%'}>
+        <Flex flexDirection={'column'} width={'100%'}>
             <FormLabel
                 textTransform={'uppercase'}
                 fontSize={'12px'}
-                pl="1rem"
+                ml={{ base: 0, md: '1rem' }}
                 mb={'8px'}
             >
                 Preferred payment currency
             </FormLabel>
             <Select
                 borderRadius={'12px'}
-                height={'52px'}
+                height={{ base: '50px', md: '52px' }}
                 backgroundColor={'#020202'}
                 border={'none'}
                 value={preferred_currency_code!}
                 onChange={handleCurrencyChange}
                 color={'white'}
+                fontSize={'14px'}
             >
                 <option
                     value="usdc"

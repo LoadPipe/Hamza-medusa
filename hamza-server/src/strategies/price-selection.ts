@@ -108,7 +108,7 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
             let prices = v.prices;
 
             //convert all currency prices according to base price
-            const baseCurrency = store?.default_currency_code;
+            /*const baseCurrency = store?.default_currency_code;
             const baseAmount = prices.find((p) => p.currency_code === baseCurrency)?.amount;
             if (baseAmount && baseCurrency) {
                 for (let n = 0; n < prices.length; n++) {
@@ -118,7 +118,7 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
                         toCurrency: prices[n].currency_code
                     });
                 }
-            }
+            }*/
 
             //if preferred currency, filter out the non-matchers
             if (preferredCurrencyId) {

@@ -77,16 +77,17 @@ const ProfileForm = () => {
     return (
         <Flex
             flexDirection={'column'}
-            maxW={'858px'}
             width={'100%'}
             gap={'23px'}
+            color={'white'}
         >
             <ProfileImage
                 firstName={avatarFirstName}
                 lastName={avatarLastName}
             />
+
             <Text
-                fontSize={'18px'}
+                fontSize={{ base: '16px', md: '18px' }}
                 fontWeight={600}
                 color={'primary.indigo.900'}
             >
@@ -94,7 +95,7 @@ const ProfileForm = () => {
             </Text>
 
             {/* First and last name input */}
-            <Flex gap={'15px'}>
+            <Flex gap={'15px'} flexDirection={{ base: 'column', md: 'row' }}>
                 <ProfileInput
                     placeholder={firstNameValue}
                     label="first name"
@@ -109,13 +110,17 @@ const ProfileForm = () => {
                 />
             </Flex>
 
-            <Flex gap={'15px'}>
+            <Flex
+                gap={'15px'}
+                maxW={{ base: '100%', md: '430px' }}
+                width={{ base: '100%', md: '50%' }}
+            >
                 <ProfileCurrency
                     preferred_currency_code={preferred_currency_code}
                     setCustomerPreferredCurrency={setCustomerPreferredCurrency}
                 />
                 {/* Email input */}
-                {emailValue?.length > 0 && (
+                {/* {emailValue?.length > 0 && (
                     <>
                         <Text
                             fontSize={'18px'}
@@ -128,18 +133,17 @@ const ProfileForm = () => {
                             {emailValue}
                         </Text>
                     </>
-                )}
+                )} */}
             </Flex>
 
             <Button
-                mt="1rem"
                 backgroundColor={'primary.indigo.900'}
                 color={'white'}
                 borderRadius={'37px'}
-                fontSize={'18px'}
+                fontSize={{ base: '14px', md: '18px' }}
                 fontWeight={600}
-                height={'47px'}
-                width={'190px'}
+                height={{ base: '42px', md: '47px' }}
+                width={{ base: '100%', md: '190px' }}
                 onClick={handleSubmit}
             >
                 Update

@@ -40,12 +40,39 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
 
     return (
         <Flex width={'100vw'} justifyContent={'center'}>
-            <Flex maxW={'1280px'} justifyContent={'center'}>
-                <Flex width={'1258px'} gap={'16px'} my="2rem">
-                    <div>{customer && <AccountNav customer={customer} />}</div>
-                    <div className="flex-1">{children}</div>
+            <Flex
+                maxW={'1280px'}
+                width={'100%'}
+                mx={'1rem'}
+                justifyContent={'center'}
+            >
+                <Flex
+                    maxW={'1258px'}
+                    width={'100%'}
+                    gap={'16px'}
+                    my="2rem"
+                    justifyContent={'center'}
+                    flexDirection={{ base: 'column', md: 'row' }}
+                >
+                    {/* <div>{customer && <AccountNav customer={customer} />}</div> */}
+                    <AccountNav customer={customer} />
+                    <Flex
+                        ml={{ base: 0, md: 'auto' }}
+                        maxWidth={'927px'}
+                        width={'100%'}
+                    >
+                        {children}
+                    </Flex>
                 </Flex>
-                {/* <div className="flex flex-col small:flex-row items-end justify-between small:border-t border-gray-200 py-12 gap-8">
+            </Flex>
+        </Flex>
+    );
+};
+
+export default AccountLayout;
+
+{
+    /* <div className="flex flex-col small:flex-row items-end justify-between small:border-t border-gray-200 py-12 gap-8">
                     <div>
                         <h3 className="text-xl-semi mb-4">Got questions?</h3>
                         <span className="txt-medium">
@@ -58,10 +85,5 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
                             Customer Service
                         </UnderlineLink>
                     </div>
-                </div> */}
-            </Flex>
-        </Flex>
-    );
-};
-
-export default AccountLayout;
+                </div> */
+}
