@@ -189,7 +189,7 @@ const AccountNav = ({
                     route={route!}
                     title={'Profile'}
                 />
-                {authData.is_verified && (
+                {!authData.is_verified && (
                     <NavLink
                         href="/account/verify"
                         route={route!}
@@ -206,16 +206,20 @@ const AccountNav = ({
                     route={route!}
                     title={'Orders'}
                 />
-                <NavLink
-                    href="/account/notifications"
-                    route={route!}
-                    title={'Notifications'}
-                />
-                <NavLink
-                    href="/account/reviews"
-                    route={route!}
-                    title={'Reviews'}
-                />
+                {authData.is_verified && (
+                    <NavLink
+                        href="/account/notifications"
+                        route={route!}
+                        title={'Notifications'}
+                    />
+                )}
+                {authData.is_verified && (
+                    <NavLink
+                        href="/account/reviews"
+                        route={route!}
+                        title={'Reviews'}
+                    />
+                )}
                 <Box
                     as="button"
                     textAlign={'left'}
