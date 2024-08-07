@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Flex, Text } from '@chakra-ui/react';
+import { Button, Flex } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import AccountMenu from '@modules/layout/templates/nav-4/menu/account-menu';
 import { SwitchNetwork } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
