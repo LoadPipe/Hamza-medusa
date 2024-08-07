@@ -37,6 +37,7 @@ export const WalletConnectButton = ({
 
                 return (
                     <Flex>
+                        <SwitchNetwork enabled={true} />
                         {connected ? (
                             <Flex
                                 ml="1rem"
@@ -44,59 +45,6 @@ export const WalletConnectButton = ({
                                 alignItems={'center'}
                             >
                                 <AccountMenu />
-                                <SwitchNetwork enabled={true} />
-                                <Flex alignSelf={'center'} ml="1rem">
-                                    <LocalizedClientLink href="/cart">
-                                        <Flex
-                                            position="relative"
-                                            width={'100%'}
-                                            color="white"
-                                            _hover={{
-                                                '.cart-text, .cart-icon': {
-                                                    color: 'primary.green.900',
-                                                },
-                                            }}
-                                        >
-                                            <Flex
-                                                flexDirection={'row'}
-                                                alignSelf={'center'}
-                                                color={'white'}
-                                                _hover={{
-                                                    '.cart-icon': {
-                                                        color: 'primary.green.900',
-                                                        transition:
-                                                            'color 0.3s ease-in-out',
-                                                    },
-                                                }}
-                                            >
-                                                <HiOutlineShoppingCart
-                                                    className="cart-icon"
-                                                    size={'40px'}
-                                                />
-                                            </Flex>
-                                            {totalItems > 0 && (
-                                                <Flex
-                                                    position="absolute"
-                                                    top="-4px"
-                                                    right="-4px"
-                                                    width="20px"
-                                                    height="20px"
-                                                    borderRadius="full"
-                                                    backgroundColor="#EB4C60"
-                                                    justifyContent="center"
-                                                    alignItems="center"
-                                                    fontSize="10px"
-                                                    color="white"
-                                                    fontWeight="700"
-                                                >
-                                                    <Text fontSize={'10px'}>
-                                                        {totalItems}
-                                                    </Text>
-                                                </Flex>
-                                            )}
-                                        </Flex>
-                                    </LocalizedClientLink>
-                                </Flex>
                             </Flex>
                         ) : (
                             <Button
