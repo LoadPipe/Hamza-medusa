@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { Flex, Box, Text } from '@chakra-ui/react';
-
-import InteractiveLink from '@modules/common/components/interactive-link';
+import errorMessage from '../../public/images/error/error-404.svg';
+import Image from 'next/image';
 
 export const metadata: Metadata = {
     title: '404',
@@ -25,6 +25,11 @@ export default function NotFound() {
                 width={'100%'}
                 gap={'10px'}
             >
+                <Image
+                    src={errorMessage}
+                    alt="404"
+                    style={{ width: '494px', height: '482px' }}
+                />
                 <Text color={'primary.green.900'} fontSize={'40px'}>
                     Page not found
                 </Text>
