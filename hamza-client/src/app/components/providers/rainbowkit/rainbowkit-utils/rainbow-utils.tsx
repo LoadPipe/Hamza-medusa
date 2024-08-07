@@ -86,7 +86,7 @@ export const { chains, publicClient, webSocketPublicClient } = configureChains(
 export function getAllowedChainsFromConfig() {
     console.log('RAINBOW: getAllowedChainsFromConfig');
     let chains = process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS;
-    if (!chains?.length) chains = '1'; ///default to mainnet
+    if (!chains?.length) chains = '10'; ///default to mainnet
 
     const split: any[] = chains.split(',');
     split.forEach((v, i) => (split[i] = parseInt(v.trim())));
@@ -105,7 +105,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     const [openModal, setOpenModal] = useState(false);
     const [preferredChainName, setPreferredChainName] = useState('');
     //sometimes not detecting environment correctly
-    const [preferredChainID, setPreferredChainID] = useState(11155111);
+    const [preferredChainID, setPreferredChainID] = useState(getAllowedChainsFromConfig()[0]);
 
     // Wagmi Hooks
     const { data: walletClient, isError } = useWalletClient();
@@ -149,6 +149,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
 
     useEffect(() => {
         const fetchChainId = async () => {
+            setSwitchNetwork();
             console.log('RAINBOW: fetchChainId');
             if (walletClient && enabled) {
                 try {
