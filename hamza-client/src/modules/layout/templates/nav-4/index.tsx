@@ -9,12 +9,12 @@ import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
 import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
 import HamzaTitle2 from '../../../../../public/images/logo/nav-logo.svg';
 //  Components
-import { WalletConnectButton } from './connect-button/components/connect-button';
+
 import NavSearchBar from './components/nav-searchbar';
 import MobileMenu from './menu/mobile-menu';
 import MobileNav from './components/mobile-nav';
 import MainMenu from './menu/main-menu';
-import ConnectWallet from './connect-button';
+import { WalletConnectButton } from './connect-button';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { LineItem } from '@medusajs/medusa';
@@ -94,7 +94,7 @@ export default async function Nav() {
 
                     <NavSearchBar />
 
-                    <ConnectWallet />
+                    <WalletConnectButton />
 
                     <Flex ml="1rem">
                         <MainMenu />

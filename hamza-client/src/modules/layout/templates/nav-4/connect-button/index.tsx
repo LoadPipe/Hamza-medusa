@@ -1,25 +1,53 @@
-import { LineItem } from '@medusajs/medusa';
+'use client';
 
-import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
+import { Button, Flex, Text } from '@chakra-ui/react';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import AccountMenu from '@modules/layout/templates/nav-4/menu/account-menu';
+import { SwitchNetwork } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 
-import { WalletConnectButton } from './components/connect-button';
+export const WalletConnectButton = () => {
+    return (
+        <ConnectButton.Custom>
+            {({
+                account,
+                chain,
+                openConnectModal,
+                authenticationStatus,
+                mounted,
+            }) => {
+                const ready = mounted && authenticationStatus !== 'loading';
+                const connected =
+                    ready &&
+                    account &&
+                    chain &&
+                    authenticationStatus === 'authenticated';
 
-const fetchCart = async () => {
-    const cart = await retrieveCart();
-
-    if (cart?.items.length) {
-        const enrichedItems = await enrichLineItems(
-            cart?.items,
-            cart?.region_id
-        );
-        cart.items = enrichedItems as LineItem[];
-    }
-
-    return cart;
+                return (
+                    <Flex>
+                        {connected ? (
+                            <Flex
+                                ml="1rem"
+                                flexDirection={'row'}
+                                alignItems={'center'}
+                            >
+                                <SwitchNetwork enabled={true} />
+                                <AccountMenu />
+                            </Flex>
+                        ) : (
+                            <Button
+                                borderRadius={'30px'}
+                                backgroundColor={'primary.green.900'}
+                                onClick={openConnectModal}
+                                ml="1rem"
+                                height="54px"
+                                fontSize={'20px'}
+                            >
+                                Connect Wallet
+                            </Button>
+                        )}
+                    </Flex>
+                );
+            }}
+        </ConnectButton.Custom>
+    );
 };
-
-export default async function ConnectWallet() {
-    const cart = await fetchCart();
-
-    return <WalletConnectButton cart={cart} />;
-}
