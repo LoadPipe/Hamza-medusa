@@ -10,6 +10,8 @@ import {
 import { Product } from '../models/product';
 import logger from '@medusajs/medusa-cli/dist/reporter';
 import { StoreRepository } from '../repositories/store';
+import { ProductVariant } from '@medusajs/medusa';
+import { ProductVariantRepository } from '../repositories/product-variant';
 
 export type UpdateProductProductVariantDTO = {
     id?: string;
@@ -46,11 +48,13 @@ class ProductService extends MedusaProductService {
     static LIFE_TIME = Lifetime.SCOPED;
     protected readonly logger: Logger;
     protected readonly storeRepository_: typeof StoreRepository;
+    protected readonly productVariantRepository_: typeof ProductVariantRepository;
 
     constructor(container) {
         super(container);
         this.logger = container.logger;
         this.storeRepository_ = container.storeRepository;
+        this.productVariantRepository_ = container.productVariantRepository;
     }
 
     async updateProduct(
@@ -66,8 +70,20 @@ class ProductService extends MedusaProductService {
 
     async addProduct(product: CreateProductInput): Promise<Product> {
         this.logger.debug(`Received add product: ${product}`);
-        const result = await super.create(product);
-        return result;
+        const savedProduct = await super.create(product);
+
+        const variantData = {
+            title: savedProduct.title,
+            product_id: savedProduct.id,
+            inventory_quantity: 10,
+            allow_backorder: false,
+            manage_inventory: true,
+        };
+
+        const variant = this.productVariantRepository_.create(variantData);
+        const savedVariant = await this.productVariantRepository_.save(variant);
+        this.logger.debug(`Product variant added: ${savedVariant.id}`);
+        return savedProduct;
     }
 
     async getProductsFromStoreWithPrices(storeId: string): Promise<Product[]> {
