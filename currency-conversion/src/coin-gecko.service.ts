@@ -124,21 +124,12 @@ export class CoinGeckoService {
     baseCurrency: string,
     conversionCurrency: string,
   ): Promise<string> {
-    // Fetch conversion rates from each token to ETH
-    const baseToEthRate = await this.getExchangeRate(baseCurrency, 'eth');
-    const conversionToEthRate = await this.getExchangeRate(
+    const baseToEth = await this.fetchConversionRate(baseCurrency, 'eth');
+    const conversionToEth = await this.fetchConversionRate(
       conversionCurrency,
       'eth',
     );
-
-    if (baseToEthRate === 0 || conversionToEthRate === 0) {
-      throw new Error(
-        'Conversion rate error: One of the rates returned as zero, check data integrity.',
-      );
-    }
-
-    // Calculate the rate from baseCurrency to conversionCurrency
-    const rate = baseToEthRate / conversionToEthRate;
+    const rate = baseToEth / conversionToEth;
     return rate.toString();
   }
 

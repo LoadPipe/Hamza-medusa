@@ -11,12 +11,12 @@ import { CoinGeckoService } from './coin-gecko.service';
 export class CoinGeckoController {
   constructor(private readonly coinGeckoService: CoinGeckoService) {}
 
-  @Get('/convert')
+  @Get('/convert') // or @Get('/exch') depending on your setup
   async convertCurrencies(
     @Query('base') baseCurrency: string,
-    @Query('to') conversionCurrency: string,
+    @Query('to') toCurrency: string,
   ): Promise<string> {
-    if (!baseCurrency || !conversionCurrency) {
+    if (!baseCurrency || !toCurrency) {
       throw new HttpException(
         'Base currency and conversion currency must be provided',
         HttpStatus.BAD_REQUEST,
@@ -25,10 +25,10 @@ export class CoinGeckoController {
     try {
       const rate = await this.coinGeckoService.getExchangeRate(
         baseCurrency,
-        conversionCurrency,
+        toCurrency,
       );
-      const convertAmount = rate * 1; // Assuming 1 as the base amount
-      return `${convertAmount} ${conversionCurrency}`;
+      const convertedAmount = rate * 1; // Assuming 1 unit to convert
+      return `${convertedAmount} ${toCurrency}`; // Or format as needed
     } catch (error) {
       throw new HttpException(
         'Failed to convert currencies',
