@@ -54,10 +54,10 @@ declare global {
 const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
     const notReady =
         !cart ||
-            !cart.shipping_address ||
-            !cart.billing_address ||
-            !cart.email ||
-            cart.shipping_methods.length < 1
+        !cart.shipping_address ||
+        !cart.billing_address ||
+        !cart.email ||
+        cart.shipping_methods.length < 1
             ? true
             : false;
 
@@ -293,14 +293,13 @@ const CryptoPaymentButton = ({
 
             //here connect wallet and sign in, if not connected
             // causes bug when connected with mobile
-            if (!isConnected) {
-                connect();
-            }
+
+            connect();
 
             updateCart.mutate(
                 { context: {} },
                 {
-                    onSuccess: ({ }) => {
+                    onSuccess: ({}) => {
                         //this calls the CartCompletion routine
                         completeCart.mutate(void 0, {
                             onSuccess: async ({ data, type }) => {
@@ -319,14 +318,17 @@ const CryptoPaymentButton = ({
                             },
                             onError: async (e) => {
                                 setSubmitting(false);
-                                if (e.message?.indexOf('status code 401') >= 0) {
+                                if (
+                                    e.message?.indexOf('status code 401') >= 0
+                                ) {
                                     setErrorMessage('Customer not whitelisted');
-                                }
-                                else {
-                                    setErrorMessage('Checkout was not completed');
+                                } else {
+                                    setErrorMessage(
+                                        'Checkout was not completed'
+                                    );
                                 }
 
-                                //TODO: this is a really bad way to do this 
+                                //TODO: this is a really bad way to do this
                                 await cancelOrderFromCart();
                             },
                         });
