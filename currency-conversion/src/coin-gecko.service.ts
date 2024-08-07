@@ -62,7 +62,7 @@ export class CoinGeckoService {
     baseCurrency: string,
     conversionCurrency: string,
   ): Promise<string> {
-    if (baseCurrency === this.ETH || conversionCurrency === this.ETH) {
+    if (baseCurrency === 'eth' || conversionCurrency === 'eth') {
       // Handle conversion involving native ETH
       return this.handleEthConversion(baseCurrency, conversionCurrency);
     } else {
@@ -71,15 +71,35 @@ export class CoinGeckoService {
     }
   }
 
-  //this method will mainly be used
   async getExchangeRate(
     baseCurrency: string,
     conversionCurrency: string,
   ): Promise<number> {
-    // check for cached first
-    // use the inverse if we have a reversed version of the pair already cached
-    // inverse of exchange rate: 1/rate (e.g. eth->usdc is 3000, usdc->eth is 1/3000)
-    return await this.fetchConversionRate(baseCurrency, conversionCurrency);
+    // Check for direct caching first
+    let cacheKey = `${baseCurrency}-${conversionCurrency}`;
+    let cachedData = this.cache[cacheKey];
+    const currentTime = new Date().getTime();
+
+    if (cachedData && currentTime - cachedData.timestamp < this.cacheDuration) {
+      return cachedData.value;
+    }
+
+    // If direct rate not cached, calculate via ETH
+    if (baseCurrency !== 'eth' && conversionCurrency !== 'eth') {
+      const baseToEth = await this.fetchConversionRate(baseCurrency, 'eth');
+      const conversionToEth = await this.fetchConversionRate(
+        conversionCurrency,
+        'eth',
+      );
+      const rate = baseToEth / conversionToEth;
+
+      // Cache this calculated rate
+      this.cache[cacheKey] = { value: rate, timestamp: currentTime };
+      return rate;
+    }
+
+    // Otherwise fetch normally
+    return this.fetchConversionRate(baseCurrency, conversionCurrency);
   }
 
   private async handleEthConversion(
@@ -104,12 +124,21 @@ export class CoinGeckoService {
     baseCurrency: string,
     conversionCurrency: string,
   ): Promise<string> {
-    const baseToEth = await this.fetchConversionRate(baseCurrency, 'eth');
-    const conversionToEth = await this.fetchConversionRate(
+    // Fetch conversion rates from each token to ETH
+    const baseToEthRate = await this.getExchangeRate(baseCurrency, 'eth');
+    const conversionToEthRate = await this.getExchangeRate(
       conversionCurrency,
       'eth',
     );
-    const rate = baseToEth / conversionToEth;
+
+    if (baseToEthRate === 0 || conversionToEthRate === 0) {
+      throw new Error(
+        'Conversion rate error: One of the rates returned as zero, check data integrity.',
+      );
+    }
+
+    // Calculate the rate from baseCurrency to conversionCurrency
+    const rate = baseToEthRate / conversionToEthRate;
     return rate.toString();
   }
 
