@@ -26,8 +26,8 @@ export class CoinGeckoService {
   private async initCache(): Promise<void> {
     this.logger.log('Initializing cache...');
     await Promise.all([
-      this.fetchAndCacheConversionRate(this.ETH, this.USDT),
-      this.fetchAndCacheConversionRate(this.ETH, this.USDC),
+      this.fetchAndCacheConversionRate(this.USDT, 'eth'),
+      this.fetchAndCacheConversionRate(this.USDC, 'eth'),
     ])
       .then(() => {
         this.logger.log('Cache initialized for ETH to USDT and ETH to USDC.');
@@ -43,6 +43,10 @@ export class CoinGeckoService {
   ): Promise<void> {
     try {
       const rate = await this.fetchConversionRate(contractAddress, vsCurrency);
+      console.log(
+        `Fetched rate for ${contractAddress} to ${vsCurrency}:`,
+        rate,
+      );
       const cacheKey = `${contractAddress}-${vsCurrency}`;
       this.cache[cacheKey] = { value: rate, timestamp: new Date().getTime() };
       this.logger.log(`Cached ${contractAddress} to ${vsCurrency} rate.`);
@@ -141,7 +145,7 @@ export class CoinGeckoService {
           `No data found for ${contractAddress} with currency ${vsCurrency}`,
         );
       }
-
+      console.log(`Response is ${JSON.stringify(response.data)}`);
       const newValue =
         contractAddress === this.ETH
           ? response.data.ethereum[vsCurrency]
