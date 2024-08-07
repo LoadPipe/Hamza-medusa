@@ -82,19 +82,19 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
         // console.log('toggle wishlist-dropdown item', product);
         wishlist.products.find((a) => a.id == productId)
             ? removeWishlistItemMutation.mutate({
-                id: productId!,
-                description: '',
-                handle: productHandle,
-                thumbnail: imageSrc,
-                title: productName
-            })
+                  id: productId!,
+                  description: '',
+                  handle: productHandle,
+                  thumbnail: imageSrc,
+                  title: productName,
+              })
             : addWishlistItemMutation.mutate({
-                id: productId!,
-                description: '',
-                handle: productHandle,
-                thumbnail: imageSrc,
-                title: productName,
-            });
+                  id: productId!,
+                  description: '',
+                  handle: productHandle,
+                  thumbnail: imageSrc,
+                  title: productName,
+              });
     };
 
     // Add to cart
@@ -113,7 +113,7 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
     const whitelistedProductHandler = async () => {
         const whitelistedProduct =
             whitelist_config.is_whitelisted &&
-                whitelist_config.whitelisted_stores.includes(storeId)
+            whitelist_config.whitelisted_stores.includes(storeId)
                 ? true
                 : false;
 
@@ -134,7 +134,7 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
             <Box
                 borderRadius="16px"
                 overflow="hidden"
-                backgroundColor="black"
+                backgroundColor="#121212"
                 transition="transform 0.2s ease-in-out" // Adds a smooth transition effect
                 _hover={{
                     transform: 'scale(1.02)', // Increases the size by 2% on hover
