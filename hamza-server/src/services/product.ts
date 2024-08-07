@@ -64,6 +64,12 @@ class ProductService extends MedusaProductService {
         return result;
     }
 
+    async addProduct(product: CreateProductInput): Promise<Product> {
+        this.logger.debug(`Received add product: ${product}`);
+        const result = await super.create(product);
+        return result;
+    }
+
     async getProductsFromStoreWithPrices(storeId: string): Promise<Product[]> {
         return this.productRepository_.find({
             where: { store_id: storeId },

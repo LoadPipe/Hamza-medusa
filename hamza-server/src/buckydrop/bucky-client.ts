@@ -182,15 +182,15 @@ const buckyClient = new BuckyClient();
 // Call to get product details
 // buckyClient
 //     .getProductDetails('https://detail.1688.com/offer/592228806840.html')
-//     .then((data) => console.log('Product Details:', data))
+//     .then((data) => console.log('Product Details:', JSON.stringify(data)))
 //     .catch((error) => console.error('Error fetching product details:', error));
-//
+
 // // Call to search products based on a keyword
-// buckyClient
-//     .searchProducts('cup', 1, 10)
-//     .then((data) => console.log('Search Results:', data))
-//     .catch((error) => console.error('Error searching products:', error));
-//
+buckyClient
+    .searchProducts('cup', 1, 10)
+    .then((data) => console.log('Search Results:', JSON.stringify(data)))
+    .catch((error) => console.error('Error searching products:', error));
+
 // buckyClient
 //     .searchProductByImage('your_base64_encoded_image_here')
 //     .then((data) => console.log('Image Search Results:', data))
@@ -231,10 +231,10 @@ const createOrderData = {
     ],
 };
 
-buckyClient
-    .createOrder(createOrderData)
-    .then((data) => console.log('Order Created:', data))
-    .catch((error) => console.error('Error creating order:', error));
+// buckyClient
+//     .createOrder(createOrderData)
+//     .then((data) => console.log('Order Created:', data))
+//     .catch((error) => console.error('Error creating order:', error));
 
 // // Call to cancel an order
 // buckyClient

@@ -401,3 +401,28 @@ Content-Type: application/json
   "order_id": "order_01J3FN3JXTGQ90KA2XQG1DYFJD",
   "status": "shipped"
 }
+
+### POST Let's add products...
+POST http://localhost:9000/custom/product/add-product
+Content-Type: application/json
+
+{
+  "title": "Sample Product",
+  "handle": "sample-product",
+  "description": "A brief description of the sample product.",
+  "is_giftcard": false,
+  "status": "published",
+  "thumbnail": "https://example.com/path/to/image.jpg",
+  "weight": 100,
+  "length": 10,
+  "height": 10,
+  "width": 10,
+  "hs_code": "123456",
+  "origin_country": "US",
+  "mid_code": "ABC123",
+  "material": "Cotton",
+  "collection_id": "pcol_01HSGAMXDJD725MR3VSW63B0RD",
+  "type_id": null,
+  "discountable": true,
+  "store_id": "store_01J3CF347H10K4C8D889DST58Z"
+}
