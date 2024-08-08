@@ -62,7 +62,10 @@ export class CoinGeckoService {
     async convertCurrency(
         baseCurrency: string,
         conversionCurrency: string,
-    ): Promise<string> {
+    ): Promise<number> {
+        if (baseCurrency === conversionCurrency)
+            return 1;
+
         if (baseCurrency === 'eth' || conversionCurrency === 'eth') {
             // Handle conversion involving native ETH
             return this.handleEthConversion(baseCurrency, conversionCurrency);
@@ -79,16 +82,20 @@ export class CoinGeckoService {
         baseCurrency = baseCurrency.trim().toLowerCase();
         conversionCurrency = conversionCurrency.trim().toLowerCase();
 
-        // Check for direct caching first
-        let cacheKey = this.createCacheKey(baseCurrency, conversionCurrency);
-        let cachedData = this.cache[cacheKey];
-        const currentTime = this.getTimestamp();
-
         //handle eth address rather than 'eth' 
         if (this.isZeroAddress(baseCurrency))
             baseCurrency = 'eth';
         if (this.isZeroAddress(conversionCurrency))
             conversionCurrency = 'eth';
+
+        //if A->A rate, return 1
+        if (conversionCurrency === baseCurrency)
+            return 1;
+
+        // Check for direct caching first
+        let cacheKey = this.createCacheKey(baseCurrency, conversionCurrency);
+        let cachedData = this.cache[cacheKey];
+        const currentTime = this.getTimestamp();
 
         if (cachedData && currentTime - cachedData.timestamp < this.cacheDuration) {
             return cachedData.value;
@@ -122,17 +129,17 @@ export class CoinGeckoService {
     private async handleEthConversion(
         baseCurrency: string,
         conversionCurrency: string,
-    ): Promise<string> {
+    ): Promise<number> {
         // Determine if ETH is the base or the target and call the appropriate conversion function
         if (baseCurrency === this.ETH) {
             // ETH to Token
             return this.fetchConversionRate(conversionCurrency, 'eth').then((rate) =>
-                (1 / rate).toString(),
+                (1 / rate),
             );
         } else {
             // Token to ETH
             return this.fetchConversionRate(baseCurrency, 'eth').then((rate) =>
-                rate.toString(),
+                rate,
             );
         }
     }
@@ -140,14 +147,14 @@ export class CoinGeckoService {
     private async convertTokenToToken(
         baseCurrency: string,
         conversionCurrency: string,
-    ): Promise<string> {
+    ): Promise<number> {
         const baseToEth = await this.fetchConversionRate(baseCurrency, 'eth');
         const conversionToEth = await this.fetchConversionRate(
             conversionCurrency,
             'eth',
         );
         const rate = baseToEth / conversionToEth;
-        return rate.toString();
+        return rate;
     }
 
     private async fetchConversionRate(
