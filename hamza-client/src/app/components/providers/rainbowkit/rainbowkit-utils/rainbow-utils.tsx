@@ -174,11 +174,11 @@ export const SwitchNetwork = ({ enabled }: Props) => {
                         `RAINBOW: connected chain id is ${chainId}, preferred chain is ${preferredChainID}`
                     );
 
-                    // if (chainId === preferredChainID) {
-                    //     setOpenModal(false);
-                    // } else {
-                    //     setOpenModal(true);
-                    // }
+                    if (chainId === preferredChainID) {
+                        setOpenModal(false);
+                    } else {
+                        setOpenModal(true);
+                    }
                 } catch (error) {
                     console.error('RAINBOW: Error fetching chain ID:', error);
                 }
