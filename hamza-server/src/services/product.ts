@@ -71,33 +71,29 @@ class ProductService extends MedusaProductService {
         return result;
     }
 
-    async addProductFromBuckyDrop(keyword: string): Promise<Product[]> {
-        const searchResults = await this.buckyClient.searchProducts(keyword);
-        const products = [];
+    async addProductFromBuckyDrop(keyword: string): Promise<any> {
+        try {
+            const data = await this.buckyClient.searchProducts(keyword, 1, 10);
+            if (!data.success || !data.data.records.length) {
+                throw new Error('No products found or error in fetching data');
+            }
 
-        for (const item of searchResults.records) {
-            const productData = this.mapBuckyDataToProductInput(item);
-            const savedProduct = this.productRepository_.create(productData);
-            await this.productRepository_.save(savedProduct);
-            products.push(savedProduct);
+            const products = data.data.records.map(
+                this.mapBuckyDataToProductInput
+            );
 
-            // Create a variant for each product
-            const variantData = {
-                title: savedProduct.title,
-                product_id: savedProduct.id,
-                inventory_quantity: 10, // Default inventory or derived from data
-                allow_backorder: false,
-                manage_inventory: true,
-                // Add other necessary fields
-            };
+            const addedProducts = await Promise.all(
+                products.map((product) => super.create(product))
+            );
 
-            const variant = this.productVariantRepository_.create(variantData);
-            const savedVariant =
-                await this.productVariantRepository_.save(variant);
-            savedProduct.variants = [savedVariant]; // Assuming you have a variants field in your product model
+            console.log(
+                `Added products: ${addedProducts.map((p) => p.id).join(', ')}`
+            );
+            return addedProducts;
+        } catch (error) {
+            console.error('Error in adding products from BuckyDrop:', error);
+            throw error;
         }
-
-        return products; // Return the array of products with their variants
     }
 
     private mapBuckyDataToProductInput(item) {
