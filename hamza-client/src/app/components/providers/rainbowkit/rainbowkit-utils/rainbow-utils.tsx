@@ -94,15 +94,28 @@ export function getAllowedChainsFromConfig() {
     return split;
 }
 
+function delay(ms: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve();
+        }, ms);
+    });
+}
+
 async function tryAndRetry(
     input: any,
     action: (arg: any) => any,
     message: string,
-    maxTries: number = 3
+    maxTries: number = 3,
+    delayMs: number = 100
 ): Promise<any> {
     for (let n = 0; n < maxTries; n++) {
         console.log(`${message} attempt number ${n + 1}...`);
         try {
+            if (delayMs) {
+                await delay(delayMs);
+            }
+
             const output = await action(input);
             if (output) {
                 console.log(`${message} succeeded, returning ${output}`);
