@@ -184,8 +184,8 @@ export class PriceConverter {
 
     private async getFromApi(price: IPrice): Promise<number> {
         //convert to addresses 
-        const baseAddr = getCurrencyAddress(price.baseCurrency, 10);
-        const toAddr = getCurrencyAddress(price.toCurrency, 10);
+        const baseAddr = getCurrencyAddress(price.baseCurrency, 1);
+        const toAddr = getCurrencyAddress(price.toCurrency, 1);
 
         return await this.restClient.getExchangeRate(
             baseAddr,
