@@ -12,7 +12,7 @@ interface CacheEntry {
 export class CoinGeckoService {
     private readonly logger = new Logger(CoinGeckoService.name);
     private cache: { [key: string]: CacheEntry } = {};
-    private readonly cacheDuration = 300000; // Cache duration in milliseconds (5 minutes)
+    private readonly cacheDuration = 900; // Cache duration in seconds (15 minutes)
 
     // Correct contract addresses
     private readonly USDT = '0xdac17f958d2ee523a2206206994597c13d831ec7';
@@ -48,7 +48,7 @@ export class CoinGeckoService {
                 rate,
             );
             const cacheKey = `${contractAddress}-${vsCurrency}`;
-            this.cache[cacheKey] = { value: rate, timestamp: new Date().getTime() };
+            this.cache[cacheKey] = { value: rate, timestamp: this.getTimestamp() };
             this.logger.log(`Cached ${contractAddress} to ${vsCurrency} rate.`);
         } catch (error) {
             this.logger.error(
@@ -78,7 +78,7 @@ export class CoinGeckoService {
         // Check for direct caching first
         let cacheKey = `${baseCurrency}-${conversionCurrency}`;
         let cachedData = this.cache[cacheKey];
-        const currentTime = new Date().getTime();
+        const currentTime = this.getTimestamp();
 
         if (cachedData && currentTime - cachedData.timestamp < this.cacheDuration) {
             return cachedData.value;
@@ -139,7 +139,7 @@ export class CoinGeckoService {
     ): Promise<number> {
         const cacheKey = `${contractAddress}-${vsCurrency}`;
         const cachedData = this.cache[cacheKey];
-        const currentTime = new Date().getTime();
+        const currentTime = this.getTimestamp();
 
         if (cachedData && currentTime - cachedData.timestamp < this.cacheDuration) {
             console.log(`Using cached data for ${contractAddress} to ${vsCurrency}`);
@@ -178,5 +178,9 @@ export class CoinGeckoService {
                 `An error occurred while fetching data for ${contractAddress}`,
             );
         }
+    }
+
+    private getTimestamp(): number {
+        return new Date().getTime() / 1000;
     }
 }
