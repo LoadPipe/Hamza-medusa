@@ -94,6 +94,22 @@ export function getAllowedChainsFromConfig() {
     return split;
 }
 
+export async function getChainId(walletClient: any) {
+
+    for (let n = 0; n < 3; n++) {
+        try {
+            const chainId = walletClient.getChainId();
+            if (chainId)
+                return chainId;
+        }
+        catch (e: any) {
+            console.error('RAINBOW: Error fetching chain ID:', e);
+        }
+    }
+
+    return null;
+}
+
 type Props = {
     enabled: boolean;
 };
@@ -153,7 +169,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
             console.log('RAINBOW: fetchChainId');
             if (walletClient && enabled) {
                 try {
-                    const chainId = await walletClient.getChainId();
+                    const chainId = await getChainId(walletClient);
                     console.log(
                         `RAINBOW: connected chain id is ${chainId}, preferred chain is ${preferredChainID}`
                     );
