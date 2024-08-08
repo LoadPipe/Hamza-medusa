@@ -26,8 +26,8 @@ export class CoinGeckoService {
     private async initCache(): Promise<void> {
         this.logger.log('Initializing cache...');
         await Promise.all([
-            this.fetchAndCacheConversionRate(this.USDT, 'eth'),
-            this.fetchAndCacheConversionRate(this.USDC, 'eth'),
+            this.fetchConversionRate(this.USDT, 'eth'),
+            this.fetchConversionRate(this.USDC, 'eth'),
         ])
             .then(() => {
                 this.logger.log('Cache initialized for ETH to USDT and ETH to USDC.');
@@ -35,28 +35,6 @@ export class CoinGeckoService {
             .catch((error) => {
                 this.logger.error('Failed to populate cache at startup:', error);
             });
-    }
-
-    //TODO: this method is redundant 
-    private async fetchAndCacheConversionRate(
-        contractAddress: string,
-        vsCurrency: string,
-    ): Promise<void> {
-        try {
-            const rate = await this.fetchConversionRate(contractAddress, vsCurrency);
-            console.log(
-                `Fetched rate for ${contractAddress} to ${vsCurrency}:`,
-                rate,
-            );
-            const cacheKey = this.createCacheKey(contractAddress, vsCurrency);
-            this.cache[cacheKey] = { value: rate, timestamp: this.getTimestamp() };
-            this.logger.log(`Cached ${contractAddress} to ${vsCurrency} rate.`);
-        } catch (error) {
-            this.logger.error(
-                `Failed to fetch and cache rate for ${contractAddress} to ${vsCurrency}:`,
-                error,
-            );
-        }
     }
 
     async convertCurrency(
@@ -210,7 +188,6 @@ export class CoinGeckoService {
 
     private createCacheKey(baseCurrency: string, conversionCurrency: string): string {
         const key = `${baseCurrency.toLowerCase()}-${conversionCurrency.toLowerCase()}`;
-        console.log('cache key', key);
         return key;
     }
 
