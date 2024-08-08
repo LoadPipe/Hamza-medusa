@@ -107,7 +107,7 @@ export class BuckyClient {
             });
     }
 
-    async createOrder(orderDetails): Promise<any> {
+    async createOrder(orderDetails) {
         const params = JSON.stringify(orderDetails);
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
@@ -117,29 +117,8 @@ export class BuckyClient {
                 `/api/rest/v2/adapt/openapi/order/create?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params
             )
-            .then(async (response) => {
-                const data = response.data;
-                console.log('Order Created:', data);
-
-                // Assuming the packageCode is part of the response
-                const packageCode =
-                    data.packageCode ||
-                    data.parcelOrderNo ||
-                    data.someOtherIdentifier;
-
-                if (packageCode) {
-                    // Query logistics information using the packageCode
-                    const logisticsInfo =
-                        await this.getLogisticsInfo(packageCode);
-                    console.log('Logistics Info:', logisticsInfo);
-                } else {
-                    console.error('No packageCode found in the order response');
-                }
-
-                return data;
-            })
+            .then((response) => response.data)
             .catch((error) => {
-                console.error('Error creating order:', error);
                 throw error;
             });
     }
@@ -185,19 +164,13 @@ export class BuckyClient {
             });
     }
 
-    async getLogisticsInfo(packageCode: string): Promise<any> {
+    async getLogisticsInfo(packageCode) {
         const params = JSON.stringify({ packageCode });
-        const timestamp = Date.now();
-        const sign = this.generateSignature(params, timestamp);
-
+        // other setup like timestamp, appCode, sign, etc.
         return this.client
-            .post(
-                `/api/rest/v2/adapt/adaptation/logistics/query-info?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                params
-            )
+            .post(`/api/rest/v2/adapt/adaptation/logistics/query-info`, params)
             .then((response) => response.data)
             .catch((error) => {
-                console.error('Error querying logistics info:', error);
                 throw error;
             });
     }
@@ -234,8 +207,8 @@ const buckyClient = new BuckyClient();
 // ORDER QUERIES
 
 const createOrderData = {
-    partnerOrderNo: 'p0101jk2',
-    partnerOrderNoName: '010112',
+    partnerOrderNo: 'p0101jjk2',
+    partnerOrderNoName: '0101112',
     country: 'string',
     countryCode: 'st',
     province: 'string',
