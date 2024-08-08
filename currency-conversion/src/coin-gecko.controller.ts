@@ -49,6 +49,7 @@ export class CoinGeckoController {
             );
         }
         try {
+            console.log('getting exchange rate');
             return await this.coinGeckoService.getExchangeRate(
                 baseCurrency,
                 conversionCurrency,

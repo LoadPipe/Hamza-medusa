@@ -37,6 +37,7 @@ export class CoinGeckoService {
             });
     }
 
+    //TODO: this method is redundant 
     private async fetchAndCacheConversionRate(
         contractAddress: string,
         vsCurrency: string,
@@ -47,7 +48,7 @@ export class CoinGeckoService {
                 `Fetched rate for ${contractAddress} to ${vsCurrency}:`,
                 rate,
             );
-            const cacheKey = `${contractAddress}-${vsCurrency}`;
+            const cacheKey = this.createCacheKey(contractAddress, vsCurrency);
             this.cache[cacheKey] = { value: rate, timestamp: this.getTimestamp() };
             this.logger.log(`Cached ${contractAddress} to ${vsCurrency} rate.`);
         } catch (error) {
@@ -76,13 +77,16 @@ export class CoinGeckoService {
         conversionCurrency: string,
     ): Promise<number> {
         // Check for direct caching first
-        let cacheKey = `${baseCurrency}-${conversionCurrency}`;
+        let cacheKey = this.createCacheKey(baseCurrency, conversionCurrency);
         let cachedData = this.cache[cacheKey];
         const currentTime = this.getTimestamp();
 
         if (cachedData && currentTime - cachedData.timestamp < this.cacheDuration) {
             return cachedData.value;
         }
+
+        console.log('data NOT cached');
+        return 0;
 
         // If direct rate not cached, calculate via ETH
         if (baseCurrency !== 'eth' && conversionCurrency !== 'eth') {
@@ -137,7 +141,7 @@ export class CoinGeckoService {
         contractAddress: string,
         vsCurrency: string,
     ): Promise<number> {
-        const cacheKey = `${contractAddress}-${vsCurrency}`;
+        const cacheKey = this.createCacheKey(contractAddress, vsCurrency);
         const cachedData = this.cache[cacheKey];
         const currentTime = this.getTimestamp();
 
@@ -182,5 +186,9 @@ export class CoinGeckoService {
 
     private getTimestamp(): number {
         return new Date().getTime() / 1000;
+    }
+
+    private createCacheKey(baseCurrency: string, conversionCurrency: string): string {
+        return `${baseCurrency.toLowerCase()}-${conversionCurrency.toLowerCase()}`;
     }
 }
