@@ -12,7 +12,8 @@ import logger from '@medusajs/medusa-cli/dist/reporter';
 import { StoreRepository } from '../repositories/store';
 import { ProductVariant } from '@medusajs/medusa';
 import { ProductVariantRepository } from '../repositories/product-variant';
-
+import { BuckyClient } from '../buckydrop/bucky-client';
+import { ProductStatus } from '@medusajs/medusa';
 export type UpdateProductProductVariantDTO = {
     id?: string;
     store_id?: string;
@@ -49,12 +50,14 @@ class ProductService extends MedusaProductService {
     protected readonly logger: Logger;
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
+    private buckyClient: BuckyClient;
 
     constructor(container) {
         super(container);
         this.logger = container.logger;
         this.storeRepository_ = container.storeRepository;
         this.productVariantRepository_ = container.productVariantRepository;
+        this.buckyClient = new BuckyClient();
     }
 
     async updateProduct(
@@ -68,22 +71,56 @@ class ProductService extends MedusaProductService {
         return result;
     }
 
-    async addProduct(product: CreateProductInput): Promise<Product> {
-        this.logger.debug(`Received add product: ${product}`);
-        const savedProduct = await super.create(product);
+    async addProductFromBuckyDrop(keyword: string): Promise<Product[]> {
+        const searchResults = await this.buckyClient.searchProducts(keyword);
+        const products = [];
 
-        const variantData = {
-            title: savedProduct.title,
-            product_id: savedProduct.id,
-            inventory_quantity: 10,
-            allow_backorder: false,
-            manage_inventory: true,
+        for (const item of searchResults.records) {
+            const productData = this.mapBuckyDataToProductInput(item);
+            const savedProduct = this.productRepository_.create(productData);
+            await this.productRepository_.save(savedProduct);
+            products.push(savedProduct);
+
+            // Create a variant for each product
+            const variantData = {
+                title: savedProduct.title,
+                product_id: savedProduct.id,
+                inventory_quantity: 10, // Default inventory or derived from data
+                allow_backorder: false,
+                manage_inventory: true,
+                // Add other necessary fields
+            };
+
+            const variant = this.productVariantRepository_.create(variantData);
+            const savedVariant =
+                await this.productVariantRepository_.save(variant);
+            savedProduct.variants = [savedVariant]; // Assuming you have a variants field in your product model
+        }
+
+        return products; // Return the array of products with their variants
+    }
+
+    private mapBuckyDataToProductInput(item) {
+        return {
+            title: item.productName,
+            handle: item.spuCode, // Assuming spuCode is unique and can be used as a handle
+            description: item.productName,
+            is_giftcard: false,
+            status: 'draft' as ProductStatus, // Use 'draft' or another valid status
+            thumbnail: item.picUrl,
+            weight: Math.round(item.weight || 100),
+            length: Math.round(item.length || 10),
+            height: Math.round(item.height || 10),
+            width: Math.round(item.width || 10),
+            hs_code: item.hs_code || '123456',
+            origin_country: item.origin_country || 'US',
+            mid_code: item.mid_code || 'ABC123',
+            material: item.material || 'Cotton',
+            type: null, // Set appropriately based on your system logic
+            collection_id: null, // Set appropriately
+            discountable: true,
+            store_id: 'store_01J3CF347H10K4C8D889DST58Z', // Ensure this is valid or handled dynamically
         };
-
-        const variant = this.productVariantRepository_.create(variantData);
-        const savedVariant = await this.productVariantRepository_.save(variant);
-        this.logger.debug(`Product variant added: ${savedVariant.id}`);
-        return savedProduct;
     }
 
     async getProductsFromStoreWithPrices(storeId: string): Promise<Product[]> {
