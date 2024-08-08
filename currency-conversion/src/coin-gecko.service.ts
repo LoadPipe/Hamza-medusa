@@ -85,13 +85,10 @@ export class CoinGeckoService {
             return cachedData.value;
         }
 
-        console.log('data NOT cached');
-        return 0;
-
         // If direct rate not cached, calculate via ETH
         if (baseCurrency !== 'eth' && conversionCurrency !== 'eth') {
-            const baseToEth = await this.fetchConversionRate(baseCurrency, 'eth');
-            const conversionToEth = await this.fetchConversionRate(
+            const baseToEth = await this.getExchangeRate(baseCurrency, 'eth');
+            const conversionToEth = await this.getExchangeRate(
                 conversionCurrency,
                 'eth',
             );
@@ -189,6 +186,8 @@ export class CoinGeckoService {
     }
 
     private createCacheKey(baseCurrency: string, conversionCurrency: string): string {
-        return `${baseCurrency.toLowerCase()}-${conversionCurrency.toLowerCase()}`;
+        const key = `${baseCurrency.toLowerCase()}-${conversionCurrency.toLowerCase()}`;
+        console.log('cache key', key);
+        return key;
     }
 }
