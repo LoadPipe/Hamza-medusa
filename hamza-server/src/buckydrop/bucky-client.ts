@@ -148,8 +148,11 @@ export class BuckyClient {
             });
     }
 
-    async getOrderDetails(orderId) {
-        const params = JSON.stringify({ orderId });
+    async getOrderDetails({ partnerOrderNo, orderNo }) {
+        const params = JSON.stringify({
+            partnerOrderNo,
+            orderNo,
+        });
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
 
@@ -207,8 +210,8 @@ const buckyClient = new BuckyClient();
 // ORDER QUERIES
 
 const createOrderData = {
-    partnerOrderNo: 'p0101jjk2',
-    partnerOrderNoName: '0101112',
+    partnerOrderNo: 'p0130z31',
+    partnerOrderNoName: '010123',
     country: 'string',
     countryCode: 'st',
     province: 'string',
@@ -231,22 +234,36 @@ const createOrderData = {
     ],
 };
 
+// buckyClient
+//     .createOrder(createOrderData)
+//     .then((data) => console.log('Order Created:', data))
+//     .catch((error) => console.error('Error creating order:', error));
+
+// Call to get order details
 buckyClient
-    .createOrder(createOrderData)
-    .then((data) => console.log('Order Created:', data))
-    .catch((error) => console.error('Error creating order:', error));
+    .getOrderDetails({
+        partnerOrderNo: 'p0130z31',
+        orderNo: 'CO172315767824400001',
+    })
+    .then((data) => console.log('Order Details:', data))
+    .catch((error) => {
+        if (error.response) {
+            console.error(
+                'API responded with a failure:',
+                error.response.status,
+                error.response.data
+            );
+        } else {
+            console.error('Request failed with no response:', error.message);
+        }
+        throw error;
+    });
 
 // // Call to cancel an order
 // buckyClient
 //     .cancelOrder('p0101jj', 'CO172315470085200001')
 //     .then((data) => console.log('Order Cancelled:', data))
 //     .catch((error) => console.error('Error cancelling order:', error));
-
-// // Call to get order details
-// buckyClient
-//     .getOrderDetails('your_order_id_here')
-//     .then((data) => console.log('Order Details:', data))
-//     .catch((error) => console.error('Error fetching order details:', error));
 
 // buckyClient
 //     .getLogisticsInfo('010111')
