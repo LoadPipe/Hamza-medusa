@@ -94,20 +94,36 @@ export function getAllowedChainsFromConfig() {
     return split;
 }
 
-export async function getChainId(walletClient: any) {
-
-    for (let n = 0; n < 3; n++) {
+async function tryAndRetry(
+    input: any,
+    action: (arg: any) => any,
+    message: string,
+    maxTries: number = 3
+): Promise<any> {
+    for (let n = 0; n < maxTries; n++) {
+        console.log(`${message} attempt number ${n + 1}...`);
         try {
-            const chainId = walletClient.getChainId();
-            if (chainId)
-                return chainId;
+            const output = await action(input);
+            if (output) {
+                console.log(`${message} succeeded, returning ${output}`);
+                return output;
+            }
         }
         catch (e: any) {
             console.error('RAINBOW: Error fetching chain ID:', e);
         }
     }
 
+    console.log(`${message} max retries exceeded`);
     return null;
+}
+
+export async function getChainId(walletClient: any) {
+    return await tryAndRetry(
+        walletClient,
+        async (wc) => { return await wc.getChainId(); },
+        'getChainId'
+    );
 }
 
 type Props = {
