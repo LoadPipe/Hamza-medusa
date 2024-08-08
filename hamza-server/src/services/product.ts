@@ -10,7 +10,11 @@ import {
 import { Product } from '../models/product';
 import logger from '@medusajs/medusa-cli/dist/reporter';
 import { StoreRepository } from '../repositories/store';
-import { ProductVariant } from '@medusajs/medusa';
+import {
+    ProductVariant,
+    MoneyAmount,
+    ProductVariantMoneyAmount,
+} from '@medusajs/medusa';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import { BuckyClient } from '../buckydrop/bucky-client';
 import { ProductStatus } from '@medusajs/medusa';
@@ -69,6 +73,39 @@ class ProductService extends MedusaProductService {
         );
         const result = await super.update(productId, update);
         return result;
+    }
+
+    async updateVariantPrice(
+        variantId: string,
+        prices: CreateProductProductVariantPriceInput[]
+    ): Promise<void> {
+        const moneyAmountRepo = this.activeManager_.getRepository(MoneyAmount);
+        const productVariantMoneyAmountRepo = this.activeManager_.getRepository(
+            ProductVariantMoneyAmount
+        );
+
+        try {
+            for (const price of prices) {
+                const moneyAmount = await moneyAmountRepo.create({
+                    currency_code: price.currency_code,
+                    amount: price.amount,
+                });
+                const savedMoneyAmount =
+                    await moneyAmountRepo.save(moneyAmount);
+
+                const productVariantMoneyAmount =
+                    await productVariantMoneyAmountRepo.create({
+                        variant_id: variantId,
+                        money_amount_id: savedMoneyAmount.id,
+                    });
+
+                await productVariantMoneyAmountRepo.save(
+                    productVariantMoneyAmount
+                );
+            }
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     async addProductFromBuckyDrop(keyword: string): Promise<any> {
@@ -139,7 +176,7 @@ class ProductService extends MedusaProductService {
             mid_code: item.mid_code || 'ABC123',
             material: item.material || 'Cotton',
             type: null,
-            collection_id: null,
+            collection_id: 'pcol_01HSGAM4918EX0DETKY6E662WT',
             discountable: true,
             store_id: 'store_01J3CF347H10K4C8D889DST58Z',
         };
