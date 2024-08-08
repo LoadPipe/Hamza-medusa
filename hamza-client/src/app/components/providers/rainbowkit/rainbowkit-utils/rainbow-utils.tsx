@@ -44,7 +44,7 @@ import {
 } from '@chakra-ui/react';
 // import sepoliaImage from '../../../../../../public/images/sepolia/sepolia.webp';
 
-const PROJECT_ID = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || '';
+const WALLETCONNECT_ID = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || '';
 const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY || '';
 
 export const darkThemeConfig = darkTheme({
@@ -75,7 +75,7 @@ export const { chains, publicClient, webSocketPublicClient } = configureChains(
         jsonRpcProvider({
             rpc: () => {
                 return {
-                    http: 'https://opt-sepolia.g.alchemy.com/v2/VrVSe8y0T1pBnrwgzgFr2vtHl9Dtj3Fn',
+                    http: `https://opt-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`,
                 };
             },
         }),
@@ -84,12 +84,13 @@ export const { chains, publicClient, webSocketPublicClient } = configureChains(
 );
 
 export function getAllowedChainsFromConfig() {
+    console.log('RAINBOW: getAllowedChainsFromConfig');
     let chains = process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS;
-    if (!chains?.length) chains = '1'; ///default to mainnet
+    if (!chains?.length) chains = '10'; ///default to mainnet
 
     const split: any[] = chains.split(',');
     split.forEach((v, i) => (split[i] = parseInt(v.trim())));
-    console.log('allowed blockchains: ', split);
+    console.log('RAINBOW: allowed blockchains: ', split);
     return split;
 }
 
@@ -99,11 +100,12 @@ type Props = {
 
 // Add NEXT_PUBLIC_ALLOWED_BLOCKCHAINS = 11155111 to env
 export const SwitchNetwork = ({ enabled }: Props) => {
+    console.log('RAINBOW: SwitchNetwork');
     // Modal Hook
     const [openModal, setOpenModal] = useState(false);
     const [preferredChainName, setPreferredChainName] = useState('');
     //sometimes not detecting environment correctly
-    const [preferredChainID, setPreferredChainID] = useState(11155111);
+    const [preferredChainID, setPreferredChainID] = useState(getAllowedChainsFromConfig()[0]);
 
     // Wagmi Hooks
     const { data: walletClient, isError } = useWalletClient();
@@ -111,10 +113,11 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
 
-    const voidFunction = () => {};
+    const voidFunction = () => { };
 
     //TODO: move this to a chain config or something
     const getChainName = (chainId: number) => {
+        console.log('RAINBOW: getChainName', chainId);
         switch (chainId) {
             case 10:
                 return 'Optimism';
@@ -134,6 +137,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     };
 
     const setSwitchNetwork = () => {
+        console.log('RAINBOW: setSwitchNetwork');
         let allowed = getAllowedChainsFromConfig()[0];
         setPreferredChainID(allowed);
         setPreferredChainName(getChainName(allowed));
@@ -145,20 +149,22 @@ export const SwitchNetwork = ({ enabled }: Props) => {
 
     useEffect(() => {
         const fetchChainId = async () => {
+            setSwitchNetwork();
+            console.log('RAINBOW: fetchChainId');
             if (walletClient && enabled) {
                 try {
                     const chainId = await walletClient.getChainId();
                     console.log(
-                        `connected chain id is ${chainId}, preferred chain is ${preferredChainID}`
+                        `RAINBOW: connected chain id is ${chainId}, preferred chain is ${preferredChainID}`
                     );
 
-                    if (chainId === preferredChainID) {
-                        setOpenModal(false);
-                    } else {
-                        setOpenModal(true);
-                    }
+                    // if (chainId === preferredChainID) {
+                    //     setOpenModal(false);
+                    // } else {
+                    //     setOpenModal(true);
+                    // }
                 } catch (error) {
-                    console.error('Error fetching chain ID:', error);
+                    console.error('RAINBOW: Error fetching chain ID:', error);
                 }
             }
         };
@@ -166,7 +172,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     }, [walletClient]);
 
     return (
-        <Modal isOpen={openModal} onClose={() => {}} isCentered>
+        <Modal isOpen={openModal} onClose={() => { }} isCentered>
             <ModalOverlay />
             <ModalContent
                 justifyContent={'center'}
@@ -229,7 +235,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
 };
 // const { connectors } = getDefaultWallets({
 //     appName: 'op_sep',
-//     projectId: PROJECT_ID,
+//     projectId: WALLETCONNECT_ID,
 //     chains,
 // });
 
@@ -237,13 +243,13 @@ const connectors = connectorsForWallets([
     {
         groupName: 'Recommended',
         wallets: [
-            rainbowWallet({ projectId: PROJECT_ID, chains }),
-            // coinbaseWallet({ appName: PROJECT_ID, chains }),
+            rainbowWallet({ projectId: WALLETCONNECT_ID, chains }),
+            // coinbaseWallet({ appName: WALLETCONNECT_ID, chains }),
             metaMaskWallet({
-                projectId: PROJECT_ID,
+                projectId: WALLETCONNECT_ID,
                 chains,
             }),
-            walletConnectWallet({ projectId: PROJECT_ID, chains }),
+            walletConnectWallet({ projectId: WALLETCONNECT_ID, chains }),
         ],
     },
 ]);

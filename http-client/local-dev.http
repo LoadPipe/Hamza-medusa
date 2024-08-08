@@ -401,3 +401,11 @@ Content-Type: application/json
   "order_id": "order_01J3FN3JXTGQ90KA2XQG1DYFJD",
   "status": "shipped"
 }
+
+### POST Let's add products...
+POST http://localhost:9000/custom/product/add-product
+Content-Type: application/json
+
+{
+  "keyword": "cup"
+}
