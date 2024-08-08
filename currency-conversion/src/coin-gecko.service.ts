@@ -76,10 +76,19 @@ export class CoinGeckoService {
         baseCurrency: string,
         conversionCurrency: string,
     ): Promise<number> {
+        baseCurrency = baseCurrency.trim().toLowerCase();
+        conversionCurrency = conversionCurrency.trim().toLowerCase();
+
         // Check for direct caching first
         let cacheKey = this.createCacheKey(baseCurrency, conversionCurrency);
         let cachedData = this.cache[cacheKey];
         const currentTime = this.getTimestamp();
+
+        //handle eth address rather than 'eth' 
+        if (this.isZeroAddress(baseCurrency))
+            baseCurrency = 'eth';
+        if (this.isZeroAddress(conversionCurrency))
+            conversionCurrency = 'eth';
 
         if (cachedData && currentTime - cachedData.timestamp < this.cacheDuration) {
             return cachedData.value;
@@ -92,11 +101,18 @@ export class CoinGeckoService {
                 conversionCurrency,
                 'eth',
             );
+
             const rate = baseToEth / conversionToEth;
 
             // Cache this calculated rate
             this.cache[cacheKey] = { value: rate, timestamp: currentTime };
             return rate;
+        }
+
+        //handle reverse rates 
+        if (baseCurrency == 'eth' && conversionCurrency !== 'eth') {
+            const rate = await this.getExchangeRate(conversionCurrency, baseCurrency);
+            return (rate ? 1 / rate : 0);
         }
 
         // Otherwise fetch normally
@@ -189,5 +205,9 @@ export class CoinGeckoService {
         const key = `${baseCurrency.toLowerCase()}-${conversionCurrency.toLowerCase()}`;
         console.log('cache key', key);
         return key;
+    }
+
+    private isZeroAddress(value: string): boolean {
+        return (value.replace('0x', '')).match(/^0+$/) ? true : false;
     }
 }
