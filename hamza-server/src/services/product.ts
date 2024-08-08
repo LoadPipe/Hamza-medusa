@@ -78,18 +78,44 @@ class ProductService extends MedusaProductService {
                 throw new Error('No products found or error in fetching data');
             }
 
-            const products = data.data.records.map(
+            // Map and create products
+            const productsData = data.data.records.map(
                 this.mapBuckyDataToProductInput
             );
-
             const addedProducts = await Promise.all(
-                products.map((product) => super.create(product))
+                productsData.map((product) => super.create(product))
             );
+
+            // Ensure all products have valid IDs
+            const validProducts = addedProducts.filter((p) => p && p.id);
+            if (validProducts.length !== addedProducts.length) {
+                throw new Error('Some products were not created successfully');
+            }
+
+            // Create variants for each valid product
+            const variantCreationPromises = validProducts.map(
+                (savedProduct) => {
+                    const variantData = {
+                        title: savedProduct.title,
+                        product_id: savedProduct.id,
+                        inventory_quantity: 10,
+                        allow_backorder: false,
+                        manage_inventory: true,
+                    };
+
+                    const variant =
+                        this.productVariantRepository_.create(variantData);
+                    return this.productVariantRepository_.save(variant);
+                }
+            );
+
+            // Wait for all variants to be created
+            const variants = await Promise.all(variantCreationPromises);
 
             console.log(
-                `Added products: ${addedProducts.map((p) => p.id).join(', ')}`
+                `Added products: ${validProducts.map((p) => p.id).join(', ')}`
             );
-            return addedProducts;
+            return validProducts;
         } catch (error) {
             console.error('Error in adding products from BuckyDrop:', error);
             throw error;
@@ -99,10 +125,10 @@ class ProductService extends MedusaProductService {
     private mapBuckyDataToProductInput(item) {
         return {
             title: item.productName,
-            handle: item.spuCode, // Assuming spuCode is unique and can be used as a handle
+            handle: item.spuCode,
             description: item.productName,
             is_giftcard: false,
-            status: 'draft' as ProductStatus, // Use 'draft' or another valid status
+            status: 'draft' as ProductStatus,
             thumbnail: item.picUrl,
             weight: Math.round(item.weight || 100),
             length: Math.round(item.length || 10),
@@ -112,10 +138,10 @@ class ProductService extends MedusaProductService {
             origin_country: item.origin_country || 'US',
             mid_code: item.mid_code || 'ABC123',
             material: item.material || 'Cotton',
-            type: null, // Set appropriately based on your system logic
-            collection_id: null, // Set appropriately
+            type: null,
+            collection_id: null,
             discountable: true,
-            store_id: 'store_01J3CF347H10K4C8D889DST58Z', // Ensure this is valid or handled dynamically
+            store_id: 'store_01J3CF347H10K4C8D889DST58Z',
         };
     }
 
