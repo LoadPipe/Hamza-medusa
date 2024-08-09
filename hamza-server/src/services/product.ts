@@ -2,11 +2,14 @@ import { Lifetime } from 'awilix';
 import {
     ProductService as MedusaProductService,
     Logger,
+    Product,
 } from '@medusajs/medusa';
 import {
     CreateProductInput,
     CreateProductProductSalesChannelInput,
     CreateProductProductVariantPriceInput,
+    FindProductConfig,
+    ProductSelector,
 } from '@medusajs/medusa/dist/types/product';
 import { Product } from '../models/product';
 import logger from '@medusajs/medusa-cli/dist/reporter';
@@ -20,6 +23,7 @@ import {
 import { ProductVariantRepository } from '../repositories/product-variant';
 import { BuckyClient } from '../buckydrop/bucky-client';
 import { ProductStatus } from '@medusajs/medusa';
+
 export type UpdateProductProductVariantDTO = {
     id?: string;
     store_id?: string;
@@ -124,7 +128,7 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    async addProductFromBuckyDrop(keyword: string): Promise<any> {
+    async addProductFromBuckyDrop(storeId: string, keyword: string): Promise<any> {
         try {
             const data = await this.buckyClient.searchProducts(keyword, 1, 10);
             if (!data.success || !data.data.records.length) {
@@ -351,6 +355,29 @@ class ProductService extends MedusaProductService {
             );
             throw new Error('Failed to fetch products from review.');
         }
+    }
+
+    private mapBuckyDataToProductInput(item) {
+        return {
+            title: item.productName,
+            handle: item.spuCode,
+            description: item.productName,
+            is_giftcard: false,
+            status: 'published' as ProductStatus,
+            thumbnail: item.picUrl,
+            weight: Math.round(item.weight || 100),
+            length: Math.round(item.length || 10),
+            height: Math.round(item.height || 10),
+            width: Math.round(item.width || 10),
+            hs_code: item.hs_code || '123456',
+            origin_country: item.origin_country || 'US',
+            mid_code: item.mid_code || 'ABC123',
+            material: item.material || 'Cotton',
+            type: null,
+            collection_id: 'pcol_01HRVF8HCVY8B00RF5S54THTPC',
+            discountable: true,
+            store_id: 'store_01J4W321MA6MH004ET2K24113Z',
+        };
     }
 }
 

@@ -14,9 +14,12 @@ import { ProductVariantRepository } from '../repositories/product-variant';
 import StoreRepository from '../repositories/store';
 import { LineItemService } from '@medusajs/medusa';
 import { Order } from '../models/order';
+import { Product } from '../models/product';
 import { Payment } from '../models/payment';
 import { Lifetime } from 'awilix';
-import { And, In, Not } from 'typeorm';
+import { In, Not } from 'typeorm';
+import { BuckyClient } from '../buckydrop/bucky-client';
+import ProductRepository from '@medusajs/medusa/dist/repositories/product';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
 // In medusa we have these 5 DEFAULT order.STATUS's {PENDING, COMPLETED, ARCHIVED, CANCELED, REQUIRES_ACTION}
@@ -42,18 +45,22 @@ export default class OrderService extends MedusaOrderService {
 
     protected orderRepository_: typeof OrderRepository;
     protected lineItemService: LineItemService;
+    protected productRepository_: typeof ProductRepository;
     protected paymentRepository_: typeof PaymentRepository;
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly logger: Logger;
+    protected buckyClient: BuckyClient;
 
     constructor(container) {
         super(container);
         this.orderRepository_ = container.orderRepository;
         this.storeRepository_ = container.storeRepository;
         this.paymentRepository_ = container.paymentRepository;
+        this.productRepository_ = container.productRepository;
         this.productVariantRepository_ = container.productVariantRepository;
         this.logger = container.logger;
+        this.buckyClient = new BuckyClient();
     }
 
     async createFromPayment(
@@ -184,6 +191,9 @@ export default class OrderService extends MedusaOrderService {
             where: { order_id: In(orderIds) },
         });
 
+        //do buckydrop order creation 
+        await this.doBuckydropOrderCreation(orders);
+
         //calls to update inventory
         const inventoryPromises =
             this.getPostCheckoutUpdateInventoryPromises(cartProductsJson);
@@ -217,6 +227,15 @@ export default class OrderService extends MedusaOrderService {
         }
 
         return orders;
+    }
+
+    private async doBuckydropOrderCreation(orders: Order[]): Promise<void> {
+        for (const order of orders) {
+            const products = await this.getBuckyProductsFromOrder(order);
+            if (products?.length) {
+                //TODO: create bucky order 
+            }
+        }
     }
 
     async cancellationStatus(orderId: string) {
@@ -467,16 +486,7 @@ export default class OrderService extends MedusaOrderService {
         // console.log(`Orders Line item? ${JSON.stringify(orders)}`);
         const cartCount = orders.length;
 
-        let newOrderList = [];
-        for (const order of orders) {
-            const orderWithItems = await this.orderRepository_.findOne({
-                where: {
-                    id: order.id,
-                },
-                relations: ['cart.items', 'cart.items.variant.product'],
-            });
-            newOrderList.push(orderWithItems);
-        }
+        let newOrderList: Order[] = await this.getOrdersWithItems(orders);
 
         // return { orders: orders, array: newOrderList };
         return { orders: newOrderList, cartCount: cartCount };
@@ -505,5 +515,27 @@ export default class OrderService extends MedusaOrderService {
             this.logger.error('Error retrieving order', e);
             throw new Error('Failed to retrieve order');
         }
+    }
+
+    private async getOrdersWithItems(orders: Order[]): Promise<Order[]> {
+        let output: Order[] = [];
+        for (const order of orders) {
+            //TODO: do this with promises
+            const orderWithItems = await this.orderRepository_.findOne({
+                where: {
+                    id: order.id,
+                },
+                relations: ['cart.items', 'cart.items.variant.product'],
+            });
+            output.push(orderWithItems);
+        }
+        return output;
+    }
+
+    private async getBuckyProductsFromOrder(order: Order): Promise<Product[]> {
+        const orders: Order[] = await this.getOrdersWithItems([order]);
+        return [];
+        const products: Product[] = orders[0].items.map(i => i.variant.product);
+        //return products.find(p => p.bucky_metadata);
     }
 }
