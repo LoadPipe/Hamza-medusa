@@ -45,7 +45,7 @@ export const WalletConnectButton = ({
                                 alignItems={'center'}
                             >
                                 <AccountMenu />
-                                <SwitchNetwork enabled={true} />
+
                                 <Flex alignSelf={'center'} ml="1rem">
                                     <LocalizedClientLink href="/cart">
                                         <Flex

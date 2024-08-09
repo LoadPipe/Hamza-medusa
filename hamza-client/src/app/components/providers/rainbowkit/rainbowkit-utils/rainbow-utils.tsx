@@ -44,7 +44,8 @@ import {
 } from '@chakra-ui/react';
 // import sepoliaImage from '../../../../../../public/images/sepolia/sepolia.webp';
 
-const WALLETCONNECT_ID = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || '';
+const WALLETCONNECT_ID =
+    process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || '';
 const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY || '';
 
 export const darkThemeConfig = darkTheme({
@@ -121,8 +122,7 @@ async function tryAndRetry(
             if (delayMs) {
                 await delay(delayMs);
             }
-        }
-        catch (e: any) {
+        } catch (e: any) {
             console.error('RB: Error fetching chain ID:', e);
         }
     }
@@ -134,7 +134,9 @@ async function tryAndRetry(
 export async function getChainId(walletClient: any) {
     return await tryAndRetry(
         walletClient,
-        async (wc) => { return await wc.getChainId(); },
+        async (wc) => {
+            return await wc.getChainId();
+        },
         'getChainId'
     );
 }
@@ -150,7 +152,9 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     const [openModal, setOpenModal] = useState(false);
     const [preferredChainName, setPreferredChainName] = useState('');
     //sometimes not detecting environment correctly
-    const [preferredChainID, setPreferredChainID] = useState(getAllowedChainsFromConfig()[0]);
+    const [preferredChainID, setPreferredChainID] = useState(
+        getAllowedChainsFromConfig()[0]
+    );
 
     // Wagmi Hooks
     const { data: walletClient, isError } = useWalletClient();
@@ -163,13 +167,12 @@ export const SwitchNetwork = ({ enabled }: Props) => {
 
     console.log('pendingChainID;', pendingChainId);
 
-    const voidFunction = () => { };
+    const voidFunction = () => {};
 
     //TODO: move this to a chain config or something
     const getChainName = (chainId: number) => {
         console.log('RB: getChainName', chainId);
-        if (chain?.name)
-            return chain.name;
+        if (chain?.name) return chain.name;
 
         switch (chainId) {
             case 10:
@@ -207,7 +210,8 @@ export const SwitchNetwork = ({ enabled }: Props) => {
             if (walletClient && enabled) {
                 try {
                     console.log('RB: calling getChainId');
-                    const chainId = chain?.id ?? await getChainId(walletClient);
+                    const chainId =
+                        chain?.id ?? (await getChainId(walletClient));
                     console.log(
                         `RB: connected chain id is ${chainId}, preferred chain is ${preferredChainID}`
                     );
@@ -226,7 +230,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     }, [walletClient]);
 
     return (
-        <Modal isOpen={openModal} onClose={() => { }} isCentered>
+        <Modal isOpen={enabled} onClose={() => {}} isCentered>
             <ModalOverlay />
             <ModalContent
                 justifyContent={'center'}
