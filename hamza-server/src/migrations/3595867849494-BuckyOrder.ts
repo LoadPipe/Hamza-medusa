@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class MultiVendorOrder1907365738273 implements MigrationInterface {
+export class BuckyOrder3595867849494 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
             `ALTER TABLE "order" ADD COLUMN "bucky_order_no" VARCHAR NULL`
