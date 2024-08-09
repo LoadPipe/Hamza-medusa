@@ -366,14 +366,23 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
 
             payer_address = await signer.getAddress();
         }
+        else {
+            if (!signer)
+                console.log('NO SIGNER')
+            if (!provider)
+                console.log('NO PROVIDER')
+        }
 
-        return {
+        const output = {
             escrow_contract_address: '0x0',
             transaction_id,
             payer_address,
             success:
                 transaction_id && transaction_id.length ? true : false,
         }
+
+        console.log('returning output: ', JSON.stringify(output));
+        return output;
     }
 
     private createPaymentGroups(
