@@ -112,14 +112,14 @@ async function tryAndRetry(
     for (let n = 0; n < maxTries; n++) {
         console.log(`${message} attempt number ${n + 1}...`);
         try {
-            if (delayMs) {
-                await delay(delayMs);
-            }
-
             const output = await action(input);
             if (output) {
                 console.log(`${message} succeeded, returning ${output}`);
                 return output;
+            }
+
+            if (delayMs) {
+                await delay(delayMs);
             }
         }
         catch (e: any) {
@@ -155,8 +155,14 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     // Wagmi Hooks
     const { data: walletClient, isError } = useWalletClient();
 
+    const { chain } = useNetwork();
+    console.log('CHAIN');
+    console.log(chain);
+
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
+
+    console.log('pendingChainID;', pendingChainId)
 
     const voidFunction = () => { };
 
@@ -198,6 +204,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
             console.log('RAINBOW: fetchChainId');
             if (walletClient && enabled) {
                 try {
+
                     const chainId = await getChainId(walletClient);
                     console.log(
                         `RAINBOW: connected chain id is ${chainId}, preferred chain is ${preferredChainID}`
