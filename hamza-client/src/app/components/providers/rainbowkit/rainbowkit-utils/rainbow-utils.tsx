@@ -68,7 +68,7 @@ export const darkThemeConfig = darkTheme({
 // export { customSepolia };
 
 export const { chains, publicClient, webSocketPublicClient } = configureChains(
-    [sepolia, mainnet, optimismSepolia, optimism, linea, lineaTestnet, goerli],
+    [sepolia, mainnet, optimism],
     [
         alchemyProvider({
             apiKey: ALCHEMY_API_KEY,
