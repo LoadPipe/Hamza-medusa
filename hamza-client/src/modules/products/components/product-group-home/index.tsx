@@ -39,8 +39,6 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
 
     const products = data?.data;
 
-    console.log(data?.data.length);
-
     const err: any = error ? error : null;
     if (err) return <div>Error: {err?.message}</div>;
 

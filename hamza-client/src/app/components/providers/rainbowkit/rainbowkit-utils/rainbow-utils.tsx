@@ -84,13 +84,13 @@ export const { chains, publicClient, webSocketPublicClient } = configureChains(
 );
 
 export function getAllowedChainsFromConfig() {
-    console.log('RAINBOW: getAllowedChainsFromConfig');
+    console.log('RB: getAllowedChainsFromConfig');
     let chains = process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS;
     if (!chains?.length) chains = '10'; ///default to mainnet
 
     const split: any[] = chains.split(',');
     split.forEach((v, i) => (split[i] = parseInt(v.trim())));
-    console.log('RAINBOW: allowed blockchains: ', split);
+    console.log('RB: allowed blockchains: ', split);
     return split;
 }
 
@@ -123,7 +123,7 @@ async function tryAndRetry(
             }
         }
         catch (e: any) {
-            console.error('RAINBOW: Error fetching chain ID:', e);
+            console.error('RB: Error fetching chain ID:', e);
         }
     }
 
@@ -145,7 +145,7 @@ type Props = {
 
 // Add NEXT_PUBLIC_ALLOWED_BLOCKCHAINS = 11155111 to env
 export const SwitchNetwork = ({ enabled }: Props) => {
-    console.log('RAINBOW: SwitchNetwork');
+    console.log('RB: SwitchNetwork');
     // Modal Hook
     const [openModal, setOpenModal] = useState(false);
     const [preferredChainName, setPreferredChainName] = useState('');
@@ -156,19 +156,21 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     const { data: walletClient, isError } = useWalletClient();
 
     const { chain } = useNetwork();
-    console.log('CHAIN');
-    console.log(chain);
+    console.log('CHAIN:', chain);
 
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
 
-    console.log('pendingChainID;', pendingChainId)
+    console.log('pendingChainID;', pendingChainId);
 
     const voidFunction = () => { };
 
     //TODO: move this to a chain config or something
     const getChainName = (chainId: number) => {
-        console.log('RAINBOW: getChainName', chainId);
+        console.log('RB: getChainName', chainId);
+        if (chain?.name)
+            return chain.name;
+
         switch (chainId) {
             case 10:
                 return 'Optimism';
@@ -188,7 +190,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     };
 
     const setSwitchNetwork = () => {
-        console.log('RAINBOW: setSwitchNetwork');
+        console.log('RB: setSwitchNetwork');
         let allowed = getAllowedChainsFromConfig()[0];
         setPreferredChainID(allowed);
         setPreferredChainName(getChainName(allowed));
@@ -201,13 +203,13 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     useEffect(() => {
         const fetchChainId = async () => {
             setSwitchNetwork();
-            console.log('RAINBOW: fetchChainId');
+            console.log('RB: fetchChainId');
             if (walletClient && enabled) {
                 try {
-
-                    const chainId = await getChainId(walletClient);
+                    console.log('RB: calling getChainId');
+                    const chainId = chain?.id ?? await getChainId(walletClient);
                     console.log(
-                        `RAINBOW: connected chain id is ${chainId}, preferred chain is ${preferredChainID}`
+                        `RB: connected chain id is ${chainId}, preferred chain is ${preferredChainID}`
                     );
 
                     if (chainId === preferredChainID) {
@@ -216,7 +218,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
                         setOpenModal(true);
                     }
                 } catch (error) {
-                    console.error('RAINBOW: Error fetching chain ID:', error);
+                    console.error('RB: Error fetching chain ID:', error);
                 }
             }
         };
