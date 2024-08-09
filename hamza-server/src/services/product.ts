@@ -5,6 +5,7 @@ import {
 } from '@medusajs/medusa';
 import {
     CreateProductInput,
+    CreateProductProductSalesChannelInput,
     CreateProductProductVariantPriceInput,
 } from '@medusajs/medusa/dist/types/product';
 import { Product } from '../models/product';
@@ -13,6 +14,7 @@ import { StoreRepository } from '../repositories/store';
 import {
     ProductVariant,
     MoneyAmount,
+    Image,
     ProductVariantMoneyAmount,
 } from '@medusajs/medusa';
 import { ProductVariantRepository } from '../repositories/product-variant';
@@ -192,8 +194,9 @@ class ProductService extends MedusaProductService {
             handle: item.spuCode,
             description: item.productName,
             is_giftcard: false,
-            status: 'draft' as ProductStatus,
+            status: 'published' as ProductStatus,
             thumbnail: item.picUrl,
+            images: [item.picUrl],
             weight: Math.round(item.weight || 100),
             length: Math.round(item.length || 10),
             height: Math.round(item.height || 10),
@@ -203,9 +206,10 @@ class ProductService extends MedusaProductService {
             mid_code: item.mid_code || 'ABC123',
             material: item.material || 'Cotton',
             type: null,
-            collection_id: 'pcol_01HSGAM4918EX0DETKY6E662WT',
+            collection_id: 'pcol_lighting',
             discountable: true,
-            store_id: 'store_01J3CF347H10K4C8D889DST58Z',
+            store_id: 'store_01J4WCBW49BP2TMP1138PD1KEP',
+            sales_channels: [{ id: 'sc_01J4WC5E72JJBC39HRGKDC6NFD' }],
         };
     }
 
