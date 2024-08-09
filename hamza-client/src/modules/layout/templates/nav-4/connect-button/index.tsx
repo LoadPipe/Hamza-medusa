@@ -129,11 +129,13 @@ export const WalletConnectButton = () => {
                                                             boxShadow: 'none',
                                                             outline: 'none',
                                                         }}
-                                                        onClick={() =>
-                                                            switchNetwork(
-                                                                switchNetworkId
-                                                            )
-                                                        }
+                                                        onClick={() => {
+                                                            if (switchNetwork) {
+                                                                switchNetwork(
+                                                                    switchNetworkId
+                                                                );
+                                                            }
+                                                        }}
                                                     >
                                                         Switch to {networkName}
                                                     </Button>
