@@ -10,6 +10,31 @@ interface CancelOrderParams {
     orderNo?: string;
 }
 
+interface ICreateOrderProduct {
+    spuCode: string;
+    skuCode: string;
+    productCount: number;
+    platform: string;
+    productPrice: number;
+    productName: string;
+}
+
+interface ICreateOrderParams {
+    partnerOrderNo: string;
+    partnerOrderNoName: string;
+    country: string;
+    countryCode: string;
+    province: string;
+    city: string;
+    detailAddress: string;
+    postCode: string;
+    contactName: string;
+    contactPhone: string;
+    email: string;
+    orderRemark: string;
+    productList: ICreateOrderProduct[]
+}
+
 export class BuckyClient {
     private client: AxiosInstance;
 
@@ -107,8 +132,8 @@ export class BuckyClient {
             });
     }
 
-    async createOrder(orderDetails) {
-        const params = JSON.stringify(orderDetails);
+    async createOrder(createOrderParams: ICreateOrderParams) {
+        const params = JSON.stringify(createOrderParams);
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
 
@@ -167,7 +192,7 @@ export class BuckyClient {
             });
     }
 
-    async getLogisticsInfo(packageCode) {
+    async getLogisticsInfo(packageCode: string) {
         const params = JSON.stringify({ packageCode });
         // other setup like timestamp, appCode, sign, etc.
         return this.client
@@ -178,94 +203,3 @@ export class BuckyClient {
             });
     }
 }
-
-const buckyClient = new BuckyClient();
-
-// PRODUCT QUERIES
-// Call to get product details
-// buckyClient
-//     .getProductDetails('https://detail.1688.com/offer/592228806840.html')
-//     .then((data) => console.log('Product Details:', JSON.stringify(data)))
-//     .catch((error) => console.error('Error fetching product details:', error));
-
-// // Call to search products based on a keyword
-// buckyClient
-//     .searchProducts('cup', 1, 10)
-//     .then((data) => console.log('Search Results:', JSON.stringify(data)))
-//     .catch((error) => console.error('Error searching products:', error));
-
-// buckyClient
-//     .searchProductByImage('your_base64_encoded_image_here')
-//     .then((data) => console.log('Image Search Results:', data))
-//     .catch((error) => console.error('Error in image search:', error));
-//
-// // Call to list product categories in a tree structure
-// buckyClient
-//     .listProductCategories()
-//     .then((data) => console.log('Product Categories:', data))
-//     .catch((error) =>
-//         console.error('Error listing product categories:', error)
-//     );
-
-// ORDER QUERIES
-
-const createOrderData = {
-    partnerOrderNo: 'p0130z31',
-    partnerOrderNoName: '010123',
-    country: 'string',
-    countryCode: 'st',
-    province: 'string',
-    city: 'string',
-    detailAddress: 'string',
-    postCode: 'string',
-    contactName: 'string',
-    contactPhone: 'string',
-    email: 'string',
-    orderRemark: 'string',
-    productList: [
-        {
-            spuCode: 'string',
-            skuCode: 'string',
-            productCount: '10',
-            platform: 'ALIBABA',
-            productPrice: 99,
-            productName: 'string',
-        },
-    ],
-};
-
-// buckyClient
-//     .createOrder(createOrderData)
-//     .then((data) => console.log('Order Created:', data))
-//     .catch((error) => console.error('Error creating order:', error));
-
-// Call to get order details
-buckyClient
-    .getOrderDetails({
-        partnerOrderNo: 'p0130z31',
-        orderNo: 'CO172315767824400001',
-    })
-    .then((data) => console.log('Order Details:', data))
-    .catch((error) => {
-        if (error.response) {
-            console.error(
-                'API responded with a failure:',
-                error.response.status,
-                error.response.data
-            );
-        } else {
-            console.error('Request failed with no response:', error.message);
-        }
-        throw error;
-    });
-
-// // Call to cancel an order
-// buckyClient
-//     .cancelOrder('p0101jj', 'CO172315470085200001')
-//     .then((data) => console.log('Order Cancelled:', data))
-//     .catch((error) => console.error('Error cancelling order:', error));
-
-// buckyClient
-//     .getLogisticsInfo('010111')
-//     .then((data) => console.log('Logistics Info:', data))
-//     .catch((error) => console.error('Error getting logistics info:', error));
