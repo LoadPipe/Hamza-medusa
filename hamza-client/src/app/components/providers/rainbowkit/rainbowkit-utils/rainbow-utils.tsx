@@ -168,9 +168,6 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     //TODO: move this to a chain config or something
     const getChainName = (chainId: number) => {
         console.log('RB: getChainName', chainId);
-        if (chain?.name)
-            return chain.name;
-
         switch (chainId) {
             case 10:
                 return 'Optimism';
