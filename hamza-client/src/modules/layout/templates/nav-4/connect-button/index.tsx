@@ -70,6 +70,7 @@ export const WalletConnectButton = () => {
 
                             if (chain.unsupported) {
                                 console.log(chain);
+                                console.log('Network id is', switchNetworkId);
                                 return (
                                     <Modal
                                         isOpen={true}
