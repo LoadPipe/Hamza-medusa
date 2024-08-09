@@ -129,7 +129,7 @@ export class MassmarketWalletPaymentHandler implements IWalletPaymentHandler {
         if (data.orders) {
             const paymentInput: IMultiPaymentInput[] = [];
             data.orders.forEach((o: any) => {
-                //o.amount = o.massmarket_amount; // translateToNativeAmount(o, chainId);
+                //o.amount = o.massmarket_amount; // convertToNativeAmount(o, chainId);
                 const input: IMultiPaymentInput = {
                     currency: o.currency_code,
                     receiver: o.wallet_address,
@@ -157,7 +157,7 @@ export class MassmarketWalletPaymentHandler implements IWalletPaymentHandler {
         return [];
     }
 
-    private translateToNativeAmount(order: any, chainId: number) {
+    private convertToNativeAmount(order: any, chainId: number) {
         const { amount, currency_code } = order;
         const precision = getCurrencyPrecision(currency_code, chainId);
         const adjustmentFactor = Math.pow(10, precision.native - precision.db);
@@ -258,7 +258,7 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
                             id: 1, //o.order_id,
                             payer: payer,
                             receiver: o.wallet_address,
-                            amount: this.translateToNativeAmount(o.currency_code, o.amount, chainId),
+                            amount: this.convertToNativeAmount(o.currency_code, o.amount, chainId),
                         },
                     ],
                 };
@@ -270,7 +270,7 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
         return [];
     }
 
-    private translateToNativeAmount(currency: string, amount: BigNumberish, chainId: number) {
+    private convertToNativeAmount(currency: string, amount: BigNumberish, chainId: number) {
         const precision = getCurrencyPrecision(currency, chainId);
         const adjustmentFactor = Math.pow(10, precision.native - precision.db);
         const nativeAmount = BigInt(amount) * BigInt(adjustmentFactor);
@@ -320,7 +320,7 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
         if (signer && provider) {
             for (const currency in paymentGroups) {
                 let tx: ethers.TransactionResponse | null = null;
-                const amount = this.translateToNativeAmount(
+                const amount = this.convertToNativeAmount(
                     currency,
                     paymentGroups[currency],
                     chainId
@@ -400,7 +400,7 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
         return {};
     }
 
-    private translateToNativeAmount(currency: string, amount: BigNumberish, chainId: number) {
+    private convertToNativeAmount(currency: string, amount: BigNumberish, chainId: number) {
 
         const precision = getCurrencyPrecision(currency, chainId);
         const adjustmentFactor = Math.pow(10, precision.native - precision.db);
