@@ -17,6 +17,11 @@ export const WalletConnectButton = () => {
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
 
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    const networkName = isProduction ? 'Optimism' : 'Sepolia';
+    const switchNetworkId = isProduction ? 10 : 11155111;
+
     return (
         <ConnectButton.Custom>
             {({
@@ -98,9 +103,9 @@ export const WalletConnectButton = () => {
                                                     </Text>
                                                     <Text color={'white'}>
                                                         Hamza currently only
-                                                        supports Sepolia. Switch
-                                                        to Sepolia to continue
-                                                        using Hamza
+                                                        supports {networkName}.
+                                                        Switch to {networkName}
+                                                        to continue using Hamza.
                                                     </Text>
                                                     <Button
                                                         backgroundColor={
@@ -126,11 +131,11 @@ export const WalletConnectButton = () => {
                                                         }}
                                                         onClick={() =>
                                                             switchNetwork(
-                                                                11155111
+                                                                switchNetworkId
                                                             )
                                                         }
                                                     >
-                                                        Switch to Sepolia
+                                                        Switch to {networkName}
                                                     </Button>
                                                 </Flex>
                                                 {error && (

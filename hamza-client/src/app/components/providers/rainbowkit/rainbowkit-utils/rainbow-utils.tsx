@@ -66,9 +66,10 @@ export const darkThemeConfig = darkTheme({
 // };
 
 // export { customSepolia };
+const isProduction = process.env.NODE_ENV === 'production';
 
 export const { chains, publicClient, webSocketPublicClient } = configureChains(
-    [sepolia, mainnet, optimism],
+    [isProduction ? optimism : sepolia],
     [
         alchemyProvider({
             apiKey: ALCHEMY_API_KEY,
