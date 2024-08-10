@@ -12,6 +12,10 @@ import {
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import AccountMenu from '@modules/layout/templates/nav-4/menu/account-menu';
 import { useSwitchNetwork } from 'wagmi';
+import {
+    getAllowedChainsFromConfig,
+    getBlockchainNetworkName
+} from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 
 export const WalletConnectButton = () => {
     const { error, isLoading, pendingChainId, switchNetwork } =
@@ -20,7 +24,8 @@ export const WalletConnectButton = () => {
     //const isProduction = process.env.NODE_ENV === 'production';
     //const networkName = isProduction ? 'Optimism' : 'Sepolia';
     //const switchNetworkId = isProduction ? 10 : 11155111;
-    const switchNetworkId = process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS;
+    const switchNetworkId = getAllowedChainsFromConfig()[0];
+    const networkName = getBlockchainNetworkName(switchNetworkId ?? '');
 
     return (
         <ConnectButton.Custom>

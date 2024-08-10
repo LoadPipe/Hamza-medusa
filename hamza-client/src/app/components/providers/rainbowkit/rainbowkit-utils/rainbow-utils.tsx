@@ -99,6 +99,8 @@ export function getAllowedChainsFromConfig() {
     const split: any[] = chains.split(',');
     split.forEach((v, i) => (split[i] = parseInt(v.trim())));
     console.log('RB: allowed blockchains: ', split);
+    if (!split.length)
+        split.push(10);
     return split;
 }
 
@@ -152,6 +154,32 @@ type Props = {
     enabled: boolean;
 };
 
+
+export function getBlockchainNetworkName(chainId: number | string) {
+    console.log('RB: getBlockchainNetworkName', chainId);
+
+    //ensure number 
+    try { chainId = chainId ? parseInt(chainId.toString()) : 10; }
+    catch { }
+
+    switch (chainId) {
+        case 10:
+            return 'Optimism';
+        case 11155111:
+            // Sepolia
+            return 'Sepolia';
+        case 11155420:
+            //  Op-Sepolia
+            return 'Op-Sepolia';
+        case 1:
+            //  Eth Main
+            return 'Ethereum Mainnet';
+        default:
+            //  Sepolia
+            return 'Unknown';
+    }
+};
+
 // Add NEXT_PUBLIC_ALLOWED_BLOCKCHAINS = 11155111 to env
 export const SwitchNetwork = ({ enabled }: Props) => {
     console.log('RB: SwitchNetwork');
@@ -176,34 +204,12 @@ export const SwitchNetwork = ({ enabled }: Props) => {
 
     const voidFunction = () => { };
 
-    //TODO: move this to a chain config or something
-    const getChainName = (chainId: number) => {
-        console.log('RB: getChainName', chainId);
-        if (chain?.name) return chain.name;
-
-        switch (chainId) {
-            case 10:
-                return 'Optimism';
-            case 11155111:
-                // Sepolia
-                return 'Sepolia';
-            case 11155420:
-                //  Op-Sepolia
-                return 'Op-Sepolia';
-            case 1:
-                //  Eth Main
-                return 'Ethereum Mainnet';
-            default:
-                //  Sepolia
-                return 'Unknown';
-        }
-    };
 
     const setSwitchNetwork = () => {
         console.log('RB: setSwitchNetwork');
         let allowed = getAllowedChainsFromConfig()[0];
         setPreferredChainID(allowed);
-        setPreferredChainName(getChainName(allowed));
+        setPreferredChainName(getBlockchainNetworkName(allowed));
     };
 
     useEffect(() => {

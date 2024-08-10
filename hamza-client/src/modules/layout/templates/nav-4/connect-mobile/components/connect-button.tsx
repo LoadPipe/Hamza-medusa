@@ -14,7 +14,7 @@ import AccountMenu from '@modules/layout/templates/nav-4/menu/account-menu';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { Cart } from '@medusajs/medusa';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
-import { SwitchNetwork } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
+import { getAllowedChainsFromConfig, getBlockchainNetworkName, SwitchNetwork } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { MdOutlineWallet } from 'react-icons/md';
 import { useSwitchNetwork } from 'wagmi';
 
@@ -30,7 +30,8 @@ export const WalletConnectButton = ({
     //const isProduction = process.env.NODE_ENV === 'production';
     //const networkName = isProduction ? 'Optimism' : 'Sepolia';
     //const switchNetworkId = isProduction ? 10 : 11155111;
-    const switchNetworkId = process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS;
+    const switchNetworkId = getAllowedChainsFromConfig()[0];
+    const networkName = getBlockchainNetworkName(switchNetworkId ?? '');
 
     return (
         <ConnectButton.Custom>
