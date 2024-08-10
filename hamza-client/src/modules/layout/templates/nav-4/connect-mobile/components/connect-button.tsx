@@ -83,7 +83,8 @@ export const WalletConnectButton = ({
                                 );
                             }
 
-                            if (chain.unsupported) {
+                            //if (chain && chain.unsupported) {
+                            if (chain && chain.id != getAllowedChainsFromConfig()[0]) {
                                 console.log(chain);
                                 console.log('Network id is', switchNetworkId);
                                 return (
