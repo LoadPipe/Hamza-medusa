@@ -5,7 +5,7 @@ import { AxiosResponse } from 'axios/index';
 
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
-  }
+    getHello(): string {
+        return 'Hello World!';
+    }
 }

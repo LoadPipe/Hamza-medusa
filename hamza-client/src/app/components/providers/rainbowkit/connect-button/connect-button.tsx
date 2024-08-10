@@ -63,7 +63,7 @@ export const WalletConnectButton = () => {
                                     </Flex>
                                 );
                             }
-                            if (chain && chain.unsupported) {
+                            if (chain && chain?.id?.toString() != process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS) {
                                 return (
                                     <button
                                         onClick={openChainModal}

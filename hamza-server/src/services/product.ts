@@ -2,7 +2,11 @@ import { Lifetime } from 'awilix';
 import {
     ProductService as MedusaProductService,
     Logger,
-    Product,
+    ProductVariant,
+    PriceSelectionResult,
+    MoneyAmount,
+    Image,
+    ProductVariantMoneyAmount,
 } from '@medusajs/medusa';
 import {
     CreateProductInput,
@@ -14,12 +18,8 @@ import {
 import { Product } from '../models/product';
 import logger from '@medusajs/medusa-cli/dist/reporter';
 import { StoreRepository } from '../repositories/store';
-import {
-    ProductVariant,
-    MoneyAmount,
-    Image,
-    ProductVariantMoneyAmount,
-} from '@medusajs/medusa';
+import PriceSelectionStrategy from '../strategies/price-selection';
+import CustomerService from '../services/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import { BuckyClient } from '../buckydrop/bucky-client';
 import { ProductStatus } from '@medusajs/medusa';
@@ -60,6 +60,7 @@ class ProductService extends MedusaProductService {
     protected readonly logger: Logger;
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
+    protected readonly customerService_: CustomerService;
     private buckyClient: BuckyClient;
 
     constructor(container) {
@@ -67,6 +68,7 @@ class ProductService extends MedusaProductService {
         this.logger = container.logger;
         this.storeRepository_ = container.storeRepository;
         this.productVariantRepository_ = container.productVariantRepository;
+        this.customerService_ = container.customerService;
         this.buckyClient = new BuckyClient();
     }
 
@@ -196,16 +198,20 @@ class ProductService extends MedusaProductService {
     }
 
     async getProductsFromStoreWithPrices(storeId: string): Promise<Product[]> {
-        return this.productRepository_.find({
-            where: { store_id: storeId },
-            relations: ['variants.prices', 'reviews'],
-        });
+        return await this.convertPrices(
+            await this.productRepository_.find({
+                where: { store_id: storeId },
+                relations: ['variants.prices', 'reviews'],
+            })
+        );
     }
 
     async getAllProductsFromStoreWithPrices(): Promise<Product[]> {
-        const products = await this.productRepository_.find({
-            relations: ['variants.prices', 'reviews'],
-        });
+        const products = await this.convertPrices(
+            await this.productRepository_.find({
+                relations: ['variants.prices', 'reviews'],
+            })
+        );
 
         // Sort products so those with weight 69 come first
         const sortedProducts = products.sort((a, b) => {
@@ -350,6 +356,27 @@ class ProductService extends MedusaProductService {
             store_id: 'store_01J4WCBW49BP2TMP1138PD1KEP',
             sales_channels: [{ id: 'sc_01J4WC5E72JJBC39HRGKDC6NFD' }],
         };
+    }
+
+    //TODO: need a way to get the customer ID or preferred currency
+    private async convertPrices(products: Product[], customerId: string = ''): Promise<Product[]> {
+        for (const prod of products) {
+            for (const variant of prod.variants) {
+                const strategy: PriceSelectionStrategy = new PriceSelectionStrategy({
+                    customerService: this.customerService_,
+                    productVariantRepository: this.productVariantRepository_,
+                    logger: this.logger
+                });
+                const results = await strategy.calculateVariantPrice(
+                    [{ variantId: variant.id, quantity: 1 }],
+                    { customer_id: customerId }
+                );
+                if (results.has(variant.id))
+                    variant.prices = results.get(variant.id).prices;
+            }
+        }
+
+        return products
     }
 }
 
