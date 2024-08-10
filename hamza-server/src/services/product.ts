@@ -151,6 +151,8 @@ class ProductService extends MedusaProductService {
                     salesChannelIds
                 )
             );
+
+            console.log(productsData);
             const addedProducts = await Promise.all(
                 productsData.map((product) => super.create(product))
             );
@@ -355,6 +357,7 @@ class ProductService extends MedusaProductService {
         collectionId: string,
         salesChannels: string[]
     ) {
+        console.log(salesChannels);
         return {
             title: item.productName,
             handle: item.spuCode,
@@ -367,7 +370,8 @@ class ProductService extends MedusaProductService {
             weight: Math.round(item.weight || 100),
             discountable: true,
             store_id: storeId,
-            sales_channels: [salesChannels.map(sc => { id: sc })],
+            sales_channels: salesChannels.map(sc => { return { id: sc } }),
+            bucky_metadata: JSON.stringify(item)
         };
     }
 
