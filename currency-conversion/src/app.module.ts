@@ -6,8 +6,8 @@ import { HttpModule } from '@nestjs/axios';
 import { CoinGeckoController } from './coin-gecko.controller';
 
 @Module({
-  imports: [HttpModule],
-  controllers: [AppController, CoinGeckoController],
-  providers: [AppService, CoinGeckoService],
+    imports: [HttpModule],
+    controllers: [AppController, CoinGeckoController],
+    providers: [AppService, CoinGeckoService],
 })
-export class AppModule {}
+export class AppModule { }

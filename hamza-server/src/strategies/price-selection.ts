@@ -8,7 +8,10 @@ import {
     Store,
 } from '@medusajs/medusa';
 import ProductVariantRepository from '@medusajs/medusa/dist/repositories/product-variant';
+import { CurrencyConversionClient } from '../currency-conversion/rest-client';
 import { In } from 'typeorm';
+import { getCurrencyAddress, getCurrencyPrecision } from '../currency.config';
+import { BigNumberish } from 'ethers';
 
 type InjectedDependencies = {
     customerService: CustomerService;
@@ -105,7 +108,7 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
             let prices = v.prices;
 
             //convert all currency prices according to base price
-            /*const baseCurrency = store?.default_currency_code;
+            const baseCurrency = store?.default_currency_code;
             const baseAmount = prices.find((p) => p.currency_code === baseCurrency)?.amount;
             if (baseAmount && baseCurrency) {
                 for (let n = 0; n < prices.length; n++) {
@@ -115,7 +118,7 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
                         toCurrency: prices[n].currency_code
                     });
                 }
-            }*/
+            }
 
             //if preferred currency, filter out the non-matchers
             if (preferredCurrencyId) {
@@ -146,8 +149,73 @@ interface IPrice {
     baseAmount: number;
 }
 
-class PriceConverter {
+//TODO: maybe find a better place for this class
+export class PriceConverter {
+    restClient: CurrencyConversionClient = new CurrencyConversionClient();
+    cache: { [key: string]: { value: number, timestamp: number } } = {};
+    expirationSeconds: 60;
+
     async getPrice(price: IPrice): Promise<number> {
-        return price.baseAmount;
+        let rate: number = this.getFromCache(price);
+
+        if (!rate) {
+            rate = await this.getFromApi(price);
+            this.writeToCache(price, rate);
+        }
+
+        //now we need currency precisions 
+        const basePrecision = getCurrencyPrecision(price.baseCurrency);
+        const toPrecision = getCurrencyPrecision(price.toCurrency);
+
+        //convert the amount 
+        const baseFactor: number = Math.pow(10, basePrecision.db);
+
+        console.log('price:', price);
+        console.log('baseFactor:', baseFactor);
+        console.log('basePrecision:', basePrecision);
+        console.log('toPrecision:', toPrecision);
+        console.log('rate:', rate);
+        const displayAmount = price.baseAmount / baseFactor;
+        console.log('displayAmount:', displayAmount);
+        const output = Math.floor(displayAmount * rate * Math.pow(10, toPrecision.db));
+        console.log(output);
+        return output;
+    }
+
+    private async getFromApi(price: IPrice): Promise<number> {
+        //convert to addresses 
+        const baseAddr = getCurrencyAddress(price.baseCurrency, 1);
+        const toAddr = getCurrencyAddress(price.toCurrency, 1);
+
+        return await this.restClient.getExchangeRate(
+            baseAddr,
+            toAddr
+        );
+    }
+
+    private getFromCache(price: IPrice): number {
+        const key: string = this.getKey(price.baseCurrency, price.toCurrency);
+        if (this.cache[key] && (this.getTimestamp() - this.cache[key].timestamp >= this.expirationSeconds)) {
+            this.cache[key] = null;
+        }
+
+        return this.cache[key]?.value;
+    }
+
+    private writeToCache(price: IPrice, rate: number) {
+        const key: string = this.getKey(price.baseCurrency, price.toCurrency);
+        this.cache[key] = { value: rate, timestamp: this.getTimestamp() };
+    }
+
+    private hasCached(price: IPrice): boolean {
+        return (this.getFromCache(price) ? true : false);
+    }
+
+    private getKey(base: string, to: string): string {
+        return `${base.trim().toLowerCase()}-${to.trim().toLowerCase()}`;
+    }
+
+    private getTimestamp(): number {
+        return Date.now() / 1000;
     }
 }
