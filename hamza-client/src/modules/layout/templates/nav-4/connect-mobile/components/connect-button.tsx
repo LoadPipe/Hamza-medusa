@@ -27,10 +27,10 @@ export const WalletConnectButton = ({
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
 
-    const isProduction = process.env.NODE_ENV === 'production';
-
-    const networkName = isProduction ? 'Optimism' : 'Sepolia';
-    const switchNetworkId = isProduction ? 10 : 11155111;
+    //const isProduction = process.env.NODE_ENV === 'production';
+    //const networkName = isProduction ? 'Optimism' : 'Sepolia';
+    //const switchNetworkId = isProduction ? 10 : 11155111;
+    const switchNetworkId = process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS;
 
     return (
         <ConnectButton.Custom>
@@ -88,7 +88,7 @@ export const WalletConnectButton = ({
                                 return (
                                     <Modal
                                         isOpen={true}
-                                        onClose={() => {}}
+                                        onClose={() => { }}
                                         isCentered
                                     >
                                         <ModalOverlay />

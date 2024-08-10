@@ -66,10 +66,16 @@ export const darkThemeConfig = darkTheme({
 // };
 
 // export { customSepolia };
-const isProduction = process.env.NODE_ENV === 'production';
+//const isProduction = process.env.NODE_ENV === 'production';
+
+const allowedChains = [];
+if (process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS === '10')
+    allowedChains.push(optimism);
+if (process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS === '11155111')
+    allowedChains.push(sepolia);
 
 export const { chains, publicClient, webSocketPublicClient } = configureChains(
-    [isProduction ? optimism : sepolia],
+    allowedChains,
     [
         alchemyProvider({
             apiKey: ALCHEMY_API_KEY,
@@ -168,7 +174,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
 
     console.log('pendingChainID;', pendingChainId);
 
-    const voidFunction = () => {};
+    const voidFunction = () => { };
 
     //TODO: move this to a chain config or something
     const getChainName = (chainId: number) => {
@@ -231,7 +237,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     }, [walletClient]);
 
     return (
-        <Modal isOpen={enabled} onClose={() => {}} isCentered>
+        <Modal isOpen={enabled} onClose={() => { }} isCentered>
             <ModalOverlay />
             <ModalContent
                 justifyContent={'center'}
