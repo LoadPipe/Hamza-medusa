@@ -5,12 +5,12 @@ const BUCKY_URL = process.env.BUCKY_URL || 'https://dev.buckydrop.com';
 const APP_CODE = process.env.APP_CODE || '0077651952683977';
 const APP_SECRET = process.env.APP_SECRET || 'b9486ca7a7654a8f863b3dfbd9e8c100';
 
-interface CancelOrderParams {
+export interface CancelOrderParams {
     partnerOrderNo?: string;
     orderNo?: string;
 }
 
-interface ICreateOrderProduct {
+export interface ICreateBuckyOrderProduct {
     spuCode: string;
     skuCode: string;
     productCount: number;
@@ -19,7 +19,7 @@ interface ICreateOrderProduct {
     productName: string;
 }
 
-interface ICreateOrderParams {
+export interface ICreateBuckyOrderParams {
     partnerOrderNo: string;
     partnerOrderNoName: string;
     country: string;
@@ -32,7 +32,7 @@ interface ICreateOrderParams {
     contactPhone: string;
     email: string;
     orderRemark: string;
-    productList: ICreateOrderProduct[]
+    productList: ICreateBuckyOrderProduct[]
 }
 
 export class BuckyClient {
@@ -132,7 +132,7 @@ export class BuckyClient {
             });
     }
 
-    async createOrder(createOrderParams: ICreateOrderParams) {
+    async createOrder(createOrderParams: ICreateBuckyOrderParams) {
         const params = JSON.stringify(createOrderParams);
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);

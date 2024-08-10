@@ -407,5 +407,10 @@ POST http://localhost:9000/custom/product/add-product
 Content-Type: application/json
 
 {
-  "keyword": "cup"
+  "keyword": "boxing",
+  "storeId": "store_01J4W6J3RXZ4JDH4XYZZQP4S2R",
+  "collectionId": "pcol_01HSGAMXDJD725MR3VSW63B0RD", 
+  "salesChannelId": "sc_01J4W6GT9V06AQF2G0T01ZPXVE"
 }
+
+

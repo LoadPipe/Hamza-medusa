@@ -7,6 +7,7 @@ import {
     Logger,
     IdempotencyKeyService,
     ProductVariant,
+    LineItem,
 } from '@medusajs/medusa';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import PaymentRepository from '@medusajs/medusa/dist/repositories/payment';
@@ -18,7 +19,7 @@ import { Product } from '../models/product';
 import { Payment } from '../models/payment';
 import { Lifetime } from 'awilix';
 import { In, Not } from 'typeorm';
-import { BuckyClient } from '../buckydrop/bucky-client';
+import { BuckyClient, ICreateBuckyOrderProduct } from '../buckydrop/bucky-client';
 import ProductRepository from '@medusajs/medusa/dist/repositories/product';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
@@ -192,7 +193,7 @@ export default class OrderService extends MedusaOrderService {
         });
 
         //do buckydrop order creation 
-        await this.doBuckydropOrderCreation(orders);
+        //await this.doBuckydropOrderCreation(orders);
 
         //calls to update inventory
         const inventoryPromises =
@@ -231,9 +232,39 @@ export default class OrderService extends MedusaOrderService {
 
     private async doBuckydropOrderCreation(orders: Order[]): Promise<void> {
         for (const order of orders) {
-            const products = await this.getBuckyProductsFromOrder(order);
+            const { products, quantities } = await this.getBuckyProductsFromOrder(order);
             if (products?.length) {
-                //TODO: create bucky order 
+                const productList: ICreateBuckyOrderProduct[] = [];
+
+                for (let n = 0; n < products.length; n++) {
+                    const metadata: any = JSON.parse(products[n].bucky_metadata);
+
+                    productList.push({
+                        spuCode: metadata.spuCode,
+                        skuCode: '',
+                        productCount: quantities[n],
+                        platform: metadata.platform,
+                        productPrice: metadata.proPrice.price,
+                        productName: metadata.productName
+                    });
+                }
+
+
+                await this.buckyClient.createOrder({
+                    partnerOrderNo: '',
+                    partnerOrderNoName: '',
+                    country: '',
+                    countryCode: '',
+                    province: '',
+                    city: '',
+                    detailAddress: '',
+                    postCode: '',
+                    contactName: '',
+                    contactPhone: '',
+                    email: '',
+                    orderRemark: '',
+                    productList
+                });
             }
         }
     }
@@ -532,10 +563,15 @@ export default class OrderService extends MedusaOrderService {
         return output;
     }
 
-    private async getBuckyProductsFromOrder(order: Order): Promise<Product[]> {
+    private async getBuckyProductsFromOrder(order: Order): Promise<{ products: Product[], quantities: number[] }> {
         const orders: Order[] = await this.getOrdersWithItems([order]);
-        return [];
-        const products: Product[] = orders[0].items.map(i => i.variant.product);
-        //return products.find(p => p.bucky_metadata);
+        const relevantItems: LineItem[] = orders[0].items.filter(
+            i => i.variant.product.bucky_metadata
+        );
+
+        return relevantItems?.length ? {
+            products: relevantItems.map(i => i.variant.product),
+            quantities: relevantItems.map(i => i.quantity)
+        } : { products: [], quantities: [] };
     }
 }
