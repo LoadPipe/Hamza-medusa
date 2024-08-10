@@ -132,6 +132,8 @@ class ProductService extends MedusaProductService {
 
     async addProductFromBuckyDrop(
         storeId: string,
+        collectionId: string,
+        salesChannelIds: string[],
         keyword: string
     ): Promise<any> {
         try {
@@ -141,8 +143,13 @@ class ProductService extends MedusaProductService {
             }
 
             // Map and create products
-            const productsData = data.data.records.map(
-                this.mapBuckyDataToProductInput
+            const productsData = data.data.records.map(r =>
+                this.mapBuckyDataToProductInput(
+                    r,
+                    ProductStatus.PUBLISHED,
+                    storeId, collectionId,
+                    salesChannelIds
+                )
             );
             const addedProducts = await Promise.all(
                 productsData.map((product) => super.create(product))
@@ -341,24 +348,29 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    private mapBuckyDataToProductInput(item) {
+    private mapBuckyDataToProductInput(
+        item: any,
+        status: ProductStatus,
+        storeId: string,
+        collectionId: string,
+        salesChannels: string[]
+    ) {
         return {
             title: item.productName,
             handle: item.spuCode,
             description: item.productName,
             is_giftcard: false,
-            status: 'published' as ProductStatus,
+            status: status as ProductStatus,
             thumbnail: item.picUrl,
             images: [item.picUrl],
-            collection_id: 'pcol_lighting',
+            collection_id: collectionId,
             weight: Math.round(item.weight || 100),
             discountable: true,
-            store_id: 'store_01J4WCBW49BP2TMP1138PD1KEP',
-            sales_channels: [{ id: 'sc_01J4WC5E72JJBC39HRGKDC6NFD' }],
+            store_id: storeId,
+            sales_channels: [salesChannels.map(sc => { id: sc })],
         };
     }
 
-    //TODO: need a way to get the customer ID or preferred currency
     private async convertPrices(products: Product[], customerId: string = ''): Promise<Product[]> {
         for (const prod of products) {
             for (const variant of prod.variants) {

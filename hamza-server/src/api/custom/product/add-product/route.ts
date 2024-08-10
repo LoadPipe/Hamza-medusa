@@ -7,7 +7,12 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const handler = new RouteHandler(req, res, 'POST', '/products/add-product');
 
     await handler.handle(async () => {
-        const productData = req.body as { keyword: string }; // Assuming only keyword is needed
+        const productData = req.body as {
+            keyword: string,
+            storeId: string,
+            collectionId: string,
+            salesChannelId: string,
+        }; // Assuming only keyword is needed
 
         if (!productData.keyword) {
             return res.status(400).json({
@@ -18,7 +23,10 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
         try {
             const addedProduct = await productService.addProductFromBuckyDrop(
-                productData.keyword
+                productData.storeId,
+                productData.collectionId,
+                [productData.salesChannelId],
+                productData.keyword,
             );
             handler.logger.debug(`Product added: ${addedProduct}`);
             return res
