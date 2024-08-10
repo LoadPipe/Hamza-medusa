@@ -130,29 +130,10 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    async addProductFromBuckyDrop(
-        storeId: string,
-        collectionId: string,
-        salesChannelIds: string[],
-        keyword: string
-    ): Promise<any> {
+    async bulkImportProducts(
+        productsData: CreateProductInput[]
+    ): Promise<Product[]> {
         try {
-            const data = await this.buckyClient.searchProducts(keyword, 1, 10);
-            if (!data.success || !data.data.records.length) {
-                throw new Error('No products found or error in fetching data');
-            }
-
-            // Map and create products
-            const productsData = data.data.records.map(r =>
-                this.mapBuckyDataToProductInput(
-                    r,
-                    ProductStatus.PUBLISHED,
-                    storeId, collectionId,
-                    salesChannelIds
-                )
-            );
-
-            console.log(productsData);
             const addedProducts = await Promise.all(
                 productsData.map((product) => super.create(product))
             );

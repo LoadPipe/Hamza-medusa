@@ -77,7 +77,7 @@ export class BuckyClient {
         keyword: string,
         currentPage: number = 1,
         pageSize: number = 10
-    ): Promise<any> {
+    ): Promise<any[]> {
         const params = JSON.stringify({
             curent: currentPage, // Note the typo "curent" should be "current" if API docs are correct
             size: pageSize,
@@ -91,7 +91,7 @@ export class BuckyClient {
                 `/api/rest/v2/adapt/openapi/product/search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params
             )
-            .then((response) => response.data)
+            .then((response) => response.data?.data?.records)
             .catch((error) => {
                 throw error;
             });
