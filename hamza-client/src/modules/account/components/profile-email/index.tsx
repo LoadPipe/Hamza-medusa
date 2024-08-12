@@ -33,7 +33,7 @@ const ProfileEmail: React.FC<MyInformationProps> = ({ customer }) => {
         <div>
             <span className="uppercase text-ui-fg-base text-xs">EMAIL</span>
             <div className="grid grid-cols-1 gap-y-2">
-                <span>{customer.email}</span>
+                <span>{customer?.email ? customer.email.endsWith('@evm.blockchain') ? '' : customer.email : ''}</span>
             </div>
         </div>
     );
