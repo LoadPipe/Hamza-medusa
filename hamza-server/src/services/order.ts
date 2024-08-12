@@ -193,7 +193,7 @@ export default class OrderService extends MedusaOrderService {
         });
 
         //do buckydrop order creation 
-        //await this.doBuckydropOrderCreation(orders);
+        //await this.doBuckydropOrderCreation(cart, orders);
 
         //calls to update inventory
         const inventoryPromises =
@@ -230,7 +230,7 @@ export default class OrderService extends MedusaOrderService {
         return orders;
     }
 
-    private async doBuckydropOrderCreation(orders: Order[]): Promise<void> {
+    private async doBuckydropOrderCreation(cartId: string, orders: Order[]): Promise<void> {
         for (const order of orders) {
             const { products, quantities } = await this.getBuckyProductsFromOrder(order);
             if (products?.length) {
@@ -241,7 +241,7 @@ export default class OrderService extends MedusaOrderService {
 
                     productList.push({
                         spuCode: metadata.spuCode,
-                        skuCode: '',
+                        skuCode: metadata.skuCode,
                         productCount: quantities[n],
                         platform: metadata.platform,
                         productPrice: metadata.proPrice.price,
@@ -249,19 +249,22 @@ export default class OrderService extends MedusaOrderService {
                     });
                 }
 
+                const cart: Cart = await this.cartService_.retrieve(
+                    cartId, { relations: ['billing_address.country'] }
+                );
 
                 await this.buckyClient.createOrder({
-                    partnerOrderNo: '',
-                    partnerOrderNoName: '',
-                    country: '',
-                    countryCode: '',
-                    province: '',
-                    city: '',
-                    detailAddress: '',
-                    postCode: '',
-                    contactName: '',
-                    contactPhone: '',
-                    email: '',
+                    partnerOrderNo: order.id, //TODO: this ok? 
+                    partnerOrderNoName: order.id, //TODO: what go here? 
+                    country: cart.billing_address.country.name ?? '', //TODO: what format?
+                    countryCode: cart.billing_address.country.iso_2 ?? '', //TODO: what format?
+                    province: cart.billing_address.province ?? '',
+                    city: cart.billing_address.city ?? '',
+                    detailAddress: `${cart.billing_address.address_1 ?? ''} ${cart.billing_address.address_2 ?? ''}`.trim(),
+                    postCode: cart.billing_address.postal_code,
+                    contactName: `${cart.billing_address.first_name ?? ''} ${cart.billing_address.last_name ?? ''}`.trim(),
+                    contactPhone: cart.billing_address.phone ?? '',
+                    email: cart.email ?? '',
                     orderRemark: '',
                     productList
                 });
