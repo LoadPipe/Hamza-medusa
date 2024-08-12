@@ -5,9 +5,34 @@ const BUCKY_URL = process.env.BUCKY_URL || 'https://dev.buckydrop.com';
 const APP_CODE = process.env.APP_CODE || '0077651952683977';
 const APP_SECRET = process.env.APP_SECRET || 'b9486ca7a7654a8f863b3dfbd9e8c100';
 
-interface CancelOrderParams {
+export interface CancelOrderParams {
     partnerOrderNo?: string;
     orderNo?: string;
+}
+
+export interface ICreateBuckyOrderProduct {
+    spuCode: string;
+    skuCode: string;
+    productCount: number;
+    platform: string;
+    productPrice: number;
+    productName: string;
+}
+
+export interface ICreateBuckyOrderParams {
+    partnerOrderNo: string;
+    partnerOrderNoName: string;
+    country: string;
+    countryCode: string;
+    province: string;
+    city: string;
+    detailAddress: string;
+    postCode: string;
+    contactName: string;
+    contactPhone: string;
+    email: string;
+    orderRemark: string;
+    productList: ICreateBuckyOrderProduct[]
 }
 
 export class BuckyClient {
@@ -52,7 +77,7 @@ export class BuckyClient {
         keyword: string,
         currentPage: number = 1,
         pageSize: number = 10
-    ): Promise<any> {
+    ): Promise<any[]> {
         const params = JSON.stringify({
             curent: currentPage, // Note the typo "curent" should be "current" if API docs are correct
             size: pageSize,
@@ -66,7 +91,7 @@ export class BuckyClient {
                 `/api/rest/v2/adapt/openapi/product/search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params
             )
-            .then((response) => response.data)
+            .then((response) => response.data?.data?.records)
             .catch((error) => {
                 throw error;
             });
@@ -107,8 +132,8 @@ export class BuckyClient {
             });
     }
 
-    async createOrder(orderDetails) {
-        const params = JSON.stringify(orderDetails);
+    async createOrder(createOrderParams: ICreateBuckyOrderParams) {
+        const params = JSON.stringify(createOrderParams);
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
 
@@ -148,8 +173,11 @@ export class BuckyClient {
             });
     }
 
-    async getOrderDetails(orderId) {
-        const params = JSON.stringify({ orderId });
+    async getOrderDetails({ partnerOrderNo, orderNo }) {
+        const params = JSON.stringify({
+            partnerOrderNo,
+            orderNo,
+        });
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
 
@@ -164,7 +192,7 @@ export class BuckyClient {
             });
     }
 
-    async getLogisticsInfo(packageCode) {
+    async getLogisticsInfo(packageCode: string) {
         const params = JSON.stringify({ packageCode });
         // other setup like timestamp, appCode, sign, etc.
         return this.client
@@ -175,79 +203,3 @@ export class BuckyClient {
             });
     }
 }
-
-const buckyClient = new BuckyClient();
-
-// PRODUCT QUERIES
-// Call to get product details
-// buckyClient
-//     .getProductDetails('https://detail.1688.com/offer/592228806840.html')
-//     .then((data) => console.log('Product Details:', JSON.stringify(data)))
-//     .catch((error) => console.error('Error fetching product details:', error));
-
-// // Call to search products based on a keyword
-buckyClient
-    .searchProducts('cup', 1, 10)
-    .then((data) => console.log('Search Results:', JSON.stringify(data)))
-    .catch((error) => console.error('Error searching products:', error));
-
-// buckyClient
-//     .searchProductByImage('your_base64_encoded_image_here')
-//     .then((data) => console.log('Image Search Results:', data))
-//     .catch((error) => console.error('Error in image search:', error));
-//
-// // Call to list product categories in a tree structure
-// buckyClient
-//     .listProductCategories()
-//     .then((data) => console.log('Product Categories:', data))
-//     .catch((error) =>
-//         console.error('Error listing product categories:', error)
-//     );
-
-// ORDER QUERIES
-
-const createOrderData = {
-    partnerOrderNo: 'p010101j',
-    partnerOrderNoName: '01012',
-    country: 'string',
-    countryCode: 'st',
-    province: 'string',
-    city: 'string',
-    detailAddress: 'string',
-    postCode: 'string',
-    contactName: 'string',
-    contactPhone: 'string',
-    email: 'string',
-    orderRemark: 'string',
-    productList: [
-        {
-            spuCode: 'string',
-            skuCode: 'string',
-            productCount: 100000,
-            platform: 'ALIBABA',
-            productPrice: 999999999,
-            productName: 'string',
-        },
-    ],
-};
-
-// buckyClient
-//     .createOrder(createOrderData)
-//     .then((data) => console.log('Order Created:', data))
-//     .catch((error) => console.error('Error creating order:', error));
-
-// // Call to cancel an order
-// buckyClient
-//     .cancelOrder('p010101', 'CO172290269356400001')
-//     .then((data) => console.log('Order Cancelled:', data))
-//     .catch((error) => console.error('Error cancelling order:', error));
-
-// // Call to get order details
-// buckyClient
-//     .getOrderDetails('your_order_id_here')
-//     .then((data) => console.log('Order Details:', data))
-//     .catch((error) => console.error('Error fetching order details:', error));
-
-// buckyClient.getLogisticsInfo('BXD1234567890')
-//     .then(data => console.log('Logistics Info:', data))
-//     .catch(error => console.error('Error getting logistics info:', error));

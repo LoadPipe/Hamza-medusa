@@ -4,10 +4,16 @@ import {
     Logger,
     ProductVariant,
     PriceSelectionResult,
+    MoneyAmount,
+    Image,
+    ProductVariantMoneyAmount,
 } from '@medusajs/medusa';
 import {
     CreateProductInput,
+    CreateProductProductSalesChannelInput,
     CreateProductProductVariantPriceInput,
+    FindProductConfig,
+    ProductSelector,
 } from '@medusajs/medusa/dist/types/product';
 import { Product } from '../models/product';
 import logger from '@medusajs/medusa-cli/dist/reporter';
@@ -17,6 +23,7 @@ import CustomerService from '../services/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import { BuckyClient } from '../buckydrop/bucky-client';
 import { ProductStatus } from '@medusajs/medusa';
+
 export type UpdateProductProductVariantDTO = {
     id?: string;
     store_id?: string;
@@ -76,17 +83,57 @@ class ProductService extends MedusaProductService {
         return result;
     }
 
-    async addProductFromBuckyDrop(keyword: string): Promise<any> {
+    async updateVariantPrice(
+        variantId: string,
+        prices: CreateProductProductVariantPriceInput[]
+    ): Promise<void> {
+        const moneyAmountRepo = this.activeManager_.getRepository(MoneyAmount);
+        const productVariantMoneyAmountRepo = this.activeManager_.getRepository(
+            ProductVariantMoneyAmount
+        );
+
         try {
-            const data = await this.buckyClient.searchProducts(keyword, 1, 10);
-            if (!data.success || !data.data.records.length) {
-                throw new Error('No products found or error in fetching data');
+            const moneyAmounts = [];
+            const variantMoneyAmounts = [];
+
+            for (const price of prices) {
+                // Create a MoneyAmount entity for each currency
+                const currencies = ['eth', 'usdc', 'usdt'];
+
+                for (const currency of currencies) {
+                    const moneyAmount = moneyAmountRepo.create({
+                        currency_code: currency,
+                        amount: price.amount, // Assuming the amount is the same for all currencies; adjust if needed
+                    });
+                    const savedMoneyAmount =
+                        await moneyAmountRepo.save(moneyAmount);
+
+                    moneyAmounts.push(savedMoneyAmount);
+
+                    const productVariantMoneyAmount =
+                        productVariantMoneyAmountRepo.create({
+                            variant_id: variantId,
+                            money_amount_id: savedMoneyAmount.id,
+                        });
+
+                    variantMoneyAmounts.push(productVariantMoneyAmount);
+                }
             }
 
-            // Map and create products
-            const productsData = data.data.records.map(
-                this.mapBuckyDataToProductInput
+            // Save all ProductVariantMoneyAmount entries in one go
+            await productVariantMoneyAmountRepo.save(variantMoneyAmounts);
+            this.logger.info(
+                `Updated prices for variant ${variantId} in currencies: eth, usdc, usdt`
             );
+        } catch (e) {
+            this.logger.error('Error updating variant prices:', e);
+        }
+    }
+
+    async bulkImportProducts(
+        productsData: CreateProductInput[]
+    ): Promise<Product[]> {
+        try {
             const addedProducts = await Promise.all(
                 productsData.map((product) => super.create(product))
             );
@@ -99,7 +146,7 @@ class ProductService extends MedusaProductService {
 
             // Create variants for each valid product
             const variantCreationPromises = validProducts.map(
-                (savedProduct) => {
+                async (savedProduct) => {
                     const variantData = {
                         title: savedProduct.title,
                         product_id: savedProduct.id,
@@ -110,11 +157,24 @@ class ProductService extends MedusaProductService {
 
                     const variant =
                         this.productVariantRepository_.create(variantData);
-                    return this.productVariantRepository_.save(variant);
+                    const savedVariant =
+                        await this.productVariantRepository_.save(variant);
+
+                    // Define the prices for the variant in different currencies
+                    const prices = [
+                        { currency_code: 'eth', amount: 1000 },
+                        { currency_code: 'usdc', amount: 1200 },
+                        { currency_code: 'usdt', amount: 1300 },
+                    ];
+
+                    // Update prices for the variant
+                    await this.updateVariantPrice(savedVariant.id, prices);
+
+                    return savedVariant;
                 }
             );
 
-            // Wait for all variants to be created
+            // Wait for all variants to be created and priced
             const variants = await Promise.all(variantCreationPromises);
 
             console.log(
@@ -125,29 +185,6 @@ class ProductService extends MedusaProductService {
             console.error('Error in adding products from BuckyDrop:', error);
             throw error;
         }
-    }
-
-    private mapBuckyDataToProductInput(item) {
-        return {
-            title: item.productName,
-            handle: item.spuCode,
-            description: item.productName,
-            is_giftcard: false,
-            status: 'draft' as ProductStatus,
-            thumbnail: item.picUrl,
-            weight: Math.round(item.weight || 100),
-            length: Math.round(item.length || 10),
-            height: Math.round(item.height || 10),
-            width: Math.round(item.width || 10),
-            hs_code: item.hs_code || '123456',
-            origin_country: item.origin_country || 'US',
-            mid_code: item.mid_code || 'ABC123',
-            material: item.material || 'Cotton',
-            type: null,
-            collection_id: null,
-            discountable: true,
-            store_id: 'store_01J3CF347H10K4C8D889DST58Z',
-        };
     }
 
     async getProductsFromStoreWithPrices(storeId: string): Promise<Product[]> {
@@ -294,7 +331,31 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    //TODO: need a way to get the customer ID or preferred currency
+    private mapBuckyDataToProductInput(
+        item: any,
+        status: ProductStatus,
+        storeId: string,
+        collectionId: string,
+        salesChannels: string[]
+    ) {
+        console.log(salesChannels);
+        return {
+            title: item.productName,
+            handle: item.spuCode,
+            description: item.productName,
+            is_giftcard: false,
+            status: status as ProductStatus,
+            thumbnail: item.picUrl,
+            images: [item.picUrl],
+            collection_id: collectionId,
+            weight: Math.round(item.weight || 100),
+            discountable: true,
+            store_id: storeId,
+            sales_channels: salesChannels.map(sc => { return { id: sc } }),
+            bucky_metadata: JSON.stringify(item)
+        };
+    }
+
     private async convertPrices(products: Product[], customerId: string = ''): Promise<Product[]> {
         for (const prod of products) {
             for (const variant of prod.variants) {
