@@ -2,27 +2,23 @@ import { Lifetime } from 'awilix';
 import {
     ProductService as MedusaProductService,
     Logger,
-    ProductVariant,
-    PriceSelectionResult,
     MoneyAmount,
-    Image,
     ProductVariantMoneyAmount,
+    Store,
 } from '@medusajs/medusa';
 import {
     CreateProductInput,
-    CreateProductProductSalesChannelInput,
     CreateProductProductVariantPriceInput,
-    FindProductConfig,
-    ProductSelector,
 } from '@medusajs/medusa/dist/types/product';
 import { Product } from '../models/product';
-import logger from '@medusajs/medusa-cli/dist/reporter';
 import { StoreRepository } from '../repositories/store';
-import PriceSelectionStrategy from '../strategies/price-selection';
+import PriceSelectionStrategy, { PriceConverter } from '../strategies/price-selection';
 import CustomerService from '../services/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import { BuckyClient } from '../buckydrop/bucky-client';
-import { ProductStatus } from '@medusajs/medusa';
+import { getCurrencyAddress } from '../currency.config';
+
+export type BulkImportProductInput = CreateProductInput & { price: number };
 
 export type UpdateProductProductVariantDTO = {
     id?: string;
@@ -97,27 +93,22 @@ class ProductService extends MedusaProductService {
             const variantMoneyAmounts = [];
 
             for (const price of prices) {
-                // Create a MoneyAmount entity for each currency
-                const currencies = ['eth', 'usdc', 'usdt'];
+                const moneyAmount = moneyAmountRepo.create({
+                    currency_code: price.currency_code,
+                    amount: price.amount, // Assuming the amount is the same for all currencies; adjust if needed
+                });
+                const savedMoneyAmount =
+                    await moneyAmountRepo.save(moneyAmount);
 
-                for (const currency of currencies) {
-                    const moneyAmount = moneyAmountRepo.create({
-                        currency_code: currency,
-                        amount: price.amount, // Assuming the amount is the same for all currencies; adjust if needed
+                moneyAmounts.push(savedMoneyAmount);
+
+                const productVariantMoneyAmount =
+                    productVariantMoneyAmountRepo.create({
+                        variant_id: variantId,
+                        money_amount_id: savedMoneyAmount.id,
                     });
-                    const savedMoneyAmount =
-                        await moneyAmountRepo.save(moneyAmount);
 
-                    moneyAmounts.push(savedMoneyAmount);
-
-                    const productVariantMoneyAmount =
-                        productVariantMoneyAmountRepo.create({
-                            variant_id: variantId,
-                            money_amount_id: savedMoneyAmount.id,
-                        });
-
-                    variantMoneyAmounts.push(productVariantMoneyAmount);
-                }
+                variantMoneyAmounts.push(productVariantMoneyAmount);
             }
 
             // Save all ProductVariantMoneyAmount entries in one go
@@ -131,17 +122,31 @@ class ProductService extends MedusaProductService {
     }
 
     async bulkImportProducts(
-        productsData: CreateProductInput[]
+        storeId: string,
+        productData: BulkImportProductInput[],
     ): Promise<Product[]> {
         try {
+            const priceConverter: PriceConverter = new PriceConverter();
+
             const addedProducts = await Promise.all(
-                productsData.map((product) => super.create(product))
+                productData.map((product) =>
+                    super.create(product)
+                )
             );
 
             // Ensure all products have valid IDs
             const validProducts = addedProducts.filter((p) => p && p.id);
             if (validProducts.length !== addedProducts.length) {
                 throw new Error('Some products were not created successfully');
+            }
+
+            //get the store 
+            const store: Store = await this.storeRepository_.findOne({
+                where: { id: storeId }
+            });
+
+            if (!store) {
+                throw new Error(`Store ${storeId} not found.`);
             }
 
             // Create variants for each valid product
@@ -160,21 +165,36 @@ class ProductService extends MedusaProductService {
                     const savedVariant =
                         await this.productVariantRepository_.save(variant);
 
-                    // Define the prices for the variant in different currencies
-                    const prices = [
-                        { currency_code: 'eth', amount: 1000 },
-                        { currency_code: 'usdc', amount: 1200 },
-                        { currency_code: 'usdt', amount: 1300 },
-                    ];
+                    //get the correct price
+                    const input = productData.find(pd => pd.handle == savedProduct.handle);
+                    if (input) {
+                        // Define the prices for the variant in different currencies
+                        const prices = [
+                            {
+                                currency_code: 'eth', amount: await priceConverter.getPrice(
+                                    { baseAmount: input.price, baseCurrency: 'usdc', toCurrency: 'eth' }
+                                )
+                            },
+                            {
+                                currency_code: 'usdc', amount: await priceConverter.getPrice(
+                                    { baseAmount: input.price, baseCurrency: 'usdc', toCurrency: 'usdc' }
+                                )
+                            },
+                            {
+                                currency_code: 'usdt', amount: await priceConverter.getPrice(
+                                    { baseAmount: input.price, baseCurrency: 'usdc', toCurrency: 'usdt' }
+                                )
+                            },
+                        ];
 
-                    // Update prices for the variant
-                    await this.updateVariantPrice(savedVariant.id, prices);
+                        // Update prices for the variant
+                        await this.updateVariantPrice(savedVariant.id, prices);
+                    }
 
                     return savedVariant;
-                }
-            );
+                });
 
-            // Wait for all variants to be created and priced
+            // Wait for all variants to be created and priced;
             const variants = await Promise.all(variantCreationPromises);
 
             console.log(
@@ -329,31 +349,6 @@ class ProductService extends MedusaProductService {
             );
             throw new Error('Failed to fetch products from review.');
         }
-    }
-
-    private mapBuckyDataToProductInput(
-        item: any,
-        status: ProductStatus,
-        storeId: string,
-        collectionId: string,
-        salesChannels: string[]
-    ) {
-        console.log(salesChannels);
-        return {
-            title: item.productName,
-            handle: item.spuCode,
-            description: item.productName,
-            is_giftcard: false,
-            status: status as ProductStatus,
-            thumbnail: item.picUrl,
-            images: [item.picUrl],
-            collection_id: collectionId,
-            weight: Math.round(item.weight || 100),
-            discountable: true,
-            store_id: storeId,
-            sales_channels: salesChannels.map(sc => { return { id: sc } }),
-            bucky_metadata: JSON.stringify(item)
-        };
     }
 
     private async convertPrices(products: Product[], customerId: string = ''): Promise<Product[]> {

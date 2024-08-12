@@ -62,6 +62,8 @@ export class CurrencyConversionClient {
                 case '0x0000000000000000000000000000000000000000':
                     return 2517.26;
                 default:
+                    if (toCurrency !== '0x0000000000000000000000000000000000000000')
+                        return 1;
                     return 0.00041;
             }
         } catch (error) {
