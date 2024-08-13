@@ -44,7 +44,8 @@ import {
 } from '@chakra-ui/react';
 // import sepoliaImage from '../../../../../../public/images/sepolia/sepolia.webp';
 
-const WALLETCONNECT_ID = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || '';
+const WALLETCONNECT_ID =
+    process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || '';
 const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_API_KEY || '';
 
 export const darkThemeConfig = darkTheme({
@@ -65,9 +66,16 @@ export const darkThemeConfig = darkTheme({
 // };
 
 // export { customSepolia };
+//const isProduction = process.env.NODE_ENV === 'production';
+
+const allowedChains = [];
+if (process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS === '10')
+    allowedChains.push(optimism);
+if (process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS === '11155111')
+    allowedChains.push(sepolia);
 
 export const { chains, publicClient, webSocketPublicClient } = configureChains(
-    [sepolia, mainnet, optimismSepolia, optimism, linea, lineaTestnet, goerli],
+    allowedChains,
     [
         alchemyProvider({
             apiKey: ALCHEMY_API_KEY,
@@ -84,63 +92,124 @@ export const { chains, publicClient, webSocketPublicClient } = configureChains(
 );
 
 export function getAllowedChainsFromConfig() {
-    console.log('RAINBOW: getAllowedChainsFromConfig');
+    console.log('RB: getAllowedChainsFromConfig');
     let chains = process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS;
     if (!chains?.length) chains = '10'; ///default to mainnet
 
     const split: any[] = chains.split(',');
     split.forEach((v, i) => (split[i] = parseInt(v.trim())));
-    console.log('RAINBOW: allowed blockchains: ', split);
+    console.log('RB: allowed blockchains: ', split);
+    if (!split.length)
+        split.push(10);
     return split;
+}
+
+function delay(ms: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve();
+        }, ms);
+    });
+}
+
+async function tryAndRetry(
+    input: any,
+    action: (arg: any) => any,
+    message: string,
+    maxTries: number = 3,
+    delayMs: number = 100
+): Promise<any> {
+    for (let n = 0; n < maxTries; n++) {
+        console.log(`${message} attempt number ${n + 1}...`);
+        try {
+            const output = await action(input);
+            if (output) {
+                console.log(`${message} succeeded, returning ${output}`);
+                return output;
+            }
+
+            if (delayMs) {
+                await delay(delayMs);
+            }
+        } catch (e: any) {
+            console.error('RB: Error fetching chain ID:', e);
+        }
+    }
+
+    console.log(`${message} max retries exceeded`);
+    return null;
+}
+
+export async function getChainId(walletClient: any) {
+    return await tryAndRetry(
+        walletClient,
+        async (wc) => {
+            return await wc.getChainId();
+        },
+        'getChainId'
+    );
 }
 
 type Props = {
     enabled: boolean;
 };
 
+
+export function getBlockchainNetworkName(chainId: number | string) {
+    console.log('RB: getBlockchainNetworkName', chainId);
+
+    //ensure number 
+    try { chainId = chainId ? parseInt(chainId.toString()) : 10; }
+    catch { }
+
+    switch (chainId) {
+        case 10:
+            return 'Optimism';
+        case 11155111:
+            // Sepolia
+            return 'Sepolia';
+        case 11155420:
+            //  Op-Sepolia
+            return 'Op-Sepolia';
+        case 1:
+            //  Eth Main
+            return 'Ethereum Mainnet';
+        default:
+            //  Sepolia
+            return 'Unknown';
+    }
+};
+
 // Add NEXT_PUBLIC_ALLOWED_BLOCKCHAINS = 11155111 to env
 export const SwitchNetwork = ({ enabled }: Props) => {
-    console.log('RAINBOW: SwitchNetwork');
+    console.log('RB: SwitchNetwork');
     // Modal Hook
     const [openModal, setOpenModal] = useState(false);
     const [preferredChainName, setPreferredChainName] = useState('');
     //sometimes not detecting environment correctly
-    const [preferredChainID, setPreferredChainID] = useState(getAllowedChainsFromConfig()[0]);
+    const [preferredChainID, setPreferredChainID] = useState(
+        getAllowedChainsFromConfig()[0]
+    );
 
     // Wagmi Hooks
     const { data: walletClient, isError } = useWalletClient();
 
+    const { chain } = useNetwork();
+    console.log('CHAIN:', chain);
+
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
 
+    console.log('pendingChainID;', pendingChainId);
+
     const voidFunction = () => { };
 
-    //TODO: move this to a chain config or something
-    const getChainName = (chainId: number) => {
-        console.log('RAINBOW: getChainName', chainId);
-        switch (chainId) {
-            case 10:
-                return 'Optimism';
-            case 11155111:
-                // Sepolia
-                return 'Sepolia';
-            case 11155420:
-                //  Op-Sepolia
-                return 'Op-Sepolia';
-            case 1:
-                //  Eth Main
-                return 'Ethereum Mainnet';
-            default:
-                //  Sepolia
-                return 'Unknown';
-        }
-    };
 
     const setSwitchNetwork = () => {
-        console.log('RAINBOW: setSwitchNetwork');
+        console.log('RB: setSwitchNetwork');
         let allowed = getAllowedChainsFromConfig()[0];
         setPreferredChainID(allowed);
-        setPreferredChainName(getChainName(allowed));
+        setPreferredChainName(getBlockchainNetworkName(allowed));
     };
 
     useEffect(() => {
@@ -150,21 +219,23 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     useEffect(() => {
         const fetchChainId = async () => {
             setSwitchNetwork();
-            console.log('RAINBOW: fetchChainId');
+            console.log('RB: fetchChainId');
             if (walletClient && enabled) {
                 try {
-                    const chainId = await walletClient.getChainId();
+                    console.log('RB: calling getChainId');
+                    const chainId =
+                        chain?.id ?? (await getChainId(walletClient));
                     console.log(
-                        `RAINBOW: connected chain id is ${chainId}, preferred chain is ${preferredChainID}`
+                        `RB: connected chain id is ${chainId}, preferred chain is ${preferredChainID}`
                     );
 
-                    // if (chainId === preferredChainID) {
-                    //     setOpenModal(false);
-                    // } else {
-                    //     setOpenModal(true);
-                    // }
+                    if (chainId === preferredChainID) {
+                        setOpenModal(false);
+                    } else {
+                        setOpenModal(true);
+                    }
                 } catch (error) {
-                    console.error('RAINBOW: Error fetching chain ID:', error);
+                    console.error('RB: Error fetching chain ID:', error);
                 }
             }
         };
@@ -172,7 +243,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     }, [walletClient]);
 
     return (
-        <Modal isOpen={openModal} onClose={() => { }} isCentered>
+        <Modal isOpen={enabled} onClose={() => { }} isCentered>
             <ModalOverlay />
             <ModalContent
                 justifyContent={'center'}
