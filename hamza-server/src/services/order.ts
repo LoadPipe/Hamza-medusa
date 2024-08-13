@@ -180,7 +180,6 @@ export default class OrderService extends MedusaOrderService {
         escrowContractAddress
     ): Promise<Order[]> {
         this.logger.debug(`Cart Products ${cartProductsJson}`);
-        console.log('cart id', cartId);
         //get orders & order ids
         const orders: Order[] = await this.orderRepository_.find({
             where: { cart_id: cartId, status: OrderStatus.PENDING },
@@ -253,7 +252,7 @@ export default class OrderService extends MedusaOrderService {
                     cartId, { relations: ['billing_address.country'] }
                 );
 
-                await this.buckyClient.createOrder({
+                const output = await this.buckyClient.createOrder({
                     partnerOrderNo: order.id, //TODO: this ok? 
                     partnerOrderNoName: order.id, //TODO: what go here? 
                     country: cart.billing_address.country.name ?? '', //TODO: what format?
@@ -268,6 +267,13 @@ export default class OrderService extends MedusaOrderService {
                     orderRemark: '',
                     productList
                 });
+
+                if (output.success) {
+
+                }
+
+                this.logger.debug('BUCKY CREATED ORDER');
+                this.logger.debug(JSON.stringify(output));
             }
         }
     }
@@ -469,12 +475,10 @@ export default class OrderService extends MedusaOrderService {
     }
 
     async completeOrderTemplate(cartId: string) {
-        console.log('Cart ID', cartId);
         const orders = (await this.orderRepository_.find({
             where: { cart_id: cartId, status: Not(OrderStatus.ARCHIVED) },
             relations: ['cart.items.variant.product', 'store.owner'],
         })) as Order[];
-        console.log(orders);
         // return orders;
 
         const products = [];
@@ -517,7 +521,6 @@ export default class OrderService extends MedusaOrderService {
             // relations: ['cart.items', 'cart.items.variant'],
         });
 
-        // console.log(`Orders Line item? ${JSON.stringify(orders)}`);
         const cartCount = orders.length;
 
         let newOrderList: Order[] = await this.getOrdersWithItems(orders);
@@ -568,7 +571,7 @@ export default class OrderService extends MedusaOrderService {
 
     private async getBuckyProductsFromOrder(order: Order): Promise<{ products: Product[], quantities: number[] }> {
         const orders: Order[] = await this.getOrdersWithItems([order]);
-        const relevantItems: LineItem[] = orders[0].items.filter(
+        const relevantItems: LineItem[] = orders[0].cart.items.filter(
             i => i.variant.product.bucky_metadata
         );
 

@@ -133,7 +133,8 @@ export class BuckyClient {
             });
     }
 
-    async createOrder(createOrderParams: ICreateBuckyOrderParams) {
+    //TODO: create type IBuckyOrderOutput
+    async createOrder(createOrderParams: ICreateBuckyOrderParams): Promise<any> {
         const params = JSON.stringify(createOrderParams);
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);

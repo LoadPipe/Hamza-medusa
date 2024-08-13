@@ -114,7 +114,7 @@ export class BasicCheckoutProcessor {
 
         //restrict by whitelist 
         if (await this.customerRestrictedByWhitelist()) {
-            throw { code: 401, message: 'Customer not Whitelisted' };
+            throw { code: 401, message: 'Customer not whitelisted' };
         }
 
         //group payments by store
