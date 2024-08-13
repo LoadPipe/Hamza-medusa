@@ -18,7 +18,7 @@ export default class WhiteListService extends TransactionBaseService {
     }
 
     async create(storeId: string, walletAddress: string) {
-        if (!await this.getByWalletAddress(storeId, walletAddress)) {
+        if (!(await this.getByWalletAddress(storeId, walletAddress))?.length) {
             return await this.whitelistRepository_.save({
                 id: generateEntityId(null, 'whitelist'),
                 store_id: storeId,
