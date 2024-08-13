@@ -1,4 +1,4 @@
-import { TransactionBaseService, Logger } from '@medusajs/medusa';
+import { TransactionBaseService, Logger, generateEntityId } from '@medusajs/medusa';
 import CustomerRepository from '../repositories/customer';
 import { WhiteListRepository } from '../repositories/whitelist';
 import { WhiteList } from '../models/whitelist';
@@ -18,21 +18,24 @@ export default class WhiteListService extends TransactionBaseService {
     }
 
     async create(storeId: string, walletAddress: string) {
-        return await this.whitelistRepository_.save({
-            store_id: storeId,
-            wallet_address: walletAddress
-        });
+        if (!await this.getByWalletAddress(storeId, walletAddress)) {
+            return await this.whitelistRepository_.save({
+                id: generateEntityId(null, 'whitelist'),
+                store_id: storeId,
+                wallet_address: walletAddress?.trim()?.toLowerCase()
+            });
+        }
     }
 
     async remove(storeId: string, walletAddress: string) {
         await this.whitelistRepository_.delete({
             store_id: storeId,
-            wallet_address: walletAddress
+            wallet_address: walletAddress?.trim()?.toLowerCase()
         });
         return;
     }
 
-    async getByStore(storeId: string, customerId: string): Promise<WhiteList[]> {
+    async getByCustomerId(storeId: string, customerId: string): Promise<WhiteList[]> {
         this.logger.debug(`getting whitelist ${storeId}, ${customerId}`);
         const customer = await this.customerRepository_.findOne({ where: { id: customerId }, relations: ['walletAddresses'] })
 
@@ -45,6 +48,18 @@ export default class WhiteListService extends TransactionBaseService {
                 //relations: ['items']
             });
         }
+
+        return [];
+    }
+
+    async getByWalletAddress(storeId: string, walletAddress: string): Promise<WhiteList[]> {
+        return await this.whitelistRepository_.find({
+            where: {
+                store_id: storeId,
+                wallet_address: walletAddress?.trim()?.toLowerCase()
+            },
+            //relations: ['items']
+        });
 
         return [];
     }

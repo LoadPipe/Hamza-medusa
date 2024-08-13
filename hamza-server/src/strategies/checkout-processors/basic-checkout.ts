@@ -160,7 +160,7 @@ export class BasicCheckoutProcessor {
             const store: Store = await this.getStore();
 
             //check whitelist 
-            const whitelist: WhiteList[] = await this.whitelistService.getByStore(
+            const whitelist: WhiteList[] = await this.whitelistService.getByCustomerId(
                 store.id,
                 this.cart.customer.id
             );
