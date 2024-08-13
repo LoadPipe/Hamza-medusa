@@ -38,6 +38,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         output.storeId = (await storeService.getStoreByName("Medusa Merch")).id;
         output.collectionId = (await productCollectionRepository.findOne({ where: { store_id: output.storeId } })).id;
+        //sales channel 
 
         return output;
     };
