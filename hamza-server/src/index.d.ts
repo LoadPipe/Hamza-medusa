@@ -49,6 +49,7 @@ export declare module '@medusajs/medusa/dist/models/product' {
         store?: Store;
         store_id: string;
         reviews: ProductReview[];
+        bucky_metadata?: string;
     }
 }
 
@@ -56,5 +57,10 @@ export declare module '@medusajs/medusa/dist/model/order' {
     declare interface Order {
         store?: Store;
         store_id: string;
+        massmarket_order_id?: string;
+        massmarket_ttl?: number;
+        massmarket_amount?: string;
+        bucky_order_no?: string;
+        bucky_partner_order_no?: string;
     }
 }

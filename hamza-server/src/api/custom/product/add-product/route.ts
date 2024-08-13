@@ -1,36 +1,65 @@
-import { MedusaRequest, MedusaResponse } from '@medusajs/medusa';
+import { MedusaRequest, MedusaResponse, ProductStatus } from '@medusajs/medusa';
 import ProductService from '../../../../services/product';
 import { RouteHandler } from '../../../route-handler';
+import { BuckyClient } from '../../../../buckydrop/bucky-client';
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     let productService: ProductService = req.scope.resolve('productService');
-    const handler = new RouteHandler(req, res, 'POST', '/products/add-product');
+    const handler = new RouteHandler(req, res, 'POST', '/products/add-product',
+        ['keyword', 'storeId', 'collectionId', 'salesChannelId']
+    );
+
+    const mapBuckyDataToProductInput = (
+        item: any,
+        status: ProductStatus,
+        storeId: string,
+        collectionId: string,
+        salesChannels: string[]
+    ) => {
+        return {
+            title: item.productName,
+            handle: item.spuCode,
+            description: item.productName,
+            is_giftcard: false,
+            status: status as ProductStatus,
+            thumbnail: item.picUrl,
+            images: [item.picUrl],
+            collection_id: collectionId,
+            weight: Math.round(item.weight || 100),
+            discountable: true,
+            store_id: storeId,
+            sales_channels: salesChannels.map(sc => { return { id: sc } }),
+            bucky_metadata: JSON.stringify(item)
+        };
+    }
 
     await handler.handle(async () => {
-        const productData = req.body as { keyword: string }; // Assuming only keyword is needed
-
-        if (!productData.keyword) {
+        if (!handler.inputParams.keyword) {
             return res.status(400).json({
                 status: false,
                 message: 'Missing required keyword field',
             });
         }
 
-        try {
-            const addedProduct = await productService.addProductFromBuckyDrop(
-                productData.keyword
-            );
-            handler.logger.debug(`Product added: ${addedProduct}`);
-            return res
-                .status(200)
-                .json({ status: true, product: addedProduct });
-        } catch (error) {
-            handler.logger.error(`Error adding product: ${error.message}`);
-            return res.status(500).json({
-                status: false,
-                message: 'Failed to add product',
-                error: error.message,
-            });
-        }
+        //retrieve products from bucky and convert them 
+        const bucky: BuckyClient = new BuckyClient();
+        const products = (await bucky.searchProducts(
+            handler.inputParams.keyword, 1, 10
+        )).map(p => {
+            return mapBuckyDataToProductInput(p,
+                ProductStatus.PUBLISHED,
+                handler.inputParams.storeId,
+                handler.inputParams.collectionId,
+                [handler.inputParams.salesChannelId])
+        });
+
+        //import the products
+        const output = products?.length ?
+            await productService.bulkImportProducts(products)
+            : [];
+
+        return res
+            .status(200)
+            .json({ status: true, products: output });
     });
 };

@@ -27,4 +27,7 @@ export class Product extends MedusaProduct {
 
     @Column()
     massmarket_prod_id?: string;
+
+    @Column()
+    bucky_metadata?: string;
 }
