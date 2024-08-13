@@ -58,6 +58,81 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         return output;
     };
 
+    const mapVariants = async (item: any, productDetails: any) => {
+        /*
+        0: {
+            "props": [{
+                "propId": 3216,
+                "valueId": 2351853,
+                "propName": "Color",
+                "valueName": "1 orange"
+            }, {
+                "propId": 3151,
+                "valueId": 891417773,
+                "propName": "model",
+                "valueName": "Candy color lacquer open ring ring diameter * wire diameter 8*1.2mm"
+            }],
+            "skuCode": "5141273114409",
+            "price": {
+                "priceCent": 2,
+                "price": 0.02
+            },
+            "proPrice": {
+                "priceCent": 2,
+                "price": 0.02
+            },
+            "quantity": 92099,
+            "imgUrl": "https://cbu01.alicdn.com/img/ibank/O1CN01PcdXOw1guZ5g0nIj9_!!2208216064202-0-cib.jpg"
+        }
+        1: {
+        "props":[{
+            "propId":3216,"valueId":47921170,
+            "propName":"Color","valueName":"2 Sapphire Blue"
+        },
+        {
+            "propId":3151,"valueId":891417773,
+            "propName":"model","valueName":"Candy color lacquer open ring ring diameter * wire diameter 8*1.2mm"
+        }],
+        "skuCode":"5141273114410",
+        "price":{"priceCent":2,"price":0.02},
+        "proPrice":{"priceCent":2,"price":0.02},
+        "quantity":98499,
+        "imgUrl":"https://cbu01.alicdn.com/img/ibank/O1CN010yQbq61guZ5ZOyzKw_!!2208216064202-0-cib.jpg"}
+        */
+        const variants = [];
+
+        for (const variant of productDetails.data.skuList) {
+            const baseAmount = variant.price.priceCent * 100;
+            const prices = [
+                {
+                    currency_code: 'eth', amount: await priceConverter.getPrice(
+                        { baseAmount, baseCurrency: 'usdc', toCurrency: 'eth' }
+                    )
+                },
+                {
+                    currency_code: 'usdc', amount: await priceConverter.getPrice(
+                        { baseAmount, baseCurrency: 'usdc', toCurrency: 'usdc' }
+                    )
+                },
+                {
+                    currency_code: 'usdt', amount: await priceConverter.getPrice(
+                        { baseAmount, baseCurrency: 'usdc', toCurrency: 'usdt' }
+                    )
+                },
+            ];
+
+            variants.push({
+                title: item.productName,
+                inventory_quantity: 100000,
+                allow_backorder: false,
+                manage_inventory: true,
+                prices
+            });
+        }
+
+        return variants;
+    }
+
     const mapBuckyDataToProductInput = async (
         buckyClient: BuckyClient,
         item: any,
@@ -67,24 +142,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         salesChannels: string[]
     ) => {
         const productDetails = await buckyClient.getProductDetails(item.productLink);
-        const baseAmount = productDetails.data.price.priceCent * 100;
-        const prices = [
-            {
-                currency_code: 'eth', amount: await priceConverter.getPrice(
-                    { baseAmount, baseCurrency: 'usdc', toCurrency: 'eth' }
-                )
-            },
-            {
-                currency_code: 'usdc', amount: await priceConverter.getPrice(
-                    { baseAmount, baseCurrency: 'usdc', toCurrency: 'usdc' }
-                )
-            },
-            {
-                currency_code: 'usdt', amount: await priceConverter.getPrice(
-                    { baseAmount, baseCurrency: 'usdc', toCurrency: 'usdt' }
-                )
-            },
-        ];
 
         return {
             title: item.productName,
@@ -102,13 +159,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 return { id: sc };
             }),
             bucky_metadata: JSON.stringify(item),
-            variants: [{
-                title: item.productName,
-                inventory_quantity: 10,
-                allow_backorder: false,
-                manage_inventory: true,
-                prices
-            }]
+            variants: await mapVariants(item, productDetails)
         };
     };
 
@@ -128,7 +179,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 [importData.salesChannelId])
         ));
 
-        products = [products[6]];
+        products = [products[7]];
 
         //import the products
         const output = products?.length
