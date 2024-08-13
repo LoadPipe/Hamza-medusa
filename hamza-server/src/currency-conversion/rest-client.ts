@@ -48,7 +48,7 @@ export class CurrencyConversionClient {
     ): Promise<number> {
         try {
             const url = `/exch?base=${baseCurrency}&to=${toCurrency}`;
-            console.log('getting exchange rate', url);
+            //console.log('getting exchange rate', url);
 
             if (baseCurrency === toCurrency) return 1;
 

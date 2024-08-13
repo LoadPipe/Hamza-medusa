@@ -60,7 +60,7 @@ const Addresses = ({
     const contactEmail = cart?.email ?
         cart.email.endsWith('@evm.blockchain') ? '' : cart.email
         : '';
-    const contactPhone = cart?.shipping_address.phone ?? '';
+    const contactPhone = cart?.shipping_address?.phone ?? '';
 
     return (
         <div className="bg-black">

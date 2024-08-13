@@ -15,15 +15,24 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         'productCollectionService'
     );
 
+    /*
+    SkuCode: what up with the array? *we think it's variants 
+    Variants: do we get them in prod details? * skulist
+    Dynamic store id and collection id and sc id on import 
+    Translate SkuList into variants 
+     1. create variant for each sku
+     2. associate (somehow) the sku with the variant 
+    */
+
     const handler: RouteHandler = new RouteHandler(
         req, res, 'GET', '/admin/custom/bucky'
     );
 
     const getImportData = async () => {
         const output = {
-            storeId: 'store_01J4W6J3RXZ4JDH4XYZZQP4S2R',
-            collectionId: 'pcol_01HSGAMXDJD725MR3VSW63B0RD',
-            salesChannelId: 'sc_01J4W6GT9V06AQF2G0T01ZPXVE'
+            storeId: 'store_01J54ZXRJ6CCTSWXD24DJ4H4GP',
+            collectionId: 'pcol_01HRVF8HCVY8B00RF5S54THTPC',
+            salesChannelId: 'sc_01J54ZW3CCERRE45GE775VMG08'
         };
 
         return output;
@@ -51,7 +60,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             sales_channels: salesChannels.map((sc) => {
                 return { id: sc };
             }),
-            price: 1,
+            price: item.price.priceCent,
             bucky_metadata: JSON.stringify(item),
         };
     };
@@ -62,18 +71,18 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         //retrieve products from bucky and convert them
         const bucky: BuckyClient = new BuckyClient();
         let products: BulkImportProductInput[] = (
-            await bucky.searchProducts(handler.inputParams.keyword, 1, 10)
+            await bucky.searchProducts("shoes", 1, 10)
         ).map((p) => {
             return mapBuckyDataToProductInput(
                 p,
                 ProductStatus.PUBLISHED,
-                handler.inputParams.storeId,
-                handler.inputParams.collectionId,
-                [handler.inputParams.salesChannelId]
+                importData.storeId,
+                importData.collectionId,
+                [importData.salesChannelId]
             );
         });
 
-        products = [products[5]];
+        products = [products[0]];
 
         const productDetails = async (prod: any) => {
             try {
@@ -83,6 +92,15 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 const productDetails =
                     await bucky.getProductDetails(productLink);
                 console.log(productDetails);
+                console.log('productImageList:', productDetails.data.productImageList);
+
+                for (let img of productDetails.data.productImageList) {
+                    if (!prod.images.find(i => i === img)) {
+                        prod.images.push(img);
+                    }
+                }
+
+                console.log('product images:', prod.images);
             } catch (error) {
                 console.log(error);
             }
