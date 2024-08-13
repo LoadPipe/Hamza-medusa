@@ -1,19 +1,33 @@
-import { MedusaRequest, MedusaResponse, ProductStatus } from '@medusajs/medusa';
-import ProductService, { BulkImportProductInput } from '../../../../services/product';
-import { RouteHandler } from '../../../route-handler';
-import { BuckyClient } from '../../../../buckydrop/bucky-client';
-import { CreateProductInput } from '@medusajs/medusa/dist/types/product';
-import { Product } from '../../../../models/product';
+import { MedusaRequest, MedusaResponse, Logger, ProductCollectionService, ProductStatus, SalesChannelService } from '@medusajs/medusa';
+import { RouteHandler } from '../../route-handler';
+import StoreService from '../../../services/store';
+import ProductService, { BulkImportProductInput } from '../../../services/product';
+import { Product } from '../../../models/product';
+import { Config } from '../../../config';
+import { BuckyClient } from '../../../buckydrop/bucky-client';
+import SalesChannelRepository from '@medusajs/medusa/dist/repositories/sales-channel';
 
-export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
+export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
+    const storeService: StoreService = req.scope.resolve('storeService');
     let productService: ProductService = req.scope.resolve('productService');
-    const handler = new RouteHandler(
-        req,
-        res,
-        'POST',
-        '/products/add-product',
-        ['keyword', 'storeId', 'collectionId', 'salesChannelId']
+    let salesChannelService: SalesChannelService = req.scope.resolve('salesChannelService');
+    const productCollectionService: ProductCollectionService = req.scope.resolve(
+        'productCollectionService'
     );
+
+    const handler: RouteHandler = new RouteHandler(
+        req, res, 'GET', '/admin/custom/bucky'
+    );
+
+    const getImportData = async () => {
+        const output = {
+            storeId: 'store_01J4W6J3RXZ4JDH4XYZZQP4S2R',
+            collectionId: 'pcol_01HSGAMXDJD725MR3VSW63B0RD',
+            salesChannelId: 'sc_01J4W6GT9V06AQF2G0T01ZPXVE'
+        };
+
+        return output;
+    };
 
     const mapBuckyDataToProductInput = (
         item: any,
@@ -43,12 +57,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     };
 
     await handler.handle(async () => {
-        if (!handler.inputParams.keyword) {
-            return res.status(400).json({
-                status: false,
-                message: 'Missing required keyword field',
-            });
-        }
+        const importData = await getImportData();
 
         //retrieve products from bucky and convert them
         const bucky: BuckyClient = new BuckyClient();
@@ -97,3 +106,4 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         return res.status(201).json({ status: true, products: output });
     });
 };
+
