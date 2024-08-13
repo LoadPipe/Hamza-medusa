@@ -1,10 +1,13 @@
 import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import { RouteHandler } from '../../../route-handler';
 import { Config } from '../../../../config';
+import WhiteListService from '../../../../services/whitelist';
+import StoreService from '../../../../services/store';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const userService = req.scope.resolve('userService');
-    const storeService = req.scope.resolve('storeService');
+    const storeService: StoreService = req.scope.resolve('storeService');
+    const whitelistService: WhiteListService = req.scope.resolve('whitelistService');
     const productCollectionService = req.scope.resolve(
         'productCollectionService'
     );

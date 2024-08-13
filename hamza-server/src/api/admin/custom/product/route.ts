@@ -2,6 +2,7 @@ import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import { Product } from '../../../../models/product';
 import { RouteHandler } from '../../../route-handler';
 
+//TODO: I do not think this is used 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const productService = req.scope.resolve('productService');
     const storeRepository = req.scope.resolve('storeRepository');
