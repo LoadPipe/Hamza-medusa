@@ -1,7 +1,16 @@
-import { MedusaRequest, MedusaResponse, Logger, ProductCollectionService, ProductStatus, SalesChannelService } from '@medusajs/medusa';
+import {
+    MedusaRequest,
+    MedusaResponse,
+    Logger,
+    ProductCollectionService,
+    ProductStatus,
+    SalesChannelService,
+} from '@medusajs/medusa';
 import { RouteHandler } from '../../route-handler';
 import StoreService from '../../../services/store';
-import ProductService, { BulkImportProductInput } from '../../../services/product';
+import ProductService, {
+    BulkImportProductInput,
+} from '../../../services/product';
 import { Product } from '../../../models/product';
 import { Config } from '../../../config';
 import { BuckyClient } from '../../../buckydrop/bucky-client';
@@ -12,11 +21,13 @@ import { Not } from 'typeorm';
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const storeService: StoreService = req.scope.resolve('storeService');
     let productService: ProductService = req.scope.resolve('productService');
-    let salesChannelService: SalesChannelService = req.scope.resolve('salesChannelService');
-    let productCollectionRepository: typeof ProductCollectionRepository = req.scope.resolve('productCollectionRepository');
-    const productCollectionService: ProductCollectionService = req.scope.resolve(
-        'productCollectionService'
+    let salesChannelService: SalesChannelService = req.scope.resolve(
+        'salesChannelService'
     );
+    let productCollectionRepository: typeof ProductCollectionRepository =
+        req.scope.resolve('productCollectionRepository');
+    const productCollectionService: ProductCollectionService =
+        req.scope.resolve('productCollectionService');
 
     /*
     Dynamic store id and collection id and sc id on import 
@@ -26,19 +37,28 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     */
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'GET', '/admin/custom/bucky'
+        req,
+        res,
+        'GET',
+        '/admin/custom/bucky'
     );
 
     const getImportData = async () => {
         const output = {
-            storeId: 'store_01J54ZXRJ6CCTSWXD24DJ4H4GP',
-            collectionId: 'pcol_01HRVF8HCVY8B00RF5S54THTPC',
-            salesChannelId: 'sc_01J54ZW3CCERRE45GE775VMG08'
+            storeId: '',
+            collectionId: '',
+            salesChannelId: '',
         };
 
-        output.storeId = (await storeService.getStoreByName("Medusa Merch")).id;
-        output.collectionId = (await productCollectionRepository.findOne({ where: { store_id: output.storeId } })).id;
-        //sales channel 
+        output.storeId = (await storeService.getStoreByName('Medusa Merch')).id;
+        output.collectionId = (
+            await productCollectionRepository.findOne({
+                where: { store_id: output.storeId },
+            })
+        ).id;
+
+        const salesChannels = await salesChannelService.list({}, { take: 1 });
+        output.salesChannelId = salesChannels[0].id;
 
         return output;
     };
@@ -76,7 +96,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         //retrieve products from bucky and convert them
         const bucky: BuckyClient = new BuckyClient();
         let products: BulkImportProductInput[] = (
-            await bucky.searchProducts("shoes", 1, 10)
+            await bucky.searchProducts('ring', 1, 10)
         ).map((p) => {
             return mapBuckyDataToProductInput(
                 p,
@@ -98,13 +118,13 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
                 //get product images
                 for (let img of productDetails.data.productImageList) {
-                    if (!prod.images.find(i => i === img)) {
+                    if (!prod.images.find((i) => i === img)) {
                         prod.images.push(img);
                     }
                 }
-
-                buckyData.skuCode = productDetails.skuList[0].skuCode;
-                prod.bucky_metadata = JSON.stringify(buckyData);
+                console.log(productDetails);
+                // buckyData.skuCode = productDetails.skuList[0].skuCode;
+                // prod.bucky_metadata = JSON.stringify(buckyData);
             } catch (error) {
                 console.log(error);
             }
@@ -122,10 +142,12 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         //import the products
         const output = products?.length
-            ? await productService.bulkImportProducts(handler.inputParams.storeId, products)
+            ? await productService.bulkImportProducts(
+                  handler.inputParams.storeId,
+                  products
+              )
             : [];
 
         return res.status(201).json({ status: true, products: output });
     });
 };
-
