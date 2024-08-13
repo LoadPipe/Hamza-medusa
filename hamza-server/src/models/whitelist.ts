@@ -19,11 +19,6 @@ export class WhiteList extends SoftDeletableEntity {
     //    onDelete: 'CASCADE',
     //})
     //items: WhitelistItem[];
-
-    @BeforeInsert()
-    private beforeInsert(): void {
-        this.id = generateEntityId(this.id, 'whitelist');
-    }
 }
 
 /*
