@@ -53,6 +53,12 @@ export declare module '@medusajs/medusa/dist/models/product' {
     }
 }
 
+export declare module '@medusajs/medusa/dist/models/product-variant' {
+    declare interface ProductVariant {
+        bucky_metadata?: string;
+    }
+}
+
 export declare module '@medusajs/medusa/dist/model/order' {
     declare interface Order {
         store?: Store;
