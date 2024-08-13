@@ -21,12 +21,27 @@ async function main() {
             }
         );
 
-        await fetch('http://localhost:9000/admin/custom/massmarket', {
-            method: 'GET',
-            headers: {
-                Cookie: authCookie.substring(0, authCookie.indexOf(';')),
-            },
-        });
+        //await fetch('http://localhost:9000/admin/custom/massmarket', {
+        //    method: 'GET',
+        //    headers: {
+        //        Cookie: authCookie.substring(0, authCookie.indexOf(';')),
+        //    },
+        //});
+
+        /*
+        const response2 = await fetch(
+            'http://localhost:9000/admin/custom/bucky',
+            {
+                method: 'GET',
+                headers: {
+                    Cookie: authCookie.substring(0, authCookie.indexOf(';')),
+                },
+            }
+        );
+        */
+
+
+
     } catch (e) {
         console.error(e);
     }
