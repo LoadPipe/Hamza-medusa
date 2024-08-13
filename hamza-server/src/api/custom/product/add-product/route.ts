@@ -1,8 +1,10 @@
 import { MedusaRequest, MedusaResponse, ProductStatus } from '@medusajs/medusa';
-import ProductService, { BulkImportProductInput } from '../../../../services/product';
+import ProductService, {
+    BulkImportProductInput,
+} from '../../../../services/product';
 import { RouteHandler } from '../../../route-handler';
 import { BuckyClient } from '../../../../buckydrop/bucky-client';
-import { CreateProductInput } from '@medusajs/medusa/dist/types/product';
+import { Product } from '../../../../models/product';
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     let productService: ProductService = req.scope.resolve('productService');
@@ -36,8 +38,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             sales_channels: salesChannels.map((sc) => {
                 return { id: sc };
             }),
-            price: 1,
-            bucky_metadata: JSON.stringify(item)
+            bucky_metadata: JSON.stringify(item),
         };
     };
 
@@ -51,7 +52,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
         //retrieve products from bucky and convert them
         const bucky: BuckyClient = new BuckyClient();
-        let products: BulkImportProductInput[] = (
+        const products = (
             await bucky.searchProducts(handler.inputParams.keyword, 1, 10)
         ).map((p) => {
             return mapBuckyDataToProductInput(
@@ -63,12 +64,35 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             );
         });
 
-        products = [products[5]];
+        const productDetails = async (prod: any) => {
+            try {
+                const buckyData = JSON.parse(prod.bucky_metadata);
+                const productLink = buckyData.productLink;
+                console.log('productLink is:', productLink);
+                const productDetails =
+                    await bucky.getProductDetails(productLink);
+                console.log(productDetails);
+            } catch (error) {
+                console.log(error);
+            }
+            return prod;
+        };
+
+        const promises: Promise<any>[] = [];
+
+        for (let i = 0; i < products.length; i++) {
+            promises.push(productDetails(products[i]));
+        }
+
+        await Promise.all(promises);
+        console.log('finished');
 
         //import the products
-        const output = products?.length
-            ? await productService.bulkImportProducts(handler.inputParams.storeId, products)
-            : [];
+        // const output = products?.length
+        //     ? await productService.bulkImportProducts(products)
+        //     : [];
+
+        const output = products;
 
         return res.status(201).json({ status: true, products: output });
     });
