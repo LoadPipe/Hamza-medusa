@@ -29,7 +29,7 @@ async function main() {
         //});
 
         const buckyResponse = await fetch(
-            'http://localhost:9000/admin/custom/bucky',
+            'http://localhost:9000/custom/bucky',
             {
                 method: 'GET',
                 headers: {
