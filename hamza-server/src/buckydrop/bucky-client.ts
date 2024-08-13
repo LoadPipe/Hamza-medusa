@@ -39,7 +39,7 @@ export class BuckyClient {
     private client: AxiosInstance;
 
     constructor() {
-        axios.defaults.timeout = 60000;
+        axios.defaults.timeout = 6000000;
         this.client = axios.create({
             baseURL: BUCKY_URL,
             headers: {

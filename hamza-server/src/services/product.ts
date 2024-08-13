@@ -18,7 +18,7 @@ import { ProductVariantRepository } from '../repositories/product-variant';
 import { BuckyClient } from '../buckydrop/bucky-client';
 import { getCurrencyAddress } from '../currency.config';
 
-export type BulkImportProductInput = CreateProductInput & { price: number };
+export type BulkImportProductInput = CreateProductInput;
 
 export type UpdateProductProductVariantDTO = {
     id?: string;
@@ -57,7 +57,6 @@ class ProductService extends MedusaProductService {
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly customerService_: CustomerService;
-    private buckyClient: BuckyClient;
 
     constructor(container) {
         super(container);
@@ -65,7 +64,6 @@ class ProductService extends MedusaProductService {
         this.storeRepository_ = container.storeRepository;
         this.productVariantRepository_ = container.productVariantRepository;
         this.customerService_ = container.customerService;
-        this.buckyClient = new BuckyClient();
     }
 
     async updateProduct(
@@ -126,8 +124,6 @@ class ProductService extends MedusaProductService {
         productData: BulkImportProductInput[],
     ): Promise<Product[]> {
         try {
-            const priceConverter: PriceConverter = new PriceConverter();
-
             const addedProducts = await Promise.all(
                 productData.map((product) =>
                     super.create(product)
@@ -149,60 +145,12 @@ class ProductService extends MedusaProductService {
                 throw new Error(`Store ${storeId} not found.`);
             }
 
-            // Create variants for each valid product
-            const variantCreationPromises = validProducts.map(
-                async (savedProduct) => {
-                    const variantData = {
-                        title: savedProduct.title,
-                        product_id: savedProduct.id,
-                        inventory_quantity: 10,
-                        allow_backorder: false,
-                        manage_inventory: true,
-                    };
-
-                    const variant =
-                        this.productVariantRepository_.create(variantData);
-                    const savedVariant =
-                        await this.productVariantRepository_.save(variant);
-
-                    //get the correct price
-                    const input = productData.find(pd => pd.handle == savedProduct.handle);
-                    if (input) {
-                        // Define the prices for the variant in different currencies
-                        const prices = [
-                            {
-                                currency_code: 'eth', amount: await priceConverter.getPrice(
-                                    { baseAmount: input.price, baseCurrency: 'usdc', toCurrency: 'eth' }
-                                )
-                            },
-                            {
-                                currency_code: 'usdc', amount: await priceConverter.getPrice(
-                                    { baseAmount: input.price, baseCurrency: 'usdc', toCurrency: 'usdc' }
-                                )
-                            },
-                            {
-                                currency_code: 'usdt', amount: await priceConverter.getPrice(
-                                    { baseAmount: input.price, baseCurrency: 'usdc', toCurrency: 'usdt' }
-                                )
-                            },
-                        ];
-
-                        // Update prices for the variant
-                        await this.updateVariantPrice(savedVariant.id, prices);
-                    }
-
-                    return savedVariant;
-                });
-
-            // Wait for all variants to be created and priced;
-            const variants = await Promise.all(variantCreationPromises);
-
-            console.log(
+            this.logger.debug(
                 `Added products: ${validProducts.map((p) => p.id).join(', ')}`
             );
             return validProducts;
         } catch (error) {
-            console.error('Error in adding products from BuckyDrop:', error);
+            this.logger.error('Error in adding products from BuckyDrop:', error);
             throw error;
         }
     }

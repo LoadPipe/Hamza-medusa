@@ -2,7 +2,6 @@ import {
     MedusaRequest,
     MedusaResponse,
     Logger,
-    ProductCollectionService,
     ProductStatus,
     SalesChannelService,
 } from '@medusajs/medusa';
@@ -11,12 +10,9 @@ import StoreService from '../../../services/store';
 import ProductService, {
     BulkImportProductInput,
 } from '../../../services/product';
-import { Product } from '../../../models/product';
-import { Config } from '../../../config';
 import { BuckyClient } from '../../../buckydrop/bucky-client';
-import SalesChannelRepository from '@medusajs/medusa/dist/repositories/sales-channel';
-import ProductCollectionRepository from 'src/repositories/product-collection';
-import { Not } from 'typeorm';
+import ProductCollectionRepository from '../../../repositories/product-collection';
+import { PriceConverter } from '../../../strategies/price-selection';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const storeService: StoreService = req.scope.resolve('storeService');
@@ -26,8 +22,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
     let productCollectionRepository: typeof ProductCollectionRepository =
         req.scope.resolve('productCollectionRepository');
-    const productCollectionService: ProductCollectionService =
-        req.scope.resolve('productCollectionService');
+    const priceConverter = new PriceConverter();
 
     /*
     Dynamic store id and collection id and sc id on import 
@@ -63,13 +58,34 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         return output;
     };
 
-    const mapBuckyDataToProductInput = (
+    const mapBuckyDataToProductInput = async (
+        buckyClient: BuckyClient,
         item: any,
         status: ProductStatus,
         storeId: string,
         collectionId: string,
         salesChannels: string[]
     ) => {
+        const productDetails = await buckyClient.getProductDetails(item.productLink);
+        const baseAmount = productDetails.data.price.priceCent * 100;
+        const prices = [
+            {
+                currency_code: 'eth', amount: await priceConverter.getPrice(
+                    { baseAmount, baseCurrency: 'usdc', toCurrency: 'eth' }
+                )
+            },
+            {
+                currency_code: 'usdc', amount: await priceConverter.getPrice(
+                    { baseAmount, baseCurrency: 'usdc', toCurrency: 'usdc' }
+                )
+            },
+            {
+                currency_code: 'usdt', amount: await priceConverter.getPrice(
+                    { baseAmount, baseCurrency: 'usdc', toCurrency: 'usdt' }
+                )
+            },
+        ];
+
         return {
             title: item.productName,
             handle: item.spuCode,
@@ -77,7 +93,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             is_giftcard: false,
             status: status as ProductStatus,
             thumbnail: item.picUrl,
-            images: [item.picUrl],
+            images: productDetails.data.productImageList,
             collection_id: collectionId,
             weight: Math.round(item.weight || 100),
             discountable: true,
@@ -85,8 +101,14 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             sales_channels: salesChannels.map((sc) => {
                 return { id: sc };
             }),
-            price: item.price.priceCent,
             bucky_metadata: JSON.stringify(item),
+            variants: [{
+                title: item.productName,
+                inventory_quantity: 10,
+                allow_backorder: false,
+                manage_inventory: true,
+                prices
+            }]
         };
     };
 
@@ -94,58 +116,26 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         const importData = await getImportData();
 
         //retrieve products from bucky and convert them
-        const bucky: BuckyClient = new BuckyClient();
-        let products: BulkImportProductInput[] = (
-            await bucky.searchProducts('ring', 1, 10)
-        ).map((p) => {
-            return mapBuckyDataToProductInput(
+        const buckyClient: BuckyClient = new BuckyClient();
+        const productData = await buckyClient.searchProducts('ring', 1, 10);
+        let products = await Promise.all(productData.map(
+            p => mapBuckyDataToProductInput(
+                buckyClient,
                 p,
                 ProductStatus.PUBLISHED,
                 importData.storeId,
                 importData.collectionId,
-                [importData.salesChannelId]
-            );
-        });
+                [importData.salesChannelId])
+        ));
 
-        products = [products[1]];
-
-        const getProductDetails = async (prod: any) => {
-            try {
-                const buckyData = JSON.parse(prod.bucky_metadata);
-                const productLink = buckyData.productLink;
-                const productDetails =
-                    await bucky.getProductDetails(productLink);
-
-                //get product images
-                for (let img of productDetails.data.productImageList) {
-                    if (!prod.images.find((i) => i === img)) {
-                        prod.images.push(img);
-                    }
-                }
-                console.log(productDetails);
-                // buckyData.skuCode = productDetails.skuList[0].skuCode;
-                // prod.bucky_metadata = JSON.stringify(buckyData);
-            } catch (error) {
-                console.log(error);
-            }
-            return prod;
-        };
-
-        const promises: Promise<any>[] = [];
-
-        for (let i = 0; i < products.length; i++) {
-            promises.push(getProductDetails(products[i]));
-        }
-
-        await Promise.all(promises);
-        console.log('finished');
+        products = [products[6]];
 
         //import the products
         const output = products?.length
             ? await productService.bulkImportProducts(
-                  handler.inputParams.storeId,
-                  products
-              )
+                handler.inputParams.storeId,
+                products
+            )
             : [];
 
         return res.status(201).json({ status: true, products: output });
