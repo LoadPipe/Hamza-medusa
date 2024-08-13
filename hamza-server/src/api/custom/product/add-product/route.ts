@@ -92,6 +92,6 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
         const output = products;
 
-        return res.status(200).json({ status: true, products: output });
+        return res.status(201).json({ status: true, products: output });
     });
 };
