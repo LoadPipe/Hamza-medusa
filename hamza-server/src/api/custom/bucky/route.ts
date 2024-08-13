@@ -6,18 +6,19 @@ import { Product } from '../../../models/product';
 import { Config } from '../../../config';
 import { BuckyClient } from '../../../buckydrop/bucky-client';
 import SalesChannelRepository from '@medusajs/medusa/dist/repositories/sales-channel';
+import ProductCollectionRepository from 'src/repositories/product-collection';
+import { Not } from 'typeorm';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const storeService: StoreService = req.scope.resolve('storeService');
     let productService: ProductService = req.scope.resolve('productService');
     let salesChannelService: SalesChannelService = req.scope.resolve('salesChannelService');
+    let productCollectionRepository: typeof ProductCollectionRepository = req.scope.resolve('productCollectionRepository');
     const productCollectionService: ProductCollectionService = req.scope.resolve(
         'productCollectionService'
     );
 
     /*
-    SkuCode: what up with the array? *we think it's variants 
-    Variants: do we get them in prod details? * skulist
     Dynamic store id and collection id and sc id on import 
     Translate SkuList into variants 
      1. create variant for each sku
@@ -34,6 +35,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             collectionId: 'pcol_01HRVF8HCVY8B00RF5S54THTPC',
             salesChannelId: 'sc_01J54ZW3CCERRE45GE775VMG08'
         };
+
+        output.storeId = (await storeService.getStoreByName("Medusa Merch")).id;
+        output.collectionId = (await productCollectionRepository.findOne({ where: { store_id: output.storeId } })).id;
 
         return output;
     };
@@ -82,25 +86,24 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             );
         });
 
-        products = [products[0]];
+        products = [products[1]];
 
-        const productDetails = async (prod: any) => {
+        const getProductDetails = async (prod: any) => {
             try {
                 const buckyData = JSON.parse(prod.bucky_metadata);
                 const productLink = buckyData.productLink;
-                console.log('productLink is:', productLink);
                 const productDetails =
                     await bucky.getProductDetails(productLink);
-                console.log(productDetails);
-                console.log('productImageList:', productDetails.data.productImageList);
 
+                //get product images
                 for (let img of productDetails.data.productImageList) {
                     if (!prod.images.find(i => i === img)) {
                         prod.images.push(img);
                     }
                 }
 
-                console.log('product images:', prod.images);
+                buckyData.skuCode = productDetails.skuList[0].skuCode;
+                prod.bucky_metadata = JSON.stringify(buckyData);
             } catch (error) {
                 console.log(error);
             }
@@ -110,7 +113,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         const promises: Promise<any>[] = [];
 
         for (let i = 0; i < products.length; i++) {
-            promises.push(productDetails(products[i]));
+            promises.push(getProductDetails(products[i]));
         }
 
         await Promise.all(promises);

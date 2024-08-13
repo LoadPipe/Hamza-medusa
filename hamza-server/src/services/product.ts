@@ -128,9 +128,6 @@ class ProductService extends MedusaProductService {
         try {
             const priceConverter: PriceConverter = new PriceConverter();
 
-            console.log("products to import:")
-            console.log(productData);
-
             const addedProducts = await Promise.all(
                 productData.map((product) =>
                     super.create(product)
