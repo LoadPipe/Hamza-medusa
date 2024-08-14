@@ -81,6 +81,14 @@ export class CoinGeckoService {
             return cachedData.value;
         }
 
+        // Check for cross-caching
+        cacheKey = this.createCacheKey(conversionCurrency, baseCurrency);
+        cachedData = this.cache[cacheKey];
+
+        if (cachedData && currentTime - cachedData.timestamp < this.cacheDuration) {
+            return 1 / cachedData.value;
+        }
+
         // If direct rate not cached, calculate via ETH
         if (baseCurrency !== 'eth' && conversionCurrency !== 'eth') {
             const baseToEth = await this.getExchangeRate(baseCurrency, 'eth');
@@ -97,7 +105,7 @@ export class CoinGeckoService {
         }
 
         //handle reverse rates 
-        if (baseCurrency == 'eth' && conversionCurrency !== 'eth') {
+        if (!this.isAddress(baseCurrency) && this.isAddress(conversionCurrency)) {
             const rate = await this.getExchangeRate(conversionCurrency, baseCurrency);
             return (rate ? 1 / rate : 0);
         }
@@ -195,5 +203,9 @@ export class CoinGeckoService {
 
     private isZeroAddress(value: string): boolean {
         return (value.replace('0x', '')).match(/^0+$/) ? true : false;
+    }
+
+    private isAddress(value: string): boolean {
+        return (value.trim().toLowerCase().startsWith('0x'));
     }
 }
