@@ -7,6 +7,7 @@ import { Tooltip } from '@medusajs/ui';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import React from 'react';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { Flex, Text, Divider } from '@chakra-ui/react';
 
 type CartTotalsProps = {
     data: Omit<Cart, 'refundable_amount' | 'refunded_total'> | Order;
@@ -58,45 +59,6 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
     return (
         <div>
             <div className="flex flex-col gap-y-2 txt-medium text-ui-fg-subtle ">
-                {subtotals['eth'] && (
-                    <div className="flex items-center justify-between">
-                        <span className="flex gap-x-1 items-center">
-                            Subtotal ETH
-                            <Tooltip content="Cart total excluding shipping and taxes.">
-                                <InformationCircleSolid color="var(--fg-muted)" />
-                            </Tooltip>
-                        </span>
-                        <span>
-                            {formatCryptoPrice(subtotals['eth'], 'eth')} ETH
-                        </span>
-                    </div>
-                )}
-                {subtotals['usdt'] && (
-                    <div className="flex items-center justify-between">
-                        <span className="flex gap-x-1 items-center">
-                            Subtotal USDT
-                            <Tooltip content="Cart total excluding shipping and taxes.">
-                                <InformationCircleSolid color="var(--fg-muted)" />
-                            </Tooltip>
-                        </span>
-                        <span>
-                            {formatCryptoPrice(subtotals['usdt'], 'usdt')} USDT
-                        </span>
-                    </div>
-                )}
-                {subtotals['usdc'] && (
-                    <div className="flex items-center justify-between">
-                        <span className="flex gap-x-1 items-center">
-                            Subtotal USDC
-                            <Tooltip content="Cart total excluding shipping and taxes.">
-                                <InformationCircleSolid color="var(--fg-muted)" />
-                            </Tooltip>
-                        </span>
-                        <span>
-                            {formatCryptoPrice(subtotals['usdc'], 'usdc')} USDC
-                        </span>
-                    </div>
-                )}
                 {!!discount_total && (
                     <div className="flex items-center justify-between">
                         <span>Discount</span>
@@ -122,7 +84,46 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                     <span>{getAmount(tax_total).toString()}</span>
                 </div>
             </div>
-            <div className="h-px w-full border-b border-gray-200 mt-4" />
+            {/* <div className="h-px w-full border-b border-gray-200 mt-4" /> */}
+            <hr
+                style={{
+                    color: 'red',
+                    width: '100%',
+                    borderTop: '2px dashed #bbb',
+                    marginTop: '2rem',
+                    marginBottom: '2rem',
+                }}
+            />
+            {subtotals['eth'] && (
+                <Flex color={'white'}>
+                    <Text fontSize={{ md: '16px' }} alignSelf={'center'}>
+                        Total
+                    </Text>
+                    <Text ml="auto" fontSize={'24px'} fontWeight={700}>
+                        {formatCryptoPrice(subtotals['eth'], 'eth')} ETH
+                    </Text>
+                </Flex>
+            )}
+            {subtotals['usdt'] && (
+                <Flex color={'white'}>
+                    <Text fontSize={{ md: '16px' }} alignSelf={'center'}>
+                        Total
+                    </Text>
+                    <Text ml="auto" fontSize={'24px'} fontWeight={700}>
+                        {formatCryptoPrice(subtotals['usdt'], 'usdt')} USDT
+                    </Text>
+                </Flex>
+            )}
+            {subtotals['usdc'] && (
+                <Flex color={'white'}>
+                    <Text fontSize={{ md: '16px' }} alignSelf={'center'}>
+                        Total
+                    </Text>
+                    <Text ml="auto" fontSize={'24px'} fontWeight={700}>
+                        {formatCryptoPrice(subtotals['usdc'], 'usdc')} USDC
+                    </Text>
+                </Flex>
+            )}
         </div>
     );
 };

@@ -24,15 +24,19 @@ const Summary = ({ cart }: SummaryProps) => {
             {/* <Heading level="h2" className="text-[2rem] leading-[2.75rem]">
                 Summary
             </Heading> */}
-            <DiscountCode cart={cart} />
+
             <Divider />
             <CartTotals data={cart} />
+
+            <DiscountCode cart={cart} />
             <LocalizedClientLink href={'/checkout?step=' + cart.checkout_step}>
                 <Button
+                    mt="2rem"
                     backgroundColor={'primary.indigo.900'}
                     color={'white'}
                     width={'100%'}
                     height={'52px'}
+                    borderRadius={'full'}
                     fontSize={'16px'}
                     _hover={{
                         backgroundColor: 'white',
