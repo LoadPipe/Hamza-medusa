@@ -9,6 +9,7 @@ import OrderDetails from '@modules/order/components/order-details';
 import ShippingDetails from '@modules/order/components/shipping-details';
 import PaymentDetails from '@modules/order/components/payment-details';
 import Summary from '@modules/order/components/summary';
+import { MdOutlineCheckCircle } from 'react-icons/md';
 
 type OrderCompletedTemplateProps = {
     order: Order;
@@ -31,16 +32,21 @@ export default function OrderCompletedTemplate({
             flexDir={'column'}
             width={'100%'}
             maxW={'649px'}
+            mt="3rem"
+            mb="5rem"
             mx="auto"
             p={'40px'}
             borderRadius={'16px'}
             color="white"
             justifyContent={'center'}
             alignItems={'center'}
-            backgroundColor={'grey'}
+            backgroundColor={'#121212'}
         >
             {isOnboarding && <OnboardingCta orderId={order.id} />}
 
+            <Box color="primary.green.900" mb="1rem">
+                <MdOutlineCheckCircle size={'72px'} />
+            </Box>
             <Heading as="h1" size="lg">
                 Payment Successful!
             </Heading>
@@ -49,6 +55,7 @@ export default function OrderCompletedTemplate({
             <Text mt="1rem">
                 Order confirmation has been sent to your registered email
             </Text>
+            <OrderDetails order={order} />
             {/* <OrderDetails order={order} />
                     <Heading as="h2" size="md" textAlign="center">
                         Summary

@@ -1,5 +1,6 @@
 import { Order } from '@medusajs/medusa';
-import { Text } from '@medusajs/ui';
+// import { Text } from '@medusajs/ui';
+import { Box, Text } from '@chakra-ui/react';
 
 type OrderDetailsProps = {
     order: Order;
@@ -27,8 +28,11 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
     // console.log(`Order Summary is ${JSON.stringify(order)}`);
 
     return (
-        <div>
-            <Text className="mt-2">
+        <Box mt="2rem">
+            <Text color={'primary.green.900'} fontSize={'18px'}>
+                Order Details
+            </Text>
+            {/* <Text className="mt-2">
                 Order date: {new Date(order.created_at).toDateString()}
             </Text>
             <Text className="mt-2">Order number: {order.display_id}</Text>
@@ -51,8 +55,8 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
                         </Text>
                     </>
                 )}
-            </div>
-        </div>
+            </div> */}
+        </Box>
     );
 };
 
