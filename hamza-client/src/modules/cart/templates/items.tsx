@@ -16,13 +16,7 @@ type ItemsTemplateProps = {
 
 const ItemsTemplate = ({ items, region }: ItemsTemplateProps) => {
     return (
-        <Box
-            mx="1rem"
-            maxWidth="746.87px"
-            width={'100%'}
-            height={'460px'}
-            overflow={'hidden'}
-        >
+        <Box width={'100%'} height={'460px'} overflow={'hidden'}>
             <Flex>
                 <Radio mr="2rem" my="auto" />
                 <Text
@@ -33,19 +27,25 @@ const ItemsTemplate = ({ items, region }: ItemsTemplateProps) => {
                     Product Details
                 </Text>
             </Flex>
-            {items && region
-                ? items
-                      .sort((a, b) => {
-                          return a.created_at > b.created_at ? -1 : 1;
-                      })
-                      .map((item) => {
-                          return (
-                              <Item key={item.id} item={item} region={region} />
-                          );
-                      })
-                : Array.from(Array(5).keys()).map((i) => {
-                      return <SkeletonLineItem key={i} />;
-                  })}
+            <Box height="400px" overflowY="scroll">
+                {items && region
+                    ? items
+                          .sort((a, b) => {
+                              return a.created_at > b.created_at ? -1 : 1;
+                          })
+                          .map((item) => {
+                              return (
+                                  <Item
+                                      key={item.id}
+                                      item={item}
+                                      region={region}
+                                  />
+                              );
+                          })
+                    : Array.from(Array(5).keys()).map((i) => {
+                          return <SkeletonLineItem key={i} />;
+                      })}
+            </Box>
         </Box>
     );
 };
