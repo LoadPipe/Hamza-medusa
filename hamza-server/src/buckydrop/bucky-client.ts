@@ -21,7 +21,7 @@ export interface ICreateBuckyOrderProduct {
 
 export interface ICreateBuckyOrderParams {
     partnerOrderNo: string;
-    partnerOrderNoName: string;
+    partnerOrderNoName?: string;
     country: string;
     countryCode: string;
     province: string;

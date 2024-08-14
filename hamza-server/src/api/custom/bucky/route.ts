@@ -126,6 +126,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 inventory_quantity: 100000,
                 allow_backorder: false,
                 manage_inventory: true,
+                bucky_metadata: JSON.stringify({ skuCode: variant.skuCode }),
                 prices
             });
         }
@@ -168,7 +169,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         //retrieve products from bucky and convert them
         const buckyClient: BuckyClient = new BuckyClient();
-        const productData = await buckyClient.searchProducts('ring', 1, 10);
+        const productData = await buckyClient.searchProducts('sports', 1, 10);
         let products = await Promise.all(productData.map(
             p => mapBuckyDataToProductInput(
                 buckyClient,
@@ -179,7 +180,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 [importData.salesChannelId])
         ));
 
-        products = [products[7]];
+        products = [products[0]];
 
         //import the products
         const output = products?.length

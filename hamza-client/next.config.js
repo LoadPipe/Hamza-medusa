@@ -41,6 +41,10 @@ const nextConfig = withStoreConfig({
                 protocol: 'https',
                 hostname: 'cbu01.alicdn.com', // Newly added entry
             },
+            {
+                protocol: 'https',
+                hostname: 'nhci-aigc.oss-cn-zhangjiakou.aliyuncs.com', // Newly added entry
+            },
         ],
     },
 });
