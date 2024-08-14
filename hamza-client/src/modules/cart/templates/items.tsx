@@ -26,8 +26,8 @@ const ItemsTemplate = ({ items, region }: ItemsTemplateProps) => {
             borderRadius={'16px'}
             backgroundColor={'#121212'}
         >
-            <Flex>
-                <Radio mr="2rem" />
+            <Flex justifyContent={{ base: 'center', md: 'left' }}>
+                <Radio mr="2rem" display={{ base: 'none', md: 'flex' }} />
                 <Text
                     fontWeight={600}
                     fontSize={'18px'}

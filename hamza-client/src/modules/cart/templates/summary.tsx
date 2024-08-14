@@ -16,8 +16,6 @@ const Summary = ({ cart }: SummaryProps) => {
     return (
         <Flex
             flexDir={'column'}
-            mt={{ base: '1rem', md: '0' }}
-            ml={{ base: '0', md: 'auto' }}
             p={{ base: '16px', md: '40px' }}
             height="auto"
             alignSelf="flex-start"

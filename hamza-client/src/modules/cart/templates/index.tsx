@@ -47,9 +47,10 @@ const CartTemplate = ({
                     width="100%"
                     mx="1rem"
                     flexDirection={{ base: 'column', md: 'row' }}
+                    gap="16px"
                 >
                     {/* gap="24px" */}
-                    <Flex flexDirection={'column'} flex={1} gap="24px">
+                    <Flex flexDirection={'column'} gap="16px" flex={1}>
                         {/* {!customer && (
                                     <>
                                         <SignInPrompt />
