@@ -58,7 +58,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
     const [message, formAction] = useFormState(submitDiscountForm, null);
 
     return (
-        <Flex mt="2rem">
+        <Flex mt="1rem">
             <Input
                 borderLeftRadius={'12px'}
                 width={'100%'}

@@ -123,7 +123,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                     width: '100%',
                     borderTop: '2px dashed #bbb',
                     marginTop: '1rem',
-                    marginBottom: '2rem',
+                    marginBottom: '1rem',
                 }}
             />
             {subtotals['eth'] && (
