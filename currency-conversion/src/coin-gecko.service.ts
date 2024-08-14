@@ -90,7 +90,7 @@ export class CoinGeckoService {
         }
 
         // If direct rate not cached, calculate via ETH
-        if (baseCurrency !== 'eth' && conversionCurrency !== 'eth') {
+        if (this.isAddress(baseCurrency) && this.isAddress(conversionCurrency)) {
             const baseToEth = await this.getExchangeRate(baseCurrency, 'eth');
             const conversionToEth = await this.getExchangeRate(
                 conversionCurrency,
@@ -108,6 +108,21 @@ export class CoinGeckoService {
         if (!this.isAddress(baseCurrency) && this.isAddress(conversionCurrency)) {
             const rate = await this.getExchangeRate(conversionCurrency, baseCurrency);
             return (rate ? 1 / rate : 0);
+        }
+
+        //handle two non-contract currencies (such as cny and eth) 
+        if (!this.isAddress(baseCurrency) && !this.isAddress(conversionCurrency)) {
+            const baseToUsdc = await this.getExchangeRate(baseCurrency, this.USDC);
+            const conversionToUsdc = await this.getExchangeRate(
+                conversionCurrency,
+                this.USDC,
+            );
+
+            const rate = baseToUsdc / conversionToUsdc;
+
+            // Cache this calculated rate
+            this.cache[cacheKey] = { value: rate, timestamp: currentTime };
+            return rate;
         }
 
         // Otherwise fetch normally
