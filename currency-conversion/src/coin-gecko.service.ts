@@ -28,9 +28,11 @@ export class CoinGeckoService {
         await Promise.all([
             this.fetchConversionRate(this.USDT, 'eth'),
             this.fetchConversionRate(this.USDC, 'eth'),
+            this.fetchConversionRate(this.USDT, 'cny'),
+            this.fetchConversionRate(this.USDC, 'cny'),
         ])
             .then(() => {
-                this.logger.log('Cache initialized for ETH to USDT and ETH to USDC.');
+                this.logger.log('Cache initialized.');
             })
             .catch((error) => {
                 this.logger.error('Failed to populate cache at startup:', error);
