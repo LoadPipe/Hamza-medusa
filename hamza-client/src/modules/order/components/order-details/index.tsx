@@ -38,18 +38,24 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
             <Text color={'primary.green.900'} fontSize={'18px'} mb="1rem">
                 Order Details
             </Text>
-            <Flex mr={'auto'} flexDirection={'column'}>
-                <Text fontWeight={600}>Transaction Date</Text>
-                <Text>{new Date(order.created_at).toDateString()}</Text>
-            </Flex>
-            {/* <Text className="mt-2">Order number: {order.display_id}</Text>
-            <Text className="mt-2">Order ID: {order.id}</Text> */}
-            {/* <Text className="mt-2">
-                Order date: {new Date(order.created_at).toDateString()}
-            </Text>
-          
+            <Flex flexDirection={'row'} width={'100%'}>
+                <Flex mr="auto" flexDir={'column'}>
+                    <Text fontWeight={600}>Transaction Date</Text>
+                    <Text>{new Date(order.created_at).toDateString()}</Text>
+                </Flex>
 
-            <div className="flex items-center text-compact-small gap-x-4 mt-4">
+                <Flex ml="auto" flexDir={'column'}>
+                    <Text fontWeight={600}>Order ID</Text>
+                    <Text>{order.id}</Text>
+                </Flex>
+            </Flex>
+
+            <Flex mr="auto" mt="1rem" flexDir={'column'}>
+                <Text fontWeight={600}>Order Number</Text>
+                <Text>{order.display_id}</Text>
+            </Flex>
+
+            {/* <div className="flex items-center text-compact-small gap-x-4 mt-4">
                 {showStatus && (
                     <>
                         <Text className="">
