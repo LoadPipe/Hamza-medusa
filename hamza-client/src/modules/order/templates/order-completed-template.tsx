@@ -50,7 +50,7 @@ export default function OrderCompletedTemplate({
             <Heading as="h1" size="lg">
                 Payment Successful!
             </Heading>
-            <Text>Thank you for your order!</Text>
+            <Text fontWeight={600}>Thank you for your order!</Text>
 
             <Text mt="1rem">
                 Order confirmation has been sent to your registered email

@@ -39,7 +39,7 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
                 Order Details
             </Text>
             <Flex mr={'auto'} flexDirection={'column'}>
-                <Text fontWeight={500}>Transaction Date</Text>
+                <Text fontWeight={600}>Transaction Date</Text>
                 <Text>{new Date(order.created_at).toDateString()}</Text>
             </Flex>
             {/* <Text className="mt-2">Order number: {order.display_id}</Text>
