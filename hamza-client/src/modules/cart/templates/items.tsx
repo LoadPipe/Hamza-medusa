@@ -20,14 +20,15 @@ const ItemsTemplate = ({ items, region }: ItemsTemplateProps) => {
             flexDir={'column'}
             maxW={'830px'}
             width={'100%'}
-            height={'540px'}
-            py={'40px'}
-            px={'45px'}
+            height={'auto'}
+            alignSelf={'self-start'}
+            py={{ base: '16px', md: '40px' }}
+            px={{ base: '16px', md: '45px' }}
             borderRadius={'16px'}
             backgroundColor={'#121212'}
         >
             <Flex justifyContent={{ base: 'center', md: 'left' }}>
-                <Radio mr="2rem" display={{ base: 'none', md: 'flex' }} />
+                {/* <Radio mr="2rem" display={{ base: 'none', md: 'flex' }} /> */}
                 <Text
                     fontWeight={600}
                     fontSize={'18px'}
@@ -36,7 +37,11 @@ const ItemsTemplate = ({ items, region }: ItemsTemplateProps) => {
                     Product Details
                 </Text>
             </Flex>
-            <Box height="400px" overflowY="scroll">
+            <Box
+                mt="1rem"
+                height={{ base: '170px', md: '400px' }}
+                overflowY="scroll"
+            >
                 {items && region
                     ? items
                           .sort((a, b) => {

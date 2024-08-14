@@ -51,11 +51,15 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
     };
 
     return (
-        <Flex height={'210px'} width={'100%'} flexDirection={'column'}>
-            <Divider my="2rem" borderColor="#3E3E3E" />
+        <Flex
+            height={{ base: '102px', md: '210px' }}
+            width={'100%'}
+            flexDirection={'column'}
+        >
+            <Divider borderColor="#3E3E3E" />
 
             <Flex my="auto">
-                <Radio mr="2rem" />
+                {/* <Radio mr="2rem" /> */}
                 <LocalizedClientLink
                     href={`/products/${handle}`}
                     className={clx('flex', {
@@ -70,7 +74,8 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
                     <Flex ml="1rem" flexDirection={'column'}>
                         <Text
                             color={'white'}
-                            fontSize={'18px'}
+                            fontSize={{ base: '14px', md: '18px' }}
+                            noOfLines={{ base: 1, md: 2 }}
                             fontWeight={600}
                             mb="auto"
                         >
