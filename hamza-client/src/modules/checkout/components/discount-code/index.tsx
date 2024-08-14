@@ -61,19 +61,19 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
         <Flex mt="1rem">
             <Input
                 borderLeftRadius={'12px'}
+                height={{ base: '50px', md: '52px' }}
                 width={'100%'}
                 fontSize={{ base: '15px', md: '16px' }}
-                height={{ base: '50px', md: '52px' }}
-                placeholder="Discount Code"
                 backgroundColor={'black'}
                 borderWidth={'0'}
+                placeholder="Discount Code"
             />
             <Button
                 borderLeftRadius={'0'}
                 borderRightRadius={'12px'}
-                fontSize={{ base: '15px', md: '16px' }}
                 height={{ base: '50px', md: '52px' }}
                 width={'82px'}
+                fontSize={{ base: '15px', md: '16px' }}
                 backgroundColor={'primary.green.900'}
                 color={'black'}
             >
