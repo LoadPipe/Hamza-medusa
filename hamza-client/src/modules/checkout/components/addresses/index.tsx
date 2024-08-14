@@ -46,9 +46,9 @@ const Addresses = ({
         useToggleState(
             cart?.shipping_address && cart?.billing_address
                 ? compareAddresses(
-                      cart?.shipping_address,
-                      cart?.billing_address
-                  )
+                    cart?.shipping_address,
+                    cart?.billing_address
+                )
                 : true
         );
 
@@ -62,7 +62,7 @@ const Addresses = ({
             ? ''
             : cart.email
         : '';
-    // const contactPhone = cart?.shipping_address.phone ?? '';
+    const contactPhone = cart?.shipping_address?.phone ?? '';
 
     return (
         <div className="bg-black">
