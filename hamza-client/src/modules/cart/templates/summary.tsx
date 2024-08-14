@@ -1,7 +1,7 @@
 'use client';
 
 import { Heading } from '@medusajs/ui';
-import { Button, Box, Text } from '@chakra-ui/react';
+import { Button, Box, Text, Flex } from '@chakra-ui/react';
 import CartTotals from '@modules/common/components/cart-totals';
 import Divider from '@modules/common/components/divider';
 import { CartWithCheckoutStep } from 'types/global';
@@ -14,7 +14,17 @@ type SummaryProps = {
 
 const Summary = ({ cart }: SummaryProps) => {
     return (
-        <Box width={'100%'}>
+        <Flex
+            flexDir={'column'}
+            mt={{ base: '1rem', md: '0' }}
+            ml={{ base: '0', md: 'auto' }}
+            p="40px"
+            maxW={{ base: '100%', md: '401px' }}
+            width={'100%'}
+            height={'450px'}
+            backgroundColor={'#121212'}
+            borderRadius={'16px'}
+        >
             <Text
                 color="primary.green.900"
                 fontSize={'18px'}
@@ -42,7 +52,7 @@ const Summary = ({ cart }: SummaryProps) => {
                     Checkout Now
                 </Button>
             </LocalizedClientLink>
-        </Box>
+        </Flex>
     );
 };
 

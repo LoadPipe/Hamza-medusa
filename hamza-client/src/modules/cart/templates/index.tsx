@@ -73,29 +73,11 @@ const CartTemplate = ({
                         </Flex>
 
                         {/* Shipping Address */}
-                        <Flex
-                            maxWidth={'825px'}
-                            width={'100%'}
-                            height={'240px'}
-                            borderRadius={'16px'}
-                            backgroundColor={'#121212'}
-                        >
-                            <CartShippingAddress customer={customer} />
-                        </Flex>
+
+                        <CartShippingAddress customer={customer} />
                     </Flex>
 
-                    <Flex
-                        mt={{ base: '1rem', md: '0' }}
-                        maxW={'401px'}
-                        width={'100%'}
-                        height={'450px'}
-                        backgroundColor={'#121212'}
-                        borderRadius={'16px'}
-                        p="40px"
-                        ml={{ base: '0', md: 'auto' }}
-                    >
-                        {cart && cart.region && <Summary cart={cart} />}
-                    </Flex>
+                    {cart && cart.region && <Summary cart={cart} />}
                 </Flex>
             ) : (
                 <div>
