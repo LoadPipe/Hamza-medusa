@@ -52,7 +52,7 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
 
     return (
         <Flex height={'210px'} width={'100%'} flexDirection={'column'}>
-            <Divider my="2rem" />
+            <Divider my="2rem" borderColor="#3E3E3E" />
 
             <Flex my="auto">
                 <Radio mr="2rem" />

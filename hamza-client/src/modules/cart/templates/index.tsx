@@ -48,7 +48,8 @@ const CartTemplate = ({
                     mx="1rem"
                     flexDirection={{ base: 'column', md: 'row' }}
                 >
-                    <Flex flexDirection={'column'} gap="24px">
+                    {/* gap="24px" */}
+                    <Flex flexDirection={'column'} flex={1} gap="24px">
                         <Flex
                             maxW={'830px'}
                             width={'100%'}
@@ -72,14 +73,15 @@ const CartTemplate = ({
                         </Flex>
 
                         {/* Shipping Address */}
-                        <Box
-                            width={'825px'}
+                        <Flex
+                            maxWidth={'825px'}
+                            width={'100%'}
                             height={'240px'}
                             borderRadius={'16px'}
                             backgroundColor={'#121212'}
                         >
                             <CartShippingAddress customer={customer} />
-                        </Box>
+                        </Flex>
                     </Flex>
 
                     <Flex

@@ -62,7 +62,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                 style={{
                     color: 'red',
                     width: '100%',
-                    borderTop: '2px dashed #bbb',
+                    borderTop: '2px dashed #3E3E3E',
                     marginBottom: '1rem',
                 }}
             />
@@ -121,7 +121,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                 style={{
                     color: 'red',
                     width: '100%',
-                    borderTop: '2px dashed #bbb',
+                    borderTop: '2px dashed #3E3E3E',
                     marginTop: '1rem',
                     marginBottom: '1rem',
                 }}
