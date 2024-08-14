@@ -28,9 +28,10 @@ const CartShippingAddress = ({
                         fontSize={'24px'}
                         fontWeight={900}
                     >
-                        {customer.first_name} {customer.last_name}
+                        {customer.shipping_addresses[0].first_name}{' '}
+                        {customer.shipping_addresses[0].last_name}
                     </Text>
-                    {/* {customer.shipping_addresses[0].address_1}
+                    {customer.shipping_addresses[0].address_1}
                     <br />
                     {customer.shipping_addresses[0].address_2 && (
                         <>
@@ -42,7 +43,7 @@ const CartShippingAddress = ({
                     {customer.shipping_addresses[0].province}{' '}
                     {customer.shipping_addresses[0].postal_code}
                     <br />
-                    {customer.shipping_addresses[0].country} */}
+                    {customer.shipping_addresses[0].country}
                 </Text>
             ) : (
                 <Text mt="0.5rem" color="white">
