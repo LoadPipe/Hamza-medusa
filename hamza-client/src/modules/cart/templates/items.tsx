@@ -16,9 +16,9 @@ type ItemsTemplateProps = {
 
 const ItemsTemplate = ({ items, region }: ItemsTemplateProps) => {
     return (
-        <Box width={'100%'} height={'460px'} overflow={'hidden'}>
+        <Box width={'100%'}>
             <Flex>
-                <Radio mr="2rem" my="auto" />
+                <Radio mr="2rem" />
                 <Text
                     fontWeight={600}
                     fontSize={'18px'}

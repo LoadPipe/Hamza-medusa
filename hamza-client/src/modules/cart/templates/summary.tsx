@@ -14,15 +14,10 @@ type SummaryProps = {
 
 const Summary = ({ cart }: SummaryProps) => {
     return (
-        <Box
-            width={'100%'}
-            backgroundColor={'#121212'}
-            p="40px"
-            borderRadius={'16px'}
-        >
+        <Box width={'100%'}>
             <Text
                 color="primary.green.900"
-                fontSize={'24px'}
+                fontSize={'18px'}
                 fontWeight={700}
                 mb="1rem"
             >

@@ -53,13 +53,11 @@ const CartTemplate = ({
                         <Flex
                             maxW={'830px'}
                             width={'100%'}
-                            height={'520px'}
+                            height={'540px'}
                             py={'40px'}
                             px={'45px'}
                             borderRadius={'16px'}
                             backgroundColor={'#121212'}
-                            justifyContent="center"
-                            alignItems={'center'}
                         >
                             {/* {!customer && (
                                     <>
@@ -88,9 +86,12 @@ const CartTemplate = ({
 
                     <Flex
                         mt={{ base: '1rem', md: '0' }}
-                        maxW={{ base: '100%', md: '401px' }}
+                        maxW={'401px'}
                         width={'100%'}
                         height={'450px'}
+                        backgroundColor={'#121212'}
+                        borderRadius={'16px'}
+                        p="40px"
                         ml={{ base: '0', md: 'auto' }}
                     >
                         {cart && cart.region && <Summary cart={cart} />}
