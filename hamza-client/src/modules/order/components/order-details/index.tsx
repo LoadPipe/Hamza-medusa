@@ -1,6 +1,6 @@
 import { Order } from '@medusajs/medusa';
 // import { Text } from '@medusajs/ui';
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Text, Flex } from '@chakra-ui/react';
 
 type OrderDetailsProps = {
     order: Order;
@@ -28,15 +28,26 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
     // console.log(`Order Summary is ${JSON.stringify(order)}`);
 
     return (
-        <Box mt="2rem">
-            <Text color={'primary.green.900'} fontSize={'18px'}>
+        <Flex
+            mt="2rem"
+            flexDir={'column'}
+            width={'100%'}
+            justifyContent={'center'}
+            alignItems={'center'}
+        >
+            <Text color={'primary.green.900'} fontSize={'18px'} mb="1rem">
                 Order Details
             </Text>
+            <Flex mr={'auto'} flexDirection={'column'}>
+                <Text fontWeight={500}>Transaction Date</Text>
+                <Text>{new Date(order.created_at).toDateString()}</Text>
+            </Flex>
+            {/* <Text className="mt-2">Order number: {order.display_id}</Text>
+            <Text className="mt-2">Order ID: {order.id}</Text> */}
             {/* <Text className="mt-2">
                 Order date: {new Date(order.created_at).toDateString()}
             </Text>
-            <Text className="mt-2">Order number: {order.display_id}</Text>
-            <Text className="mt-2">Order ID: {order.id}</Text>
+          
 
             <div className="flex items-center text-compact-small gap-x-4 mt-4">
                 {showStatus && (
@@ -56,7 +67,7 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
                     </>
                 )}
             </div> */}
-        </Box>
+        </Flex>
     );
 };
 
