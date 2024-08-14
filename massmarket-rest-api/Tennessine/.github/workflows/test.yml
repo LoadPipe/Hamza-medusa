@@ -1,0 +1,152 @@
+# SPDX-FileCopyrightText: 2024 Mass Labs
+#
+# SPDX-License-Identifier: MIT
+
+name: test
+
+on: [push]
+
+env:
+  PGUSER: postgres
+  PGPASSWORD: postgres
+  PGHOST: localhost
+  PGPORT: 5432
+
+jobs:
+  browser-tests:
+    runs-on: [self-hosted, linux]
+
+    permissions:
+      contents: read
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      ipfs:
+        image: cryptix/ipfs-offline:v1
+        ports:
+          - 5001:5001
+
+      anvil:
+        image: ghcr.io/foundry-rs/foundry:latest
+        ports:
+          - 8545:8545
+        options: --entrypoint anvil
+        env:
+          ANVIL_IP_ADDR: 0.0.0.0
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: Tennessine
+
+      # not needed on self-hosted but kept around if we want to use it on github-hosted
+      #- name: Install Nix
+      #  uses: DeterminateSystems/nix-installer-action@main
+      #- uses: DeterminateSystems/magic-nix-cache-action@main
+      - uses: DeterminateSystems/flake-checker-action@main
+        with:
+          flake-lock-path: Tennessine/packages/client/flake.lock
+
+      - name: Extract branch name for other checkouts
+        shell: bash
+        run: echo "branch=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+        id: extract_branch
+
+      - name: git clone relay
+        uses: ./Tennessine/.github/actions/checkout
+        with:
+          repository: masslbs/relay
+          ssh-key: ${{ secrets.SSH_CHECKOUT_RELAY }}
+          ref: ${{ steps.extract_branch.outputs.branch }}
+          fallback-branch: network-v2
+          path: relay
+
+      - name: Compile relay
+        run: nix build '.#relay'
+        working-directory: relay
+
+      - name: deploy contracts and update ABI
+        run: |
+          nix develop -c deploy-market
+        working-directory: relay
+
+      - name: prepare env file for relay
+        run: |
+          cp .env.sample .env
+          cat .env
+        working-directory: relay
+
+      - name: initdb and start relay
+        run: |
+          createdb massmarket-relay-test
+          psql massmarket-relay-test < ./db/schema.sql
+          export $(egrep -v '^#' .env | xargs)
+          ./result/bin/relay server > relay.log &
+        working-directory: relay
+
+      - name: check services
+        run: |
+          set -e
+          curl http://localhost:4444/health
+          curl http://localhost:5001/api/v0/version -X POST
+          curl http://localhost:8545/ -X POST -H 'content-type: application/json' --data-raw '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":0}'
+
+      - name: Build all packages
+        run: nix develop -c bash -c "pnpm i && tsc -b"
+        working-directory: Tennessine
+
+      - name: Check Formatting
+        run: nix develop -c bash -c "pnpm lint"
+        working-directory: Tennessine
+
+      - name: Check Linting
+        run: nix develop -c bash -c "pnpm lint"
+        working-directory: Tennessine/packages/client
+
+      - name: Run node tests on client
+        run: nix develop -c bash -c "pnpm exec vitest --watch=false"
+        working-directory: Tennessine/packages/client
+
+      - name: Run node tests on blockchain
+        run: nix develop -c bash -c "pnpm exec vitest --watch=false"
+        working-directory: Tennessine/packages/blockchain
+
+      - name: Run node tests on mmr
+        run: nix develop -c bash -c "pnpm exec vitest --watch=false"
+        working-directory: Tennessine/packages/mmr
+
+      - name: Run browser tests
+        run: nix develop -c bash -c "pnpm exec vitest --browser --watch=false"
+        working-directory: Tennessine/packages/client
+
+      - name: build frontend
+        run: nix develop -c bash -c "pnpm build"
+        working-directory: Tennessine/packages/frontend
+
+      - name: Upload frontend to Pinata
+        run: |
+          pinata auth ${{ secrets.PINATA_JWT }}
+          echo "Build Available as:" >> $GITHUB_STEP_SUMMARY
+          pinata upload --name "frontend-${{ github.sha }}" out/ > pinata.log
+          cid=$(egrep -o 'CID: (.*)' pinata.log | cut -d ' ' -f2)
+          echo "https://$cid.ipfs.nftstorage.link" >> $GITHUB_STEP_SUMMARY
+        working-directory: Tennessine/packages/frontend
+
+      - name: Upload relay log on failure
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: relay-log.txt
+          path: relay/relay.log

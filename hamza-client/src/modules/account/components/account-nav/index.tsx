@@ -9,7 +9,7 @@ import {
     useRouter,
     useSearchParams,
 } from 'next/navigation';
-
+import { Flex, Box, Button, Text } from '@chakra-ui/react';
 import ChevronDown from '@modules/common/icons/chevron-down';
 import { signOut } from '@modules/account/actions';
 import User from '@modules/common/icons/user';
@@ -19,6 +19,7 @@ import LocalizedClientLink from '@modules/common/components/localized-client-lin
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { useEffect } from 'react';
 import Cookies from 'js-cookie';
+import NavLink from './components/nav-link';
 
 const AccountNav = ({
     customer,
@@ -41,7 +42,6 @@ const AccountNav = ({
         Cookies.remove('_medusa_jwt');
         Cookies.remove('_medusa_cart_id');
         router.replace('/');
-        return;
     };
 
     useEffect(() => {
@@ -70,186 +70,68 @@ const AccountNav = ({
     }, [authData.is_verified]);
 
     return (
-        <div>
-            <div className="small:hidden">
-                {route !== `/${countryCode}/account` ? (
-                    <LocalizedClientLink
-                        href="/account"
-                        className="flex items-center gap-x-2 text-small-regular py-2"
-                    >
-                        <>
-                            <ChevronDown className="transform rotate-90" />
-                            <span>Account</span>
-                        </>
-                    </LocalizedClientLink>
-                ) : (
-                    <>
-                        <div className="text-xl-semi mb-4 ">
-                            Hello {customer?.first_name}
-                        </div>
-                        <div className="text-base-regular">
-                            <ul>
-                                <li>
-                                    <LocalizedClientLink
-                                        href="/account/profile"
-                                        className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
-                                    >
-                                        <>
-                                            <div className="flex items-center gap-x-2">
-                                                <User size={20} />
-                                                <span>Profile</span>
-                                            </div>
-                                            <ChevronDown className="transform -rotate-90" />
-                                        </>
-                                    </LocalizedClientLink>
-                                </li>
-
-                                {authData.is_verified && (
-                                    <li>
-                                        <LocalizedClientLink
-                                            href="/account/addresses"
-                                            className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
-                                        >
-                                            <>
-                                                <div className="flex items-center gap-x-2">
-                                                    <MapPin size={20} />
-                                                    <span>Addresses</span>
-                                                </div>
-                                                <ChevronDown className="transform -rotate-90" />
-                                            </>
-                                        </LocalizedClientLink>
-                                    </li>
-                                )}
-                                <li>
-                                    <LocalizedClientLink
-                                        href="/account/orders"
-                                        className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
-                                    >
-                                        <div className="flex items-center gap-x-2">
-                                            <Package size={20} />
-                                            <span>Orders</span>
-                                        </div>
-                                        <ChevronDown className="transform -rotate-90" />
-                                    </LocalizedClientLink>
-                                </li>
-
-                                {authData.is_verified && (
-                                    <li>
-                                        <LocalizedClientLink
-                                            href="/account/notifications"
-                                            className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
-                                        >
-                                            <div className="flex items-center gap-x-2">
-                                                <Package size={20} />
-                                                <span>Notifications</span>
-                                            </div>
-                                            <ChevronDown className="transform -rotate-90" />
-                                        </LocalizedClientLink>
-                                    </li>
-                                )}
-                                <li>
-                                    <button
-                                        type="button"
-                                        className="flex items-center justify-between py-4 border-b border-gray-200 px-8 w-full"
-                                        onClick={handleLogout}
-                                    >
-                                        <div className="flex items-center gap-x-2">
-                                            <ArrowRightOnRectangle />
-                                            <span>Log out</span>
-                                        </div>
-                                        <ChevronDown className="transform -rotate-90" />
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                    </>
+        <Flex style={{ width: '245px' }}>
+            <Flex flexDirection={'column'} width={'245px'}>
+                <NavLink
+                    href="/account/profile"
+                    route={route!}
+                    title={'Profile'}
+                />
+                {!authData.is_verified && (
+                    <NavLink
+                        href="/account/verify"
+                        route={route!}
+                        title={'Verify'}
+                    />
                 )}
-            </div>
-            <div className="hidden small:block">
-                <div>
-                    <div className="pb-4">
-                        <h3 className="text-base-semi">Account</h3>
-                    </div>
-                    <div className="text-base-regular">
-                        <ul className="flex mb-0 justify-start items-start flex-col gap-y-4 ">
-                            <li>
-                                <AccountNavLink
-                                    href="/account/profile"
-                                    route={route!}
-                                >
-                                    Profile
-                                </AccountNavLink>
-                            </li>
-                            {authData.is_verified && (
-                                <li>
-                                    <AccountNavLink
-                                        href="/account/addresses"
-                                        route={route!}
-                                    >
-                                        Addresses
-                                    </AccountNavLink>
-                                </li>
-                            )}
-
-                            <li>
-                                <AccountNavLink
-                                    href="/account/orders"
-                                    route={route!}
-                                >
-                                    Orders
-                                </AccountNavLink>
-                            </li>
-                            {authData.is_verified && (
-                                <li>
-                                    <AccountNavLink
-                                        href="/account/notifications"
-                                        route={route!}
-                                    >
-                                        Notifications
-                                    </AccountNavLink>
-                                </li>
-                            )}
-                            <li>
-                                <AccountNavLink
-                                    href="/account/reviews"
-                                    route={route!}
-                                >
-                                    Reviews
-                                </AccountNavLink>
-                            </li>
-
-                            <li className="text-grey-700">
-                                <button type="button" onClick={handleLogout}>
-                                    Log out
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-type AccountNavLinkProps = {
-    href: string;
-    route: string;
-    children: React.ReactNode;
-};
-
-const AccountNavLink = ({ href, route, children }: AccountNavLinkProps) => {
-    const { countryCode }: { countryCode: string } = useParams();
-
-    const active = route.split(countryCode)[1] === href;
-    return (
-        <LocalizedClientLink
-            href={href}
-            className={clx('text-ui-fg-subtle hover:text-gray-200 text-white', {
-                'text-white font-semibold': active,
-            })}
-        >
-            {children}
-        </LocalizedClientLink>
+                <NavLink
+                    href="/account/addresses"
+                    route={route!}
+                    title={'Addresses'}
+                />
+                <NavLink
+                    href="/account/orders"
+                    route={route!}
+                    title={'Orders'}
+                />
+                {authData.is_verified && (
+                    <NavLink
+                        href="/account/notifications"
+                        route={route!}
+                        title={'Notifications'}
+                    />
+                )}
+                {authData.is_verified && (
+                    <NavLink
+                        href="/account/reviews"
+                        route={route!}
+                        title={'Reviews'}
+                    />
+                )}
+                <Box
+                    as="button"
+                    textAlign={'left'}
+                    borderRadius={'8px'}
+                    width={'245px'}
+                    height={'56px'}
+                    padding="16px"
+                    bg="transparent"
+                    borderColor="#ccd0d5"
+                    color="white"
+                    _active={{
+                        bg: 'primary.green.900',
+                        color: 'black',
+                        transform: 'scale(0.98)',
+                        borderColor: '#bec3c9',
+                    }}
+                    onClick={handleLogout}
+                >
+                    <Text my="auto" fontSize={'18px'} fontWeight={600}>
+                        Logout
+                    </Text>
+                </Box>
+            </Flex>
+        </Flex>
     );
 };
 

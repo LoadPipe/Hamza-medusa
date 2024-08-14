@@ -22,6 +22,7 @@ import {
     TiStarOutline,
 } from 'react-icons/ti';
 import CartPopup from '../../cart-popup';
+import { averageRatings, reviewCounter } from '@lib/data';
 
 const MEDUSA_SERVER_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -67,17 +68,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
 
     useEffect(() => {
         const fetchProductReview = async () => {
-            const averageRatingResponse = await axios.post(
-                `${MEDUSA_SERVER_URL}/custom/review/average`,
-                { product_id: productId }
-            );
-            const reviewCountResponse = await axios.post(
-                `${MEDUSA_SERVER_URL}/custom/review/count`,
-                { product_id: productId }
-            );
+            const averageRatingResponse = await averageRatings(productId);
+            const reviewCountResponse = await reviewCounter(productId);
 
-            setAverageRating(averageRatingResponse.data);
-            setReviewCount(reviewCountResponse.data);
+            setAverageRating(averageRatingResponse);
+            setReviewCount(reviewCountResponse);
         };
 
         fetchProductReview();
@@ -145,7 +140,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                 selectedProductVariant &&
                 (selectedProductVariant.prices.find(
                     (p: any) =>
-                        p.currency_code === preferred_currency_code ?? 'usdt'
+                        p.currency_code === preferred_currency_code ?? 'usdc'
                 ) ??
                     selectedProductVariant.prices[0]);
             // console.log(`price is being set to ${price}`);
@@ -170,7 +165,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
 
             if (showPopup) {
                 setCartModalOpen(true);
-                setTimeout(() => { setCartModalOpen(false); }, 3000);
+                setTimeout(() => {
+                    setCartModalOpen(false);
+                }, 3000);
             }
         } catch (error) {
             console.error('Error adding to cart:', error);
@@ -466,6 +463,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                     borderColor={'primary.yellow.900'}
                     backgroundColor={'transparent'}
                     mt="1rem"
+                    data-cy="add-to-cart-button"
                     fontSize={{ base: '12px', md: '18px' }}
                     _hover={{
                         color: 'black',

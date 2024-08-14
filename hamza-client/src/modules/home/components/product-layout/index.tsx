@@ -10,6 +10,7 @@ import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { addToCart } from '@modules/cart/actions';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import SkeletonProductGrid from '@modules/skeletons/components/skeleton-product-grid';
+import { getProductsByVendor } from '@lib/data';
 
 type Props = {
     vendorName: string;
@@ -21,9 +22,10 @@ const ProductCardGroup = ({ vendorName, category }: Props) => {
     const { data, error, isLoading } = useQuery(
         ['products', { vendor: vendorName }],
         () =>
-            axios.get(
-                `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/store/custom/products?store_name=${vendorName}`
-            )
+            getProductsByVendor(vendorName).catch((err) => {
+                console.log(err);
+                return null;
+            })
     );
 
     console.log(data);

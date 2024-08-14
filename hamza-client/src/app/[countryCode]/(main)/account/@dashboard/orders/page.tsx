@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import OrderOverview from '@modules/account/components/order-overview';
 import { listCustomerOrders } from '@lib/data';
 import { notFound } from 'next/navigation';
-
+import { Box, Text } from '@chakra-ui/react';
 export const metadata: Metadata = {
     title: 'Orders',
     description: 'Overview of your previous orders.',
@@ -15,19 +15,19 @@ export default async function Orders() {
     if (!orders) {
         notFound();
     }
-
+    // 121212
     return (
-        <div className="w-full bg-black text-white p-8">
-            <div className="mb-8 flex flex-col gap-y-4">
-                <h1 className="text-2xl-semi">Orders</h1>
-                <p className="text-base-regular">
-                    View your previous orders and their status. You can also
-                    create returns or exchanges for your orders if needed.
-                </p>
-            </div>
-            <div>
+        <Box width="full" bg="#121212" color="white" rounded={'lg'}>
+            <Box display="flex" flexDirection="column">
+                {/*<Text fontWeight={'bold'} fontSize="lg">*/}
+                {/*    Orders*/}
+                {/*</Text>*/}
+                {/*<p className="text-base-regular">*/}
+                {/*    View your previous orders and their status. You can also*/}
+                {/*    create returns or exchanges for your orders if needed.*/}
+                {/*</p>*/}
                 <OrderOverview orders={orders} />
-            </div>
-        </div>
+            </Box>
+        </Box>
     );
 }

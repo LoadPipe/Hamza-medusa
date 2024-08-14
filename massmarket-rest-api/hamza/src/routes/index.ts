@@ -5,7 +5,7 @@ import { storeController } from '../controllers/store.js';
 import { productsController } from '../controllers/products.js';
 const router = Router();
 
-router.get('/test', testController.test);
+router.get('/test', testController.setCurrencies);
 router.post('/checkout', checkoutController.doCheckout);
 router.post('/store', storeController.createStore);
 router.put('/store', storeController.enrollKeycard);

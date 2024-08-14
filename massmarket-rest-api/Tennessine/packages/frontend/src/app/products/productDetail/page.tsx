@@ -4,7 +4,7 @@
 
 "use client";
 import React, { useState, useEffect } from "react";
-import ModalHeader from "@/app/common/components/ModalHeader";
+// import ModalHeader from "@/app/common/components/ModalHeader";
 import Image from "next/image";
 import Button from "@/app/common/components/Button";
 // import SeeProductActions from "@/app/components/products/SeeProductActions";
@@ -140,13 +140,6 @@ const ProductDetail = () => {
 
   if (!item) return null;
 
-  const onUpdate = () => {
-    setButton("Success");
-    setTimeout(() => {
-      setButton("Review");
-    }, 1000);
-  };
-
   const getCtaButton = () => {
     if (!addedToCart) {
       return (
@@ -157,7 +150,7 @@ const ProductDetail = () => {
             if (res?.error) {
               setShowErrorMessage(res.error);
             } else {
-              onUpdate();
+              setButton("Review");
             }
           }}
         >
@@ -165,17 +158,8 @@ const ProductDetail = () => {
         </Button>
       );
     } else if (buttonState === "Review") {
-      return <Button onClick={() => router.push("/cart")}>Review Sale</Button>;
-    } else if (buttonState === "Success") {
       return (
-        <button className="flex justify-center bg-green-600 w-full text-white px-4 rounded-md">
-          <Image
-            src="/assets/checkmark.svg"
-            alt="checkmark-icon"
-            width={24}
-            height={24}
-          />
-        </button>
+        <Button onClick={() => router.push("/checkout")}>Review Sale</Button>
       );
     } else
       return (
@@ -185,7 +169,7 @@ const ProductDetail = () => {
             if (res?.error) {
               setShowErrorMessage(res.error);
             } else {
-              onUpdate();
+              setButton("Review");
             }
           }}
         >
@@ -197,7 +181,7 @@ const ProductDetail = () => {
   return (
     <main className="pt-under-nav h-screen bg-gray-100">
       {showConfirmModal && confirmDelete}
-      <ModalHeader />
+      {/* <ModalHeader /> */}
       <section className="h-[45rem] flex flex-col">
         <ErrorMessage
           errorMessage={showErrorMessage}

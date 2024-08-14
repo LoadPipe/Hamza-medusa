@@ -1,15 +1,29 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { useEffect, useMemo, useState } from 'react';
 import { Order } from '@medusajs/medusa';
 import OrderCard from '../order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
-import { getVendors } from '@lib/data/index';
+import Refund from '../../../order/templates/refund';
+import Delivered from '../../../order/templates/delivered';
+import Processing from '../../../order/templates/processing';
+import Shipped from '../../../order/templates/shipped';
+import All from '../../../order/templates/all';
+import Cancelled from '../../../order/templates/cancelled';
+
+import {
+    getVendors,
+    orderInformation,
+    orderDetails,
+    orderStatus,
+    orderBucket,
+    cancelOrder,
+} from '@lib/data';
 import {
     Button,
+    ButtonGroup,
     Modal,
     ModalOverlay,
     ModalContent,
@@ -20,10 +34,9 @@ import {
     Textarea,
     FormControl,
     FormErrorMessage,
+    Box,
+    Flex,
 } from '@chakra-ui/react';
-
-const MEDUSA_SERVER_URL =
-    process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
 
 // Define a type that extends the Order type with any additional data
 interface DetailedOrder extends Order {
@@ -57,6 +70,43 @@ type WishlistProps = OrderProps & {
     id: string;
 };
 
+const commonButtonStyles = {
+    borderRadius: '8px',
+    width: '146px',
+    height: '56px',
+    padding: '16px',
+    bg: 'gray.900',
+    borderColor: 'transparent',
+    color: 'white',
+    _hover: {
+        // Assuming you want hover effects as well
+        bg: 'gray.200',
+        color: 'black',
+    },
+    _active: {
+        bg: 'primary.green.900',
+        color: 'black',
+        transform: 'scale(0.98)',
+        borderColor: '#bec3c9',
+    },
+};
+
+enum OrderBucketType {
+    TO_PAY = 1,
+    TO_SHIP = 2,
+    SHIPPED = 3,
+    COMPLETED = 4,
+    CANCELLED = 5,
+    REFUNDED = 6,
+}
+const TABS = {
+    ALL: 'All Orders',
+    PROCESSING: 'Processing',
+    SHIPPED: 'Shipped',
+    DELIVERED: 'Delivered',
+    CANCELLED: 'Cancelled',
+    REFUND: 'Refund',
+};
 const OrderOverview = ({ orders }: { orders: Order[] }) => {
     // Initialize state with the correct type
     const [detailedOrders, setDetailedOrders] = useState<DetailedOrder[]>([]);
@@ -66,8 +116,11 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
     const [cancelReason, setCancelReason] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
-    const [customerOrder, setCustomerOrder] = useState<Order[] | null>(null);
+    const [customerOrder, setCustomerOrder] = useState<any[] | null>(null);
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
+    const [customerId, setCustomerId] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [activeTab, setActiveTab] = useState(TABS.ALL);
 
     const openModal = (orderId: string) => {
         setSelectedOrderId(orderId);
@@ -78,102 +131,62 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
         setCancelReason('');
         setIsAttemptedSubmit(false);
     };
-    console.log('Orders: ', orders);
+    // console.log('Orders: ', orders);
 
     let countryCode = useParams().countryCode as string;
     if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY) countryCode = 'us';
 
     const router = useRouter();
 
-    useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const { data } = await axios.post(
-                    `${MEDUSA_SERVER_URL}/custom/order`,
-                    {
-                        cart_id: orders[0].cart_id,
-                    }
-                );
-                setDetailedOrders(data.order);
-            } catch (error) {
-                console.error('Error fetching orders: ', error);
-            }
-        };
-
-        const fetchAll = async () => {
-            try {
-                const { data } = await axios.post(
-                    `${MEDUSA_SERVER_URL}/custom/order/customer-orders`,
-                    {
-                        customer_id: orders[0].customer_id,
-                    }
-                );
-                console.log(
-                    `fetching all data in new style ${JSON.stringify(data.order.orders)}`
-                );
-                setCustomerOrder(data.order.orders);
-            } catch (e) {
-                console.error('Error fetching all data in new style: ', e);
-            }
-        };
-
-        fetchAll();
-        fetchOrders();
-    }, [orders]);
-
-    useEffect(() => {
-        const fetchStatuses = async () => {
-            if (!orders || orders.length === 0) return;
-
-            const statuses = await Promise.allSettled(
-                orders.map(async (order, index) => {
-                    console.log(`Fetching status for order ${order.id}`);
-                    try {
-                        const statusRes = await axios.get(
-                            `${MEDUSA_SERVER_URL}/custom/order/status`,
-                            {
-                                params: {
-                                    order_id: order.id,
-                                },
-                            }
-                        );
-                        return {
-                            orderId: order.id,
-                            status: statusRes.data.order,
-                        };
-                    } catch (error) {
-                        console.error(
-                            `Error fetching status for order ${order.id}:`,
-                            error
-                        );
-                        return {
-                            orderId: order.id,
-                            status: 'unknown',
-                        };
-                    }
-                })
-            );
-
-            const statusMap: { [key: string]: any } = {};
-            statuses.forEach((result) => {
-                if (result.status === 'fulfilled') {
-                    const { orderId, status } = result.value;
-                    statusMap[orderId] = status;
-                } else {
-                    console.error(
-                        `Failed to fetch status for order: ${result.reason}`
-                    );
-                }
-            });
-
-            setOrderStatuses(statusMap);
-            console.log('Order statuses: ', statusMap);
-        };
-
-        if (Object.keys(detailedOrders).length > 0) {
-            fetchStatuses();
+    const renderTabContent = () => {
+        switch (activeTab) {
+            case TABS.ALL:
+                return <All orders={orders} />;
+            case TABS.PROCESSING:
+                return <Processing orders={orders} />;
+            case TABS.SHIPPED:
+                return <Shipped />;
+            case TABS.DELIVERED:
+                return <Delivered />;
+            case TABS.CANCELLED:
+                return <Cancelled />;
+            case TABS.REFUND:
+                return <Refund />;
+            default:
+                return <div>Select a tab to view orders.</div>;
         }
-    }, [detailedOrders, orders]);
+    };
+
+    const fetchAllOrders = async (customerId: string) => {
+        setIsLoading(true);
+        try {
+            const response = await orderDetails(customerId);
+            // const bucket = await orderBucket(customerId);
+            // console.log(`Bucket is ${JSON.stringify(bucket)}`);
+
+            if (response && Array.isArray(response)) {
+                setCustomerOrder(response);
+            } else {
+                console.error('Expected an array but got:', response);
+                setCustomerOrder([]); // Setting to empty array if the expected data is not found
+            }
+        } catch (error) {
+            console.error('Error fetching order details:', error);
+            setCustomerOrder([]); // Setting to empty array on error
+        }
+        setIsLoading(false);
+    };
+
+    useEffect(() => {
+        let customer_id = orders[0]?.customer_id;
+        console.log(
+            `this is runnning and we getting customerID ${customer_id}`
+        );
+        if (orders && orders.length > 0) {
+            fetchAllOrders(customer_id);
+            setCustomerId(customer_id);
+        }
+    }, [orders]);
 
     const handleCancel = async () => {
         if (!cancelReason) {
@@ -183,9 +196,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
         if (!selectedOrderId) return;
 
         try {
-            await axios.delete(`${MEDUSA_SERVER_URL}/custom/order/cancel`, {
-                params: { order_id: selectedOrderId },
-            });
+            await cancelOrder(selectedOrderId);
             setOrderStatuses((prevStatuses) => ({
                 ...prevStatuses,
                 [selectedOrderId]: 'canceled',
@@ -215,89 +226,38 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
 
         return;
     };
-
-    // console.log('groupedByCartId: ', groupedByCartId);
-    // customerOrder?.map((order: any) => {
-    //     console.log('Customer Order: ', order);
-    // });
-
+    const handleTabChange = (tab: any) => {
+        setActiveTab(tab);
+    };
     return (
-        <div className="flex flex-col gap-y-8 w-full bg-black text-white p-8">
-            {customerOrder && customerOrder.length > 0
-                ? customerOrder.map((orderGroup) => (
-                      <div
-                          key={orderGroup.cart_id}
-                          className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
-                      >
-                          <div className="p-4 bg-gray-700">
-                              Cart ID {orderGroup.cart_id} - Total Items:{' '}
-                              {orderGroup.items.length}
-                              <span
-                                  className="pl-2 text-blue-400 underline underline-offset-1 cursor-pointer"
-                                  onClick={() => {
-                                      handleReorder(orderGroup.items);
-                                  }}
-                              >
-                                  Re-order
-                              </span>
-                          </div>
-                          {orderGroup.items.map((item) => {
-                              const handle =
-                                  item.variant?.product?.handle || 'N/A'; // Grab the handle from the product object
-                              return (
-                                  <div key={item.id}>
-                                      item: {item.id} <br /> Order_id list:{' '}
-                                      {/*{item.order_ids} <br />*/}
-                                      {/*item quantity: {item.quantity}*/}
-                                      <OrderCard
-                                          key={item.id}
-                                          order={item}
-                                          handle={handle} // Pass the handle here
-                                      />
-                                      <LocalizedClientLink
-                                          href={`/account/orders/details/${item.order_ids[0]}`}
-                                          passHref
-                                      >
-                                          <Button colorScheme="blue">
-                                              See details
-                                          </Button>
-                                      </LocalizedClientLink>
-                                      {orderStatuses[orderGroup.cart_id] ===
-                                      'canceled' ? (
-                                          <Button
-                                              colorScheme="red"
-                                              ml={4}
-                                              isDisabled
-                                          >
-                                              Cancellation Requested
-                                          </Button>
-                                      ) : (
-                                          <Button
-                                              variant="solid"
-                                              colorScheme="blue"
-                                              ml={4}
-                                              onClick={() =>
-                                                  openModal(orderGroup.cart_id)
-                                              }
-                                          >
-                                              Request Cancellation
-                                          </Button>
-                                      )}
-                                  </div>
-                              );
-                          })}
-                      </div>
-                  ))
-                : null}
-            <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <Box
+            display="flex"
+            flexDirection="column"
+            gap="4"
+            width="full"
+            color="white"
+            p="8"
+        >
+            <ButtonGroup isAttached justifyContent="center">
+                {Object.values(TABS).map((tab) => (
+                    <Button
+                        key={tab}
+                        onClick={() => handleTabChange(tab)}
+                        {...commonButtonStyles}
+                        isActive={activeTab === tab}
+                    >
+                        {tab}
+                    </Button>
+                ))}
+            </ButtonGroup>
+            {renderTabContent()}
+            <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Request Cancellation</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        <FormControl
-                            isInvalid={!cancelReason && isAttemptedSubmit}
-                        >
+                        <FormControl isInvalid={!cancelReason && isModalOpen}>
                             <Textarea
                                 placeholder="Reason for cancellation"
                                 value={cancelReason}
@@ -305,7 +265,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                                     setCancelReason(e.target.value)
                                 }
                             />
-                            {!cancelReason && isAttemptedSubmit && (
+                            {!cancelReason && isModalOpen && (
                                 <FormErrorMessage>
                                     Cancellation reason is required.
                                 </FormErrorMessage>
@@ -313,7 +273,10 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                         </FormControl>
                     </ModalBody>
                     <ModalFooter>
-                        <Button variant="ghost" onClick={closeModal}>
+                        <Button
+                            variant="ghost"
+                            onClick={() => setIsModalOpen(false)}
+                        >
                             Cancel
                         </Button>
                         <Button
@@ -326,21 +289,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </div>
-    );
-
-    return (
-        <div className="w-full flex flex-col items-center gap-y-4 bg-black text-white p-8">
-            <h2 className="text-large-semi">Nothing to see here</h2>
-            <p className="text-base-regular">
-                You don't have any orders yet, let us change that {':)'}
-            </p>
-            <div className="mt-4">
-                <LocalizedClientLink href="/" passHref>
-                    <Button>Continue shopping</Button>
-                </LocalizedClientLink>
-            </div>
-        </div>
+        </Box>
     );
 };
 

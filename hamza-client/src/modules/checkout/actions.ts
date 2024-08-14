@@ -165,12 +165,15 @@ export async function setPaymentMethod(providerId: string) {
     const cartId = cookies().get('_medusa_cart_id')?.value;
 
     if (!cartId) throw new Error('No cartId cookie found');
+    if (!providerId) throw new Error('No providerId provided');
 
+    console.log(`ProviderID is ${providerId} && cartId is ${cartId}`);
     try {
         const cart = await setPaymentSession({ cartId, providerId });
         revalidateTag('cart');
         return cart;
     } catch (error: any) {
+        console.log(error);
         throw error;
     }
 }

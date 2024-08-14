@@ -5,16 +5,9 @@ import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import React, { Suspense, useEffect, useState } from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
-import ImageGallery from '@modules/products/components/image-gallery';
-import ProductActions from '@modules/products/components/product-actions';
-import ProductOnboardingCta from '@modules/products/components/product-onboarding-cta';
-import ProductTabs from '@modules/products/components/product-tabs';
-import RelatedProducts from '@modules/products/components/related-products';
 // import ProductReview from '@modules/products/components/product-review';
 // import ProductInfo from '@modules/products/templates/product-info';
-import SkeletonRelatedProducts from '@modules/skeletons/templates/skeleton-related-products';
 import { notFound } from 'next/navigation';
-import ProductActionsWrapper from './product-actions-wrapper';
 import { Box, Flex, Divider, Text } from '@chakra-ui/react';
 import PreviewGallery from '../components/product-preview/components/preview-gallery';
 import ProductInfo from '../components/product-preview/components/product-info';
@@ -24,10 +17,9 @@ import ProductReviewMobile from '../components/product-preview/components/produc
 import useProductPreview from '@store/product-preview/product-preview';
 import VendorBanner from '../components/product-preview/components/vendor-banner';
 import SearchBar from '../components/product-preview/components/mobile-search';
-import axios from 'axios';
 import Tweet from '@/components/tweet';
-import { XMark } from '@medusajs/icons';
 import { MdChevronLeft } from 'react-icons/md';
+import { getStoreName } from '@lib/data';
 
 type ProductTemplateProps = {
     product: PricedProduct;
@@ -73,7 +65,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
     ]);
 
     // if (!product || !product.id) {
-    //     return null; // Return null or some error display component
+    //     return null; // Return null or some error display components
     // }
     // console.log(
     //     `Product Page, we have product ${product.id} ${product.handle}`
@@ -83,12 +75,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
         // Fetch Vendor Name from product.id
         const fetchVendor = async () => {
             try {
-                const { data } = await axios.post(
-                    `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/get-store`,
-                    {
-                        product_id: product.id,
-                    }
-                );
+                const data = await getStoreName(product.id as string);
                 // console.log(`Vendor: ${data}`);
                 setVendor(data);
             } catch (error) {
@@ -186,7 +173,6 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                 mt="2rem"
             />
             <ProductReview productId={product.id as string} />
-            <ProductReviewMobile productId={product.id as string} />
         </Flex>
     );
 };

@@ -20,11 +20,11 @@ GET http://localhost:9000/store/products
 Content-Type: application/json
 
 ###
-GET http://localhost:9000/store/custom/products?store_name=Medusa Merch
+GET http://localhost:9000/custom/store/products?store_name=Medusa Merch
 Content-Type: application/json
 
 ### Get All products yayayay
-GET http://localhost:9000/store/custom/all-products
+GET http://localhost:9000/custom/store/products
 Content-Type: application/json
 
 
@@ -43,7 +43,7 @@ GET http://localhost:9000/custom/wishlist
 Content-Type: application/json
 
 {
-  "customer_id": "cus_01HW298CJPT60818GCHWD8GAT7"
+  "customer_id": "cus_01J3CF43WK0QT2591VHG9JT07E"
 }
 
 ###
@@ -112,7 +112,7 @@ POST http://localhost:9000/custom/order
 Content-Type: application/json
 
 {
-  "cart_id": "cart_01J14XTSA3X0TRQQHAPCR8QY2A"
+  "cart_id": "cart_01J3CF7DMR72ZS436EM0NYDCGW"
 }
 
 ### Update Currency
@@ -264,7 +264,7 @@ POST http://localhost:9000/custom/vendors/vendor-store
 Content-Type: application/json
 
 {
-  "store_name": "Goblin Store"
+  "store_name": "Legos"
 }
 
 
@@ -286,7 +286,7 @@ Content-Type: application/json
 
 
 ### Create Notification Types
-POST http://localhost:9000/custom/notification/add-notification
+POST http://localhost:9000/custom/notification/add
 Content-Type: application/json
 
 {
@@ -296,7 +296,7 @@ Content-Type: application/json
 
 
 ### GET All Notifications for Customer
-POST http://localhost:9000/custom/notification/get-notification
+POST http://localhost:9000/custom/notification/get
 Content-Type: application/json
 
 {
@@ -305,7 +305,7 @@ Content-Type: application/json
 
 
 ### Remove All Notifications for Customer
-DELETE http://localhost:9000/custom/notification/remove-notification
+DELETE http://localhost:9000/custom/notification/remove
 Content-Type: application/json
 
 {
@@ -342,7 +342,7 @@ POST http://localhost:9000/custom/order/customer-orders
 Content-Type: application/json
 
 {
-  "customer_id": "cus_01J0WJ5M458YXMWJ2EFBGTAKK1"
+  "customer_id": "cus_01J3CF43WK0QT2591VHG9JT07E"
 }
 
 
@@ -369,3 +369,48 @@ Content-Type: application/json
 {
   "cart_id": "cart_01J1AD0YVD46WW4JWWNE33G2SX"
 }
+
+### GET Request to cancel order
+GET http://localhost:9000/custom/cancel-order/cart_01J3CF7DMR72ZS436EM0NYDCGW
+Content-Type: application/json
+
+
+### Get Specific Customers All Orders METHOD: listCustomerOrders() in order.ts
+GET http://localhost:9000/custom/order/customer-orders?customer_id=cus_01J3CF43WK0QT2591VHG9JT07E&buckets=true
+Content-Type: application/json
+
+
+### Get Single BUCKET
+GET http://localhost:9000/custom/order/customer-order?customer_id=cus_01J3CF43WK0QT2591VHG9JT07E&bucket=1
+
+### PUT cart_id to payment_session record 
+PUT http://localhost:9000/custom/payment-session
+Content-Type: application/json
+
+{
+  "cart_id": "cart_01J3M8J8V2SB9MQY6M13D0Y291",
+  "payment_session_id": "ps_01J3M8JRV4050QQCK59NE75MQZ"
+}
+
+
+### Change Order Status for Development
+PUT http://localhost:9000/custom/order/change-status
+Content-Type: application/json
+
+{
+  "order_id": "order_01J3FN3JXTGQ90KA2XQG1DYFJD",
+  "status": "shipped"
+}
+
+### POST Let's add products...
+POST http://localhost:9000/custom/product/add-product
+Content-Type: application/json
+
+{
+  "keyword": "boxing",
+  "storeId": "store_01J4W6J3RXZ4JDH4XYZZQP4S2R",
+  "collectionId": "pcol_01HSGAMXDJD725MR3VSW63B0RD", 
+  "salesChannelId": "sc_01J4W6GT9V06AQF2G0T01ZPXVE"
+}
+
+

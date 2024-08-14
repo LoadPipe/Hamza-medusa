@@ -27,11 +27,11 @@ export const useCustomerAuthStore = create<State & Actions>()(
     persist(
         (set, get) => ({
             authData: {
-                customer_id: 'empty',
+                customer_id: '',
                 is_verified: false,
                 status: 'unauthenticated',
-                token: 'empty',
-                wallet_address: 'empty',
+                token: '',
+                wallet_address: '',
             },
             preferred_currency_code: null,
             whitelist_config: {

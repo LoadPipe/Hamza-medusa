@@ -11,35 +11,29 @@
             font-family: Arial, sans-serif;
             line-height: 1.6;
         }
-
         .order {
             margin-bottom: 20px;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
-
         .order-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
         }
-
         .order-details {
             margin-bottom: 10px;
         }
-
         .order-items {
             margin-bottom: 10px;
         }
-
         .item {
             display: flex;
             justify-content: space-between;
             margin-bottom: 5px;
         }
-
         .item-image {
             max-width: 100px;
             margin-right: 10px;
@@ -57,7 +51,6 @@
                     <h2>
                         <%= store.storeName %>
                     </h2>
-
                 </div>
                 <% store.orders.forEach(order=> { %>
                     <div class="order-details">
@@ -93,7 +86,6 @@
                             <% }); %>
                     </div>
                     <% }); %>
-
             </div>
             <% } %>
                 <br />

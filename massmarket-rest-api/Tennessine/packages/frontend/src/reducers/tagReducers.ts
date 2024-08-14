@@ -9,7 +9,7 @@ export const SET_ALL_TAGS = "SET_ALL_TAGS";
 export const DESELECT_TAG = "DESELECT_TAG";
 export const SELECT_TAG = "SELECT_TAG";
 export const RESET_TAGS = "RESET_TAGS";
-
+export const CLEAR_ALL_TAGS = "CLEAR_ALL_TAGS";
 export const TURN_ON_SEARCH_VIS = "TURN_ON_SEARCH_VIS";
 export const TURN_OFF_SEARCH_VIS = "TURN_OFF_SEARCH_VIS";
 export const ALL_TAGS = "ALL_TAGS";
@@ -47,6 +47,9 @@ export type allTagsAction =
   | {
       type: "SET_ALL_TAGS";
       payload: { allTags: Map<TagId, ITag> };
+    }
+  | {
+      type: "CLEAR_ALL_TAGS";
     };
 
 export const allTagsReducer = (
@@ -61,6 +64,9 @@ export const allTagsReducer = (
       return _state;
     case SET_ALL_TAGS:
       return action.payload.allTags;
+    case CLEAR_ALL_TAGS:
+      _state.clear();
+      return _state;
     default:
       return state;
   }

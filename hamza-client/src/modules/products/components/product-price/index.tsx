@@ -18,6 +18,7 @@ import {
 } from '@lib/util/get-product-price';
 import { RegionInfo } from 'types/global';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { averageRatings, reviewCounter, getStore } from '@lib/data';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -43,15 +44,9 @@ export default function ProductPrice({
     useEffect(() => {
         const fetchReviewCount = async () => {
             try {
-                const response = await axios.post(
-                    `${BACKEND_URL}/custom/review/count`,
-                    {
-                        product_id: product.id,
-                    },
-                    { headers: { 'Content-Type': 'application/json' } }
-                );
+                const response = await reviewCounter(product.id as string);
                 // console.log(`response.data.count is ${response.data}`);
-                setReviewCount(response.data); // Assuming the response contains the count directly
+                setReviewCount(response); // Assuming the response contains the count directly
             } catch (error) {
                 console.error('Failed to fetch review count:', error);
             }
@@ -59,15 +54,9 @@ export default function ProductPrice({
 
         const fetchAverageRating = async () => {
             try {
-                const response = await axios.post(
-                    `${BACKEND_URL}/custom/review/average`,
-                    {
-                        product_id: product.id,
-                    },
-                    { headers: { 'Content-Type': 'application/json' } }
-                );
+                const response = await averageRatings(product.id as string);
                 // console.log(`response.data.average is ${response.data}`);
-                setAverageRating(response.data); // Assuming the response contains the average directly
+                setAverageRating(response); // Assuming the response contains the average directly
             } catch (error) {
                 console.error('Failed to fetch average rating:', error);
             }
@@ -75,15 +64,9 @@ export default function ProductPrice({
 
         const getStoreName = async () => {
             try {
-                const response = await axios.post(
-                    `${BACKEND_URL}/custom/get-store`,
-                    {
-                        product_id: product.id,
-                    },
-                    { headers: { 'Content-Type': 'application/json' } }
-                );
-                console.log(`STORE NAME is ${response.data}`);
-                setStoreName(response.data);
+                const response = await getStore(product.id as string);
+                console.log(`STORE NAME is ${response}`);
+                setStoreName(response);
             } catch (error) {
                 console.error('Failed to fetch store name:', error);
             }

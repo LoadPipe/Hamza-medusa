@@ -1,48 +1,29 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import ProductReviewService from '../../../../services/product-review';
-import { readRequestBody } from '../../../../utils/request-body';
+import { RouteHandler } from '../../../route-handler';
 
+//TODO: update routes should be PUT instead of POST (and don't need their own folders)
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
-    const logger = req.scope.resolve('logger') as Logger;
     const productReviewService: ProductReviewService = req.scope.resolve(
         'productReviewService'
     );
 
-    const { product_id, reviewUpdates, ratingUpdates, customer_id, order_id } =
-        readRequestBody(req.body, [
-            'product_id',
-            'reviewUpdates',
-            'ratingUpdates',
-            'customer_id',
-            'order_id',
-        ]);
+    const handler: RouteHandler = new RouteHandler(req, res, 'POST', '/custom/review/update', [
+        'product_id',
+        'reviewUpdates',
+        'ratingUpdates',
+        'customer_id',
+        'order_id'
+    ]);
 
-    logger.debug(
-        'product_id: ' +
-            product_id +
-            'reviewUpdates: ' +
-            reviewUpdates +
-            'ratingUpdates: ' +
-            ratingUpdates +
-            'customer_id: ' +
-            customer_id +
-            'order_id: ' +
-            order_id
-    );
-
-    try {
+    await handler.handle(async () => {
         const updatedReview = await productReviewService.updateProduct(
-            product_id,
-            reviewUpdates,
-            ratingUpdates,
-            customer_id,
-            order_id
+            handler.inputParams.product_id,
+            handler.inputParams.reviewUpdates,
+            handler.inputParams.ratingUpdates,
+            handler.inputParams.customer_id,
+            handler.inputParams.order_id
         );
         res.json(updatedReview);
-    } catch (err) {
-        logger.error('Error updating product review:', err);
-        res.status(500).json({
-            error: 'Failed to update product review',
-        });
-    }
+    });
 };

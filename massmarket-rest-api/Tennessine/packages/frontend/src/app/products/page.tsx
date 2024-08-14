@@ -16,6 +16,8 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { createQueryString } from "@/app/utils";
 import SecondaryButton from "@/app/common/components/SecondaryButton";
 import CartButton from "@/app/components/checkout/CartButton";
+import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 const Products = () => {
   const searchParams = useSearchParams();
@@ -31,7 +33,7 @@ const Products = () => {
   const [showTags, setShowTags] = useState<boolean>(false);
   const [tagIdToFilter, setTagIdToFilter] = useState<null | TagId>(null);
   const [gridView, setGridView] = useState<boolean>(true);
-
+  const { isMerchantView } = useAuth();
   const findRemoveTagId = () => {
     for (const [key, value] of allTags.entries()) {
       if (value.text && value.text === "remove") {
@@ -137,37 +139,48 @@ const Products = () => {
         publishedTagId && item.tagIds && item.tagIds.includes(publishedTagId);
 
       return (
-        <div
-          onClick={() => viewProductDetails(item)}
-          key={item.id}
-          className={`flex flex-col text-center mb-3 ${!visible ? "opacity-50" : ""} `}
-        >
-          <p className="text-xs" data-testid={`product-name`}>
-            {metadata.name}
-          </p>
-
+        <div key={item.id}>
           <div
-            className="product-box gap-2 flex flex-col text-center border-2 p-3 rounded-xl bg-white"
-            data-testid={`product-${metadata.name}`}
+            onClick={() => viewProductDetails(item)}
+            className={`flex flex-col text-center mb-3 ${!visible ? "opacity-50" : ""} `}
           >
-            <div className="flex justify-center">
-              <Image
-                src={metadata.image || "/assets/no-image.png"}
-                // src={"/assets/example-item.jpeg" || "/assets/no-image.png"}
-                width={85}
-                height={60}
-                alt="product-thumb"
-                unoptimized={true}
-                style={{ maxHeight: "60px", maxWidth: "85px" }}
-                onError={(e) => {
-                  (e.target as HTMLImageElement).onerror = null;
-                  (e.target as HTMLImageElement).src = "/assets/no-image.png";
-                }}
-              />
+            <p className="text-xs" data-testid={`product-name`}>
+              {metadata.name}
+            </p>
+
+            <div
+              className="mt-2 product-box gap-2 flex flex-col text-center border-2 p-3 rounded-xl bg-white"
+              data-testid={`product-${metadata.name}`}
+            >
+              <div className="flex justify-center">
+                <Image
+                  src={metadata.image || "/assets/no-image.png"}
+                  width={85}
+                  height={60}
+                  alt="product-thumb"
+                  unoptimized={true}
+                  style={{ maxHeight: "60px", maxWidth: "85px" }}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).onerror = null;
+                    (e.target as HTMLImageElement).src = "/assets/no-image.png";
+                  }}
+                />
+              </div>
+              <h4>{Number(item.price).toFixed(0)}</h4>
+              <p className="text-sm text-gray-400">{item.stockQty} left</p>
             </div>
-            <h4>{item.price}</h4>
-            <p className="text-sm text-gray-400">{item.stockQty} left</p>
           </div>
+          {isMerchantView && (
+            <div className="mt-2">
+              <SecondaryButton>
+                <Link
+                  href={`/products/edit?${createQueryString("itemId", item.id, searchParams)}`}
+                >
+                  Edit
+                </Link>
+              </SecondaryButton>
+            </div>
+          )}
         </div>
       );
     });

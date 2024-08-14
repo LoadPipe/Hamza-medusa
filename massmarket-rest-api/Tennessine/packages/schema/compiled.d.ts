@@ -2034,6 +2034,9 @@ export namespace market {
 
       /** UpdateOrder orderCanceled */
       orderCanceled?: market.mass.UpdateOrder.IOrderCanceled | null;
+
+      /** UpdateOrder updateShippingDetails */
+      updateShippingDetails?: market.mass.UpdateOrder.IAddressDetails | null;
     }
 
     /** Represents an UpdateOrder. */
@@ -2059,8 +2062,15 @@ export namespace market {
       /** UpdateOrder orderCanceled. */
       public orderCanceled?: market.mass.UpdateOrder.IOrderCanceled | null;
 
+      /** UpdateOrder updateShippingDetails. */
+      public updateShippingDetails?: market.mass.UpdateOrder.IAddressDetails | null;
+
       /** UpdateOrder action. */
-      public action?: "changeItems" | "itemsFinalized" | "orderCanceled";
+      public action?:
+        | "changeItems"
+        | "itemsFinalized"
+        | "orderCanceled"
+        | "updateShippingDetails";
 
       /**
        * Creates a new UpdateOrder instance using the specified properties.
@@ -2558,6 +2568,155 @@ export namespace market {
 
         /**
          * Gets the default type url for OrderCanceled
+         * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
+         * @returns The default type url
+         */
+        public static getTypeUrl(typeUrlPrefix?: string): string;
+      }
+
+      /** Properties of an AddressDetails. */
+      interface IAddressDetails {
+        /** AddressDetails name */
+        name?: string | null;
+
+        /** AddressDetails address1 */
+        address1?: string | null;
+
+        /** AddressDetails address2 */
+        address2?: string | null;
+
+        /** AddressDetails city */
+        city?: string | null;
+
+        /** AddressDetails postalCode */
+        postalCode?: string | null;
+
+        /** AddressDetails country */
+        country?: string | null;
+
+        /** AddressDetails phoneNumber */
+        phoneNumber?: string | null;
+      }
+
+      /** Represents an AddressDetails. */
+      class AddressDetails implements IAddressDetails {
+        /**
+         * Constructs a new AddressDetails.
+         * @param [properties] Properties to set
+         */
+        constructor(properties?: market.mass.UpdateOrder.IAddressDetails);
+
+        /** AddressDetails name. */
+        public name: string;
+
+        /** AddressDetails address1. */
+        public address1: string;
+
+        /** AddressDetails address2. */
+        public address2: string;
+
+        /** AddressDetails city. */
+        public city: string;
+
+        /** AddressDetails postalCode. */
+        public postalCode: string;
+
+        /** AddressDetails country. */
+        public country: string;
+
+        /** AddressDetails phoneNumber. */
+        public phoneNumber: string;
+
+        /**
+         * Creates a new AddressDetails instance using the specified properties.
+         * @param [properties] Properties to set
+         * @returns AddressDetails instance
+         */
+        public static create(
+          properties?: market.mass.UpdateOrder.IAddressDetails,
+        ): market.mass.UpdateOrder.AddressDetails;
+
+        /**
+         * Encodes the specified AddressDetails message. Does not implicitly {@link market.mass.UpdateOrder.AddressDetails.verify|verify} messages.
+         * @param message AddressDetails message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encode(
+          message: market.mass.UpdateOrder.IAddressDetails,
+          writer?: $protobuf.Writer,
+        ): $protobuf.Writer;
+
+        /**
+         * Encodes the specified AddressDetails message, length delimited. Does not implicitly {@link market.mass.UpdateOrder.AddressDetails.verify|verify} messages.
+         * @param message AddressDetails message or plain object to encode
+         * @param [writer] Writer to encode to
+         * @returns Writer
+         */
+        public static encodeDelimited(
+          message: market.mass.UpdateOrder.IAddressDetails,
+          writer?: $protobuf.Writer,
+        ): $protobuf.Writer;
+
+        /**
+         * Decodes an AddressDetails message from the specified reader or buffer.
+         * @param reader Reader or buffer to decode from
+         * @param [length] Message length if known beforehand
+         * @returns AddressDetails
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decode(
+          reader: $protobuf.Reader | Uint8Array,
+          length?: number,
+        ): market.mass.UpdateOrder.AddressDetails;
+
+        /**
+         * Decodes an AddressDetails message from the specified reader or buffer, length delimited.
+         * @param reader Reader or buffer to decode from
+         * @returns AddressDetails
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        public static decodeDelimited(
+          reader: $protobuf.Reader | Uint8Array,
+        ): market.mass.UpdateOrder.AddressDetails;
+
+        /**
+         * Verifies an AddressDetails message.
+         * @param message Plain object to verify
+         * @returns `null` if valid, otherwise the reason why it is not
+         */
+        public static verify(message: { [k: string]: any }): string | null;
+
+        /**
+         * Creates an AddressDetails message from a plain object. Also converts values to their respective internal types.
+         * @param object Plain object
+         * @returns AddressDetails
+         */
+        public static fromObject(object: {
+          [k: string]: any;
+        }): market.mass.UpdateOrder.AddressDetails;
+
+        /**
+         * Creates a plain object from an AddressDetails message. Also converts values to other types if specified.
+         * @param message AddressDetails
+         * @param [options] Conversion options
+         * @returns Plain object
+         */
+        public static toObject(
+          message: market.mass.UpdateOrder.AddressDetails,
+          options?: $protobuf.IConversionOptions,
+        ): { [k: string]: any };
+
+        /**
+         * Converts this AddressDetails to JSON.
+         * @returns JSON object
+         */
+        public toJSON(): { [k: string]: any };
+
+        /**
+         * Gets the default type url for AddressDetails
          * @param [typeUrlPrefix] your custom typeUrlPrefix(default "type.googleapis.com")
          * @returns The default type url
          */

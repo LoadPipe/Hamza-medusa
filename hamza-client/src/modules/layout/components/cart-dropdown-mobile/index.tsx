@@ -65,7 +65,7 @@ const CartDropdown = ({
         open();
     };
 
-    // Clean up the timer when the component unmounts
+    // Clean up the timer when the components unmounts
     useEffect(() => {
         return () => {
             if (activeTimer) {

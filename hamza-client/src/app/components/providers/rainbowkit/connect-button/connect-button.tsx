@@ -3,6 +3,7 @@ import { Box, Button, Text, Flex, Image } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { formatAddress } from '@lib/util/format-address';
 import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
+import { getAllowedChainsFromConfig } from '../rainbowkit-utils/rainbow-utils';
 
 export const WalletConnectButton = () => {
     return (
@@ -16,7 +17,7 @@ export const WalletConnectButton = () => {
                 authenticationStatus,
                 mounted,
             }) => {
-                // Ensure the component is ready and not in a loading state
+                // Ensure the components is ready and not in a loading state
                 const ready = mounted && authenticationStatus !== 'loading';
                 const connected =
                     ready &&
@@ -63,7 +64,8 @@ export const WalletConnectButton = () => {
                                     </Flex>
                                 );
                             }
-                            if (chain && chain.unsupported) {
+                            //if (chain && chain.unsupported) {
+                            if (chain && chain.id != getAllowedChainsFromConfig()[0]) {
                                 return (
                                     <button
                                         onClick={openChainModal}
@@ -87,11 +89,11 @@ export const WalletConnectButton = () => {
                                         alignSelf={'center'}
                                         backgroundColor={'#2C272D'}
                                     >
-                                        {chain.iconUrl && (
+                                        {chain?.iconUrl && (
                                             <Image
                                                 alignSelf={'center'}
                                                 alt={`${chain.name ?? 'Chain'} icon`}
-                                                src={chain.iconUrl}
+                                                src={chain?.iconUrl}
                                             />
                                         )}
                                     </Box>

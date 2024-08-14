@@ -54,7 +54,31 @@ const chainConfig: any = {
             },
         },
         usdt: {
-            contract_address: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+            contract_address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+            precision: {
+                db: 2,
+                native: 6,
+            },
+        },
+        eth: {
+            contract_address: '0x0000000000000000000000000000000000000000',
+            precision: {
+                db: 8,
+                native: 18,
+            },
+        },
+    },
+    10: {
+        chain_name: 'optimism',
+        usdc: {
+            contract_address: '0x0b2c639c533813f4aa9d7837caf62653d097ff85',
+            precision: {
+                db: 2,
+                native: 6,
+            },
+        },
+        usdt: {
+            contract_address: '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58',
             precision: {
                 db: 2,
                 native: 6,

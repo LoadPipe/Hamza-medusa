@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ReviewCardMobile from './review-card-mobile';
 import { Text, Flex, Box } from '@chakra-ui/react';
 import axios from 'axios';
+import { reviewResponse } from '@lib/data';
 
 const fakeReviews = [
     {
@@ -29,44 +30,22 @@ const fakeReviews = [
 const ProductReviewMobile = ({ productId }: { productId: string }) => {
     const [reviews, setReviews] = useState<any>([]);
     const reviewDataFetcher = async () => {
-        let res = await axios.post(
-            `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/review/all-reviews`,
-            {
-                product_id: productId,
-            }
-        );
+        let res = await reviewResponse(productId);
 
-        if (res.data) {
-            if (res.data.length < 2) {
-                setReviews([
-                    ...fakeReviews,
-                    ...res.data.map((a: any) => {
-                        return {
-                            id: a.id,
-                            name:
-                                `${a.customer.first_name} ${a.customer.last_name}` ||
-                                'Anonymous Customer',
-                            location: 'US',
-                            review: a.content,
-                            stars: a.rating,
-                        };
-                    }),
-                ]);
-            } else {
-                setReviews([
-                    ...res.data.map((a: any) => {
-                        return {
-                            id: a.id,
-                            name:
-                                `${a.customer.first_name} ${a.customer.last_name}` ||
-                                'Anonymous Customer',
-                            location: 'US',
-                            review: a.content,
-                            stars: a.rating,
-                        };
-                    }),
-                ]);
-            }
+        if (res) {
+            setReviews([
+                ...res.map((a: any) => {
+                    return {
+                        id: a.id,
+                        name:
+                            `${a.customer.first_name} ${a.customer.last_name}` ||
+                            'Anonymous Customer',
+                        location: 'US',
+                        review: a.content,
+                        stars: a.rating,
+                    };
+                }),
+            ]);
         }
 
         return;
@@ -78,7 +57,7 @@ const ProductReviewMobile = ({ productId }: { productId: string }) => {
             reviewDataFetcher();
         }
     }, [productId]);
-    return (
+    return reviews.length > 0 ? (
         <Flex
             maxW="1280px"
             width={'100%'}
@@ -105,7 +84,10 @@ const ProductReviewMobile = ({ productId }: { productId: string }) => {
                 </Flex>
             </Flex>
         </Flex>
-    );
+    ) : (<div><br />
+        <Text color='white'>
+            This product has no reviews or ratings
+        </Text><br /><br /></div>);
 };
 
 export default ProductReviewMobile;

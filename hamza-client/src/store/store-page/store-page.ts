@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 
 // Define the state and associated actions in an interface
 interface StoreState {

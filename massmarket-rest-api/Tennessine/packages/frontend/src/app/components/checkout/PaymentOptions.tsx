@@ -7,17 +7,27 @@ import QRScan from "@/app/components/transactions/QRScan";
 import WalletConnectQR from "../transactions/WalletConnectQR";
 
 const PaymentOptions = ({
-  next,
   imgSrc,
   totalDollar,
   purchaseAddress,
   cryptoTotal,
+  name,
+  address,
+  city,
+  zip,
+  country,
+  number,
 }: {
-  next: () => void;
   imgSrc: string;
   totalDollar: string;
   purchaseAddress: string;
   cryptoTotal: string;
+  name: string;
+  address: string;
+  city: string;
+  zip: string;
+  country: string;
+  number: string;
 }) => {
   const [showPaymentOptions, setShowPaymentOptions] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<"QR" | "Address" | null>(null);
@@ -39,8 +49,11 @@ const PaymentOptions = ({
         <p className="text-center">Your order will be sent to:</p>
         <div className="ml-2 mt-4 flex gap-1 border-2 items-center border-gray-300 rounded-xl p-3">
           <div>
-            <p>Antimo Farid</p>
-            <p>928 Kingsway, London. NW46 9MY</p>
+            <p>{name}</p>
+            <p>{number}</p>
+            <p>
+              {address}, {city}, {country}, {zip}
+            </p>
           </div>
           <div className="ml-auto">
             <SecondaryButton>EDIT</SecondaryButton>
@@ -85,7 +98,6 @@ const PaymentOptions = ({
             />
           </div>
         </SecondaryButton>
-        <button onClick={next}>see next</button>
       </div>
     </div>
   );

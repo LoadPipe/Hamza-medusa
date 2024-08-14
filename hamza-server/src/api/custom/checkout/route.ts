@@ -1,6 +1,6 @@
 import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import OrderService from '../../../services/order';
-import { readRequestBody } from '../../../utils/request-body';
+import { RouteHandler } from '../../route-handler';
 
 interface ICheckoutData {
     order_id: string;
@@ -16,6 +16,32 @@ interface ICheckoutData {
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
+
+    const handler: RouteHandler = new RouteHandler(
+        req, res, 'GET', '/custom/checkout'
+    );
+
+    await handler.handle(async () => {
+        const orders = await orderService.getOrdersForCart(req.query.cart_id.toString());
+        const output: ICheckoutData[] = [];
+        orders.forEach((o) => {
+            output.push({
+                order_id: o.id,
+                cart_id: o.cart_id,
+                wallet_address: o.store?.owner?.wallet_address ?? '',
+                currency_code: o.payments[0].currency_code,
+                amount: o.payments[0].amount,
+                massmarket_amount: o.massmarket_amount,
+                massmarket_order_id: o.massmarket_order_id,
+                massmarket_ttl: o.massmarket_ttl,
+                orders,
+            });
+        });
+        handler.logger.debug(`returning checkout data: ${output}`);
+        res.send({ orders: output });
+    });
+
+    /*
     const logger: Logger = req.scope.resolve('logger');
     const { cart_id } = req.query;
 
@@ -41,41 +67,28 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         logger.error(e);
         res.send({ message: e.message });
     }
+    */
 };
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
-    const logger: Logger = req.scope.resolve('logger');
-    //const { cart_id, transaction_id, payer_address, escrow_contract_address } =
-    //    req.body;
-    const {
-        cartProducts,
-        cart_id,
-        transaction_id,
-        payer_address,
-        escrow_contract_address = [],
-    } = readRequestBody(req.body, [
-        'cartProducts',
+
+    const handler: RouteHandler = new RouteHandler(
+        req, res, 'POST', '/custom/checkout', ['cartProducts',
         'cart_id',
         'transaction_id',
         'payer_address',
-        'escrow_contract_address',
+        'escrow_contract_address'
     ]);
 
-    try {
-        logger.debug(
-            `Cart in the route: ${cartProducts} ${typeof cartProducts}`
-        );
+    await handler.handle(async () => {
         await orderService.finalizeCheckout(
-            cartProducts,
-            cart_id,
-            transaction_id,
-            payer_address,
-            escrow_contract_address
+            handler.inputParams.cartProducts,
+            handler.inputParams.cart_id,
+            handler.inputParams.transaction_id,
+            handler.inputParams.payer_address,
+            handler.inputParams.escrow_contract_address
         );
         res.send(true);
-    } catch (e) {
-        logger.error(e);
-        res.send({ message: e.message });
-    }
+    });
 };

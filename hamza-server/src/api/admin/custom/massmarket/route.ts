@@ -1,5 +1,6 @@
-import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
-//import { RelayClientWrapper } from '../../../../massmarket/client';
+import { MedusaRequest, MedusaResponse, Logger, Product } from '@medusajs/medusa';
+import { RouteHandler } from '../../../route-handler';
+import { Config } from '../../../../config';
 
 const productsToIds = {
     //Medusa Merch
@@ -114,9 +115,6 @@ const storesToIds = {
     },
 };
 
-/*
-
-*/
 
 async function updateStoreForMM(
     storeRepository,
@@ -149,28 +147,27 @@ async function updateStoreForMM(
 }
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
-    const userService = req.scope.resolve('userService');
     const storeService = req.scope.resolve('storeService');
     const storeRepository = req.scope.resolve('storeRepository');
     const productService = req.scope.resolve('productService');
-    const logger = req.scope.resolve('logger') as Logger;
 
-    try {
-        const stores = await storeService.getStores();
-        for (let store of stores) {
-            await updateStoreForMM(
-                storeRepository,
-                productService,
-                store.id,
-                store.name
-            );
+    const handler: RouteHandler = new RouteHandler(
+        req, res, 'POST', '/admin/custom/massmarket',
+    );
+
+    await handler.handle(async () => {
+        if (Config.dataSeed != 'alt1') {
+            const stores = await storeService.getStores();
+            for (let store of stores) {
+                await updateStoreForMM(
+                    storeRepository,
+                    productService,
+                    store.id,
+                    store.name
+                );
+            }
         }
 
         return res.json({ ok: true });
-    } catch (error) {
-        logger.error(error);
-        return res
-            .status(500)
-            .json({ message: 'Internal server error', error: error.message });
-    }
+    });
 };

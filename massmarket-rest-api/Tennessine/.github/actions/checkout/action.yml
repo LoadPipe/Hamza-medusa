@@ -1,0 +1,82 @@
+# SPDX-FileCopyrightText: 2024 Mass Labs
+#
+# SPDX-License-Identifier: MIT
+
+# .github/actions/checkout/action.yml
+
+# source: https://github.com/actions/checkout/issues/512#issuecomment-1264735491
+
+# This is essentially the same as actions/checkout, but will
+# fallback to the default branch if the ref does not exist.
+# https://github.com/actions/checkout
+
+name: Checkout
+
+inputs:
+  fetch-depth:
+    default: 1
+    required: false
+    type: number
+  path:
+    default: ""
+    required: false
+    type: string
+  repository:
+    default: ${{ github.repository }}
+    required: false
+    type: string
+  ref:
+    default: ""
+    required: true
+    type: string
+  ssh-key:
+    description: SSH key used to fetch the repository
+  fallback-branch:
+    default: "main"
+    required: false
+    type: string
+
+runs:
+  using: composite
+
+  steps:
+    - id: repo
+      shell: bash
+      run: |
+        echo "${{ inputs.ssh-key }}" > ssh_keyfile
+        chmod 600 ssh_keyfile
+        # for sandboxed install
+        # export GIT_SSH_COMMAND="ssh -i ssh_keyfile -o IdentitiesOnly=yes -o UserKnownHostsFile=/run/github-runner/ssh_known_hosts"
+        export GIT_SSH_COMMAND="ssh -i ssh_keyfile -o IdentitiesOnly=yes"
+        if [[ "${{ inputs.ssh-key }}" = "" ]]
+        then
+          export GIT_CHECKOUT_URL="https://github.com/${{ inputs.repository }}.git"
+        else
+          export GIT_CHECKOUT_URL="git@github.com:${{ inputs.repository }}.git"
+        fi
+        if git ls-remote --heads --quiet --exit-code $GIT_CHECKOUT_URL ${{ inputs.ref }}
+        then
+          echo "::notice::Checkout: ${{ inputs.repository }} using ${{ inputs.ref }}"
+          echo "ref-exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "::notice::Checkout: ${{ inputs.repository }} does not have ref ${{ inputs.ref }} (fallback to ${{ inputs.fallback-branch }})"
+          echo "ref-exists=false" >> $GITHUB_OUTPUT
+        fi
+
+    - if: steps.repo.outputs.ref-exists == 'true'
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: ${{ inputs.fetch-depth }}
+        path: ${{ inputs.path }}
+        repository: ${{ inputs.repository }}
+        ref: ${{ inputs.ref }}
+        ssh-key: ${{ inputs.ssh-key }}
+
+    - if: steps.repo.outputs.ref-exists == 'false'
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: ${{ inputs.fetch-depth }}
+        path: ${{ inputs.path }}
+        repository: ${{ inputs.repository }}
+        ref: ${{ inputs.fallback-branch }}
+        ssh-key: ${{ inputs.ssh-key }}

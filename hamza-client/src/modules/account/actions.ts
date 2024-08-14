@@ -19,6 +19,7 @@ import {
     StorePostCustomersCustomerReq,
     StorePostCustomersReq,
 } from '@medusajs/medusa';
+import toast from 'react-hot-toast';
 
 declare class StorePostAuthReqCustom {
     email: string;

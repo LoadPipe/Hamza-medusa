@@ -1,31 +1,24 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import ProductReviewService from 'src/services/product-review';
-import { readRequestBody } from '../../../../utils/request-body';
+import { RouteHandler } from '../../../route-handler';
+
+//TODO: this and all-reviews, all-customer-reviews, customer-reviews, etc. can be consolidated 
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
-    const logger = req.scope.resolve('logger') as Logger;
     const productReviewService: ProductReviewService = req.scope.resolve(
         'productReviewService'
     );
 
-    const { product_id, customer_id } = readRequestBody(req.body, [
+    const handler: RouteHandler = new RouteHandler(req, res, 'POST', '/custom/review/customer-reviews', [
         'product_id',
-        'customer_id',
+        'customer_id'
     ]);
-    logger.debug(
-        `Product ID is: ${product_id}, Customer ID is: ${customer_id}`
-    );
 
-    try {
+    await handler.handle(async () => {
         const reviews = await productReviewService.getCustomerReviews(
-            product_id,
-            customer_id
+            handler.inputParams.product_id,
+            handler.inputParams.customer_id
         );
         res.json(reviews);
-    } catch (err) {
-        logger.error('Error fetching product reviews:', err);
-        res.status(500).json({
-            error: 'Failed to fetch product reviews',
-        });
-    }
+    });
 };

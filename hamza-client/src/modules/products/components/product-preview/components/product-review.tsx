@@ -12,6 +12,7 @@ import {
     TiStarHalfOutline,
     TiStarOutline,
 } from 'react-icons/ti';
+import { allReviews } from '@lib/data';
 
 const fakeReviews = [
     {
@@ -59,45 +60,11 @@ const ProductReview = ({ productId }: { productId: string }) => {
     ];
 
     const reviewDataFetcher = async () => {
-        let res = await axios.post(
-            `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/review/all-reviews`,
-            {
-                product_id: productId,
-            }
-        );
-        if (res.data) {
-            if (res.data.length < 2) {
-                console.log('setting ', [
-                    ...fakeReviews,
-                    ...res.data.map((a: any) => {
-                        return {
-                            id: a.id,
-                            name:
-                                `${a.customer.first_name} ${a.customer.last_name}` ||
-                                'Anonymous Customer',
-                            location: 'US',
-                            review: a.content,
-                            stars: a.rating,
-                        };
-                    }),
-                ]);
+        let res = await allReviews(productId);
+        if (res) {
+            if (reviews.length > 0) {
                 setReviews([
-                    ...fakeReviews,
-                    ...res.data.map((a: any) => {
-                        return {
-                            id: a.id,
-                            name:
-                                `${a.customer.first_name} ${a.customer.last_name}` ||
-                                'Anonymous Customer',
-                            location: 'US',
-                            review: a.content,
-                            stars: a.rating,
-                        };
-                    }),
-                ]);
-            } else {
-                setReviews([
-                    ...res.data.map((a: any) => {
+                    ...res.map((a: any) => {
                         return {
                             id: a.id,
                             name:
@@ -121,7 +88,7 @@ const ProductReview = ({ productId }: { productId: string }) => {
             reviewDataFetcher();
         }
     }, [productId]);
-    return (
+    return reviews.length > 0 ? (
         <Flex
             maxW="1280px"
             my="2rem"
@@ -195,7 +162,10 @@ const ProductReview = ({ productId }: { productId: string }) => {
                 </Flex>
             </Flex>
         </Flex>
-    );
+    ) : (<div><br />
+        <Text color='white'>
+            This product has no reviews or ratings
+        </Text><br /><br /></div>);
 };
 
 export default ProductReview;
