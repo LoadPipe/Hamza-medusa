@@ -115,7 +115,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             for (const currency of currencies) {
                 prices.push({
                     currency_code: currency, amount: await priceConverter.getPrice(
-                        { baseAmount, baseCurrency: 'rmb', toCurrency: currency }
+                        { baseAmount, baseCurrency: 'cny', toCurrency: currency }
                     )
                 });
             }
