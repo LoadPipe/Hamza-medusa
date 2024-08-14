@@ -23,8 +23,5 @@ export class Order extends MedusaOrder {
     massmarket_amount?: string;
 
     @Column()
-    bucky_order_no?: string;
-
-    @Column()
-    bucky_partner_order_no?: string;
+    bucky_metadata?: string;
 }
