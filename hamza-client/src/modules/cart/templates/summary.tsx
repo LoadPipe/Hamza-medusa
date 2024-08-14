@@ -18,16 +18,17 @@ const Summary = ({ cart }: SummaryProps) => {
             flexDir={'column'}
             mt={{ base: '1rem', md: '0' }}
             ml={{ base: '0', md: 'auto' }}
-            p="40px"
+            p={{ base: '16px', md: '40px' }}
+            height="auto"
+            alignSelf="flex-start"
             maxW={{ base: '100%', md: '401px' }}
             width={'100%'}
-            height={'450px'}
             backgroundColor={'#121212'}
             borderRadius={'16px'}
         >
             <Text
                 color="primary.green.900"
-                fontSize={'18px'}
+                fontSize={{ base: '16px', md: '18px' }}
                 fontWeight={700}
                 mb="1rem"
             >
@@ -41,9 +42,9 @@ const Summary = ({ cart }: SummaryProps) => {
                     backgroundColor={'primary.indigo.900'}
                     color={'white'}
                     width={'100%'}
-                    height={'52px'}
+                    height={{ base: '42px', md: '52px' }}
                     borderRadius={'full'}
-                    fontSize={'16px'}
+                    fontSize={{ base: '14px', md: '16px' }}
                     _hover={{
                         backgroundColor: 'white',
                         color: 'black',

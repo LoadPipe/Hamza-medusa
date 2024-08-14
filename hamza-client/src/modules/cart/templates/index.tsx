@@ -50,27 +50,17 @@ const CartTemplate = ({
                 >
                     {/* gap="24px" */}
                     <Flex flexDirection={'column'} flex={1} gap="24px">
-                        <Flex
-                            maxW={'830px'}
-                            width={'100%'}
-                            height={'540px'}
-                            py={'40px'}
-                            px={'45px'}
-                            borderRadius={'16px'}
-                            backgroundColor={'#121212'}
-                        >
-                            {/* {!customer && (
+                        {/* {!customer && (
                                     <>
                                         <SignInPrompt />
                                         <Divider />
                                     </>
                                 )} */}
-                            {/* Cart Items */}
-                            <ItemsTemplate
-                                region={cart?.region}
-                                items={cart?.items}
-                            />
-                        </Flex>
+                        {/* Cart Items */}
+                        <ItemsTemplate
+                            region={cart?.region}
+                            items={cart?.items}
+                        />
 
                         {/* Shipping Address */}
 

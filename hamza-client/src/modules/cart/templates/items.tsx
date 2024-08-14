@@ -16,7 +16,16 @@ type ItemsTemplateProps = {
 
 const ItemsTemplate = ({ items, region }: ItemsTemplateProps) => {
     return (
-        <Box width={'100%'}>
+        <Flex
+            flexDir={'column'}
+            maxW={'830px'}
+            width={'100%'}
+            height={'540px'}
+            py={'40px'}
+            px={'45px'}
+            borderRadius={'16px'}
+            backgroundColor={'#121212'}
+        >
             <Flex>
                 <Radio mr="2rem" />
                 <Text
@@ -46,7 +55,7 @@ const ItemsTemplate = ({ items, region }: ItemsTemplateProps) => {
                           return <SkeletonLineItem key={i} />;
                       })}
             </Box>
-        </Box>
+        </Flex>
     );
 };
 

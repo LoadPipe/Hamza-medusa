@@ -69,24 +69,30 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
             <Flex flexDirection={'column'} color="white">
                 {subtotals['eth'] && (
                     <Flex color={'white'}>
-                        <Text fontSize={{ md: '16px' }}>Subtotal</Text>
-                        <Text ml="auto" fontSize={'16px'}>
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
+                            Subtotal
+                        </Text>
+                        <Text ml="auto" fontSize={{ base: '14px', md: '16px' }}>
                             {formatCryptoPrice(subtotals['eth'], 'eth')} ETH
                         </Text>
                     </Flex>
                 )}
                 {subtotals['usdt'] && (
                     <Flex color={'white'}>
-                        <Text fontSize={{ md: '16px' }}>Subtotal</Text>
-                        <Text ml="auto" fontSize={'16px'}>
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
+                            Subtotal
+                        </Text>
+                        <Text ml="auto" fontSize={{ base: '14px', md: '16px' }}>
                             {formatCryptoPrice(subtotals['usdt'], 'usdt')} USDT
                         </Text>
                     </Flex>
                 )}
                 {subtotals['usdc'] && (
                     <Flex color={'white'}>
-                        <Text fontSize={{ md: '16px' }}>Subtotal</Text>
-                        <Text ml="auto" fontSize={'16px'}>
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
+                            Subtotal
+                        </Text>
+                        <Text ml="auto" fontSize={{ base: '14px', md: '16px' }}>
                             {formatCryptoPrice(subtotals['usdc'], 'usdc')} USDC
                         </Text>
                     </Flex>
@@ -101,19 +107,24 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                         <span>Gift card</span>
                     </div>
                 )}
-                <div className="flex items-center justify-between">
-                    <span>Shipping</span>
-                    <span>
+
+                <Flex>
+                    <Text fontSize={{ base: '14px', md: '16px' }}>
+                        Shipping
+                    </Text>
+                    <Text ml="auto" fontSize={{ base: '14px', md: '16px' }}>
                         {formatCryptoPrice(
                             shipping_total!,
                             preferred_currency_code!
-                        ).toString()}{' '}
+                        ).toString()}
                         {preferred_currency_code?.toUpperCase()}
-                    </span>
-                </div>
-                <Flex className="flex justify-between">
-                    <Text fontSize={{ md: '16px' }}>Taxes</Text>
-                    <Text ml="auto">{getAmount(tax_total).toString()}</Text>
+                    </Text>
+                </Flex>
+                <Flex>
+                    <Text fontSize={{ base: '14px', md: '16px' }}>Taxes</Text>
+                    <Text ml="auto" fontSize={{ base: '14px', md: '16px' }}>
+                        {getAmount(tax_total).toString()}
+                    </Text>
                 </Flex>
             </Flex>
             {/* <div className="h-px w-full border-b border-gray-200 mt-4" /> */}
@@ -128,30 +139,51 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
             />
             {subtotals['eth'] && (
                 <Flex color={'white'}>
-                    <Text fontSize={{ md: '16px' }} alignSelf={'center'}>
+                    <Text
+                        fontSize={{ base: '15px', md: '16px' }}
+                        alignSelf={'center'}
+                    >
                         Total
                     </Text>
-                    <Text ml="auto" fontSize={'24px'} fontWeight={700}>
+                    <Text
+                        ml="auto"
+                        fontSize={{ base: '15px', md: '24px' }}
+                        fontWeight={700}
+                    >
                         {formatCryptoPrice(subtotals['eth'], 'eth')} ETH
                     </Text>
                 </Flex>
             )}
             {subtotals['usdt'] && (
                 <Flex color={'white'}>
-                    <Text fontSize={{ md: '16px' }} alignSelf={'center'}>
+                    <Text
+                        fontSize={{ base: '15px', md: '16px' }}
+                        alignSelf={'center'}
+                    >
                         Total
                     </Text>
-                    <Text ml="auto" fontSize={'24px'} fontWeight={700}>
+                    <Text
+                        ml="auto"
+                        fontSize={{ base: '15px', md: '24px' }}
+                        fontWeight={700}
+                    >
                         {formatCryptoPrice(subtotals['usdt'], 'usdt')} USDT
                     </Text>
                 </Flex>
             )}
             {subtotals['usdc'] && (
                 <Flex color={'white'}>
-                    <Text fontSize={{ md: '16px' }} alignSelf={'center'}>
+                    <Text
+                        fontSize={{ base: '15px', md: '16px' }}
+                        alignSelf={'center'}
+                    >
                         Total
                     </Text>
-                    <Text ml="auto" fontSize={'24px'} fontWeight={700}>
+                    <Text
+                        ml="auto"
+                        fontSize={{ base: '15px', md: '24px' }}
+                        fontWeight={700}
+                    >
                         {formatCryptoPrice(subtotals['usdc'], 'usdc')} USDC
                     </Text>
                 </Flex>

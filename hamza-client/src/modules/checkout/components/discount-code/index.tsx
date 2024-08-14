@@ -62,8 +62,8 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
             <Input
                 borderLeftRadius={'12px'}
                 width={'100%'}
-                fontSize={'16px'}
-                height={'52px'}
+                fontSize={{ base: '15px', md: '16px' }}
+                height={{ base: '50px', md: '52px' }}
                 placeholder="Discount Code"
                 backgroundColor={'black'}
                 borderWidth={'0'}
@@ -71,8 +71,8 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
             <Button
                 borderLeftRadius={'0'}
                 borderRightRadius={'12px'}
-                fontSize={'16px'}
-                height={'52px'}
+                fontSize={{ base: '15px', md: '16px' }}
+                height={{ base: '50px', md: '52px' }}
                 width={'82px'}
                 backgroundColor={'primary.green.900'}
                 color={'black'}
