@@ -61,9 +61,17 @@ export class CurrencyConversionClient {
             switch (baseCurrency) {
                 case '0x0000000000000000000000000000000000000000':
                     return 2517.26;
-                default:
+                case 'rmb':
                     if (toCurrency !== '0x0000000000000000000000000000000000000000')
+                        return 0.14;
+                    else
+                        return 0.000051;
+                default:
+                    if (toCurrency !== '0x0000000000000000000000000000000000000000') {
+                        if (toCurrency === 'rmb')
+                            return 7.14
                         return 1;
+                    }
                     return 0.00041;
             }
         } catch (error) {

@@ -2,8 +2,8 @@ import axios, { AxiosInstance } from 'axios';
 import { createHash } from 'crypto';
 
 const BUCKY_URL = process.env.BUCKY_URL || 'https://dev.buckydrop.com';
-const APP_CODE = process.env.APP_CODE || '0077651952683977';
-const APP_SECRET = process.env.APP_SECRET || 'b9486ca7a7654a8f863b3dfbd9e8c100';
+const APP_CODE = process.env.BUCKY_APP_CODE || '0077651952683977';
+const APP_SECRET = process.env.BUCKY_APP_SECRET || 'b9486ca7a7654a8f863b3dfbd9e8c100';
 
 export interface CancelOrderParams {
     partnerOrderNo?: string;
@@ -66,7 +66,7 @@ export class BuckyClient {
         return this.client
             .post(
                 `/api/rest/v2/adapt/openapi/product/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                //`adapt/adaptation/product/query?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                //`/api/rest/v2/adapt/adaptation/product/query?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params
             )
             .then((response) => response.data)

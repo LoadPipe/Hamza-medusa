@@ -104,24 +104,21 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         const variants = [];
 
         for (const variant of productDetails.data.skuList) {
-            const baseAmount = variant.proPrice.priceCent * 10;
-            const prices = [
-                {
-                    currency_code: 'eth', amount: await priceConverter.getPrice(
-                        { baseAmount, baseCurrency: 'usdc', toCurrency: 'eth' }
+            console.log(JSON.stringify(variant));
+            const baseAmount = (variant.proPrice ?
+                variant.proPrice.priceCent :
+                variant.price.priceCent);
+
+            //TODO: get from someplace global
+            const currencies = ['eth', 'usdc', 'usdt'];
+            const prices = [];
+            for (const currency of currencies) {
+                prices.push({
+                    currency_code: currency, amount: await priceConverter.getPrice(
+                        { baseAmount, baseCurrency: 'rmb', toCurrency: currency }
                     )
-                },
-                {
-                    currency_code: 'usdc', amount: await priceConverter.getPrice(
-                        { baseAmount, baseCurrency: 'usdc', toCurrency: 'usdc' }
-                    )
-                },
-                {
-                    currency_code: 'usdt', amount: await priceConverter.getPrice(
-                        { baseAmount, baseCurrency: 'usdc', toCurrency: 'usdt' }
-                    )
-                },
-            ];
+                });
+            }
 
             variants.push({
                 title: item.productName,
@@ -145,6 +142,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         salesChannels: string[]
     ) => {
         const productDetails = await buckyClient.getProductDetails(item.productLink);
+        console.log(productDetails);
 
         return {
             title: item.productName,
@@ -162,8 +160,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 return { id: sc };
             }),
             bucky_metadata: JSON.stringify(item),
-            variants: await mapVariants(item, productDetails),
-            options: await mapVariants(item, productDetails)
+            variants: await mapVariants(item, productDetails)
         };
     };
 
@@ -172,8 +169,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         //retrieve products from bucky and convert them
         const buckyClient: BuckyClient = new BuckyClient();
-        const productData = await buckyClient.searchProducts('sports', 1, 10);
-        let products: CreateProductInput[] = await Promise.all(productData.map(
+        const productData = [(await buckyClient.searchProducts('shoes', 1, 10))[0]];
+        console.log(productData);
+
+        const products: CreateProductInput[] = await Promise.all(productData.map(
             p => mapBuckyDataToProductInput(
                 buckyClient,
                 p,
@@ -182,8 +181,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 importData.collectionId,
                 [importData.salesChannelId])
         ));
-
-        products = [products[0]];
 
         //import the products
         const output = products?.length
