@@ -6,11 +6,11 @@ import { Heading, Label, Text, Tooltip } from '@medusajs/ui';
 import React, { useMemo } from 'react';
 import { useFormState } from 'react-dom';
 
-import Input from '@modules/common/components/input';
+// import Input from '@modules/common/components/input';
 import Trash from '@modules/common/icons/trash';
 import ErrorMessage from '@modules/checkout/components/error-message';
 import { SubmitButton } from '@modules/checkout/components/submit-button';
-import { Button } from '@chakra-ui/react';
+import { Button, Flex, Box, Input } from '@chakra-ui/react';
 import {
     removeDiscount,
     removeGiftCard,
@@ -58,8 +58,36 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
     const [message, formAction] = useFormState(submitDiscountForm, null);
 
     return (
-        <div className="w-full bg-black flex flex-col">
-            <div className="txt-medium">
+        <Flex mt="1rem">
+            <Input
+                borderLeftRadius={'12px'}
+                height={{ base: '50px', md: '52px' }}
+                width={'100%'}
+                fontSize={{ base: '15px', md: '16px' }}
+                backgroundColor={'black'}
+                borderWidth={'0'}
+                placeholder="Discount Code"
+            />
+            <Button
+                borderLeftRadius={'0'}
+                borderRightRadius={'12px'}
+                height={{ base: '50px', md: '52px' }}
+                width={'82px'}
+                fontSize={{ base: '15px', md: '16px' }}
+                backgroundColor={'primary.green.900'}
+                color={'black'}
+            >
+                Apply
+            </Button>
+        </Flex>
+    );
+};
+
+export default DiscountCode;
+
+/*
+
+  <div className="txt-medium">
                 {gift_cards.length > 0 && (
                     <div className="flex flex-col mb-4">
                         <Heading className="txt-medium">
@@ -126,43 +154,29 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
                     </div>
                 ) : (
                     <form action={formAction} className="w-full">
-                        <Label className="flex gap-x-1 my-2 items-center">
-                            <button
-                                onClick={() => setIsOpen(!isOpen)}
-                                type="button"
-                                className="txt-medium text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
+                        <Flex>
+                            <Input
+                                borderLeftRadius={'16px'}
+                                style={{ height: '52px' }}
+                                placeholder="Discount Code"
+                                backgroundColor={'#121212'}
+                                borderWidth={'0'}
+                                name="code"
+                                type="text"
+                                autoFocus={false}
+                            />
+                            <Button
+                                height={'52px'}
+                                backgroundColor={'primary.green.900'}
+                                color={'black'}
+                                variant="secondary"
                             >
-                                Add gift card or discount code
-                            </button>
-                            <Tooltip content="You can add multiple gift cards, but only one discount code.">
-                                <InformationCircleSolid color="var(--fg-muted)" />
-                            </Tooltip>
-                        </Label>
-                        {isOpen && (
-                            <>
-                                <div className="flex w-full gap-x-2 items-center">
-                                    <Input
-                                        label="Please enter code"
-                                        name="code"
-                                        type="text"
-                                        autoFocus={false}
-                                    />
-                                    <Button
-                                        backgroundColor={'primary.green.900'}
-                                        color={'white'}
-                                        variant="secondary"
-                                    >
-                                        Apply
-                                    </Button>
-                                </div>
-                                <ErrorMessage error={message} />
-                            </>
-                        )}
+                                Apply
+                            </Button>
+                        </Flex>
+                        <ErrorMessage error={message} />
                     </form>
                 )}
             </div>
-        </div>
-    );
-};
 
-export default DiscountCode;
+*/

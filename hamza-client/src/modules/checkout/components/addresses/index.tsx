@@ -57,8 +57,10 @@ const Addresses = ({
     };
 
     const [message, formAction] = useFormState(setAddresses, null);
-    const contactEmail = cart?.email ?
-        cart.email.endsWith('@evm.blockchain') ? '' : cart.email
+    const contactEmail = cart?.email
+        ? cart.email.endsWith('@evm.blockchain')
+            ? ''
+            : cart.email
         : '';
     const contactPhone = cart?.shipping_address?.phone ?? '';
 
@@ -130,19 +132,20 @@ const Addresses = ({
                                         </Text>
                                     </div>
 
-                                    {(contactEmail?.length > 0 && contactPhone?.length > 0) &&
-                                        <div className="flex flex-col w-full md:w-1/3 mb-4 md:mb-0">
-                                            <Text className="text-medium-plus text-white mb-1">
-                                                Contact
-                                            </Text>
-                                            <Text className="text-medium text-white">
-                                                {contactEmail}
-                                            </Text>
-                                            <Text className="text-medium text-white">
-                                                {contactPhone}
-                                            </Text>
-                                        </div>
-                                    }
+                                    {contactEmail?.length > 0 &&
+                                        contactPhone?.length > 0 && (
+                                            <div className="flex flex-col w-full md:w-1/3 mb-4 md:mb-0">
+                                                <Text className="text-medium-plus text-white mb-1">
+                                                    Contact
+                                                </Text>
+                                                <Text className="text-medium text-white">
+                                                    {contactEmail}
+                                                </Text>
+                                                <Text className="text-medium text-white">
+                                                    {contactPhone}
+                                                </Text>
+                                            </div>
+                                        )}
                                 </div>
                             </div>
                         ) : (
