@@ -66,6 +66,7 @@ export class BuckyClient {
         return this.client
             .post(
                 `/api/rest/v2/adapt/openapi/product/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                //`adapt/adaptation/product/query?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params
             )
             .then((response) => response.data)
@@ -175,7 +176,7 @@ export class BuckyClient {
             });
     }
 
-    async getOrderDetails({ partnerOrderNo, orderNo }) {
+    async getOrderDetails(partnerOrderNo: string, orderNo: string) {
         const params = JSON.stringify({
             partnerOrderNo,
             orderNo,
@@ -190,6 +191,7 @@ export class BuckyClient {
             )
             .then((response) => response.data)
             .catch((error) => {
+                console.error(error);
                 throw error;
             });
     }

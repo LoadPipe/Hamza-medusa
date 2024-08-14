@@ -143,6 +143,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         salesChannels: string[]
     ) => {
         const productDetails = await buckyClient.getProductDetails(item.productLink);
+        console.log(productDetails);
+        return;
 
         return {
             title: item.productName,
