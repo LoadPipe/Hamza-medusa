@@ -38,18 +38,25 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
             <Text color={'primary.green.900'} fontSize={'18px'} mb="1rem">
                 Order Details
             </Text>
-            <Flex flexDirection={'row'} width={'100%'}>
-                <Flex mr="auto" flexDir={'column'}>
-                    <Text fontWeight={600}>Transaction Date</Text>
-                    <Text>{new Date(order.created_at).toDateString()}</Text>
-                </Flex>
 
-                <Flex ml="auto" flexDir={'column'}>
-                    <Text fontWeight={600}>Order ID</Text>
-                    <Text>{order.id}</Text>
-                </Flex>
+            <Flex mr="auto" flexDir={'column'}>
+                <Text fontWeight={600}>Transaction Date</Text>
+                <Text>
+                    {new Date(order.created_at).toLocaleDateString('en-US', {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        timeZoneName: 'short',
+                        timeZone: 'Asia/Bangkok',
+                    })}
+                </Text>
             </Flex>
 
+            <Flex mr="auto" mt="1rem" flexDir={'column'}>
+                <Text fontWeight={600}>Order ID</Text>
+                <Text>{order.id}</Text>
+            </Flex>
             <Flex mr="auto" mt="1rem" flexDir={'column'}>
                 <Text fontWeight={600}>Order Number</Text>
                 <Text>{order.display_id}</Text>
