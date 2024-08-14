@@ -44,7 +44,6 @@ const CartTemplate = ({
                 <Flex
                     maxWidth="1258px"
                     width="100%"
-                    height={'100vh'}
                     mx="1rem"
                     flexDirection={{ base: 'column', md: 'row' }}
                 >
