@@ -401,3 +401,16 @@ Content-Type: application/json
   "order_id": "order_01J3FN3JXTGQ90KA2XQG1DYFJD",
   "status": "shipped"
 }
+
+### POST Let's add products...
+POST http://localhost:9000/custom/product/add-product
+Content-Type: application/json
+
+{
+  "keyword": "boxing",
+  "storeId": "store_01J4W6J3RXZ4JDH4XYZZQP4S2R",
+  "collectionId": "pcol_01HSGAMXDJD725MR3VSW63B0RD", 
+  "salesChannelId": "sc_01J4W6GT9V06AQF2G0T01ZPXVE"
+}
+
+

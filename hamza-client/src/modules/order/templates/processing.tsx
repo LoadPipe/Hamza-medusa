@@ -28,7 +28,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
     useEffect(() => {
         console.log('Orders received in Processing:', orders);
         if (orders && orders.length > 0) {
-            const customer_id = orders[0].customer_id;
+            const customer_id = orders[0]?.customer_id;
             console.log(
                 `Running fetchAllOrders with customerID ${customer_id}`
             );
@@ -96,40 +96,23 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                             'N/A'
                                         }
                                     />
-                                    <LocalizedClientLink
-                                        href={`/account/orders/details/${order.id}`} // Ensure order_ids exists
-                                        passHref
-                                    >
-                                        <Button
-                                            variant="outline"
-                                            colorScheme="white"
-                                            borderRadius={'37px'}
+                                    <div className="flex justify-end pr-4">
+                                        {' '}
+                                        {/* This div is necessary to create a flexbox container */}
+                                        <LocalizedClientLink
+                                            href={`/account/orders/details/${order.id}`}
+                                            passHref
+                                            className=""
                                         >
-                                            See details
-                                        </Button>
-                                    </LocalizedClientLink>
-                                    {orderStatuses[order.cart_id] ===
-                                    'canceled' ? (
-                                        <Button
-                                            colorScheme="red"
-                                            ml={4}
-                                            isDisabled
-                                        >
-                                            Cancellation Requested
-                                        </Button>
-                                    ) : (
-                                        <Button
-                                            variant="outline"
-                                            colorScheme="white"
-                                            borderRadius={'37px'}
-                                            ml={4}
-                                            onClick={() =>
-                                                openModal(order.cart_id)
-                                            }
-                                        >
-                                            Request Cancellation
-                                        </Button>
-                                    )}
+                                            <Button
+                                                variant="outline"
+                                                colorScheme="white"
+                                                borderRadius={'37px'}
+                                            >
+                                                Check Details
+                                            </Button>
+                                        </LocalizedClientLink>
+                                    </div>
                                 </Box>
                             )
                         )}

@@ -44,6 +44,14 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
     );
     console.log(`Product details ${JSON.stringify(handle)} `);
 
+    const getAmount = (amount?: number | null) => {
+        if (amount === null || amount === undefined) {
+            return;
+        }
+
+        return formatCryptoPrice(amount, order.currency_code || 'USDC');
+    };
+
     useEffect(() => {
         // Fetch Vendor Name from product.id
         const fetchVendor = async () => {
@@ -104,13 +112,13 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
                 <Box flex="1">
                     <Flex justifyContent="space-between">
                         <Flex direction="column">
-                            <Text fontWeight="bold" fontSize="lg">
+                            <Text fontWeight="bold" fontSize="18px">
                                 {order.title}
                             </Text>
-                            <Text fontSize="sm">{order.description}</Text>
+                            <Text fontSize="14px">{order.description}</Text>
                         </Flex>
-                        <Text fontSize="md" fontWeight="semibold">
-                            {order.unit_price} {order.currency_code}
+                        <Text fontSize="24px" fontWeight="semibold">
+                            {getAmount(order.unit_price)} {order.currency_code}
                         </Text>
                     </Flex>
 
@@ -119,7 +127,7 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
                         alignItems="center"
                         mt={2}
                     >
-                        <Text fontSize="sm">
+                        <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
                             {new Date(order.created_at).toLocaleDateString()}
                         </Text>
                         <Text fontSize="sm">{order.quantity} item(s)</Text>

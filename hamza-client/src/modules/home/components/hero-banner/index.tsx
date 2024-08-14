@@ -3,12 +3,10 @@
 import React from 'react';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { FaArrowRightLong } from 'react-icons/fa6';
-import { SwitchNetwork } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 
 const HeroBanner = () => {
     return (
         <>
-            <SwitchNetwork enabled={false} />
             <Flex
                 mt="2rem"
                 justifyContent={'center'}

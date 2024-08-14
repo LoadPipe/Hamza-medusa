@@ -120,12 +120,11 @@ export async function getProductsByVendor(vendorName: string) {
 // Get All Product reviews
 export async function getAllProductReviews(customer_id: string) {
     try {
-        const response = await axios.post(
+        const response = await axios.get(
             `${BACKEND_URL}/custom/review/all-customer-reviews`,
-            { customer_id: customer_id },
             {
-                headers: {
-                    'Content-Type': 'application/json',
+                params: {
+                    customer_id: customer_id,
                 },
             }
         );
@@ -532,15 +531,21 @@ export async function deleteDiscount(cartId: string, code: string) {
         });
 }
 
-export async function updatePaymentSession(cartId: string, paymentSessionId: string | undefined, providerId: string) {
-    console.log(`updatePaymentSession(${cartId}, ${paymentSessionId}, ${providerId})`)
+export async function updatePaymentSession(
+    cartId: string,
+    paymentSessionId: string | undefined,
+    providerId: string
+) {
+    console.log(
+        `updatePaymentSession(${cartId}, ${paymentSessionId}, ${providerId})`
+    );
     if (paymentSessionId) {
         try {
             const response = await axios.put(
                 `${BACKEND_URL}/custom/payment-session`,
                 {
                     cart_id: cartId,
-                    payment_session_id: paymentSessionId
+                    payment_session_id: paymentSessionId,
                 }
             );
             return response.data;
@@ -551,13 +556,16 @@ export async function updatePaymentSession(cartId: string, paymentSessionId: str
     }
 }
 
-export async function createPaymentSessions(cartId: string, providerId: string = 'crypto') {
+export async function createPaymentSessions(
+    cartId: string,
+    providerId: string = 'crypto'
+) {
     console.log(`createPaymentSessions(${cartId})`);
     const headers = getMedusaHeaders(['cart']);
     return medusaClient.carts
         .createPaymentSessions(cartId, headers)
         .then(({ cart }) => {
-            updatePaymentSession(cartId, cart?.payment_session?.id, providerId,);
+            updatePaymentSession(cartId, cart?.payment_session?.id, providerId);
             return cart;
         })
         .catch((err) => {
@@ -574,13 +582,15 @@ export async function setPaymentSession({
     providerId: string;
 }) {
     const headers = getMedusaHeaders(['cart']);
-    return medusaClient.carts
-        .setPaymentSession(cartId, { provider_id: providerId }, headers)
-        //.createPaymentSessions(cartId, { provider_id: providerId })
-        .then(({ cart }) => cart)
-        .catch((err) => {
-            medusaError(err);
-        });
+    return (
+        medusaClient.carts
+            .setPaymentSession(cartId, { provider_id: providerId }, headers)
+            //.createPaymentSessions(cartId, { provider_id: providerId })
+            .then(({ cart }) => cart)
+            .catch((err) => {
+                medusaError(err);
+            })
+    );
 }
 
 export async function completeCart(cartId: string) {

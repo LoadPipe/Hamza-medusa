@@ -70,128 +70,20 @@ const AccountNav = ({
     }, [authData.is_verified]);
 
     return (
-        <div style={{ width: '245px' }}>
-            <div className="small:hidden">
-                {route !== `/${countryCode}/account` ? (
-                    <LocalizedClientLink
-                        href="/account"
-                        className="flex items-center gap-x-2 text-small-regular py-2"
-                    >
-                        <>
-                            <ChevronDown className="transform rotate-90" />
-                            <span>Account</span>
-                        </>
-                    </LocalizedClientLink>
-                ) : (
-                    <>
-                        <div className="text-xl-semi mb-4 ">
-                            Hello {customer?.first_name}
-                        </div>
-                        <div className="text-base-regular">
-                            <ul>
-                                <li>
-                                    <LocalizedClientLink
-                                        href="/account/profile"
-                                        className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
-                                    >
-                                        <>
-                                            <div className="flex items-center gap-x-2">
-                                                <User size={20} />
-                                                <span>Profile</span>
-                                            </div>
-                                            <ChevronDown className="transform -rotate-90" />
-                                        </>
-                                    </LocalizedClientLink>
-                                </li>
-
-                                <li>
-                                    <LocalizedClientLink
-                                        href="/account/profile"
-                                        className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
-                                    >
-                                        <>
-                                            <div className="flex items-center gap-x-2">
-                                                <User size={20} />
-                                                <span>Verify</span>
-                                            </div>
-                                            <ChevronDown className="transform -rotate-90" />
-                                        </>
-                                    </LocalizedClientLink>
-                                </li>
-
-                                {authData.is_verified && (
-                                    <li>
-                                        <LocalizedClientLink
-                                            href="/account/addresses"
-                                            className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
-                                        >
-                                            <>
-                                                <div className="flex items-center gap-x-2">
-                                                    <MapPin size={20} />
-                                                    <span>Addresses</span>
-                                                </div>
-                                                <ChevronDown className="transform -rotate-90" />
-                                            </>
-                                        </LocalizedClientLink>
-                                    </li>
-                                )}
-                                <li>
-                                    <LocalizedClientLink
-                                        href="/account/orders"
-                                        className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
-                                    >
-                                        <div className="flex items-center gap-x-2">
-                                            <Package size={20} />
-                                            <span>Orders</span>
-                                        </div>
-                                        <ChevronDown className="transform -rotate-90" />
-                                    </LocalizedClientLink>
-                                </li>
-
-                                {authData.is_verified && (
-                                    <li>
-                                        <LocalizedClientLink
-                                            href="/account/notifications"
-                                            className="flex items-center justify-between py-4 border-b border-gray-200 px-8"
-                                        >
-                                            <div className="flex items-center gap-x-2">
-                                                <Package size={20} />
-                                                <span>Notifications</span>
-                                            </div>
-                                            <ChevronDown className="transform -rotate-90" />
-                                        </LocalizedClientLink>
-                                    </li>
-                                )}
-                                <li>
-                                    <button
-                                        type="button"
-                                        className="flex items-center justify-between py-4 border-b border-gray-200 px-8 w-full"
-                                        onClick={handleLogout}
-                                    >
-                                        <div className="flex items-center gap-x-2">
-                                            <ArrowRightOnRectangle />
-                                            <span>Log out</span>
-                                        </div>
-                                        <ChevronDown className="transform -rotate-90" />
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                    </>
-                )}
-            </div>
-
+        <Flex style={{ width: '245px' }}>
             <Flex flexDirection={'column'} width={'245px'}>
                 <NavLink
                     href="/account/profile"
                     route={route!}
                     title={'Profile'}
                 />
-                <NavLink
-                    href="/account/verify"
-                    route={route!}
-                    title={'Verify'}
-                />
+                {!authData.is_verified && (
+                    <NavLink
+                        href="/account/verify"
+                        route={route!}
+                        title={'Verify'}
+                    />
+                )}
                 <NavLink
                     href="/account/addresses"
                     route={route!}
@@ -202,16 +94,20 @@ const AccountNav = ({
                     route={route!}
                     title={'Orders'}
                 />
-                <NavLink
-                    href="/account/notifications"
-                    route={route!}
-                    title={'Notifications'}
-                />
-                <NavLink
-                    href="/account/reviews"
-                    route={route!}
-                    title={'Reviews'}
-                />
+                {authData.is_verified && (
+                    <NavLink
+                        href="/account/notifications"
+                        route={route!}
+                        title={'Notifications'}
+                    />
+                )}
+                {authData.is_verified && (
+                    <NavLink
+                        href="/account/reviews"
+                        route={route!}
+                        title={'Reviews'}
+                    />
+                )}
                 <Box
                     as="button"
                     textAlign={'left'}
@@ -235,7 +131,7 @@ const AccountNav = ({
                     </Text>
                 </Box>
             </Flex>
-        </div>
+        </Flex>
     );
 };
 

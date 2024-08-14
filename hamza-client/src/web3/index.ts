@@ -2,7 +2,7 @@ import { BigNumberish, ethers } from 'ethers';
 import { HexString } from 'ethers/lib.commonjs/utils/data';
 
 /**
- * Input params to a single payment to the Switch.
+ * Input params to a single payment to the Massmarket contract.
  */
 export interface IPaymentInput {
     id: BigNumberish;
@@ -16,6 +16,16 @@ export interface IPaymentInput {
     massmarketOrderId: string;
     massmarketAmount: string;
     massmarketTtl: number;
+}
+
+/**
+ * Input params to a single payment to the Switch.
+ */
+export interface ISwitchPaymentInput {
+    id: BigNumberish;
+    receiver: HexString; //contract address
+    payer: HexString;
+    amount: BigNumberish;
 }
 
 /**
@@ -34,4 +44,13 @@ export interface IMultiPaymentInput {
     receiver: string;
     currency: string; //token address, or ethers.ZeroAddress for native
     payments: IPaymentInput[];
+}
+
+/**
+ * Input params for multiple concurrent payments to the switch.
+ */
+export interface ISwitchMultiPaymentInput {
+    receiver: string;
+    currency: string; //token address, or ethers.ZeroAddress for native
+    payments: ISwitchPaymentInput[];
 }
