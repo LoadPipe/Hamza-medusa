@@ -15,19 +15,20 @@ type SummaryProps = {
 const Summary = ({ cart }: SummaryProps) => {
     return (
         <Box
-            width={'100vw'}
+            width={'100%'}
             backgroundColor={'#121212'}
             p="40px"
             borderRadius={'16px'}
         >
-            <Text color={'primary.green.900'}>Enter your email</Text>
-            {/* <Heading level="h2" className="text-[2rem] leading-[2.75rem]">
+            <Text
+                color="primary.green.900"
+                fontSize={'24px'}
+                fontWeight={700}
+                mb="1rem"
+            >
                 Summary
-            </Heading> */}
-
-            <Divider />
+            </Text>
             <CartTotals data={cart} />
-
             <DiscountCode cart={cart} />
             <LocalizedClientLink href={'/checkout?step=' + cart.checkout_step}>
                 <Button

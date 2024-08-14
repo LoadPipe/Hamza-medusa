@@ -92,8 +92,7 @@ const CartTemplate = ({
                     <Flex
                         mt={{ base: '1rem', md: '0' }}
                         maxW={{ base: '100%', md: '401px' }}
-                        width={'100vw'}
-                        height="404px"
+                        width={'100%'}
                         ml={{ base: '0', md: 'auto' }}
                     >
                         {cart && cart.region && <Summary cart={cart} />}

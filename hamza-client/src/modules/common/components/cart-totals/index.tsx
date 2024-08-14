@@ -58,7 +58,39 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
 
     return (
         <div>
-            <div className="flex flex-col gap-y-2 txt-medium text-ui-fg-subtle ">
+            <hr
+                style={{
+                    color: 'red',
+                    width: '100%',
+                    borderTop: '2px dashed #bbb',
+                    marginBottom: '1rem',
+                }}
+            />
+            <Flex flexDirection={'column'} color="white">
+                {subtotals['eth'] && (
+                    <Flex color={'white'}>
+                        <Text fontSize={{ md: '16px' }}>Subtotal</Text>
+                        <Text ml="auto" fontSize={'16px'}>
+                            {formatCryptoPrice(subtotals['eth'], 'eth')} ETH
+                        </Text>
+                    </Flex>
+                )}
+                {subtotals['usdt'] && (
+                    <Flex color={'white'}>
+                        <Text fontSize={{ md: '16px' }}>Subtotal</Text>
+                        <Text ml="auto" fontSize={'16px'}>
+                            {formatCryptoPrice(subtotals['usdt'], 'usdt')} USDT
+                        </Text>
+                    </Flex>
+                )}
+                {subtotals['usdc'] && (
+                    <Flex color={'white'}>
+                        <Text fontSize={{ md: '16px' }}>Subtotal</Text>
+                        <Text ml="auto" fontSize={'16px'}>
+                            {formatCryptoPrice(subtotals['usdc'], 'usdc')} USDC
+                        </Text>
+                    </Flex>
+                )}
                 {!!discount_total && (
                     <div className="flex items-center justify-between">
                         <span>Discount</span>
@@ -79,18 +111,18 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                         {preferred_currency_code?.toUpperCase()}
                     </span>
                 </div>
-                <div className="flex justify-between">
-                    <span className="flex gap-x-1 items-center ">Taxes</span>
-                    <span>{getAmount(tax_total).toString()}</span>
-                </div>
-            </div>
+                <Flex className="flex justify-between">
+                    <Text fontSize={{ md: '16px' }}>Taxes</Text>
+                    <Text ml="auto">{getAmount(tax_total).toString()}</Text>
+                </Flex>
+            </Flex>
             {/* <div className="h-px w-full border-b border-gray-200 mt-4" /> */}
             <hr
                 style={{
                     color: 'red',
                     width: '100%',
                     borderTop: '2px dashed #bbb',
-                    marginTop: '2rem',
+                    marginTop: '1rem',
                     marginBottom: '2rem',
                 }}
             />
