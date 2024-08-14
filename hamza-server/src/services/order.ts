@@ -244,7 +244,7 @@ export default class OrderService extends MedusaOrderService {
                         skuCode: varMetadata.skuCode,
                         productCount: quantities[n],
                         platform: prodMetadata.platform,
-                        productPrice: prodMetadata.proPrice.price,
+                        productPrice: prodMetadata.proPrice.price, //TODO: price come from variant
                         productName: prodMetadata.productName
                     });
                 }

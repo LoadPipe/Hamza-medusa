@@ -13,6 +13,7 @@ import ProductService, {
 import { BuckyClient } from '../../../buckydrop/bucky-client';
 import ProductCollectionRepository from '../../../repositories/product-collection';
 import { PriceConverter } from '../../../strategies/price-selection';
+import { CreateProductInput } from '@medusajs/medusa/dist/types/product';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const storeService: StoreService = req.scope.resolve('storeService');
@@ -84,6 +85,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             "quantity": 92099,
             "imgUrl": "https://cbu01.alicdn.com/img/ibank/O1CN01PcdXOw1guZ5g0nIj9_!!2208216064202-0-cib.jpg"
         }
+
         1: {
         "props":[{
             "propId":3216,"valueId":47921170,
@@ -102,7 +104,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         const variants = [];
 
         for (const variant of productDetails.data.skuList) {
-            const baseAmount = variant.price.priceCent * 100;
+            const baseAmount = variant.proPrice.priceCent * 10;
             const prices = [
                 {
                     currency_code: 'eth', amount: await priceConverter.getPrice(
@@ -123,7 +125,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
             variants.push({
                 title: item.productName,
-                inventory_quantity: 100000,
+                inventory_quantity: variant.quantity,
                 allow_backorder: false,
                 manage_inventory: true,
                 bucky_metadata: JSON.stringify({ skuCode: variant.skuCode }),
@@ -143,8 +145,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         salesChannels: string[]
     ) => {
         const productDetails = await buckyClient.getProductDetails(item.productLink);
-        console.log(productDetails);
-        return;
 
         return {
             title: item.productName,
@@ -162,7 +162,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 return { id: sc };
             }),
             bucky_metadata: JSON.stringify(item),
-            variants: await mapVariants(item, productDetails)
+            variants: await mapVariants(item, productDetails),
+            options: await mapVariants(item, productDetails)
         };
     };
 
@@ -172,7 +173,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         //retrieve products from bucky and convert them
         const buckyClient: BuckyClient = new BuckyClient();
         const productData = await buckyClient.searchProducts('sports', 1, 10);
-        let products = await Promise.all(productData.map(
+        let products: CreateProductInput[] = await Promise.all(productData.map(
             p => mapBuckyDataToProductInput(
                 buckyClient,
                 p,
