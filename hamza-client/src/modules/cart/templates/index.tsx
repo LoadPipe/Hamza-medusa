@@ -33,53 +33,47 @@ const CartTemplate = ({
 
     return (
         <Flex
-            width={'1280px'}
+            maxW={'1280px'}
+            width={'100vw'}
             mx="auto"
+            py={{ base: '1rem', md: '4rem' }}
             justifyContent="center"
             alignItems={'center'}
         >
             {cart?.items.length ? (
-                <Box width="1,258px" pb="5rem" pt="2rem">
-                    <Flex flexDirection={'row'} gap="32px">
-                        <Flex flexDirection={'column'} gap="32px">
-                            <Flex
-                                width={'825px'}
-                                borderRadius={'16px'}
-                                backgroundColor={'#121212'}
-                                px="40px"
-                                py="10px"
-                                justifyContent="center"
-                            >
-                                <Flex
-                                    maxW={'705px'}
-                                    height={'460px'}
-                                    width={'100%'}
-                                    flexDirection={'column'}
-                                >
-                                    {!customer && (
-                                        <>
-                                            <SignInPrompt />
-                                            <Divider />
-                                        </>
-                                    )}
-                                    <Text
-                                        mt="1rem"
-                                        fontWeight={600}
-                                        fontSize={'18px'}
-                                        color="primary.green.900"
-                                    >
-                                        Product Details
-                                    </Text>
-                                    {/* Cart Items */}
-                                    <ItemsTemplate
-                                        region={cart?.region}
-                                        items={cart?.items}
-                                    />
-                                </Flex>
-                            </Flex>
+                <Flex
+                    maxWidth="1258px"
+                    width="100%"
+                    height={'100vh'}
+                    mx="1rem"
+                    flexDirection={{ base: 'column', md: 'row' }}
+                >
+                    {/* gap="32px" */}
 
-                            {/* Shipping Address */}
-                            <Box
+                    <Flex
+                        maxW={'830px'}
+                        width={'100%'}
+                        height={'520px'}
+                        borderRadius={'16px'}
+                        backgroundColor={'#121212'}
+                        justifyContent="center"
+                        alignItems={'center'}
+                    >
+                        {/* {!customer && (
+                                    <>
+                                        <SignInPrompt />
+                                        <Divider />
+                                    </>
+                                )} */}
+                        {/* Cart Items */}
+                        <ItemsTemplate
+                            region={cart?.region}
+                            items={cart?.items}
+                        />
+                    </Flex>
+
+                    {/* Shipping Address */}
+                    {/* <Box
                                 width={'825px'}
                                 height={'240px'}
                                 borderRadius={'16px'}
@@ -93,14 +87,18 @@ const CartTemplate = ({
                                 >
                                     Shipping Address
                                 </Text>
-                            </Box>
-                        </Flex>
+                            </Box> */}
 
-                        <Box>
-                            {cart && cart.region && <Summary cart={cart} />}
-                        </Box>
+                    <Flex
+                        mt={{ base: '1rem', md: '0' }}
+                        maxW={{ base: '100%', md: '401px' }}
+                        width={'100vw'}
+                        height="404px"
+                        ml={{ base: '0', md: 'auto' }}
+                    >
+                        {cart && cart.region && <Summary cart={cart} />}
                     </Flex>
-                </Box>
+                </Flex>
             ) : (
                 <div>
                     <EmptyCartMessage />

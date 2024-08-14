@@ -15,7 +15,7 @@ type SummaryProps = {
 const Summary = ({ cart }: SummaryProps) => {
     return (
         <Box
-            width={'401px'}
+            width={'100vw'}
             backgroundColor={'#121212'}
             p="40px"
             borderRadius={'16px'}

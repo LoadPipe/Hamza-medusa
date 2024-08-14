@@ -2,7 +2,6 @@
 
 import { LineItem, Region } from '@medusajs/medusa';
 import { Table, clx } from '@medusajs/ui';
-
 import CartItemSelect from '@modules/cart/components/cart-item-select';
 import DeleteButton from '@modules/common/components/delete-button';
 import LineItemOptions from '@modules/common/components/line-item-options';
@@ -15,6 +14,7 @@ import { useState } from 'react';
 import ErrorMessage from '@modules/checkout/components/error-message';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { Flex, Text, Divider } from '@chakra-ui/react';
+import { Radio, RadioGroup } from '@chakra-ui/react';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -51,9 +51,11 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
     };
 
     return (
-        <Flex maxW={'705px'} width={'100%'} flexDirection={'column'}>
+        <Flex height={'210px'} width={'100%'} flexDirection={'column'}>
             <Divider my="2rem" />
-            <Flex>
+
+            <Flex my="auto">
+                <Radio mr="2rem" />
                 <LocalizedClientLink
                     href={`/products/${handle}`}
                     className={clx('flex', {

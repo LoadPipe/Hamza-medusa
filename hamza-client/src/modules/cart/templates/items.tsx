@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Flex, Radio, Text } from '@chakra-ui/react';
 import { LineItem, Region } from '@medusajs/medusa';
 import { Heading, Table } from '@medusajs/ui';
 
@@ -16,7 +16,23 @@ type ItemsTemplateProps = {
 
 const ItemsTemplate = ({ items, region }: ItemsTemplateProps) => {
     return (
-        <Box width="705px">
+        <Box
+            mx="1rem"
+            maxWidth="746.87px"
+            width={'100%'}
+            height={'460px'}
+            overflow={'hidden'}
+        >
+            <Flex>
+                <Radio mr="2rem" my="auto" />
+                <Text
+                    fontWeight={600}
+                    fontSize={'18px'}
+                    color="primary.green.900"
+                >
+                    Product Details
+                </Text>
+            </Flex>
             {items && region
                 ? items
                       .sort((a, b) => {
