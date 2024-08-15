@@ -35,7 +35,7 @@ export default function OrderCompletedTemplate({
             mt="3rem"
             mb="5rem"
             mx="auto"
-            p={'40px'}
+            p={{ base: '16px', md: '40px' }}
             borderRadius={'16px'}
             color="white"
             justifyContent={'center'}

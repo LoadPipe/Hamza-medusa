@@ -97,7 +97,9 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
                                 />
                             </Flex>
                         </LocalizedClientLink>
-                        <Text ml="1rem">{product.title}</Text>
+                        <Text ml="1rem" noOfLines={1}>
+                            {product.title}
+                        </Text>
                     </Flex>
 
                     <Flex mt="2rem">
