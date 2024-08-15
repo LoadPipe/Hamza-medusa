@@ -55,10 +55,10 @@ declare global {
 const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
     const notReady =
         !cart ||
-        !cart.shipping_address ||
-        !cart.billing_address ||
-        !cart.email ||
-        cart.shipping_methods.length < 1
+            !cart.shipping_address ||
+            !cart.billing_address ||
+            !cart.email ||
+            cart.shipping_methods.length < 1
             ? true
             : false;
 
@@ -125,6 +125,12 @@ const CryptoPaymentButton = ({
         return response.data?.checkout_mode?.trim()?.toUpperCase();
     };
 
+    //displays error to user
+    const displayError = (errMsg: string) => {
+        setErrorMessage(errMsg);
+        toast.error(errMsg);
+    }
+
     /**
      * Sends the given payment data to the Switch by way of the user's connnected
      * wallet.
@@ -179,7 +185,7 @@ const CryptoPaymentButton = ({
             );
         } catch (e) {
             console.error('error has occured during transaction', e);
-            setErrorMessage('Checkout was not completed.');
+            displayError('Checkout was not completed.');
             setSubmitting(false);
         }
     };
@@ -259,12 +265,11 @@ const CryptoPaymentButton = ({
                 );
             } else {
                 setSubmitting(false);
-                toast.error('Checkout was not completed.');
-                // setErrorMessage(
-                //     output?.message
-                //         ? output.message
-                //         : 'Checkout was not completed.'
-                // );
+                displayError(
+                    output?.message
+                        ? output.message
+                        : 'Checkout was not completed.'
+                );
                 await cancelOrderFromCart();
             }
         } else {
@@ -301,7 +306,7 @@ const CryptoPaymentButton = ({
             updateCart.mutate(
                 { context: {} },
                 {
-                    onSuccess: ({}) => {
+                    onSuccess: ({ }) => {
                         //this calls the CartCompletion routine
                         completeCart.mutate(void 0, {
                             onSuccess: async ({ data, type }) => {
@@ -312,7 +317,7 @@ const CryptoPaymentButton = ({
                                 } catch (e) {
                                     console.error(e);
                                     setSubmitting(false);
-                                    setErrorMessage(
+                                    displayError(
                                         'Checkout was not completed'
                                     );
                                     await cancelOrderFromCart();
@@ -323,9 +328,9 @@ const CryptoPaymentButton = ({
                                 if (
                                     e.message?.indexOf('status code 401') >= 0
                                 ) {
-                                    setErrorMessage('Customer not whitelisted');
+                                    displayError('Customer not whitelisted');
                                 } else {
-                                    setErrorMessage(
+                                    displayError(
                                         'Checkout was not completed'
                                     );
                                 }
@@ -342,7 +347,7 @@ const CryptoPaymentButton = ({
         } catch (e) {
             console.error(e);
             setSubmitting(false);
-            setErrorMessage('Checkout was not completed');
+            displayError('Checkout was not completed');
             await cancelOrderFromCart();
         }
     };
