@@ -59,14 +59,14 @@ export class BuckyClient {
 
     // Method to get product details
     async getProductDetails(productLink: string): Promise<any> {
-        const params = JSON.stringify({ productLink });
+        const params = JSON.stringify({ goodsLink: productLink });
         const timestamp = Date.now(); // Current timestamp in milliseconds
         const sign = this.generateSignature(params, timestamp);
 
         return this.client
             .post(
-                `/api/rest/v2/adapt/openapi/product/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                //`/api/rest/v2/adapt/adaptation/product/query?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                //`/api/rest/v2/adapt/openapi/product/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                `/api/rest/v2/adapt/adaptation/product/query?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params
             )
             .then((response) => response.data)
