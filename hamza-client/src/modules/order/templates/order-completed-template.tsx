@@ -1,6 +1,6 @@
 import { Order } from '@medusajs/medusa';
 import { cookies } from 'next/headers';
-import { Box, Flex, Heading, VStack, Text } from '@chakra-ui/react';
+import { Box, Flex, Heading, VStack, Text, Divider } from '@chakra-ui/react';
 import CartTotals from '@modules/common/components/cart-totals';
 import Help from '@modules/order/components/help';
 import Items from '@modules/order/components/items';
@@ -35,7 +35,7 @@ export default function OrderCompletedTemplate({
             mt="3rem"
             mb="5rem"
             mx="auto"
-            p={'40px'}
+            p={{ base: '16px', md: '40px' }}
             borderRadius={'16px'}
             color="white"
             justifyContent={'center'}
@@ -52,10 +52,14 @@ export default function OrderCompletedTemplate({
             </Heading>
             <Text fontWeight={600}>Thank you for your order!</Text>
 
-            <Text mt="1rem">
+            <Text mt="1rem" textAlign={'center'}>
                 Order confirmation has been sent to your registered email
             </Text>
+
             <OrderDetails order={order} />
+
+            <Summary cart_id={order.cart_id} />
+
             {/* <OrderDetails order={order} />
                     <Heading as="h2" size="md" textAlign="center">
                         Summary
