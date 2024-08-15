@@ -114,7 +114,10 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
                     {/* What does full mean */}
                     {type === 'full' && (
                         <Flex ml="auto" flexDirection={'column'}>
-                            <Flex ml="auto" mb={{ base: '0', md: '1.25rem' }}>
+                            <Flex
+                                ml="auto"
+                                mb={{ base: 'auto', md: '1.25rem' }}
+                            >
                                 <DeleteButton id={item.id} />
                             </Flex>
                             <CartItemSelect
@@ -122,7 +125,7 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
                                 onChange={(value) =>
                                     changeQuantity(parseInt(value.target.value))
                                 }
-                                className="w-14 h-10 p-4"
+                                className="w-12 h-8 md:w-14 md:h-10"
                             >
                                 {Array.from(
                                     {
