@@ -100,53 +100,18 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
                         <Text ml="1rem">{product.title}</Text>
                     </Flex>
 
-                    <Divider my="2rem" />
-
-                    {/* <Tweet productHandle={product.handle} isPurchased={true} />
-                    <Box mb={4}>
-                        <Heading size="md">{product.title}</Heading>
-                        <div
-                            className="mt-2"
-                            dangerouslySetInnerHTML={{
-                                __html: product.description,
-                            }}
-                        ></div>
-                    </Box>
-                    <Stack spacing={2}>
-                        <Text>
-                            {new Date(product.created_at).toDateString()}
-                        </Text>
-                        <Text>Product SKU: {product.id}</Text>
-                        <Text>Order ID: {product.order_id}</Text>
-                        <Text>
+                    <Flex mt="2rem">
+                        <Text>Subtotal</Text>
+                        <Text ml="auto">
                             {formatCryptoPrice(
                                 product.unit_price,
                                 product.currency_code
                             )}{' '}
                             {product.currency_code.toUpperCase()}
                         </Text>
-                        <Text>Store Name: {product.store_name}</Text>
-                    </Stack>
+                    </Flex>
 
-                    <LocalizedClientLink href={`/products/${product.handle}`}>
-                        <Thumbnail
-                            thumbnail={product.thumbnail}
-                            images={[]}
-                            size="small"
-                        />
-                    </LocalizedClientLink>
-                    <Button
-                        my={4}
-                        backgroundColor={'black'}
-                        color="white"
-                        onClick={() =>
-                            router.push(
-                                `/${countryCode}/vendor/${product.store_name}`
-                            )
-                        }
-                    >
-                        Vendor Store
-                    </Button> */}
+                    <Divider mt="1rem" mb="2rem" />
                 </Box>
             ))}
         </Flex>
@@ -154,3 +119,51 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
 };
 
 export default Summary;
+
+{
+    /* <Tweet productHandle={product.handle} isPurchased={true} />
+<Box mb={4}>
+    <Heading size="md">{product.title}</Heading>
+    <div
+        className="mt-2"
+        dangerouslySetInnerHTML={{
+            __html: product.description,
+        }}
+    ></div>
+</Box>
+<Stack spacing={2}>
+    <Text>
+        {new Date(product.created_at).toDateString()}
+    </Text>
+    <Text>Product SKU: {product.id}</Text>
+    <Text>Order ID: {product.order_id}</Text>
+    <Text>
+        {formatCryptoPrice(
+            product.unit_price,
+            product.currency_code
+        )}{' '}
+        {product.currency_code.toUpperCase()}
+    </Text>
+    <Text>Store Name: {product.store_name}</Text>
+</Stack>
+
+<LocalizedClientLink href={`/products/${product.handle}`}>
+    <Thumbnail
+        thumbnail={product.thumbnail}
+        images={[]}
+        size="small"
+    />
+</LocalizedClientLink>
+<Button
+    my={4}
+    backgroundColor={'black'}
+    color="white"
+    onClick={() =>
+        router.push(
+            `/${countryCode}/vendor/${product.store_name}`
+        )
+    }
+>
+    Vendor Store
+</Button> */
+}
