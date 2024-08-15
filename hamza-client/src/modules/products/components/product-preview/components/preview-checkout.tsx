@@ -140,7 +140,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                 selectedProductVariant &&
                 (selectedProductVariant.prices.find(
                     (p: any) =>
-                        p.currency_code === preferred_currency_code ?? 'usdc'
+                        p.currency_code === (preferred_currency_code ?? 'usdc')
                 ) ??
                     selectedProductVariant.prices[0]);
             // console.log(`price is being set to ${price}`);
