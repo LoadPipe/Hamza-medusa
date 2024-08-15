@@ -82,7 +82,7 @@ export default async function Nav() {
                             />
 
                             <Image
-                                src={HamzaTitle2}
+                                src={HamzaTitle}
                                 className="w-[60.73px] h-[11.59px] md:w-[125.42px] md:h-[106px] ml-[0.5rem] md:ml-[1rem]"
                                 style={{
                                     alignSelf: 'center',

@@ -1,5 +1,6 @@
 import { Order } from '@medusajs/medusa';
-import { Text } from '@medusajs/ui';
+// import { Text } from '@medusajs/ui';
+import { Box, Text, Flex } from '@chakra-ui/react';
 
 type OrderDetailsProps = {
     order: Order;
@@ -24,17 +25,76 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
 
         return formatted.slice(0, 1).toUpperCase() + formatted.slice(1);
     };
+
+    const payment = order.payments[0];
     // console.log(`Order Summary is ${JSON.stringify(order)}`);
 
     return (
-        <div>
-            <Text className="mt-2">
-                Order date: {new Date(order.created_at).toDateString()}
+        <Flex
+            mt="2rem"
+            flexDir={'column'}
+            width={'100%'}
+            justifyContent={'center'}
+            alignItems={'center'}
+        >
+            <Text color={'primary.green.900'} fontSize={'18px'} mb="1rem">
+                Order Details
             </Text>
-            <Text className="mt-2">Order number: {order.display_id}</Text>
-            <Text className="mt-2">Order ID: {order.id}</Text>
 
-            <div className="flex items-center text-compact-small gap-x-4 mt-4">
+            <Flex
+                mr="auto"
+                flexDir={{ base: 'column', md: 'row' }}
+                width={'100%'}
+            >
+                <Flex flexDir={'column'}>
+                    <Text fontWeight={600}>Transaction Date</Text>
+                    <Text>
+                        {new Date(order.created_at).toLocaleDateString(
+                            'en-US',
+                            {
+                                weekday: 'long',
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                timeZoneName: 'short',
+                                timeZone: 'Asia/Bangkok',
+                            }
+                        )}
+                    </Text>
+                </Flex>
+                <Flex
+                    mt={{ base: '1rem', md: '0' }}
+                    ml={{ base: '0', md: 'auto' }}
+                    flexDir={'column'}
+                    width={'200px'}
+                >
+                    <Text fontWeight={600}>Payment Method</Text>
+                    <Text>Crypto</Text>
+                </Flex>
+            </Flex>
+
+            <Flex
+                mt="1rem"
+                mr="auto"
+                flexDir={{ base: 'column', md: 'row' }}
+                width={'100%'}
+            >
+                <Flex flexDir={'column'}>
+                    <Text fontWeight={600}>Order ID</Text>
+                    <Text>{order.id}</Text>
+                </Flex>
+                <Flex
+                    mt={{ base: '1rem', md: '0' }}
+                    ml={{ base: '0', md: 'auto' }}
+                    flexDir={'column'}
+                    width={'200px'}
+                >
+                    <Text fontWeight={600}>Order Number</Text>
+                    <Text>{order.display_id}</Text>
+                </Flex>
+            </Flex>
+
+            {/* <div className="flex items-center text-compact-small gap-x-4 mt-4">
                 {showStatus && (
                     <>
                         <Text className="">
@@ -51,8 +111,8 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
                         </Text>
                     </>
                 )}
-            </div>
-        </div>
+            </div> */}
+        </Flex>
     );
 };
 

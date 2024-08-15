@@ -132,7 +132,7 @@ const Addresses = ({
                                         </Text>
                                     </div>
 
-                                    {contactEmail?.length > 0 &&
+                                    {/* {contactEmail?.length > 0 &&
                                         contactPhone?.length > 0 && (
                                             <div className="flex flex-col w-full md:w-1/3 mb-4 md:mb-0">
                                                 <Text className="text-medium-plus text-white mb-1">
@@ -145,7 +145,7 @@ const Addresses = ({
                                                     {contactPhone}
                                                 </Text>
                                             </div>
-                                        )}
+                                        )} */}
                                 </div>
                             </div>
                         ) : (

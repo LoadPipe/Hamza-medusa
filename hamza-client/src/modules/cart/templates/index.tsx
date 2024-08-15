@@ -51,21 +51,19 @@ const CartTemplate = ({
                 >
                     {/* gap="24px" */}
                     <Flex flexDirection={'column'} gap="16px" flex={1}>
-                        {/* {!customer && (
-                                    <>
-                                        <SignInPrompt />
-                                        <Divider />
-                                    </>
-                                )} */}
+                        {!customer && (
+                            <>
+                                <SignInPrompt />
+                                <Divider />
+                            </>
+                        )}
                         {/* Cart Items */}
                         <ItemsTemplate
                             region={cart?.region}
                             items={cart?.items}
                         />
-
                         {/* Shipping Address */}
-
-                        <CartShippingAddress customer={customer} />
+                        {/* <CartShippingAddress customer={customer} /> */}
                     </Flex>
 
                     {cart && cart.region && <Summary cart={cart} />}
