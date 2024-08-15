@@ -19,7 +19,6 @@ type OrderCompletedTemplateProps = {
 //TODO: replace the following back in the template, when working
 /*
           <Items items={line-item.items} region={line-item.region} />
-          <CartTotals data={line-item} />
           <ShippingDetails line-item={line-item} />
 */
 
@@ -48,9 +47,9 @@ export default function OrderCompletedTemplate({
             <Box color="primary.green.900" mb="1rem">
                 <MdOutlineCheckCircle size={'72px'} />
             </Box>
-            <Heading as="h1" size="lg">
+            <Text as="h1" fontSize={'24px'} fontWeight={700}>
                 Payment Successful!
-            </Heading>
+            </Text>
             <Text fontWeight={600}>Thank you for your order!</Text>
 
             <Text mt="1rem" textAlign={'center'}>
@@ -58,12 +57,12 @@ export default function OrderCompletedTemplate({
             </Text>
 
             <OrderDetails order={order} />
-
             <Divider my="2rem" borderColor="#555555" />
             <Summary cart_id={order.cart_id} />
-            <Divider my="2rem" borderColor="#555555" />
+            <Divider my="1rem" borderColor="#555555" />
             <TransactionDetails data={order} />
             <Divider my="1rem" borderColor="#555555" />
+
             {/* <CartTotals  /> */}
             {/* <OrderDetails order={order} />
                     <Heading as="h2" size="md" textAlign="center">
