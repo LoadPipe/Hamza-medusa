@@ -5,6 +5,7 @@ import { clx } from '@medusajs/ui';
 import { getPercentageDiff } from '@lib/util/get-precentage-diff';
 import { CalculatedVariant } from 'types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import { Text } from '@chakra-ui/react';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -56,7 +57,11 @@ const LineItemPrice = ({
                         )}
                     </>
                 )}
-                <span
+                <Text
+                    as="span"
+                    fontSize={{ base: '14px', md: '24px' }}
+                    fontWeight={700}
+                    style={{ color: 'white' }}
                     className={clx('text-base-regular', {
                         'text-ui-fg-interactive': hasReducedPrice,
                     })}
@@ -68,7 +73,7 @@ const LineItemPrice = ({
                         ) +
                             ' ' +
                             (item.currency_code?.toUpperCase() ?? '')}
-                </span>
+                </Text>
             </div>
         </div>
     );
