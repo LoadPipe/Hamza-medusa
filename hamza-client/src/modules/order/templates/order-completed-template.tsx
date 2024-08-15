@@ -9,6 +9,7 @@ import OrderDetails from '@modules/order/components/order-details';
 import ShippingDetails from '@modules/order/components/shipping-details';
 import PaymentDetails from '@modules/order/components/payment-details';
 import Summary from '@modules/order/components/summary';
+import { MdOutlineCheckCircle } from 'react-icons/md';
 
 type OrderCompletedTemplateProps = {
     order: Order;
@@ -27,49 +28,41 @@ export default function OrderCompletedTemplate({
     const isOnboarding = cookies().get('_medusa_onboarding')?.value === 'true';
 
     return (
-        <Box
-            py={6}
-            minH="calc(100vh - 64px)"
-            mx="1rem"
+        <Flex
+            flexDir={'column'}
+            width={'100%'}
+            maxW={'649px'}
+            mt="3rem"
+            mb="5rem"
+            mx="auto"
+            p={'40px'}
+            borderRadius={'16px'}
+            color="white"
             justifyContent={'center'}
             alignItems={'center'}
+            backgroundColor={'#121212'}
         >
-            <Flex
-                direction="column"
-                justifyContent={'center'}
-                alignItems={'center'}
-                gap={10}
-                maxW="4xl"
-                h="full"
-                w="full"
-                mx="auto"
-            >
-                {isOnboarding && <OnboardingCta orderId={order.id} />}
-                <Box
-                    p={6}
-                    bg="white"
-                    w="full"
-                    py={10}
-                    boxShadow="md"
-                    rounded="lg"
-                >
-                    <VStack spacing={4} align="center" w="full">
-                        <Heading as="h1" size="lg" mb={4} textAlign="center">
-                            Thank you!
-                        </Heading>
-                        <Text textAlign="center">
-                            Your order was placed successfully.
-                        </Text>
-                        <OrderDetails order={order} />
-                        <Heading as="h2" size="md" textAlign="center">
-                            Summary
-                        </Heading>
-                        <Summary cart_id={order.cart_id} />
-                        <PaymentDetails order={order} />
-                        <Help />
-                    </VStack>
-                </Box>
-            </Flex>
-        </Box>
+            {isOnboarding && <OnboardingCta orderId={order.id} />}
+
+            <Box color="primary.green.900" mb="1rem">
+                <MdOutlineCheckCircle size={'72px'} />
+            </Box>
+            <Heading as="h1" size="lg">
+                Payment Successful!
+            </Heading>
+            <Text fontWeight={600}>Thank you for your order!</Text>
+
+            <Text mt="1rem">
+                Order confirmation has been sent to your registered email
+            </Text>
+            <OrderDetails order={order} />
+            {/* <OrderDetails order={order} />
+                    <Heading as="h2" size="md" textAlign="center">
+                        Summary
+                    </Heading>
+                    <Summary cart_id={order.cart_id} />
+                    <PaymentDetails order={order} />
+                    <Help /> */}
+        </Flex>
     );
 }

@@ -65,7 +65,7 @@ const CartTemplate = ({
 
                         {/* Shipping Address */}
 
-                        <CartShippingAddress customer={customer} />
+                        {/* <CartShippingAddress customer={customer} /> */}
                     </Flex>
 
                     {cart && cart.region && <Summary cart={cart} />}
