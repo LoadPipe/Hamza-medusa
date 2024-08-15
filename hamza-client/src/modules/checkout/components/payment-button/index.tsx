@@ -23,6 +23,7 @@ import {
     getMassmarketPaymentAddress,
     getMasterSwitchAddress,
 } from 'contracts.config';
+import toast from 'react-hot-toast';
 
 //TODO: we need a global common function to replace this
 const MEDUSA_SERVER_URL =
@@ -258,11 +259,12 @@ const CryptoPaymentButton = ({
                 );
             } else {
                 setSubmitting(false);
-                setErrorMessage(
-                    output?.message
-                        ? output.message
-                        : 'Checkout was not completed.'
-                );
+                toast.error('Checkout was not completed.');
+                // setErrorMessage(
+                //     output?.message
+                //         ? output.message
+                //         : 'Checkout was not completed.'
+                // );
                 await cancelOrderFromCart();
             }
         } else {
