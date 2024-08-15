@@ -90,7 +90,8 @@ export class BuckyClient {
 
         return this.client
             .post(
-                `/api/rest/v2/adapt/openapi/product/search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                //`/api/rest/v2/adapt/openapi/product/search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                `/api/rest/v2/adapt/adaptation/product/search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params
             )
             .then((response) => response.data?.data?.records)

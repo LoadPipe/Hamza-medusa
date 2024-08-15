@@ -121,7 +121,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             }
 
             variants.push({
-                title: item.productName,
+                title: productDetails.data.goodsName,
                 inventory_quantity: variant.quantity,
                 allow_backorder: false,
                 manage_inventory: true,
@@ -141,11 +141,11 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         collectionId: string,
         salesChannels: string[]
     ) => {
-        const productDetails = await buckyClient.getProductDetails(item.productLink);
+        const productDetails = await buckyClient.getProductDetails(item.goodsLink);
         console.log(productDetails);
 
         return {
-            title: item.productName,
+            title: item.goodsName,
             handle: item.spuCode,
             description: item.productName,
             is_giftcard: false,
@@ -169,7 +169,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         //retrieve products from bucky and convert them
         const buckyClient: BuckyClient = new BuckyClient();
-        const productData = [(await buckyClient.searchProducts('shoes', 1, 10))[0]];
+        const searchResults = await buckyClient.searchProducts('cup', 1, 10);
+        handler.logger.debug(`search returned ${searchResults.length} results`);
+        const productData = [searchResults[3]];
         console.log(productData);
 
         const products: CreateProductInput[] = await Promise.all(productData.map(
