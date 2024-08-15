@@ -1,7 +1,6 @@
-import { Order } from '@medusajs/medusa';
+import { Cart, Order } from '@medusajs/medusa';
 import { cookies } from 'next/headers';
 import { Box, Flex, Heading, VStack, Text, Divider } from '@chakra-ui/react';
-import CartTotals from '@modules/common/components/cart-totals';
 import Help from '@modules/order/components/help';
 import Items from '@modules/order/components/items';
 import OnboardingCta from '@modules/order/components/onboarding-cta';
@@ -10,9 +9,11 @@ import ShippingDetails from '@modules/order/components/shipping-details';
 import PaymentDetails from '@modules/order/components/payment-details';
 import Summary from '@modules/order/components/summary';
 import { MdOutlineCheckCircle } from 'react-icons/md';
+import TransactionDetails from '../components/transaction-details';
 
 type OrderCompletedTemplateProps = {
     order: Order;
+    cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | Order;
 };
 
 //TODO: replace the following back in the template, when working
@@ -59,7 +60,8 @@ export default function OrderCompletedTemplate({
             <OrderDetails order={order} />
 
             <Summary cart_id={order.cart_id} />
-
+            <TransactionDetails data={order} />
+            {/* <CartTotals  /> */}
             {/* <OrderDetails order={order} />
                     <Heading as="h2" size="md" textAlign="center">
                         Summary
