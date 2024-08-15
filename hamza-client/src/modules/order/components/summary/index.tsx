@@ -1,7 +1,15 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Box, Flex, Heading, Text, Button, Stack } from '@chakra-ui/react';
+import {
+    Box,
+    Flex,
+    Heading,
+    Text,
+    Button,
+    Stack,
+    Divider,
+} from '@chakra-ui/react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import Thumbnail from '@modules/products/components/thumbnail';
 import Tweet from '@/components/tweet';
@@ -72,16 +80,29 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
     }, [cart_id]);
 
     return (
-        <Flex direction="column" gap={8}>
+        <Flex direction="column" width={'100%'}>
+            <Divider my="2rem" />
+            <Text fontWeight={600}>Your Order</Text>
             {products.map((product) => (
-                <Box
-                    key={product.id}
-                    borderWidth={{ base: '0px', md: '1px' }}
-                    borderRadius="lg"
-                    p={6}
-                    mb={8}
-                >
-                    <Tweet productHandle={product.handle} isPurchased={true} />
+                <Box key={product.id} mt="1rem">
+                    <Flex flexDir={'row'}>
+                        <LocalizedClientLink
+                            href={`/products/${product.handle}`}
+                        >
+                            <Flex width={'55px'} height={'55px'}>
+                                <Thumbnail
+                                    thumbnail={product.thumbnail}
+                                    images={[]}
+                                    size="small"
+                                />
+                            </Flex>
+                        </LocalizedClientLink>
+                        <Text ml="1rem">{product.title}</Text>
+                    </Flex>
+
+                    <Divider my="2rem" />
+
+                    {/* <Tweet productHandle={product.handle} isPurchased={true} />
                     <Box mb={4}>
                         <Heading size="md">{product.title}</Heading>
                         <div
@@ -125,7 +146,7 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
                         }
                     >
                         Vendor Store
-                    </Button>
+                    </Button> */}
                 </Box>
             ))}
         </Flex>
