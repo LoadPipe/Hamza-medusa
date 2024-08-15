@@ -13,7 +13,6 @@ import TransactionDetails from '../components/transaction-details';
 
 type OrderCompletedTemplateProps = {
     order: Order;
-    cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | Order;
 };
 
 //TODO: replace the following back in the template, when working
@@ -61,7 +60,6 @@ export default function OrderCompletedTemplate({
             <Summary cart_id={order.cart_id} />
             <Divider my="1rem" borderColor="#555555" />
             <TransactionDetails data={order} />
-            <Divider my="1rem" borderColor="#555555" />
 
             {/* <CartTotals  /> */}
             {/* <OrderDetails order={order} />

@@ -56,8 +56,12 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
 
     const subtotals = getCartSubtotals(data);
 
+    const getGrandTotal = () => {};
+
+    const grandTotal = getGrandTotal();
+
     return (
-        <Flex width={'100%'}>
+        <Flex width={'100%'} flexDir={'column'}>
             <Flex flexDirection={'column'} color="white" width={'100%'}>
                 {subtotals['eth'] && (
                     <Flex color={'white'}>
@@ -188,6 +192,13 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                     </Text>
                 </Flex>
             )}
+            <Divider my="1rem" borderColor="#555555" />
+            <Flex width={'100%'}>
+                <Text>Grand Total</Text>
+                <Text ml="auto">
+                    0:00 {preferred_currency_code?.toUpperCase()}
+                </Text>
+            </Flex>
         </Flex>
     );
 };
