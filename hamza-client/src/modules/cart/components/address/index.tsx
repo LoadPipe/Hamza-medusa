@@ -39,13 +39,13 @@ const CartShippingAddress = ({
                         {customer.shipping_addresses[0]?.first_name ?? ''}
                         {customer.shipping_addresses[0]?.last_name ?? ''}
                     </Text>
-                    {customer.shipping_addresses[0].email && (
+                    {customer.shipping_addresses[0]?.email && (
                         <Text fontSize={{ base: '14px', md: '16x' }}>
                             {customer.shipping_addresses[0]?.email ?? ''}
                             <br />
                         </Text>
                     )}
-                    {customer.shipping_addresses[0].phone && (
+                    {customer.shipping_addresses[0]?.phone && (
                         <Text fontSize={{ base: '14px', md: '16x' }}>
                             {customer.shipping_addresses[0]?.phone ?? ''}
                             <br />
@@ -55,7 +55,7 @@ const CartShippingAddress = ({
                         {customer.shipping_addresses[0]?.address_1 ?? ''}
                         <br />
                     </Text>
-                    {customer.shipping_addresses[0].address_2 && (
+                    {customer.shipping_addresses[0]?.address_2 && (
                         <Text fontSize={{ base: '14px', md: '16x' }}>
                             {customer.shipping_addresses[0]?.address_2 ?? ''}
                             <br />
