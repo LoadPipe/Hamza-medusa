@@ -26,7 +26,14 @@ const HeroBanner = () => {
                     <Link href="https://blog.hamza.biz/alpha-ship" isExternal>
                         <Text fontSize={'16px'} fontWeight="bold">
                             Alpha Ship! Join our Ambassador Program To Join
-                            (Apply Here https://blog.hamza.biz/alpha-ship)
+                            Apply Here{' '}
+                            <Text
+                                as="span"
+                                color="cyan.300"
+                                textDecoration="underline"
+                            >
+                                https://blog.hamza.biz/alpha-ship
+                            </Text>
                         </Text>
                     </Link>
                 </Flex>
