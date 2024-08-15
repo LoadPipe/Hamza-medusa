@@ -52,9 +52,10 @@ export default function OrderCompletedTemplate({
             </Heading>
             <Text fontWeight={600}>Thank you for your order!</Text>
 
-            <Text mt="1rem">
+            <Text mt="1rem" textAlign={'center'}>
                 Order confirmation has been sent to your registered email
             </Text>
+
             <OrderDetails order={order} />
             {/* <OrderDetails order={order} />
                     <Heading as="h2" size="md" textAlign="center">
