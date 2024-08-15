@@ -28,9 +28,11 @@ export class CoinGeckoService {
         await Promise.all([
             this.fetchConversionRate(this.USDT, 'eth'),
             this.fetchConversionRate(this.USDC, 'eth'),
+            this.fetchConversionRate(this.USDT, 'cny'),
+            this.fetchConversionRate(this.USDC, 'cny'),
         ])
             .then(() => {
-                this.logger.log('Cache initialized for ETH to USDT and ETH to USDC.');
+                this.logger.log('Cache initialized.');
             })
             .catch((error) => {
                 this.logger.error('Failed to populate cache at startup:', error);
@@ -79,8 +81,16 @@ export class CoinGeckoService {
             return cachedData.value;
         }
 
+        // Check for cross-caching
+        cacheKey = this.createCacheKey(conversionCurrency, baseCurrency);
+        cachedData = this.cache[cacheKey];
+
+        if (cachedData && currentTime - cachedData.timestamp < this.cacheDuration) {
+            return 1 / cachedData.value;
+        }
+
         // If direct rate not cached, calculate via ETH
-        if (baseCurrency !== 'eth' && conversionCurrency !== 'eth') {
+        if (this.isAddress(baseCurrency) && this.isAddress(conversionCurrency)) {
             const baseToEth = await this.getExchangeRate(baseCurrency, 'eth');
             const conversionToEth = await this.getExchangeRate(
                 conversionCurrency,
@@ -95,9 +105,24 @@ export class CoinGeckoService {
         }
 
         //handle reverse rates 
-        if (baseCurrency == 'eth' && conversionCurrency !== 'eth') {
+        if (!this.isAddress(baseCurrency) && this.isAddress(conversionCurrency)) {
             const rate = await this.getExchangeRate(conversionCurrency, baseCurrency);
             return (rate ? 1 / rate : 0);
+        }
+
+        //handle two non-contract currencies (such as cny and eth) 
+        if (!this.isAddress(baseCurrency) && !this.isAddress(conversionCurrency)) {
+            const baseToUsdc = await this.getExchangeRate(baseCurrency, this.USDC);
+            const conversionToUsdc = await this.getExchangeRate(
+                conversionCurrency,
+                this.USDC,
+            );
+
+            const rate = baseToUsdc / conversionToUsdc;
+
+            // Cache this calculated rate
+            this.cache[cacheKey] = { value: rate, timestamp: currentTime };
+            return rate;
         }
 
         // Otherwise fetch normally
@@ -193,5 +218,9 @@ export class CoinGeckoService {
 
     private isZeroAddress(value: string): boolean {
         return (value.replace('0x', '')).match(/^0+$/) ? true : false;
+    }
+
+    private isAddress(value: string): boolean {
+        return (value.trim().toLowerCase().startsWith('0x'));
     }
 }
