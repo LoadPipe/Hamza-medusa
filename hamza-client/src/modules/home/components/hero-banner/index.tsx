@@ -24,7 +24,11 @@ const HeroBanner = () => {
                     style={{ opacity: 1, transition: 'opacity 0.5s ease-out' }}
                 >
                     <Link href="https://blog.hamza.biz/alpha-ship" isExternal>
-                        <Text fontSize={'16px'} fontWeight="bold">
+                        <Text
+                            fontSize={{ base: '12px', md: '16px' }}
+                            textAlign={'center'}
+                            fontWeight="bold"
+                        >
                             Alpha Ship! Join our Ambassador Program To Join
                             Apply Here:{' '}
                             <Text
