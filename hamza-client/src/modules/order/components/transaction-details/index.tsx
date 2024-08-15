@@ -101,20 +101,36 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                 )}
 
                 <Flex>
-                    <Text fontSize={{ base: '14px', md: '16px' }}>
-                        Shipping
+                    <Text
+                        fontSize={{ base: '14px', md: '16px' }}
+                        color="#555555"
+                    >
+                        Shipping Cost
                     </Text>
-                    <Text ml="auto" fontSize={{ base: '14px', md: '16px' }}>
+                    <Text
+                        ml="auto"
+                        fontSize={{ base: '14px', md: '16px' }}
+                        color="#555555"
+                    >
                         {formatCryptoPrice(
                             shipping_total!,
                             preferred_currency_code!
-                        ).toString()}
+                        ).toString()}{' '}
                         {preferred_currency_code?.toUpperCase()}
                     </Text>
                 </Flex>
                 <Flex>
-                    <Text fontSize={{ base: '14px', md: '16px' }}>Taxes</Text>
-                    <Text ml="auto" fontSize={{ base: '14px', md: '16px' }}>
+                    <Text
+                        fontSize={{ base: '14px', md: '16px' }}
+                        color="#555555"
+                    >
+                        Taxes
+                    </Text>
+                    <Text
+                        ml="auto"
+                        fontSize={{ base: '14px', md: '16px' }}
+                        color="#555555"
+                    >
                         {getAmount(tax_total).toString()}
                     </Text>
                 </Flex>

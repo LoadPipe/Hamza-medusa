@@ -81,7 +81,6 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
 
     return (
         <Flex direction="column" width={'100%'}>
-            <Divider my="2rem" />
             <Text fontWeight={600}>Your Order</Text>
             {products.map((product) => (
                 <Box key={product.id} mt="1rem">
@@ -112,8 +111,6 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
                             {product.currency_code.toUpperCase()}
                         </Text>
                     </Flex>
-
-                    <Divider mt="1rem" mb="2rem" />
                 </Box>
             ))}
         </Flex>

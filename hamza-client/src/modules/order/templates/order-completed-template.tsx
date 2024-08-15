@@ -59,8 +59,11 @@ export default function OrderCompletedTemplate({
 
             <OrderDetails order={order} />
 
+            <Divider my="2rem" borderColor="#555555" />
             <Summary cart_id={order.cart_id} />
+            <Divider my="2rem" borderColor="#555555" />
             <TransactionDetails data={order} />
+            <Divider my="1rem" borderColor="#555555" />
             {/* <CartTotals  /> */}
             {/* <OrderDetails order={order} />
                     <Heading as="h2" size="md" textAlign="center">
