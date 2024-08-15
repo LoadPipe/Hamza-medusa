@@ -3,17 +3,35 @@
 import React from 'react';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { FaArrowRightLong } from 'react-icons/fa6';
+import Link from 'next/link';
 
 const HeroBanner = () => {
     return (
         <>
             <Flex
-                mt="2rem"
                 justifyContent={'center'}
                 alignItems={'center'}
                 flexDirection={'column'}
             >
                 <Flex
+                    w="100%"
+                    bg="primary.indigo.900"
+                    color="white"
+                    py={2}
+                    mb={4}
+                    justifyContent="center"
+                    alignItems="center"
+                    style={{ opacity: 1, transition: 'opacity 0.5s ease-out' }}
+                >
+                    <Link href="https://blog.hamza.biz/alpha-ship" isExternal>
+                        <Text fontSize={'16px'} fontWeight="bold">
+                            Alpha Ship! Join our Ambassador Program To Join
+                            (Apply Here https://blog.hamza.biz/alpha-ship)
+                        </Text>
+                    </Link>
+                </Flex>
+                <Flex
+                    mt="2rem"
                     gap={{ base: '0', md: '10px' }}
                     justifyContent={'center'}
                     alignItems={'center'}
