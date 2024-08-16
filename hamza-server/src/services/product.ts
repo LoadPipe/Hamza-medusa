@@ -129,40 +129,44 @@ class ProductService extends MedusaProductService {
     ): Promise<Product[]> {
         try {
             const addedProducts = await Promise.all(
-                productData.map(async (product) => {
-                    const productHandle = product.handle;
+                productData.map((product) => {
+                    return new Promise(async (resolve, reject) => {
+                        const productHandle = product.handle;
 
-                    try {
-                        // Check if the product already exists by handle
-                        const existingProduct =
-                            await this.productRepository_.findOne({
-                                where: { handle: productHandle },
-                                relations: ['variants'],
-                            });
+                        try {
+                            // Check if the product already exists by handle
+                            const existingProduct =
+                                await this.productRepository_.findOne({
+                                    where: { handle: productHandle },
+                                    relations: ['variants'],
+                                });
 
-                        if (existingProduct) {
-                            // If the product exists, update it
-                            this.logger.info(
-                                `Updating existing product with handle: ${productHandle}`
+                            if (existingProduct) {
+                                // If the product exists, update it
+                                this.logger.info(
+                                    `Updating existing product with handle: ${productHandle}`
+                                );
+                                return await this.updateProduct(
+                                    existingProduct.id,
+                                    product.variants
+                                );
+                            } else {
+                                // If the product does not exist, create a new one
+                                this.logger.info(
+                                    `Creating new product with handle: ${productHandle}`
+                                );
+                                return await super.create(product);
+                            }
+
+                            resolve(true);
+                        } catch (error) {
+                            this.logger.error(
+                                `Error processing product with handle: ${productHandle}`,
+                                error
                             );
-                            return await this.updateProduct(
-                                existingProduct.id,
-                                product.variants
-                            );
-                        } else {
-                            // If the product does not exist, create a new one
-                            this.logger.info(
-                                `Creating new product with handle: ${productHandle}`
-                            );
-                            return await super.create(product);
+                            resolve(false);
                         }
-                    } catch (error) {
-                        this.logger.error(
-                            `Error processing product with handle: ${productHandle}`,
-                            error
-                        );
-                        throw error;
-                    }
+                    });
                 })
             );
             // Ensure all products have valid IDs
