@@ -161,7 +161,6 @@ class ProductService extends MedusaProductService {
                             `Error processing product with handle: ${productHandle}`,
                             error
                         );
-                        // Optionally, you can throw the error to let the calling code handle it, or return null/undefined to continue with other products
                         throw error;
                     }
                 })
