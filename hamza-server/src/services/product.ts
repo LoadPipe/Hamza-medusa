@@ -173,7 +173,8 @@ class ProductService extends MedusaProductService {
                     });
                 })
             );
-            // Ensure all products have valid IDs
+
+            // Ensure all products are non-null and have valid IDs
             const validProducts = addedProducts.filter((p) => p && p.id);
             if (validProducts.length !== addedProducts.length) {
                 throw new Error('Some products were not created successfully');
