@@ -1,7 +1,6 @@
-import { Order } from '@medusajs/medusa';
+import { Cart, Order } from '@medusajs/medusa';
 import { cookies } from 'next/headers';
 import { Box, Flex, Heading, VStack, Text, Divider } from '@chakra-ui/react';
-import CartTotals from '@modules/common/components/cart-totals';
 import Help from '@modules/order/components/help';
 import Items from '@modules/order/components/items';
 import OnboardingCta from '@modules/order/components/onboarding-cta';
@@ -10,6 +9,7 @@ import ShippingDetails from '@modules/order/components/shipping-details';
 import PaymentDetails from '@modules/order/components/payment-details';
 import Summary from '@modules/order/components/summary';
 import { MdOutlineCheckCircle } from 'react-icons/md';
+import TransactionDetails from '../components/transaction-details';
 
 type OrderCompletedTemplateProps = {
     order: Order;
@@ -18,7 +18,6 @@ type OrderCompletedTemplateProps = {
 //TODO: replace the following back in the template, when working
 /*
           <Items items={line-item.items} region={line-item.region} />
-          <CartTotals data={line-item} />
           <ShippingDetails line-item={line-item} />
 */
 
@@ -47,9 +46,9 @@ export default function OrderCompletedTemplate({
             <Box color="primary.green.900" mb="1rem">
                 <MdOutlineCheckCircle size={'72px'} />
             </Box>
-            <Heading as="h1" size="lg">
+            <Text as="h1" fontSize={'24px'} fontWeight={700}>
                 Payment Successful!
-            </Heading>
+            </Text>
             <Text fontWeight={600}>Thank you for your order!</Text>
 
             <Text mt="1rem" textAlign={'center'}>
@@ -57,9 +56,12 @@ export default function OrderCompletedTemplate({
             </Text>
 
             <OrderDetails order={order} />
-
+            <Divider my="2rem" borderColor="#555555" />
             <Summary cart_id={order.cart_id} />
+            <Divider my="1rem" borderColor="#555555" />
+            <TransactionDetails data={order} />
 
+            {/* <CartTotals  /> */}
             {/* <OrderDetails order={order} />
                     <Heading as="h2" size="md" textAlign="center">
                         Summary
