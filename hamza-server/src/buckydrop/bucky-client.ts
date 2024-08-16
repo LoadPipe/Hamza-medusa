@@ -40,7 +40,6 @@ export class BuckyClient {
     private client: AxiosInstance;
 
     constructor() {
-        axios.defaults.timeout = 6000000;
         this.client = axios.create({
             baseURL: BUCKY_URL,
             headers: {
@@ -70,7 +69,8 @@ export class BuckyClient {
             .post(
                 //`/api/rest/v2/adapt/openapi/product/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 `/api/rest/v2/adapt/adaptation/product/query?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                params
+                params,
+                { timeout: 60000 }
             )
             .then((response) => response.data)
             .catch((error) => {
@@ -95,7 +95,8 @@ export class BuckyClient {
             .post(
                 //`/api/rest/v2/adapt/openapi/product/search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 `/api/rest/v2/adapt/adaptation/product/search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                params
+                params,
+                { timeout: 60000 }
             )
             .then((response) => response.data?.data?.records)
             .catch((error) => {
@@ -117,7 +118,8 @@ export class BuckyClient {
                 //TODO: get correct url for this
                 .post(
                     `/api/rest/v2/adapt/openapi/product/image-search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                    params
+                    params,
+                    { timeout: 60000 }
                 )
                 .then((response) => response.data)
                 .catch((error) => {
