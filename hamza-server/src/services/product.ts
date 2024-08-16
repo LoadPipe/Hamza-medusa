@@ -125,7 +125,7 @@ class ProductService extends MedusaProductService {
 
     async bulkImportProducts(
         storeId: string,
-        productData: BulkImportProductInput[]
+        productData: (CreateProductInput | UpdateProductInput)[]
     ): Promise<Product[]> {
         try {
             const addedProducts = await Promise.all(
@@ -149,7 +149,7 @@ class ProductService extends MedusaProductService {
                                 resolve(
                                     await this.updateProduct(
                                         existingProduct.id,
-                                        product.variants
+                                        product as UpdateProductInput
                                     )
                                 );
                             } else {
@@ -157,7 +157,11 @@ class ProductService extends MedusaProductService {
                                 this.logger.info(
                                     `Creating new product with handle: ${productHandle}`
                                 );
-                                resolve(await super.create(product));
+                                resolve(
+                                    await super.create(
+                                        product as CreateProductInput
+                                    )
+                                );
                             }
                         } catch (error) {
                             this.logger.error(
