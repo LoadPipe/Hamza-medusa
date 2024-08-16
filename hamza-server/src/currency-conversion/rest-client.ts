@@ -48,7 +48,7 @@ export class CurrencyConversionClient {
     ): Promise<number> {
         try {
             const url = `/exch?base=${baseCurrency}&to=${toCurrency}`;
-            console.log('getting exchange rate', url);
+            //console.log('getting exchange rate', url);
 
             if (baseCurrency === toCurrency) return 1;
 
@@ -61,7 +61,17 @@ export class CurrencyConversionClient {
             switch (baseCurrency) {
                 case '0x0000000000000000000000000000000000000000':
                     return 2517.26;
+                case 'cny':
+                    if (toCurrency !== '0x0000000000000000000000000000000000000000')
+                        return 0.14;
+                    else
+                        return 0.000051;
                 default:
+                    if (toCurrency !== '0x0000000000000000000000000000000000000000') {
+                        if (toCurrency === 'cny')
+                            return 7.14
+                        return 1;
+                    }
                     return 0.00041;
             }
         } catch (error) {

@@ -2,12 +2,12 @@ import axios, { AxiosInstance } from 'axios';
 import { createHash } from 'crypto';
 
 const BUCKY_URL = process.env.BUCKY_URL || 'https://dev.buckydrop.com';
-const APP_CODE = process.env.APP_CODE || '0077651952683977';
-const APP_SECRET = process.env.APP_SECRET || 'b9486ca7a7654a8f863b3dfbd9e8c100';
+const APP_CODE = process.env.BUCKY_APP_CODE || '0077651952683977';
+const APP_SECRET = process.env.BUCKY_APP_SECRET || 'b9486ca7a7654a8f863b3dfbd9e8c100';
 
 export interface CancelOrderParams {
     partnerOrderNo?: string;
-    orderNo?: string;
+    shopOrderNo?: string;
 }
 
 export interface ICreateBuckyOrderProduct {
@@ -21,7 +21,7 @@ export interface ICreateBuckyOrderProduct {
 
 export interface ICreateBuckyOrderParams {
     partnerOrderNo: string;
-    partnerOrderNoName: string;
+    partnerOrderNoName?: string;
     country: string;
     countryCode: string;
     province: string;
@@ -39,6 +39,7 @@ export class BuckyClient {
     private client: AxiosInstance;
 
     constructor() {
+        axios.defaults.timeout = 6000000;
         this.client = axios.create({
             baseURL: BUCKY_URL,
             headers: {
@@ -58,13 +59,16 @@ export class BuckyClient {
 
     // Method to get product details
     async getProductDetails(productLink: string): Promise<any> {
-        const params = JSON.stringify({ productLink });
+        const params = JSON.stringify({
+            goodsLink: productLink
+        });
         const timestamp = Date.now(); // Current timestamp in milliseconds
         const sign = this.generateSignature(params, timestamp);
 
         return this.client
             .post(
-                `/api/rest/v2/adapt/openapi/product/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                //`/api/rest/v2/adapt/openapi/product/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                `/api/rest/v2/adapt/adaptation/product/query?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params
             )
             .then((response) => response.data)
@@ -88,7 +92,8 @@ export class BuckyClient {
 
         return this.client
             .post(
-                `/api/rest/v2/adapt/openapi/product/search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                //`/api/rest/v2/adapt/openapi/product/search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                `/api/rest/v2/adapt/adaptation/product/search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params
             )
             .then((response) => response.data?.data?.records)
@@ -107,6 +112,7 @@ export class BuckyClient {
         const sign = this.generateSignature(params, timestamp);
 
         return this.client
+            //TODO: get correct url for this 
             .post(
                 `/api/rest/v2/adapt/openapi/product/image-search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params
@@ -122,9 +128,11 @@ export class BuckyClient {
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
 
+        //TODO: add more detailed parameters
         return this.client
             .get(
-                `/api/rest/v2/adapt/openapi/product/category/list-tree?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`
+                `/api/rest/v2/adapt/openapi/product/category/list-tree?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}?lang=en`
+                //`/api/rest/v2/adapt/openapi/product/category/list-tree?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`
             )
             .then((response) => response.data)
             .catch((error) => {
@@ -132,14 +140,16 @@ export class BuckyClient {
             });
     }
 
-    async createOrder(createOrderParams: ICreateBuckyOrderParams) {
+    //TODO: create type IBuckyOrderOutput
+    async createOrder(createOrderParams: ICreateBuckyOrderParams): Promise<any> {
         const params = JSON.stringify(createOrderParams);
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
 
         return this.client
             .post(
-                `/api/rest/v2/adapt/openapi/order/create?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                `/api/rest/v2/adapt/adaptation/order/shop-order/create?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                //`/api/rest/v2/adapt/openapi/order/create?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params
             )
             .then((response) => response.data)
@@ -148,18 +158,19 @@ export class BuckyClient {
             });
     }
 
-    async cancelOrder(partnerOrderNo?: string, orderNo?: string) {
-        const bodyParams: CancelOrderParams = {};
-        if (partnerOrderNo) bodyParams.partnerOrderNo = partnerOrderNo;
-        if (orderNo) bodyParams.orderNo = orderNo;
+    async cancelOrder(shopOrderNo: string, partnerOrderNo?: string) {
+        const params = JSON.stringify({
+            shopOrderNo,
+            partnerOrderNo,
+        });
 
-        const params = JSON.stringify(bodyParams);
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
 
         return this.client
             .post(
-                `/api/rest/v2/adapt/openapi/order/cancel?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                `/api/rest/v2/adapt/adaptation/order/shop-order/cancel?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                //`/api/rest/v2/adapt/openapi/order/cancel?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params,
                 {
                     headers: {
@@ -173,21 +184,24 @@ export class BuckyClient {
             });
     }
 
-    async getOrderDetails({ partnerOrderNo, orderNo }) {
+    async getOrderDetails(shopOrderNo: string, partnerOrderNo?: string) {
         const params = JSON.stringify({
+            shopOrderNo,
             partnerOrderNo,
-            orderNo,
         });
+
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
 
         return this.client
             .post(
-                `/api/rest/v2/adapt/openapi/order/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                `/api/rest/v2/adapt/adaptation/order/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                //`/api/rest/v2/adapt/openapi/order/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params
             )
             .then((response) => response.data)
             .catch((error) => {
+                console.error(error);
                 throw error;
             });
     }

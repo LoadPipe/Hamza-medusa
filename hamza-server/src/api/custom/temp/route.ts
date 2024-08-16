@@ -1,11 +1,14 @@
 import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import { RouteHandler } from '../../route-handler';
 import { Config } from '../../../config';
+import WhiteListService from 'src/services/whitelist';
+import StoreService from 'src/services/store';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const userService = req.scope.resolve('userService');
-    const storeService = req.scope.resolve('storeService');
+    const storeService: StoreService = req.scope.resolve('storeService');
     const productService = req.scope.resolve('productService');
+    const whitelistService: WhiteListService = req.scope.resolve('whitelistService');
     const productCollectionService = req.scope.resolve(
         'productCollectionService'
     );
@@ -15,6 +18,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
+        const store = await storeService.getStoreByName('Medusa Merch');
+        await whitelistService.create(store.id, '0x01');
+
         /*
         const user0 = await userService.create(
             {
@@ -49,6 +55,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         );
         */
 
+        /*
         const stores = await storeService.getStores();
         const products = await productService.getProductsFromStoreWithPrices();
         for (const store of stores) {
@@ -59,6 +66,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         console.log(products);
 
         return res.json(stores);
+        */
+
+        return res.json({ 'ok': 'ok' });
     });
 
 };
