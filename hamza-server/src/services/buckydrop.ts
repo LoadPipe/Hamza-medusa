@@ -49,9 +49,33 @@ export default class BuckydropService extends TransactionBaseService {
 
         if (existingProduct) {
             this.logger.info(
-                `Product with goodsId ${goodsId} already exists in the database.`
+                `Product with goodsId ${goodsId} already exists in the database. Updating existing product.`
             );
-            return []; // Or return an appropriate response if the product is already imported
+
+            console.log('exist product id', existingProduct);
+            console.log('exist product id', existingProduct.id);
+
+            // Map the Bucky data to update the existing product
+            const products: CreateProductInput[] = await Promise.all(
+                productData.map((p) =>
+                    this.mapBuckyDataToProductInput(
+                        buckyClient,
+                        p,
+                        ProductStatus.PUBLISHED,
+                        storeId,
+                        collectionId,
+                        [salesChannelId]
+                    )
+                )
+            );
+
+            // Update the existing product
+            const updatedProduct = await this.productService_.updateProduct(
+                existingProduct.id,
+                products
+            );
+
+            return [updatedProduct]; // Return the updated product
         }
 
         const products: CreateProductInput[] = await Promise.all(
