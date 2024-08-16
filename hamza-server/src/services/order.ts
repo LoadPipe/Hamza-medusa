@@ -19,7 +19,10 @@ import { Product } from '../models/product';
 import { Payment } from '../models/payment';
 import { Lifetime } from 'awilix';
 import { In, Not } from 'typeorm';
-import { BuckyClient, ICreateBuckyOrderProduct } from '../buckydrop/bucky-client';
+import {
+    BuckyClient,
+    ICreateBuckyOrderProduct,
+} from '../buckydrop/bucky-client';
 import ProductRepository from '@medusajs/medusa/dist/repositories/product';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
@@ -191,7 +194,7 @@ export default class OrderService extends MedusaOrderService {
             where: { order_id: In(orderIds) },
         });
 
-        //do buckydrop order creation 
+        //do buckydrop order creation
         await this.doBuckydropOrderCreation(cartId, orders);
 
         //calls to update inventory
@@ -229,15 +232,23 @@ export default class OrderService extends MedusaOrderService {
         return orders;
     }
 
-    private async doBuckydropOrderCreation(cartId: string, orders: Order[]): Promise<void> {
+    private async doBuckydropOrderCreation(
+        cartId: string,
+        orders: Order[]
+    ): Promise<void> {
         for (const order of orders) {
-            const { variants, quantities } = await this.getBuckyProductVariantsFromOrder(order);
+            const { variants, quantities } =
+                await this.getBuckyProductVariantsFromOrder(order);
             if (variants?.length) {
                 const productList: ICreateBuckyOrderProduct[] = [];
 
                 for (let n = 0; n < variants.length; n++) {
-                    const prodMetadata: any = JSON.parse(variants[n].product.bucky_metadata);
-                    const varMetadata: any = JSON.parse(variants[n].bucky_metadata);
+                    const prodMetadata: any = JSON.parse(
+                        variants[n].product.bucky_metadata
+                    );
+                    const varMetadata: any = JSON.parse(
+                        variants[n].bucky_metadata
+                    );
 
                     productList.push({
                         spuCode: prodMetadata.spuCode,
@@ -245,32 +256,38 @@ export default class OrderService extends MedusaOrderService {
                         productCount: quantities[n],
                         platform: prodMetadata.platform,
                         productPrice: prodMetadata.proPrice.price, //TODO: price come from variant
-                        productName: prodMetadata.productName
+                        productName: prodMetadata.goodsName,
                     });
                 }
 
-                const cart: Cart = await this.cartService_.retrieve(
-                    cartId, { relations: ['billing_address.country', 'customer'] }
-                );
+                const cart: Cart = await this.cartService_.retrieve(cartId, {
+                    relations: ['billing_address.country', 'customer'],
+                });
 
                 this.logger.debug('cart.email: ' + cart.email);
                 const output = await this.buckyClient.createOrder({
                     partnerOrderNo: order.id.replace('_', ''),
-                    //partnerOrderNoName: order.id, //TODO: what go here? 
+                    //partnerOrderNoName: order.id, //TODO: what go here?
                     country: cart.billing_address.country.name ?? '', //TODO: what format?
                     countryCode: cart.billing_address.country.iso_2 ?? '', //TODO: what format?
                     province: cart.billing_address.province ?? '',
                     city: cart.billing_address.city ?? '',
-                    detailAddress: `${cart.billing_address.address_1 ?? ''} ${cart.billing_address.address_2 ?? ''}`.trim(),
+                    detailAddress:
+                        `${cart.billing_address.address_1 ?? ''} ${cart.billing_address.address_2 ?? ''}`.trim(),
                     postCode: cart.billing_address.postal_code,
-                    contactName: `${cart.billing_address.first_name ?? ''} ${cart.billing_address.last_name ?? ''}`.trim(),
-                    contactPhone: cart.billing_address.phone?.length ? cart.billing_address.phone : '0809997747',
-                    email: cart.email?.length ? cart.email : cart.customer.email,
+                    contactName:
+                        `${cart.billing_address.first_name ?? ''} ${cart.billing_address.last_name ?? ''}`.trim(),
+                    contactPhone: cart.billing_address.phone?.length
+                        ? cart.billing_address.phone
+                        : '0809997747',
+                    email: cart.email?.length
+                        ? cart.email
+                        : cart.customer.email,
                     orderRemark: '',
-                    productList
+                    productList,
                 });
 
-                //TODO: if not success, need to take some action 
+                //TODO: if not success, need to take some action
                 order.bucky_metadata = JSON.stringify(output);
                 await this.orderRepository_.save(order);
 
@@ -571,27 +588,35 @@ export default class OrderService extends MedusaOrderService {
         return output;
     }
 
-    private async getBuckyProductsFromOrder(order: Order): Promise<{ products: Product[], quantities: number[] }> {
+    private async getBuckyProductsFromOrder(
+        order: Order
+    ): Promise<{ products: Product[]; quantities: number[] }> {
         const orders: Order[] = await this.getOrdersWithItems([order]);
         const relevantItems: LineItem[] = orders[0].cart.items.filter(
-            i => i.variant.product.bucky_metadata
+            (i) => i.variant.product.bucky_metadata
         );
 
-        return relevantItems?.length ? {
-            products: relevantItems.map(i => i.variant.product),
-            quantities: relevantItems.map(i => i.quantity)
-        } : { products: [], quantities: [] };
+        return relevantItems?.length
+            ? {
+                  products: relevantItems.map((i) => i.variant.product),
+                  quantities: relevantItems.map((i) => i.quantity),
+              }
+            : { products: [], quantities: [] };
     }
 
-    private async getBuckyProductVariantsFromOrder(order: Order): Promise<{ variants: ProductVariant[], quantities: number[] }> {
+    private async getBuckyProductVariantsFromOrder(
+        order: Order
+    ): Promise<{ variants: ProductVariant[]; quantities: number[] }> {
         const orders: Order[] = await this.getOrdersWithItems([order]);
         const relevantItems: LineItem[] = orders[0].cart.items.filter(
-            i => i.variant.product.bucky_metadata
+            (i) => i.variant.product.bucky_metadata
         );
 
-        return relevantItems?.length ? {
-            variants: relevantItems.map(i => i.variant),
-            quantities: relevantItems.map(i => i.quantity)
-        } : { variants: [], quantities: [] };
+        return relevantItems?.length
+            ? {
+                  variants: relevantItems.map((i) => i.variant),
+                  quantities: relevantItems.map((i) => i.quantity),
+              }
+            : { variants: [], quantities: [] };
     }
 }
