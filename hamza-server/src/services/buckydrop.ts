@@ -150,7 +150,7 @@ export default class BuckydropService extends TransactionBaseService {
         return {
             title: item.goodsName,
             handle: item.spuCode,
-            description: item.productName,
+            description: item.goodsName,
             is_giftcard: false,
             status: status as ProductStatus,
             thumbnail: item.picUrl,
