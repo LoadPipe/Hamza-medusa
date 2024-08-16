@@ -55,7 +55,6 @@ export default class BuckydropService extends TransactionBaseService {
             console.log('exist product id', existingProduct);
             console.log('exist product id', existingProduct.id);
 
-            // Map the Bucky data to update the existing product
             const products: CreateProductInput[] = await Promise.all(
                 productData.map((p) =>
                     this.mapBuckyDataToProductInput(
