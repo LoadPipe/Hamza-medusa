@@ -30,10 +30,29 @@ export default class BuckydropService extends TransactionBaseService {
     ): Promise<Product[]> {
         //retrieve products from bucky and convert them
         const buckyClient: BuckyClient = new BuckyClient();
-        const searchResults = await buckyClient.searchProducts('cup', 1, 10);
+        const searchResults = await buckyClient.searchProducts('elf', 1, 10);
         this.logger.debug(`search returned ${searchResults.length} results`);
         const productData = [searchResults[3]];
-        console.log(productData);
+
+        // Check if the product with the same goodsId exists in the database
+        const goodsId = productData[0].goodsId;
+        let existingProduct;
+        try {
+            existingProduct = await this.productService_.findByGoodsId(goodsId);
+        } catch (error) {
+            this.logger.error(
+                'Error checking if product exists by goodsId in bucky_metadata',
+                error
+            );
+            throw error;
+        }
+
+        if (existingProduct) {
+            this.logger.info(
+                `Product with goodsId ${goodsId} already exists in the database.`
+            );
+            return []; // Or return an appropriate response if the product is already imported
+        }
 
         const products: CreateProductInput[] = await Promise.all(
             productData.map((p) =>
