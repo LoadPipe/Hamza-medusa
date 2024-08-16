@@ -32,7 +32,7 @@ export default class BuckydropService extends TransactionBaseService {
         const buckyClient: BuckyClient = new BuckyClient();
         const searchResults = await buckyClient.searchProducts('elf', 1, 10);
         this.logger.debug(`search returned ${searchResults.length} results`);
-        const productData = [searchResults[3]];
+        const productData = searchResults;
 
         // Check if the product with the same goodsId exists in the database
         const goodsId = productData[0].goodsId;
