@@ -121,15 +121,51 @@ class ProductService extends MedusaProductService {
         }
     }
 
+    // do the detection here does the product exist already / update product input
+
     async bulkImportProducts(
         storeId: string,
         productData: BulkImportProductInput[]
     ): Promise<Product[]> {
         try {
             const addedProducts = await Promise.all(
-                productData.map((product) => super.create(product))
-            );
+                productData.map(async (product) => {
+                    const productHandle = product.handle;
 
+                    try {
+                        // Check if the product already exists by handle
+                        const existingProduct =
+                            await this.productRepository_.findOne({
+                                where: { handle: productHandle },
+                                relations: ['variants'],
+                            });
+
+                        if (existingProduct) {
+                            // If the product exists, update it
+                            this.logger.info(
+                                `Updating existing product with handle: ${productHandle}`
+                            );
+                            return await this.updateProduct(
+                                existingProduct.id,
+                                product.variants
+                            );
+                        } else {
+                            // If the product does not exist, create a new one
+                            this.logger.info(
+                                `Creating new product with handle: ${productHandle}`
+                            );
+                            return await super.create(product);
+                        }
+                    } catch (error) {
+                        this.logger.error(
+                            `Error processing product with handle: ${productHandle}`,
+                            error
+                        );
+                        // Optionally, you can throw the error to let the calling code handle it, or return null/undefined to continue with other products
+                        throw error;
+                    }
+                })
+            );
             // Ensure all products have valid IDs
             const validProducts = addedProducts.filter((p) => p && p.id);
             if (validProducts.length !== addedProducts.length) {
