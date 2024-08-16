@@ -130,7 +130,7 @@ class ProductService extends MedusaProductService {
         try {
             const addedProducts = await Promise.all(
                 productData.map((product) => {
-                    return new Promise(async (resolve, reject) => {
+                    return new Promise<Product>(async (resolve, reject) => {
                         const productHandle = product.handle;
 
                         try {
@@ -146,25 +146,25 @@ class ProductService extends MedusaProductService {
                                 this.logger.info(
                                     `Updating existing product with handle: ${productHandle}`
                                 );
-                                return await this.updateProduct(
-                                    existingProduct.id,
-                                    product.variants
+                                resolve(
+                                    await this.updateProduct(
+                                        existingProduct.id,
+                                        product.variants
+                                    )
                                 );
                             } else {
                                 // If the product does not exist, create a new one
                                 this.logger.info(
                                     `Creating new product with handle: ${productHandle}`
                                 );
-                                return await super.create(product);
+                                resolve(await super.create(product));
                             }
-
-                            resolve(true);
                         } catch (error) {
                             this.logger.error(
                                 `Error processing product with handle: ${productHandle}`,
                                 error
                             );
-                            resolve(false);
+                            resolve(null);
                         }
                     });
                 })
