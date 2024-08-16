@@ -174,7 +174,6 @@ export default class BuckydropService extends TransactionBaseService {
                 'Error mapping Bucky data to product input',
                 error
             );
-            throw error;
         }
     }
 }
