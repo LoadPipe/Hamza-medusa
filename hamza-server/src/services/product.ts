@@ -12,7 +12,9 @@ import {
 } from '@medusajs/medusa/dist/types/product';
 import { Product } from '../models/product';
 import { StoreRepository } from '../repositories/store';
-import PriceSelectionStrategy, { PriceConverter } from '../strategies/price-selection';
+import PriceSelectionStrategy, {
+    PriceConverter,
+} from '../strategies/price-selection';
 import CustomerService from '../services/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import { BuckyClient } from '../buckydrop/bucky-client';
@@ -121,13 +123,11 @@ class ProductService extends MedusaProductService {
 
     async bulkImportProducts(
         storeId: string,
-        productData: BulkImportProductInput[],
+        productData: BulkImportProductInput[]
     ): Promise<Product[]> {
         try {
             const addedProducts = await Promise.all(
-                productData.map((product) =>
-                    super.create(product)
-                )
+                productData.map((product) => super.create(product))
             );
 
             // Ensure all products have valid IDs
@@ -136,9 +136,9 @@ class ProductService extends MedusaProductService {
                 throw new Error('Some products were not created successfully');
             }
 
-            //get the store 
+            //get the store
             const store: Store = await this.storeRepository_.findOne({
-                where: { id: storeId }
+                where: { id: storeId },
             });
 
             if (!store) {
@@ -150,7 +150,10 @@ class ProductService extends MedusaProductService {
             );
             return validProducts;
         } catch (error) {
-            this.logger.error('Error in adding products from BuckyDrop:', error);
+            this.logger.error(
+                'Error in adding products from BuckyDrop:',
+                error
+            );
             throw error;
         }
     }
@@ -299,14 +302,67 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    private async convertPrices(products: Product[], customerId: string = ''): Promise<Product[]> {
+    async findByBuckyMetadata(buckyMetadata: string): Promise<Product | null> {
+        try {
+            const product = await this.productRepository_.findOne({
+                where: { bucky_metadata: buckyMetadata },
+            });
+
+            if (!product) {
+                this.logger.info(
+                    `Product with bucky_metadata ${buckyMetadata} not found.`
+                );
+                return null;
+            }
+
+            return product;
+        } catch (error) {
+            this.logger.error(
+                'Error fetching product by bucky_metadata:',
+                error
+            );
+            throw new Error('Failed to fetch product by bucky_metadata');
+        }
+    }
+
+    async findByGoodsId(goodsId: string): Promise<Product | null> {
+        try {
+            const product = await this.productRepository_
+                .createQueryBuilder('product')
+                .where('product.bucky_metadata LIKE :goodsId', {
+                    goodsId: `%${goodsId}%`,
+                })
+                .getOne();
+
+            if (!product) {
+                this.logger.info(
+                    `Product with goodsId ${goodsId} not found in bucky_metadata.`
+                );
+                return null;
+            }
+
+            return product;
+        } catch (error) {
+            this.logger.error('Error fetching product by goodsId:', error);
+            throw new Error(
+                'Failed to fetch product by goodsId in bucky_metadata'
+            );
+        }
+    }
+
+    private async convertPrices(
+        products: Product[],
+        customerId: string = ''
+    ): Promise<Product[]> {
         for (const prod of products) {
             for (const variant of prod.variants) {
-                const strategy: PriceSelectionStrategy = new PriceSelectionStrategy({
-                    customerService: this.customerService_,
-                    productVariantRepository: this.productVariantRepository_,
-                    logger: this.logger
-                });
+                const strategy: PriceSelectionStrategy =
+                    new PriceSelectionStrategy({
+                        customerService: this.customerService_,
+                        productVariantRepository:
+                            this.productVariantRepository_,
+                        logger: this.logger,
+                    });
                 const results = await strategy.calculateVariantPrice(
                     [{ variantId: variant.id, quantity: 1 }],
                     { customer_id: customerId }
@@ -316,7 +372,7 @@ class ProductService extends MedusaProductService {
             }
         }
 
-        return products
+        return products;
     }
 }
 

@@ -3,7 +3,8 @@ import { createHash } from 'crypto';
 
 const BUCKY_URL = process.env.BUCKY_URL || 'https://dev.buckydrop.com';
 const APP_CODE = process.env.BUCKY_APP_CODE || '0077651952683977';
-const APP_SECRET = process.env.BUCKY_APP_SECRET || 'b9486ca7a7654a8f863b3dfbd9e8c100';
+const APP_SECRET =
+    process.env.BUCKY_APP_SECRET || 'b9486ca7a7654a8f863b3dfbd9e8c100';
 
 export interface CancelOrderParams {
     partnerOrderNo?: string;
@@ -32,7 +33,7 @@ export interface ICreateBuckyOrderParams {
     contactPhone: string;
     email: string;
     orderRemark: string;
-    productList: ICreateBuckyOrderProduct[]
+    productList: ICreateBuckyOrderProduct[];
 }
 
 export class BuckyClient {
@@ -60,7 +61,7 @@ export class BuckyClient {
     // Method to get product details
     async getProductDetails(productLink: string): Promise<any> {
         const params = JSON.stringify({
-            goodsLink: productLink
+            goodsLink: productLink,
         });
         const timestamp = Date.now(); // Current timestamp in milliseconds
         const sign = this.generateSignature(params, timestamp);
@@ -111,16 +112,18 @@ export class BuckyClient {
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
 
-        return this.client
-            //TODO: get correct url for this 
-            .post(
-                `/api/rest/v2/adapt/openapi/product/image-search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                params
-            )
-            .then((response) => response.data)
-            .catch((error) => {
-                throw error;
-            });
+        return (
+            this.client
+                //TODO: get correct url for this
+                .post(
+                    `/api/rest/v2/adapt/openapi/product/image-search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                    params
+                )
+                .then((response) => response.data)
+                .catch((error) => {
+                    throw error;
+                })
+        );
     }
 
     async listProductCategories() {
@@ -141,7 +144,9 @@ export class BuckyClient {
     }
 
     //TODO: create type IBuckyOrderOutput
-    async createOrder(createOrderParams: ICreateBuckyOrderParams): Promise<any> {
+    async createOrder(
+        createOrderParams: ICreateBuckyOrderParams
+    ): Promise<any> {
         const params = JSON.stringify(createOrderParams);
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
