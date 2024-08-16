@@ -1,36 +1,21 @@
 import {
     MedusaRequest,
     MedusaResponse,
-    Logger,
-    ProductStatus,
     SalesChannelService,
 } from '@medusajs/medusa';
 import { RouteHandler } from '../../route-handler';
 import StoreService from '../../../services/store';
-import ProductService, {
-    BulkImportProductInput,
-} from '../../../services/product';
-import { BuckyClient } from '../../../buckydrop/bucky-client';
 import ProductCollectionRepository from '../../../repositories/product-collection';
-import { PriceConverter } from '../../../strategies/price-selection';
-import { CreateProductInput } from '@medusajs/medusa/dist/types/product';
+import BuckydropService from '../../../services/buckydrop';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const storeService: StoreService = req.scope.resolve('storeService');
-    let productService: ProductService = req.scope.resolve('productService');
+    let buckyService: BuckydropService = req.scope.resolve('buckydropService');
     let salesChannelService: SalesChannelService = req.scope.resolve(
         'salesChannelService'
     );
     let productCollectionRepository: typeof ProductCollectionRepository =
         req.scope.resolve('productCollectionRepository');
-    const priceConverter = new PriceConverter();
-
-    /*
-    Dynamic store id and collection id and sc id on import 
-    Translate SkuList into variants 
-     1. create variant for each sku
-     2. associate (somehow) the sku with the variant 
-    */
 
     const handler: RouteHandler = new RouteHandler(
         req,
@@ -59,138 +44,14 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         return output;
     };
 
-    const mapVariants = async (item: any, productDetails: any) => {
-        /*
-        0: {
-            "props": [{
-                "propId": 3216,
-                "valueId": 2351853,
-                "propName": "Color",
-                "valueName": "1 orange"
-            }, {
-                "propId": 3151,
-                "valueId": 891417773,
-                "propName": "model",
-                "valueName": "Candy color lacquer open ring ring diameter * wire diameter 8*1.2mm"
-            }],
-            "skuCode": "5141273114409",
-            "price": {
-                "priceCent": 2,
-                "price": 0.02
-            },
-            "proPrice": {
-                "priceCent": 2,
-                "price": 0.02
-            },
-            "quantity": 92099,
-            "imgUrl": "https://cbu01.alicdn.com/img/ibank/O1CN01PcdXOw1guZ5g0nIj9_!!2208216064202-0-cib.jpg"
-        }
-
-        1: {
-        "props":[{
-            "propId":3216,"valueId":47921170,
-            "propName":"Color","valueName":"2 Sapphire Blue"
-        },
-        {
-            "propId":3151,"valueId":891417773,
-            "propName":"model","valueName":"Candy color lacquer open ring ring diameter * wire diameter 8*1.2mm"
-        }],
-        "skuCode":"5141273114410",
-        "price":{"priceCent":2,"price":0.02},
-        "proPrice":{"priceCent":2,"price":0.02},
-        "quantity":98499,
-        "imgUrl":"https://cbu01.alicdn.com/img/ibank/O1CN010yQbq61guZ5ZOyzKw_!!2208216064202-0-cib.jpg"}
-        */
-        const variants = [];
-
-        for (const variant of productDetails.data.skuList) {
-            console.log(JSON.stringify(variant));
-            const baseAmount = (variant.proPrice ?
-                variant.proPrice.priceCent :
-                variant.price.priceCent);
-
-            //TODO: get from someplace global
-            const currencies = ['eth', 'usdc', 'usdt'];
-            const prices = [];
-            for (const currency of currencies) {
-                prices.push({
-                    currency_code: currency, amount: await priceConverter.getPrice(
-                        { baseAmount, baseCurrency: 'cny', toCurrency: currency }
-                    )
-                });
-            }
-
-            variants.push({
-                title: productDetails.data.goodsName,
-                inventory_quantity: variant.quantity,
-                allow_backorder: false,
-                manage_inventory: true,
-                bucky_metadata: JSON.stringify({ skuCode: variant.skuCode }),
-                prices
-            });
-        }
-
-        return variants;
-    }
-
-    const mapBuckyDataToProductInput = async (
-        buckyClient: BuckyClient,
-        item: any,
-        status: ProductStatus,
-        storeId: string,
-        collectionId: string,
-        salesChannels: string[]
-    ) => {
-        const productDetails = await buckyClient.getProductDetails(item.goodsLink);
-        console.log(productDetails);
-
-        return {
-            title: item.goodsName,
-            handle: item.spuCode,
-            description: item.productName,
-            is_giftcard: false,
-            status: status as ProductStatus,
-            thumbnail: item.picUrl,
-            images: productDetails.data.productImageList,
-            collection_id: collectionId,
-            weight: Math.round(item.weight || 100),
-            discountable: true,
-            store_id: storeId,
-            sales_channels: salesChannels.map((sc) => {
-                return { id: sc };
-            }),
-            bucky_metadata: JSON.stringify(item),
-            variants: await mapVariants(item, productDetails)
-        };
-    };
-
     await handler.handle(async () => {
         const importData = await getImportData();
 
-        //retrieve products from bucky and convert them
-        const buckyClient: BuckyClient = new BuckyClient();
-        const searchResults = await buckyClient.searchProducts('cup', 1, 10);
-        handler.logger.debug(`search returned ${searchResults.length} results`);
-        const productData = [searchResults[3]];
-        console.log(productData);
-
-        const products: CreateProductInput[] = await Promise.all(productData.map(
-            p => mapBuckyDataToProductInput(
-                buckyClient,
-                p,
-                ProductStatus.PUBLISHED,
-                importData.storeId,
-                importData.collectionId,
-                [importData.salesChannelId])
-        ));
-
-        //import the products
-        const output = products?.length
-            ? await productService.bulkImportProducts(
-                handler.inputParams.storeId,
-                products
-            )
-            : [];
+        const output = buckyService.importProductsByKeyword(
+            importData.storeId,
+            importData.collectionId,
+            importData.salesChannelId
+        );
 
         return res.status(201).json({ status: true, products: output });
     });
