@@ -1,8 +1,8 @@
 {
     "name": "medusa-starter-default",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "description": "A starter for Medusa projects.",
-    "author": "Medusa (https://medusajs.com)",
+    "author": "Garo Nazarian, Beau Troxclair, Jonny Bajada, John R. Kosinski",
     "license": "MIT",
     "keywords": [
         "sqlite",
