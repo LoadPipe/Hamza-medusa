@@ -10,7 +10,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         req,
         res,
         'GET',
-        '/admin/custom/bucky'
+        '/admin/custom/bucky/track'
     );
 
     await handler.handle(async () => {

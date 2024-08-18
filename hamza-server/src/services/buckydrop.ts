@@ -2,24 +2,31 @@ import {
     TransactionBaseService,
     Logger,
     ProductStatus,
+    CartService,
+    Cart,
+    LineItem,
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
 import { Product } from '../models/product';
 import { PriceConverter } from '../strategies/price-selection';
 import { BuckyClient } from '../buckydrop/bucky-client';
 import { CreateProductInput as MedusaCreateProductInput } from '@medusajs/medusa/dist/types/product';
+import { UpdateProductInput as MedusaUpdateProductInput } from '@medusajs/medusa/dist/types/product';
 
 type CreateProductInput = MedusaCreateProductInput & { store_id: string, bucky_metadata?: string };
+//type UpdateProductInput = MedusaUpdateProductInput & { store_id: string, bucky_metadata?: string };
 
 export default class BuckydropService extends TransactionBaseService {
     protected readonly logger: Logger;
     protected readonly productService_: ProductService;
+    protected readonly cartService_: CartService;
     protected readonly priceConverter: PriceConverter;
     protected readonly buckyClient: BuckyClient;
 
     constructor(container) {
         super(container);
         this.productService_ = container.productService;
+        this.cartService_ = container.cartService;
         this.logger = container.logger;
         this.priceConverter = new PriceConverter();
         this.buckyClient = new BuckyClient();
@@ -64,6 +71,27 @@ export default class BuckydropService extends TransactionBaseService {
 
         //TODO: best to return some type of report; what succeeded, what failed
         return output;
+    }
+
+    async calculateShippingPriceForCart(cartId: string): Promise<number> {
+        const cart: Cart = await this.cartService_.retrieve(cartId, {
+            relations: [
+                'items.variant.product.store',
+                'items.variant.prices', //TODO: we need prices?
+                'customer'
+            ],
+        });
+
+        //calculate prices
+        const prices = await Promise.all(
+            cart.items.map(i => this.calculateShippingPriceForProduct(cart, i.variant.product))
+        );
+
+        return 0;
+    }
+
+    async calculateShippingPriceForProduct(cart: Cart, product: Product): Promise<number> {
+        return 0;
     }
 
     private async mapVariants(item: any, productDetails: any) {
