@@ -7,7 +7,9 @@ import ProductService from '../services/product';
 import { Product } from '../models/product';
 import { PriceConverter } from '../strategies/price-selection';
 import { BuckyClient } from '../buckydrop/bucky-client';
-import { CreateProductInput } from '@medusajs/medusa/dist/types/product';
+import { CreateProductInput as MedusaCreateProductInput } from '@medusajs/medusa/dist/types/product';
+
+type CreateProductInput = MedusaCreateProductInput & { store_id: string, bucky_metadata?: string };
 
 export default class BuckydropService extends TransactionBaseService {
     protected readonly logger: Logger;
@@ -31,14 +33,14 @@ export default class BuckydropService extends TransactionBaseService {
         //retrieve products from bucky and convert them
         const buckyClient: BuckyClient = new BuckyClient();
         const searchResults = await buckyClient.searchProducts(
-            'hotwheel',
+            'cup',
             1,
             10
         );
         this.logger.debug(`search returned ${searchResults.length} results`);
-        const productData = searchResults;
+        const productData = searchResults; //[searchResults[4], searchResults[5]];
 
-        const products: CreateProductInput[] = await Promise.all(
+        let products: CreateProductInput[] = await Promise.all(
             productData.map((p) =>
                 this.mapBuckyDataToProductInput(
                     buckyClient,
@@ -50,6 +52,10 @@ export default class BuckydropService extends TransactionBaseService {
                 )
             )
         );
+
+
+        //filter out failures
+        products = products.filter(p => p ? p : null);
 
         //import the products
         const output = products?.length
@@ -104,6 +110,20 @@ export default class BuckydropService extends TransactionBaseService {
         */
         const variants = [];
 
+        const getVariantDescriptionText = (data: any) => {
+            let output: string = '';
+            if (data.props) {
+                for (let prop of data.props) {
+                    output += prop.valueName + ' ';
+                }
+                output = output.trim();
+            }
+            else {
+                output = productDetails.data.goodsName;
+            }
+            return output;
+        }
+
         for (const variant of productDetails.data.skuList) {
             console.log(JSON.stringify(variant));
             const baseAmount = variant.proPrice
@@ -125,7 +145,7 @@ export default class BuckydropService extends TransactionBaseService {
             }
 
             variants.push({
-                title: productDetails.data.goodsName,
+                title: getVariantDescriptionText(variant),
                 inventory_quantity: variant.quantity,
                 allow_backorder: false,
                 manage_inventory: true,
@@ -144,21 +164,23 @@ export default class BuckydropService extends TransactionBaseService {
         storeId: string,
         collectionId: string,
         salesChannels: string[]
-    ) {
+    ): Promise<CreateProductInput> {
         try {
             const productDetails = await buckyClient.getProductDetails(
                 item.goodsLink
             );
+            console.log('productDetails:');
             console.log(productDetails);
 
             return {
                 title: item.goodsName,
+                subtitle: item.goodsName, //TODO: find a better value
                 handle: item.spuCode,
-                description: item.goodsName,
+                description: productDetails.data.goodsDetailHtml,
                 is_giftcard: false,
                 status: status as ProductStatus,
                 thumbnail: item.picUrl,
-                images: productDetails.data.productImageList,
+                images: productDetails.data.mainItemImgs,
                 collection_id: collectionId,
                 weight: Math.round(item.weight || 100),
                 discountable: true,
@@ -174,6 +196,7 @@ export default class BuckydropService extends TransactionBaseService {
                 'Error mapping Bucky data to product input',
                 error
             );
+            return null;
         }
     }
 }
