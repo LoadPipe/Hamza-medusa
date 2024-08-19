@@ -136,8 +136,9 @@ export default function Page({ params }: { params: { slug: string } }) {
                             boxSize="72px"
                             objectFit="cover"
                             objectPosition="center"
+                            alignSelf={'center'}
                         />
-                        <Flex flexDir={'column'}>
+                        <Flex flexDir={'column'} alignSelf={'center'}>
                             <Text fontSize={'24px'}>
                                 {displaySlug}{' '}
                                 {/* Display the capitalized slug */}
