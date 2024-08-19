@@ -163,16 +163,7 @@ const Shipping: React.FC<ShippingProps> = ({
                                                 </span>
                                             </div>
                                             <span className="justify-self-end text-white">
-                                                {option.name ===
-                                                    'FakeEx Standard'
-                                                    ? preferred_currency_code ===
-                                                        'eth'
-                                                        ? '0.000000 '
-                                                        : '0.00'
-                                                    : preferred_currency_code ===
-                                                        'eth'
-                                                        ? '0.0000000 '
-                                                        : '0.00'}{' '}
+                                                {formatCryptoPrice(option.amount ?? 0, preferred_currency_code ?? 'usdc')}{' '}
                                                 {preferred_currency_code?.toUpperCase()}
                                             </span>
                                         </RadioGroup.Option>
@@ -221,15 +212,7 @@ const Shipping: React.FC<ShippingProps> = ({
                                             .shipping_option.name
                                         : ' '}{' '}
                                     (
-                                    {cart.shipping_methods[0].shipping_option
-                                        .name === 'FakeEx Standard'
-                                        ? preferred_currency_code === 'eth'
-                                            ? '0.00000 '
-                                            : '0.00'
-                                        : preferred_currency_code === 'eth'
-                                            ? '0.000025 '
-                                            : '0.00'}{' '}
-                                    {preferred_currency_code?.toUpperCase()})
+                                    {cart.shipping_methods[0].shipping_option.amount})
                                 </Text>
                             </div>
                         )}
