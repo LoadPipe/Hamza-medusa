@@ -116,7 +116,7 @@ export default function Page({ params }: { params: { slug: string } }) {
     };
 
     return (
-        <Box color={'white'}>
+        <Box color={'white'} my="4rem">
             <Flex
                 flexDir={'column'}
                 mx="auto"
@@ -127,7 +127,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                 borderRadius={'16px'}
             >
                 {/* Company */}
-                <Flex flexDir={'row'}>
+                <Flex flexDir={'row'} gap={'26px'}>
                     <Image
                         src={reviewStats.thumbnail}
                         alt="Vendor"
@@ -157,7 +157,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                         </Flex>
                     </Flex>
                     {/* Reviews */}
-                    <Box ml="2rem">
+                    <Box ml="2rem" width={'166px'}>
                         <Heading as="h2" size="md">
                             Review Stats
                         </Heading>
@@ -172,6 +172,36 @@ export default function Page({ params }: { params: { slug: string } }) {
                                 : `Review Count: ${reviewStats.reviewCount}`}
                         </Text>
                     </Box>
+
+                    <Flex
+                        flexDir={'column'}
+                        borderLeftWidth={'1px'}
+                        borderRightWidth={'1px'}
+                        borderStyle={'dashed'}
+                        width={'166px'}
+                    >
+                        <Text
+                            as="h1"
+                            fontSize={'32px'}
+                            textAlign={'center'}
+                            color="primary.green.900"
+                        >
+                            {reviewStats.productCount}
+                        </Text>
+                        <Text textAlign={'center'}>Total Products</Text>
+                    </Flex>
+
+                    <Flex flexDir={'column'} width={'166px'}>
+                        <Text
+                            as="h1"
+                            fontSize={'32px'}
+                            color="primary.green.900"
+                            textAlign={'center'}
+                        >
+                            {reviewStats.numberOfFollowers}
+                        </Text>
+                        <Text textAlign={'center'}>Number of Followersss</Text>
+                    </Flex>
 
                     <Flex ml="auto" flexDir={'column'} gap="16px">
                         <Flex
@@ -232,11 +262,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                 </Flex>
                 <Text ml="auto">Vendor Created at: {readableDate}</Text>
             </Flex>
-
-            <Text>Total Products: {reviewStats.productCount}</Text>
-
-            <Text>Number of Followersss: {reviewStats.numberOfFollowers}</Text>
-
+            {/* 
             <Box className="bg-black text-white p-4">
                 <Card>
                     {reviewStats.reviewCount > 0 && (
@@ -286,7 +312,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                         </>
                     )}
                 </Card>
-            </Box>
+            </Box> */}
 
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
