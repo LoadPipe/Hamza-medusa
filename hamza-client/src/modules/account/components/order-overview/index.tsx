@@ -178,6 +178,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
     };
 
     useEffect(() => {
+        if (orders.length === 0) return;
         let customer_id = orders[0].customer_id;
         console.log(
             `this is runnning and we getting customerID ${customer_id}`
