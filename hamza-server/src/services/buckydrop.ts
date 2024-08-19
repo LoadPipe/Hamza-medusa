@@ -2,82 +2,53 @@ import {
     TransactionBaseService,
     Logger,
     ProductStatus,
+    CartService,
+    Cart,
+    LineItem,
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
 import { Product } from '../models/product';
 import { PriceConverter } from '../strategies/price-selection';
-import { BuckyClient } from '../buckydrop/bucky-client';
-import { CreateProductInput } from '@medusajs/medusa/dist/types/product';
+import { BuckyClient, IBuckyShippingCostRequest } from '../buckydrop/bucky-client';
+import { CreateProductInput as MedusaCreateProductInput } from '@medusajs/medusa/dist/types/product';
+import { UpdateProductInput as MedusaUpdateProductInput } from '@medusajs/medusa/dist/types/product';
+
+type CreateProductInput = MedusaCreateProductInput & { store_id: string, bucky_metadata?: string };
+//type UpdateProductInput = MedusaUpdateProductInput & { store_id: string, bucky_metadata?: string };
 
 export default class BuckydropService extends TransactionBaseService {
     protected readonly logger: Logger;
     protected readonly productService_: ProductService;
+    protected readonly cartService_: CartService;
     protected readonly priceConverter: PriceConverter;
     protected readonly buckyClient: BuckyClient;
 
     constructor(container) {
         super(container);
         this.productService_ = container.productService;
+        this.cartService_ = container.cartService;
         this.logger = container.logger;
         this.priceConverter = new PriceConverter();
         this.buckyClient = new BuckyClient();
     }
 
     async importProductsByKeyword(
+        keyword: string,
         storeId: string,
         collectionId: string,
         salesChannelId: string
     ): Promise<Product[]> {
         //retrieve products from bucky and convert them
         const buckyClient: BuckyClient = new BuckyClient();
-        const searchResults = await buckyClient.searchProducts('elf', 1, 10);
+        const searchResults = await buckyClient.searchProducts(
+            keyword,
+            1,
+            10
+        );
         this.logger.debug(`search returned ${searchResults.length} results`);
-        const productData = [searchResults[3]];
+        const productData = searchResults; //[searchResults[4], searchResults[5]];
 
-        // Check if the product with the same goodsId exists in the database
-        const goodsId = productData[0].goodsId;
-        let existingProduct;
-        try {
-            existingProduct = await this.productService_.findByGoodsId(goodsId);
-        } catch (error) {
-            this.logger.error(
-                'Error checking if product exists by goodsId in bucky_metadata',
-                error
-            );
-            throw error;
-        }
-
-        if (existingProduct) {
-            this.logger.info(
-                `Product with goodsId ${goodsId} already exists in the database. Updating existing product.`
-            );
-
-            console.log('exist product id', existingProduct);
-            console.log('exist product id', existingProduct.id);
-
-            const products: CreateProductInput[] = await Promise.all(
-                productData.map((p) =>
-                    this.mapBuckyDataToProductInput(
-                        buckyClient,
-                        p,
-                        ProductStatus.PUBLISHED,
-                        storeId,
-                        collectionId,
-                        [salesChannelId]
-                    )
-                )
-            );
-
-            // Update the existing product
-            const updatedProduct = await this.productService_.updateProduct(
-                existingProduct.id,
-                products
-            );
-
-            return [updatedProduct]; // Return the updated product
-        }
-
-        const products: CreateProductInput[] = await Promise.all(
+        let products: CreateProductInput[] = await Promise.all(
             productData.map((p) =>
                 this.mapBuckyDataToProductInput(
                     buckyClient,
@@ -90,6 +61,10 @@ export default class BuckydropService extends TransactionBaseService {
             )
         );
 
+
+        //filter out failures
+        products = products.filter(p => p ? p : null);
+
         //import the products
         const output = products?.length
             ? await this.productService_.bulkImportProducts(storeId, products)
@@ -97,6 +72,39 @@ export default class BuckydropService extends TransactionBaseService {
 
         //TODO: best to return some type of report; what succeeded, what failed
         return output;
+    }
+
+    async calculateShippingPriceForCart(cartId: string): Promise<number> {
+        const cart: Cart = await this.cartService_.retrieve(cartId, {
+            relations: [
+                'items.variant.product.store',
+                'items.variant.prices', //TODO: we need prices?
+                'customer'
+            ],
+        });
+
+        //calculate prices
+        const input: IBuckyShippingCostRequest = {
+            lang: 'en',
+            countryCode: cart.shipping_address.country_code,
+            country: cart.shipping_address.country.name,
+            provinceCode: cart.shipping_address.province,
+            province: cart.shipping_address.province,
+            detailAddress: `${cart.shipping_address.address_1 ?? ''} ${cart.shipping_address.address_2 ?? ''}`.trim(),
+            postCode: cart.shipping_address.postal_code,
+            length: 1,
+            width: 1,
+            weight: 1,
+            height: 1,
+            categoryCode: '',
+            productList: []
+        }
+
+        return 0;
+    }
+
+    async calculateShippingPriceForProduct(cart: Cart, product: Product): Promise<number> {
+        return 0;
     }
 
     private async mapVariants(item: any, productDetails: any) {
@@ -143,6 +151,20 @@ export default class BuckydropService extends TransactionBaseService {
         */
         const variants = [];
 
+        const getVariantDescriptionText = (data: any) => {
+            let output: string = '';
+            if (data.props) {
+                for (let prop of data.props) {
+                    output += prop.valueName + ' ';
+                }
+                output = output.trim();
+            }
+            else {
+                output = productDetails.data.goodsName;
+            }
+            return output;
+        }
+
         for (const variant of productDetails.data.skuList) {
             console.log(JSON.stringify(variant));
             const baseAmount = variant.proPrice
@@ -164,7 +186,7 @@ export default class BuckydropService extends TransactionBaseService {
             }
 
             variants.push({
-                title: productDetails.data.goodsName,
+                title: getVariantDescriptionText(variant),
                 inventory_quantity: variant.quantity,
                 allow_backorder: false,
                 manage_inventory: true,
@@ -183,29 +205,42 @@ export default class BuckydropService extends TransactionBaseService {
         storeId: string,
         collectionId: string,
         salesChannels: string[]
-    ) {
-        const productDetails = await buckyClient.getProductDetails(
-            item.goodsLink
-        );
-        console.log(productDetails);
+    ): Promise<CreateProductInput> {
+        try {
+            const productDetails = await buckyClient.getProductDetails(
+                item.goodsLink
+            );
+            console.log('productDetails:');
+            console.log(productDetails);
 
-        return {
-            title: item.goodsName,
-            handle: item.spuCode,
-            description: item.goodsName,
-            is_giftcard: false,
-            status: status as ProductStatus,
-            thumbnail: item.picUrl,
-            images: productDetails.data.productImageList,
-            collection_id: collectionId,
-            weight: Math.round(item.weight || 100),
-            discountable: true,
-            store_id: storeId,
-            sales_channels: salesChannels.map((sc) => {
-                return { id: sc };
-            }),
-            bucky_metadata: JSON.stringify(item),
-            variants: await this.mapVariants(item, productDetails),
-        };
+            const metadata = item;
+            metadata.detail = productDetails.data;
+
+            return {
+                title: item.goodsName,
+                subtitle: item.goodsName, //TODO: find a better value
+                handle: item.spuCode,
+                description: productDetails.data.goodsDetailHtml,
+                is_giftcard: false,
+                status: status as ProductStatus,
+                thumbnail: item.picUrl,
+                images: productDetails.data.mainItemImgs,
+                collection_id: collectionId,
+                weight: Math.round(item.weight || 100),
+                discountable: true,
+                store_id: storeId,
+                sales_channels: salesChannels.map((sc) => {
+                    return { id: sc };
+                }),
+                bucky_metadata: JSON.stringify(metadata),
+                variants: await this.mapVariants(item, productDetails),
+            };
+        } catch (error) {
+            this.logger.error(
+                'Error mapping Bucky data to product input',
+                error
+            );
+            return null;
+        }
     }
 }

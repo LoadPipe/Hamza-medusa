@@ -36,11 +36,35 @@ export interface ICreateBuckyOrderParams {
     productList: ICreateBuckyOrderProduct[];
 }
 
+export interface IBuckyShippingCostRequest {
+    lang: string;
+    country: string;
+    countryCode: string;
+    provinceCode: string;
+    province: string;
+    detailAddress: string;
+    postCode: string;
+    length: number;
+    width: number;
+    height: number;
+    weight: number;
+    count?: number;
+    categoryCode: string;
+    goodsPrice?: string;
+    productNameCn?: string;
+    productNameEn?: string;
+    categoryName?: string;
+    goodsAttrCode?: string;
+    orderBy?: string;
+    orderType?: string;
+
+    productList: [];
+}
+
 export class BuckyClient {
     private client: AxiosInstance;
 
     constructor() {
-        axios.defaults.timeout = 6000000;
         this.client = axios.create({
             baseURL: BUCKY_URL,
             headers: {
@@ -70,7 +94,8 @@ export class BuckyClient {
             .post(
                 //`/api/rest/v2/adapt/openapi/product/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 `/api/rest/v2/adapt/adaptation/product/query?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                params
+                params,
+                { timeout: 60000 }
             )
             .then((response) => response.data)
             .catch((error) => {
@@ -95,7 +120,8 @@ export class BuckyClient {
             .post(
                 //`/api/rest/v2/adapt/openapi/product/search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 `/api/rest/v2/adapt/adaptation/product/search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                params
+                params,
+                { timeout: 60000 }
             )
             .then((response) => response.data?.data?.records)
             .catch((error) => {
@@ -116,8 +142,11 @@ export class BuckyClient {
             this.client
                 //TODO: get correct url for this
                 .post(
-                    `/api/rest/v2/adapt/openapi/product/image-search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                    params
+                    //TODO: use adapt/adaptation url here   
+                    ``,
+                    //`/api/rest/v2/adapt/openapi/product/image-search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                    params,
+                    { timeout: 60000 }
                 )
                 .then((response) => response.data)
                 .catch((error) => {
@@ -134,7 +163,9 @@ export class BuckyClient {
         //TODO: add more detailed parameters
         return this.client
             .get(
-                `/api/rest/v2/adapt/openapi/product/category/list-tree?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}?lang=en`
+                //TODO: use adapt/adaptation url here   
+                ``,
+                //`/api/rest/v2/adapt/openapi/product/category/list-tree?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}?lang=en`
                 //`/api/rest/v2/adapt/openapi/product/category/list-tree?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`
             )
             .then((response) => response.data)
@@ -216,6 +247,28 @@ export class BuckyClient {
         // other setup like timestamp, appCode, sign, etc.
         return this.client
             .post(`/api/rest/v2/adapt/adaptation/logistics/query-info`, params)
+            .then((response) => response.data)
+            .catch((error) => {
+                throw error;
+            });
+    }
+
+    async getParcelDetails(packageCode: string) {
+        const params = JSON.stringify({ packageCode });
+        // other setup like timestamp, appCode, sign, etc.
+        return this.client
+            .post(`api/rest/v2/adapt/adaptation/pkg/detail`, params)
+            .then((response) => response.data)
+            .catch((error) => {
+                throw error;
+            });
+    }
+
+    async getShippingCostEstimate(size: number, current: number, item: IBuckyShippingCostRequest) {
+        const params = JSON.stringify({ size, current, item });
+        // other setup like timestamp, appCode, sign, etc.
+        return this.client
+            .post(`api/rest/v2/adapt/adaptation/logistics/channel-carriage-list`, params)
             .then((response) => response.data)
             .catch((error) => {
                 throw error;

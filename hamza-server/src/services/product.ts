@@ -121,19 +121,63 @@ class ProductService extends MedusaProductService {
         }
     }
 
+    // do the detection here does the product exist already / update product input
+
     async bulkImportProducts(
         storeId: string,
-        productData: BulkImportProductInput[]
+        productData: (CreateProductInput | UpdateProductInput)[]
     ): Promise<Product[]> {
         try {
             const addedProducts = await Promise.all(
-                productData.map((product) => super.create(product))
+                productData.map((product) => {
+                    return new Promise<Product>(async (resolve, reject) => {
+                        const productHandle = product.handle;
+
+                        try {
+                            // Check if the product already exists by handle
+                            const existingProduct =
+                                await this.productRepository_.findOne({
+                                    where: { handle: productHandle },
+                                    relations: ['variants'],
+                                });
+
+                            if (existingProduct) {
+                                // If the product exists, update it
+                                this.logger.info(
+                                    `Updating existing product with handle: ${productHandle}`
+                                );
+                                resolve(
+                                    await this.updateProduct(
+                                        existingProduct.id,
+                                        product as UpdateProductInput
+                                    )
+                                );
+                            } else {
+                                // If the product does not exist, create a new one
+                                this.logger.info(
+                                    `Creating new product with handle: ${productHandle}`
+                                );
+                                resolve(
+                                    await super.create(
+                                        product as CreateProductInput
+                                    )
+                                );
+                            }
+                        } catch (error) {
+                            this.logger.error(
+                                `Error processing product with handle: ${productHandle}`,
+                                error
+                            );
+                            resolve(null);
+                        }
+                    });
+                })
             );
 
-            // Ensure all products have valid IDs
+            // Ensure all products are non-null and have valid IDs
             const validProducts = addedProducts.filter((p) => p && p.id);
             if (validProducts.length !== addedProducts.length) {
-                throw new Error('Some products were not created successfully');
+                this.logger.error('Some products were not created successfully');
             }
 
             //get the store
