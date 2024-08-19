@@ -48,6 +48,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         const importData = await getImportData();
 
         const output = await buckyService.importProductsByKeyword(
+            'shoe',
             importData.storeId,
             importData.collectionId,
             importData.salesChannelId
