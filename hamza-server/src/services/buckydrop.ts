@@ -97,12 +97,21 @@ export default class BuckydropService extends TransactionBaseService {
             province: cart.shipping_address.province,
             detailAddress: `${cart.shipping_address.address_1 ?? ''} ${cart.shipping_address.address_2 ?? ''}`.trim(),
             postCode: cart.shipping_address.postal_code,
-            length: 1,
-            width: 1,
-            weight: 1,
-            height: 1,
-            categoryCode: '',
             productList: []
+        };
+
+        for (let item of cart.items) {
+            if (item.variant.bucky_metadata?.length) {
+                const variantMetadata = JSON.parse(item.variant.bucky_metadata);
+                const productMetadata = JSON.parse(item.variant.product.bucky_metadata);
+                input.productList.push({
+                    length: variantMetadata.length,
+                    width: variantMetadata.width,
+                    height: variantMetadata.height,
+                    weight: variantMetadata.weight,
+                    categoryCode: productMetadata.detail.categoryCode
+                });
+            }
         }
 
         return 0;
