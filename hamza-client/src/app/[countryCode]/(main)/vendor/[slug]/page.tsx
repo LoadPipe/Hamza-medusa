@@ -173,21 +173,46 @@ export default function Page({ params }: { params: { slug: string } }) {
                         </Text>
                     </Box>
 
-                    <Flex
-                        ml="auto"
-                        display={{ base: 'none', md: 'flex' }}
-                        height={{ base: '33px', md: '47px' }}
-                        width={{ base: '120px', md: '190px' }}
-                        borderColor={'primary.indigo.900'}
-                        borderWidth={'1px'}
-                        borderRadius={'37px'}
-                        justifyContent={'center'}
-                        cursor={'pointer'}
-                        fontSize={{ base: '12px', md: '16px' }}
-                    >
-                        <Text alignSelf={'center'} color="primary.indigo.900">
-                            Chat with them
-                        </Text>
+                    <Flex ml="auto" flexDir={'column'} gap="16px">
+                        <Flex
+                            display={{ base: 'none', md: 'flex' }}
+                            height={{ base: '33px', md: '47px' }}
+                            width={{ base: '120px', md: '190px' }}
+                            borderColor={'primary.indigo.900'}
+                            borderWidth={'1px'}
+                            borderRadius={'37px'}
+                            justifyContent={'center'}
+                            cursor={'pointer'}
+                            fontSize={{ base: '12px', md: '16px' }}
+                        >
+                            <Text
+                                alignSelf={'center'}
+                                color="primary.indigo.900"
+                            >
+                                Chat with them
+                            </Text>
+                        </Flex>
+                        <Flex
+                            display={{ base: 'none', md: 'flex' }}
+                            height={{ base: '33px', md: '47px' }}
+                            width={{ base: '120px', md: '190px' }}
+                            borderWidth={'1px'}
+                            borderRadius={'37px'}
+                            justifyContent={'center'}
+                            cursor={'pointer'}
+                            fontSize={{ base: '12px', md: '16px' }}
+                            onClick={onOpen}
+                            borderColor={isSubmitted ? 'green' : 'red'}
+                        >
+                            <Text
+                                alignSelf={'center'}
+                                color={isSubmitted ? 'green' : 'red'}
+                            >
+                                {isSubmitted
+                                    ? 'Report Submitted'
+                                    : 'Report Abuse'}
+                            </Text>
+                        </Flex>
                     </Flex>
                 </Flex>
                 <Divider backgroundColor={'#555555'} my="2rem" />
@@ -212,16 +237,6 @@ export default function Page({ params }: { params: { slug: string } }) {
 
             <Text>Number of Followersss: {reviewStats.numberOfFollowers}</Text>
 
-            {/* 
-            <Box pt={12}>
-                <Button
-                    onClick={onOpen}
-                    colorScheme={isSubmitted ? 'green' : 'red'}
-                    mt={4}
-                >
-                    {isSubmitted ? 'Report Submitted' : 'Report Abuse'}
-                </Button>
-            </Box>
             <Box className="bg-black text-white p-4">
                 <Card>
                     {reviewStats.reviewCount > 0 && (
@@ -271,7 +286,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                         </>
                     )}
                 </Card>
-            </Box> */}
+            </Box>
 
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
