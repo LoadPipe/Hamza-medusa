@@ -127,83 +127,100 @@ export default function Page({ params }: { params: { slug: string } }) {
                 borderRadius={'16px'}
             >
                 {/* Company */}
-                <Flex flexDir={'row'} gap={'26px'}>
-                    <Image
-                        src={reviewStats.thumbnail}
-                        alt="Vendor"
-                        borderRadius="full"
-                        boxSize="72px"
-                        objectFit="cover"
-                        objectPosition="center"
-                    />
-                    <Flex ml="1rem" flexDir={'column'}>
-                        <Text fontSize={'24px'}>
-                            {displaySlug} {/* Display the capitalized slug */}
-                        </Text>
-                        <Flex color="#555555" gap={'7px'}>
-                            <Text fontSize={{ base: '10px', md: '16px' }}>
-                                Flagship Store
+                <Flex flexDir={'row'} gap={'62px'}>
+                    <Flex flexDir={'row'} gap={'24px'}>
+                        <Image
+                            src={reviewStats.thumbnail}
+                            alt="Vendor"
+                            borderRadius="full"
+                            boxSize="72px"
+                            objectFit="cover"
+                            objectPosition="center"
+                        />
+                        <Flex flexDir={'column'}>
+                            <Text fontSize={'24px'}>
+                                {displaySlug}{' '}
+                                {/* Display the capitalized slug */}
                             </Text>
-                            <Box
-                                alignSelf={'center'}
-                                width={{ base: '2.53px', md: '7.33px' }}
-                                height={{ base: '2.53px', md: '7.33px' }}
-                                borderRadius={'full'}
-                                backgroundColor="primary.green.900"
-                            />
-                            <Text fontSize={{ base: '10px', md: '16px' }}>
-                                Online
-                            </Text>
+                            <Flex color="#555555" gap={'7px'}>
+                                <Text fontSize={{ base: '10px', md: '16px' }}>
+                                    Flagship Store
+                                </Text>
+                                <Box
+                                    alignSelf={'center'}
+                                    width={{ base: '2.53px', md: '7.33px' }}
+                                    height={{ base: '2.53px', md: '7.33px' }}
+                                    borderRadius={'full'}
+                                    backgroundColor="primary.green.900"
+                                />
+                                <Text fontSize={{ base: '10px', md: '16px' }}>
+                                    Online
+                                </Text>
+                            </Flex>
                         </Flex>
                     </Flex>
-                    {/* Reviews */}
-                    <Box ml="2rem" width={'166px'}>
-                        <Heading as="h2" size="md">
-                            Review Stats
-                        </Heading>
-                        <Text>
-                            {reviewStats.reviewCount === 0
-                                ? 'No reviews yet'
-                                : `Average Rating: ${reviewStats.avgRating.toFixed(1)}`}
-                        </Text>
-                        <Text>
+
+                    {/* Stats */}
+                    <Flex>
+                        <Flex ml="2rem" flexDir="column" width={'166px'}>
+                            <Text
+                                as="h1"
+                                fontSize={'32px'}
+                                textAlign={'center'}
+                                color="primary.green.900"
+                            >
+                                {reviewStats.reviewCount === 0
+                                    ? 0
+                                    : `${reviewStats.avgRating.toFixed(1)}`}
+                            </Text>
+                            <Text textAlign={'center'}>
+                                {reviewStats.reviewCount === 0
+                                    ? 'No reviews yet'
+                                    : `Average Rating: ${reviewStats.avgRating.toFixed(1)}`}
+                            </Text>
+                            {/* <Text>
                             {reviewStats.reviewCount === 0
                                 ? 'No ratings yet'
                                 : `Review Count: ${reviewStats.reviewCount}`}
-                        </Text>
-                    </Box>
+                        </Text> */}
+                        </Flex>
 
-                    <Flex
-                        flexDir={'column'}
-                        borderLeftWidth={'1px'}
-                        borderRightWidth={'1px'}
-                        borderStyle={'dashed'}
-                        width={'166px'}
-                    >
-                        <Text
-                            as="h1"
-                            fontSize={'32px'}
-                            textAlign={'center'}
-                            color="primary.green.900"
+                        <Flex
+                            flexDir={'column'}
+                            borderLeftWidth={'1px'}
+                            borderRightWidth={'1px'}
+                            borderStyle={'dashed'}
+                            width={'166px'}
                         >
-                            {reviewStats.productCount}
-                        </Text>
-                        <Text textAlign={'center'}>Total Products</Text>
-                    </Flex>
+                            <Text
+                                as="h1"
+                                fontSize={'32px'}
+                                textAlign={'center'}
+                                color="primary.green.900"
+                            >
+                                {reviewStats.productCount}
+                            </Text>
+                            <Text textAlign={'center'}>Total Products</Text>
+                        </Flex>
 
-                    <Flex flexDir={'column'} width={'166px'}>
-                        <Text
-                            as="h1"
-                            fontSize={'32px'}
-                            color="primary.green.900"
-                            textAlign={'center'}
-                        >
-                            {reviewStats.numberOfFollowers}
-                        </Text>
-                        <Text textAlign={'center'}>Number of Followersss</Text>
+                        <Flex flexDir={'column'} width={'166px'}>
+                            <Text
+                                as="h1"
+                                fontSize={'32px'}
+                                color="primary.green.900"
+                                textAlign={'center'}
+                            >
+                                {reviewStats.numberOfFollowers}
+                            </Text>
+                            <Text textAlign={'center'}>
+                                Number of Followersss
+                            </Text>
+                        </Flex>
                     </Flex>
+                    {/*End of Stats*/}
 
-                    <Flex ml="auto" flexDir={'column'} gap="16px">
+                    {/* Chat / Report */}
+                    <Flex ml={'auto'} flexDir={'column'} gap="16px">
                         <Flex
                             display={{ base: 'none', md: 'flex' }}
                             height={{ base: '33px', md: '47px' }}
@@ -246,6 +263,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                     </Flex>
                 </Flex>
                 <Divider backgroundColor={'#555555'} my="2rem" />
+
                 {/* About */}
                 <Flex flexDir={'column'}>
                     <Text alignSelf={'flex-start'} color="primary.green.900">
@@ -260,7 +278,9 @@ export default function Page({ params }: { params: { slug: string } }) {
                         laborum.
                     </Text>
                 </Flex>
-                <Text ml="auto">Vendor Created at: {readableDate}</Text>
+                <Text ml="auto" mt="1rem">
+                    Vendor Created at: {readableDate}
+                </Text>
             </Flex>
             {/* 
             <Box className="bg-black text-white p-4">
