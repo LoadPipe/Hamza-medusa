@@ -5,9 +5,13 @@ import {
     CartService,
     Cart,
     LineItem,
+    OrderStatus,
+    FulfillmentStatus
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
+import OrderService from '../services/order';
 import { Product } from '../models/product';
+import { Order } from '../models/order';
 import { PriceConverter } from '../strategies/price-selection';
 import { BuckyClient, IBuckyShippingCostRequest } from '../buckydrop/bucky-client';
 import { CreateProductInput as MedusaCreateProductInput } from '@medusajs/medusa/dist/types/product';
@@ -20,6 +24,7 @@ export default class BuckydropService extends TransactionBaseService {
     protected readonly logger: Logger;
     protected readonly productService_: ProductService;
     protected readonly cartService_: CartService;
+    protected readonly orderService_: OrderService;
     protected readonly priceConverter: PriceConverter;
     protected readonly buckyClient: BuckyClient;
 
@@ -105,6 +110,88 @@ export default class BuckydropService extends TransactionBaseService {
 
     async calculateShippingPriceForProduct(cart: Cart, product: Product): Promise<number> {
         return 0;
+    }
+
+    async reconcileOrderStatus(orderId: string): Promise<void> {
+        try {
+            //get order & metadata
+            const order: Order = await this.orderService_.retrieve(orderId);
+            const buckyData = order.bucky_metadata?.length ? JSON.parse(order.bucky_metadata) : null;
+
+            if (order && buckyData) {
+
+                //get order details from buckydrop
+                const orderDetail = await this.buckyClient.getOrderDetails(
+                    buckyData.data.shopOrderNo ?? buckyData.shopOrderNo
+                );
+
+                //get the order status
+                if (orderDetail) {
+                    const status = orderDetail.orderDetails?.data?.poOrderList[0]?.orderStatus;
+                    if (status) {
+
+                        //translate the status 
+                        switch (parseInt(status)) {
+                            case 0:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.NOT_FULFILLED;
+                                break;
+                            case 1:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.NOT_FULFILLED;
+                                break;
+                            case 2:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.NOT_FULFILLED;
+                                break;
+                            case 3:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.NOT_FULFILLED;
+                                break;
+                            case 4:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.NOT_FULFILLED;
+                                break;
+                            case 5:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.NOT_FULFILLED;
+                                break;
+                            case 6:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.NOT_FULFILLED;
+                                break;
+                            case 7:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.SHIPPED;
+                                break;
+                            case 8:
+                                order.status = OrderStatus.CANCELED;
+                                order.fulfillment_status = FulfillmentStatus.CANCELED;
+                                break;
+                            case 9:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.SHIPPED;
+                                break;
+                            case 10:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.SHIPPED;
+                                break;
+                            case 11:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.SHIPPED;
+                                break;
+                            case 10:
+                                order.status = OrderStatus.COMPLETED;
+                                order.fulfillment_status = FulfillmentStatus.FULFILLED;
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+        catch (e: any) {
+            this.logger.error(`Error reconciling order status for order ${orderId}`, e);
+        }
     }
 
     private async mapVariants(item: any, productDetails: any) {
