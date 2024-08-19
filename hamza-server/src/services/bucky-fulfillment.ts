@@ -2,7 +2,7 @@ import { AbstractFulfillmentService, Cart, Fulfillment, LineItem, Order } from "
 import { CreateReturnType } from "@medusajs/medusa/dist/types/fulfillment-provider";
 
 class BuckyFulfillmentService extends AbstractFulfillmentService {
-    static identifier = "my-fulfillment";
+    static identifier = "bucky-fulfillment";
 
     constructor(container, options) {
         super(container)
@@ -28,7 +28,7 @@ class BuckyFulfillmentService extends AbstractFulfillmentService {
         data: Record<string, unknown>,
         cart: Cart
     ): Promise<Record<string, unknown>> {
-        if (data.id !== "my-fulfillment") {
+        if (data.id !== "bucky-fulfillment") {
             throw new Error("invalid data")
         }
 
