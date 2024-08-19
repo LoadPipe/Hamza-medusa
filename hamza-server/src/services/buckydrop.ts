@@ -9,7 +9,7 @@ import {
 import ProductService from '../services/product';
 import { Product } from '../models/product';
 import { PriceConverter } from '../strategies/price-selection';
-import { BuckyClient } from '../buckydrop/bucky-client';
+import { BuckyClient, IBuckyShippingCostRequest } from '../buckydrop/bucky-client';
 import { CreateProductInput as MedusaCreateProductInput } from '@medusajs/medusa/dist/types/product';
 import { UpdateProductInput as MedusaUpdateProductInput } from '@medusajs/medusa/dist/types/product';
 
@@ -33,6 +33,7 @@ export default class BuckydropService extends TransactionBaseService {
     }
 
     async importProductsByKeyword(
+        keyword: string,
         storeId: string,
         collectionId: string,
         salesChannelId: string
@@ -40,7 +41,7 @@ export default class BuckydropService extends TransactionBaseService {
         //retrieve products from bucky and convert them
         const buckyClient: BuckyClient = new BuckyClient();
         const searchResults = await buckyClient.searchProducts(
-            'cup',
+            keyword,
             1,
             10
         );
@@ -83,9 +84,21 @@ export default class BuckydropService extends TransactionBaseService {
         });
 
         //calculate prices
-        const prices = await Promise.all(
-            cart.items.map(i => this.calculateShippingPriceForProduct(cart, i.variant.product))
-        );
+        const input: IBuckyShippingCostRequest = {
+            lang: 'en',
+            countryCode: cart.shipping_address.country_code,
+            country: cart.shipping_address.country.name,
+            provinceCode: cart.shipping_address.province,
+            province: cart.shipping_address.province,
+            detailAddress: `${cart.shipping_address.address_1 ?? ''} ${cart.shipping_address.address_2 ?? ''}`.trim(),
+            postCode: cart.shipping_address.postal_code,
+            length: 1,
+            width: 1,
+            weight: 1,
+            height: 1,
+            categoryCode: '',
+            productList: []
+        }
 
         return 0;
     }
@@ -200,6 +213,9 @@ export default class BuckydropService extends TransactionBaseService {
             console.log('productDetails:');
             console.log(productDetails);
 
+            const metadata = item;
+            metadata.detail = productDetails.data;
+
             return {
                 title: item.goodsName,
                 subtitle: item.goodsName, //TODO: find a better value
@@ -216,7 +232,7 @@ export default class BuckydropService extends TransactionBaseService {
                 sales_channels: salesChannels.map((sc) => {
                     return { id: sc };
                 }),
-                bucky_metadata: JSON.stringify(item),
+                bucky_metadata: JSON.stringify(metadata),
                 variants: await this.mapVariants(item, productDetails),
             };
         } catch (error) {
