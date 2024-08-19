@@ -62,7 +62,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
             const response = await getAllProductReviews(
                 authData.customer_id as string
             );
-            setReviews(response);
+            if (response.length !== 0) setReviews(response);
             console.log('Reviews:', JSON.stringify(response));
         } catch (error) {
             console.error('Error fetching reviews:', error);
