@@ -191,6 +191,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                             borderLeftWidth={'1px'}
                             borderRightWidth={'1px'}
                             borderStyle={'dashed'}
+                            borderColor={'#555555'}
                             width={'166px'}
                         >
                             <Text
@@ -263,7 +264,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                         </Flex>
                     </Flex>
                 </Flex>
-                <Divider backgroundColor={'#555555'} my="2rem" />
+                <Divider borderColor={'#555555'} my="2rem" />
 
                 {/* About */}
                 <Flex flexDir={'column'}>
