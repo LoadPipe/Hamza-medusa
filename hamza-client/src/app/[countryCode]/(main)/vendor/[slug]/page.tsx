@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import React, { Suspense, useEffect, useState } from 'react';
 import ProductCollections from '@modules/collections/product_collection_filter';
 import {
+    Flex,
     Box,
     Grid,
     GridItem,
@@ -35,6 +36,7 @@ import {
     StackDivider,
     CardFooter,
     FormErrorMessage,
+    Divider,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { getVendorStoreBySlug } from '@lib/data';
@@ -114,43 +116,103 @@ export default function Page({ params }: { params: { slug: string } }) {
     };
 
     return (
-        <div className="bg-black text-white text-center flex flex-col py-12">
-            <h1 className="text-3xl font-bold mb-4 text-center">
-                {displaySlug} {/* Display the capitalized slug */}
-            </h1>
-            <Image
-                src={reviewStats.thumbnail}
-                alt="Vendor"
-                borderRadius="full"
-                boxSize="250px"
-                objectFit="cover"
-                objectPosition="center"
+        <Box color={'white'}>
+            <Flex
+                flexDir={'column'}
                 mx="auto"
-                my={4}
-            />
+                maxW={'1261px'}
+                width="100%"
+                bgColor={'#121212'}
+                padding={'40px'}
+                borderRadius={'16px'}
+            >
+                {/* Company */}
+                <Flex flexDir={'row'}>
+                    <Image
+                        src={reviewStats.thumbnail}
+                        alt="Vendor"
+                        borderRadius="full"
+                        boxSize="72px"
+                        objectFit="cover"
+                        objectPosition="center"
+                    />
+                    <Flex ml="1rem" flexDir={'column'}>
+                        <Text fontSize={'24px'}>
+                            {displaySlug} {/* Display the capitalized slug */}
+                        </Text>
+                        <Flex color="#555555" gap={'7px'}>
+                            <Text fontSize={{ base: '10px', md: '16px' }}>
+                                Flagship Store
+                            </Text>
+                            <Box
+                                alignSelf={'center'}
+                                width={{ base: '2.53px', md: '7.33px' }}
+                                height={{ base: '2.53px', md: '7.33px' }}
+                                borderRadius={'full'}
+                                backgroundColor="primary.green.900"
+                            />
+                            <Text fontSize={{ base: '10px', md: '16px' }}>
+                                Online
+                            </Text>
+                        </Flex>
+                    </Flex>
+                    {/* Reviews */}
+                    <Box ml="2rem">
+                        <Heading as="h2" size="md">
+                            Review Stats
+                        </Heading>
+                        <Text>
+                            {reviewStats.reviewCount === 0
+                                ? 'No reviews yet'
+                                : `Average Rating: ${reviewStats.avgRating.toFixed(1)}`}
+                        </Text>
+                        <Text>
+                            {reviewStats.reviewCount === 0
+                                ? 'No ratings yet'
+                                : `Review Count: ${reviewStats.reviewCount}`}
+                        </Text>
+                    </Box>
+
+                    <Flex
+                        ml="auto"
+                        display={{ base: 'none', md: 'flex' }}
+                        height={{ base: '33px', md: '47px' }}
+                        width={{ base: '120px', md: '190px' }}
+                        borderColor={'primary.indigo.900'}
+                        borderWidth={'1px'}
+                        borderRadius={'37px'}
+                        justifyContent={'center'}
+                        cursor={'pointer'}
+                        fontSize={{ base: '12px', md: '16px' }}
+                    >
+                        <Text alignSelf={'center'} color="primary.indigo.900">
+                            Chat with them
+                        </Text>
+                    </Flex>
+                </Flex>
+                <Divider backgroundColor={'#555555'} my="2rem" />
+                {/* About */}
+                <Flex flexDir={'column'}>
+                    <Text alignSelf={'flex-start'} color="primary.green.900">
+                        About the seller
+                    </Text>
+
+                    <Text ml="auto" mt="1rem">
+                        Lorem, ipsum dolor sit amet consectetur adipisicing
+                        elit. Commodi, nostrum. Quasi similique cum sunt alias
+                        harum voluptatum adipisci delectus, mollitia porro
+                        labore at eos numquam ratione nihil repellat! Placeat,
+                        laborum.
+                    </Text>
+                </Flex>
+                <Text ml="auto">Vendor Created at: {readableDate}</Text>
+            </Flex>
 
             <Text>Total Products: {reviewStats.productCount}</Text>
-            <Text>Vendor Created at: {readableDate}</Text>
-            <Text>Number of Followers: {reviewStats.numberOfFollowers}</Text>
-            <Box>
-                <Heading as="h2" size="md" mt={4}>
-                    Review Stats
-                </Heading>
-                <Text>
-                    {reviewStats.reviewCount === 0
-                        ? 'No reviews yet'
-                        : `Average Rating: ${reviewStats.avgRating.toFixed(1)}`}
-                </Text>
-                <Text>
-                    {reviewStats.reviewCount === 0
-                        ? 'No ratings yet'
-                        : `Review Count: ${reviewStats.reviewCount}`}
-                </Text>
-            </Box>
-            <div>
-                <ProductCollections vendorName={displaySlug} />{' '}
-                {/* Pass the capitalized slug */}
-            </div>
+
+            <Text>Number of Followersss: {reviewStats.numberOfFollowers}</Text>
+
+            {/* 
             <Box pt={12}>
                 <Button
                     onClick={onOpen}
@@ -209,7 +271,8 @@ export default function Page({ params }: { params: { slug: string } }) {
                         </>
                     )}
                 </Card>
-            </Box>
+            </Box> */}
+
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
@@ -285,7 +348,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </div>
+        </Box>
     );
 }
 
