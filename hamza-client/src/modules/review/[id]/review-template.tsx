@@ -48,9 +48,9 @@ const ReviewTemplate = ({ reviewItem, isOpen, onClose }: any) => {
 
         try {
             const response = await createReview(data);
+            setReview('');
+            setRating(0);
             if (response.status === 200) {
-                setReview('');
-                setRating(0);
                 toast.success('Review Submitted!', {});
                 onClose();
             }

@@ -221,53 +221,60 @@ const ReviewPage = ({ region }: { region: Region }) => {
                 </>
             )}
 
-            {activeButton === 'pending' && pendingReviews.length > 0 && (
+            {activeButton === 'pending' && (
                 <>
-                    <CardHeader>
-                        <Heading size="md">Pending Reviews</Heading>
-                    </CardHeader>
-                    <Stack divider={<StackDivider />} spacing={4}>
-                        {pendingReviews.map((review: any) => (
-                            <CardBody key={review.id}>
-                                <Text fontSize="16px">
-                                    <Text as="span" color="#555555">
-                                        Purchase Date:{' '}
+                    {pendingReviews.length > 0 ? (
+                        <Stack divider={<StackDivider />} spacing={4}>
+                            {pendingReviews.map((review: any) => (
+                                <CardBody key={review.id}>
+                                    <Text fontSize="16px">
+                                        <Text as="span" color="#555555">
+                                            Purchase Date:{' '}
+                                        </Text>
+                                        {format(
+                                            new Date(review.created_at),
+                                            'PPP'
+                                        )}
                                     </Text>
-                                    {format(new Date(review.created_at), 'PPP')}
-                                </Text>
-                                <div className="flex flex-row space-x-2 items-center">
-                                    <Image
-                                        rounded={'lg'}
-                                        width={'72px'}
-                                        height={'72px'}
-                                        src={
-                                            review.cart.items[0].variant.product
-                                                .thumbnail
-                                        } // Update to your data structure
-                                    />
-                                    <Text
-                                        fontSize={'18px'}
-                                        fontWeight={'bold'}
-                                        textTransform="uppercase"
-                                    >
-                                        {
-                                            review.cart.items[0].variant.product
-                                                .title
-                                        }{' '}
-                                        {/* Adjust title path */}
-                                    </Text>
-                                    <Button
-                                        onClick={() =>
-                                            handlePendingReview(review)
-                                        }
-                                        colorScheme="green"
-                                    >
-                                        Write Review
-                                    </Button>
-                                </div>
-                            </CardBody>
-                        ))}
-                    </Stack>
+                                    <div className="flex flex-row space-x-2 items-center">
+                                        <Image
+                                            rounded={'lg'}
+                                            width={'72px'}
+                                            height={'72px'}
+                                            src={
+                                                review.cart.items[0].variant
+                                                    .product.thumbnail
+                                            }
+                                        />
+                                        <Text
+                                            fontSize={'18px'}
+                                            fontWeight={'bold'}
+                                            textTransform="uppercase"
+                                        >
+                                            {
+                                                review.cart.items[0].variant
+                                                    .product.title
+                                            }
+                                        </Text>
+                                        <Button
+                                            onClick={() =>
+                                                handlePendingReview(review)
+                                            }
+                                            colorScheme="green"
+                                        >
+                                            Write Review
+                                        </Button>
+                                    </div>
+                                </CardBody>
+                            ))}
+                        </Stack>
+                    ) : (
+                        <Box textAlign="center" py={5}>
+                            <Text color="red.500" fontSize="lg">
+                                No pending reviews available.
+                            </Text>
+                        </Box>
+                    )}
                     <CardFooter />
                 </>
             )}
