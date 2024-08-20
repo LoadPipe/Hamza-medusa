@@ -52,6 +52,7 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
 
     return (
         <Flex
+            mt="1rem"
             height={{ base: '102px', md: '210px' }}
             width={'100%'}
             flexDirection={'column'}
