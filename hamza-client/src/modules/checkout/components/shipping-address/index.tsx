@@ -51,7 +51,6 @@ const ShippingAddress = ({
     );
 
     useEffect(() => {
-        console.log(cart);
         setFormData({
             'shipping_address.first_name':
                 cart?.shipping_address?.first_name || '',

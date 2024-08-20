@@ -2,9 +2,11 @@ import { MedusaRequest, MedusaResponse, OrderService } from '@medusajs/medusa';
 import { RouteHandler } from '../../../route-handler';
 import { Order } from '../../../../models/order';
 import { BuckyClient } from '../../../../buckydrop/bucky-client';
+import BuckydropService from 'src/services/buckydrop';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
+    const buckyService: BuckydropService = req.scope.resolve('buckydropService');
 
     const handler: RouteHandler = new RouteHandler(
         req,
@@ -15,20 +17,17 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     await handler.handle(async () => {
         const orderId = req.query.order.toString();
-        const buckyClient: BuckyClient = new BuckyClient();
 
-        const order: Order = await orderService.retrieve(orderId);
-        const metadata = JSON.parse(order.bucky_metadata);
+        //const order: Order = await orderService.retrieve(orderId);
+        //const metadata = JSON.parse(order.bucky_metadata);
 
-        const orderNo = metadata.data.shopOrderNo;
-        console.log('orderNo is ', orderNo);
-        const orderDetails = await buckyClient.getOrderDetails(
-            orderNo,
-            metadata.data.partnerOrderNo
-        );
+        //const orderNo = metadata.data.shopOrderNo;
+        //c/onsole.log('orderNo is ', orderNo);
+
+        const output = await buckyService.reconcileOrderStatus(orderId);
 
         return res
             .status(201)
-            .json({ status: true, metadata, orderNo, orderDetails });
+            .json({ status: true, output });
     });
 };

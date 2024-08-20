@@ -57,6 +57,7 @@ const Addresses = ({
     };
 
     const [message, formAction] = useFormState(setAddresses, null);
+    console.log('cart.email == ', cart?.email);
     const contactEmail = cart?.email
         ? cart.email.endsWith('@evm.blockchain')
             ? ''
@@ -129,6 +130,9 @@ const Addresses = ({
                                         </Text>
                                         <Text className="text-medium text-white">
                                             {cart.shipping_address.country_code?.toUpperCase()}
+                                        </Text>
+                                        <Text className="text-medium text-white">
+                                            {contactEmail}
                                         </Text>
                                     </div>
 

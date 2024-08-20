@@ -19,6 +19,7 @@ import CustomerService from '../services/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import { BuckyClient } from '../buckydrop/bucky-client';
 import { getCurrencyAddress } from '../currency.config';
+import { In } from 'typeorm';
 
 export type BulkImportProductInput = CreateProductInput;
 
@@ -128,6 +129,23 @@ class ProductService extends MedusaProductService {
         productData: (CreateProductInput | UpdateProductInput)[]
     ): Promise<Product[]> {
         try {
+
+            //get the store
+            const store: Store = await this.storeRepository_.findOne({
+                where: { id: storeId },
+            });
+
+            if (!store) {
+                throw new Error(`Store ${storeId} not found.`);
+            }
+
+            //get existing products by handle
+            const productHandles: string[] = productData.map(p => p.handle);
+            const existingProducts: Product[] = await this.productRepository_.find({
+                where: { handle: In(productHandles) },
+                relations: ['variants'],
+            });
+
             const addedProducts = await Promise.all(
                 productData.map((product) => {
                     return new Promise<Product>(async (resolve, reject) => {
@@ -135,11 +153,7 @@ class ProductService extends MedusaProductService {
 
                         try {
                             // Check if the product already exists by handle
-                            const existingProduct =
-                                await this.productRepository_.findOne({
-                                    where: { handle: productHandle },
-                                    relations: ['variants'],
-                                });
+                            const existingProduct = existingProducts.find(p => p.handle === product.handle);
 
                             if (existingProduct) {
                                 // If the product exists, update it
@@ -176,17 +190,9 @@ class ProductService extends MedusaProductService {
 
             // Ensure all products are non-null and have valid IDs
             const validProducts = addedProducts.filter((p) => p && p.id);
+            this.logger.info(`${validProducts.length} out of ${productData.length} products were imported`)
             if (validProducts.length !== addedProducts.length) {
-                this.logger.error('Some products were not created successfully');
-            }
-
-            //get the store
-            const store: Store = await this.storeRepository_.findOne({
-                where: { id: storeId },
-            });
-
-            if (!store) {
-                throw new Error(`Store ${storeId} not found.`);
+                this.logger.warn('Some products were not created successfully');
             }
 
             this.logger.debug(

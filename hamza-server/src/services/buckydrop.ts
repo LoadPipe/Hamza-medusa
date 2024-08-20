@@ -5,13 +5,18 @@ import {
     CartService,
     Cart,
     LineItem,
+    OrderStatus,
+    FulfillmentStatus
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
+import OrderService from '../services/order';
 import { Product } from '../models/product';
+import { Order } from '../models/order';
 import { PriceConverter } from '../strategies/price-selection';
 import { BuckyClient, IBuckyShippingCostRequest } from '../buckydrop/bucky-client';
 import { CreateProductInput as MedusaCreateProductInput } from '@medusajs/medusa/dist/types/product';
 import { UpdateProductInput as MedusaUpdateProductInput } from '@medusajs/medusa/dist/types/product';
+import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 
 type CreateProductInput = MedusaCreateProductInput & { store_id: string, bucky_metadata?: string };
 //type UpdateProductInput = MedusaUpdateProductInput & { store_id: string, bucky_metadata?: string };
@@ -20,6 +25,8 @@ export default class BuckydropService extends TransactionBaseService {
     protected readonly logger: Logger;
     protected readonly productService_: ProductService;
     protected readonly cartService_: CartService;
+    protected readonly orderService_: OrderService;
+    protected readonly orderRepository_: typeof OrderRepository;
     protected readonly priceConverter: PriceConverter;
     protected readonly buckyClient: BuckyClient;
 
@@ -27,6 +34,8 @@ export default class BuckydropService extends TransactionBaseService {
         super(container);
         this.productService_ = container.productService;
         this.cartService_ = container.cartService;
+        this.orderRepository_ = container.orderRepository;
+        this.orderService_ = container.orderService;
         this.logger = container.logger;
         this.priceConverter = new PriceConverter();
         this.buckyClient = new BuckyClient();
@@ -43,11 +52,13 @@ export default class BuckydropService extends TransactionBaseService {
         const searchResults = await buckyClient.searchProducts(
             keyword,
             1,
-            10
+            3
         );
         this.logger.debug(`search returned ${searchResults.length} results`);
         const productData = searchResults; //[searchResults[4], searchResults[5]];
 
+        //doing it this way incurs the wrath of the API rate limit
+        /*
         let products: CreateProductInput[] = await Promise.all(
             productData.map((p) =>
                 this.mapBuckyDataToProductInput(
@@ -60,14 +71,29 @@ export default class BuckydropService extends TransactionBaseService {
                 )
             )
         );
+        */
+
+        let productInputs: CreateProductInput[] = [];
+        for (let p of productData) {
+            productInputs.push(await
+                this.mapBuckyDataToProductInput(
+                    buckyClient,
+                    p,
+                    ProductStatus.PUBLISHED,
+                    storeId,
+                    collectionId,
+                    [salesChannelId]
+                )
+            );
+        }
 
 
         //filter out failures
-        products = products.filter(p => p ? p : null);
+        productInputs = productInputs.filter(p => p ? p : null);
 
         //import the products
-        const output = products?.length
-            ? await this.productService_.bulkImportProducts(storeId, products)
+        const output = productInputs?.length
+            ? await this.productService_.bulkImportProducts(storeId, productInputs)
             : [];
 
         //TODO: best to return some type of report; what succeeded, what failed
@@ -92,12 +118,21 @@ export default class BuckydropService extends TransactionBaseService {
             province: cart.shipping_address.province,
             detailAddress: `${cart.shipping_address.address_1 ?? ''} ${cart.shipping_address.address_2 ?? ''}`.trim(),
             postCode: cart.shipping_address.postal_code,
-            length: 1,
-            width: 1,
-            weight: 1,
-            height: 1,
-            categoryCode: '',
             productList: []
+        };
+
+        for (let item of cart.items) {
+            if (item.variant.bucky_metadata?.length) {
+                const variantMetadata = JSON.parse(item.variant.bucky_metadata);
+                const productMetadata = JSON.parse(item.variant.product.bucky_metadata);
+                input.productList.push({
+                    length: variantMetadata.length,
+                    width: variantMetadata.width,
+                    height: variantMetadata.height,
+                    weight: variantMetadata.weight,
+                    categoryCode: productMetadata.detail.categoryCode
+                });
+            }
         }
 
         return 0;
@@ -105,6 +140,127 @@ export default class BuckydropService extends TransactionBaseService {
 
     async calculateShippingPriceForProduct(cart: Cart, product: Product): Promise<number> {
         return 0;
+    }
+
+    async reconcileOrderStatus(orderId: string): Promise<Order> {
+        try {
+            //get order & metadata
+            const order: Order = await this.orderService_.retrieve(orderId);
+            const buckyData = order.bucky_metadata?.length ? JSON.parse(order.bucky_metadata) : null;
+
+            if (order && buckyData) {
+
+                //get order details from buckydrop
+                const orderDetail = await this.buckyClient.getOrderDetails(
+                    buckyData.data.shopOrderNo ?? buckyData.shopOrderNo
+                );
+
+                //get the order status
+                if (orderDetail) {
+                    const status = orderDetail.orderDetails?.data?.poOrderList[0]?.orderStatus;
+                    if (status) {
+
+                        //translate the status 
+                        switch (parseInt(status)) {
+                            case 0:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.NOT_FULFILLED;
+                                break;
+                            case 1:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.NOT_FULFILLED;
+                                break;
+                            case 2:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.NOT_FULFILLED;
+                                break;
+                            case 3:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.NOT_FULFILLED;
+                                break;
+                            case 4:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.NOT_FULFILLED;
+                                break;
+                            case 5:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.NOT_FULFILLED;
+                                break;
+                            case 6:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.NOT_FULFILLED;
+                                break;
+                            case 7:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.SHIPPED;
+                                break;
+                            case 8:
+                                order.status = OrderStatus.CANCELED;
+                                order.fulfillment_status = FulfillmentStatus.CANCELED;
+                                break;
+                            case 9:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.SHIPPED;
+                                break;
+                            case 10:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.SHIPPED;
+                                break;
+                            case 11:
+                                order.status = OrderStatus.PENDING;
+                                order.fulfillment_status = FulfillmentStatus.SHIPPED;
+                                break;
+                            case 10:
+                                order.status = OrderStatus.COMPLETED;
+                                order.fulfillment_status = FulfillmentStatus.FULFILLED;
+                                break;
+                        }
+                    }
+
+                    //save the tracking data
+                    buckyData.tracking = orderDetail;
+                    order.bucky_metadata = JSON.stringify(buckyData);
+
+                    //save the order 
+                    await this.orderRepository_.save(order);
+                }
+            }
+
+            return order;
+        }
+        catch (e: any) {
+            this.logger.error(`Error reconciling order status for order ${orderId}`, e);
+        }
+    }
+
+    async cancelOrder(orderId: string): Promise<Order> {
+        try {
+            const order: Order = await this.orderService_.retrieve(orderId);
+            const buckyData = order.bucky_metadata?.length ? JSON.parse(order.bucky_metadata) : null;
+
+            if (order && buckyData) {
+
+                //get order details from buckydrop
+                const shopOrderNo: string = buckyData.data.shopOrderNo ?? buckyData.shopOrderNo;
+
+                //get the order status
+                if (shopOrderNo) {
+
+                    //save the tracking data
+                    const output = await this.buckyClient.cancelOrder(shopOrderNo);
+                    buckyData.cancel = output;
+                    order.bucky_metadata = JSON.stringify(buckyData);
+
+                    //save the order 
+                    await this.orderRepository_.save(order);
+                }
+            }
+
+            return order;
+        }
+        catch (e) {
+            this.logger.error(`Error cancelling order ${orderId}`, e);
+        }
     }
 
     private async mapVariants(item: any, productDetails: any) {

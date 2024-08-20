@@ -44,21 +44,22 @@ export interface IBuckyShippingCostRequest {
     province: string;
     detailAddress: string;
     postCode: string;
-    length: number;
-    width: number;
-    height: number;
-    weight: number;
-    count?: number;
-    categoryCode: string;
-    goodsPrice?: string;
-    productNameCn?: string;
-    productNameEn?: string;
-    categoryName?: string;
-    goodsAttrCode?: string;
     orderBy?: string;
     orderType?: string;
 
-    productList: [];
+    productList: {
+        length: number;
+        width: number;
+        height: number;
+        weight: number;
+        count?: number;
+        categoryCode: string;
+        goodsPrice?: string;
+        productNameCn?: string;
+        productNameEn?: string;
+        categoryName?: string;
+        goodsAttrCode?: string;
+    }[];
 }
 
 export class BuckyClient {
@@ -95,7 +96,7 @@ export class BuckyClient {
                 //`/api/rest/v2/adapt/openapi/product/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 `/api/rest/v2/adapt/adaptation/product/query?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params,
-                { timeout: 60000 }
+                { timeout: 600000 }
             )
             .then((response) => response.data)
             .catch((error) => {
@@ -121,7 +122,7 @@ export class BuckyClient {
                 //`/api/rest/v2/adapt/openapi/product/search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 `/api/rest/v2/adapt/adaptation/product/search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params,
-                { timeout: 60000 }
+                { timeout: 600000 }
             )
             .then((response) => response.data?.data?.records)
             .catch((error) => {
@@ -146,7 +147,7 @@ export class BuckyClient {
                     ``,
                     //`/api/rest/v2/adapt/openapi/product/image-search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                     params,
-                    { timeout: 60000 }
+                    { timeout: 600000 }
                 )
                 .then((response) => response.data)
                 .catch((error) => {
