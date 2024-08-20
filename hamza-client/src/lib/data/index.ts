@@ -148,6 +148,42 @@ export async function checkReviewsExistence(order_id: string) {
     }
 }
 
+export async function checkCustomerReviewExistence(
+    order_id: string,
+    variant_id: string
+) {
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/review/existing`,
+            {
+                params: {
+                    order_id: order_id,
+                    variant_id: variant_id,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching reviews:', error);
+    }
+}
+
+export async function getNotReviewed(customer_id: string) {
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/review/get-customer-not-reviewed`,
+            {
+                params: {
+                    customer_id: customer_id,
+                },
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching reviews:', error);
+    }
+}
+
 export async function allReviews(product_id: string) {
     try {
         const response = await axios.post(
@@ -276,6 +312,22 @@ export async function singleBucket(customer_id: string, bucket: number) {
     }
 }
 
+export async function getNotReviewedOrders(customer_id: string) {
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/review/get-customer-not-reviewed`,
+            {
+                params: {
+                    customer_id: customer_id,
+                },
+            }
+        );
+        return response.data;
+    } catch (e) {
+        console.error(`Error fetching all non reviewed orders ${e}`);
+    }
+}
+
 export async function orderStatus(order_id: string) {
     try {
         const response = await axios.post(
@@ -346,6 +398,30 @@ export async function reviewResponse(product_id: string) {
         return response.data;
     } catch (error) {
         console.error('Error fetching review response:', error);
+    }
+}
+
+export async function updateProductReview(
+    product_id: string,
+    review: string,
+    rating: number,
+    customer_id: string,
+    order_id: string
+) {
+    try {
+        const response = await axios.put(
+            `${BACKEND_URL}/custom/review/update`,
+            {
+                product_id: product_id,
+                reviewUpdates: review,
+                ratingUpdates: rating,
+                customer_id: customer_id,
+                order_id: order_id,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error updating product review:', error);
     }
 }
 

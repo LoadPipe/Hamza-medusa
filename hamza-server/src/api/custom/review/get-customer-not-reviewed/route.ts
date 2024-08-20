@@ -11,15 +11,14 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         req,
         res,
         'GET',
-        '/custom/review/existing',
-        ['product_id', 'order_id']
+        '/custom/review/get-customer-not-reviewed',
+        ['customer_id']
     );
 
     await handler.handle(async () => {
-        const verify = await productReviewService.getSpecificReview(
-            handler.inputParams.order_id,
-            handler.inputParams.product_id
+        const reviews = await productReviewService.getNotReviewedOrders(
+            handler.inputParams.customer_id
         );
-        res.json(verify);
+        res.json(reviews);
     });
 };

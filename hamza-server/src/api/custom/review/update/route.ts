@@ -3,18 +3,24 @@ import ProductReviewService from '../../../../services/product-review';
 import { RouteHandler } from '../../../route-handler';
 
 //TODO: update routes should be PUT instead of POST (and don't need their own folders)
-export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
+export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
     const productReviewService: ProductReviewService = req.scope.resolve(
         'productReviewService'
     );
 
-    const handler: RouteHandler = new RouteHandler(req, res, 'POST', '/custom/review/update', [
-        'product_id',
-        'reviewUpdates',
-        'ratingUpdates',
-        'customer_id',
-        'order_id'
-    ]);
+    const handler: RouteHandler = new RouteHandler(
+        req,
+        res,
+        'PUT',
+        '/custom/review/update',
+        [
+            'product_id',
+            'reviewUpdates',
+            'ratingUpdates',
+            'customer_id',
+            'order_id',
+        ]
+    );
 
     await handler.handle(async () => {
         const updatedReview = await productReviewService.updateProduct(

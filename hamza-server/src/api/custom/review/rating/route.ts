@@ -7,16 +7,20 @@ export const PATCH = async (req: MedusaRequest, res: MedusaResponse) => {
         'productReviewService'
     );
 
-    const handler: RouteHandler = new RouteHandler(req, res, 'PATCH', '/custom/review/rating', [
-        'product_id',
-        'rating',
-        'customer_id'
-    ]);
+    const handler: RouteHandler = new RouteHandler(
+        req,
+        res,
+        'PATCH',
+        '/custom/review/rating',
+        ['product_id', 'rating', 'customer_id']
+    );
 
     await handler.handle(async () => {
-        const updatedReview = await productReviewService.updateProductRating(
+        const updatedReview = await productReviewService.updateProduct(
             handler.inputParams.product_id,
             handler.inputParams.rating,
+            handler.inputParams.review,
+            handler.inputParams.order_id,
             handler.inputParams.customer_id
         );
         res.json(updatedReview);

@@ -542,6 +542,41 @@ export default class OrderService extends MedusaOrderService {
         return uniqueCart;
     }
 
+    async getNotReviewedOrders(customer_id: string) {
+        const orderRepository = this.activeManager_.getRepository(Order);
+        const notReviewedOrders = await orderRepository
+            .createQueryBuilder('order')
+            .leftJoinAndSelect('order.products', 'product')
+            .leftJoinAndSelect('order.store', 'store')
+            .leftJoin(
+                'order.reviews',
+                'review',
+                'review.customer_id = :customer_id',
+                { customer_id }
+            )
+            .select([
+                'order.id',
+                'order.status',
+                'product.thumbnail',
+                // 'store.icon',
+            ])
+            .where('order.customer_id = :customer_id', { customer_id })
+            .andWhere('review.id IS NULL') // Ensures that the order has no reviews
+            .andWhere('order.status != :status', { status: 'archived' })
+            .getMany();
+
+        if (!notReviewedOrders || notReviewedOrders.length === 0) {
+            throw new Error('No unreviewed orders found');
+        }
+
+        return notReviewedOrders.map((order) => ({
+            order_id: order.id,
+            status: order.status,
+            // store_logo: order.store.icon,
+            // thumbnails: order.products.map((product) => product.thumbnail), // Assuming multiple products can be in one order
+        }));
+    }
+
     async listCustomerOrders(
         customerId: string
     ): Promise<{ orders: any[]; cartCount: number }> {
