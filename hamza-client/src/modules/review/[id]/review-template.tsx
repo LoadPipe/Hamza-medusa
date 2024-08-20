@@ -17,33 +17,16 @@ import {
 } from '@chakra-ui/react';
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
-const ReviewTemplate = ({ isOpen, onClose }: any) => {
+const ReviewTemplate = ({ reviewItem, isOpen, onClose }: any) => {
     const [review, setReview] = useState('');
     const [rating, setRating] = useState(0);
     const [hovered, setHovered] = useState(0);
     const [canSubmit, setCanSubmit] = useState(false);
     const [submissionSuccess, setSubmissionSuccess] = useState(false);
 
-    const item = useItemStore((state) => state.item);
-
-    console.log(`Item is ${JSON.stringify(item)}`);
-    // console.log(`item info ${JSON.stringify(item)}`);
-    useEffect(() => {
-        if (item && item.order_id) {
-            checkReviewExistence(item.order_id);
-        }
-        // console.log(`Checking ${item?.title} if we can submit?`);
-    }, [item]);
-
-    const checkReviewExistence = async (orderId: string) => {
-        try {
-            const response = await checkReviewsExistence(orderId);
-            // console.log(`Can submit? ${response.data}`);
-            setCanSubmit(response.data); // Assuming API returns { exists: true/false }
-        } catch (error) {
-            alert('Failed to check review existence: ' + error);
-        }
-    };
+    console.log(
+        `reviewItem description ${JSON.stringify(reviewItem.cart.items[0]?.variant?.product?.thumbnail)}`
+    );
 
     const submitReview = async () => {
         if (canSubmit) {
@@ -52,12 +35,12 @@ const ReviewTemplate = ({ isOpen, onClose }: any) => {
         }
 
         const data = {
-            customer_id: item?.customer_id,
-            product_id: item?.variant_id,
+            customer_id: review?.customer_id,
+            product_id: review?.variant_id,
             rating: rating,
             content: review,
-            title: 'Review for ' + item?.title, // Assuming a title is needed
-            order_id: item?.order_id,
+            title: 'Review for ' + review?.title, // Assuming a title is needed
+            order_id: review?.order_id,
         };
 
         try {
@@ -95,19 +78,31 @@ const ReviewTemplate = ({ isOpen, onClose }: any) => {
                         <ModalBody>
                             <Box className="flex items-center mb-4">
                                 <Image
-                                    src={item?.thumbnail}
-                                    alt={item?.title}
+                                    src={
+                                        reviewItem.cart.items[0]?.variant
+                                            ?.product?.thumbnail
+                                    }
+                                    alt={
+                                        reviewItem.cart.items[0]?.variant
+                                            ?.product?.title
+                                    }
                                     className="w-24 h-24 mr-4"
                                 />
                                 <Box>
                                     <h1 className="text-xl font-semibold">
-                                        {item?.title}
+                                        {
+                                            reviewItem.cart.items[0]?.variant
+                                                ?.product?.title
+                                        }
                                     </h1>
-                                    <p
-                                        dangerouslySetInnerHTML={{
-                                            __html: item?.description ?? '',
-                                        }}
-                                    ></p>
+                                    {/*<p*/}
+                                    {/*    dangerouslySetInnerHTML={{*/}
+                                    {/*        __html:*/}
+                                    {/*            reviewItem.cart.items[0]*/}
+                                    {/*                ?.variant?.product*/}
+                                    {/*                ?.description ?? '',*/}
+                                    {/*    }}*/}
+                                    {/*></p>*/}
                                 </Box>
                             </Box>
                             <Box>
@@ -146,7 +141,10 @@ const ReviewTemplate = ({ isOpen, onClose }: any) => {
                                     color={'primary.indigo.900'}
                                     width={'180px'}
                                     borderRadius={'37px'}
-                                    onClick={onClose} // This will close the modal
+                                    onClick={() => {
+                                        onClose();
+                                        setRating(0);
+                                    }}
                                 >
                                     Cancel
                                 </Button>

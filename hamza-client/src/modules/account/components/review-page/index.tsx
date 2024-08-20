@@ -264,7 +264,11 @@ const ReviewPage = ({ region }: { region: Region }) => {
             )}
 
             {selectedPendingReview && (
-                <ReviewTemplate isOpen={isOpen} onClose={onClose} />
+                <ReviewTemplate
+                    reviewItem={selectedPendingReview}
+                    isOpen={isOpen}
+                    onClose={onClose}
+                />
             )}
 
             {selectedReview && (
