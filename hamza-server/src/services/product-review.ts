@@ -110,6 +110,7 @@ class ProductReviewService extends TransactionBaseService {
             .andWhere('order.status != :status', { status: 'archived' })
             .getMany();
 
+        console.log(`orders are ${JSON.stringify(orders)}`);
         // If no orders are found, throw an error
         if (!orders || orders.length === 0) {
             throw new Error('No unreviewed orders found');
@@ -385,32 +386,8 @@ class ProductReviewService extends TransactionBaseService {
         const productReviewRepository =
             this.activeManager_.getRepository(ProductReview);
 
-        let productId;
-
-        try {
-            const variantProduct = await this.productVariantRepository_.findOne(
-                {
-                    where: { id: product_id }, // Assuming product_id is the ID of the variant
-                }
-            );
-
-            if (!variantProduct) {
-                throw new Error('Product variant not found');
-            }
-
-            productId = variantProduct.product_id; // This assumes that variantProduct actually contains a product_id
-        } catch (e) {
-            this.logger.error(`Error fetching product variant: ${e}`);
-            throw e; // Rethrow or handle the error appropriately
-        }
-
-        // Ensure productId was successfully retrieved before proceeding
-        if (!productId) {
-            throw new Error('Unable to retrieve product ID for the review');
-        }
-
         const createdReview = productReviewRepository.create({
-            product_id: productId,
+            product_id: product_id,
             title: data.title,
             customer_id: data.customer_id, // Assuming there is a customer_id field
             content: data.content,

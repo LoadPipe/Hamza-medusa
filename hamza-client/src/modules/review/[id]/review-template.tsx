@@ -25,7 +25,7 @@ const ReviewTemplate = ({ reviewItem, isOpen, onClose }: any) => {
     const [submissionSuccess, setSubmissionSuccess] = useState(false);
 
     console.log(
-        `reviewItem description ${JSON.stringify(reviewItem.cart.items[0]?.variant?.product?.thumbnail)}`
+        `reviewItem description ${JSON.stringify(reviewItem.customer_id)}`
     );
 
     const submitReview = async () => {
@@ -35,12 +35,14 @@ const ReviewTemplate = ({ reviewItem, isOpen, onClose }: any) => {
         }
 
         const data = {
-            customer_id: review?.customer_id,
-            product_id: review?.variant_id,
+            customer_id: reviewItem?.customer_id,
+            product_id: reviewItem.cart.items[0]?.variant?.product.id,
             rating: rating,
             content: review,
-            title: 'Review for ' + review?.title, // Assuming a title is needed
-            order_id: review?.order_id,
+            title:
+                'Review for ' +
+                reviewItem.cart.items[0]?.variant?.product?.title, // TODO: Assuming a title is needed?? not sure why I added this - GN
+            order_id: reviewItem?.id,
         };
 
         try {
