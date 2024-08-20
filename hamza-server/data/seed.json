@@ -107,7 +107,7 @@
                 "id": "bucky-fulfillment"
             },
             "price_type": "flat_rate",
-            "amount": 3000
+            "amount": 300
         },
         {
             "name": "FakeEx Return",
