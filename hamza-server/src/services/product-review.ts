@@ -132,7 +132,6 @@ class ProductReviewService extends TransactionBaseService {
             .map((order) => order.id);
 
         if (unreviewedOrderIds.length === 0) {
-            throw new Error('No unreviewed orders left to fetch details for.');
             return [];
         }
 
