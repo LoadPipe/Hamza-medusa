@@ -254,7 +254,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Request Cancellation</ModalHeader>
+                    <ModalHeader>Request Cancellationss</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <FormControl isInvalid={!cancelReason && isModalOpen}>

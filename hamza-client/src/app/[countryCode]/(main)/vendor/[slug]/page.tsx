@@ -39,6 +39,8 @@ import {
     Divider,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import ProductCardGroup from '@modules/products/components/product-group-vendor';
+import VendorProductDisplay from '@modules/vendors/components/products/vendor-product-display';
 import { getVendorStoreBySlug } from '@lib/data';
 import { format } from 'date-fns';
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
@@ -341,7 +343,9 @@ export default function Page({ params }: { params: { slug: string } }) {
                     Vendor Created at: {readableDate}
                 </Text>
             </Flex>
-            {/* 
+
+            <VendorProductDisplay />
+            {/*
             <Box className="bg-black text-white p-4">
                 <Card>
                     {reviewStats.reviewCount > 0 && (
