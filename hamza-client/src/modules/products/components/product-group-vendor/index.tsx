@@ -84,8 +84,6 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
     if (isLoading) {
         return (
             <Flex
-                mt={{ base: '0', md: '1rem' }}
-                mb={'4rem'}
                 maxW={'1280px'}
                 width="100%"
                 mx="auto"
@@ -137,7 +135,6 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
 
     return (
         <Flex
-            mt={{ base: '0', md: '1rem' }}
             mb={'4rem'}
             maxW={'1280px'}
             width="100%"

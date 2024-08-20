@@ -4,18 +4,10 @@ import React, { useState, useEffect, Suspense } from 'react';
 import ProductCardGroup from '@modules/products/components/product-group-vendor';
 import { Flex } from '@chakra-ui/react';
 import SearchBar from '@modules/home/components/search-and-filter-panel/components/SearchBar';
+import VendorSearch from './vendor-search';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 
-const VendorProductDisplay = () => {
-    const { categorySelect } = useHomeProductsPage();
-    const [vendorName, setVendorName] = useState('All');
-
-    useEffect(() => {
-        if (categorySelect) {
-            setVendorName(categorySelect);
-        }
-    }, [categorySelect]);
-
+const VendorProductDisplay = (props: any) => {
     return (
         <Flex
             mx={'auto'}
@@ -26,7 +18,8 @@ const VendorProductDisplay = () => {
             alignItems={'center'}
         >
             {/* <SearchBar /> */}
-            <ProductCardGroup vendorName={vendorName} />
+            <VendorSearch />
+            <ProductCardGroup vendorName={props.vendorName} />
         </Flex>
     );
 };

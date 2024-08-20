@@ -344,7 +344,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                 </Text>
             </Flex>
 
-            <VendorProductDisplay />
+            <VendorProductDisplay vendorName={displaySlug} />
             {/*
             <Box className="bg-black text-white p-4">
                 <Card>
