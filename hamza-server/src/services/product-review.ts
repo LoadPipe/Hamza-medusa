@@ -113,7 +113,7 @@ class ProductReviewService extends TransactionBaseService {
         console.log(`orders are ${JSON.stringify(orders)}`);
         // If no orders are found, throw an error
         if (!orders || orders.length === 0) {
-            throw new Error('No unreviewed orders found');
+            return [];
         }
 
         // Fetch all reviews for the customer

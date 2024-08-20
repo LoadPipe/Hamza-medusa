@@ -86,6 +86,10 @@ const ReviewPage = ({ region }: { region: Region }) => {
         fetchReviews();
     };
 
+    const handlePendingUpdated = () => {
+        fetchPendingReviews();
+    };
+
     const fetchPendingReviews = async () => {
         console.log('Fetching pending reviews...'); // For debugging
         try {
@@ -289,6 +293,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
                     reviewItem={selectedPendingReview}
                     isOpen={isReviewOpen}
                     onClose={onReviewClose}
+                    onPendingReviewUpdated={handlePendingUpdated}
                 />
             )}
 
