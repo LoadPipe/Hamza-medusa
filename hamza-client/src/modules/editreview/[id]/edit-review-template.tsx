@@ -101,7 +101,7 @@ const EditReviewTemplate = ({ review, isOpen, onClose }: any) => {
                                 <Box>
                                     <Box className="flex items-center mb-2">
                                         {[1, 2, 3, 4, 5].map((star: number) => (
-                                            <Button
+                                            <button
                                                 key={star}
                                                 size="lg"
                                                 variant={
@@ -123,7 +123,7 @@ const EditReviewTemplate = ({ review, isOpen, onClose }: any) => {
                                                 }
                                             >
                                                 ★
-                                            </Button>
+                                            </button>
                                         ))}
                                         <Text
                                             ml="2"
