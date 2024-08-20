@@ -4,17 +4,15 @@ import { Flex, Text } from '@chakra-ui/react';
 const VendorCatButton = (props: any) => {
     return (
         <Flex
-            width={'167px'}
-            height={'66px'}
-            py={'11px'}
-            px={'24px'}
+            width={{ base: '94px', md: '167px' }}
+            height={{ base: '42px', md: '66px' }}
             borderRadius={'49px'}
             borderWidth={'1px'}
             justifyContent={'center'}
             alignItems={'center'}
             cursor={'pointer'}
         >
-            <Text>{props.catName}</Text>
+            <Text fontSize={{ base: '10px', md: '16px' }}>{props.catName}</Text>
         </Flex>
     );
 };

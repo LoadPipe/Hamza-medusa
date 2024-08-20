@@ -120,58 +120,109 @@ export default function Page({ params }: { params: { slug: string } }) {
     return (
         <Box color={'white'} my="4rem">
             <Flex
-                flexDir={'column'}
-                mx={'auto'}
-                maxW={'1261px'}
+                maxW={'1280x'}
                 width="100%"
-                bgColor={'#121212'}
-                padding={{ base: '14px', md: '40px' }}
-                borderRadius={'16px'}
+                justifyContent={'center'}
+                alignItems={'center'}
             >
-                {/* Company */}
                 <Flex
-                    flexDir={{ base: 'column', md: 'row' }}
-                    gap={{ base: '24px', md: '62px' }}
+                    flexDir={'column'}
+                    mx={'1rem'}
+                    maxW={'1261px'}
+                    width="100%"
+                    bgColor={'#121212'}
+                    padding={{ base: '14px', md: '40px' }}
+                    borderRadius={'16px'}
                 >
-                    <Flex flexDir={'row'} gap={{ base: '16px', md: '24px' }}>
-                        <Image
-                            src={reviewStats.thumbnail}
-                            alt="Vendor"
-                            borderRadius="full"
-                            boxSize={{ base: '40px', md: '72px' }}
-                            objectFit="cover"
-                            objectPosition="center"
-                            alignSelf={'center'}
-                        />
-                        <Flex flexDir={'column'} alignSelf={'center'}>
-                            <Text fontSize={{ base: '12px', md: '24px' }}>
-                                {displaySlug}{' '}
-                                {/* Display the capitalized slug */}
-                            </Text>
-                            <Flex color="#555555" gap={'7px'}>
-                                <Text fontSize={{ base: '10px', md: '16px' }}>
-                                    Flagship Store
+                    {/* Company */}
+                    <Flex
+                        flexDir={{ base: 'column', md: 'row' }}
+                        gap={{ base: '24px', md: '62px' }}
+                    >
+                        <Flex
+                            flexDir={'row'}
+                            gap={{ base: '16px', md: '24px' }}
+                        >
+                            <Image
+                                src={reviewStats.thumbnail}
+                                alt="Vendor"
+                                borderRadius="full"
+                                boxSize={{ base: '40px', md: '72px' }}
+                                objectFit="cover"
+                                objectPosition="center"
+                                alignSelf={'center'}
+                            />
+                            <Flex flexDir={'column'} alignSelf={'center'}>
+                                <Text fontSize={{ base: '12px', md: '24px' }}>
+                                    {displaySlug}{' '}
+                                    {/* Display the capitalized slug */}
                                 </Text>
-                                <Box
-                                    alignSelf={'center'}
-                                    width={{ base: '2.53px', md: '7.33px' }}
-                                    height={{ base: '2.53px', md: '7.33px' }}
-                                    borderRadius={'full'}
-                                    backgroundColor="primary.green.900"
-                                />
-                                <Text fontSize={{ base: '10px', md: '16px' }}>
-                                    Online
-                                </Text>
+                                <Flex color="#555555" gap={'7px'}>
+                                    <Text
+                                        fontSize={{ base: '10px', md: '16px' }}
+                                    >
+                                        Flagship Store
+                                    </Text>
+                                    <Box
+                                        alignSelf={'center'}
+                                        width={{ base: '2.53px', md: '7.33px' }}
+                                        height={{
+                                            base: '2.53px',
+                                            md: '7.33px',
+                                        }}
+                                        borderRadius={'full'}
+                                        backgroundColor="primary.green.900"
+                                    />
+                                    <Text
+                                        fontSize={{ base: '10px', md: '16px' }}
+                                    >
+                                        Online
+                                    </Text>
+                                </Flex>
                             </Flex>
                         </Flex>
-                    </Flex>
 
-                    {/* Stats */}
-                    <Flex>
+                        {/* Stats */}
                         <Flex>
+                            <Flex>
+                                <Flex
+                                    ml={{ base: '0', md: '2rem' }}
+                                    flexDir={{ base: 'row', md: 'column' }}
+                                    width={'166px'}
+                                    gap={{ base: '5px', md: '0' }}
+                                >
+                                    <Text
+                                        as="h1"
+                                        fontSize={{ base: '9px', md: '32px' }}
+                                        textAlign={'center'}
+                                        color="primary.green.900"
+                                    >
+                                        {reviewStats.reviewCount === 0
+                                            ? 0
+                                            : `${reviewStats.avgRating.toFixed(1)}`}
+                                    </Text>
+                                    <Text
+                                        fontSize={{ base: '9px', md: '16px' }}
+                                        textAlign={'center'}
+                                    >
+                                        {reviewStats.reviewCount === 0
+                                            ? 'No reviews yet'
+                                            : `Average Rating: ${reviewStats.avgRating.toFixed(1)}`}
+                                    </Text>
+                                    {/* <Text>
+                            {reviewStats.reviewCount === 0
+                                ? 'No ratings yet'
+                                : `Review Count: ${reviewStats.reviewCount}`}
+                        </Text> */}
+                                </Flex>
+                            </Flex>
+
                             <Flex
-                                ml={{ base: '0', md: '2rem' }}
                                 flexDir={{ base: 'row', md: 'column' }}
+                                borderLeftWidth={{ base: '0', md: '1px' }}
+                                borderRightWidth={{ base: '0', md: '1px' }}
+                                borderStyle={'dashed'}
+                                borderColor={'#555555'}
                                 width={'166px'}
                                 gap={{ base: '5px', md: '0' }}
                             >
@@ -181,170 +232,140 @@ export default function Page({ params }: { params: { slug: string } }) {
                                     textAlign={'center'}
                                     color="primary.green.900"
                                 >
-                                    {reviewStats.reviewCount === 0
-                                        ? 0
-                                        : `${reviewStats.avgRating.toFixed(1)}`}
+                                    {reviewStats.productCount}
                                 </Text>
                                 <Text
                                     fontSize={{ base: '9px', md: '16px' }}
                                     textAlign={'center'}
                                 >
-                                    {reviewStats.reviewCount === 0
-                                        ? 'No reviews yet'
-                                        : `Average Rating: ${reviewStats.avgRating.toFixed(1)}`}
+                                    Total Products
                                 </Text>
-                                {/* <Text>
-                            {reviewStats.reviewCount === 0
-                                ? 'No ratings yet'
-                                : `Review Count: ${reviewStats.reviewCount}`}
-                        </Text> */}
+                            </Flex>
+
+                            <Flex
+                                flexDir={{ base: 'row', md: 'column' }}
+                                gap={{ base: '5px', md: '0' }}
+                                width={'166px'}
+                            >
+                                <Text
+                                    as="h1"
+                                    fontSize={{ base: '9px', md: '32px' }}
+                                    color="primary.green.900"
+                                    textAlign={'center'}
+                                >
+                                    {reviewStats.numberOfFollowers}
+                                </Text>
+                                <Text
+                                    fontSize={{ base: '9px', md: '16px' }}
+                                    textAlign={'center'}
+                                >
+                                    Total Followers
+                                </Text>
                             </Flex>
                         </Flex>
+                        {/*End of Stats*/}
 
-                        <Flex
-                            flexDir={{ base: 'row', md: 'column' }}
-                            borderLeftWidth={{ base: '0', md: '1px' }}
-                            borderRightWidth={{ base: '0', md: '1px' }}
-                            borderStyle={'dashed'}
-                            borderColor={'#555555'}
-                            width={'166px'}
-                            gap={{ base: '5px', md: '0' }}
-                        >
-                            <Text
-                                as="h1"
-                                fontSize={{ base: '9px', md: '32px' }}
-                                textAlign={'center'}
-                                color="primary.green.900"
+                        {/* Chat / Report */}
+                        <Flex ml={'auto'} flexDir={'column'} gap="16px">
+                            <Flex
+                                display={{ base: 'none', md: 'flex' }}
+                                height={{ base: '33px', md: '47px' }}
+                                width={{ base: '120px', md: '190px' }}
+                                borderColor={'primary.indigo.900'}
+                                borderWidth={'1px'}
+                                borderRadius={'37px'}
+                                justifyContent={'center'}
+                                cursor={'pointer'}
+                                fontSize={{ base: '12px', md: '16px' }}
                             >
-                                {reviewStats.productCount}
-                            </Text>
-                            <Text
-                                fontSize={{ base: '9px', md: '16px' }}
-                                textAlign={'center'}
-                            >
-                                Total Products
-                            </Text>
-                        </Flex>
+                                <Text
+                                    alignSelf={'center'}
+                                    color="primary.indigo.900"
+                                >
+                                    Chat with them
+                                </Text>
+                            </Flex>
 
-                        <Flex
-                            flexDir={{ base: 'row', md: 'column' }}
-                            gap={{ base: '5px', md: '0' }}
-                            width={'166px'}
-                        >
-                            <Text
-                                as="h1"
-                                fontSize={{ base: '9px', md: '32px' }}
-                                color="primary.green.900"
-                                textAlign={'center'}
+                            <Flex
+                                display={{ base: 'none', md: 'flex' }}
+                                height={{ base: '33px', md: '47px' }}
+                                width={{ base: '120px', md: '190px' }}
+                                borderColor={'primary.indigo.900'}
+                                borderWidth={'1px'}
+                                borderRadius={'37px'}
+                                justifyContent={'center'}
+                                cursor={'pointer'}
+                                fontSize={{ base: '12px', md: '16px' }}
                             >
-                                {reviewStats.numberOfFollowers}
-                            </Text>
-                            <Text
-                                fontSize={{ base: '9px', md: '16px' }}
-                                textAlign={'center'}
-                            >
-                                Total Followers
-                            </Text>
+                                <Text
+                                    alignSelf={'center'}
+                                    color="primary.indigo.900"
+                                >
+                                    Follow Seller
+                                </Text>
+                            </Flex>
                         </Flex>
                     </Flex>
-                    {/*End of Stats*/}
+                    <Divider
+                        borderColor={'#555555'}
+                        my={{ base: '1rem', md: '2rem' }}
+                    />
 
-                    {/* Chat / Report */}
-                    <Flex ml={'auto'} flexDir={'column'} gap="16px">
-                        <Flex
-                            display={{ base: 'none', md: 'flex' }}
-                            height={{ base: '33px', md: '47px' }}
-                            width={{ base: '120px', md: '190px' }}
-                            borderColor={'primary.indigo.900'}
-                            borderWidth={'1px'}
-                            borderRadius={'37px'}
-                            justifyContent={'center'}
-                            cursor={'pointer'}
-                            fontSize={{ base: '12px', md: '16px' }}
+                    {/* About */}
+                    <Flex flexDir={'column'}>
+                        <Text
+                            fontSize={{ base: '14px', md: '16px' }}
+                            alignSelf={'flex-start'}
+                            color="primary.green.900"
                         >
-                            <Text
-                                alignSelf={'center'}
-                                color="primary.indigo.900"
-                            >
-                                Chat with them
-                            </Text>
-                        </Flex>
+                            About the seller
+                        </Text>
 
-                        <Flex
-                            display={{ base: 'none', md: 'flex' }}
-                            height={{ base: '33px', md: '47px' }}
-                            width={{ base: '120px', md: '190px' }}
-                            borderColor={'primary.indigo.900'}
-                            borderWidth={'1px'}
-                            borderRadius={'37px'}
-                            justifyContent={'center'}
-                            cursor={'pointer'}
-                            fontSize={{ base: '12px', md: '16px' }}
+                        <Text
+                            fontSize={{ base: '14px', md: '16px' }}
+                            ml="auto"
+                            mt={{ base: '0.5rem', md: '1rem' }}
                         >
-                            <Text
-                                alignSelf={'center'}
-                                color="primary.indigo.900"
-                            >
-                                Follow Seller
-                            </Text>
-                        </Flex>
-
-                        {/* <Flex
-                            display={{ base: 'none', md: 'flex' }}
-                            height={{ base: '33px', md: '47px' }}
-                            width={{ base: '120px', md: '190px' }}
-                            borderWidth={'1px'}
-                            borderRadius={'37px'}
-                            justifyContent={'center'}
-                            cursor={'pointer'}
-                            fontSize={{ base: '12px', md: '16px' }}
-                            onClick={onOpen}
-                            borderColor={isSubmitted ? 'green' : 'red'}
-                        >
-                            <Text
-                                alignSelf={'center'}
-                                color={isSubmitted ? 'green' : 'red'}
-                            >
-                                {isSubmitted
-                                    ? 'Report Submitted'
-                                    : 'Report Abuse'}
-                            </Text>
-                        </Flex> */}
+                            Lorem, ipsum dolor sit amet consectetur adipisicing
+                            elit. Commodi, nostrum. Quasi similique cum sunt
+                            alias harum voluptatum adipisci delectus, mollitia
+                            porro labore at eos numquam ratione nihil repellat!
+                            Placeat, laborum.
+                        </Text>
                     </Flex>
-                </Flex>
-                <Divider
-                    borderColor={'#555555'}
-                    my={{ base: '1rem', md: '2rem' }}
-                />
-
-                {/* About */}
-                <Flex flexDir={'column'}>
-                    <Text
-                        fontSize={{ base: '14px', md: '16px' }}
-                        alignSelf={'flex-start'}
-                        color="primary.green.900"
-                    >
-                        About the seller
-                    </Text>
-
-                    <Text
-                        fontSize={{ base: '14px', md: '16px' }}
-                        ml="auto"
-                        mt={{ base: '0.5rem', md: '1rem' }}
-                    >
-                        Lorem, ipsum dolor sit amet consectetur adipisicing
-                        elit. Commodi, nostrum. Quasi similique cum sunt alias
-                        harum voluptatum adipisci delectus, mollitia porro
-                        labore at eos numquam ratione nihil repellat! Placeat,
-                        laborum.
-                    </Text>
-                </Flex>
-                <Text ml="auto" mt="1rem" display={{ base: 'none', md: 'box' }}>
+                    {/* <Text
+                    ml="auto"
+                    mt="1rem"
+                    fontSize={{ base: '14px', md: '16px' }}
+                >
                     Vendor Created at: {readableDate}
-                </Text>
+                </Text> */}
+                </Flex>
             </Flex>
 
             <VendorProductDisplay vendorName={displaySlug} />
+
+            <Flex>
+                <Flex
+                    display={{ base: 'none', md: 'flex' }}
+                    height={{ base: '33px', md: '47px' }}
+                    width={{ base: '120px', md: '190px' }}
+                    borderWidth={'1px'}
+                    borderRadius={'37px'}
+                    justifyContent={'center'}
+                    cursor={'pointer'}
+                    fontSize={{ base: '12px', md: '16px' }}
+                    onClick={onOpen}
+                    borderColor={isSubmitted ? 'green' : 'red'}
+                >
+                    <Text
+                        alignSelf={'center'}
+                        color={isSubmitted ? 'green' : 'red'}
+                    >
+                        {isSubmitted ? 'Report Submitted' : 'Report Abuse'}
+                    </Text>
+                </Flex>
+            </Flex>
             {/*
             <Box className="bg-black text-white p-4">
                 <Card>
