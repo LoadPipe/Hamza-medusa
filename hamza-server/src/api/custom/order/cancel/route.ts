@@ -18,7 +18,7 @@ export const DELETE = async (req: MedusaRequest, res: MedusaResponse) => {
 
     await handler.handle(async () => {
         const order = await orderService.cancellationStatus(
-            'order_01J5Q50W8EBRJY2058W581QSJZ'
+            handler.inputParams.order_id
         );
 
         res.status(200).json({ order });
