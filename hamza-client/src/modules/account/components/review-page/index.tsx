@@ -54,7 +54,16 @@ import { renderStars } from '@modules/products/components/product-preview/compon
 const ReviewPage = ({ region }: { region: Region }) => {
     const [reviews, setReviews] = useState([]);
     const { authData } = useCustomerAuthStore();
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const {
+        isOpen: isEditReviewOpen,
+        onOpen: onEditReviewOpen,
+        onClose: onEditReviewClose,
+    } = useDisclosure();
+    const {
+        isOpen: isReviewOpen,
+        onOpen: onReviewOpen,
+        onClose: onReviewClose,
+    } = useDisclosure();
     const [selectedReview, setSelectedReview] = useState(null);
     const [selectedPendingReview, setSelectedPendingReview] = useState(null);
     const [activeButton, setActiveButton] = useState('reviews');
@@ -99,13 +108,13 @@ const ReviewPage = ({ region }: { region: Region }) => {
     const handleReviewEdit = (review: any) => {
         setSelectedReview(review);
         console.log(`selected review modal`);
-        onOpen();
+        onEditReviewOpen();
     };
 
     const handlePendingReview = (review: any) => {
         setSelectedPendingReview(review);
         console.log(`Selecting pending review`);
-        onOpen();
+        onReviewOpen();
     };
 
     return (
@@ -266,16 +275,16 @@ const ReviewPage = ({ region }: { region: Region }) => {
             {selectedPendingReview && (
                 <ReviewTemplate
                     reviewItem={selectedPendingReview}
-                    isOpen={isOpen}
-                    onClose={onClose}
+                    isOpen={isReviewOpen}
+                    onClose={onReviewClose}
                 />
             )}
 
             {selectedReview && (
                 <EditReviewTemplate
                     review={selectedReview}
-                    isOpen={isOpen}
-                    onClose={onClose}
+                    isOpen={isEditReviewOpen}
+                    onClose={onEditReviewClose}
                 />
             )}
         </Card>

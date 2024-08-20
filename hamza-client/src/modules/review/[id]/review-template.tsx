@@ -24,9 +24,9 @@ const ReviewTemplate = ({ reviewItem, isOpen, onClose }: any) => {
     const [canSubmit, setCanSubmit] = useState(false);
     const [submissionSuccess, setSubmissionSuccess] = useState(false);
 
-    console.log(
-        `reviewItem description ${JSON.stringify(reviewItem.customer_id)}`
-    );
+    // console.log(
+    //     `reviewItem description ${JSON.stringify(reviewItem.customer_id)}`
+    // );
 
     const submitReview = async () => {
         if (canSubmit) {
