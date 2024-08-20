@@ -21,7 +21,12 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
 // TODO: WHEN TO TRIGGER getAllProductReviews? 1. Initial load 2. Set new Review
 // Why can't we set isOpen: boolean?
-const EditReviewTemplate = ({ review, isOpen, onClose }: any) => {
+const EditReviewTemplate = ({
+    review,
+    isOpen,
+    onClose,
+    onReviewUpdated,
+}: any) => {
     const [currentReview, setCurrentReview] = useState(review.content || '');
     const [rating, setRating] = useState(review.rating || 0);
     const [hovered, setHovered] = useState(0);
@@ -57,6 +62,14 @@ const EditReviewTemplate = ({ review, isOpen, onClose }: any) => {
             setRating(0);
             toast.success('Review Updated Successfully!', {});
             onClose();
+
+            if (onReviewUpdated) {
+                onReviewUpdated({
+                    ...review,
+                    content: currentReview,
+                    rating: Number(rating),
+                });
+            }
         } catch (error) {
             console.error('Failed to submit review: ', error);
             toast.error('Failed to submit Review.');

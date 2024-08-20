@@ -81,6 +81,11 @@ const ReviewPage = ({ region }: { region: Region }) => {
         }
     };
 
+    const handleReviewUpdated = () => {
+        // This function will be called after a review is updated
+        fetchReviews();
+    };
+
     const fetchPendingReviews = async () => {
         console.log('Fetching pending reviews...'); // For debugging
         try {
@@ -292,6 +297,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
                     review={selectedReview}
                     isOpen={isEditReviewOpen}
                     onClose={onEditReviewClose}
+                    onReviewUpdated={handleReviewUpdated}
                 />
             )}
         </Card>
