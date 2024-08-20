@@ -173,7 +173,6 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                 mt="2rem"
             />
             <ProductReview productId={product.id as string} />
-            <ProductReviewMobile productId={product.id as string} />
         </Flex>
     );
 };

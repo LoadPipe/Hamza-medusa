@@ -4,18 +4,12 @@ import React, { useState, useEffect, Suspense } from 'react';
 import ProductCardGroup from '@modules/products/components/product-group-home';
 import { Flex } from '@chakra-ui/react';
 import SearchBar from './components/SearchBar';
-import SkeletonProductGrid from '@modules/skeletons/components/skeleton-product-grid';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import FilterBar from './components/filter-bar/FilterBar';
 
 const SearchAndFilterPanel = () => {
     const { categorySelect } = useHomeProductsPage();
     const [vendorName, setVendorName] = useState('All');
-    const [isClient, setIsClient] = useState(false);
-
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
 
     useEffect(() => {
         if (categorySelect) {
@@ -34,13 +28,7 @@ const SearchAndFilterPanel = () => {
         >
             <SearchBar />
             <FilterBar />
-            {isClient ? (
-                <Suspense fallback={<SkeletonProductGrid />}>
-                    <ProductCardGroup vendorName={vendorName} />
-                </Suspense>
-            ) : (
-                <SkeletonProductGrid />
-            )}
+            <ProductCardGroup vendorName={vendorName} />
         </Flex>
     );
 };

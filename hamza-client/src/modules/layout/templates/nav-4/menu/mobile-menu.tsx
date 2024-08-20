@@ -17,21 +17,31 @@ import CartButton from '@modules/layout/components/cart-button';
 import Wishlist from '@/components/wishlist';
 // Icons
 import { AiOutlineMenu } from 'react-icons/ai';
+import { GiHamburgerMenu } from 'react-icons/gi';
 
 export default function MobileMenu() {
     return (
         <Flex display={{ sm: 'flex', md: 'none' }} mr="auto">
             <Menu placement="bottom-start">
                 <MenuButton
-                    flexShrink={0}
-                    width={{ base: '60px' }}
-                    height={{ base: '60px' }}
-                    px="1rem"
-                    borderRadius={{ base: 'none' }}
+                    ml={'1rem'}
+                    width={'24px'}
+                    height={'24px'}
+                    borderRadius={'full'}
+                    borderColor={'white'}
+                    borderWidth={'1px'}
+                    justifyContent={'center'}
+                    alignItems={'center'}
+                    backgroundColor={'transparent'}
                     cursor={'pointer'}
                 >
-                    <Flex color={'primary.green.900'}>
-                        <AiOutlineMenu size={'20px'} />
+                    <Flex
+                        className="menu-icon"
+                        alignSelf={'center'}
+                        justifyContent={'center'}
+                        color={'white'}
+                    >
+                        <GiHamburgerMenu size={12} />
                     </Flex>
                 </MenuButton>
                 <MenuList

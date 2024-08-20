@@ -1,4 +1,4 @@
-const vendors = [
+let vendors = [
     {
         id: 1,
         vendorName: 'All',
@@ -50,5 +50,15 @@ const vendors = [
         vendorType: 'games',
     },
 ];
+
+if (process.env.NEXT_PUBLIC_ALT_SEED === '1') {
+    vendors = [
+        {
+            id: 1,
+            vendorName: 'All',
+            vendorType: 'all',
+        },
+    ];
+}
 
 export default vendors;

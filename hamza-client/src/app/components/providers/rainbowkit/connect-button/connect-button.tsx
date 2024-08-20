@@ -3,6 +3,7 @@ import { Box, Button, Text, Flex, Image } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { formatAddress } from '@lib/util/format-address';
 import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
+import { getAllowedChainsFromConfig } from '../rainbowkit-utils/rainbow-utils';
 
 export const WalletConnectButton = () => {
     return (
@@ -63,7 +64,8 @@ export const WalletConnectButton = () => {
                                     </Flex>
                                 );
                             }
-                            if (chain && chain.unsupported) {
+                            //if (chain && chain.unsupported) {
+                            if (chain && chain.id != getAllowedChainsFromConfig()[0]) {
                                 return (
                                     <button
                                         onClick={openChainModal}

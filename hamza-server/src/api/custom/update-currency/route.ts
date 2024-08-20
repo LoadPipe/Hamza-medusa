@@ -3,6 +3,7 @@ import CustomerService from '../../../services/customer';
 import { RouteHandler } from '../../route-handler';
 
 //TODO: updates should be PUT 
+//TODO: should be under /customer
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const customerService: CustomerService =
         req.scope.resolve('customerService');

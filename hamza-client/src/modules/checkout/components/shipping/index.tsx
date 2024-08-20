@@ -167,12 +167,12 @@ const Shipping: React.FC<ShippingProps> = ({
                                                     'FakeEx Standard'
                                                     ? preferred_currency_code ===
                                                         'eth'
-                                                        ? '0.00001 '
-                                                        : '1.20'
+                                                        ? '0.000000 '
+                                                        : '0.00'
                                                     : preferred_currency_code ===
                                                         'eth'
-                                                        ? '0.000025 '
-                                                        : '3.25'}{' '}
+                                                        ? '0.0000000 '
+                                                        : '0.00'}{' '}
                                                 {preferred_currency_code?.toUpperCase()}
                                             </span>
                                         </RadioGroup.Option>
@@ -224,11 +224,11 @@ const Shipping: React.FC<ShippingProps> = ({
                                     {cart.shipping_methods[0].shipping_option
                                         .name === 'FakeEx Standard'
                                         ? preferred_currency_code === 'eth'
-                                            ? '0.00001 '
-                                            : '1.20'
+                                            ? '0.00000 '
+                                            : '0.00'
                                         : preferred_currency_code === 'eth'
                                             ? '0.000025 '
-                                            : '3.25'}{' '}
+                                            : '0.00'}{' '}
                                     {preferred_currency_code?.toUpperCase()})
                                 </Text>
                             </div>

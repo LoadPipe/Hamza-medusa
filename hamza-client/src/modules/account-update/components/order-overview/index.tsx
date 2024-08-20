@@ -94,7 +94,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
         const fetchOrders = async () => {
             try {
                 const { data } = (await orderInformation(
-                    orders[0].customer_id
+                    orders[0]?.customer_id
                 )) as any;
                 setDetailedOrders(data.order);
             } catch (error) {
@@ -105,7 +105,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
         const fetchAll = async () => {
             try {
                 const { data } = (await orderDetails(
-                    orders[0].customer_id
+                    orders[0]?.customer_id
                 )) as any;
                 console.log(
                     `fetching all data in new style ${JSON.stringify(data.order.orders)}`

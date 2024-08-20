@@ -45,7 +45,7 @@ const ShippingDetails = ({ order }: ShippingDetailsProps) => {
                     <Text className="txt-medium ">
                         {order.shipping_address.phone}
                     </Text>
-                    <Text className="txt-medium ">{order.email}</Text>
+                    <Text className="txt-medium ">{order.email.endsWith('@evm.blockchain') ? order.email : ''}</Text>
                 </div>
 
                 <div className="flex flex-col w-1/3">

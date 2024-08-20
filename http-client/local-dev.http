@@ -397,3 +397,16 @@ Content-Type: application/json
 
 ### Get Customer Orders without reviews. getNotReviewed
 GET http://localhost:9000/custom/review/get-customer-not-reviewed?customer_id=cus_01J5NWK29Y8H16NDM2P2K8D09W
+
+### POST Let's add products...
+POST http://localhost:9000/custom/product/add-product
+Content-Type: application/json
+
+{
+  "keyword": "fitness",
+  "storeId": "store_01J4W6J3RXZ4JDH4XYZZQP4S2R",
+  "collectionId": "pcol_01HSGAMXDJD725MR3VSW63B0RD", 
+  "salesChannelId": "sc_01J4W6GT9V06AQF2G0T01ZPXVE"
+}
+
+

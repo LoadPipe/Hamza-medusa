@@ -21,4 +21,7 @@ export class Order extends MedusaOrder {
 
     @Column()
     massmarket_amount?: string;
+
+    @Column()
+    bucky_metadata?: string;
 }

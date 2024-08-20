@@ -3,19 +3,46 @@
 import React from 'react';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { FaArrowRightLong } from 'react-icons/fa6';
-import { SwitchNetwork } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
+import { Link } from '@chakra-ui/react';
 
 const HeroBanner = () => {
     return (
         <>
-            <SwitchNetwork enabled={false} />
             <Flex
-                mt="2rem"
                 justifyContent={'center'}
                 alignItems={'center'}
                 flexDirection={'column'}
             >
                 <Flex
+                    w="100%"
+                    bg="primary.indigo.900"
+                    color="white"
+                    py={2}
+                    mb={4}
+                    justifyContent="center"
+                    alignItems="center"
+                    style={{ opacity: 1, transition: 'opacity 0.5s ease-out' }}
+                >
+                    <Link href="https://blog.hamza.biz/alpha-ship" isExternal>
+                        <Text
+                            fontSize={{ base: '12px', md: '16px' }}
+                            textAlign={'center'}
+                            fontWeight="bold"
+                        >
+                            Alpha Ship! Join our Ambassador Program To Join
+                            Apply Here:{' '}
+                            <Text
+                                as="span"
+                                color="cyan.300"
+                                textDecoration="underline"
+                            >
+                                https://blog.hamza.biz/alpha-ship
+                            </Text>
+                        </Text>
+                    </Link>
+                </Flex>
+                <Flex
+                    mt="2rem"
                     gap={{ base: '0', md: '10px' }}
                     justifyContent={'center'}
                     alignItems={'center'}
@@ -26,7 +53,7 @@ const HeroBanner = () => {
                         fontWeight={'200'}
                         fontSize={{ base: '24px', md: '32px' }}
                     >
-                        Buy & Sell Products Using
+                        The
                     </Text>
                     <Text
                         mt={{ base: '-0.5rem', md: '0' }}
@@ -35,9 +62,9 @@ const HeroBanner = () => {
                         fontSize={{ base: '24px', md: '32px' }}
                     >
                         <span style={{ color: '#7B61FF', fontWeight: '700' }}>
-                            <b>Crypto</b>
+                            <b>World's First</b>
                         </span>{' '}
-                        as a Community
+                        Decom Marketplace
                     </Text>
                 </Flex>
                 <b />
@@ -51,28 +78,19 @@ const HeroBanner = () => {
                         md: 'row',
                     }}
                 >
-                    <Flex gap={'10px'}>
+                    <Flex gap={'10px'} color="primary.green.900">
                         <Text
-                            color={'#FBFDFA'}
+                            flexDir={'row'}
+                            color={'primary'}
                             fontWeight={'400'}
-                            fontSize={{ base: '16px', md: '20px' }}
+                            fontSize={{ base: '16px', md: '24px' }}
                         >
-                            By The <b>People</b>
+                            <span style={{ color: 'white' }}>
+                                Buy & Sell Products Using{' '}
+                            </span>
+                            Crypto
                         </Text>
-                        <Box
-                            fontSize={{ base: '21px', md: '24px' }}
-                            alignSelf="center"
-                        >
-                            <FaArrowRightLong color="#FBFDFA" />
-                        </Box>
                     </Flex>
-                    <Text
-                        color={'#FBFDFA'}
-                        fontWeight={'400'}
-                        fontSize={{ base: '16px', md: '20px' }}
-                    >
-                        For The <b>People</b> Using Blockchain Tech
-                    </Text>
                 </Flex>
             </Flex>
         </>
