@@ -13,6 +13,7 @@ import TransactionDetails from '../components/transaction-details';
 
 type OrderCompletedTemplateProps = {
     order: Order;
+    cart: Cart;
 };
 
 //TODO: replace the following back in the template, when working
@@ -22,7 +23,7 @@ type OrderCompletedTemplateProps = {
 */
 
 export default function OrderCompletedTemplate({
-    order,
+    order, cart,
 }: OrderCompletedTemplateProps) {
     const isOnboarding = cookies().get('_medusa_onboarding')?.value === 'true';
 
@@ -59,7 +60,7 @@ export default function OrderCompletedTemplate({
             <Divider my="2rem" borderColor="#555555" />
             <Summary cart_id={order.cart_id} />
             <Divider my="1rem" borderColor="#555555" />
-            <TransactionDetails data={order} />
+            <TransactionDetails data={cart} />
 
             {/* <CartTotals  /> */}
             {/* <OrderDetails order={order} />
