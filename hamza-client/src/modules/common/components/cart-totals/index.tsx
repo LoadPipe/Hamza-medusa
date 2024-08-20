@@ -29,14 +29,6 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
 
     const { preferred_currency_code } = useCustomerAuthStore();
 
-    const getAmount = (amount: number | null | undefined) => {
-        return formatAmount({
-            amount: amount || 0,
-            region: data.region,
-            includeTaxes: false,
-            currency_code: '',
-        });
-    };
 
     //TODO: this can be replaced later by extending the cart, if necessary
     const getCartSubtotals = (cart: any) => {
@@ -47,7 +39,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
             const currency: string = item.currency_code ?? '';
             if (currency.length) {
                 subtotals[currency] = subtotals[currency] ?? 0;
-                subtotals[currency] += item.unit_price * item.quantity;
+                subtotals[currency] += item.unit_price * item.quantity - (item.discount_total ?? 0);
             }
         }
 
@@ -55,6 +47,10 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
     };
 
     const subtotals = getCartSubtotals(data);
+    const currencyCode = preferred_currency_code ?? 'usdc';
+    const shippingCost = shipping_total ?? 0;
+    const taxTotal = tax_total ?? 0;
+    const grandTotal = (subtotals[currencyCode] ?? 0) + shippingCost + taxTotal;
 
     return (
         <div>
@@ -67,33 +63,13 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                 }}
             />
             <Flex flexDirection={'column'} color="white">
-                {subtotals['eth'] && (
+                {subtotals[currencyCode] && (
                     <Flex color={'white'}>
                         <Text fontSize={{ base: '14px', md: '16px' }}>
                             Subtotal
                         </Text>
                         <Text ml="auto" fontSize={{ base: '14px', md: '16px' }}>
-                            {formatCryptoPrice(subtotals['eth'], 'eth')} ETH
-                        </Text>
-                    </Flex>
-                )}
-                {subtotals['usdt'] && (
-                    <Flex color={'white'}>
-                        <Text fontSize={{ base: '14px', md: '16px' }}>
-                            Subtotal
-                        </Text>
-                        <Text ml="auto" fontSize={{ base: '14px', md: '16px' }}>
-                            {formatCryptoPrice(subtotals['usdt'], 'usdt')} USDT
-                        </Text>
-                    </Flex>
-                )}
-                {subtotals['usdc'] && (
-                    <Flex color={'white'}>
-                        <Text fontSize={{ base: '14px', md: '16px' }}>
-                            Subtotal
-                        </Text>
-                        <Text ml="auto" fontSize={{ base: '14px', md: '16px' }}>
-                            {formatCryptoPrice(subtotals['usdc'], 'usdc')} USDC
+                            {formatCryptoPrice(subtotals[currencyCode], currencyCode)}{' '}{currencyCode.toUpperCase()}
                         </Text>
                     </Flex>
                 )}
@@ -114,16 +90,16 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                     </Text>
                     <Text ml="auto" fontSize={{ base: '14px', md: '16px' }}>
                         {formatCryptoPrice(
-                            shipping_total!,
-                            preferred_currency_code!
-                        ).toString()}
-                        {preferred_currency_code?.toUpperCase()}
+                            shippingCost!,
+                            currencyCode!
+                        ).toString()}{' '}
+                        {currencyCode.toUpperCase()}
                     </Text>
                 </Flex>
                 <Flex>
                     <Text fontSize={{ base: '14px', md: '16px' }}>Taxes</Text>
                     <Text ml="auto" fontSize={{ base: '14px', md: '16px' }}>
-                        {getAmount(tax_total).toString()}
+                        {formatCryptoPrice(taxTotal, currencyCode).toString()} {currencyCode.toUpperCase()}
                     </Text>
                 </Flex>
             </Flex>
@@ -137,7 +113,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                     marginBottom: '1rem',
                 }}
             />
-            {subtotals['eth'] && (
+            {subtotals[currencyCode] && (
                 <Flex color={'white'}>
                     <Text
                         fontSize={{ base: '15px', md: '16px' }}
@@ -150,41 +126,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                         fontSize={{ base: '15px', md: '24px' }}
                         fontWeight={700}
                     >
-                        {formatCryptoPrice(subtotals['eth'], 'eth')} ETH
-                    </Text>
-                </Flex>
-            )}
-            {subtotals['usdt'] && (
-                <Flex color={'white'}>
-                    <Text
-                        fontSize={{ base: '15px', md: '16px' }}
-                        alignSelf={'center'}
-                    >
-                        Total
-                    </Text>
-                    <Text
-                        ml="auto"
-                        fontSize={{ base: '15px', md: '24px' }}
-                        fontWeight={700}
-                    >
-                        {formatCryptoPrice(subtotals['usdt'], 'usdt')} USDT
-                    </Text>
-                </Flex>
-            )}
-            {subtotals['usdc'] && (
-                <Flex color={'white'}>
-                    <Text
-                        fontSize={{ base: '15px', md: '16px' }}
-                        alignSelf={'center'}
-                    >
-                        Total
-                    </Text>
-                    <Text
-                        ml="auto"
-                        fontSize={{ base: '15px', md: '24px' }}
-                        fontWeight={700}
-                    >
-                        {formatCryptoPrice(subtotals['usdc'], 'usdc')} USDC
+                        {formatCryptoPrice(grandTotal, currencyCode)} {currencyCode.toUpperCase()}
                     </Text>
                 </Flex>
             )}
