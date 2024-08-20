@@ -56,7 +56,6 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
     const router = useRouter();
     const { countryCode } = useParams();
 
-    console.log(`CART ID IS ${cart_id}`);
     useEffect(() => {
         const fetchProducts = async () => {
             try {
