@@ -81,13 +81,13 @@ const ReviewPage = ({ region }: { region: Region }) => {
         }
     };
 
-    const handleReviewUpdated = () => {
+    const handleReviewUpdated = async () => {
         // This function will be called after a review is updated
-        fetchReviews();
+        await fetchReviews();
     };
 
-    const handlePendingUpdated = () => {
-        fetchPendingReviews();
+    const handlePendingUpdated = async () => {
+        await fetchPendingReviews();
     };
 
     const fetchPendingReviews = async () => {
@@ -98,6 +98,8 @@ const ReviewPage = ({ region }: { region: Region }) => {
             );
             if (response.length !== 0) {
                 setPendingReviews(response);
+            } else {
+                setPendingReviews([]);
             }
             console.log(`Pending reviews: ${JSON.stringify(response)}`); // For debugging
         } catch (error) {

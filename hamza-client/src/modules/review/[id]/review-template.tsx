@@ -16,7 +16,12 @@ import {
 import { createReview } from '@lib/data';
 import toast from 'react-hot-toast';
 
-const ReviewTemplate = ({ reviewItem, isOpen, onClose }: any) => {
+const ReviewTemplate = ({
+    reviewItem,
+    isOpen,
+    onClose,
+    onPendingReviewUpdated,
+}: any) => {
     const [review, setReview] = useState('');
     const [rating, setRating] = useState(0);
     const [hovered, setHovered] = useState(0);
@@ -37,8 +42,9 @@ const ReviewTemplate = ({ reviewItem, isOpen, onClose }: any) => {
             const response = await createReview(data);
             setReview('');
             setRating(0);
-            if (response.status === 200) {
+            if (response) {
                 toast.success('Review Submitted!', {});
+                onPendingReviewUpdated();
                 onClose();
             }
         } catch (error) {
@@ -120,7 +126,7 @@ const ReviewTemplate = ({ reviewItem, isOpen, onClose }: any) => {
                             value={review}
                             onChange={(e) => setReview(e.target.value)}
                         />
-                        {review.trim().length < 100 && (
+                        {review.trim().length < 50 && (
                             <Text color="red.500" fontSize="sm" mt={2}>
                                 Review must be at least 50 characters long.
                             </Text>
