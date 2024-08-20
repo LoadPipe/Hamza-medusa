@@ -16,6 +16,7 @@ import { PriceConverter } from '../strategies/price-selection';
 import { BuckyClient, IBuckyShippingCostRequest } from '../buckydrop/bucky-client';
 import { CreateProductInput as MedusaCreateProductInput } from '@medusajs/medusa/dist/types/product';
 import { UpdateProductInput as MedusaUpdateProductInput } from '@medusajs/medusa/dist/types/product';
+import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 
 type CreateProductInput = MedusaCreateProductInput & { store_id: string, bucky_metadata?: string };
 //type UpdateProductInput = MedusaUpdateProductInput & { store_id: string, bucky_metadata?: string };
@@ -25,6 +26,7 @@ export default class BuckydropService extends TransactionBaseService {
     protected readonly productService_: ProductService;
     protected readonly cartService_: CartService;
     protected readonly orderService_: OrderService;
+    protected readonly orderRepository_: typeof OrderRepository;
     protected readonly priceConverter: PriceConverter;
     protected readonly buckyClient: BuckyClient;
 
@@ -32,6 +34,8 @@ export default class BuckydropService extends TransactionBaseService {
         super(container);
         this.productService_ = container.productService;
         this.cartService_ = container.cartService;
+        this.orderRepository_ = container.orderRepository;
+        this.orderService_ = container.orderService;
         this.logger = container.logger;
         this.priceConverter = new PriceConverter();
         this.buckyClient = new BuckyClient();
@@ -138,7 +142,7 @@ export default class BuckydropService extends TransactionBaseService {
         return 0;
     }
 
-    async reconcileOrderStatus(orderId: string): Promise<void> {
+    async reconcileOrderStatus(orderId: string): Promise<Order> {
         try {
             //get order & metadata
             const order: Order = await this.orderService_.retrieve(orderId);
@@ -212,8 +216,17 @@ export default class BuckydropService extends TransactionBaseService {
                                 break;
                         }
                     }
+
+                    //save the tracking data
+                    buckyData.tracking = orderDetail;
+                    order.bucky_metadata = JSON.stringify(buckyData);
+
+                    //save the order 
+                    await this.orderRepository_.save(order);
                 }
             }
+
+            return order;
         }
         catch (e: any) {
             this.logger.error(`Error reconciling order status for order ${orderId}`, e);
