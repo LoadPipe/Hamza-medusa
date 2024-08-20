@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import React, { Suspense, useEffect, useState } from 'react';
 import ProductCollections from '@modules/collections/product_collection_filter';
 import {
+    Flex,
     Box,
     Grid,
     GridItem,
@@ -35,10 +36,18 @@ import {
     StackDivider,
     CardFooter,
     FormErrorMessage,
+    Divider,
 } from '@chakra-ui/react';
 import axios from 'axios';
+import ProductCardGroup from '@modules/products/components/product-group-vendor';
+import VendorProductDisplay from '@modules/vendors/components/products/vendor-product-display';
 import { getVendorStoreBySlug } from '@lib/data';
 import { format } from 'date-fns';
+import {
+    MdOutlineKeyboardArrowRight,
+    MdOutlineKeyboardArrowUp,
+} from 'react-icons/md';
+
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
 export default function Page({ params }: { params: { slug: string } }) {
@@ -57,6 +66,9 @@ export default function Page({ params }: { params: { slug: string } }) {
     const [abuseDetails, setAbuseDetails] = useState('');
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
+
+    // reveal more text mobile about
+    const [showMore, setShowMore] = useState(3);
     console.log(`slug name ${displaySlug}`);
     // can I get a store_id from vendor name??
     // yes you can so let's do that, /custom/vendors/vendor-reviews
@@ -113,53 +125,301 @@ export default function Page({ params }: { params: { slug: string } }) {
         onClose();
     };
 
-    return (
-        <div className="bg-black text-white text-center flex flex-col py-12">
-            <h1 className="text-3xl font-bold mb-4 text-center">
-                {displaySlug} {/* Display the capitalized slug */}
-            </h1>
-            <Image
-                src={reviewStats.thumbnail}
-                alt="Vendor"
-                borderRadius="full"
-                boxSize="250px"
-                objectFit="cover"
-                objectPosition="center"
-                mx="auto"
-                my={4}
-            />
+    const toggleShowMore = () => {
+        setShowMore((prev) => (prev === 3 ? 0 : 3));
+    };
 
-            <Text>Total Products: {reviewStats.productCount}</Text>
-            <Text>Vendor Created at: {readableDate}</Text>
-            <Text>Number of Followers: {reviewStats.numberOfFollowers}</Text>
-            <Box>
-                <Heading as="h2" size="md" mt={4}>
-                    Review Stats
-                </Heading>
-                <Text>
-                    {reviewStats.reviewCount === 0
-                        ? 'No reviews yet'
-                        : `Average Rating: ${reviewStats.avgRating.toFixed(1)}`}
-                </Text>
-                <Text>
-                    {reviewStats.reviewCount === 0
-                        ? 'No ratings yet'
-                        : `Review Count: ${reviewStats.reviewCount}`}
-                </Text>
-            </Box>
-            <div>
-                <ProductCollections vendorName={displaySlug} />{' '}
-                {/* Pass the capitalized slug */}
-            </div>
-            <Box pt={12}>
-                <Button
-                    onClick={onOpen}
-                    colorScheme={isSubmitted ? 'green' : 'red'}
-                    mt={4}
+    return (
+        <Box color={'white'} my="4rem">
+            <Flex
+                maxW={'1280x'}
+                width="100%"
+                justifyContent={'center'}
+                alignItems={'center'}
+            >
+                <Flex
+                    flexDir={'column'}
+                    mx={'1rem'}
+                    maxW={'1261px'}
+                    overflow={'hidden'}
+                    width="100%"
+                    bgColor={'#121212'}
+                    padding={{ base: '14px', md: '40px' }}
+                    borderRadius={'16px'}
                 >
-                    {isSubmitted ? 'Report Submitted' : 'Report Abuse'}
-                </Button>
-            </Box>
+                    {/* Company */}
+                    <Flex flexDir={{ base: 'column', md: 'row' }}>
+                        <Flex
+                            flexDir={'row'}
+                            gap={{ base: '16px', md: '24px' }}
+                        >
+                            <Image
+                                src={reviewStats.thumbnail}
+                                alt="Vendor"
+                                borderRadius="full"
+                                boxSize={{ base: '40px', md: '72px' }}
+                                objectFit="cover"
+                                objectPosition="center"
+                                alignSelf={'center'}
+                            />
+                            <Flex flexDir={'column'} alignSelf={'center'}>
+                                <Text fontSize={{ base: '12px', md: '24px' }}>
+                                    {displaySlug}{' '}
+                                    {/* Display the capitalized slug */}
+                                </Text>
+                                <Flex color="#555555" gap={'7px'}>
+                                    <Text
+                                        fontSize={{ base: '10px', md: '16px' }}
+                                    >
+                                        Flagship Store
+                                    </Text>
+                                    <Box
+                                        alignSelf={'center'}
+                                        width={{ base: '2.53px', md: '7.33px' }}
+                                        height={{
+                                            base: '2.53px',
+                                            md: '7.33px',
+                                        }}
+                                        borderRadius={'full'}
+                                        backgroundColor="primary.green.900"
+                                    />
+                                    <Text
+                                        fontSize={{ base: '10px', md: '16px' }}
+                                    >
+                                        Online
+                                    </Text>
+                                </Flex>
+                            </Flex>
+                            <Flex
+                                display={{ base: 'flex', md: 'none' }}
+                                height={'33px'}
+                                width={'120px'}
+                                ml="auto"
+                                borderColor={'primary.indigo.900'}
+                                borderWidth={'1px'}
+                                borderRadius={'37px'}
+                                justifyContent={'center'}
+                                cursor={'pointer'}
+                                fontSize={{ base: '12px', md: '16px' }}
+                            >
+                                <Text
+                                    alignSelf={'center'}
+                                    color="primary.indigo.900"
+                                >
+                                    Follow Seller
+                                </Text>
+                            </Flex>
+                        </Flex>
+
+                        {/* Stats */}
+                        <Flex mt="1rem" justifyContent={'space-between'}>
+                            <Flex>
+                                <Flex
+                                    ml={{ base: '0', md: '2rem' }}
+                                    flexDir={{ base: 'row', md: 'column' }}
+                                    width={{ base: '100px', md: '166px' }}
+                                >
+                                    <Text
+                                        as="h1"
+                                        mr={{ base: '5px', md: '0' }}
+                                        fontSize={{ base: '9px', md: '32px' }}
+                                        textAlign={'center'}
+                                        color="primary.green.900"
+                                    >
+                                        {reviewStats.reviewCount === 0
+                                            ? 0
+                                            : `${reviewStats.avgRating.toFixed(1)}`}
+                                    </Text>
+                                    <Text
+                                        fontSize={{ base: '9px', md: '16px' }}
+                                        textAlign={'center'}
+                                    >
+                                        {reviewStats.reviewCount === 0
+                                            ? 'No reviews yet'
+                                            : `Average Rating: ${reviewStats.avgRating.toFixed(1)}`}
+                                    </Text>
+                                    {/* <Text>
+                            {reviewStats.reviewCount === 0
+                                ? 'No ratings yet'
+                                : `Review Count: ${reviewStats.reviewCount}`}
+                        </Text> */}
+                                </Flex>
+                            </Flex>
+
+                            <Flex
+                                flexDir={{ base: 'row', md: 'column' }}
+                                justifyContent={{ base: 'end', md: 'normal' }}
+                                borderLeftWidth={{ base: '0', md: '1px' }}
+                                borderRightWidth={{ base: '0', md: '1px' }}
+                                borderStyle={'dashed'}
+                                borderColor={'#555555'}
+                                width={{ base: '100px', md: '166px' }}
+                            >
+                                <Text
+                                    as="h1"
+                                    mr={{ base: '5px', md: '0' }}
+                                    fontSize={{ base: '9px', md: '32px' }}
+                                    textAlign={'center'}
+                                    color="primary.green.900"
+                                >
+                                    {reviewStats.productCount}
+                                </Text>
+                                <Text
+                                    fontSize={{ base: '9px', md: '16px' }}
+                                    textAlign={'center'}
+                                >
+                                    Total Products
+                                </Text>
+                            </Flex>
+
+                            <Flex
+                                flexDir={{ base: 'row', md: 'column' }}
+                                justifyContent={{ base: 'end', md: 'normal' }}
+                                width={{ base: '100px', md: '166px' }}
+                            >
+                                <Text
+                                    mr={{ base: '5px', md: '0' }}
+                                    as="h1"
+                                    fontSize={{ base: '9px', md: '32px' }}
+                                    color="primary.green.900"
+                                    textAlign={'center'}
+                                >
+                                    {reviewStats.numberOfFollowers}
+                                </Text>
+                                <Text
+                                    fontSize={{ base: '9px', md: '16px' }}
+                                    textAlign={'center'}
+                                >
+                                    Total Followers
+                                </Text>
+                            </Flex>
+                        </Flex>
+                        {/*End of Stats*/}
+
+                        {/* Chat / Report */}
+                        <Flex ml={'auto'} flexDir={'column'} gap="16px">
+                            <Flex
+                                display={{ base: 'none', md: 'flex' }}
+                                height={{ base: '33px', md: '47px' }}
+                                width={{ base: '120px', md: '190px' }}
+                                borderColor={'primary.indigo.900'}
+                                borderWidth={'1px'}
+                                borderRadius={'37px'}
+                                justifyContent={'center'}
+                                cursor={'pointer'}
+                                fontSize={{ base: '12px', md: '16px' }}
+                            >
+                                <Text
+                                    alignSelf={'center'}
+                                    color="primary.indigo.900"
+                                >
+                                    Chat with them
+                                </Text>
+                            </Flex>
+
+                            <Flex
+                                display={{ base: 'none', md: 'flex' }}
+                                height={{ base: '33px', md: '47px' }}
+                                width={{ base: '120px', md: '190px' }}
+                                borderColor={'primary.indigo.900'}
+                                borderWidth={'1px'}
+                                borderRadius={'37px'}
+                                justifyContent={'center'}
+                                cursor={'pointer'}
+                                fontSize={{ base: '12px', md: '16px' }}
+                            >
+                                <Text
+                                    alignSelf={'center'}
+                                    color="primary.indigo.900"
+                                >
+                                    Follow Seller
+                                </Text>
+                            </Flex>
+                        </Flex>
+                    </Flex>
+                    <Divider
+                        borderColor={'#555555'}
+                        my={{ base: '1rem', md: '2rem' }}
+                    />
+
+                    {/* About */}
+                    <Flex flexDir={'column'}>
+                        <Text
+                            fontSize={{ base: '14px', md: '16px' }}
+                            alignSelf={'flex-start'}
+                            color="primary.green.900"
+                        >
+                            About the seller
+                        </Text>
+
+                        <Text
+                            fontSize={{ base: '14px', md: '16px' }}
+                            ml="auto"
+                            mt={{ base: '0', md: '1rem' }}
+                            noOfLines={{ base: showMore, md: 0 }}
+                        >
+                            Lorem, ipsum dolor sit amet consectetur adipisicing
+                            elit. Commodi, nostrum. Quasi similique cum sunt
+                            alias harum voluptatum adipisci delectus, mollitia
+                            porro labore at eos numquam ratione nihil repellat!
+                            Placeat, laborum.
+                        </Text>
+
+                        <Flex>
+                            <Flex
+                                display={{ base: 'flex', md: 'none' }}
+                                fontSize={{ base: '14px', md: '16px' }}
+                                alignSelf={'center'}
+                                onClick={toggleShowMore}
+                            >
+                                {showMore === 0 ? 'Show Less' : 'Show More'}
+                            </Flex>
+                            <Flex
+                                display={{ base: 'flex', md: 'none' }}
+                                alignSelf={'center'}
+                            >
+                                {showMore === 0 ? (
+                                    <MdOutlineKeyboardArrowUp size={24} />
+                                ) : (
+                                    <MdOutlineKeyboardArrowRight size={24} />
+                                )}
+                            </Flex>
+                        </Flex>
+                    </Flex>
+                    {/* <Text
+                    ml="auto"
+                    mt="1rem"
+                    fontSize={{ base: '14px', md: '16px' }}
+                >
+                    Vendor Created at: {readableDate}
+                </Text> */}
+                </Flex>
+            </Flex>
+
+            <VendorProductDisplay vendorName={displaySlug} />
+
+            {/* <Flex>
+                <Flex
+                    display={{ base: 'none', md: 'flex' }}
+                    height={{ base: '33px', md: '47px' }}
+                    width={{ base: '120px', md: '190px' }}
+                    borderWidth={'1px'}
+                    borderRadius={'37px'}
+                    justifyContent={'center'}
+                    cursor={'pointer'}
+                    fontSize={{ base: '12px', md: '16px' }}
+                    onClick={onOpen}
+                    borderColor={isSubmitted ? 'green' : 'red'}
+                >
+                    <Text
+                        alignSelf={'center'}
+                        color={isSubmitted ? 'green' : 'red'}
+                    >
+                        {isSubmitted ? 'Report Submitted' : 'Report Abuse'}
+                    </Text>
+                </Flex>
+            </Flex> */}
+            {/*
             <Box className="bg-black text-white p-4">
                 <Card>
                     {reviewStats.reviewCount > 0 && (
@@ -209,7 +469,8 @@ export default function Page({ params }: { params: { slug: string } }) {
                         </>
                     )}
                 </Card>
-            </Box>
+            </Box> */}
+
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
@@ -285,7 +546,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </div>
+        </Box>
     );
 }
 

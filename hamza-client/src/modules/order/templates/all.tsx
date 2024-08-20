@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { orderBucket, orderDetails, singleBucket } from '@lib/data';
+import {
+    orderBucket,
+    orderDetails,
+    singleBucket,
+    cancelOrder,
+} from '@lib/data';
 import { Box, Button, Text } from '@chakra-ui/react';
 import OrderCard from '@modules/account/components/order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
@@ -119,7 +124,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                     borderColor="gray.200"
                                     pb={'6'}
                                 >
-                                    {/*<div className="p-4 bg-gray-700">*/}
+                                    {/* <div className="p-4 bg-gray-700">*/}
                                     {/*    Cart ID {order.cart_id} - Total Items:{' '}*/}
                                     {/*    {order.cart?.items?.length || 0}*/}
                                     {/*    <span*/}
@@ -130,7 +135,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                     {/*    >*/}
                                     {/*        Re-order*/}
                                     {/*    </span>*/}
-                                    {/*</div>*/}
+                                    {/*</div> */}
                                     {order.cart?.items?.map(
                                         (
                                             item: any // Adjusting the map to the correct path
@@ -180,7 +185,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         borderRadius={'37px'}
                                                         ml={4}
                                                         onClick={() =>
-                                                            openModal(
+                                                            cancelOrder(
                                                                 order.cart_id
                                                             )
                                                         }
