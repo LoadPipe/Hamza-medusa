@@ -138,6 +138,11 @@ const ReviewTemplate = ({ reviewItem, isOpen, onClose }: any) => {
                                 value={review}
                                 onChange={(e) => setReview(e.target.value)}
                             />
+                            {review.trim().length < 100 && (
+                                <Text color="red.500" fontSize="sm" mt={2}>
+                                    Review must be at least 100 characters long.
+                                </Text>
+                            )}
                             <Button
                                 variant="solid"
                                 borderColor={'primary.indigo.900'}
@@ -160,7 +165,9 @@ const ReviewTemplate = ({ reviewItem, isOpen, onClose }: any) => {
                                 ml={'20px'}
                                 width={'180px'}
                                 onClick={submitReview}
-                                disabled={rating === 0 || review.trim() === ''}
+                                disabled={
+                                    rating === 0 || review.trim().length < 100
+                                }
                             >
                                 Submit
                             </Button>
