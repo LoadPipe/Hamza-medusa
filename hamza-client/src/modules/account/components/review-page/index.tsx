@@ -18,12 +18,10 @@ import {
 } from '@chakra-ui/react';
 import { Region } from '@medusajs/medusa';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import axios from 'axios';
 import { format } from 'date-fns';
-import { getAllProductReviews } from '@lib/data';
+import { getAllProductReviews, getNotReviewedOrders } from '@lib/data';
 import { EditIcon } from '@chakra-ui/icons';
 import EditReviewTemplate from '@modules/editreview/[id]/edit-review-template';
-import Link from 'next/link';
 import {
     TiStarFullOutline,
     TiStarHalfOutline,
@@ -57,6 +55,9 @@ const ReviewPage = ({ region }: { region: Region }) => {
     const { authData } = useCustomerAuthStore();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [selectedReview, setSelectedReview] = useState(null);
+    const [activeButton, setActiveButton] = useState('reviews');
+    const [pendingReviews, setPendingReviews] = useState([]);
+
     const fetchReviews = async () => {
         try {
             const response = await getAllProductReviews(
@@ -68,6 +69,23 @@ const ReviewPage = ({ region }: { region: Region }) => {
             console.error('Error fetching reviews:', error);
         }
     };
+
+    const fetchPendingReviews = async () => {
+        console.log('Fetching pending reviews...'); // For debugging
+        try {
+            const response = await getNotReviewedOrders(
+                authData.customer_id as string
+            );
+            if (response.length !== 0) {
+                setPendingReviews(response);
+            }
+            console.log(`Pending reviews: ${JSON.stringify(response)}`); // For debugging
+        } catch (error) {
+            console.error(`Error fetching not reviewed orders: ${error}`);
+            // Handle error state in UI if necessary, e.g., show a message
+        }
+    };
+
     useEffect(() => {
         console.log(`trigger outter GETTER`);
         if (authData.status == 'authenticated') {
@@ -90,12 +108,35 @@ const ReviewPage = ({ region }: { region: Region }) => {
             textColor={'white'}
         >
             <ButtonGroup isAttached justifyContent="center">
-                <Button {...commonButtonStyles}>Pending Reviews</Button>
-                <Button isActive={true} {...commonButtonStyles}>
+                <Button
+                    onClick={() => {
+                        fetchPendingReviews()
+                            .then(() => {
+                                console.log('Fetch successful');
+                                setActiveButton('pending');
+                            })
+                            .catch((error) => {
+                                console.error('Failed to fetch: ', error);
+                            });
+                    }}
+                    {...commonButtonStyles}
+                    isActive={activeButton === 'pending'}
+                >
+                    Pending Reviews
+                </Button>
+
+                <Button
+                    onClick={() => {
+                        fetchReviews();
+                        setActiveButton('reviews');
+                    }}
+                    {...commonButtonStyles}
+                    isActive={activeButton === 'reviews'}
+                >
                     Review Archives
                 </Button>
             </ButtonGroup>
-            {reviews.length > 0 && (
+            {activeButton === 'reviews' && reviews.length > 0 && (
                 <>
                     <CardHeader>
                         <Heading size="md">My Product Reviews</Heading>
@@ -162,6 +203,56 @@ const ReviewPage = ({ region }: { region: Region }) => {
                     <CardFooter />
                 </>
             )}
+
+            {activeButton === 'pending' && pendingReviews.length > 0 && (
+                <>
+                    <CardHeader>
+                        <Heading size="md">Pending Reviews</Heading>
+                    </CardHeader>
+                    <Stack divider={<StackDivider />} spacing={4}>
+                        {pendingReviews.map((review: any) => (
+                            <CardBody key={review.id}>
+                                <Text fontSize="16px">
+                                    <Text as="span" color="#555555">
+                                        Purchase Date:{' '}
+                                    </Text>
+                                    {format(new Date(review.created_at), 'PPP')}
+                                </Text>
+                                <div className="flex flex-row space-x-2 items-center">
+                                    <Image
+                                        rounded={'lg'}
+                                        width={'72px'}
+                                        height={'72px'}
+                                        src={
+                                            review.cart.items[0].variant.product
+                                                .thumbnail
+                                        } // Update to your data structure
+                                    />
+                                    <Text
+                                        fontSize={'18px'}
+                                        fontWeight={'bold'}
+                                        textTransform="uppercase"
+                                    >
+                                        {
+                                            review.cart.items[0].variant.product
+                                                .title
+                                        }{' '}
+                                        {/* Adjust title path */}
+                                    </Text>
+                                    <Button
+                                        onClick={() => handleReviewEdit(review)}
+                                        colorScheme="green"
+                                    >
+                                        Write Review
+                                    </Button>
+                                </div>
+                            </CardBody>
+                        ))}
+                    </Stack>
+                    <CardFooter />
+                </>
+            )}
+
             {selectedReview && (
                 <EditReviewTemplate
                     review={selectedReview}

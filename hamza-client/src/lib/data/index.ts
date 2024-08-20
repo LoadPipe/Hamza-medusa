@@ -312,6 +312,22 @@ export async function singleBucket(customer_id: string, bucket: number) {
     }
 }
 
+export async function getNotReviewedOrders(customer_id: string) {
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/review/get-customer-not-reviewed`,
+            {
+                params: {
+                    customer_id: customer_id,
+                },
+            }
+        );
+        return response.data;
+    } catch (e) {
+        console.error(`Error fetching all non reviewed orders ${e}`);
+    }
+}
+
 export async function orderStatus(order_id: string) {
     try {
         const response = await axios.post(
