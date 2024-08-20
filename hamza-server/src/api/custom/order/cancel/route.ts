@@ -5,7 +5,7 @@ import { RouteHandler } from '../../../route-handler';
 
 //CANCELs an order, given its order id
 //TODO: does not need to be DELETE (cancelling is not deleting)
-export const DELETE = async (req: MedusaRequest, res: MedusaResponse) => {
+export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
 
     const handler: RouteHandler = new RouteHandler(
@@ -17,7 +17,7 @@ export const DELETE = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        const order = await orderService.cancellationStatus(
+        const order = await orderService.cancelOrder(
             handler.inputParams.order_id
         );
 

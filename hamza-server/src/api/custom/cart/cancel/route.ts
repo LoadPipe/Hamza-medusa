@@ -6,7 +6,7 @@ import { RouteHandler } from '../../../route-handler';
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     let orderService: OrderService = req.scope.resolve('orderService');
 
-    const handler = new RouteHandler(req, res, 'GET', '/custom/cancel-order', [
+    const handler = new RouteHandler(req, res, 'POST', '/custom/cart/cancel', [
         'cart_id',
     ]);
 

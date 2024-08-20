@@ -233,6 +233,36 @@ export default class BuckydropService extends TransactionBaseService {
         }
     }
 
+    async cancelOrder(orderId: string): Promise<Order> {
+        try {
+            const order: Order = await this.orderService_.retrieve(orderId);
+            const buckyData = order.bucky_metadata?.length ? JSON.parse(order.bucky_metadata) : null;
+
+            if (order && buckyData) {
+
+                //get order details from buckydrop
+                const shopOrderNo: string = buckyData.data.shopOrderNo ?? buckyData.shopOrderNo;
+
+                //get the order status
+                if (shopOrderNo) {
+
+                    //save the tracking data
+                    const output = await this.buckyClient.cancelOrder(shopOrderNo);
+                    buckyData.cancel = output;
+                    order.bucky_metadata = JSON.stringify(buckyData);
+
+                    //save the order 
+                    await this.orderRepository_.save(order);
+                }
+            }
+
+            return order;
+        }
+        catch (e) {
+            this.logger.error(`Error cancelling order ${orderId}`, e);
+        }
+    }
+
     private async mapVariants(item: any, productDetails: any) {
         /*
         0: {

@@ -293,7 +293,7 @@ export async function orderStatus(order_id: string) {
 
 export async function cancelOrder(order_id: string) {
     try {
-        const response = await axios.delete(
+        const response = await axios.post(
             `${BACKEND_URL}/custom/order/cancel`,
             {
                 params: {

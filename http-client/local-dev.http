@@ -314,7 +314,7 @@ Content-Type: application/json
 
 
 ### Cancel Order
-DELETE http://localhost:9000/custom/order/cancel
+POST http://localhost:9000/custom/order/cancel
 Content-Type: application/json
 
 {
@@ -371,8 +371,12 @@ Content-Type: application/json
 }
 
 ### GET Request to cancel order
-GET http://localhost:9000/custom/cancel-order/cart_01J3CF7DMR72ZS436EM0NYDCGW
+POST http://localhost:9000/custom/cart/cancel
 Content-Type: application/json
+
+{
+    "cart_id": "cart_01J3CF7DMR72ZS436EM0NYDCGW"
+}
 
 
 ### Get Specific Customers All Orders METHOD: listCustomerOrders() in order.ts
