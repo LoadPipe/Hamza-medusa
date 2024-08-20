@@ -52,8 +52,7 @@ const ReviewTemplate = ({ reviewItem, isOpen, onClose }: any) => {
                 setReview('');
                 setRating(0);
                 toast.success('Review Submitted!', {});
-            } else {
-                toast.error('Failed to submit Review.');
+                onClose();
             }
         } catch (error) {
             toast.error('Failed to submit Review.');
