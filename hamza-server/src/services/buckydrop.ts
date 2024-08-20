@@ -48,11 +48,13 @@ export default class BuckydropService extends TransactionBaseService {
         const searchResults = await buckyClient.searchProducts(
             keyword,
             1,
-            10
+            3
         );
         this.logger.debug(`search returned ${searchResults.length} results`);
         const productData = searchResults; //[searchResults[4], searchResults[5]];
 
+        //doing it this way incurs the wrath of the API rate limit
+        /*
         let products: CreateProductInput[] = await Promise.all(
             productData.map((p) =>
                 this.mapBuckyDataToProductInput(
@@ -65,14 +67,29 @@ export default class BuckydropService extends TransactionBaseService {
                 )
             )
         );
+        */
+
+        let productInputs: CreateProductInput[] = [];
+        for (let p of productData) {
+            productInputs.push(await
+                this.mapBuckyDataToProductInput(
+                    buckyClient,
+                    p,
+                    ProductStatus.PUBLISHED,
+                    storeId,
+                    collectionId,
+                    [salesChannelId]
+                )
+            );
+        }
 
 
         //filter out failures
-        products = products.filter(p => p ? p : null);
+        productInputs = productInputs.filter(p => p ? p : null);
 
         //import the products
-        const output = products?.length
-            ? await this.productService_.bulkImportProducts(storeId, products)
+        const output = productInputs?.length
+            ? await this.productService_.bulkImportProducts(storeId, productInputs)
             : [];
 
         //TODO: best to return some type of report; what succeeded, what failed
