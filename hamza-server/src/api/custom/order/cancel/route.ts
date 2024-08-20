@@ -1,5 +1,4 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
-import { readRequestBody } from '../../../../utils/request-body';
 import OrderService from '../../../../services/order';
 import { RouteHandler } from '../../../route-handler';
 
