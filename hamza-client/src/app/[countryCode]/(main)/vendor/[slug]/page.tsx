@@ -126,7 +126,7 @@ export default function Page({ params }: { params: { slug: string } }) {
     };
 
     const toggleShowMore = () => {
-        setShowMore((prev) => (prev === 3 ? undefined : 3));
+        setShowMore((prev) => (prev === 3 ? 0 : 3));
     };
 
     return (
@@ -356,7 +356,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                             fontSize={{ base: '14px', md: '16px' }}
                             ml="auto"
                             mt={{ base: '0', md: '1rem' }}
-                            noOfLines={{ base: showMore, md: undefined }}
+                            noOfLines={{ base: showMore, md: 0 }}
                         >
                             Lorem, ipsum dolor sit amet consectetur adipisicing
                             elit. Commodi, nostrum. Quasi similique cum sunt
@@ -372,15 +372,13 @@ export default function Page({ params }: { params: { slug: string } }) {
                                 alignSelf={'center'}
                                 onClick={toggleShowMore}
                             >
-                                {showMore === undefined
-                                    ? 'Show Less'
-                                    : 'Show More'}
+                                {showMore === 0 ? 'Show Less' : 'Show More'}
                             </Flex>
                             <Flex
                                 display={{ base: 'flex', md: 'none' }}
                                 alignSelf={'center'}
                             >
-                                {showMore === undefined ? (
+                                {showMore === 0 ? (
                                     <MdOutlineKeyboardArrowUp size={24} />
                                 ) : (
                                     <MdOutlineKeyboardArrowRight size={24} />
