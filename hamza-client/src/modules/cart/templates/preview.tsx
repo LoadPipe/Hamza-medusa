@@ -3,7 +3,7 @@
 import { LineItem, Region } from '@medusajs/medusa';
 import { Table, clx } from '@medusajs/ui';
 
-import Item from '@modules/cart/components/item';
+import Item from '@modules/cart/components/item-checkout';
 import SkeletonLineItem from '@modules/skeletons/components/skeleton-line-item';
 
 type ExtendedLineItem = LineItem & {
