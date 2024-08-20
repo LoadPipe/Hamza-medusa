@@ -15,6 +15,7 @@ import {
     Box,
 } from '@chakra-ui/react';
 import { updateProductReview } from '@lib/data';
+import toast from 'react-hot-toast';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -32,6 +33,8 @@ const EditReviewTemplate = ({ review, isOpen, onClose }: any) => {
         setRating(review.rating);
     }, [review]);
 
+    console.log(`Review edit page ${JSON.stringify(review)}`);
+
     const submitReview = async () => {
         try {
             const response = await updateProductReview(
@@ -42,18 +45,19 @@ const EditReviewTemplate = ({ review, isOpen, onClose }: any) => {
                 review.order_id
             );
 
-            if (response) {
+            if (response.status === 200) {
                 setCurrentReview('');
                 setRating(0);
-                setSubmissionSuccess(true); // Update the state to indicate success
+                toast.success('Review Submitted!', {});
+                onClose();
                 console.log('Review updated successfully');
             } else {
                 console.error('Failed to update review');
-                alert('Failed to update review');
+                toast.error('Failed to submit Review.');
             }
         } catch (error) {
             console.error('Failed to submit review: ', error);
-            alert('Failed to submit review: ' + error);
+            toast.error('Failed to submit Review.');
         }
     };
 
@@ -78,7 +82,7 @@ const EditReviewTemplate = ({ review, isOpen, onClose }: any) => {
                             <>
                                 <Box className="flex items-center mb-4">
                                     <Image
-                                        src={review.thumbnail}
+                                        src={review.product.thumbnail}
                                         alt={review.title}
                                         boxSize="96px"
                                         mr="4"
