@@ -61,6 +61,9 @@ export default function Page({ params }: { params: { slug: string } }) {
     const [abuseDetails, setAbuseDetails] = useState('');
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
+
+    // reveal more text mobile about
+    const [showMore, setShowMore] = useState(3);
     console.log(`slug name ${displaySlug}`);
     // can I get a store_id from vendor name??
     // yes you can so let's do that, /custom/vendors/vendor-reviews
@@ -117,6 +120,10 @@ export default function Page({ params }: { params: { slug: string } }) {
         onClose();
     };
 
+    const toggleShowMore = () => {
+        setShowMore((prev) => (prev === 3 ? undefined : 3));
+    };
+
     return (
         <Box color={'white'} my="4rem">
             <Flex
@@ -129,16 +136,14 @@ export default function Page({ params }: { params: { slug: string } }) {
                     flexDir={'column'}
                     mx={'1rem'}
                     maxW={'1261px'}
+                    overflow={'hidden'}
                     width="100%"
                     bgColor={'#121212'}
                     padding={{ base: '14px', md: '40px' }}
                     borderRadius={'16px'}
                 >
                     {/* Company */}
-                    <Flex
-                        flexDir={{ base: 'column', md: 'row' }}
-                        gap={{ base: '24px', md: '62px' }}
-                    >
+                    <Flex flexDir={{ base: 'column', md: 'row' }}>
                         <Flex
                             flexDir={'row'}
                             gap={{ base: '16px', md: '24px' }}
@@ -183,13 +188,12 @@ export default function Page({ params }: { params: { slug: string } }) {
                         </Flex>
 
                         {/* Stats */}
-                        <Flex>
+                        <Flex mt="1rem" justifyContent={'space-between'}>
                             <Flex>
                                 <Flex
                                     ml={{ base: '0', md: '2rem' }}
                                     flexDir={{ base: 'row', md: 'column' }}
-                                    width={'166px'}
-                                    gap={{ base: '5px', md: '0' }}
+                                    width={{ base: '87px', md: '166px' }}
                                 >
                                     <Text
                                         as="h1"
@@ -223,8 +227,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                                 borderRightWidth={{ base: '0', md: '1px' }}
                                 borderStyle={'dashed'}
                                 borderColor={'#555555'}
-                                width={'166px'}
-                                gap={{ base: '5px', md: '0' }}
+                                width={{ base: '87px', md: '166px' }}
                             >
                                 <Text
                                     as="h1"
@@ -244,8 +247,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
                             <Flex
                                 flexDir={{ base: 'row', md: 'column' }}
-                                gap={{ base: '5px', md: '0' }}
-                                width={'166px'}
+                                width={{ base: '87px', md: '166px' }}
                             >
                                 <Text
                                     as="h1"
@@ -324,7 +326,8 @@ export default function Page({ params }: { params: { slug: string } }) {
                         <Text
                             fontSize={{ base: '14px', md: '16px' }}
                             ml="auto"
-                            mt={{ base: '0.5rem', md: '1rem' }}
+                            mt={{ base: '0', md: '1rem' }}
+                            noOfLines={{ base: showMore, md: undefined }}
                         >
                             Lorem, ipsum dolor sit amet consectetur adipisicing
                             elit. Commodi, nostrum. Quasi similique cum sunt
@@ -332,6 +335,14 @@ export default function Page({ params }: { params: { slug: string } }) {
                             porro labore at eos numquam ratione nihil repellat!
                             Placeat, laborum.
                         </Text>
+
+                        <Flex
+                            display={{ base: 'flex', md: 'none' }}
+                            fontSize={{ base: '14px', md: '16px' }}
+                            onClick={toggleShowMore}
+                        >
+                            Show More
+                        </Flex>
                     </Flex>
                     {/* <Text
                     ml="auto"
