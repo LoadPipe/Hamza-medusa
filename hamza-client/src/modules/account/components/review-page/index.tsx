@@ -22,6 +22,7 @@ import { format } from 'date-fns';
 import { getAllProductReviews, getNotReviewedOrders } from '@lib/data';
 import { EditIcon } from '@chakra-ui/icons';
 import EditReviewTemplate from '@modules/editreview/[id]/edit-review-template';
+import ReviewTemplate from '@modules/review/[id]/review-template';
 import {
     TiStarFullOutline,
     TiStarHalfOutline,
@@ -55,6 +56,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
     const { authData } = useCustomerAuthStore();
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [selectedReview, setSelectedReview] = useState(null);
+    const [selectedPendingReview, setSelectedPendingReview] = useState(null);
     const [activeButton, setActiveButton] = useState('reviews');
     const [pendingReviews, setPendingReviews] = useState([]);
 
@@ -97,6 +99,12 @@ const ReviewPage = ({ region }: { region: Region }) => {
     const handleReviewEdit = (review: any) => {
         setSelectedReview(review);
         console.log(`selected review modal`);
+        onOpen();
+    };
+
+    const handlePendingReview = (review: any) => {
+        setSelectedPendingReview(review);
+        console.log(`Selecting pending review`);
         onOpen();
     };
 
@@ -240,7 +248,9 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                         {/* Adjust title path */}
                                     </Text>
                                     <Button
-                                        onClick={() => handleReviewEdit(review)}
+                                        onClick={() =>
+                                            handlePendingReview(review)
+                                        }
                                         colorScheme="green"
                                     >
                                         Write Review
@@ -252,6 +262,8 @@ const ReviewPage = ({ region }: { region: Region }) => {
                     <CardFooter />
                 </>
             )}
+
+            {selectedPendingReview && <ReviewTemplate />}
 
             {selectedReview && (
                 <EditReviewTemplate
