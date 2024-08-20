@@ -43,6 +43,11 @@ import ProductCardGroup from '@modules/products/components/product-group-vendor'
 import VendorProductDisplay from '@modules/vendors/components/products/vendor-product-display';
 import { getVendorStoreBySlug } from '@lib/data';
 import { format } from 'date-fns';
+import {
+    MdOutlineKeyboardArrowRight,
+    MdOutlineKeyboardArrowUp,
+} from 'react-icons/md';
+
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
 export default function Page({ params }: { params: { slug: string } }) {
@@ -185,6 +190,25 @@ export default function Page({ params }: { params: { slug: string } }) {
                                     </Text>
                                 </Flex>
                             </Flex>
+                            <Flex
+                                display={{ base: 'flex', md: 'none' }}
+                                height={'33px'}
+                                width={'120px'}
+                                ml="auto"
+                                borderColor={'primary.indigo.900'}
+                                borderWidth={'1px'}
+                                borderRadius={'37px'}
+                                justifyContent={'center'}
+                                cursor={'pointer'}
+                                fontSize={{ base: '12px', md: '16px' }}
+                            >
+                                <Text
+                                    alignSelf={'center'}
+                                    color="primary.indigo.900"
+                                >
+                                    Follow Seller
+                                </Text>
+                            </Flex>
                         </Flex>
 
                         {/* Stats */}
@@ -193,10 +217,11 @@ export default function Page({ params }: { params: { slug: string } }) {
                                 <Flex
                                     ml={{ base: '0', md: '2rem' }}
                                     flexDir={{ base: 'row', md: 'column' }}
-                                    width={{ base: '87px', md: '166px' }}
+                                    width={{ base: '100px', md: '166px' }}
                                 >
                                     <Text
                                         as="h1"
+                                        mr={{ base: '5px', md: '0' }}
                                         fontSize={{ base: '9px', md: '32px' }}
                                         textAlign={'center'}
                                         color="primary.green.900"
@@ -223,14 +248,16 @@ export default function Page({ params }: { params: { slug: string } }) {
 
                             <Flex
                                 flexDir={{ base: 'row', md: 'column' }}
+                                justifyContent={{ base: 'end', md: 'normal' }}
                                 borderLeftWidth={{ base: '0', md: '1px' }}
                                 borderRightWidth={{ base: '0', md: '1px' }}
                                 borderStyle={'dashed'}
                                 borderColor={'#555555'}
-                                width={{ base: '87px', md: '166px' }}
+                                width={{ base: '100px', md: '166px' }}
                             >
                                 <Text
                                     as="h1"
+                                    mr={{ base: '5px', md: '0' }}
                                     fontSize={{ base: '9px', md: '32px' }}
                                     textAlign={'center'}
                                     color="primary.green.900"
@@ -247,9 +274,11 @@ export default function Page({ params }: { params: { slug: string } }) {
 
                             <Flex
                                 flexDir={{ base: 'row', md: 'column' }}
-                                width={{ base: '87px', md: '166px' }}
+                                justifyContent={{ base: 'end', md: 'normal' }}
+                                width={{ base: '100px', md: '166px' }}
                             >
                                 <Text
+                                    mr={{ base: '5px', md: '0' }}
                                     as="h1"
                                     fontSize={{ base: '9px', md: '32px' }}
                                     color="primary.green.900"
@@ -336,12 +365,27 @@ export default function Page({ params }: { params: { slug: string } }) {
                             Placeat, laborum.
                         </Text>
 
-                        <Flex
-                            display={{ base: 'flex', md: 'none' }}
-                            fontSize={{ base: '14px', md: '16px' }}
-                            onClick={toggleShowMore}
-                        >
-                            Show More
+                        <Flex>
+                            <Flex
+                                display={{ base: 'flex', md: 'none' }}
+                                fontSize={{ base: '14px', md: '16px' }}
+                                alignSelf={'center'}
+                                onClick={toggleShowMore}
+                            >
+                                {showMore === undefined
+                                    ? 'Show Less'
+                                    : 'Show More'}
+                            </Flex>
+                            <Flex
+                                display={{ base: 'flex', md: 'none' }}
+                                alignSelf={'center'}
+                            >
+                                {showMore === undefined ? (
+                                    <MdOutlineKeyboardArrowUp size={24} />
+                                ) : (
+                                    <MdOutlineKeyboardArrowRight size={24} />
+                                )}
+                            </Flex>
                         </Flex>
                     </Flex>
                     {/* <Text
@@ -356,7 +400,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
             <VendorProductDisplay vendorName={displaySlug} />
 
-            <Flex>
+            {/* <Flex>
                 <Flex
                     display={{ base: 'none', md: 'flex' }}
                     height={{ base: '33px', md: '47px' }}
@@ -376,7 +420,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                         {isSubmitted ? 'Report Submitted' : 'Report Abuse'}
                     </Text>
                 </Flex>
-            </Flex>
+            </Flex> */}
             {/*
             <Box className="bg-black text-white p-4">
                 <Card>
