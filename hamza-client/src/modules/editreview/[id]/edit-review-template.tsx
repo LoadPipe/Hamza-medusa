@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import {
     Modal,
     ModalOverlay,
@@ -9,18 +8,14 @@ import {
     ModalHeader,
     ModalBody,
     ModalCloseButton,
+    Box,
     Button,
     Image,
     Text,
-    Box,
 } from '@chakra-ui/react';
 import { updateProductReview } from '@lib/data';
 import toast from 'react-hot-toast';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
-
-// TODO: WHEN TO TRIGGER getAllProductReviews? 1. Initial load 2. Set new Review
-// Why can't we set isOpen: boolean?
 const EditReviewTemplate = ({
     review,
     isOpen,
@@ -41,37 +36,39 @@ const EditReviewTemplate = ({
         }
     }, [review]);
 
-    console.log(`Review edit page ${JSON.stringify(review)}`);
-
     const submitReview = async () => {
-        console.log(
-            `Review data is ${review.product_id} ${currentReview} ${Number(rating)} ${review.customer_id} ${review.order_id}`
-        );
+        const data = {
+            product_id: review.product_id,
+            content: currentReview,
+            rating: Number(rating),
+            customer_id: review.customer_id,
+            order_id: review.order_id,
+        };
+
         try {
             const response = await updateProductReview(
-                review.product_id,
-                currentReview,
-                Number(rating),
-                review.customer_id,
-                review.order_id
+                data.product_id,
+                data.content,
+                data.rating,
+                data.customer_id,
+                data.order_id
             );
-
-            console.log(`RESPONSE IS ${response}`);
 
             setCurrentReview('');
             setRating(0);
-            toast.success('Review Updated Successfully!', {});
-            onClose();
+            if (response) {
+                toast.success('Review Updated Successfully!');
 
-            if (onReviewUpdated) {
-                onReviewUpdated({
-                    ...review,
-                    content: currentReview,
-                    rating: Number(rating),
-                });
+                if (onReviewUpdated) {
+                    onReviewUpdated({
+                        ...review,
+                        content: currentReview,
+                        rating: Number(rating),
+                    });
+                }
+                onClose();
             }
         } catch (error) {
-            console.error('Failed to submit review: ', error);
             toast.error('Failed to submit Review.');
         }
     };
@@ -84,12 +81,17 @@ const EditReviewTemplate = ({
         'Delighted',
     ];
 
-    // TODO: Seems like once we if(response).... is setting all the other reviews to 0 star....
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader>Edit Your Review</ModalHeader>
+                <ModalHeader
+                    color={'primary.green.900'}
+                    justifyContent={'center'}
+                    alignContent={'center'}
+                >
+                    Edit Your Review
+                </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
                     <Box className="flex items-center mb-4">
@@ -112,34 +114,29 @@ const EditReviewTemplate = ({
                     </Box>
                     <Box>
                         <Box className="flex items-center mb-2">
-                            {[1, 2, 3, 4, 5].map((star: number) => (
-                                <Button
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <button
                                     key={star}
-                                    size="lg"
-                                    variant={
+                                    className={`text-2xl ${
                                         star <= (hovered || rating)
-                                            ? 'solid'
-                                            : 'ghost'
-                                    }
-                                    colorScheme={
-                                        star <= (hovered || rating)
-                                            ? 'yellow'
-                                            : 'gray'
-                                    }
-                                    onClick={() => setRating(star)}
+                                            ? 'text-yellow-500'
+                                            : 'text-gray-400'
+                                    }`}
                                     onMouseEnter={() => setHovered(star)}
                                     onMouseLeave={() => setHovered(0)}
+                                    onClick={() => {
+                                        setRating(star);
+                                        setHovered(star);
+                                    }}
                                 >
                                     ★
-                                </Button>
+                                </button>
                             ))}
-                            <Text ml="2" fontSize="sm" fontWeight="medium">
+                            <span className="ml-2 text-sm font-medium text-black self-center">
                                 {ratingDescriptions[rating - 1] || ''}
-                            </Text>
+                            </span>
                         </Box>
-                        <Text fontSize="md" fontWeight="bold">
-                            Review Detail
-                        </Text>
+                        <p className="text-black">Review Detail</p>
                         <textarea
                             className="w-full p-2 border rounded text-black"
                             rows={4}
@@ -147,19 +144,51 @@ const EditReviewTemplate = ({
                             value={currentReview}
                             onChange={(e) => setCurrentReview(e.target.value)}
                         />
+                        {currentReview.trim().length < 50 && (
+                            <Text color="red.500" fontSize="sm" mt={2}>
+                                Review must be at least 50 characters long.
+                            </Text>
+                        )}
+                        <Button
+                            variant="solid"
+                            borderColor={'primary.indigo.900'}
+                            color={'primary.indigo.900'}
+                            width={'180px'}
+                            height={'47px'}
+                            borderRadius={'37px'}
+                            onClick={() => {
+                                onClose();
+                                setRating(0);
+                                setCurrentReview('');
+                            }}
+                        >
+                            Cancel
+                        </Button>
+
+                        <Box
+                            as="button"
+                            mt={4}
+                            borderRadius={'37px'}
+                            backgroundColor={
+                                rating === 0 || currentReview.trim().length < 50
+                                    ? 'gray.400'
+                                    : 'primary.indigo.900'
+                            }
+                            color={'white'}
+                            fontSize={'18px'}
+                            fontWeight={600}
+                            height={'47px'}
+                            width={'180px'}
+                            ml={'20px'}
+                            onClick={submitReview}
+                            disabled={
+                                rating === 0 || currentReview.trim().length < 50
+                            }
+                        >
+                            Submit
+                        </Box>
                     </Box>
                 </ModalBody>
-                <Button
-                    colorScheme="blue"
-                    mr={3}
-                    onClick={submitReview}
-                    disabled={rating === 0 || currentReview.trim() === ''}
-                >
-                    Submit Review
-                </Button>
-                <Button variant="ghost" onClick={onClose}>
-                    Close
-                </Button>
             </ModalContent>
         </Modal>
     );
