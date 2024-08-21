@@ -22,7 +22,9 @@ const LineItemUnitPrice = ({
     region,
     style = 'default',
 }: LineItemUnitPriceProps) => {
-    const unitPrice = (item.variant as CalculatedVariant).prices.find(p => p.currency_code == item.currency_code).amount;
+    const unitPrice = item.variant.prices ?
+        (item.variant as CalculatedVariant).prices.find(p => p.currency_code == item.currency_code).amount :
+        (item.variant as CalculatedVariant).original_price;
     const price = unitPrice * item.quantity;
     const hasReducedPrice = (price * item.quantity || 0) > item.total!;
     const reducedPrice = (item.total || 0) / item.quantity!;
