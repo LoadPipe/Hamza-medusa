@@ -40,7 +40,6 @@ class CartCompletionStrategy extends AbstractCartCompletionStrategy {
     protected readonly orderRepository: typeof OrderRepository;
     protected readonly lineItemRepository: typeof LineItemRepository;
     protected readonly logger: Logger;
-    //private massMarketStrategy: MassMarketCartStrategy;
     private massMarketProcessor: MassMarketCheckoutProcessor;
     private switchProcessor: SwitchCheckoutProcessor;
     private basicProcessor: BasicCheckoutProcessor;
