@@ -206,6 +206,30 @@ export class BuckyClient {
             });
     }
 
+    async cancelOrder2(shopOrderNo: string, partnerOrderNo?: string) {
+        const params = JSON.stringify({
+            shopOrderNo,
+            partnerOrderNo,
+        });
+
+
+        return this.client
+            .post(
+                this.formatApiUrl('/order/po-cancel', params), //?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                //`/api/rest/v2/adapt/openapi/order/cancel?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                params,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+            )
+            .then((response) => response.data)
+            .catch((error) => {
+                throw error;
+            });
+    }
+
     async getOrderDetails(shopOrderNo: string, partnerOrderNo?: string) {
         const params = JSON.stringify({
             shopOrderNo,
