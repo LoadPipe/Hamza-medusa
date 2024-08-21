@@ -129,7 +129,6 @@ class ProductService extends MedusaProductService {
         productData: (CreateProductInput | UpdateProductInput)[]
     ): Promise<Product[]> {
         try {
-
             //get the store
             const store: Store = await this.storeRepository_.findOne({
                 where: { id: storeId },
@@ -140,11 +139,12 @@ class ProductService extends MedusaProductService {
             }
 
             //get existing products by handle
-            const productHandles: string[] = productData.map(p => p.handle);
-            const existingProducts: Product[] = await this.productRepository_.find({
-                where: { handle: In(productHandles) },
-                relations: ['variants'],
-            });
+            const productHandles: string[] = productData.map((p) => p.handle);
+            const existingProducts: Product[] =
+                await this.productRepository_.find({
+                    where: { handle: In(productHandles) },
+                    relations: ['variants'],
+                });
 
             const addedProducts = await Promise.all(
                 productData.map((product) => {
@@ -153,7 +153,9 @@ class ProductService extends MedusaProductService {
 
                         try {
                             // Check if the product already exists by handle
-                            const existingProduct = existingProducts.find(p => p.handle === product.handle);
+                            const existingProduct = existingProducts.find(
+                                (p) => p.handle === product.handle
+                            );
 
                             if (existingProduct) {
                                 // If the product exists, update it
@@ -190,7 +192,9 @@ class ProductService extends MedusaProductService {
 
             // Ensure all products are non-null and have valid IDs
             const validProducts = addedProducts.filter((p) => p && p.id);
-            this.logger.info(`${validProducts.length} out of ${productData.length} products were imported`)
+            this.logger.info(
+                `${validProducts.length} out of ${productData.length} products were imported`
+            );
             if (validProducts.length !== addedProducts.length) {
                 this.logger.warn('Some products were not created successfully');
             }
@@ -244,6 +248,28 @@ class ProductService extends MedusaProductService {
             where: { store_id: storeId },
             // relations: ['store'],
         });
+    }
+
+    async getCategoriesByStoreId(storeId: string): Promise<Product[]> {
+        try {
+            const query = `
+                SELECT pc.*
+                FROM product p
+                JOIN product_category_product pcp ON p.id = pcp.product_id
+                JOIN product_category pc ON pcp.product_category_id = pc.id
+                WHERE p.store_id = $1
+            `;
+
+            const categories = await this.productRepository_.query(query, [
+                storeId,
+            ]);
+            return categories;
+        } catch (error) {
+            this.logger.error('Error fetching categories by store ID:', error);
+            throw new Error(
+                'Failed to fetch categories for the specified store.'
+            );
+        }
     }
 
     async getStoreFromProduct(productId: string): Promise<string> {
