@@ -7,7 +7,11 @@ import SearchBar from '@modules/home/components/search-and-filter-panel/componen
 import VendorSearch from './vendor-search';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 
-const VendorProductDisplay = (props: any) => {
+type Props = {
+    vendorName: string;
+};
+
+const VendorProductDisplay = ({ vendorName }: Props) => {
     return (
         <Flex
             mx={'auto'}
@@ -18,8 +22,8 @@ const VendorProductDisplay = (props: any) => {
             alignItems={'center'}
         >
             {/* <SearchBar /> */}
-            <VendorSearch />
-            <ProductCardGroup vendorName={props.vendorName} />
+            <VendorSearch vendorName={vendorName} />
+            <ProductCardGroup vendorName={vendorName} />
         </Flex>
     );
 };

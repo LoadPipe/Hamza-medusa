@@ -1,8 +1,21 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect } from 'react';
 import { Flex, Box, Text, Input } from '@chakra-ui/react';
 import VendorCatButton from './vendor-cat-button';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
-const VendorSearch = () => {
+type Props = {
+    vendorName: string;
+};
+
+const VendorSearch = ({ vendorName }: Props) => {
+    const { data, error, isLoading } = useQuery(['products'], () => {
+        const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/categories?store_name=${vendorName}`;
+        return axios.get(url);
+    });
+
     return (
         <Flex
             my={{ base: '1rem', md: '3rem' }}
@@ -11,6 +24,7 @@ const VendorSearch = () => {
         >
             <Flex mx={{ base: '1rem', md: '0' }} flexDir={'row'} width={'100%'}>
                 <VendorCatButton catName="All Products" />
+
                 {/* <Flex ml="auto" alignSelf={'center'}>
                     <Input
                         height={'66px'}

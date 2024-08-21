@@ -19,23 +19,28 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         '/custom/store/categories'
     );
 
+    // Return error if no products in store
     await handler.handle(async () => {
-        const { store_id } = req.query;
+        const { store_name } = req.query;
 
         // Validate the request
-        if (!store_id) {
+        if (!store_name) {
             return res.status(400).json({ message: 'store_id is required' });
         }
 
         // Fetch the categories by store ID
         try {
-            const productCategories =
-                await productService.getCategoriesByStoreId(
-                    store_id.toString()
-                );
+            const storeData = await storeService.getStoreByName(
+                store_name.toString()
+            );
+            console.log('Retrieved store data:', storeData);
+            const products = await productService.getCategoriesByStoreId(
+                storeData.id.toString()
+            );
+            console.log('Retrieved products:', products);
 
             // Return the products with categories
-            return res.json(productCategories);
+            return res.json(products);
         } catch (error) {
             return res.status(500).json({
                 message: 'Failed to fetch categories',
