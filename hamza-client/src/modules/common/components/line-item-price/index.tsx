@@ -15,12 +15,14 @@ type LineItemPriceProps = {
     item: Omit<ExtendedLineItem, 'beforeInsert'>;
     region: Region;
     style?: 'default' | 'tight';
+    currencyCode: string;
 };
 
 const LineItemPrice = ({
     item,
     region,
     style = 'default',
+    currencyCode
 }: LineItemPriceProps) => {
     const originalPrice =
         (item.variant as CalculatedVariant).original_price * item.quantity;
@@ -40,9 +42,9 @@ const LineItemPrice = ({
                             <span className="line-through text-ui-fg-muted">
                                 {formatCryptoPrice(
                                     originalPrice,
-                                    item.currency_code ?? ''
+                                    currencyCode
                                 )}{' '}
-                                {item.currency_code?.toUpperCase() ?? ''}
+                                {currencyCode?.toUpperCase() ?? 'USDC'}
                             </span>
                         </p>
                         {style === 'default' && (
@@ -69,10 +71,10 @@ const LineItemPrice = ({
                     {!isNaN(originalPrice) &&
                         formatCryptoPrice(
                             originalPrice,
-                            item.currency_code ?? ''
+                            currencyCode
                         ) +
-                            ' ' +
-                            (item.currency_code?.toUpperCase() ?? '')}
+                        ' ' +
+                        (currencyCode?.toUpperCase() ?? 'USDC')}
                 </Text>
             </div>
         </div>

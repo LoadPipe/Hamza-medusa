@@ -24,9 +24,10 @@ type ItemProps = {
     item: Omit<ExtendedLineItem, 'beforeInsert'>;
     region: Region;
     type?: 'full' | 'preview';
+    currencyCode?: string;
 };
 
-const Item = ({ item, region, type = 'full' }: ItemProps) => {
+const Item = ({ item, region, type = 'full', currencyCode }: ItemProps) => {
     const [updating, setUpdating] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -114,6 +115,7 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
                                 item={item}
                                 region={region}
                                 style="tight"
+                                currencyCode={currencyCode}
                             />
                         </Flex>
                     </Flex>
@@ -296,7 +298,8 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
                             />
                         </span>
                     )}
-                    <LineItemPrice item={item} region={region} style="tight" />
+                    <LineItemPrice item={item} region={region} style="tight" 
+                                currencyCode={currencyCode}/>
                 </span>
             </Table.Cell>
         </Table.Row>

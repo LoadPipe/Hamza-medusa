@@ -100,7 +100,7 @@ export function getProductPrice({
 
 export function formatCryptoPrice(
     amount: number,
-    currencyCode: string
+    currencyCode: string = 'usdc'
 ): string | number {
     try {
         if (!currencyCode?.length)
