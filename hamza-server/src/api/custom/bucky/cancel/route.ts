@@ -24,10 +24,12 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         //const orderNo = metadata.data.shopOrderNo;
         //c/onsole.log('orderNo is ', orderNo);
 
-        console.log(await new BuckyClient().cancelOrder2('CO172426763230900001'))
+        const client = new BuckyClient();
+        console.log(await client.cancelPurchaseOrder('P3051765232001'))
+        const orderDetail = await client.getOrderDetails('CO172426763230900001')
 
         return res
             .status(201)
-            .json({ status: true });
+            .json({ orderDetail });
     });
 };
