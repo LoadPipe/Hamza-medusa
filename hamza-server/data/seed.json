@@ -107,7 +107,8 @@
                 "id": "bucky-fulfillment"
             },
             "price_type": "flat_rate",
-            "amount": 300
+            "is_installed": true,
+            "amount": 0
         },
         {
             "name": "FakeEx Return",

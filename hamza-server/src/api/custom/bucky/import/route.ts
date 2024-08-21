@@ -3,10 +3,10 @@ import {
     MedusaResponse,
     SalesChannelService,
 } from '@medusajs/medusa';
-import { RouteHandler } from '../../route-handler';
-import StoreService from '../../../services/store';
-import ProductCollectionRepository from '../../../repositories/product-collection';
-import BuckydropService from '../../../services/buckydrop';
+import { RouteHandler } from '../../../route-handler';
+import StoreService from '../../../../services/store';
+import ProductCollectionRepository from '../../../../repositories/product-collection';
+import BuckydropService from '../../../../services/buckydrop';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const storeService: StoreService = req.scope.resolve('storeService');
@@ -21,7 +21,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         req,
         res,
         'GET',
-        '/admin/custom/bucky'
+        '/admin/custom/bucky/import'
     );
 
     const getImportData = async () => {
