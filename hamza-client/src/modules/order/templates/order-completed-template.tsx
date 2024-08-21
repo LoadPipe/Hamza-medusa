@@ -23,7 +23,8 @@ type OrderCompletedTemplateProps = {
 */
 
 export default function OrderCompletedTemplate({
-    order, cart,
+    order,
+    cart,
 }: OrderCompletedTemplateProps) {
     const isOnboarding = cookies().get('_medusa_onboarding')?.value === 'true';
 
@@ -61,6 +62,19 @@ export default function OrderCompletedTemplate({
             <Summary cart_id={order.cart_id} />
             <Divider my="1rem" borderColor="#555555" />
             <TransactionDetails data={cart} />
+
+            <Flex
+                height={'52px'}
+                mt="2rem"
+                bgColor="primary.indigo.900"
+                width={'100%'}
+                justifyContent={'center'}
+                alignItems={'center'}
+                borderRadius={'full'}
+                cursor={'pointer'}
+            >
+                <Text>Check Order Status</Text>
+            </Flex>
 
             {/* <CartTotals  /> */}
             {/* <OrderDetails order={order} />

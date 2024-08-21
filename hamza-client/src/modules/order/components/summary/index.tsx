@@ -98,6 +98,12 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
                         <Text ml="1rem" noOfLines={1}>
                             {product.title}
                         </Text>
+                        <Flex ml="auto">
+                            <Tweet
+                                productHandle={product.handle}
+                                isPurchased={true}
+                            />
+                        </Flex>
                     </Flex>
 
                     <Flex mt="2rem">
