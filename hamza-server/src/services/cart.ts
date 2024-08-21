@@ -10,11 +10,13 @@ import ProductVariantRepository from '@medusajs/medusa/dist/repositories/product
 import { LineItem } from '../models/line-item';
 import { Lifetime } from 'awilix';
 import { PriceConverter } from '../strategies/price-selection';
+import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 
 export default class CartService extends MedusaCartService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
 
     protected readonly customerRepository_: typeof CustomerRepository;
+    protected readonly lineItemRepository_: typeof LineItemRepository;
     protected readonly priceConverter: PriceConverter = new PriceConverter();
     protected readonly logger: Logger;
     //protected productVariantRepository_: typeof ProductVariantRepository;
@@ -22,6 +24,7 @@ export default class CartService extends MedusaCartService {
     constructor(container) {
         super(container);
         this.customerRepository_ = container.customerRepository;
+        this.lineItemRepository_ = container.lineItemRepository;
         this.logger = container.logger;
     }
 
@@ -38,7 +41,7 @@ export default class CartService extends MedusaCartService {
                 currencyCode = cart.customer?.preferred_currency_id ?? currencyCode;
             }
 
-            let changed = false;
+            const itemsToSave: LineItem[] = [];
             for (let item of cart.items) {
                 if (item.currency_code != currencyCode) {
                     this.logger.debug(`cart item with currency ${item.currency_code} amount ${item.unit_price} changing to ${currencyCode}`)
@@ -46,12 +49,16 @@ export default class CartService extends MedusaCartService {
                     item.unit_price = await this.priceConverter.getPrice(
                         { baseAmount: item.unit_price, baseCurrency: item.currency_code, toCurrency: currencyCode }
                     );
-                    changed = true;
+                    itemsToSave.push(item);
                 }
             }
 
-            if (changed)
-                await this.cartRepository_.save(cart);
+            if (itemsToSave.length) {
+
+                await Promise.all(
+                    itemsToSave.map(i => this.lineItemRepository_.save(i))
+                );
+            }
         }
 
         return cart;
