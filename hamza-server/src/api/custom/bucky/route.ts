@@ -44,14 +44,18 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         return output;
     };
 
+    //soup bowls 
+
     await handler.handle(async () => {
         const importData = await getImportData();
 
         const output = await buckyService.importProductsByKeyword(
-            'art',
+            req.query.keyword.toString(),
             importData.storeId,
             importData.collectionId,
-            importData.salesChannelId
+            importData.salesChannelId,
+            parseInt(req.query.count?.toString() ?? '10'),
+            parseInt(req.query.page?.toString() ?? '1')
         );
 
         return res.status(201).json({ status: true, products: output });

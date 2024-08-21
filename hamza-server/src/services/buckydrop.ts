@@ -45,14 +45,16 @@ export default class BuckydropService extends TransactionBaseService {
         keyword: string,
         storeId: string,
         collectionId: string,
-        salesChannelId: string
+        salesChannelId: string,
+        count: number = 10,
+        page: number = 1
     ): Promise<Product[]> {
         //retrieve products from bucky and convert them
         const buckyClient: BuckyClient = new BuckyClient();
         const searchResults = await buckyClient.searchProducts(
             keyword,
-            1,
-            3
+            page,
+            count
         );
         this.logger.debug(`search returned ${searchResults.length} results`);
         const productData = searchResults; //[searchResults[4], searchResults[5]];
@@ -105,7 +107,8 @@ export default class BuckydropService extends TransactionBaseService {
             relations: [
                 'items.variant.product.store',
                 'items.variant.prices', //TODO: we need prices?
-                'customer'
+                'customer',
+                'shipping_address.country'
             ],
         });
 
@@ -135,7 +138,11 @@ export default class BuckydropService extends TransactionBaseService {
             }
         }
 
-        return 0;
+        const output = await this.buckyClient.getShippingCostEstimate(10, 1, input);
+        console.log("BUCKY SHIPPING");
+        console.log(output);
+
+        return 145;
     }
 
     async calculateShippingPriceForProduct(cart: Cart, product: Product): Promise<number> {
