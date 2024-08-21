@@ -148,7 +148,10 @@ export default function Page({ params }: { params: { slug: string } }) {
                     borderRadius={'16px'}
                 >
                     {/* Company */}
-                    <Flex flexDir={{ base: 'column', md: 'row' }}>
+                    <Flex
+                        flexDir={{ base: 'column', md: 'row' }}
+                        height={{ base: 'inherit', md: '111px' }}
+                    >
                         <Flex
                             flexDir={'row'}
                             gap={{ base: '16px', md: '24px' }}
@@ -212,9 +215,13 @@ export default function Page({ params }: { params: { slug: string } }) {
                         </Flex>
 
                         {/* Stats */}
-                        <Flex mt="1rem" justifyContent={'space-between'}>
+                        <Flex
+                            mt={{ base: '1rem', md: '0' }}
+                            justifyContent={'space-between'}
+                        >
                             <Flex>
                                 <Flex
+                                    alignSelf={'center'}
                                     ml={{ base: '0', md: '2rem' }}
                                     flexDir={{ base: 'row', md: 'column' }}
                                     width={{ base: '100px', md: '166px' }}
@@ -248,31 +255,35 @@ export default function Page({ params }: { params: { slug: string } }) {
 
                             <Flex
                                 flexDir={{ base: 'row', md: 'column' }}
-                                justifyContent={{ base: 'end', md: 'normal' }}
+                                justifyContent={{ base: 'end', md: 'center' }}
                                 borderLeftWidth={{ base: '0', md: '1px' }}
                                 borderRightWidth={{ base: '0', md: '1px' }}
                                 borderStyle={'dashed'}
                                 borderColor={'#555555'}
                                 width={{ base: '100px', md: '166px' }}
+                                alignItems={'center'}
                             >
-                                <Text
-                                    as="h1"
-                                    mr={{ base: '5px', md: '0' }}
-                                    fontSize={{ base: '9px', md: '32px' }}
-                                    textAlign={'center'}
-                                    color="primary.green.900"
-                                >
-                                    {reviewStats.productCount}
-                                </Text>
-                                <Text
-                                    fontSize={{ base: '9px', md: '16px' }}
-                                    textAlign={'center'}
-                                >
-                                    Total Products
-                                </Text>
+                                <Flex flexDir={{ base: 'row', md: 'column' }}>
+                                    <Text
+                                        as="h1"
+                                        mr={{ base: '5px', md: '0' }}
+                                        fontSize={{ base: '9px', md: '32px' }}
+                                        textAlign={'center'}
+                                        color="primary.green.900"
+                                    >
+                                        {reviewStats.productCount}
+                                    </Text>
+                                    <Text
+                                        fontSize={{ base: '9px', md: '16px' }}
+                                        textAlign={'center'}
+                                    >
+                                        Total Products
+                                    </Text>
+                                </Flex>
                             </Flex>
 
                             <Flex
+                                alignSelf={'center'}
                                 flexDir={{ base: 'row', md: 'column' }}
                                 justifyContent={{ base: 'end', md: 'normal' }}
                                 width={{ base: '100px', md: '166px' }}
