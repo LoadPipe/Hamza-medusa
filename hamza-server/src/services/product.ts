@@ -177,7 +177,9 @@ class ProductService extends MedusaProductService {
             // Ensure all products are non-null and have valid IDs
             const validProducts = addedProducts.filter((p) => p && p.id);
             if (validProducts.length !== addedProducts.length) {
-                this.logger.error('Some products were not created successfully');
+                this.logger.error(
+                    'Some products were not created successfully'
+                );
             }
 
             //get the store
@@ -238,6 +240,28 @@ class ProductService extends MedusaProductService {
             where: { store_id: storeId },
             // relations: ['store'],
         });
+    }
+
+    async getCategoriesByStoreId(storeId: string): Promise<Product[]> {
+        try {
+            const query = `
+                SELECT pc.*
+                FROM product p
+                JOIN product_category_product pcp ON p.id = pcp.product_id
+                JOIN product_category pc ON pcp.product_category_id = pc.id
+                WHERE p.store_id = $1
+            `;
+
+            const categories = await this.productRepository_.query(query, [
+                storeId,
+            ]);
+            return categories;
+        } catch (error) {
+            this.logger.error('Error fetching categories by store ID:', error);
+            throw new Error(
+                'Failed to fetch categories for the specified store.'
+            );
+        }
     }
 
     async getStoreFromProduct(productId: string): Promise<string> {
