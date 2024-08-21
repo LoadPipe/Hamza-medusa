@@ -22,9 +22,9 @@ const LineItemPrice = ({
     region,
     style = 'default',
 }: LineItemPriceProps) => {
-    const originalPrice =
-        (item.variant as CalculatedVariant).original_price * item.quantity;
-    const hasReducedPrice = (item.total || 0) < originalPrice;
+    const unitPrice = (item.variant as CalculatedVariant).prices.find(p => p.currency_code == item.currency_code).amount;
+    const price = unitPrice * item.quantity;
+    const hasReducedPrice = (item.total || 0) < price;
 
     return (
         <div className="flex flex-col gap-x-2 text-ui-fg-subtle items-end">
@@ -39,17 +39,17 @@ const LineItemPrice = ({
                             )}
                             <span className="line-through text-ui-fg-muted">
                                 {formatCryptoPrice(
-                                    originalPrice,
-                                    item.currency_code ?? ''
+                                    price,
+                                    item.currency_code ?? 'usdc'
                                 )}{' '}
-                                {item.currency_code?.toUpperCase() ?? ''}
+                                {item.currency_code?.toUpperCase() ?? 'usdc'}
                             </span>
                         </p>
                         {style === 'default' && (
                             <span className="text-ui-fg-interactive">
                                 -
                                 {getPercentageDiff(
-                                    originalPrice,
+                                    price,
                                     item.total || 0
                                 )}
                                 %
@@ -66,13 +66,13 @@ const LineItemPrice = ({
                         'text-ui-fg-interactive': hasReducedPrice,
                     })}
                 >
-                    {!isNaN(originalPrice) &&
+                    {!isNaN(price) &&
                         formatCryptoPrice(
-                            originalPrice,
+                            price,
                             item.currency_code ?? ''
                         ) +
-                            ' ' +
-                            (item.currency_code?.toUpperCase() ?? '')}
+                        ' ' +
+                        (item.currency_code?.toUpperCase() ?? '')}
                 </Text>
             </div>
         </div>
