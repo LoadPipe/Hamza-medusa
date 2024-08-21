@@ -22,6 +22,8 @@ import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 type CreateProductInput = MedusaCreateProductInput & { store_id: string, bucky_metadata?: string };
 //type UpdateProductInput = MedusaUpdateProductInput & { store_id: string, bucky_metadata?: string };
 
+const SHIPPING_COST_MIN: number = 1000;
+
 export default class BuckydropService extends TransactionBaseService {
     protected readonly logger: Logger;
     protected readonly productService_: ProductService;
@@ -111,6 +113,9 @@ export default class BuckydropService extends TransactionBaseService {
         let gotPrice = false;
 
         try {
+            //this subtotal is calculated to compare with the shipping cost  
+            let subtotal = 0;
+
             const cart: Cart = await this.cartService_.retrieve(cartId, {
                 relations: [
                     'items.variant.product.store',
@@ -153,9 +158,12 @@ export default class BuckydropService extends TransactionBaseService {
                         weight: variantMetadata.weight ?? 100,
                         categoryCode: productMetadata.detail.categoryCode
                     });
+
+                    subtotal += item.unit_price * item.quantity;
                 }
             }
 
+            console.log('subtotal is ', subtotal);
             const estimate = await this.buckyClient.getShippingCostEstimate(10, 1, input);
 
             if (estimate?.data?.total) {
@@ -166,19 +174,36 @@ export default class BuckydropService extends TransactionBaseService {
                 });
                 gotPrice = true;
             }
+            console.log('estimate is ', output);
+
+
+            //if price was not yet converted, or nothing came back, do it now
+            if (!gotPrice) {
+
+                //this needs to be converted to USDC in order to compare
+                if (output <= 0 && subtotal > 0) {
+                    subtotal = await this.priceConverter.getPrice(
+                        { baseAmount: subtotal, baseCurrency: currency, toCurrency: 'usdc' }
+                    );
+                    console.log('subtotal is now', subtotal);
+
+                    //final calculated price should be 
+                    output = subtotal < SHIPPING_COST_MIN ? SHIPPING_COST_MIN : subtotal;
+                    console.log('output is ', output);
+                }
+
+                output = await this.priceConverter.getPrice({
+                    baseAmount: output,
+                    baseCurrency: 'usdc',
+                    toCurrency: currency
+                });
+            }
         }
         catch (e) {
             this.logger.error(`Error calculating shipping costs in BuckydropService`, e);
+            output = SHIPPING_COST_MIN;
         }
 
-        //if price was not yet converted, do it now
-        if (!gotPrice && !currency.startsWith('us') && output > 0) {
-            output = await this.priceConverter.getPrice({
-                baseAmount: output,
-                baseCurrency: 'usdc',
-                toCurrency: currency
-            })
-        }
         return output;
     }
 
