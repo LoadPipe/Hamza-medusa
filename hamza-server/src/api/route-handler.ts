@@ -36,6 +36,10 @@ export class RouteHandler {
         if (req.params) {
             this.inputParams = { ...this.inputParams, ...req.params };
         }
+
+        if (req.query) {
+            this.inputParams = { ...this.inputParams, ...req.query };
+        }
     }
 
     public async handle(fn: (_this?: RouteHandler) => void) {

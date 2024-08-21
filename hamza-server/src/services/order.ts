@@ -24,6 +24,7 @@ import {
     ICreateBuckyOrderProduct,
 } from '../buckydrop/bucky-client';
 import ProductRepository from '@medusajs/medusa/dist/repositories/product';
+import BuckydropService from './buckydrop';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
 // In medusa we have these 5 DEFAULT order.STATUS's {PENDING, COMPLETED, ARCHIVED, CANCELED, REQUIRES_ACTION}
@@ -55,6 +56,7 @@ export default class OrderService extends MedusaOrderService {
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly logger: Logger;
     protected buckyClient: BuckyClient;
+    protected buckyService: BuckydropService;
 
     constructor(container) {
         super(container);
@@ -265,6 +267,8 @@ export default class OrderService extends MedusaOrderService {
                 });
 
                 this.logger.debug('cart.email: ' + cart.email);
+
+                //TODO: replace this with a BuckyService call, and get rid of buckyClient
                 const output = await this.buckyClient.createOrder({
                     partnerOrderNo: order.id.replace('_', ''),
                     //partnerOrderNoName: order.id, //TODO: what go here?
@@ -297,15 +301,25 @@ export default class OrderService extends MedusaOrderService {
         }
     }
 
-    async cancellationStatus(orderId: string) {
-        const order = await this.orderRepository_.findOne({
+    async cancelOrder(orderId: string) {
+        //get order
+        let order: Order = await this.orderRepository_.findOne({
             where: { id: orderId },
         });
+
+        //set order status
         if (order.status === OrderStatus.PENDING) {
             order.status = OrderStatus.CANCELED;
+
             await this.orderRepository_.save(order);
-            return order;
         }
+
+        //special handling for buckydrop order 
+        if (order.bucky_metadata) {
+            order = await this.buckyService.cancelOrder(order.id);
+        }
+
+        return order;
     }
 
     async orderStatus(orderId: string) {
@@ -528,6 +542,41 @@ export default class OrderService extends MedusaOrderService {
         return uniqueCart;
     }
 
+    async getNotReviewedOrders(customer_id: string) {
+        const orderRepository = this.activeManager_.getRepository(Order);
+        const notReviewedOrders = await orderRepository
+            .createQueryBuilder('order')
+            .leftJoinAndSelect('order.products', 'product')
+            .leftJoinAndSelect('order.store', 'store')
+            .leftJoin(
+                'order.reviews',
+                'review',
+                'review.customer_id = :customer_id',
+                { customer_id }
+            )
+            .select([
+                'order.id',
+                'order.status',
+                'product.thumbnail',
+                // 'store.icon',
+            ])
+            .where('order.customer_id = :customer_id', { customer_id })
+            .andWhere('review.id IS NULL') // Ensures that the order has no reviews
+            .andWhere('order.status != :status', { status: 'archived' })
+            .getMany();
+
+        if (!notReviewedOrders || notReviewedOrders.length === 0) {
+            throw new Error('No unreviewed orders found');
+        }
+
+        return notReviewedOrders.map((order) => ({
+            order_id: order.id,
+            status: order.status,
+            // store_logo: order.store.icon,
+            // thumbnails: order.products.map((product) => product.thumbnail), // Assuming multiple products can be in one order
+        }));
+    }
+
     async listCustomerOrders(
         customerId: string
     ): Promise<{ orders: any[]; cartCount: number }> {
@@ -598,9 +647,9 @@ export default class OrderService extends MedusaOrderService {
 
         return relevantItems?.length
             ? {
-                  products: relevantItems.map((i) => i.variant.product),
-                  quantities: relevantItems.map((i) => i.quantity),
-              }
+                products: relevantItems.map((i) => i.variant.product),
+                quantities: relevantItems.map((i) => i.quantity),
+            }
             : { products: [], quantities: [] };
     }
 
@@ -614,9 +663,9 @@ export default class OrderService extends MedusaOrderService {
 
         return relevantItems?.length
             ? {
-                  variants: relevantItems.map((i) => i.variant),
-                  quantities: relevantItems.map((i) => i.quantity),
-              }
+                variants: relevantItems.map((i) => i.variant),
+                quantities: relevantItems.map((i) => i.quantity),
+            }
             : { variants: [], quantities: [] };
     }
 }

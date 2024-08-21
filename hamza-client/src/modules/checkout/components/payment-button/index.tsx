@@ -210,11 +210,12 @@ const CryptoPaymentButton = ({
      */
     const redirectToOrderConfirmation = (
         orderId: string,
+        cartId: string,
         countryCode: string
     ) => {
         //finally, if all good, redirect to order confirmation page
         if (orderId?.length) {
-            router.push(`/${countryCode}/order/confirmed/${orderId}`);
+            router.push(`/${countryCode}/order/confirmed/${orderId}?cart=${cartId}`);
         }
     };
 
@@ -261,6 +262,7 @@ const CryptoPaymentButton = ({
                 //redirect to confirmation page
                 redirectToOrderConfirmation(
                     data?.orders?.length ? data.orders[0].order_id : null,
+                    cart.id,
                     countryCode
                 );
             } else {
@@ -280,8 +282,9 @@ const CryptoPaymentButton = ({
 
     const cancelOrderFromCart = async () => {
         try {
-            let response = await axios.get(
-                `${MEDUSA_SERVER_URL}/custom/cancel-order/${cart.id}`
+            let response = await axios.post(
+                `${MEDUSA_SERVER_URL}/custom/cart/cancel`,
+                { cart_id: cart.id }
             );
             return;
         } catch (e) {
