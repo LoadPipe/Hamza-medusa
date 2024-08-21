@@ -1,4 +1,5 @@
 import { Cart, Order } from '@medusajs/medusa';
+import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { Box, Flex, Heading, VStack, Text, Divider } from '@chakra-ui/react';
 import Help from '@modules/order/components/help';
@@ -57,24 +58,29 @@ export default function OrderCompletedTemplate({
                 Order confirmation has been sent to your registered email
             </Text>
 
+            {/* Order Body */}
             <OrderDetails order={order} />
             <Divider my="2rem" borderColor="#555555" />
             <Summary cart_id={order.cart_id} />
             <Divider my="1rem" borderColor="#555555" />
             <TransactionDetails data={cart} />
 
-            <Flex
-                height={'52px'}
-                mt="2rem"
-                bgColor="primary.indigo.900"
-                width={'100%'}
-                justifyContent={'center'}
-                alignItems={'center'}
-                borderRadius={'full'}
-                cursor={'pointer'}
-            >
-                <Text>Check Order Status</Text>
-            </Flex>
+            {/* Check Order Buttin */}
+            <Link href="/account/orders" style={{ width: '100%' }}>
+                <Flex
+                    height={{ base: '42px', md: '52px' }}
+                    mt="2rem"
+                    bgColor="primary.indigo.900"
+                    justifyContent={'center'}
+                    alignItems={'center'}
+                    borderRadius={'full'}
+                    cursor={'pointer'}
+                >
+                    <Text fontSize={{ base: '14px', md: '16px' }}>
+                        Check Order Status
+                    </Text>
+                </Flex>
+            </Link>
 
             {/* <CartTotals  /> */}
             {/* <OrderDetails order={order} />
