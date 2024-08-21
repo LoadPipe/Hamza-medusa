@@ -238,6 +238,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                                             : `${reviewStats.avgRating.toFixed(1)}`}
                                     </Text>
                                     <Text
+                                        mt={{ base: '0', md: '0.75rem' }}
                                         fontSize={{ base: '9px', md: '16px' }}
                                         textAlign={'center'}
                                     >
@@ -274,6 +275,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                                         {reviewStats.productCount}
                                     </Text>
                                     <Text
+                                        mt={{ base: '0', md: '0.75rem' }}
                                         fontSize={{ base: '9px', md: '16px' }}
                                         textAlign={'center'}
                                     >
@@ -298,6 +300,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                                     {reviewStats.numberOfFollowers}
                                 </Text>
                                 <Text
+                                    mt={{ base: '0', md: '0.75rem' }}
                                     fontSize={{ base: '9px', md: '16px' }}
                                     textAlign={'center'}
                                 >
