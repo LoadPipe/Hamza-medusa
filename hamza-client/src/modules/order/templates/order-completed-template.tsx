@@ -49,7 +49,7 @@ export default function OrderCompletedTemplate({
             <Box color="primary.green.900" mb="1rem">
                 <MdOutlineCheckCircle size={'72px'} />
             </Box>
-            <Text as="h1" fontSize={'24px'} fontWeight={700}>
+            <Text fontSize={'24px'} fontWeight={700}>
                 Payment Successful!
             </Text>
             <Text fontWeight={600}>Thank you for your order!</Text>

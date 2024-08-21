@@ -61,7 +61,11 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                             Subtotal
                         </Text>
                         <Text ml="auto" fontSize={{ base: '14px', md: '16px' }}>
-                            {formatCryptoPrice(subtotals[currencyCode], currencyCode)} {currencyCode.toUpperCase()}
+                            {formatCryptoPrice(
+                                subtotals[currencyCode],
+                                currencyCode
+                            )}{' '}
+                            {currencyCode.toUpperCase()}
                         </Text>
                     </Flex>
                 )}
@@ -114,7 +118,7 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
             </Flex>
             {/* <div className="h-px w-full border-b border-gray-200 mt-4" /> */}
 
-            {subtotals[currencyCode] && (
+            {/* {subtotals[currencyCode] && (
                 <Flex color={'white'}>
                     <Text
                         fontSize={{ base: '15px', md: '16px' }}
@@ -130,12 +134,13 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                         {formatCryptoPrice(subtotals[currencyCode], currencyCode)}{' '}{currencyCode.toUpperCase()}
                     </Text>
                 </Flex>
-            )}
+            )} */}
             <Divider my="1rem" borderColor="#555555" />
             <Flex width={'100%'}>
                 <Text>Grand Total</Text>
                 <Text ml="auto">
-                    {formatCryptoPrice(grandTotal, currencyCode)} {currencyCode.toUpperCase()}
+                    {formatCryptoPrice(grandTotal, currencyCode)}{' '}
+                    {currencyCode.toUpperCase()}
                 </Text>
             </Flex>
         </Flex>
