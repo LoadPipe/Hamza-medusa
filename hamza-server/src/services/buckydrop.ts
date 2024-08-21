@@ -106,7 +106,7 @@ export default class BuckydropService extends TransactionBaseService {
     }
 
     async calculateShippingPriceForCart(cartId: string): Promise<number> {
-        let output = 300;
+        let output = 0;
         let currency = 'usdc';
         let gotPrice = false;
 
@@ -172,7 +172,7 @@ export default class BuckydropService extends TransactionBaseService {
         }
 
         //if price was not yet converted, do it now
-        if (!gotPrice && !currency.startsWith('us')) {
+        if (!gotPrice && !currency.startsWith('us') && output > 0) {
             output = await this.priceConverter.getPrice({
                 baseAmount: output,
                 baseCurrency: 'usdc',
