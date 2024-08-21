@@ -163,18 +163,18 @@ export default class BuckydropService extends TransactionBaseService {
                 }
             }
 
-            console.log('subtotal is ', subtotal);
-            const estimate = await this.buckyClient.getShippingCostEstimate(10, 1, input);
+            if (subtotal > 0) {
+                const estimate = await this.buckyClient.getShippingCostEstimate(10, 1, input);
 
-            if (estimate?.data?.total) {
-                output = await this.priceConverter.getPrice({
-                    baseAmount: estimate.data.total,
-                    baseCurrency: 'cny',
-                    toCurrency: currency
-                });
-                gotPrice = true;
+                if (estimate?.data?.total) {
+                    output = await this.priceConverter.getPrice({
+                        baseAmount: estimate.data.total,
+                        baseCurrency: 'cny',
+                        toCurrency: currency
+                    });
+                    gotPrice = true;
+                }
             }
-            console.log('estimate is ', output);
 
 
             //if price was not yet converted, or nothing came back, do it now
@@ -185,11 +185,9 @@ export default class BuckydropService extends TransactionBaseService {
                     subtotal = await this.priceConverter.getPrice(
                         { baseAmount: subtotal, baseCurrency: currency, toCurrency: 'usdc' }
                     );
-                    console.log('subtotal is now', subtotal);
 
                     //final calculated price should be 
                     output = subtotal < SHIPPING_COST_MIN ? SHIPPING_COST_MIN : subtotal;
-                    console.log('output is ', output);
                 }
 
                 output = await this.priceConverter.getPrice({
