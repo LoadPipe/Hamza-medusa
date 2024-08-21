@@ -138,7 +138,7 @@ Content-Type: application/json
 }
 
 ### Get All Product Reviews
-GET http://localhost:9000/custom/review/all-reviews?product_id=prod_01J5R22FMC8VRTQK25MKPK2G4K
+GET http://localhost:9000/custom/review/all-reviews?product_id=prod_01J5R22FTSYT5MSYDEHGJME9BH
 Content-Type: application/json
 
 
