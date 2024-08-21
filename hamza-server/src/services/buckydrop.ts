@@ -6,7 +6,8 @@ import {
     Cart,
     LineItem,
     OrderStatus,
-    FulfillmentStatus
+    FulfillmentStatus,
+    CustomerService
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
 import OrderService from '../services/order';
@@ -25,6 +26,7 @@ export default class BuckydropService extends TransactionBaseService {
     protected readonly logger: Logger;
     protected readonly productService_: ProductService;
     protected readonly cartService_: CartService;
+    protected readonly customerService_: CustomerService;
     protected readonly orderService_: OrderService;
     protected readonly orderRepository_: typeof OrderRepository;
     protected readonly priceConverter: PriceConverter;
@@ -36,6 +38,7 @@ export default class BuckydropService extends TransactionBaseService {
         this.cartService_ = container.cartService;
         this.orderRepository_ = container.orderRepository;
         this.orderService_ = container.orderService;
+        this.customerService_ = container.customerService;
         this.logger = container.logger;
         this.priceConverter = new PriceConverter();
         this.buckyClient = new BuckyClient();
@@ -45,14 +48,16 @@ export default class BuckydropService extends TransactionBaseService {
         keyword: string,
         storeId: string,
         collectionId: string,
-        salesChannelId: string
+        salesChannelId: string,
+        count: number = 10,
+        page: number = 1
     ): Promise<Product[]> {
         //retrieve products from bucky and convert them
         const buckyClient: BuckyClient = new BuckyClient();
         const searchResults = await buckyClient.searchProducts(
             keyword,
-            1,
-            3
+            page,
+            count
         );
         this.logger.debug(`search returned ${searchResults.length} results`);
         const productData = searchResults; //[searchResults[4], searchResults[5]];
@@ -101,41 +106,80 @@ export default class BuckydropService extends TransactionBaseService {
     }
 
     async calculateShippingPriceForCart(cartId: string): Promise<number> {
-        const cart: Cart = await this.cartService_.retrieve(cartId, {
-            relations: [
-                'items.variant.product.store',
-                'items.variant.prices', //TODO: we need prices?
-                'customer'
-            ],
-        });
+        let output = 300;
+        let currency = 'usdc';
+        let gotPrice = false;
 
-        //calculate prices
-        const input: IBuckyShippingCostRequest = {
-            lang: 'en',
-            countryCode: cart.shipping_address.country_code,
-            country: cart.shipping_address.country.name,
-            provinceCode: cart.shipping_address.province,
-            province: cart.shipping_address.province,
-            detailAddress: `${cart.shipping_address.address_1 ?? ''} ${cart.shipping_address.address_2 ?? ''}`.trim(),
-            postCode: cart.shipping_address.postal_code,
-            productList: []
-        };
+        try {
+            const cart: Cart = await this.cartService_.retrieve(cartId, {
+                relations: [
+                    'items.variant.product.store',
+                    'items.variant.prices', //TODO: we need prices?
+                    'customer',
+                    'shipping_address.country'
+                ],
+            });
 
-        for (let item of cart.items) {
-            if (item.variant.bucky_metadata?.length) {
-                const variantMetadata = JSON.parse(item.variant.bucky_metadata);
-                const productMetadata = JSON.parse(item.variant.product.bucky_metadata);
-                input.productList.push({
-                    length: variantMetadata.length,
-                    width: variantMetadata.width,
-                    height: variantMetadata.height,
-                    weight: variantMetadata.weight,
-                    categoryCode: productMetadata.detail.categoryCode
+            if (!cart)
+                throw new Error(`Cart with id ${cartId} not found`);
+
+            if (!cart.customer) {
+                cart.customer = await this.customerService_.retrieve(cart.customer_id);
+            }
+
+            currency = cart.customer.preferred_currency_id;
+
+            //calculate prices
+            const input: IBuckyShippingCostRequest = {
+                lang: 'en',
+                countryCode: cart.shipping_address.country_code,
+                country: cart.shipping_address.country.name,
+                provinceCode: cart.shipping_address.province,
+                province: cart.shipping_address.province,
+                detailAddress: `${cart.shipping_address.address_1 ?? ''} ${cart.shipping_address.address_2 ?? ''}`.trim(),
+                postCode: cart.shipping_address.postal_code,
+                productList: []
+            };
+
+            //generate input for each product in cart that is bucky
+            for (let item of cart.items) {
+                if (item.variant.bucky_metadata?.length) {
+                    const variantMetadata = JSON.parse(item.variant.bucky_metadata);
+                    const productMetadata = JSON.parse(item.variant.product.bucky_metadata);
+                    input.productList.push({
+                        length: variantMetadata.length ?? 100,
+                        width: variantMetadata.width ?? 100,
+                        height: variantMetadata.height ?? 100,
+                        weight: variantMetadata.weight ?? 100,
+                        categoryCode: productMetadata.detail.categoryCode
+                    });
+                }
+            }
+
+            const estimate = await this.buckyClient.getShippingCostEstimate(10, 1, input);
+
+            if (estimate?.data?.total) {
+                output = await this.priceConverter.getPrice({
+                    baseAmount: estimate.data.total,
+                    baseCurrency: 'cny',
+                    toCurrency: currency
                 });
+                gotPrice = true;
             }
         }
+        catch (e) {
+            this.logger.error(`Error calculating shipping costs in BuckydropService`, e);
+        }
 
-        return 0;
+        //if price was not yet converted, do it now
+        if (!gotPrice && !currency.startsWith('us')) {
+            output = await this.priceConverter.getPrice({
+                baseAmount: output,
+                baseCurrency: 'usdc',
+                toCurrency: currency
+            })
+        }
+        return output;
     }
 
     async calculateShippingPriceForProduct(cart: Cart, product: Product): Promise<number> {

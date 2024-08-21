@@ -76,25 +76,16 @@ export class BuckyClient {
         });
     }
 
-    // Method to calculate MD5 signature
-    private generateSignature(params: string, timestamp: number): string {
-        const hash = createHash('md5');
-        const data = `${APP_CODE}${params}${timestamp}${APP_SECRET}`;
-        return hash.update(data).digest('hex');
-    }
-
     // Method to get product details
     async getProductDetails(productLink: string): Promise<any> {
         const params = JSON.stringify({
             goodsLink: productLink,
         });
-        const timestamp = Date.now(); // Current timestamp in milliseconds
-        const sign = this.generateSignature(params, timestamp);
 
         return this.client
             .post(
                 //`/api/rest/v2/adapt/openapi/product/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                `/api/rest/v2/adapt/adaptation/product/query?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                this.formatApiUrl('product/query', params), //`/api/rest/v2/adapt/adaptation/product/query?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params,
                 { timeout: 600000 }
             )
@@ -114,13 +105,11 @@ export class BuckyClient {
             size: pageSize,
             item: { keyword: keyword },
         });
-        const timestamp = Date.now();
-        const sign = this.generateSignature(params, timestamp);
 
         return this.client
             .post(
                 //`/api/rest/v2/adapt/openapi/product/search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                `/api/rest/v2/adapt/adaptation/product/search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                this.formatApiUrl('/product/search', params), //?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params,
                 { timeout: 600000 }
             )
@@ -180,12 +169,10 @@ export class BuckyClient {
         createOrderParams: ICreateBuckyOrderParams
     ): Promise<any> {
         const params = JSON.stringify(createOrderParams);
-        const timestamp = Date.now();
-        const sign = this.generateSignature(params, timestamp);
 
         return this.client
             .post(
-                `/api/rest/v2/adapt/adaptation/order/shop-order/create?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                this.formatApiUrl('/order/shop-order/create', params), //?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 //`/api/rest/v2/adapt/openapi/order/create?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params
             )
@@ -201,12 +188,10 @@ export class BuckyClient {
             partnerOrderNo,
         });
 
-        const timestamp = Date.now();
-        const sign = this.generateSignature(params, timestamp);
 
         return this.client
             .post(
-                `/api/rest/v2/adapt/adaptation/order/shop-order/cancel?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                this.formatApiUrl('/order/shop-order/cancel', params), //?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 //`/api/rest/v2/adapt/openapi/order/cancel?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params,
                 {
@@ -227,12 +212,9 @@ export class BuckyClient {
             partnerOrderNo,
         });
 
-        const timestamp = Date.now();
-        const sign = this.generateSignature(params, timestamp);
-
         return this.client
             .post(
-                `/api/rest/v2/adapt/adaptation/order/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                this.formatApiUrl('/order/detail', params), //?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 //`/api/rest/v2/adapt/openapi/order/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 params
             )
@@ -245,9 +227,8 @@ export class BuckyClient {
 
     async getLogisticsInfo(packageCode: string) {
         const params = JSON.stringify({ packageCode });
-        // other setup like timestamp, appCode, sign, etc.
         return this.client
-            .post(`/api/rest/v2/adapt/adaptation/logistics/query-info`, params)
+            .post(this.formatApiUrl('/logistics/query-info', params), params) //query-info?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`, params)
             .then((response) => response.data)
             .catch((error) => {
                 throw error;
@@ -256,9 +237,8 @@ export class BuckyClient {
 
     async getParcelDetails(packageCode: string) {
         const params = JSON.stringify({ packageCode });
-        // other setup like timestamp, appCode, sign, etc.
         return this.client
-            .post(`api/rest/v2/adapt/adaptation/pkg/detail`, params)
+            .post(this.formatApiUrl('/pkg/detail', params), params)
             .then((response) => response.data)
             .catch((error) => {
                 throw error;
@@ -267,12 +247,27 @@ export class BuckyClient {
 
     async getShippingCostEstimate(size: number, current: number, item: IBuckyShippingCostRequest) {
         const params = JSON.stringify({ size, current, item });
-        // other setup like timestamp, appCode, sign, etc.
         return this.client
-            .post(`api/rest/v2/adapt/adaptation/logistics/channel-carriage-list`, params)
+            .post(this.formatApiUrl('/logistics/channel-carriage-list', params), params)
             .then((response) => response.data)
             .catch((error) => {
                 throw error;
             });
+    }
+
+    private formatApiUrl(route: string, params: any = {}): string {
+        route = route.trim();
+        if (!route.startsWith('/'))
+            route = '/' + route;
+        const timestamp = Date.now();
+        const sign = this.generateSignature(params, timestamp);
+        return `/api/rest/v2/adapt/adaptation${route}?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`;
+    }
+
+    // Method to calculate MD5 signature
+    private generateSignature(params: string, timestamp: number): string {
+        const hash = createHash('md5');
+        const data = `${APP_CODE}${params}${timestamp}${APP_SECRET}`;
+        return hash.update(data).digest('hex');
     }
 }

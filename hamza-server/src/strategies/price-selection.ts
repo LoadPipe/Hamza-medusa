@@ -156,6 +156,7 @@ export class PriceConverter {
     cache: { [key: string]: { value: number, timestamp: number } } = {};
     expirationSeconds: 60;
 
+    //TODO: refactor: instead of taking a structure as input, take 3 params
     async getPrice(price: IPrice): Promise<number> {
         let rate: number = this.getFromCache(price);
 
