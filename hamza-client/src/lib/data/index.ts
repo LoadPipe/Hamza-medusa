@@ -186,10 +186,12 @@ export async function getNotReviewed(customer_id: string) {
 
 export async function allReviews(product_id: string) {
     try {
-        const response = await axios.post(
+        const response = await axios.get(
             `${BACKEND_URL}/custom/review/all-reviews`,
             {
-                product_id: product_id,
+                params: {
+                    product_id: product_id,
+                },
             }
         );
         return response.data;

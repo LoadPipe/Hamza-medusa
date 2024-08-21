@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import {
     Modal,
     ModalOverlay,
@@ -9,51 +8,68 @@ import {
     ModalHeader,
     ModalBody,
     ModalCloseButton,
+    Box,
     Button,
     Image,
     Text,
-    Box,
 } from '@chakra-ui/react';
 import { updateProductReview } from '@lib/data';
+import toast from 'react-hot-toast';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
-
-// TODO: WHEN TO TRIGGER getAllProductReviews? 1. Initial load 2. Set new Review
-// Why can't we set isOpen: boolean?
-const EditReviewTemplate = ({ review, isOpen, onClose }: any) => {
+const EditReviewTemplate = ({
+    review,
+    isOpen,
+    onClose,
+    onReviewUpdated,
+}: any) => {
     const [currentReview, setCurrentReview] = useState(review.content || '');
     const [rating, setRating] = useState(review.rating || 0);
     const [hovered, setHovered] = useState(0);
-    const [submissionSuccess, setSubmissionSuccess] = useState(false);
 
     useEffect(() => {
-        // No need to fetch details if they are already passed as props
-        console.log(`Review issss?D: ${JSON.stringify(review)}`);
-        setRating(review.rating);
+        if (
+            review &&
+            (review.content !== currentReview || review.rating !== rating)
+        ) {
+            setCurrentReview(review.content || '');
+            setRating(review.rating || 0);
+        }
     }, [review]);
 
     const submitReview = async () => {
+        const data = {
+            product_id: review.product_id,
+            content: currentReview,
+            rating: Number(rating),
+            customer_id: review.customer_id,
+            order_id: review.order_id,
+        };
+
         try {
             const response = await updateProductReview(
-                review.product_id,
-                currentReview,
-                rating,
-                review.customer_id,
-                review.order_id
+                data.product_id,
+                data.content,
+                data.rating,
+                data.customer_id,
+                data.order_id
             );
 
+            setCurrentReview('');
+            setRating(0);
             if (response) {
-                setCurrentReview('');
-                setRating(0);
-                setSubmissionSuccess(true); // Update the state to indicate success
-                console.log('Review updated successfully');
-            } else {
-                console.error('Failed to update review');
-                alert('Failed to update review');
+                toast.success('Review Updated Successfully!');
+
+                if (onReviewUpdated) {
+                    onReviewUpdated({
+                        ...review,
+                        content: currentReview,
+                        rating: Number(rating),
+                    });
+                }
+                onClose();
             }
         } catch (error) {
-            console.error('Failed to submit review: ', error);
-            alert('Failed to submit review: ' + error);
+            toast.error('Failed to submit Review.');
         }
     };
 
@@ -65,113 +81,114 @@ const EditReviewTemplate = ({ review, isOpen, onClose }: any) => {
         'Delighted',
     ];
 
-    // TODO: Seems like once we if(response).... is setting all the other reviews to 0 star....
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
             <ModalContent>
-                {!submissionSuccess ? (
-                    <>
-                        <ModalHeader>Edit Your Review</ModalHeader>
-                        <ModalCloseButton />
-                        <ModalBody>
-                            <>
-                                <Box className="flex items-center mb-4">
-                                    <Image
-                                        src={review.thumbnail}
-                                        alt={review.title}
-                                        boxSize="96px"
-                                        mr="4"
-                                    />
-                                    <Box>
-                                        <Text
-                                            fontSize="xl"
-                                            fontWeight="semibold"
-                                        >
-                                            {review.title}
-                                        </Text>
-                                        <Text
-                                            dangerouslySetInnerHTML={{
-                                                __html:
-                                                    review.description || '',
-                                            }}
-                                        ></Text>
-                                    </Box>
-                                </Box>
-                                <Box>
-                                    <Box className="flex items-center mb-2">
-                                        {[1, 2, 3, 4, 5].map((star: number) => (
-                                            <Button
-                                                key={star}
-                                                size="lg"
-                                                variant={
-                                                    star <= (hovered || rating)
-                                                        ? 'solid'
-                                                        : 'ghost'
-                                                }
-                                                colorScheme={
-                                                    star <= (hovered || rating)
-                                                        ? 'yellow'
-                                                        : 'gray'
-                                                }
-                                                onClick={() => setRating(star)}
-                                                onMouseEnter={() =>
-                                                    setHovered(star)
-                                                }
-                                                onMouseLeave={() =>
-                                                    setHovered(0)
-                                                }
-                                            >
-                                                ★
-                                            </Button>
-                                        ))}
-                                        <Text
-                                            ml="2"
-                                            fontSize="sm"
-                                            fontWeight="medium"
-                                        >
-                                            {ratingDescriptions[rating - 1] ||
-                                                ''}
-                                        </Text>
-                                    </Box>
-                                    <Text fontSize="md" fontWeight="bold">
-                                        Review Detail
-                                    </Text>
-                                    <textarea
-                                        className="w-full p-2 border rounded text-black"
-                                        rows={4}
-                                        placeholder="What do you think of this product?"
-                                        value={currentReview}
-                                        onChange={(e) =>
-                                            setCurrentReview(e.target.value)
-                                        }
-                                    />
-                                </Box>
-                            </>
-                        </ModalBody>
+                <ModalHeader
+                    color={'primary.green.900'}
+                    justifyContent={'center'}
+                    alignContent={'center'}
+                >
+                    Edit Your Review
+                </ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                    <Box className="flex items-center mb-4">
+                        <Image
+                            src={review.product.thumbnail}
+                            alt={review.title}
+                            boxSize="96px"
+                            mr="4"
+                        />
+                        <Box>
+                            <Text fontSize="xl" fontWeight="semibold">
+                                {review.title}
+                            </Text>
+                            <Text
+                                dangerouslySetInnerHTML={{
+                                    __html: review.description || '',
+                                }}
+                            ></Text>
+                        </Box>
+                    </Box>
+                    <Box>
+                        <Box className="flex items-center mb-2">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <button
+                                    key={star}
+                                    className={`text-2xl ${
+                                        star <= (hovered || rating)
+                                            ? 'text-yellow-500'
+                                            : 'text-gray-400'
+                                    }`}
+                                    onMouseEnter={() => setHovered(star)}
+                                    onMouseLeave={() => setHovered(0)}
+                                    onClick={() => {
+                                        setRating(star);
+                                        setHovered(star);
+                                    }}
+                                >
+                                    ★
+                                </button>
+                            ))}
+                            <span className="ml-2 text-sm font-medium text-black self-center">
+                                {ratingDescriptions[rating - 1] || ''}
+                            </span>
+                        </Box>
+                        <p className="text-black">Review Detail</p>
+                        <textarea
+                            className="w-full p-2 border rounded text-black"
+                            rows={4}
+                            placeholder="What do you think of this product?"
+                            value={currentReview}
+                            onChange={(e) => setCurrentReview(e.target.value)}
+                        />
+                        {currentReview.trim().length < 50 && (
+                            <Text color="red.500" fontSize="sm" mt={2}>
+                                Review must be at least 50 characters long.
+                            </Text>
+                        )}
                         <Button
-                            colorScheme="blue"
-                            mr={3}
+                            variant="solid"
+                            borderColor={'primary.indigo.900'}
+                            color={'primary.indigo.900'}
+                            width={'180px'}
+                            height={'47px'}
+                            borderRadius={'37px'}
+                            onClick={() => {
+                                onClose();
+                                setRating(0);
+                                setCurrentReview('');
+                            }}
+                        >
+                            Cancel
+                        </Button>
+
+                        <Box
+                            as="button"
+                            mt={4}
+                            borderRadius={'37px'}
+                            backgroundColor={
+                                rating === 0 || currentReview.trim().length < 50
+                                    ? 'gray.400'
+                                    : 'primary.indigo.900'
+                            }
+                            color={'white'}
+                            fontSize={'18px'}
+                            fontWeight={600}
+                            height={'47px'}
+                            width={'180px'}
+                            ml={'20px'}
                             onClick={submitReview}
                             disabled={
-                                rating === 0 || currentReview.trim() === ''
+                                rating === 0 || currentReview.trim().length < 50
                             }
                         >
-                            Submit Review
-                        </Button>
-                    </>
-                ) : (
-                    <>
-                        <ModalHeader>Your Review has been Updated</ModalHeader>
-                        <ModalCloseButton />
-                        <Text className="text-center p-4 text-green-500">
-                            Review has been submitted successfully!
-                        </Text>
-                    </>
-                )}
-                <Button variant="ghost" onClick={onClose}>
-                    Close
-                </Button>
+                            Submit
+                        </Box>
+                    </Box>
+                </ModalBody>
             </ModalContent>
         </Modal>
     );
