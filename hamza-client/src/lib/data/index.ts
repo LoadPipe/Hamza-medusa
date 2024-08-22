@@ -350,11 +350,10 @@ export async function cancelOrder(order_id: string) {
         const response = await axios.post(
             `${BACKEND_URL}/custom/order/cancel`,
             {
-                params: {
-                    order_id: order_id,
-                },
+                order_id
             }
         );
+
         return response;
     } catch (error) {
         console.error('Error cancelling order:', error);
