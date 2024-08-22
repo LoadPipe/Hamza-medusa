@@ -67,7 +67,7 @@ class StoreService extends MedusaStoreService {
         store: Store,
         collection: String
     ): Promise<any> {
-        let collectionListUrl = `http://localhost:9000/store/products?collection_id[]=${collection}`;
+        let collectionListUrl = `http://localhost:${process.env.PORT}/store/products?collection_id[]=${collection}`;
         this.logger.debug(
             'Fetching products from collection: ' + collectionListUrl
         );
@@ -78,7 +78,10 @@ class StoreService extends MedusaStoreService {
 
             // Map `each` product to a `POST` request to update product with `store_id`
             const updatePromises: Promise<void>[] = products.map((product) => {
-                this.productRepository_.save({ id: product.id, store_id: store.id })
+                this.productRepository_.save({
+                    id: product.id,
+                    store_id: store.id,
+                });
             });
 
             await Promise.all(updatePromises);
