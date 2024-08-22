@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { orderBucket, orderDetails, singleBucket } from '@lib/data';
-import { Box, Button } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Collapse,
+    Flex,
+    Text,
+    VStack,
+    HStack,
+} from '@chakra-ui/react';
 import ProcessingOrderCard from '@modules/account/components/processing-order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
@@ -11,6 +19,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [cancelReason, setCancelReason] = useState('');
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
+    const [expandViewOrder, setExpandViewOrder] = useState(false);
 
     const [customerOrder, setCustomerOrder] = useState<any[] | null>(null);
     const [orderStatuses, setOrderStatuses] = useState<{
@@ -25,6 +34,11 @@ const Processing = ({ orders }: { orders: any[] }) => {
         setCancelReason('');
         setIsAttemptedSubmit(false);
     };
+
+    const toggleViewOrder = () => {
+        setExpandViewOrder(!expandViewOrder);
+    };
+
     useEffect(() => {
         console.log('Orders received in Processing:', orders);
         if (orders && orders.length > 0) {
@@ -97,22 +111,106 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                         }
                                     />
                                     <div className="flex justify-end pr-4">
-                                        {' '}
-                                        {/* This div is necessary to create a flexbox container */}
-                                        <LocalizedClientLink
-                                            href={`/account/orders/details/${order.id}`}
-                                            passHref
-                                            className=""
+                                        <Box
+                                            color={'primary.green.900'}
+                                            onClick={toggleViewOrder}
                                         >
-                                            <Button
-                                                variant="outline"
-                                                colorScheme="white"
-                                                borderRadius={'37px'}
-                                            >
-                                                Check Details
-                                            </Button>
-                                        </LocalizedClientLink>
+                                            View Order
+                                        </Box>
                                     </div>
+                                    {/* Collapsible Section */}
+                                    <Collapse
+                                        in={expandViewOrder}
+                                        animateOpacity
+                                    >
+                                        <Box mt={4}>
+                                            <Flex justify="space-between">
+                                                <Text>Order History</Text>
+                                                <Text>Order Details</Text>
+                                            </Flex>
+
+                                            <HStack spacing={8} align="stretch">
+                                                {/* Order History Section */}
+                                                <VStack
+                                                    align="start"
+                                                    spacing={4}
+                                                    p={4}
+                                                    borderWidth="1px"
+                                                    borderRadius="lg"
+                                                    flex="1"
+                                                    bg="gray.900"
+                                                >
+                                                    <Text fontWeight="bold">
+                                                        Order History
+                                                    </Text>
+                                                    <Box>
+                                                        <Text>
+                                                            Order Placed
+                                                        </Text>
+                                                        <Text fontSize="sm">
+                                                            18/07/2024 | 3:43 pm
+                                                        </Text>
+                                                    </Box>
+                                                    <Box>
+                                                        <Text>
+                                                            Payment Complete
+                                                        </Text>
+                                                        <Text fontSize="sm">
+                                                            18/07/2024 | 3:43 pm
+                                                        </Text>
+                                                    </Box>
+                                                    <Box>
+                                                        <Text>
+                                                            Order Confirmed
+                                                        </Text>
+                                                        <Text fontSize="sm">
+                                                            18/07/2024 | 3:49 pm
+                                                        </Text>
+                                                    </Box>
+                                                    <Box>
+                                                        <Text>
+                                                            Product Packaging
+                                                        </Text>
+                                                        <Text fontSize="sm">
+                                                            18/07/2024 | 5:12 pm
+                                                        </Text>
+                                                    </Box>
+                                                    <Box>
+                                                        <Text>
+                                                            Product Shipped
+                                                        </Text>
+                                                        <Text fontSize="sm">
+                                                            18/07/2024 | 6:12 pm
+                                                        </Text>
+                                                    </Box>
+                                                </VStack>
+
+                                                {/* Order Details Section */}
+                                                <VStack
+                                                    align="start"
+                                                    spacing={4}
+                                                    p={4}
+                                                    borderWidth="1px"
+                                                    borderRadius="lg"
+                                                    flex="1"
+                                                    bg="gray.900"
+                                                >
+                                                    <Text fontWeight="bold">
+                                                        Order Details
+                                                    </Text>
+                                                    <Text>
+                                                        Courier: DHL Express
+                                                    </Text>
+                                                    <Text>
+                                                        Address: Maharlika St,
+                                                        San Fernando, 2000
+                                                        Pampanga
+                                                    </Text>
+                                                    {/* Additional order details here */}
+                                                </VStack>
+                                            </HStack>
+                                        </Box>
+                                    </Collapse>
                                 </Box>
                             )
                         )}
