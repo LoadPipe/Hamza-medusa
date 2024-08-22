@@ -239,19 +239,6 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                             fontSize="sm"
                                                                             color="gray.400"
                                                                         >
-                                                                            Vendor:
-                                                                        </Text>
-                                                                        <Text fontWeight="bold">
-                                                                            Apple
-                                                                            Official
-                                                                            Store
-                                                                        </Text>
-                                                                    </Box>
-                                                                    <Box>
-                                                                        <Text
-                                                                            fontSize="sm"
-                                                                            color="gray.400"
-                                                                        >
                                                                             Order
                                                                             Date:
                                                                         </Text>
@@ -263,6 +250,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                             3:43pm
                                                                         </Text>
                                                                     </Box>
+
                                                                     <Box>
                                                                         <Text
                                                                             fontSize="sm"
@@ -273,6 +261,18 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                         </Text>
                                                                         <Text fontWeight="bold">
                                                                             11
+                                                                        </Text>
+                                                                    </Box>
+                                                                    <Box>
+                                                                        <Text
+                                                                            fontSize="sm"
+                                                                            color="gray.400"
+                                                                        >
+                                                                            Item
+                                                                            ID:
+                                                                        </Text>
+                                                                        <Text fontWeight="bold">
+                                                                            item_11ijnovwd124
                                                                         </Text>
                                                                     </Box>
                                                                     <Box>
@@ -311,6 +311,19 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                         <Text fontWeight="bold">
                                                                             On
                                                                             Process
+                                                                        </Text>
+                                                                    </Box>
+                                                                    <Box>
+                                                                        <Text
+                                                                            fontSize="sm"
+                                                                            color="gray.400"
+                                                                        >
+                                                                            Vendor:
+                                                                        </Text>
+                                                                        <Text fontWeight="bold">
+                                                                            Apple
+                                                                            Official
+                                                                            Store
                                                                         </Text>
                                                                     </Box>
                                                                 </VStack>
