@@ -286,7 +286,9 @@ export class BuckyClient {
             route = '/' + route;
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
-        return `/api/rest/v2/adapt/adaptation${route}?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`;
+        const url = `/api/rest/v2/adapt/adaptation${route}?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`;
+        console.log(url);
+        return url;
     }
 
     // Method to calculate MD5 signature
