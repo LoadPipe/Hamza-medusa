@@ -13,7 +13,6 @@ import {
     TabPanels,
     Tab,
     TabPanel,
-    TabIndicator,
     Icon,
 } from '@chakra-ui/react';
 import { BsCircleFill } from 'react-icons/bs';

@@ -21,6 +21,7 @@ const Shipped = ({ orders }: { orders: any[] }) => {
     const [customerOrder, setCustomerOrder] = useState<any[] | null>(null);
     const [customerId, setCustomerId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [courierInfo, setCourierInfo] = useState(false);
 
     useEffect(() => {
         console.log('Orders received in Cancelled:', orders);
@@ -33,6 +34,10 @@ const Shipped = ({ orders }: { orders: any[] }) => {
             setCustomerId(customer_id);
         }
     }, [orders]);
+
+    const toggleCourierInfo = (orderId: any) => {
+        setCourierInfo(courierInfo === orderId ? null : orderId);
+    };
 
     const fetchAllOrders = async (customerId: string) => {
         setIsLoading(true);
@@ -81,6 +86,81 @@ const Shipped = ({ orders }: { orders: any[] }) => {
                                             'N/A'
                                         }
                                     />
+                                    <div className="flex justify-end pr-4">
+                                        <Box
+                                            color={'primary.green.900'}
+                                            cursor="pointer"
+                                            _hover={{
+                                                textDecoration: 'underline',
+                                            }}
+                                            onClick={() =>
+                                                toggleCourierInfo(item.id)
+                                            }
+                                        >
+                                            Track Courier
+                                        </Box>
+                                    </div>
+                                    <Collapse
+                                        in={courierInfo === item.id}
+                                        animateOpacity
+                                    >
+                                        <Box mt={4}>
+                                            <Tabs variant="unstyled">
+                                                <TabList>
+                                                    <Tab
+                                                        _selected={{
+                                                            color: 'primary.green.900',
+                                                            borderBottom:
+                                                                '2px solid',
+                                                            borderColor:
+                                                                'primary.green.900',
+                                                        }}
+                                                    >
+                                                        Order Update
+                                                    </Tab>
+                                                    <Tab
+                                                        _selected={{
+                                                            color: 'primary.green.900',
+                                                            borderBottom:
+                                                                '2px solid',
+                                                            borderColor:
+                                                                'primary.green.900',
+                                                        }}
+                                                    >
+                                                        Item Details
+                                                    </Tab>
+                                                </TabList>
+                                                <TabPanels>
+                                                    <TabPanel>
+                                                        <VStack
+                                                            align="start"
+                                                            spacing={4}
+                                                            p={4}
+                                                            borderRadius="lg"
+                                                            w="100%"
+                                                        >
+                                                            <Text fontWeight="bold">
+                                                                Order Update
+                                                            </Text>
+                                                        </VStack>
+                                                    </TabPanel>
+                                                    <TabPanel>
+                                                        <VStack
+                                                            align="start"
+                                                            spacing={4}
+                                                            p={4}
+                                                            borderRadius="lg"
+                                                            w="100%"
+                                                        >
+                                                            <Text fontWeight="bold">
+                                                                Item Details
+                                                            </Text>
+                                                        </VStack>
+                                                    </TabPanel>
+                                                </TabPanels>
+                                            </Tabs>
+                                        </Box>
+                                    </Collapse>
                                 </Box>
                             )
                         )}
