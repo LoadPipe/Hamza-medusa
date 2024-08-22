@@ -149,7 +149,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
             case TABS.DELIVERED:
                 return <Delivered />;
             case TABS.CANCELLED:
-                return <Cancelled />;
+                return <Cancelled orders={orders} />;
             case TABS.REFUND:
                 return <Refund />;
             default:
