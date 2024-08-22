@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { orderBucket, orderDetails, singleBucket } from '@lib/data';
 import { Box, Button } from '@chakra-ui/react';
-import OrderCard from '@modules/account/components/order-card';
+import ProcessingOrderCard from '@modules/account/components/processing-order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
 const Processing = ({ orders }: { orders: any[] }) => {
@@ -88,7 +88,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                     rounded="lg"
                                 >
                                     {/*item: {item.id} <br />*/}
-                                    <OrderCard
+                                    <ProcessingOrderCard
                                         key={item.id}
                                         order={item}
                                         handle={
