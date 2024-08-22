@@ -118,7 +118,7 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
                             <Text fontSize="14px">{order.description}</Text>
                         </Flex>
                         <Text fontSize="24px" fontWeight="semibold">
-                            {getAmount(order.unit_price)} {order.currency_code}
+                            {getAmount(order.unit_price)} {order.currency_code.toUpperCase()} //TODO: this amount is wrong
                         </Text>
                     </Flex>
 
