@@ -17,6 +17,7 @@ import {
 import { BsCircleFill } from 'react-icons/bs';
 import RefundCard from '@modules/account/components/refund-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
 
 const Refund = ({ orders }: { orders: any[] }) => {
     const [customerOrder, setCustomerOrder] = useState<any[] | null>(null);
@@ -24,6 +25,7 @@ const Refund = ({ orders }: { orders: any[] }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [courierInfo, setCourierInfo] = useState(false);
 
+    console.log(`ORDERS ARE ${JSON.stringify(orders)}`);
     useEffect(() => {
         console.log('Orders received in Cancelled:', orders);
         if (orders && orders.length > 0) {
@@ -36,8 +38,16 @@ const Refund = ({ orders }: { orders: any[] }) => {
         }
     }, [orders]);
 
-    const toggleCourierInfo = (orderId: any) => {
+    const toggleRefundInfo = (orderId: any) => {
         setCourierInfo(courierInfo === orderId ? null : orderId);
+    };
+
+    const getAmount = (amount?: number | null) => {
+        if (amount === null || amount === undefined) {
+            return;
+        }
+
+        return formatCryptoPrice(amount, order.currency_code || 'USDC');
     };
 
     const fetchAllOrders = async (customerId: string) => {
@@ -95,7 +105,7 @@ const Refund = ({ orders }: { orders: any[] }) => {
                                                 textDecoration: 'underline',
                                             }}
                                             onClick={() =>
-                                                toggleCourierInfo(item.id)
+                                                toggleRefundInfo(item.id)
                                             }
                                         >
                                             Refund Details
@@ -106,6 +116,13 @@ const Refund = ({ orders }: { orders: any[] }) => {
                                         animateOpacity
                                     >
                                         <Box mt={4}>
+                                            <Text
+                                                fontSize="24px"
+                                                fontWeight="semibold"
+                                            >
+                                                {getAmount(order.unit_price)}{' '}
+                                                {order.currency_code}
+                                            </Text>
                                             <HStack
                                                 align="start"
                                                 spacing={3}

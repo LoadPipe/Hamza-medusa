@@ -44,14 +44,6 @@ const RefundCard = ({ order, handle }: OrderCardProps) => {
     );
     console.log(`Product details ${JSON.stringify(handle)} `);
 
-    const getAmount = (amount?: number | null) => {
-        if (amount === null || amount === undefined) {
-            return;
-        }
-
-        return formatCryptoPrice(amount, order.currency_code || 'USDC');
-    };
-
     useEffect(() => {
         // Fetch Vendor Name from product.id
         const fetchVendor = async () => {
