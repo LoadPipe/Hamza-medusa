@@ -14,7 +14,10 @@ import {
     Tab,
     TabPanel,
     TabIndicator,
+    Icon,
 } from '@chakra-ui/react';
+import { BsCircleFill } from 'react-icons/bs';
+
 import ProcessingOrderCard from '@modules/account/components/processing-order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
@@ -178,55 +181,158 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                             <Text fontWeight="bold">
                                                                 Order History
                                                             </Text>
-                                                            <Box>
-                                                                <Text>
-                                                                    Order Placed
-                                                                </Text>
-                                                                <Text fontSize="sm">
-                                                                    18/07/2024 |
-                                                                    3:43 pm
-                                                                </Text>
-                                                            </Box>
-                                                            <Box>
-                                                                <Text>
-                                                                    Payment
-                                                                    Complete
-                                                                </Text>
-                                                                <Text fontSize="sm">
-                                                                    18/07/2024 |
-                                                                    3:43 pm
-                                                                </Text>
-                                                            </Box>
-                                                            <Box>
-                                                                <Text>
-                                                                    Order
-                                                                    Confirmed
-                                                                </Text>
-                                                                <Text fontSize="sm">
-                                                                    18/07/2024 |
-                                                                    3:49 pm
-                                                                </Text>
-                                                            </Box>
-                                                            <Box>
-                                                                <Text>
-                                                                    Product
-                                                                    Packaging
-                                                                </Text>
-                                                                <Text fontSize="sm">
-                                                                    18/07/2024 |
-                                                                    5:12 pm
-                                                                </Text>
-                                                            </Box>
-                                                            <Box>
-                                                                <Text>
-                                                                    Product
-                                                                    Shipped
-                                                                </Text>
-                                                                <Text fontSize="sm">
-                                                                    18/07/2024 |
-                                                                    6:12 pm
-                                                                </Text>
-                                                            </Box>
+                                                            <VStack
+                                                                align="start"
+                                                                spacing={4}
+                                                                w="100%"
+                                                            >
+                                                                {/* Example timeline event */}
+                                                                {[
+                                                                    {
+                                                                        status: 'Product Shipped',
+                                                                        date: '18/07/2024 | 6:12 pm',
+                                                                        trackingNumber:
+                                                                            '5896-0991-7811',
+                                                                        warehouse:
+                                                                            'Manila Logistics',
+                                                                        courier:
+                                                                            'DHL Express',
+                                                                    },
+                                                                    {
+                                                                        status: 'Product Packaging',
+                                                                        date: '18/07/2024 | 5:12 pm',
+                                                                        trackingNumber:
+                                                                            '5896-0991-7811',
+                                                                        warehouse:
+                                                                            'Manila Logistics',
+                                                                        courier:
+                                                                            'DHL Express',
+                                                                    },
+                                                                    {
+                                                                        status: 'Order Confirmed',
+                                                                        date: '18/07/2024 | 3:49 pm',
+                                                                    },
+                                                                    {
+                                                                        status: 'Payment Complete',
+                                                                        date: '18/07/2024 | 3:43 pm',
+                                                                        paymentDetails:
+                                                                            'Paid with USDC via Binance Smart Chain. Total payment: 1499.99 USDC.',
+                                                                        receiptLink:
+                                                                            'View receipt',
+                                                                    },
+                                                                    {
+                                                                        status: 'Payment On Process',
+                                                                        date: '18/07/2024 | 3:43 pm',
+                                                                        paymentDetails:
+                                                                            'Paid with USDC via Binance Smart Chain. Total payment: 1499.99 USDC.',
+                                                                    },
+                                                                    {
+                                                                        status: 'Order Placed',
+                                                                        date: '18/07/2024 | 3:43 pm',
+                                                                    },
+                                                                ].map(
+                                                                    (
+                                                                        event,
+                                                                        index
+                                                                    ) => (
+                                                                        <HStack
+                                                                            key={
+                                                                                index
+                                                                            }
+                                                                            align="start"
+                                                                            w="100%"
+                                                                        >
+                                                                            {/* Circle icon */}
+                                                                            <Icon
+                                                                                as={
+                                                                                    BsCircleFill
+                                                                                }
+                                                                                color="primary.green.900"
+                                                                                boxSize={
+                                                                                    3
+                                                                                } // Adjust size as needed
+                                                                                position="relative"
+                                                                                top="6px" // Move the icon down by 4px (adjust this value to align with status text)
+                                                                            />
+
+                                                                            <VStack
+                                                                                align="start"
+                                                                                spacing={
+                                                                                    1
+                                                                                }
+                                                                                pl={
+                                                                                    2
+                                                                                }
+                                                                            >
+                                                                                <Text fontWeight="bold">
+                                                                                    {
+                                                                                        event.status
+                                                                                    }
+                                                                                </Text>
+                                                                                <Text fontSize="sm">
+                                                                                    {
+                                                                                        event.date
+                                                                                    }
+                                                                                </Text>
+                                                                                {event.trackingNumber && (
+                                                                                    <Text
+                                                                                        fontSize="sm"
+                                                                                        color="gray.400"
+                                                                                    >
+                                                                                        Tracking
+                                                                                        Number:{' '}
+                                                                                        {
+                                                                                            event.trackingNumber
+                                                                                        }
+                                                                                    </Text>
+                                                                                )}
+                                                                                {event.warehouse && (
+                                                                                    <Text
+                                                                                        fontSize="sm"
+                                                                                        color="gray.400"
+                                                                                    >
+                                                                                        Warehouse:{' '}
+                                                                                        {
+                                                                                            event.warehouse
+                                                                                        }
+                                                                                    </Text>
+                                                                                )}
+                                                                                {event.courier && (
+                                                                                    <Text
+                                                                                        fontSize="sm"
+                                                                                        color="gray.400"
+                                                                                    >
+                                                                                        Courier:{' '}
+                                                                                        {
+                                                                                            event.courier
+                                                                                        }
+                                                                                    </Text>
+                                                                                )}
+                                                                                {event.paymentDetails && (
+                                                                                    <Text
+                                                                                        fontSize="sm"
+                                                                                        color="gray.400"
+                                                                                    >
+                                                                                        {
+                                                                                            event.paymentDetails
+                                                                                        }
+                                                                                    </Text>
+                                                                                )}
+                                                                                {event.receiptLink && (
+                                                                                    <Text
+                                                                                        fontSize="sm"
+                                                                                        color="primary.green.900"
+                                                                                    >
+                                                                                        {
+                                                                                            event.receiptLink
+                                                                                        }
+                                                                                    </Text>
+                                                                                )}
+                                                                            </VStack>
+                                                                        </HStack>
+                                                                    )
+                                                                )}
+                                                            </VStack>
                                                         </VStack>
                                                     </TabPanel>
 
