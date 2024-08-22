@@ -13,6 +13,7 @@ import {
     TabPanels,
     Tab,
     TabPanel,
+    TabIndicator,
 } from '@chakra-ui/react';
 import ProcessingOrderCard from '@modules/account/components/processing-order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
@@ -136,12 +137,32 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                     >
                                         <Box mt={4}>
                                             <Tabs
-                                                variant="enclosed"
-                                                colorScheme="green"
+                                                variant="unstyled"
+                                                colorScheme={'green'}
                                             >
                                                 <TabList>
-                                                    <Tab>Order History</Tab>
-                                                    <Tab>Order Details</Tab>
+                                                    <Tab
+                                                        _selected={{
+                                                            color: 'primary.green.900',
+                                                            borderBottom:
+                                                                '2px solid',
+                                                            borderColor:
+                                                                'primary.green.900',
+                                                        }}
+                                                    >
+                                                        Order History
+                                                    </Tab>
+                                                    <Tab
+                                                        _selected={{
+                                                            color: 'primary.green.900',
+                                                            borderBottom:
+                                                                '2px solid',
+                                                            borderColor:
+                                                                'primary.green.900',
+                                                        }}
+                                                    >
+                                                        Order Details
+                                                    </Tab>
                                                 </TabList>
 
                                                 <TabPanels>
