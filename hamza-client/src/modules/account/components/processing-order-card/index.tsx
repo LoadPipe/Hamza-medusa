@@ -112,25 +112,29 @@ const ProcessingOrderCard = ({ order, handle }: OrderCardProps) => {
                 <Box flex="1">
                     <Flex justifyContent="space-between">
                         <Flex direction="column">
+                            <Text
+                                color={'rgba(85, 85, 85, 1.0)'}
+                                fontSize="16px"
+                            >
+                                Item Name
+                            </Text>
                             <Text fontWeight="bold" fontSize="18px">
                                 {order.title}
                             </Text>
                             <Text fontSize="14px">{order.description}</Text>
                         </Flex>
-                        <Text fontSize="24px" fontWeight="semibold">
-                            {getAmount(order.unit_price)} {order.currency_code}
-                        </Text>
+                        {/*<Text fontSize="24px" fontWeight="semibold">*/}
+                        {/*    {getAmount(order.unit_price)} {order.currency_code}*/}
+                        {/*</Text>*/}
                     </Flex>
 
-                    <Flex
-                        justifyContent="space-between"
-                        alignItems="center"
-                        mt={2}
-                    >
+                    <Flex direction="column" mt={2}>
                         <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
+                            Order Date
+                        </Text>
+                        <Text color={'white'} fontSize="16px">
                             {new Date(order.created_at).toLocaleDateString()}
                         </Text>
-                        <Text fontSize="sm">{order.quantity} item(s)</Text>
                     </Flex>
                 </Box>
             </Flex>

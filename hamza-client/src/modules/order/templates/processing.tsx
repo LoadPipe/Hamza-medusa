@@ -260,11 +260,9 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                             Date:
                                                                         </Text>
                                                                         <Text fontWeight="bold">
-                                                                            Thursday,
-                                                                            July
-                                                                            18,
-                                                                            2024
-                                                                            3:43pm
+                                                                            {new Date(
+                                                                                item.created_at
+                                                                            ).toLocaleDateString()}
                                                                         </Text>
                                                                     </Box>
 
@@ -300,7 +298,9 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                             Quantity:
                                                                         </Text>
                                                                         <Text fontWeight="bold">
-                                                                            1
+                                                                            {
+                                                                                item.quantity
+                                                                            }
                                                                         </Text>
                                                                     </Box>
                                                                     <Box>
