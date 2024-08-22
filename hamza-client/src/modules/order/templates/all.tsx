@@ -5,9 +5,10 @@ import {
     singleBucket,
     cancelOrder,
 } from '@lib/data';
-import { Box, Button, Text } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormErrorMessage, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text } from '@chakra-ui/react';
 import OrderCard from '@modules/account/components/order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
+import { Textarea } from '@medusajs/ui';
 type OrderType = {
     id: string;
     cart: any;
@@ -40,15 +41,17 @@ const All = ({ orders }: { orders: any[] }) => {
         [key: string]: string;
     }>({});
 
-    const openModal = (orderId: string) => {
+    const openCancelModal = (orderId: string) => {
         setSelectedOrderId(orderId);
         setIsModalOpen(true);
     };
-    const closeModal = () => {
+
+    const closeCancelModal = () => {
         setIsModalOpen(false);
         setCancelReason('');
         setIsAttemptedSubmit(false);
     };
+
     useEffect(() => {
         console.log('Orders received in Processing:', orders);
         if (orders && orders.length > 0) {
@@ -102,6 +105,26 @@ const All = ({ orders }: { orders: any[] }) => {
             });
         }
         setIsLoading(false);
+    };
+
+    //TODO: this is duplicated code; should be dried
+    const handleCancel = async () => {
+        if (!cancelReason) {
+            setIsAttemptedSubmit(true);
+            return;
+        }
+        if (!selectedOrderId) return;
+
+        try {
+            await cancelOrder(selectedOrderId);
+            setOrderStatuses((prevStatuses) => ({
+                ...prevStatuses,
+                [selectedOrderId]: 'canceled',
+            }));
+            setIsModalOpen(false);
+        } catch (error) {
+            console.error('Error cancelling order: ', error);
+        }
     };
 
     return (
@@ -185,9 +208,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         borderRadius={'37px'}
                                                         ml={4}
                                                         onClick={() =>
-                                                            cancelOrder(
-                                                                order.cart_id
-                                                            )
+                                                            openCancelModal(order.id)
                                                         }
                                                     >
                                                         Request Cancellation
@@ -292,8 +313,8 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         borderRadius={'37px'}
                                                         ml={4}
                                                         onClick={() =>
-                                                            openModal(
-                                                                order.cart_id
+                                                            openCancelModal(
+                                                                order.id
                                                             )
                                                         }
                                                     >
@@ -398,8 +419,8 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         borderRadius={'37px'}
                                                         ml={4}
                                                         onClick={() =>
-                                                            openModal(
-                                                                order.cart_id
+                                                            openCancelModal(
+                                                                order.id
                                                             )
                                                         }
                                                     >
@@ -504,8 +525,8 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         borderRadius={'37px'}
                                                         ml={4}
                                                         onClick={() =>
-                                                            openModal(
-                                                                order.cart_id
+                                                            openCancelModal(
+                                                                order.id
                                                             )
                                                         }
                                                     >
@@ -610,8 +631,8 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         borderRadius={'37px'}
                                                         ml={4}
                                                         onClick={() =>
-                                                            openModal(
-                                                                order.cart_id
+                                                            openCancelModal(
+                                                                order.id
                                                             )
                                                         }
                                                     >
@@ -662,8 +683,46 @@ const All = ({ orders }: { orders: any[] }) => {
                         </Button>
                     </LocalizedClientLink>
                 </Box>
-            )}
-        </Box>
+            )
+            }
+            <Modal isOpen={isModalOpen} onClose={closeCancelModal}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Request Cancellation</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <FormControl
+                            isInvalid={!cancelReason && isAttemptedSubmit}
+                        >
+                            <Textarea
+                                placeholder="Reason for cancellation"
+                                value={cancelReason}
+                                onChange={(e) =>
+                                    setCancelReason(e.target.value)
+                                }
+                            />
+                            {!cancelReason && isAttemptedSubmit && (
+                                <FormErrorMessage>
+                                    Cancellation reason is required.
+                                </FormErrorMessage>
+                            )}
+                        </FormControl>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button variant="ghost" onClick={closeCancelModal}>
+                            Cancel
+                        </Button>
+                        <Button
+                            colorScheme="blue"
+                            ml={3}
+                            onClick={handleCancel}
+                        >
+                            Submit
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </Box >
     );
 };
 
