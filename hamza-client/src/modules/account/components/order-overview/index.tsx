@@ -151,7 +151,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
             case TABS.CANCELLED:
                 return <Cancelled orders={orders} />;
             case TABS.REFUND:
-                return <Refund />;
+                return <Refund orders={orders} />;
             default:
                 return <div>Select a tab to view orders.</div>;
         }

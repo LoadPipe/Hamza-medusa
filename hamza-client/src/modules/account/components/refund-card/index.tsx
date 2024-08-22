@@ -36,7 +36,7 @@ type OrderCardProps = {
     handle: any;
 };
 
-const ProcessingOrderCard = ({ order, handle }: OrderCardProps) => {
+const RefundCard = ({ order, handle }: OrderCardProps) => {
     const [vendor, setVendor] = useState('');
     const orderString = typeof order.currency_code;
     console.log(
@@ -167,20 +167,19 @@ const ProcessingOrderCard = ({ order, handle }: OrderCardProps) => {
                 >
                     <Box mb={4}>
                         <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
-                            Courier
+                            Status
                         </Text>
                         <Text color={'white'} fontSize="16px">
-                            DHL Express
+                            Under review
                         </Text>
                     </Box>
 
                     <Box>
                         <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
-                            Address
+                            Return Reason
                         </Text>
                         <Text color={'white'} fontSize="16px">
-                            Rock Rocks Pa Daet Sub-district, 50100, Chiang Mai
-                            CA
+                            Received the wrong product
                         </Text>
                     </Box>
                 </Flex>
@@ -189,4 +188,4 @@ const ProcessingOrderCard = ({ order, handle }: OrderCardProps) => {
     );
 };
 
-export default ProcessingOrderCard;
+export default RefundCard;
