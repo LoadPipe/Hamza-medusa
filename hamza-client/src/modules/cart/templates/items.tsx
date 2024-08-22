@@ -1,4 +1,12 @@
-import { Box, Flex, Radio, Text, Button, Link } from '@chakra-ui/react';
+import {
+    Box,
+    Flex,
+    Radio,
+    Text,
+    Button,
+    Link,
+    Divider,
+} from '@chakra-ui/react';
 import { LineItem, Region } from '@medusajs/medusa';
 import { Heading, Table } from '@medusajs/ui';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
@@ -62,40 +70,44 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
                             );
                         })
                 ) : (
-                    <Flex
-                        maxW={'329px'}
-                        height={{ base: '170px', md: '273px' }}
-                        width={'100%'}
-                        mx="auto"
-                        flexDir={'column'}
-                        gap={30}
-                        justifyContent={'center'}
-                        alignItems={'center'}
-                    >
-                        <HiOutlineShoppingCart size={'56px'} />
-                        <Flex flexDir={'column'} mt="-1rem">
-                            <Text
-                                textAlign={'center'}
-                                fontSize={'20px'}
-                                fontWeight={600}
-                                color="primary.green.900"
-                            >
-                                Your cart is empty
-                            </Text>
-                            <Text textAlign={'center'}>
-                                Looks like you haven't added anything to your
-                                cart yet.
-                            </Text>
+                    <Flex width={'100%'} flexDir={'column'}>
+                        <Divider borderColor="#3E3E3E" />
+                        <Flex
+                            mt="1rem"
+                            maxW={'329px'}
+                            height={{ base: '170px', md: '273px' }}
+                            width={'100%'}
+                            mx="auto"
+                            flexDir={'column'}
+                            gap={30}
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                        >
+                            <HiOutlineShoppingCart size={'56px'} />
+                            <Flex flexDir={'column'} mt="-1rem">
+                                <Text
+                                    textAlign={'center'}
+                                    fontSize={'20px'}
+                                    fontWeight={600}
+                                    color="primary.green.900"
+                                >
+                                    Your cart is empty
+                                </Text>
+                                <Text textAlign={'center'}>
+                                    Looks like you haven't added anything to
+                                    your cart yet.
+                                </Text>
+                            </Flex>
+                            <Link href={'/store'}>
+                                <Button
+                                    backgroundColor={'primary.green.900'}
+                                    color="black"
+                                    borderRadius={'30px'}
+                                >
+                                    Start Shopping
+                                </Button>
+                            </Link>
                         </Flex>
-                        <Link href={'/store'}>
-                            <Button
-                                backgroundColor={'primary.green.900'}
-                                color="black"
-                                borderRadius={'30px'}
-                            >
-                                Start Shopping
-                            </Button>
-                        </Link>
                     </Flex>
                 )}
             </Box>
