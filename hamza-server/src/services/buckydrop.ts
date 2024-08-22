@@ -22,7 +22,8 @@ import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 type CreateProductInput = MedusaCreateProductInput & { store_id: string, bucky_metadata?: string };
 //type UpdateProductInput = MedusaUpdateProductInput & { store_id: string, bucky_metadata?: string };
 
-const SHIPPING_COST_MIN: number = 1000;
+const SHIPPING_COST_MIN: number = parseInt(process.env.BUCKY_MIN_SHIPPING_COST_US_CENT ?? '1000');
+const SHIPPING_COST_MAX: number = parseInt(process.env.BUCKY_MAX_SHIPPING_COST_US_CENT ?? '4000');
 
 export default class BuckydropService extends TransactionBaseService {
     protected readonly logger: Logger;
@@ -166,14 +167,26 @@ export default class BuckydropService extends TransactionBaseService {
             if (subtotal > 0) {
                 const estimate = await this.buckyClient.getShippingCostEstimate(10, 1, input);
 
+                //convert to usd first
                 if (estimate?.data?.total) {
                     output = await this.priceConverter.getPrice({
                         baseAmount: estimate.data.total,
                         baseCurrency: 'cny',
-                        toCurrency: currency
+                        toCurrency: 'usdc'
                     });
                     gotPrice = true;
                 }
+
+                output = subtotal < SHIPPING_COST_MIN ? SHIPPING_COST_MIN : subtotal;
+                output = output > SHIPPING_COST_MAX ? SHIPPING_COST_MAX : output;
+
+                //convert to final currency 
+                if (currency != 'usdc')
+                    output = await this.priceConverter.getPrice({
+                        baseAmount: estimate.data.total,
+                        baseCurrency: 'usdc',
+                        toCurrency: currency
+                    });
             }
 
 
@@ -188,6 +201,7 @@ export default class BuckydropService extends TransactionBaseService {
 
                     //final calculated price should be 
                     output = subtotal < SHIPPING_COST_MIN ? SHIPPING_COST_MIN : subtotal;
+                    output = output > SHIPPING_COST_MAX ? SHIPPING_COST_MAX : output;
                 }
 
                 output = await this.priceConverter.getPrice({
