@@ -40,8 +40,8 @@ const Processing = ({ orders }: { orders: any[] }) => {
         setIsAttemptedSubmit(false);
     };
 
-    const toggleViewOrder = () => {
-        setExpandViewOrder(!expandViewOrder);
+    const toggleViewOrder = (orderId: any) => {
+        setExpandViewOrder(expandViewOrder === orderId ? null : orderId);
     };
 
     useEffect(() => {
@@ -118,14 +118,16 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                     <div className="flex justify-end pr-4">
                                         <Box
                                             color={'primary.green.900'}
-                                            onClick={toggleViewOrder}
+                                            onClick={() =>
+                                                toggleViewOrder(item.id)
+                                            }
                                         >
                                             View Order
                                         </Box>
                                     </div>
                                     {/* Collapsible Section */}
                                     <Collapse
-                                        in={expandViewOrder}
+                                        in={expandViewOrder === item.id}
                                         animateOpacity
                                     >
                                         <Box mt={4}>
