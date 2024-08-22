@@ -85,6 +85,7 @@ export class CoinGeckoService {
                 if (cachedData.refreshing)
                     return cachedData.value;
 
+                console.log('refreshing cache for ', cacheKey);
                 cachedData.refreshing = true;
             }
         }
@@ -108,6 +109,7 @@ export class CoinGeckoService {
             const rate = baseToEth / conversionToEth;
 
             // Cache this calculated rate
+            console.log('refreshed cache for ', cacheKey);
             this.cache[cacheKey] = { value: rate, timestamp: currentTime, refreshing: false };
             return rate;
         }
@@ -129,6 +131,7 @@ export class CoinGeckoService {
             const rate = baseToUsdc / conversionToUsdc;
 
             // Cache this calculated rate
+            console.log('refreshed cache for ', cacheKey);
             this.cache[cacheKey] = { value: rate, timestamp: currentTime, refreshing: false };
             return rate;
         }
@@ -186,6 +189,7 @@ export class CoinGeckoService {
                     if (cachedData.refreshing)
                         return cachedData.value;
 
+                    console.log('refreshing cache for ', cacheKey);
                     cachedData.refreshing = true;
                 }
             }
@@ -215,6 +219,7 @@ export class CoinGeckoService {
                 contractAddress === this.ETH
                     ? response.data.ethereum[vsCurrency]
                     : response.data[contractAddress][vsCurrency];
+            console.log('refreshed cache for ', cacheKey);
             this.cache[cacheKey] = { value: newValue, timestamp: currentTime, refreshing: false };
             return newValue;
         } catch (error) {
