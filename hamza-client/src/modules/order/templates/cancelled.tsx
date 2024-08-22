@@ -14,8 +14,7 @@ import {
     Text,
     VStack,
 } from '@chakra-ui/react';
-import ProcessingOrderCard from '@modules/account/components/processing-order-card';
-import { BsCircleFill } from 'react-icons/bs';
+import CancelCard from '@modules/account/components/cancel-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
 const Cancelled = ({ orders }: { orders: any[] }) => {
@@ -74,7 +73,7 @@ const Cancelled = ({ orders }: { orders: any[] }) => {
                                     rounded="lg"
                                 >
                                     {/*item: {item.id} <br />*/}
-                                    <ProcessingOrderCard
+                                    <CancelCard
                                         key={item.id}
                                         order={item}
                                         handle={
