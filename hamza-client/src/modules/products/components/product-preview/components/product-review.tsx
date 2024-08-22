@@ -1,17 +1,9 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { FaArrowLeft, FaArrowRight } from 'react-icons/fa6';
 import { GoArrowLeft, GoArrowRight } from 'react-icons/go';
 import ReviewCard, { renderStars } from './review-card';
 import ReviewCardMobile from './review-card-mobile';
-import ReviewStar from '../../../../../../public/images/products/review-star.svg';
-import Image from 'next/image';
-import axios from 'axios';
-import {
-    TiStarFullOutline,
-    TiStarHalfOutline,
-    TiStarOutline,
-} from 'react-icons/ti';
+
 import { allReviews } from '@lib/data';
 
 const fakeReviews = [
@@ -60,11 +52,12 @@ const ProductReview = ({ productId }: { productId: string }) => {
     ];
 
     const reviewDataFetcher = async () => {
-        let res = await allReviews(productId);
-        if (res) {
-            if (reviews.length > 0) {
-                setReviews([
-                    ...res.map((a: any) => {
+        try {
+            let res = await allReviews(productId);
+            console.log(`Pulling products from ALLREVIEWS ${res}`);
+            if (res) {
+                setReviews(
+                    res.map((a: any) => {
                         return {
                             id: a.id,
                             name:
@@ -74,15 +67,15 @@ const ProductReview = ({ productId }: { productId: string }) => {
                             review: a.content,
                             stars: a.rating,
                         };
-                    }),
-                ]);
+                    })
+                );
             }
+        } catch (error) {
+            console.error('Failed to fetch reviews:', error);
         }
-
-        return;
     };
 
-    console.log('product reviews are ', reviews);
+    console.log('product reviews are ', reviews, productId);
     useEffect(() => {
         if (productId) {
             reviewDataFetcher();
@@ -162,10 +155,14 @@ const ProductReview = ({ productId }: { productId: string }) => {
                 </Flex>
             </Flex>
         </Flex>
-    ) : (<div><br />
-        <Text color='white'>
-            This product has no reviews or ratings
-        </Text><br /><br /></div>);
+    ) : (
+        <div>
+            <br />
+            <Text color="white">This product has no reviews or ratings</Text>
+            <br />
+            <br />
+        </div>
+    );
 };
 
 export default ProductReview;
