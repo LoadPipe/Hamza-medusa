@@ -71,9 +71,9 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
                         })
                 ) : (
                     <Flex width={'100%'} flexDir={'column'}>
-                        <Divider borderColor="#3E3E3E" />
+                        <Divider borderColor="#3E3E3E" borderWidth={'1px'} />
                         <Flex
-                            mt="1rem"
+                            mt="1.5rem"
                             maxW={'329px'}
                             height={{ base: '170px', md: '273px' }}
                             width={'100%'}
