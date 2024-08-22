@@ -18,23 +18,6 @@ type ItemsTemplateProps = {
 };
 
 const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
-    console.log('this is items', items);
-    console.log('this is region', region);
-    console.log('this is items type', typeof items);
-    console.log('this is region type', typeof region);
-
-    if (items === undefined) {
-        console.log('items is undefined');
-    } else if (items === null) {
-        console.log('items is null');
-    }
-
-    if (region === undefined) {
-        console.log('regiom is undefined');
-    } else if (region === null) {
-        console.log('regiom is null');
-    }
-
     return (
         <Flex
             flexDir={'column'}
@@ -60,7 +43,7 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
             </Flex>
             <Box
                 mt="1rem"
-                height={{ base: '170px', md: '400px' }}
+                maxHeight={{ base: '170px', md: '400px' }}
                 overflowY="scroll"
             >
                 {items && items.length > 0 && region ? (
@@ -81,7 +64,7 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
                 ) : (
                     <Flex
                         maxW={'329px'}
-                        height={{ base: '170px', md: '400px' }}
+                        height={{ base: '170px', md: '273px' }}
                         width={'100%'}
                         mx="auto"
                         flexDir={'column'}
