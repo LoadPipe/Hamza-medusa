@@ -1,4 +1,4 @@
-import { Box, Flex, Radio, Text } from '@chakra-ui/react';
+import { Box, Flex, Radio, Text, Button, Link } from '@chakra-ui/react';
 import { LineItem, Region } from '@medusajs/medusa';
 import { Heading, Table } from '@medusajs/ui';
 
@@ -16,6 +16,23 @@ type ItemsTemplateProps = {
 };
 
 const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
+    console.log('this is items', items);
+    console.log('this is region', region);
+    console.log('this is items type', typeof items);
+    console.log('this is region type', typeof region);
+
+    if (items === undefined) {
+        console.log('items is undefined');
+    } else if (items === null) {
+        console.log('items is null');
+    }
+
+    if (region === undefined) {
+        console.log('regiom is undefined');
+    } else if (region === null) {
+        console.log('regiom is null');
+    }
+
     return (
         <Flex
             flexDir={'column'}
@@ -27,6 +44,7 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
             px={{ base: '16px', md: '45px' }}
             borderRadius={'16px'}
             backgroundColor={'#121212'}
+            color={'white'}
         >
             <Flex justifyContent={{ base: 'center', md: 'left' }}>
                 {/* <Radio mr="2rem" display={{ base: 'none', md: 'flex' }} /> */}
@@ -43,8 +61,8 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
                 height={{ base: '170px', md: '400px' }}
                 overflowY="scroll"
             >
-                {items && region
-                    ? items
+                {items && items.length > 0 && region ? (
+                    items
                         .sort((a, b) => {
                             return a.created_at > b.created_at ? -1 : 1;
                         })
@@ -58,9 +76,41 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
                                 />
                             );
                         })
-                    : Array.from(Array(5).keys()).map((i) => {
-                        return <SkeletonLineItem key={i} />;
-                    })}
+                ) : (
+                    <Flex
+                        maxW={'329px'}
+                        width={'100%'}
+                        mx="auto"
+                        flexDir={'column'}
+                        gap={30}
+                        justifyContent={'center'}
+                        alignItems={'center'}
+                    >
+                        <Flex flexDir={'column'}>
+                            <Text
+                                textAlign={'center'}
+                                fontSize={'20px'}
+                                fontWeight={600}
+                                color="primary.green.900"
+                            >
+                                Your cart is empty
+                            </Text>
+                            <Text textAlign={'center'}>
+                                Looks like you haven't added anything to your
+                                cart yet.
+                            </Text>
+                        </Flex>
+                        <Link href={'/store'}>
+                            <Button
+                                backgroundColor={'primary.green.900'}
+                                color="black"
+                                borderRadius={'30px'}
+                            >
+                                Start Shopping
+                            </Button>
+                        </Link>
+                    </Flex>
+                )}
             </Box>
         </Flex>
     );
@@ -68,41 +118,6 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
 
 export default ItemsTemplate;
 
-// <Box width="705px">
-// <Table className="p-8">
-//     <Table.Header className="w-full text-white">
-//         <Table.Row className="txt-medium-plus bg-black">
-//             <Table.HeaderCell className="!pl-0">
-//                 Item
-//             </Table.HeaderCell>
-//             <Table.HeaderCell></Table.HeaderCell>
-//             <Table.HeaderCell>Quantity</Table.HeaderCell>
-//             <Table.HeaderCell className="hidden small:table-cell">
-//                 Price
-//             </Table.HeaderCell>
-//             <Table.HeaderCell className="!pr-0 text-right">
-//                 Total
-//             </Table.HeaderCell>
-//         </Table.Row>
-//     </Table.Header>
-//     <Table.Body>
-//         {items && region
-//             ? items
-//                   .sort((a, b) => {
-//                       return a.created_at > b.created_at ? -1 : 1;
-//                   })
-//                   .map((item) => {
-//                       return (
-//                           <Item
-//                               key={item.id}
-//                               item={item}
-//                               region={region}
-//                           />
-//                       );
-//                   })
-//             : Array.from(Array(5).keys()).map((i) => {
-//                   return <SkeletonLineItem key={i} />;
-//               })}
-//     </Table.Body>
-// </Table>
-// </Box>
+// Array.from(Array(5).keys()).map((i) => {
+//     return <SkeletonLineItem key={i} />;
+// })
