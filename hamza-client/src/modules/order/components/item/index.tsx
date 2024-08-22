@@ -42,6 +42,7 @@ const Item = ({ item, region, currencyCode }: ItemProps) => {
                             item={item}
                             region={region}
                             style="tight"
+                            currencyCode={currencyCode}
                         />
                     </span>
 

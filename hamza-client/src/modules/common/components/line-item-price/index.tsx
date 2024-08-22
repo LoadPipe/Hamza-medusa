@@ -15,7 +15,7 @@ type LineItemPriceProps = {
     item: Omit<ExtendedLineItem, 'beforeInsert'>;
     region: Region;
     style?: 'default' | 'tight';
-    currencyCode: string;
+    currencyCode?: string;
 };
 
 const LineItemPrice = ({
@@ -25,8 +25,8 @@ const LineItemPrice = ({
     currencyCode
 }: LineItemPriceProps) => {
     const unitPrice = item.variant.prices ?
-        (item.variant as CalculatedVariant).prices.find(p => p.currency_code == currencyCode).amount :
-        (item.variant as CalculatedVariant).original_price;
+        (item.variant as CalculatedVariant).prices.find(p => p.currency_code == currencyCode)?.amount ?? 0 :
+        (item.variant as CalculatedVariant)?.original_price ?? 0;
     const price = unitPrice * item.quantity;
     const hasReducedPrice = (item.total || 0) < price;
 

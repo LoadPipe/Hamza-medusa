@@ -98,6 +98,7 @@ const Item = ({ item, region, type = 'full', currencyCode }: ItemProps) => {
                                         item={item}
                                         region={region}
                                         style="tight"
+                                        currencyCode={currencyCode}
                                     />
                                 </Flex>
                             )}
@@ -265,6 +266,7 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
                         item={item}
                         region={region}
                         style="tight"
+                                        currencyCode={currencyCode}
                     />
                 </Table.Cell>
             )}
@@ -285,6 +287,7 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
                                 item={item}
                                 region={region}
                                 style="tight"
+                                        currencyCode={currencyCode}
                             />
                         </span>
                     )}
