@@ -100,43 +100,79 @@ const ProcessingOrderCard = ({ order, handle }: OrderCardProps) => {
                 </Flex>
             </Flex>
 
-            <Flex alignItems="center" justifyContent="space-between">
-                <Image
-                    borderRadius="lg"
-                    width={{ base: '60px', md: '120px' }}
-                    src={order.thumbnail}
-                    alt={`Thumbnail of ${order.title}`}
-                    mr={4}
-                />
+            <Flex justifyContent="space-between">
+                {/* Left Side: Existing Content */}
+                <Flex
+                    alignItems="center"
+                    justifyContent="space-between"
+                    flex="1"
+                >
+                    <Image
+                        borderRadius="lg"
+                        width={{ base: '60px', md: '120px' }}
+                        src={order.thumbnail}
+                        alt={`Thumbnail of ${order.title}`}
+                        mr={4}
+                    />
 
-                <Box flex="1">
-                    <Flex justifyContent="space-between">
-                        <Flex direction="column">
+                    <Box flex="1">
+                        <Flex justifyContent="space-between" direction="row">
+                            <Flex direction="column">
+                                <Text
+                                    color={'rgba(85, 85, 85, 1.0)'}
+                                    fontSize="16px"
+                                >
+                                    Item Name
+                                </Text>
+                                <Text fontWeight="bold" fontSize="18px">
+                                    {order.title}
+                                </Text>
+                                <Text fontSize="14px">{order.description}</Text>
+                            </Flex>
+                        </Flex>
+
+                        <Flex direction="column" mt={2}>
                             <Text
                                 color={'rgba(85, 85, 85, 1.0)'}
                                 fontSize="16px"
                             >
-                                Item Name
+                                Order Date
                             </Text>
-                            <Text fontWeight="bold" fontSize="18px">
-                                {order.title}
+                            <Text color={'white'} fontSize="16px">
+                                {new Date(
+                                    order.created_at
+                                ).toLocaleDateString()}
                             </Text>
-                            <Text fontSize="14px">{order.description}</Text>
                         </Flex>
-                        {/*<Text fontSize="24px" fontWeight="semibold">*/}
-                        {/*    {getAmount(order.unit_price)} {order.currency_code}*/}
-                        {/*</Text>*/}
-                    </Flex>
+                    </Box>
+                </Flex>
 
-                    <Flex direction="column" mt={2}>
+                {/* Right Side: Courier and Address */}
+                <Flex
+                    direction="column"
+                    ml={4}
+                    minWidth="200px"
+                    maxWidth="300px"
+                >
+                    <Box mb={4}>
                         <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
-                            Order Date
+                            Courier
                         </Text>
                         <Text color={'white'} fontSize="16px">
-                            {new Date(order.created_at).toLocaleDateString()}
+                            DHL Express
                         </Text>
-                    </Flex>
-                </Box>
+                    </Box>
+
+                    <Box>
+                        <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
+                            Address
+                        </Text>
+                        <Text color={'white'} fontSize="16px">
+                            Rock Rocks Pa Daet Sub-district, 50100, Chiang Mai
+                            CA
+                        </Text>
+                    </Box>
+                </Flex>
             </Flex>
         </Box>
     );
