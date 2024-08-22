@@ -1,6 +1,8 @@
 import { Box, Flex, Radio, Text, Button, Link } from '@chakra-ui/react';
 import { LineItem, Region } from '@medusajs/medusa';
 import { Heading, Table } from '@medusajs/ui';
+import { HiOutlineShoppingCart } from 'react-icons/hi';
+import { IconContext } from 'react-icons';
 
 import Item from '@modules/cart/components/item';
 import SkeletonLineItem from '@modules/skeletons/components/skeleton-line-item';
@@ -79,6 +81,7 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
                 ) : (
                     <Flex
                         maxW={'329px'}
+                        height={{ base: '170px', md: '400px' }}
                         width={'100%'}
                         mx="auto"
                         flexDir={'column'}
@@ -86,7 +89,8 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
                         justifyContent={'center'}
                         alignItems={'center'}
                     >
-                        <Flex flexDir={'column'}>
+                        <HiOutlineShoppingCart size={'56px'} />
+                        <Flex flexDir={'column'} mt="-1rem">
                             <Text
                                 textAlign={'center'}
                                 fontSize={'20px'}
