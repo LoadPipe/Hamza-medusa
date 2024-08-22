@@ -9,6 +9,7 @@ import { Box, Button, FormControl, FormErrorMessage, Modal, ModalBody, ModalClos
 import OrderCard from '@modules/account/components/order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { Textarea } from '@medusajs/ui';
+
 type OrderType = {
     id: string;
     cart: any;
@@ -16,6 +17,7 @@ type OrderType = {
     status: string;
     // include other order properties here
 };
+
 interface OrderState {
     Processing: OrderType[];
     Shipped: OrderType[];
@@ -23,6 +25,9 @@ interface OrderState {
     Cancelled: OrderType[];
     Refunded: OrderType[];
 }
+
+const MIN_CANCEL_REASON_LENGTH = 30;
+
 const All = ({ orders }: { orders: any[] }) => {
     const [customerId, setCustomerId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -105,9 +110,9 @@ const All = ({ orders }: { orders: any[] }) => {
         setIsLoading(false);
     };
 
-    //TODO: this is duplicated code; should be dried
+    //TODO: this is duplicated code (3x); should be DRYed (likewise with the modal itself)
     const handleCancel = async () => {
-        if (!cancelReason) {
+        if ((cancelReason?.length ?? 0) < MIN_CANCEL_REASON_LENGTH) {
             setIsAttemptedSubmit(true);
             return;
         }
@@ -685,7 +690,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                     setCancelReason(e.target.value)
                                 }
                             />
-                            {!cancelReason && isAttemptedSubmit && (
+                            {((cancelReason?.length ?? 0) < MIN_CANCEL_REASON_LENGTH) && isAttemptedSubmit && (
                                 <FormErrorMessage>
                                     Cancellation reason is required.
                                 </FormErrorMessage>
