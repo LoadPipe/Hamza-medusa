@@ -14,6 +14,7 @@ import {
     Text,
     VStack,
 } from '@chakra-ui/react';
+import { BsCircleFill } from 'react-icons/bs';
 import ShippedCard from '@modules/account/components/shipped-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
@@ -132,18 +133,63 @@ const Shipped = ({ orders }: { orders: any[] }) => {
                                                 </TabList>
                                                 <TabPanels>
                                                     <TabPanel>
-                                                        <VStack
+                                                        <HStack
                                                             align="start"
-                                                            spacing={4}
-                                                            p={4}
-                                                            borderRadius="lg"
+                                                            spacing={3}
                                                             w="100%"
                                                         >
-                                                            <Text fontWeight="bold">
-                                                                Order Update
-                                                            </Text>
-                                                        </VStack>
+                                                            {' '}
+                                                            {/* Align icon and text block horizontally */}
+                                                            {/* Left Column: Icon */}
+                                                            <Icon
+                                                                as={
+                                                                    BsCircleFill
+                                                                }
+                                                                color="primary.green.900"
+                                                                boxSize={3} // Adjust size as needed
+                                                                mt={1} // Optional: Adjust this to vertically center the icon with the text
+                                                            />
+                                                            {/* Right Column: Text */}
+                                                            <VStack
+                                                                align="start"
+                                                                spacing={2}
+                                                            >
+                                                                {' '}
+                                                                {/* Stack text vertically */}
+                                                                <Text fontWeight="bold">
+                                                                    Your order
+                                                                    is shipped
+                                                                    out for
+                                                                    delivery
+                                                                </Text>
+                                                                <Text
+                                                                    color="gray.500"
+                                                                    fontSize="16px"
+                                                                >
+                                                                    {new Date(
+                                                                        order.created_at
+                                                                    ).toLocaleDateString()}
+                                                                </Text>
+                                                                <Text
+                                                                    fontSize="sm"
+                                                                    color="gray.500"
+                                                                >
+                                                                    Tracking
+                                                                    Number:
+                                                                    5896-0991-7811
+                                                                </Text>
+                                                                <Text
+                                                                    fontSize="sm"
+                                                                    color="gray.500"
+                                                                >
+                                                                    Estimated
+                                                                    Time: 2:00
+                                                                    pm
+                                                                </Text>
+                                                            </VStack>
+                                                        </HStack>
                                                     </TabPanel>
+
                                                     <TabPanel>
                                                         <VStack
                                                             align="start"
