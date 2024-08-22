@@ -51,10 +51,6 @@ const All = ({ orders }: { orders: any[] }) => {
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
     const [isCanceling, setIsCanceling] = useState(false);
 
-    useEffect(() => {
-        console.log('Current CancelReason:', cancelReason);
-    }, [cancelReason]);
-
     const [customerOrder, setCustomerOrder] = useState<OrderState | null>({
         Processing: [],
         Shipped: [],

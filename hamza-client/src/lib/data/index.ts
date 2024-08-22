@@ -268,10 +268,10 @@ export async function orderInformation(cart_id: string) {
 
 export async function orderDetails(customer_id: string) {
     try {
-        const response = await axios.post(
+        const response = await axios.get(
             `${BACKEND_URL}/custom/order/customer-orders`,
             {
-                customer_id: customer_id,
+                params: { customer_id: customer_id },
             }
         );
         return response.data.orders.orders;
@@ -350,7 +350,7 @@ export async function cancelOrder(order_id: string) {
         const response = await axios.post(
             `${BACKEND_URL}/custom/order/cancel`,
             {
-                order_id
+                order_id,
             }
         );
 
