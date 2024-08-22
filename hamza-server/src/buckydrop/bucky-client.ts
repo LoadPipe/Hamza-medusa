@@ -185,7 +185,7 @@ export class BuckyClient {
             });
     }
 
-    async cancelOrder(shopOrderNo: string, partnerOrderNo?: string): Promise<any> {
+    async cancelShopOrder(shopOrderNo: string, partnerOrderNo?: string): Promise<any> {
         const params = JSON.stringify({
             shopOrderNo,
             partnerOrderNo,

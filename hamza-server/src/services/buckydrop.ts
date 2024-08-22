@@ -304,23 +304,55 @@ export default class BuckydropService extends TransactionBaseService {
         try {
             const order: Order = await this.orderService_.retrieve(orderId);
             const buckyData = order.bucky_metadata?.length ? JSON.parse(order.bucky_metadata) : null;
+            let cancelOutput: any = null;
 
             if (order && buckyData) {
 
                 //get order details from buckydrop
                 const shopOrderNo: string = buckyData.data.shopOrderNo ?? buckyData.shopOrderNo;
+                let purchaseCode = buckyData?.tracking?.data?.poOrderList.orderCode;
 
-                //get the order status
                 if (shopOrderNo) {
+                    //get PO number from order details
+                    const orderDetail = await this.buckyClient.getOrderDetails(shopOrderNo);
+                    purchaseCode = orderDetail?.data?.poOrderList.orderCode;
+                    if (orderDetail)
+                        buckyData.tracking = orderDetail;
+                    let canceled: boolean = false;
 
-                    //save the tracking data
-                    const output = await this.buckyClient.cancelOrder(shopOrderNo);
-                    buckyData.cancel = output;
-                    order.bucky_metadata = JSON.stringify(buckyData);
+                    //first try cancelling purchase order
+                    if (purchaseCode) {
+                        cancelOutput = await this.buckyClient.cancelPurchaseOrder(purchaseCode);
+                        canceled = (cancelOutput?.success === 'true');
+                    }
 
-                    //save the order 
-                    await this.orderRepository_.save(order);
+                    //if not canceled yet, try to cancel the shop order
+                    if (!canceled) {
+                        if (shopOrderNo) {
+                            cancelOutput = await this.buckyClient.cancelShopOrder(shopOrderNo);
+                            canceled = (cancelOutput?.success === 'true');
+                        }
+                    }
+
+                    if (cancelOutput) {
+                        //save the tracking data
+                        order.bucky_metadata = JSON.stringify(buckyData);
+                        buckyData.cancel = cancelOutput;
+
+                        //save the order 
+                        await this.orderRepository_.save(order);
+                    } else {
+                        this.logger.warn(`Order ${orderId}: no Buckydrop cancellation was performed`);
+                    }
+                } else {
+                    this.logger.warn(`Order ${orderId} has no BD shop order number`);
                 }
+            }
+            else {
+                if (!order)
+                    this.logger.warn(`Order ${orderId} not found.`);
+                else
+                    this.logger.warn(`Order ${orderId} is not a Buckydrop order (or has no BD metadata)`);
             }
 
             return order;
