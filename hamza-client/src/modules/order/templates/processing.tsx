@@ -118,6 +118,10 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                     <div className="flex justify-end pr-4">
                                         <Box
                                             color={'primary.green.900'}
+                                            cursor="pointer"
+                                            _hover={{
+                                                textDecoration: 'underline',
+                                            }}
                                             onClick={() =>
                                                 toggleViewOrder(item.id)
                                             }
