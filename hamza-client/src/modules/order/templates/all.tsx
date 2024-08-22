@@ -5,9 +5,23 @@ import {
     singleBucket,
     cancelOrder,
 } from '@lib/data';
-import { Box, Button, FormControl, FormErrorMessage, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    FormControl,
+    FormErrorMessage,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    Text,
+} from '@chakra-ui/react';
 import OrderCard from '@modules/account/components/order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
+import CancelOrderModal from '../components/cancel-order-modal';
 import { Textarea } from '@medusajs/ui';
 
 type OrderType = {
@@ -35,6 +49,11 @@ const All = ({ orders }: { orders: any[] }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [cancelReason, setCancelReason] = useState('');
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
+    const [isCanceling, setIsCanceling] = useState(false);
+
+    useEffect(() => {
+        console.log('Current CancelReason:', cancelReason);
+    }, [cancelReason]);
 
     const [customerOrder, setCustomerOrder] = useState<OrderState | null>({
         Processing: [],
@@ -118,11 +137,15 @@ const All = ({ orders }: { orders: any[] }) => {
         }
         if (!selectedOrderId) return;
 
+        setIsCanceling(true); //start loader for button in modal
+
         try {
             await cancelOrder(selectedOrderId);
-            setIsModalOpen(false);
         } catch (error) {
             console.error('Error cancelling order: ', error);
+        } finally {
+            setIsCanceling(false);
+            closeCancelModal();
         }
     };
 
@@ -205,7 +228,9 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         borderRadius={'37px'}
                                                         ml={4}
                                                         onClick={() =>
-                                                            openCancelModal(order.id)
+                                                            openCancelModal(
+                                                                order.id
+                                                            )
                                                         }
                                                     >
                                                         Request Cancellation
@@ -672,46 +697,18 @@ const All = ({ orders }: { orders: any[] }) => {
                         </Button>
                     </LocalizedClientLink>
                 </Box>
-            )
-            }
-            <Modal isOpen={isModalOpen} onClose={closeCancelModal}>
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>Request Cancellation</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                        <FormControl
-                            isInvalid={!cancelReason && isAttemptedSubmit}
-                        >
-                            <Textarea
-                                placeholder="Reason for cancellation"
-                                value={cancelReason}
-                                onChange={(e) =>
-                                    setCancelReason(e.target.value)
-                                }
-                            />
-                            {((cancelReason?.length ?? 0) < MIN_CANCEL_REASON_LENGTH) && isAttemptedSubmit && (
-                                <FormErrorMessage>
-                                    Cancellation reason is required.
-                                </FormErrorMessage>
-                            )}
-                        </FormControl>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button variant="ghost" onClick={closeCancelModal}>
-                            Cancel
-                        </Button>
-                        <Button
-                            colorScheme="blue"
-                            ml={3}
-                            onClick={handleCancel}
-                        >
-                            Submit
-                        </Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
-        </Box >
+            )}
+
+            <CancelOrderModal
+                isModalOpen={isModalOpen}
+                closeCancelModal={closeCancelModal}
+                handleCancel={handleCancel}
+                cancelReason={cancelReason}
+                setCancelReason={setCancelReason}
+                isAttemptedSubmit={isAttemptedSubmit}
+                isCanceling={isCanceling}
+            />
+        </Box>
     );
 };
 
