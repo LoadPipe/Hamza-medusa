@@ -8,6 +8,11 @@ import {
     Text,
     VStack,
     HStack,
+    Tabs,
+    TabList,
+    TabPanels,
+    Tab,
+    TabPanel,
 } from '@chakra-ui/react';
 import ProcessingOrderCard from '@modules/account/components/processing-order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
@@ -124,91 +129,111 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                         animateOpacity
                                     >
                                         <Box mt={4}>
-                                            <Flex justify="space-between">
-                                                <Text>Order History</Text>
-                                                <Text>Order Details</Text>
-                                            </Flex>
+                                            <Tabs
+                                                variant="soft-rounded"
+                                                colorScheme="green"
+                                            >
+                                                <TabList>
+                                                    <Tab>Order History</Tab>
+                                                    <Tab>Order Details</Tab>
+                                                </TabList>
 
-                                            <HStack spacing={8} align="stretch">
-                                                {/* Order History Section */}
-                                                <VStack
-                                                    align="start"
-                                                    spacing={4}
-                                                    p={4}
-                                                    borderWidth="1px"
-                                                    borderRadius="lg"
-                                                    flex="1"
-                                                    bg="gray.900"
-                                                >
-                                                    <Text fontWeight="bold">
-                                                        Order History
-                                                    </Text>
-                                                    <Box>
-                                                        <Text>
-                                                            Order Placed
-                                                        </Text>
-                                                        <Text fontSize="sm">
-                                                            18/07/2024 | 3:43 pm
-                                                        </Text>
-                                                    </Box>
-                                                    <Box>
-                                                        <Text>
-                                                            Payment Complete
-                                                        </Text>
-                                                        <Text fontSize="sm">
-                                                            18/07/2024 | 3:43 pm
-                                                        </Text>
-                                                    </Box>
-                                                    <Box>
-                                                        <Text>
-                                                            Order Confirmed
-                                                        </Text>
-                                                        <Text fontSize="sm">
-                                                            18/07/2024 | 3:49 pm
-                                                        </Text>
-                                                    </Box>
-                                                    <Box>
-                                                        <Text>
-                                                            Product Packaging
-                                                        </Text>
-                                                        <Text fontSize="sm">
-                                                            18/07/2024 | 5:12 pm
-                                                        </Text>
-                                                    </Box>
-                                                    <Box>
-                                                        <Text>
-                                                            Product Shipped
-                                                        </Text>
-                                                        <Text fontSize="sm">
-                                                            18/07/2024 | 6:12 pm
-                                                        </Text>
-                                                    </Box>
-                                                </VStack>
+                                                <TabPanels>
+                                                    {/* Order History Panel */}
+                                                    <TabPanel>
+                                                        <VStack
+                                                            align="start"
+                                                            spacing={4}
+                                                            p={4}
+                                                            borderWidth="1px"
+                                                            borderRadius="lg"
+                                                            bg="gray.900"
+                                                            w="100%"
+                                                        >
+                                                            <Text fontWeight="bold">
+                                                                Order History
+                                                            </Text>
+                                                            <Box>
+                                                                <Text>
+                                                                    Order Placed
+                                                                </Text>
+                                                                <Text fontSize="sm">
+                                                                    18/07/2024 |
+                                                                    3:43 pm
+                                                                </Text>
+                                                            </Box>
+                                                            <Box>
+                                                                <Text>
+                                                                    Payment
+                                                                    Complete
+                                                                </Text>
+                                                                <Text fontSize="sm">
+                                                                    18/07/2024 |
+                                                                    3:43 pm
+                                                                </Text>
+                                                            </Box>
+                                                            <Box>
+                                                                <Text>
+                                                                    Order
+                                                                    Confirmed
+                                                                </Text>
+                                                                <Text fontSize="sm">
+                                                                    18/07/2024 |
+                                                                    3:49 pm
+                                                                </Text>
+                                                            </Box>
+                                                            <Box>
+                                                                <Text>
+                                                                    Product
+                                                                    Packaging
+                                                                </Text>
+                                                                <Text fontSize="sm">
+                                                                    18/07/2024 |
+                                                                    5:12 pm
+                                                                </Text>
+                                                            </Box>
+                                                            <Box>
+                                                                <Text>
+                                                                    Product
+                                                                    Shipped
+                                                                </Text>
+                                                                <Text fontSize="sm">
+                                                                    18/07/2024 |
+                                                                    6:12 pm
+                                                                </Text>
+                                                            </Box>
+                                                        </VStack>
+                                                    </TabPanel>
 
-                                                {/* Order Details Section */}
-                                                <VStack
-                                                    align="start"
-                                                    spacing={4}
-                                                    p={4}
-                                                    borderWidth="1px"
-                                                    borderRadius="lg"
-                                                    flex="1"
-                                                    bg="gray.900"
-                                                >
-                                                    <Text fontWeight="bold">
-                                                        Order Details
-                                                    </Text>
-                                                    <Text>
-                                                        Courier: DHL Express
-                                                    </Text>
-                                                    <Text>
-                                                        Address: Maharlika St,
-                                                        San Fernando, 2000
-                                                        Pampanga
-                                                    </Text>
-                                                    {/* Additional order details here */}
-                                                </VStack>
-                                            </HStack>
+                                                    {/* Order Details Panel */}
+                                                    <TabPanel>
+                                                        <VStack
+                                                            align="start"
+                                                            spacing={4}
+                                                            p={4}
+                                                            borderWidth="1px"
+                                                            borderRadius="lg"
+                                                            bg="gray.900"
+                                                            w="100%"
+                                                        >
+                                                            <Text fontWeight="bold">
+                                                                Order Details
+                                                            </Text>
+                                                            <Text>
+                                                                Courier: DHL
+                                                                Express
+                                                            </Text>
+                                                            <Text>
+                                                                Address:
+                                                                Maharlika St,
+                                                                San Fernando,
+                                                                2000 Pampanga
+                                                            </Text>
+                                                            {/* Additional order details here */}
+                                                        </VStack>
+                                                    </TabPanel>
+                                                </TabPanels>
+                                            </Tabs>
                                         </Box>
                                     </Collapse>
                                 </Box>
