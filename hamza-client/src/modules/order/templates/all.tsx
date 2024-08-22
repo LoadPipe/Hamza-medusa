@@ -49,6 +49,7 @@ const All = ({ orders }: { orders: any[] }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [cancelReason, setCancelReason] = useState('');
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
+    const [isCanceling, setIsCanceling] = useState(false);
 
     useEffect(() => {
         console.log('Current CancelReason:', cancelReason);
@@ -136,11 +137,15 @@ const All = ({ orders }: { orders: any[] }) => {
         }
         if (!selectedOrderId) return;
 
+        setIsCanceling(true); //start loader for button in modal
+
         try {
             await cancelOrder(selectedOrderId);
-            setIsModalOpen(false);
         } catch (error) {
             console.error('Error cancelling order: ', error);
+        } finally {
+            setIsCanceling(false);
+            closeCancelModal();
         }
     };
 
@@ -701,47 +706,8 @@ const All = ({ orders }: { orders: any[] }) => {
                 cancelReason={cancelReason}
                 setCancelReason={setCancelReason}
                 isAttemptedSubmit={isAttemptedSubmit}
+                isCanceling={isCanceling}
             />
-
-            {/* <Modal isOpen={isModalOpen} onClose={closeCancelModal}>
-                <ModalOverlay />
-                <ModalContent>
-                    <ModalHeader>Request Cancellation</ModalHeader>
-                    <ModalCloseButton />
-                    <ModalBody>
-                        <FormControl
-                            isInvalid={!cancelReason && isAttemptedSubmit}
-                        >
-                            <Textarea
-                                placeholder="Reason for cancellation"
-                                value={cancelReason}
-                                onChange={(e) =>
-                                    setCancelReason(e.target.value)
-                                }
-                            />
-                            {(cancelReason?.length ?? 0) <
-                                MIN_CANCEL_REASON_LENGTH &&
-                                isAttemptedSubmit && (
-                                    <FormErrorMessage>
-                                        Cancellation reason is required.
-                                    </FormErrorMessage>
-                                )}
-                        </FormControl>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button variant="ghost" onClick={closeCancelModal}>
-                            Cancel
-                        </Button>
-                        <Button
-                            colorScheme="blue"
-                            ml={3}
-                            onClick={handleCancel}
-                        >
-                            Submit
-                        </Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal> */}
         </Box>
     );
 };

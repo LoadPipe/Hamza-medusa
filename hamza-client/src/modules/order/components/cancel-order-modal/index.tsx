@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-    Box,
     Button,
     FormControl,
     FormErrorMessage,
@@ -23,6 +22,7 @@ interface CancelOrderModalProps {
     cancelReason: string;
     setCancelReason: (reason: string) => void;
     isAttemptedSubmit: boolean;
+    isCanceling: boolean;
 }
 
 const CancelOrderModal: React.FC<CancelOrderModalProps> = ({
@@ -32,6 +32,7 @@ const CancelOrderModal: React.FC<CancelOrderModalProps> = ({
     cancelReason,
     setCancelReason,
     isAttemptedSubmit,
+    isCanceling,
 }) => {
     const getErrorMessage = (): string => {
         if (!cancelReason) {
@@ -77,10 +78,20 @@ const CancelOrderModal: React.FC<CancelOrderModalProps> = ({
                     </FormControl>
                 </ModalBody>
                 <ModalFooter>
-                    <Button variant="ghost" onClick={closeCancelModal}>
+                    <Button
+                        variant="ghost"
+                        onClick={closeCancelModal}
+                        isDisabled={isCanceling}
+                    >
                         Cancel
                     </Button>
-                    <Button colorScheme="blue" ml={3} onClick={handleCancel}>
+                    <Button
+                        colorScheme="blue"
+                        ml={3}
+                        onClick={handleCancel}
+                        isLoading={isCanceling}
+                        isDisabled={isCanceling}
+                    >
                         Submit
                     </Button>
                 </ModalFooter>
