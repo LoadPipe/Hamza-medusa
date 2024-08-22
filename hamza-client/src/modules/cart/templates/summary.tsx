@@ -43,6 +43,7 @@ const Summary = ({ cart }: SummaryProps) => {
                     height={{ base: '42px', md: '52px' }}
                     borderRadius={'full'}
                     fontSize={{ base: '14px', md: '16px' }}
+                    isDisabled={cart.items.length === 0 ? true : false}
                     _hover={{
                         backgroundColor: 'white',
                         color: 'black',

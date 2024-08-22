@@ -45,39 +45,33 @@ const CartTemplate = ({
             justifyContent="center"
             alignItems={'center'}
         >
-            {cart?.items.length ? (
-                <Flex
-                    maxWidth="1258px"
-                    width="100%"
-                    mx="1rem"
-                    flexDirection={{ base: 'column', md: 'row' }}
-                    gap="16px"
-                >
-                    {/* gap="24px" */}
-                    <Flex flexDirection={'column'} gap="16px" flex={1}>
-                        {!customer && (
-                            <>
-                                <SignInPrompt />
-                                <Divider />
-                            </>
-                        )}
-                        {/* Cart Items */}
-                        <ItemsTemplate
-                            region={cart?.region}
-                            items={cart?.items}
-                            currencyCode={preferred_currency_code ?? undefined}
-                        />
-                        {/* Shipping Address */}
-                        {/* <CartShippingAddress customer={customer} /> */}
-                    </Flex>
-
-                    {cart && cart.region && <Summary cart={cart} />}
+            <Flex
+                maxWidth="1258px"
+                width="100%"
+                mx="1rem"
+                flexDirection={{ base: 'column', md: 'row' }}
+                gap="16px"
+            >
+                {/* gap="24px" */}
+                <Flex flexDirection={'column'} gap="16px" flex={1}>
+                    {!customer && (
+                        <>
+                            <SignInPrompt />
+                            <Divider />
+                        </>
+                    )}
+                    {/* Cart Items */}
+                    <ItemsTemplate
+                        region={cart?.region}
+                        items={cart?.items}
+                        currencyCode={preferred_currency_code ?? undefined}
+                    />
+                    {/* Shipping Address */}
+                    {/* <CartShippingAddress customer={customer} /> */}
                 </Flex>
-            ) : (
-                <div>
-                    <EmptyCartMessage />
-                </div>
-            )}
+
+                {cart && cart.region && <Summary cart={cart} />}
+            </Flex>
         </Flex>
     );
 };
