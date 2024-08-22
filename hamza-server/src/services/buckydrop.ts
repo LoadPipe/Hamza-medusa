@@ -22,6 +22,8 @@ import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 type CreateProductInput = MedusaCreateProductInput & { store_id: string, bucky_metadata?: string };
 //type UpdateProductInput = MedusaUpdateProductInput & { store_id: string, bucky_metadata?: string };
 
+const SHIPPING_COST_MIN: number = 1000;
+
 export default class BuckydropService extends TransactionBaseService {
     protected readonly logger: Logger;
     protected readonly productService_: ProductService;
@@ -106,11 +108,14 @@ export default class BuckydropService extends TransactionBaseService {
     }
 
     async calculateShippingPriceForCart(cartId: string): Promise<number> {
-        let output = 300;
+        let output = 0;
         let currency = 'usdc';
         let gotPrice = false;
 
         try {
+            //this subtotal is calculated to compare with the shipping cost  
+            let subtotal = 0;
+
             const cart: Cart = await this.cartService_.retrieve(cartId, {
                 relations: [
                     'items.variant.product.store',
@@ -153,32 +158,50 @@ export default class BuckydropService extends TransactionBaseService {
                         weight: variantMetadata.weight ?? 100,
                         categoryCode: productMetadata.detail.categoryCode
                     });
+
+                    subtotal += item.unit_price * item.quantity;
                 }
             }
 
-            const estimate = await this.buckyClient.getShippingCostEstimate(10, 1, input);
+            if (subtotal > 0) {
+                const estimate = await this.buckyClient.getShippingCostEstimate(10, 1, input);
 
-            if (estimate?.data?.total) {
+                if (estimate?.data?.total) {
+                    output = await this.priceConverter.getPrice({
+                        baseAmount: estimate.data.total,
+                        baseCurrency: 'cny',
+                        toCurrency: currency
+                    });
+                    gotPrice = true;
+                }
+            }
+
+
+            //if price was not yet converted, or nothing came back, do it now
+            if (!gotPrice) {
+
+                //this needs to be converted to USDC in order to compare
+                if (output <= 0 && subtotal > 0) {
+                    subtotal = await this.priceConverter.getPrice(
+                        { baseAmount: subtotal, baseCurrency: currency, toCurrency: 'usdc' }
+                    );
+
+                    //final calculated price should be 
+                    output = subtotal < SHIPPING_COST_MIN ? SHIPPING_COST_MIN : subtotal;
+                }
+
                 output = await this.priceConverter.getPrice({
-                    baseAmount: estimate.data.total,
-                    baseCurrency: 'cny',
+                    baseAmount: output,
+                    baseCurrency: 'usdc',
                     toCurrency: currency
                 });
-                gotPrice = true;
             }
         }
         catch (e) {
             this.logger.error(`Error calculating shipping costs in BuckydropService`, e);
+            output = SHIPPING_COST_MIN;
         }
 
-        //if price was not yet converted, do it now
-        if (!gotPrice && !currency.startsWith('us')) {
-            output = await this.priceConverter.getPrice({
-                baseAmount: output,
-                baseCurrency: 'usdc',
-                toCurrency: currency
-            })
-        }
         return output;
     }
 
@@ -281,23 +304,55 @@ export default class BuckydropService extends TransactionBaseService {
         try {
             const order: Order = await this.orderService_.retrieve(orderId);
             const buckyData = order.bucky_metadata?.length ? JSON.parse(order.bucky_metadata) : null;
+            let cancelOutput: any = null;
 
             if (order && buckyData) {
 
                 //get order details from buckydrop
                 const shopOrderNo: string = buckyData.data.shopOrderNo ?? buckyData.shopOrderNo;
+                let purchaseCode = buckyData?.tracking?.data?.poOrderList.orderCode;
 
-                //get the order status
                 if (shopOrderNo) {
+                    //get PO number from order details
+                    const orderDetail = await this.buckyClient.getOrderDetails(shopOrderNo);
+                    purchaseCode = orderDetail?.data?.poOrderList.orderCode;
+                    if (orderDetail)
+                        buckyData.tracking = orderDetail;
+                    let canceled: boolean = false;
 
-                    //save the tracking data
-                    const output = await this.buckyClient.cancelOrder(shopOrderNo);
-                    buckyData.cancel = output;
-                    order.bucky_metadata = JSON.stringify(buckyData);
+                    //first try cancelling purchase order
+                    if (purchaseCode) {
+                        cancelOutput = await this.buckyClient.cancelPurchaseOrder(purchaseCode);
+                        canceled = (cancelOutput?.success === 'true');
+                    }
 
-                    //save the order 
-                    await this.orderRepository_.save(order);
+                    //if not canceled yet, try to cancel the shop order
+                    if (!canceled) {
+                        if (shopOrderNo) {
+                            cancelOutput = await this.buckyClient.cancelShopOrder(shopOrderNo);
+                            canceled = (cancelOutput?.success === 'true');
+                        }
+                    }
+
+                    if (cancelOutput) {
+                        //save the tracking data
+                        order.bucky_metadata = JSON.stringify(buckyData);
+                        buckyData.cancel = cancelOutput;
+
+                        //save the order 
+                        await this.orderRepository_.save(order);
+                    } else {
+                        this.logger.warn(`Order ${orderId}: no Buckydrop cancellation was performed`);
+                    }
+                } else {
+                    this.logger.warn(`Order ${orderId} has no BD shop order number`);
                 }
+            }
+            else {
+                if (!order)
+                    this.logger.warn(`Order ${orderId} not found.`);
+                else
+                    this.logger.warn(`Order ${orderId} is not a Buckydrop order (or has no BD metadata)`);
             }
 
             return order;

@@ -62,6 +62,9 @@ export interface IBuckyShippingCostRequest {
     }[];
 }
 
+//TODO: comment the methods 
+//TODO: proper return types 
+
 export class BuckyClient {
     private client: AxiosInstance;
 
@@ -119,7 +122,7 @@ export class BuckyClient {
             });
     }
 
-    async searchProductByImage(base64Image, currentPage = 1, pageSize = 10) {
+    async searchProductByImage(base64Image, currentPage = 1, pageSize = 10): Promise<any> {
         const params = JSON.stringify({
             curent: currentPage,
             size: pageSize,
@@ -145,7 +148,7 @@ export class BuckyClient {
         );
     }
 
-    async listProductCategories() {
+    async listProductCategories(): Promise<any> {
         const params = ''; // Assuming no body is required
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
@@ -182,7 +185,7 @@ export class BuckyClient {
             });
     }
 
-    async cancelOrder(shopOrderNo: string, partnerOrderNo?: string) {
+    async cancelShopOrder(shopOrderNo: string, partnerOrderNo?: string): Promise<any> {
         const params = JSON.stringify({
             shopOrderNo,
             partnerOrderNo,
@@ -206,7 +209,29 @@ export class BuckyClient {
             });
     }
 
-    async getOrderDetails(shopOrderNo: string, partnerOrderNo?: string) {
+    async cancelPurchaseOrder(orderCode: string): Promise<any> {
+        const params = JSON.stringify({
+            orderCode
+        });
+
+
+        return this.client
+            .post(
+                this.formatApiUrl('/order/po-cancel', params),
+                params,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+            )
+            .then((response) => response.data)
+            .catch((error) => {
+                throw error;
+            });
+    }
+
+    async getOrderDetails(shopOrderNo: string, partnerOrderNo?: string): Promise<any> {
         const params = JSON.stringify({
             shopOrderNo,
             partnerOrderNo,
@@ -225,7 +250,7 @@ export class BuckyClient {
             });
     }
 
-    async getLogisticsInfo(packageCode: string) {
+    async getLogisticsInfo(packageCode: string): Promise<any> {
         const params = JSON.stringify({ packageCode });
         return this.client
             .post(this.formatApiUrl('/logistics/query-info', params), params) //query-info?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`, params)
@@ -235,7 +260,7 @@ export class BuckyClient {
             });
     }
 
-    async getParcelDetails(packageCode: string) {
+    async getParcelDetails(packageCode: string): Promise<any> {
         const params = JSON.stringify({ packageCode });
         return this.client
             .post(this.formatApiUrl('/pkg/detail', params), params)
@@ -245,7 +270,7 @@ export class BuckyClient {
             });
     }
 
-    async getShippingCostEstimate(size: number, current: number, item: IBuckyShippingCostRequest) {
+    async getShippingCostEstimate(size: number, current: number, item: IBuckyShippingCostRequest): Promise<any> {
         const params = JSON.stringify({ size, current, item });
         return this.client
             .post(this.formatApiUrl('/logistics/channel-carriage-list', params), params)
@@ -261,7 +286,9 @@ export class BuckyClient {
             route = '/' + route;
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
-        return `/api/rest/v2/adapt/adaptation${route}?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`;
+        const url = `/api/rest/v2/adapt/adaptation${route}?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`;
+        console.log(url);
+        return url;
     }
 
     // Method to calculate MD5 signature
