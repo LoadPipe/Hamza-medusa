@@ -5,9 +5,23 @@ import {
     singleBucket,
     cancelOrder,
 } from '@lib/data';
-import { Box, Button, FormControl, FormErrorMessage, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    FormControl,
+    FormErrorMessage,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    Text,
+} from '@chakra-ui/react';
 import OrderCard from '@modules/account/components/order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
+import CancelOrderModal from '../components/cancel-order-modal';
 import { Textarea } from '@medusajs/ui';
 
 type OrderType = {
@@ -35,6 +49,10 @@ const All = ({ orders }: { orders: any[] }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [cancelReason, setCancelReason] = useState('');
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
+
+    useEffect(() => {
+        console.log('Current CancelReason:', cancelReason);
+    }, [cancelReason]);
 
     const [customerOrder, setCustomerOrder] = useState<OrderState | null>({
         Processing: [],
@@ -205,7 +223,9 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         borderRadius={'37px'}
                                                         ml={4}
                                                         onClick={() =>
-                                                            openCancelModal(order.id)
+                                                            openCancelModal(
+                                                                order.id
+                                                            )
                                                         }
                                                     >
                                                         Request Cancellation
@@ -672,9 +692,18 @@ const All = ({ orders }: { orders: any[] }) => {
                         </Button>
                     </LocalizedClientLink>
                 </Box>
-            )
-            }
-            <Modal isOpen={isModalOpen} onClose={closeCancelModal}>
+            )}
+
+            <CancelOrderModal
+                isModalOpen={isModalOpen}
+                closeCancelModal={closeCancelModal}
+                handleCancel={handleCancel}
+                cancelReason={cancelReason}
+                setCancelReason={setCancelReason}
+                isAttemptedSubmit={isAttemptedSubmit}
+            />
+
+            {/* <Modal isOpen={isModalOpen} onClose={closeCancelModal}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Request Cancellation</ModalHeader>
@@ -690,11 +719,13 @@ const All = ({ orders }: { orders: any[] }) => {
                                     setCancelReason(e.target.value)
                                 }
                             />
-                            {((cancelReason?.length ?? 0) < MIN_CANCEL_REASON_LENGTH) && isAttemptedSubmit && (
-                                <FormErrorMessage>
-                                    Cancellation reason is required.
-                                </FormErrorMessage>
-                            )}
+                            {(cancelReason?.length ?? 0) <
+                                MIN_CANCEL_REASON_LENGTH &&
+                                isAttemptedSubmit && (
+                                    <FormErrorMessage>
+                                        Cancellation reason is required.
+                                    </FormErrorMessage>
+                                )}
                         </FormControl>
                     </ModalBody>
                     <ModalFooter>
@@ -710,8 +741,8 @@ const All = ({ orders }: { orders: any[] }) => {
                         </Button>
                     </ModalFooter>
                 </ModalContent>
-            </Modal>
-        </Box >
+            </Modal> */}
+        </Box>
     );
 };
 
