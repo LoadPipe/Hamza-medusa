@@ -6,7 +6,6 @@ import { ProductCollectionWithPreviews } from 'types/global';
 import SearchAndFilterPanel from '@modules/home/components/search-and-filter-panel';
 import { Box } from '@chakra-ui/react';
 import HeroBanner from '@modules/home/components/hero-banner';
-import Error from 'app/error';
 
 export const metadata: Metadata = {
     title: 'Hamza Store',
@@ -55,12 +54,6 @@ const getCollectionsWithProducts = async (
     return collections as unknown as ProductCollectionWithPreviews[];
 };
 
-// const mockError = new Error('This is a mock error for testing purposes.');
-// const mockReset = () => {
-//     console.log('Reset function called');
-//     // Add any reset logic you want to test
-// };
-
 export default async function Home({
     params: { countryCode },
 }: {
@@ -75,9 +68,8 @@ export default async function Home({
 
     return (
         <Box backgroundColor={'transparent'}>
-            <Error error={'eat a dick'} />
-            {/* <HeroBanner />
-            <SearchAndFilterPanel /> */}
+            <HeroBanner />
+            <SearchAndFilterPanel />
         </Box>
     );
 }

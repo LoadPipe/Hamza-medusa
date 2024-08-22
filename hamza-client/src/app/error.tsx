@@ -9,8 +9,6 @@ import {
     Button,
     ListItem,
     UnorderedList,
-    List,
-    Link,
 } from '@chakra-ui/react';
 
 type ErrorPageProps = {
