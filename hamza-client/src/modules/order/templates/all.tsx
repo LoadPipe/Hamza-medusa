@@ -13,6 +13,7 @@ type OrderType = {
     id: string;
     cart: any;
     cart_id: string;
+    status: string;
     // include other order properties here
 };
 interface OrderState {
@@ -37,9 +38,6 @@ const All = ({ orders }: { orders: any[] }) => {
         Cancelled: [],
         Refunded: [],
     });
-    const [orderStatuses, setOrderStatuses] = useState<{
-        [key: string]: string;
-    }>({});
 
     const openCancelModal = (orderId: string) => {
         setSelectedOrderId(orderId);
@@ -117,10 +115,6 @@ const All = ({ orders }: { orders: any[] }) => {
 
         try {
             await cancelOrder(selectedOrderId);
-            setOrderStatuses((prevStatuses) => ({
-                ...prevStatuses,
-                [selectedOrderId]: 'canceled',
-            }));
             setIsModalOpen(false);
         } catch (error) {
             console.error('Error cancelling order: ', error);
@@ -191,9 +185,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         See details
                                                     </Button>
                                                 </LocalizedClientLink>
-                                                {orderStatuses[
-                                                    order.id
-                                                ] === 'canceled' ? (
+                                                {order.status === 'canceled' ? (
                                                     <Button
                                                         colorScheme="red"
                                                         ml={4}
@@ -296,9 +288,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         See details
                                                     </Button>
                                                 </LocalizedClientLink>
-                                                {orderStatuses[
-                                                    order.id
-                                                ] === 'canceled' ? (
+                                                {order.status === 'canceled' ? (
                                                     <Button
                                                         colorScheme="red"
                                                         ml={4}
@@ -402,9 +392,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         See details
                                                     </Button>
                                                 </LocalizedClientLink>
-                                                {orderStatuses[
-                                                    order.id
-                                                ] === 'canceled' ? (
+                                                {order.status === 'canceled' ? (
                                                     <Button
                                                         colorScheme="red"
                                                         ml={4}
@@ -508,9 +496,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         See details
                                                     </Button>
                                                 </LocalizedClientLink>
-                                                {orderStatuses[
-                                                    order.id
-                                                ] === 'canceled' ? (
+                                                {order.status === 'canceled' ? (
                                                     <Button
                                                         colorScheme="red"
                                                         ml={4}
@@ -614,9 +600,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         See details
                                                     </Button>
                                                 </LocalizedClientLink>
-                                                {orderStatuses[
-                                                    order.id
-                                                ] === 'canceled' ? (
+                                                {order.status === 'canceled' ? (
                                                     <Button
                                                         colorScheme="red"
                                                         ml={4}
