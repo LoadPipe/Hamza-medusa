@@ -24,14 +24,14 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         '/admin/custom/bucky/import'
     );
 
-    const getImportData = async () => {
+    const getImportData = async (storeName: string) => {
         const output = {
             storeId: '',
             collectionId: '',
             salesChannelId: '',
         };
 
-        output.storeId = (await storeService.getStoreByName('Medusa Merch')).id;
+        output.storeId = (await storeService.getStoreByName(storeName)).id;
         output.collectionId = (
             await productCollectionRepository.findOne({
                 where: { store_id: output.storeId },
@@ -47,7 +47,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     //soup bowls 
 
     await handler.handle(async () => {
-        const importData = await getImportData();
+        const importData = await getImportData(req.query.store.toString() ?? 'Medusa Merch');
 
         const output = await buckyService.importProductsByKeyword(
             req.query.keyword.toString(),
