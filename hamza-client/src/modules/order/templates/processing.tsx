@@ -136,7 +136,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                     >
                                         <Box mt={4}>
                                             <Tabs
-                                                variant="soft-rounded"
+                                                variant="enclosed"
                                                 colorScheme="green"
                                             >
                                                 <TabList>
@@ -151,9 +151,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                             align="start"
                                                             spacing={4}
                                                             p={4}
-                                                            borderWidth="1px"
                                                             borderRadius="lg"
-                                                            bg="gray.900"
                                                             w="100%"
                                                         >
                                                             <Text fontWeight="bold">
@@ -217,9 +215,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                             align="start"
                                                             spacing={4}
                                                             p={4}
-                                                            borderWidth="1px"
                                                             borderRadius="lg"
-                                                            bg="gray.900"
                                                             w="100%"
                                                         >
                                                             <Text fontWeight="bold">
