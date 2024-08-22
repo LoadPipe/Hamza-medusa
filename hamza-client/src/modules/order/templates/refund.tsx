@@ -42,12 +42,15 @@ const Refund = ({ orders }: { orders: any[] }) => {
         setCourierInfo(courierInfo === orderId ? null : orderId);
     };
 
-    const getAmount = (amount?: number | null) => {
+    const getAmount = (
+        amount?: number | null,
+        currency_code?: string | null
+    ) => {
         if (amount === null || amount === undefined) {
             return;
         }
 
-        return formatCryptoPrice(amount, order.currency_code || 'USDC');
+        return formatCryptoPrice(amount, currency_code || 'USDC');
     };
 
     const fetchAllOrders = async (customerId: string) => {
@@ -120,7 +123,10 @@ const Refund = ({ orders }: { orders: any[] }) => {
                                                 fontSize="24px"
                                                 fontWeight="semibold"
                                             >
-                                                {getAmount(order.unit_price)}{' '}
+                                                {getAmount(
+                                                    order.unit_price,
+                                                    order.currency_code
+                                                )}{' '}
                                                 {order.currency_code}
                                             </Text>
                                             <HStack
