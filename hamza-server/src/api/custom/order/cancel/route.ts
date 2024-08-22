@@ -20,6 +20,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             handler.inputParams.order_id
         );
 
+        handler.logger.debug(`Order ${handler.inputParams.order_id} cancelled.`);
         res.status(200).json({ order });
     });
 };

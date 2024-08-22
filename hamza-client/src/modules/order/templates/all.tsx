@@ -5,15 +5,19 @@ import {
     singleBucket,
     cancelOrder,
 } from '@lib/data';
-import { Box, Button, Text } from '@chakra-ui/react';
+import { Box, Button, FormControl, FormErrorMessage, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text } from '@chakra-ui/react';
 import OrderCard from '@modules/account/components/order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
+import { Textarea } from '@medusajs/ui';
+
 type OrderType = {
     id: string;
     cart: any;
     cart_id: string;
+    status: string;
     // include other order properties here
 };
+
 interface OrderState {
     Processing: OrderType[];
     Shipped: OrderType[];
@@ -21,6 +25,9 @@ interface OrderState {
     Cancelled: OrderType[];
     Refunded: OrderType[];
 }
+
+const MIN_CANCEL_REASON_LENGTH = 30;
+
 const All = ({ orders }: { orders: any[] }) => {
     const [customerId, setCustomerId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -36,19 +43,18 @@ const All = ({ orders }: { orders: any[] }) => {
         Cancelled: [],
         Refunded: [],
     });
-    const [orderStatuses, setOrderStatuses] = useState<{
-        [key: string]: string;
-    }>({});
 
-    const openModal = (orderId: string) => {
+    const openCancelModal = (orderId: string) => {
         setSelectedOrderId(orderId);
         setIsModalOpen(true);
     };
-    const closeModal = () => {
+
+    const closeCancelModal = () => {
         setIsModalOpen(false);
         setCancelReason('');
         setIsAttemptedSubmit(false);
     };
+
     useEffect(() => {
         console.log('Orders received in Processing:', orders);
         if (orders && orders.length > 0) {
@@ -102,6 +108,22 @@ const All = ({ orders }: { orders: any[] }) => {
             });
         }
         setIsLoading(false);
+    };
+
+    //TODO: this is duplicated code (3x); should be DRYed (likewise with the modal itself)
+    const handleCancel = async () => {
+        if ((cancelReason?.length ?? 0) < MIN_CANCEL_REASON_LENGTH) {
+            setIsAttemptedSubmit(true);
+            return;
+        }
+        if (!selectedOrderId) return;
+
+        try {
+            await cancelOrder(selectedOrderId);
+            setIsModalOpen(false);
+        } catch (error) {
+            console.error('Error cancelling order: ', error);
+        }
     };
 
     return (
@@ -168,9 +190,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         See details
                                                     </Button>
                                                 </LocalizedClientLink>
-                                                {orderStatuses[
-                                                    order.cart_id
-                                                ] === 'canceled' ? (
+                                                {order.status === 'canceled' ? (
                                                     <Button
                                                         colorScheme="red"
                                                         ml={4}
@@ -185,9 +205,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         borderRadius={'37px'}
                                                         ml={4}
                                                         onClick={() =>
-                                                            cancelOrder(
-                                                                order.cart_id
-                                                            )
+                                                            openCancelModal(order.id)
                                                         }
                                                     >
                                                         Request Cancellation
@@ -232,7 +250,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                     pb={'6'}
                                 >
                                     {/*<div className="p-4 bg-gray-700">*/}
-                                    {/*    Cart ID {order.cart_id} - Total Items:{' '}*/}
+                                    {/*    Cart ID {order.id} - Total Items:{' '}*/}
                                     {/*    {order.cart?.items?.length || 0}*/}
                                     {/*    <span*/}
                                     {/*        className="pl-2 text-blue-400 underline underline-offset-1 cursor-pointer"*/}
@@ -275,9 +293,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         See details
                                                     </Button>
                                                 </LocalizedClientLink>
-                                                {orderStatuses[
-                                                    order.cart_id
-                                                ] === 'canceled' ? (
+                                                {order.status === 'canceled' ? (
                                                     <Button
                                                         colorScheme="red"
                                                         ml={4}
@@ -292,8 +308,8 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         borderRadius={'37px'}
                                                         ml={4}
                                                         onClick={() =>
-                                                            openModal(
-                                                                order.cart_id
+                                                            openCancelModal(
+                                                                order.id
                                                             )
                                                         }
                                                     >
@@ -381,9 +397,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         See details
                                                     </Button>
                                                 </LocalizedClientLink>
-                                                {orderStatuses[
-                                                    order.cart_id
-                                                ] === 'canceled' ? (
+                                                {order.status === 'canceled' ? (
                                                     <Button
                                                         colorScheme="red"
                                                         ml={4}
@@ -398,8 +412,8 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         borderRadius={'37px'}
                                                         ml={4}
                                                         onClick={() =>
-                                                            openModal(
-                                                                order.cart_id
+                                                            openCancelModal(
+                                                                order.id
                                                             )
                                                         }
                                                     >
@@ -487,9 +501,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         See details
                                                     </Button>
                                                 </LocalizedClientLink>
-                                                {orderStatuses[
-                                                    order.cart_id
-                                                ] === 'canceled' ? (
+                                                {order.status === 'canceled' ? (
                                                     <Button
                                                         colorScheme="red"
                                                         ml={4}
@@ -504,8 +516,8 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         borderRadius={'37px'}
                                                         ml={4}
                                                         onClick={() =>
-                                                            openModal(
-                                                                order.cart_id
+                                                            openCancelModal(
+                                                                order.id
                                                             )
                                                         }
                                                     >
@@ -593,9 +605,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         See details
                                                     </Button>
                                                 </LocalizedClientLink>
-                                                {orderStatuses[
-                                                    order.cart_id
-                                                ] === 'canceled' ? (
+                                                {order.status === 'canceled' ? (
                                                     <Button
                                                         colorScheme="red"
                                                         ml={4}
@@ -610,8 +620,8 @@ const All = ({ orders }: { orders: any[] }) => {
                                                         borderRadius={'37px'}
                                                         ml={4}
                                                         onClick={() =>
-                                                            openModal(
-                                                                order.cart_id
+                                                            openCancelModal(
+                                                                order.id
                                                             )
                                                         }
                                                     >
@@ -662,8 +672,46 @@ const All = ({ orders }: { orders: any[] }) => {
                         </Button>
                     </LocalizedClientLink>
                 </Box>
-            )}
-        </Box>
+            )
+            }
+            <Modal isOpen={isModalOpen} onClose={closeCancelModal}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader>Request Cancellation</ModalHeader>
+                    <ModalCloseButton />
+                    <ModalBody>
+                        <FormControl
+                            isInvalid={!cancelReason && isAttemptedSubmit}
+                        >
+                            <Textarea
+                                placeholder="Reason for cancellation"
+                                value={cancelReason}
+                                onChange={(e) =>
+                                    setCancelReason(e.target.value)
+                                }
+                            />
+                            {((cancelReason?.length ?? 0) < MIN_CANCEL_REASON_LENGTH) && isAttemptedSubmit && (
+                                <FormErrorMessage>
+                                    Cancellation reason is required.
+                                </FormErrorMessage>
+                            )}
+                        </FormControl>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button variant="ghost" onClick={closeCancelModal}>
+                            Cancel
+                        </Button>
+                        <Button
+                            colorScheme="blue"
+                            ml={3}
+                            onClick={handleCancel}
+                        >
+                            Submit
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
+        </Box >
     );
 };
 
