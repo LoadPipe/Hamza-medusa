@@ -9,6 +9,7 @@ import Divider from '@modules/common/components/divider';
 import { Customer } from '@medusajs/medusa';
 import { Box, Flex, Text } from '@chakra-ui/react';
 import CartShippingAddress from '../components/address';
+import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
 const CartTemplate = ({
     cart,
@@ -24,6 +25,9 @@ const CartTemplate = ({
         }));
         console.log('ITEMS ARE', items);
     };
+
+    const { preferred_currency_code, setCustomerPreferredCurrency } =
+        useCustomerAuthStore();
 
     // Ensure `cart` is not null before calling `updateInventory`
     const handleUpdateInventory = () => {
@@ -61,6 +65,7 @@ const CartTemplate = ({
                         <ItemsTemplate
                             region={cart?.region}
                             items={cart?.items}
+                            currencyCode={preferred_currency_code ?? undefined}
                         />
                         {/* Shipping Address */}
                         {/* <CartShippingAddress customer={customer} /> */}

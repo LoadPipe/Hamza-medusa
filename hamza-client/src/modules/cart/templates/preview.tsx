@@ -13,9 +13,10 @@ type ExtendedLineItem = LineItem & {
 type ItemsTemplateProps = {
     items?: Omit<ExtendedLineItem, 'beforeInsert'>[];
     region?: Region;
+    currencyCode?: string;
 };
 
-const ItemsPreviewTemplate = ({ items, region }: ItemsTemplateProps) => {
+const ItemsPreviewTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
     const hasOverflow = items && items.length > 4;
 
     return (
@@ -29,22 +30,23 @@ const ItemsPreviewTemplate = ({ items, region }: ItemsTemplateProps) => {
                 <Table.Body>
                     {items && region
                         ? items
-                              .sort((a, b) => {
-                                  return a.created_at > b.created_at ? -1 : 1;
-                              })
-                              .map((item) => {
-                                  return (
-                                      <Item
-                                          key={item.id}
-                                          item={item}
-                                          region={region}
-                                          type="preview"
-                                      />
-                                  );
-                              })
+                            .sort((a, b) => {
+                                return a.created_at > b.created_at ? -1 : 1;
+                            })
+                            .map((item) => {
+                                return (
+                                    <Item
+                                        key={item.id}
+                                        item={item}
+                                        region={region}
+                                        type="preview"
+                                        currencyCode={currencyCode}
+                                    />
+                                );
+                            })
                         : Array.from(Array(5).keys()).map((i) => {
-                              return <SkeletonLineItem key={i} />;
-                          })}
+                            return <SkeletonLineItem key={i} />;
+                        })}
                 </Table.Body>
             </Table>
         </div>

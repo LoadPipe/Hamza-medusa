@@ -211,6 +211,7 @@ leaveTo="opacity-0 translate-y-1"
                                                 }
                                                 item={item}
                                                 style="tight"
+                                                currencyCode={currencyCode}
                                             />
                                         </div>
                                     </div>

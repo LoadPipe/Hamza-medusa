@@ -196,7 +196,8 @@ export default class OrderService extends MedusaOrderService {
         });
 
         //do buckydrop order creation
-        await this.doBuckydropOrderCreation(cartId, orders);
+        if (process.env.BUCKY_ENABLE_PURCHASE)
+            await this.doBuckydropOrderCreation(cartId, orders);
 
         //calls to update inventory
         const inventoryPromises =

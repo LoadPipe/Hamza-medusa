@@ -22,7 +22,8 @@ import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 type CreateProductInput = MedusaCreateProductInput & { store_id: string, bucky_metadata?: string };
 //type UpdateProductInput = MedusaUpdateProductInput & { store_id: string, bucky_metadata?: string };
 
-const SHIPPING_COST_MIN: number = 1000;
+const SHIPPING_COST_MIN: number = parseInt(process.env.BUCKY_MIN_SHIPPING_COST_US_CENT ?? '1000');
+const SHIPPING_COST_MAX: number = parseInt(process.env.BUCKY_MAX_SHIPPING_COST_US_CENT ?? '4000');
 
 export default class BuckydropService extends TransactionBaseService {
     protected readonly logger: Logger;
@@ -166,14 +167,23 @@ export default class BuckydropService extends TransactionBaseService {
             if (subtotal > 0) {
                 const estimate = await this.buckyClient.getShippingCostEstimate(10, 1, input);
 
+                //convert to usd first
                 if (estimate?.data?.total) {
-                    output = await this.priceConverter.getPrice({
-                        baseAmount: estimate.data.total,
-                        baseCurrency: 'cny',
-                        toCurrency: currency
-                    });
+                    output = await this.priceConverter.convertPrice(
+                        estimate.data.total, 'cny', 'usdc'
+                    );
                     gotPrice = true;
                 }
+
+                output = subtotal;
+                output = output < SHIPPING_COST_MIN ? SHIPPING_COST_MIN : output;
+                output = output > SHIPPING_COST_MAX ? SHIPPING_COST_MAX : output;
+
+                //convert to final currency 
+                if (currency != 'usdc')
+                    output = await this.priceConverter.convertPrice(
+                        estimate.data.total, 'usdc', currency
+                    );
             }
 
 
@@ -182,19 +192,19 @@ export default class BuckydropService extends TransactionBaseService {
 
                 //this needs to be converted to USDC in order to compare
                 if (output <= 0 && subtotal > 0) {
-                    subtotal = await this.priceConverter.getPrice(
-                        { baseAmount: subtotal, baseCurrency: currency, toCurrency: 'usdc' }
+                    subtotal = await this.priceConverter.convertPrice(
+                        subtotal, currency, 'usdc'
                     );
 
                     //final calculated price should be 
-                    output = subtotal < SHIPPING_COST_MIN ? SHIPPING_COST_MIN : subtotal;
+                    output = subtotal;
+                    output = output < SHIPPING_COST_MIN ? SHIPPING_COST_MIN : output;
+                    output = output > SHIPPING_COST_MAX ? SHIPPING_COST_MAX : output;
                 }
 
-                output = await this.priceConverter.getPrice({
-                    baseAmount: output,
-                    baseCurrency: 'usdc',
-                    toCurrency: currency
-                });
+                output = await this.priceConverter.convertPrice(
+                    output, 'usdc', currency
+                );
             }
         }
         catch (e) {
@@ -421,7 +431,6 @@ export default class BuckydropService extends TransactionBaseService {
         }
 
         for (const variant of productDetails.data.skuList) {
-            console.log(JSON.stringify(variant));
             const baseAmount = variant.proPrice
                 ? variant.proPrice.priceCent
                 : variant.price.priceCent;
@@ -465,8 +474,6 @@ export default class BuckydropService extends TransactionBaseService {
             const productDetails = await buckyClient.getProductDetails(
                 item.goodsLink
             );
-            console.log('productDetails:');
-            console.log(productDetails);
 
             const metadata = item;
             metadata.detail = productDetails.data;

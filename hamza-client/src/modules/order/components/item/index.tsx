@@ -13,9 +13,10 @@ type ExtendedLineItem = LineItem & {
 type ItemProps = {
     item: Omit<ExtendedLineItem, 'beforeInsert'>;
     region: Region;
+    currencyCode: string;
 };
 
-const Item = ({ item, region }: ItemProps) => {
+const Item = ({ item, region, currencyCode }: ItemProps) => {
     return (
         <Table.Row className="w-full">
             <Table.Cell className="!pl-0 p-4 w-24">
@@ -41,10 +42,15 @@ const Item = ({ item, region }: ItemProps) => {
                             item={item}
                             region={region}
                             style="tight"
+                            currencyCode={currencyCode}
                         />
                     </span>
 
-                    <LineItemPrice item={item} region={region} style="tight" />
+                    <LineItemPrice
+                        item={item}
+                        region={region}
+                        style="tight"
+                        currencyCode={currencyCode} />
                 </span>
             </Table.Cell>
         </Table.Row>

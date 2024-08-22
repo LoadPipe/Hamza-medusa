@@ -11,7 +11,7 @@ const OrderSummary = ({ order }: OrderSummaryProps) => {
             return;
         }
 
-        return formatCryptoPrice(amount, order.currency_code || 'ETH');
+        return formatCryptoPrice(amount, order.currency_code || 'usdc');
     };
 
     return (
