@@ -225,17 +225,183 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                             <Text fontWeight="bold">
                                                                 Order Details
                                                             </Text>
-                                                            <Text>
-                                                                Courier: DHL
-                                                                Express
-                                                            </Text>
-                                                            <Text>
-                                                                Address:
-                                                                Maharlika St,
-                                                                San Fernando,
-                                                                2000 Pampanga
-                                                            </Text>
-                                                            {/* Additional order details here */}
+                                                            <HStack
+                                                                w="100%"
+                                                                justifyContent="space-between"
+                                                            >
+                                                                {/* Left Column */}
+                                                                <VStack
+                                                                    align="start"
+                                                                    spacing={4}
+                                                                >
+                                                                    <Box>
+                                                                        <Text
+                                                                            fontSize="sm"
+                                                                            color="gray.400"
+                                                                        >
+                                                                            Vendor:
+                                                                        </Text>
+                                                                        <Text fontWeight="bold">
+                                                                            Apple
+                                                                            Official
+                                                                            Store
+                                                                        </Text>
+                                                                    </Box>
+                                                                    <Box>
+                                                                        <Text
+                                                                            fontSize="sm"
+                                                                            color="gray.400"
+                                                                        >
+                                                                            Order
+                                                                            Date:
+                                                                        </Text>
+                                                                        <Text fontWeight="bold">
+                                                                            Thursday,
+                                                                            July
+                                                                            18,
+                                                                            2024
+                                                                            3:43pm
+                                                                        </Text>
+                                                                    </Box>
+                                                                    <Box>
+                                                                        <Text
+                                                                            fontSize="sm"
+                                                                            color="gray.400"
+                                                                        >
+                                                                            Order
+                                                                            Number:
+                                                                        </Text>
+                                                                        <Text fontWeight="bold">
+                                                                            11
+                                                                        </Text>
+                                                                    </Box>
+                                                                    <Box>
+                                                                        <Text
+                                                                            fontSize="sm"
+                                                                            color="gray.400"
+                                                                        >
+                                                                            Quantity:
+                                                                        </Text>
+                                                                        <Text fontWeight="bold">
+                                                                            1
+                                                                        </Text>
+                                                                    </Box>
+                                                                    <Box>
+                                                                        <Text
+                                                                            fontSize="sm"
+                                                                            color="gray.400"
+                                                                        >
+                                                                            Order
+                                                                            Status:
+                                                                        </Text>
+                                                                        <Text fontWeight="bold">
+                                                                            Payment
+                                                                            On
+                                                                            Process
+                                                                        </Text>
+                                                                    </Box>
+                                                                    <Box>
+                                                                        <Text
+                                                                            fontSize="sm"
+                                                                            color="gray.400"
+                                                                        >
+                                                                            Payment
+                                                                            Status:
+                                                                        </Text>
+                                                                        <Text fontWeight="bold">
+                                                                            On
+                                                                            Process
+                                                                        </Text>
+                                                                    </Box>
+                                                                </VStack>
+
+                                                                {/* Right Column */}
+                                                                <VStack
+                                                                    align="start"
+                                                                    spacing={4}
+                                                                >
+                                                                    <Box>
+                                                                        <Text
+                                                                            fontSize="sm"
+                                                                            color="gray.400"
+                                                                        >
+                                                                            Courier:
+                                                                        </Text>
+                                                                        <Text fontWeight="bold">
+                                                                            DHL
+                                                                            Express
+                                                                        </Text>
+                                                                    </Box>
+                                                                    <Box>
+                                                                        <Text
+                                                                            fontSize="sm"
+                                                                            color="gray.400"
+                                                                        >
+                                                                            Tracking
+                                                                            Number:
+                                                                        </Text>
+                                                                        <Text fontWeight="bold">
+                                                                            2856374190
+                                                                        </Text>
+                                                                    </Box>
+                                                                    <Box>
+                                                                        <Text
+                                                                            fontSize="sm"
+                                                                            color="gray.400"
+                                                                        >
+                                                                            Estimated
+                                                                            Time
+                                                                            of
+                                                                            Arrival:
+                                                                        </Text>
+                                                                        <Text fontWeight="bold">
+                                                                            July
+                                                                            27-31,
+                                                                            2024
+                                                                        </Text>
+                                                                    </Box>
+                                                                    <Box>
+                                                                        <Text
+                                                                            fontSize="sm"
+                                                                            color="gray.400"
+                                                                        >
+                                                                            Shipping
+                                                                            Information:
+                                                                        </Text>
+                                                                        <Text fontWeight="bold">
+                                                                            Rock
+                                                                            Rocks
+                                                                            Pa
+                                                                            Daet
+                                                                            Sub-district,
+                                                                            50100,
+                                                                            Chiang
+                                                                            Mai
+                                                                            CA
+                                                                        </Text>
+                                                                    </Box>
+                                                                    <Box>
+                                                                        <Text
+                                                                            fontSize="sm"
+                                                                            color="gray.400"
+                                                                        >
+                                                                            Contact
+                                                                            Information:
+                                                                        </Text>
+                                                                        <Text fontWeight="bold">
+                                                                            Alfred
+                                                                            Neuman
+                                                                        </Text>
+                                                                        <Text fontWeight="bold">
+                                                                            +01
+                                                                            1234567890
+                                                                        </Text>
+                                                                        <Text fontWeight="bold">
+                                                                            alfredneuman@gmail.com
+                                                                        </Text>
+                                                                    </Box>
+                                                                </VStack>
+                                                            </HStack>
                                                         </VStack>
                                                     </TabPanel>
                                                 </TabPanels>
