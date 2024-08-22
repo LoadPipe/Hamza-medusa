@@ -36,15 +36,12 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
         for (let n = 0; n < cart.items.length; n++) {
             const item: ExtendedLineItem = cart.items[n];
 
-            const currency = preferred_currency_code ?? 'usdc';
-            subtotals[currency] = subtotals[currency] ?? 0;
-            subtotals[currency] += item.unit_price * item.quantity - (item.discount_total ?? 0);
+            const currency = preferred_currency_code ?? item.currency_code ?? 'usdc';
 
-            //const currency: string = item.currency_code ?? '';
-            //if (currency.length) {
-            //    subtotals[currency] = subtotals[currency] ?? 0;
-            //    subtotals[currency] += item.unit_price * item.quantity;
-            //}
+            if (currency.length) {
+                subtotals[currency] = subtotals[currency] ?? 0;
+                subtotals[currency] += item.unit_price * item.quantity - (item.discount_total ?? 0);
+            }
         }
 
         return subtotals;
