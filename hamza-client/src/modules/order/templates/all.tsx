@@ -192,7 +192,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                                     </Button>
                                                 </LocalizedClientLink>
                                                 {orderStatuses[
-                                                    order.cart_id
+                                                    order.id
                                                 ] === 'canceled' ? (
                                                     <Button
                                                         colorScheme="red"
@@ -253,7 +253,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                     pb={'6'}
                                 >
                                     {/*<div className="p-4 bg-gray-700">*/}
-                                    {/*    Cart ID {order.cart_id} - Total Items:{' '}*/}
+                                    {/*    Cart ID {order.id} - Total Items:{' '}*/}
                                     {/*    {order.cart?.items?.length || 0}*/}
                                     {/*    <span*/}
                                     {/*        className="pl-2 text-blue-400 underline underline-offset-1 cursor-pointer"*/}
@@ -297,7 +297,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                                     </Button>
                                                 </LocalizedClientLink>
                                                 {orderStatuses[
-                                                    order.cart_id
+                                                    order.id
                                                 ] === 'canceled' ? (
                                                     <Button
                                                         colorScheme="red"
@@ -403,7 +403,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                                     </Button>
                                                 </LocalizedClientLink>
                                                 {orderStatuses[
-                                                    order.cart_id
+                                                    order.id
                                                 ] === 'canceled' ? (
                                                     <Button
                                                         colorScheme="red"
@@ -509,7 +509,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                                     </Button>
                                                 </LocalizedClientLink>
                                                 {orderStatuses[
-                                                    order.cart_id
+                                                    order.id
                                                 ] === 'canceled' ? (
                                                     <Button
                                                         colorScheme="red"
@@ -615,7 +615,7 @@ const All = ({ orders }: { orders: any[] }) => {
                                                     </Button>
                                                 </LocalizedClientLink>
                                                 {orderStatuses[
-                                                    order.cart_id
+                                                    order.id
                                                 ] === 'canceled' ? (
                                                     <Button
                                                         colorScheme="red"
