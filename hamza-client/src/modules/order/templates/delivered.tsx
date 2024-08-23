@@ -18,6 +18,7 @@ import { BsCircleFill } from 'react-icons/bs';
 import DeliveredCard from '@modules/account/components/delivered-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import { addToCart } from '@modules/cart/actions';
 
 const Delivered = ({ orders }: { orders: any[] }) => {
     const [customerOrder, setCustomerOrder] = useState<any[] | null>(null);

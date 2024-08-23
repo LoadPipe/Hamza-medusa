@@ -4,6 +4,9 @@ import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
 import React, { useEffect, useState } from 'react';
 import { getStoreName } from '@lib/data';
+import { addToCart } from '@modules/cart/actions';
+import { useParams, useRouter } from 'next/navigation';
+
 type OrderDetails = {
     thumbnail: string;
     title: string;
@@ -39,6 +42,10 @@ type OrderCardProps = {
 const DeliveredCard = ({ order, handle }: OrderCardProps) => {
     const [vendor, setVendor] = useState('');
     const orderString = typeof order.currency_code;
+    const router = useRouter();
+    let countryCode = useParams().countryCode as string;
+    if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY) countryCode = 'us';
+
     console.log(
         `Order Card details ${JSON.stringify(order.variant.product_id)}`
     );
@@ -69,9 +76,25 @@ const DeliveredCard = ({ order, handle }: OrderCardProps) => {
         fetchVendor();
     }, [order]);
 
+    const handleReorder = async (order: any) => {
+        try {
+            await addToCart({
+                variantId: order.variant_id,
+                countryCode: countryCode,
+                currencyCode: order.currency_code,
+                quantity: order.quantity,
+            });
+        } catch (e) {
+            alert(`Product with name ${order.title} could not be added`);
+        }
+
+        router.push('/checkout');
+    };
+
     if (!order) {
         return <div>Loading...</div>; // Display loading message if order is undefined
     }
+    console.log(`What are order ITEMS? ${JSON.stringify(order)}`);
     return (
         <Box
             // bg={'#272727'}
@@ -141,6 +164,9 @@ const DeliveredCard = ({ order, handle }: OrderCardProps) => {
                     variant="outline"
                     colorScheme="white"
                     borderRadius={'37px'}
+                    onClick={() => {
+                        handleReorder(order || []);
+                    }}
                 >
                     Buy Again
                 </Button>
