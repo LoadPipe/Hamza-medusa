@@ -157,9 +157,10 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
         (state) => state.setOrderActiveTab
     );
 
-    const handleTabChange = (tab: any) => {
-        setOrderActiveTab(tab);
-        // navigate to OrderOverview or update the URL to reflect the active tab
+    const handleTabChange = (tab: string) => {
+        if (orderActiveTab !== tab) {
+            setOrderActiveTab(tab);
+        }
     };
 
     const renderTabContent = () => {
@@ -187,7 +188,10 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
         if (!selectedOrderId) return;
 
         try {
-            await cancelOrder(selectedOrderId);
+            const response = await cancelOrder(selectedOrderId);
+            console.log(
+                `selectedOrder cancelOrder?? ${JSON.stringify(response)}`
+            );
             setOrderStatuses((prevStatuses) => ({
                 ...prevStatuses,
                 [selectedOrderId]: 'canceled',
@@ -196,26 +200,6 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
         } catch (error) {
             console.error('Error cancelling order: ', error);
         }
-    };
-
-    const handleReorder = async (items: any) => {
-        // console.log('Reorder button clicked');
-        items.map(async (item: any) => {
-            try {
-                await addToCart({
-                    variantId: item.variant_id,
-                    countryCode: countryCode,
-                    currencyCode: item.currency_code,
-                    quantity: item.quantity,
-                });
-            } catch (e) {
-                alert(`Product with name ${item.title} could not be added`);
-            }
-        });
-
-        router.push('/checkout');
-
-        return;
     };
 
     return (
@@ -243,7 +227,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Request Cancellationss</ModalHeader>
+                    <ModalHeader>Request Cancellations</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <FormControl isInvalid={!cancelReason && isModalOpen}>
