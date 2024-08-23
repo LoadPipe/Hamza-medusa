@@ -70,32 +70,6 @@ const Items: React.FC<Props> = ({ items, handles }) => {
     const setItem = itemStore((state) => state.setItem);
     const router = useRouter();
 
-    const handleItemClick = async (item: any) => {
-        // console.log(`Checking review existence for order: ${item?.order_id}`);
-        try {
-            const response = await axios.post(
-                `${BACKEND_URL}/custom/review/exists`,
-                {
-                    order_id: item?.order_id,
-                    customer_id: item.customer_id,
-                    variant_id: item.variant_id,
-                }
-            );
-            const reviewExists = response.data; // Assuming response directly returns true/false
-            // console.log(`response data ${reviewExists}`);
-            if (!reviewExists) {
-                // console.log('User has already reviewed');
-                router.push(`/account/editreview/${item.id}`);
-            } else {
-                // console.log('User has not reviewed yet');
-                router.push(`/account/reviews/${item.id}`);
-            }
-        } catch (error: any) {
-            alert('Failed to check review existence: ' + error.message);
-        }
-        setItem(item);
-    };
-
     return (
         <Box className="flex flex-col bg-black">
             <TableContainer>
@@ -145,23 +119,6 @@ const Items: React.FC<Props> = ({ items, handles }) => {
                                             >
                                                 Quantity: {item.quantity}
                                             </Text>
-                                        </Td>
-                                    </Tr>
-                                    <Tr key={`review-${item.id}`}>
-                                        <Td colSpan={3}>
-                                            <Button
-                                                variant="solid"
-                                                backgroundColor={
-                                                    'primary.indigo.900'
-                                                }
-                                                borderRadius={'37px'}
-                                                m={2}
-                                                onClick={() =>
-                                                    handleItemClick(item)
-                                                }
-                                            >
-                                                Review
-                                            </Button>
                                         </Td>
                                     </Tr>
                                 </>
