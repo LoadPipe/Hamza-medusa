@@ -71,6 +71,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
         }
         if (!selectedOrderId) return;
 
+        console.log(`selectedORDER ID ${selectedOrderId}`);
         try {
             await cancelOrder(selectedOrderId);
             setOrderStatuses((prevStatuses) => ({
@@ -117,10 +118,12 @@ const Processing = ({ orders }: { orders: any[] }) => {
             if (!customerOrder || customerOrder.length === 0) return;
 
             const statuses = await Promise.allSettled(
-                customerOrder.map(async (order, index) => {
-                    console.log(`Fetching status for order ${order.id}`);
+                customerOrder.map(async (order) => {
                     try {
                         const statusRes = await orderStatus(order.id);
+                        console.log(
+                            `Fetching status for order ${order.id} StatusResponse ${statusRes.order}`
+                        );
                         return {
                             orderId: order.id,
                             status: statusRes.order,
@@ -150,13 +153,15 @@ const Processing = ({ orders }: { orders: any[] }) => {
                 }
             });
 
+            console.log(
+                `Fetching status for MAP: ${JSON.stringify(statusMap)}`
+            );
+
             setOrderStatuses(statusMap);
             console.log('Order statuses: ', statusMap);
         };
 
-        if (customerOrder) {
-            fetchStatuses();
-        }
+        fetchStatuses();
     }, [customerOrder]);
 
     return (
@@ -641,7 +646,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                     borderBottom: 'none',
                                 }}
                             >
-                                {orderStatuses[order.cart_id] === 'canceled' ? (
+                                {orderStatuses[order.id] === 'canceled' ? (
                                     <Button colorScheme="red" ml={4} isDisabled>
                                         Cancellation Requested
                                     </Button>
@@ -650,7 +655,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                         variant="solid"
                                         colorScheme="blue"
                                         ml={4}
-                                        onClick={() => openModal(order.cart_id)}
+                                        onClick={() => openModal(order.id)}
                                     >
                                         Request Cancellation
                                     </Button>

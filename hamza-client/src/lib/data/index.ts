@@ -346,12 +346,9 @@ export async function orderStatus(order_id: string) {
 
 export async function cancelOrder(order_id: string) {
     try {
-        const response = await axios.post(
-            `${BACKEND_URL}/custom/order/cancel`,
-            {
-                order_id,
-            }
-        );
+        const response = await axios.put(`${BACKEND_URL}/custom/order/cancel`, {
+            order_id,
+        });
 
         return response;
     } catch (error) {

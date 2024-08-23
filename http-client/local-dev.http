@@ -303,11 +303,11 @@ Content-Type: application/json
 
 
 ### Cancel Order
-POST http://localhost:9000/custom/order/cancel
+PUT http://localhost:9000/custom/order/cancel
 Content-Type: application/json
 
 {
-  "order_id": "order_01J5Q50W8EBRJY2058W581QSJZ"
+  "order_id": "order_01J5XBP0K1N4VBJQ2FEZNW93BX"
 }
 
 ### GET Order Status
@@ -315,7 +315,7 @@ GET http://localhost:9000/custom/order/status
 Content-Type: application/json
 
 {
-  "order_id": "order_01J5XB1MTXM9KRST8RKG5326ZN"
+  "order_id": "order_01J5XBJXJX1XPTA4XPV0W8ARHE"
 }
 
 ### Get Vendor Name by Order_id
