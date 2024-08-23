@@ -9,15 +9,19 @@ import {
     useRouter,
     useSearchParams,
 } from 'next/navigation';
-import { Flex, Box, Button, Text } from '@chakra-ui/react';
-import ChevronDown from '@modules/common/icons/chevron-down';
-import { signOut } from '@modules/account/actions';
-import User from '@modules/common/icons/user';
-import MapPin from '@modules/common/icons/map-pin';
-import Package from '@modules/common/icons/package';
-import LocalizedClientLink from '@modules/common/components/localized-client-link';
+import {
+    Flex,
+    Box,
+    Button,
+    Text,
+    Menu,
+    IconButton,
+    Collapse,
+} from '@chakra-ui/react';
+import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
+
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import NavLink from './components/nav-link';
 
@@ -31,6 +35,8 @@ const AccountNav = ({
     const { countryCode } = useParams();
     const { setCustomerAuthData, authData } = useCustomerAuthStore();
     const router = useRouter();
+    const [isOpen, setIsOpen] = useState(false);
+
     const handleLogout = async () => {
         setCustomerAuthData({
             customer_id: '',
@@ -43,6 +49,8 @@ const AccountNav = ({
         Cookies.remove('_medusa_cart_id');
         router.replace('/');
     };
+
+    const toggleCollapse = () => setIsOpen(!isOpen);
 
     useEffect(() => {
         if (searchParams.get('verify') === 'true') {
@@ -72,11 +80,45 @@ const AccountNav = ({
     return (
         <Flex style={{ width: '245px' }}>
             <Flex flexDirection={'column'} width={'245px'}>
-                <NavLink
-                    href="/account/profile"
-                    route={route!}
-                    title={'Profile'}
-                />
+                <Flex
+                    borderRadius={'8px'}
+                    width={'245px'}
+                    height={'56px'}
+                    padding="16px"
+                    my={'8'}
+                    alignItems={'center'}
+                    justifyContent="space-between"
+                    color="white"
+                    onClick={toggleCollapse}
+                    cursor="pointer"
+                >
+                    <Text my="auto" fontSize={'18px'} fontWeight={600}>
+                        Manage My Account
+                    </Text>
+                    <IconButton
+                        aria-label="Toggle Collapse"
+                        icon={isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
+                        variant="ghost"
+                        color="white"
+                    />
+                </Flex>
+
+                {/* Collapsible Panel */}
+                <Collapse in={isOpen} animateOpacity>
+                    <Box mt={2} pl={4}>
+                        <NavLink
+                            href="/account/profile"
+                            route={route!}
+                            title="My Profile"
+                        />
+                        <NavLink
+                            href="/account/addresses"
+                            route={route!}
+                            title="My Addresses"
+                        />
+                    </Box>
+                </Collapse>
+
                 {!authData.is_verified && (
                     <NavLink
                         href="/account/verify"
@@ -84,11 +126,7 @@ const AccountNav = ({
                         title={'Verify'}
                     />
                 )}
-                <NavLink
-                    href="/account/addresses"
-                    route={route!}
-                    title={'Addresses'}
-                />
+
                 <NavLink
                     href="/account/orders"
                     route={route!}
