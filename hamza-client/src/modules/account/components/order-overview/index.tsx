@@ -169,8 +169,8 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                 return <Processing orders={orders} />;
             case TABS.SHIPPED:
                 return <Shipped orders={orders} />;
-            // case TABS.DELIVERED:
-            //     return <Delivered orders={orders} />;
+            case TABS.DELIVERED:
+                return <Delivered orders={orders} />;
             case TABS.CANCELLED:
                 return <Cancelled orders={orders} />;
             case TABS.REFUND:
