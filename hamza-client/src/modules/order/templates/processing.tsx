@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { orderBucket, orderDetails, singleBucket } from '@lib/data';
+import {
+    cancelOrder,
+    orderBucket,
+    orderDetails,
+    orderStatus,
+    singleBucket,
+} from '@lib/data';
 import {
     Box,
     Button,
@@ -14,6 +20,16 @@ import {
     Tab,
     TabPanel,
     Icon,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalCloseButton,
+    ModalBody,
+    FormControl,
+    Textarea,
+    FormErrorMessage,
+    ModalFooter,
+    Modal,
 } from '@chakra-ui/react';
 import { BsCircleFill } from 'react-icons/bs';
 
@@ -28,11 +44,12 @@ const Processing = ({ orders }: { orders: any[] }) => {
     const [cancelReason, setCancelReason] = useState('');
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
     const [expandViewOrder, setExpandViewOrder] = useState(false);
-
-    const [customerOrder, setCustomerOrder] = useState<any[] | null>(null);
     const [orderStatuses, setOrderStatuses] = useState<{
         [key: string]: string;
     }>({});
+    const [customerOrder, setCustomerOrder] = useState<any[] | null>(null);
+
+    console.log(`ORDER FOR PROCESSING ${JSON.stringify(orders)}`);
     const openModal = (orderId: string) => {
         setSelectedOrderId(orderId);
         setIsModalOpen(true);
@@ -45,6 +62,25 @@ const Processing = ({ orders }: { orders: any[] }) => {
 
     const toggleViewOrder = (orderId: any) => {
         setExpandViewOrder(expandViewOrder === orderId ? null : orderId);
+    };
+
+    const handleCancel = async () => {
+        if (!cancelReason) {
+            setIsAttemptedSubmit(true);
+            return;
+        }
+        if (!selectedOrderId) return;
+
+        try {
+            await cancelOrder(selectedOrderId);
+            setOrderStatuses((prevStatuses) => ({
+                ...prevStatuses,
+                [selectedOrderId]: 'canceled',
+            }));
+            setIsModalOpen(false);
+        } catch (error) {
+            console.error('Error cancelling order: ', error);
+        }
     };
 
     useEffect(() => {
@@ -76,6 +112,53 @@ const Processing = ({ orders }: { orders: any[] }) => {
         setIsLoading(false);
     };
 
+    useEffect(() => {
+        const fetchStatuses = async () => {
+            if (!customerOrder || customerOrder.length === 0) return;
+
+            const statuses = await Promise.allSettled(
+                customerOrder.map(async (order, index) => {
+                    console.log(`Fetching status for order ${order.id}`);
+                    try {
+                        const statusRes = await orderStatus(order.id);
+                        return {
+                            orderId: order.id,
+                            status: statusRes.order,
+                        };
+                    } catch (error) {
+                        console.error(
+                            `Error fetching status for order ${order.id}:`,
+                            error
+                        );
+                        return {
+                            orderId: order.id,
+                            status: 'unknown',
+                        };
+                    }
+                })
+            );
+
+            const statusMap: { [key: string]: any } = {};
+            statuses.forEach((result) => {
+                if (result.status === 'fulfilled') {
+                    const { orderId, status } = result.value;
+                    statusMap[orderId] = status;
+                } else {
+                    console.error(
+                        `Failed to fetch status for order: ${result.reason}`
+                    );
+                }
+            });
+
+            setOrderStatuses(statusMap);
+            console.log('Order statuses: ', statusMap);
+        };
+
+        if (Object.keys(customerOrder).length > 0) {
+            fetchStatuses();
+        }
+    }, [customerOrder]);
+
     return (
         <div>
             {/* Processing-specific content */}
@@ -87,18 +170,6 @@ const Processing = ({ orders }: { orders: any[] }) => {
                             <div
                                 key={order.id} // Changed from cart_id to id since it's more reliable and unique
                             >
-                                {/*<div className="p-4 bg-gray-700">*/}
-                                {/*    Cart ID {order.cart_id} - Total Items:{' '}*/}
-                                {/*    {order.cart?.items?.length || 0}*/}
-                                {/*    <span*/}
-                                {/*        className="pl-2 text-blue-400 underline underline-offset-1 cursor-pointer"*/}
-                                {/*        onClick={() =>*/}
-                                {/*            handleReorder(order.cart?.items || [])*/}
-                                {/*        }*/}
-                                {/*    >*/}
-                                {/*        Re-order*/}
-                                {/*    </span>*/}
-                                {/*</div>*/}
                                 {order.cart?.items?.map(
                                     (
                                         item: any // Adjusting the map to the correct path
@@ -570,16 +641,62 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                     borderBottom: 'none',
                                 }}
                             >
-                                <Button
-                                    variant="outline"
-                                    colorScheme="white"
-                                    borderRadius={'37px'}
-                                >
-                                    Request Cancellation
-                                </Button>
+                                {orderStatuses[order.cart_id] === 'canceled' ? (
+                                    <Button colorScheme="red" ml={4} isDisabled>
+                                        Cancellation Requested
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        variant="solid"
+                                        colorScheme="blue"
+                                        ml={4}
+                                        onClick={() => openModal(order.cart_id)}
+                                    >
+                                        Request Cancellation
+                                    </Button>
+                                )}
                             </Flex>
                         </>
                     ))}
+                    <Modal isOpen={isModalOpen} onClose={closeModal}>
+                        <ModalOverlay />
+                        <ModalContent>
+                            <ModalHeader>Request Cancellation</ModalHeader>
+                            <ModalCloseButton />
+                            <ModalBody>
+                                <FormControl
+                                    isInvalid={
+                                        !cancelReason && isAttemptedSubmit
+                                    }
+                                >
+                                    <Textarea
+                                        placeholder="Reason for cancellation"
+                                        value={cancelReason}
+                                        onChange={(e) =>
+                                            setCancelReason(e.target.value)
+                                        }
+                                    />
+                                    {!cancelReason && isAttemptedSubmit && (
+                                        <FormErrorMessage>
+                                            Cancellation reason is required.
+                                        </FormErrorMessage>
+                                    )}
+                                </FormControl>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button variant="ghost" onClick={closeModal}>
+                                    Cancel
+                                </Button>
+                                <Button
+                                    colorScheme="blue"
+                                    ml={3}
+                                    onClick={handleCancel}
+                                >
+                                    Submit
+                                </Button>
+                            </ModalFooter>
+                        </ModalContent>
+                    </Modal>
                 </>
             ) : (
                 <div className="flex flex-col items-center w-full bg-black text-white p-8">

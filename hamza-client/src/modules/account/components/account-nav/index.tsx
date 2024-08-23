@@ -1,8 +1,6 @@
 'use client';
 
 import { Customer } from '@medusajs/medusa';
-import { clx } from '@medusajs/ui';
-import { ArrowRightOnRectangle } from '@medusajs/icons';
 import {
     useParams,
     usePathname,
