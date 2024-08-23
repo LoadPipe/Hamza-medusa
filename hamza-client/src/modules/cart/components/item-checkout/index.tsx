@@ -109,16 +109,17 @@ const Item = ({ item, region, currencyCode }: ItemProps) => {
                                     currencyCode={currencyCode}
                                 />
                             </Flex>
-
-                            <LineItemPrice
-                                item={item}
-                                region={region}
-                                style="tight"
-                                currencyCode={currencyCode}
-                            />
                         </Flex>
                     </Flex>
                 </Flex>
+            </Flex>
+            <Flex>
+                <LineItemPrice
+                    item={item}
+                    region={region}
+                    style="tight"
+                    currencyCode={currencyCode}
+                />
             </Flex>
         </Flex>
     );

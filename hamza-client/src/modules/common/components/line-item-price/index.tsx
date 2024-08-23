@@ -25,6 +25,7 @@ const LineItemPrice = ({
     style = 'default',
     currencyCode,
 }: LineItemPriceProps) => {
+    console.log(currencyCode);
     const [price, setPrice] = useState<number | null>(null);
     const [reducedPrice, setReducedPrice] = useState<number | null>(null);
     const [hasReducedPrice, setHasReducedPrice] = useState<boolean>(false);
