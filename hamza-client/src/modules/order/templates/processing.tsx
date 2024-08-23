@@ -562,7 +562,13 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                 justifyContent="flex-end"
                                 my={8}
                                 gap={'4'}
-                                className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
+                                borderBottom="1px solid"
+                                borderColor="gray.200"
+                                pb={6}
+                                _last={{
+                                    pb: 0,
+                                    borderBottom: 'none',
+                                }}
                             >
                                 <Button
                                     variant="outline"
