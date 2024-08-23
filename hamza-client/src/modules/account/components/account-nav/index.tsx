@@ -17,8 +17,10 @@ import {
     Menu,
     IconButton,
     Collapse,
+    Link,
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
+import NextLink from 'next/link';
 
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import React, { useEffect, useState } from 'react';
@@ -36,6 +38,7 @@ const AccountNav = ({
     const { setCustomerAuthData, authData } = useCustomerAuthStore();
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
+    const [isOrdersOpen, setIsOrdersOpen] = useState(false);
 
     const handleLogout = async () => {
         setCustomerAuthData({
@@ -51,6 +54,7 @@ const AccountNav = ({
     };
 
     const toggleCollapse = () => setIsOpen(!isOpen);
+    const toggleOrdersCollapse = () => setIsOrdersOpen(!isOrdersOpen);
 
     useEffect(() => {
         if (searchParams.get('verify') === 'true') {
@@ -127,11 +131,131 @@ const AccountNav = ({
                     />
                 )}
 
-                <NavLink
-                    href="/account/orders"
-                    route={route!}
-                    title={'Orders'}
-                />
+                <Flex
+                    borderRadius="8px"
+                    width="245px"
+                    height="56px"
+                    padding="12px 16px"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    color="white"
+                    bg="gray.800"
+                    mt="4"
+                    cursor="pointer"
+                    onClick={toggleOrdersCollapse} // Toggle collapse when the whole Flex container is clicked
+                >
+                    <Flex
+                        as={NextLink}
+                        href="/account/orders"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        width="100%"
+                        textDecoration="none"
+                        _hover={{ textDecoration: 'none' }} // Remove underline on hover
+                    >
+                        <Text fontWeight={600} color="white">
+                            Orders
+                        </Text>
+                        <IconButton
+                            aria-label="Toggle Collapse"
+                            icon={
+                                isOrdersOpen ? (
+                                    <ChevronUpIcon />
+                                ) : (
+                                    <ChevronDownIcon />
+                                )
+                            }
+                            variant="ghost"
+                            color="white"
+                            size="sm" // Adjust icon button size for better alignment
+                            onClick={toggleOrdersCollapse} // Toggle collapse when the Chevron icon is clicked
+                        />
+                    </Flex>
+                </Flex>
+
+                {/* Collapsible Panel for Orders */}
+                <Collapse in={isOrdersOpen} animateOpacity>
+                    <Box mt={2} pl={4}>
+                        <Box
+                            as="button"
+                            textAlign="left"
+                            width="100%"
+                            py={2} // Add padding for better click area
+                            color="white"
+                            bg="transparent"
+                            _hover={{ color: 'primary.green.900' }} // Update hover color to primary.green.900
+                            onClick={() => renderTabContent(TABS.ALL)}
+                        >
+                            All Orders
+                        </Box>
+                        <Box
+                            as="button"
+                            textAlign="left"
+                            width="100%"
+                            py={2}
+                            mt={1} // Ensure consistent spacing
+                            color="white"
+                            bg="transparent"
+                            _hover={{ color: 'primary.green.900' }}
+                            onClick={() => renderTabContent(TABS.PROCESSING)}
+                        >
+                            Processing
+                        </Box>
+                        <Box
+                            as="button"
+                            textAlign="left"
+                            width="100%"
+                            py={2}
+                            mt={1}
+                            color="white"
+                            bg="transparent"
+                            _hover={{ color: 'primary.green.900' }}
+                            onClick={() => renderTabContent(TABS.SHIPPED)}
+                        >
+                            Shipped
+                        </Box>
+                        <Box
+                            as="button"
+                            textAlign="left"
+                            width="100%"
+                            py={2}
+                            mt={1}
+                            color="white"
+                            bg="transparent"
+                            _hover={{ color: 'primary.green.900' }}
+                            onClick={() => renderTabContent(TABS.DELIVERED)}
+                        >
+                            Delivered
+                        </Box>
+                        <Box
+                            as="button"
+                            textAlign="left"
+                            width="100%"
+                            py={2}
+                            mt={1}
+                            color="white"
+                            bg="transparent"
+                            _hover={{ color: 'primary.green.900' }}
+                            onClick={() => renderTabContent(TABS.CANCELLED)}
+                        >
+                            Cancelled
+                        </Box>
+                        <Box
+                            as="button"
+                            textAlign="left"
+                            width="100%"
+                            py={2}
+                            mt={1}
+                            color="white"
+                            bg="transparent"
+                            _hover={{ color: 'primary.green.900' }}
+                            onClick={() => renderTabContent(TABS.REFUND)}
+                        >
+                            Refund
+                        </Box>
+                    </Box>
+                </Collapse>
+
                 {authData.is_verified && (
                     <NavLink
                         href="/account/notifications"
