@@ -21,6 +21,7 @@ import {
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import NextLink from 'next/link';
+import { renderTabContent, TABS } from '@modules/tab-rendered';
 
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import React, { useEffect, useState } from 'react';
@@ -184,7 +185,7 @@ const AccountNav = ({
                             color="white"
                             bg="transparent"
                             _hover={{ color: 'primary.green.900' }} // Update hover color to primary.green.900
-                            onClick={() => renderTabContent(TABS.ALL)}
+                            onClick={() => renderTabContent(TABS.ALL, [])}
                         >
                             All Orders
                         </Box>
@@ -197,7 +198,7 @@ const AccountNav = ({
                             color="white"
                             bg="transparent"
                             _hover={{ color: 'primary.green.900' }}
-                            onClick={() => renderTabContent(TABS.PROCESSING)}
+                            onClick={() => renderTabContent(TABS.PROCESSING, [])}
                         >
                             Processing
                         </Box>
@@ -210,7 +211,7 @@ const AccountNav = ({
                             color="white"
                             bg="transparent"
                             _hover={{ color: 'primary.green.900' }}
-                            onClick={() => renderTabContent(TABS.SHIPPED)}
+                            onClick={() => renderTabContent(TABS.SHIPPED, [])}
                         >
                             Shipped
                         </Box>
@@ -223,7 +224,7 @@ const AccountNav = ({
                             color="white"
                             bg="transparent"
                             _hover={{ color: 'primary.green.900' }}
-                            onClick={() => renderTabContent(TABS.DELIVERED)}
+                            onClick={() => renderTabContent(TABS.DELIVERED, [])}
                         >
                             Delivered
                         </Box>
@@ -236,7 +237,7 @@ const AccountNav = ({
                             color="white"
                             bg="transparent"
                             _hover={{ color: 'primary.green.900' }}
-                            onClick={() => renderTabContent(TABS.CANCELLED)}
+                            onClick={() => renderTabContent(TABS.CANCELLED, [])}
                         >
                             Cancelled
                         </Box>
@@ -249,7 +250,7 @@ const AccountNav = ({
                             color="white"
                             bg="transparent"
                             _hover={{ color: 'primary.green.900' }}
-                            onClick={() => renderTabContent(TABS.REFUND)}
+                            onClick={() => renderTabContent(TABS.REFUND, [])}
                         >
                             Refund
                         </Box>
