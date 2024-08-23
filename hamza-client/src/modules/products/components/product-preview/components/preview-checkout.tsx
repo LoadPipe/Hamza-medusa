@@ -128,7 +128,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                 setVariantId(productData.variants[0].id);
             }
             let selectedProductVariant = productData.variants.find(
-                (a: any) => a.id == productData.variants[0].id
+                (a: any) => a.id == productData.variants[0]?.id
                 // (a: any) => a.id == variantId
             );
             console.log(`variantID is: ${variantId}`);

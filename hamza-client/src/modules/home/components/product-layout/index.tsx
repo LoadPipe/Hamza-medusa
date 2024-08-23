@@ -90,7 +90,7 @@ const ProductCardGroup = ({ vendorName, category }: Props) => {
                                 discountValue={product.discountValue}
                                 productId={product.id}
                                 inventory={
-                                    product.variants[0].inventory_quantity
+                                    product.variants[0]?.inventory_quantity
                                 }
                                 allow_backorder={
                                     product.variants[0].allow_backorder

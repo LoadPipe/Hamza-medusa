@@ -73,23 +73,7 @@ export default class BuckydropService extends TransactionBaseService {
             count
         );
         this.logger.debug(`search returned ${searchResults.length} results`);
-        const productData = searchResults; //[searchResults[4], searchResults[5]];
-
-        //doing it this way incurs the wrath of the API rate limit
-        /*
-        let products: CreateProductInput[] = await Promise.all(
-            productData.map((p) =>
-                this.mapBuckyDataToProductInput(
-                    buckyClient,
-                    p,
-                    ProductStatus.PUBLISHED,
-                    storeId,
-                    collectionId,
-                    [salesChannelId]
-                )
-            )
-        );
-        */
+        const productData = searchResults;
 
         let productInputs: CreateProductInput[] = [];
         for (let p of productData) {
@@ -108,12 +92,14 @@ export default class BuckydropService extends TransactionBaseService {
         //filter out failures
         productInputs = productInputs.filter((p) => (p ? p : null));
 
+        this.logger.debug(`importing ${productInputs.length} products...`);
+
         //import the products
         const output = productInputs?.length
             ? await this.productService_.bulkImportProducts(
-                  storeId,
-                  productInputs
-              )
+                storeId,
+                productInputs
+            )
             : [];
 
         //TODO: best to return some type of report; what succeeded, what failed
@@ -495,6 +481,10 @@ export default class BuckydropService extends TransactionBaseService {
             return output;
         };
 
+        if (!productDetails.data.skuList?.length) {
+            console.log("EMPTY SKU LIST");
+        }
+
         for (const variant of productDetails.data.skuList) {
             const baseAmount = variant.proPrice
                 ? variant.proPrice.priceCent
@@ -540,18 +530,21 @@ export default class BuckydropService extends TransactionBaseService {
                 item.goodsLink
             );
 
+            if (!productDetails)
+                throw new Error(`No product details were retrieved for product ${item.spuCode}`);
+
             const metadata = item;
             metadata.detail = productDetails.data;
 
-            return {
+            const output = {
                 title: item.goodsName,
                 subtitle: item.goodsName, //TODO: find a better value
                 handle: item.spuCode,
-                description: productDetails.data.goodsDetailHtml,
+                description: productDetails?.data?.goodsDetailHtml ?? '',
                 is_giftcard: false,
                 status: status as ProductStatus,
                 thumbnail: item.picUrl,
-                images: productDetails.data.mainItemImgs,
+                images: productDetails?.data?.mainItemImgs,
                 collection_id: collectionId,
                 weight: Math.round(item.weight || 100),
                 discountable: true,
@@ -562,6 +555,11 @@ export default class BuckydropService extends TransactionBaseService {
                 bucky_metadata: JSON.stringify(metadata),
                 variants: await this.mapVariants(item, productDetails),
             };
+
+            if (!output.variants?.length)
+                throw new Error(`No variants were detected for product ${item.spuCode}`);
+
+            return output;
         } catch (error) {
             this.logger.error(
                 'Error mapping Bucky data to product input',
