@@ -60,6 +60,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
     const [reviewCount, setReviewCount] = useState<number>(0);
 
     const { preferred_currency_code } = useCustomerAuthStore();
+    console.log('user preferred currency code: ', preferred_currency_code);
+
     const { whitelist_config, setWhitelistConfig, authData } =
         useCustomerAuthStore();
     const router = useRouter();

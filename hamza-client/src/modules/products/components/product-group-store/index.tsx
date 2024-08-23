@@ -29,6 +29,7 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
     );
 
     const { preferred_currency_code } = useCustomerAuthStore();
+    console.log('user preferred currency code: ', preferred_currency_code);
 
     if (isLoading) {
         return null; // Suspense will handle the loading fallback.

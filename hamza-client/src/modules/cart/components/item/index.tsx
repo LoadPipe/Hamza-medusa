@@ -132,7 +132,7 @@ const Item = ({ item, region, type = 'full', currencyCode }: ItemProps) => {
                                         length: Math.min(
                                             item.variant.inventory_quantity > 0
                                                 ? item.variant
-                                                    .inventory_quantity
+                                                      .inventory_quantity
                                                 : 10,
                                             10
                                         ),

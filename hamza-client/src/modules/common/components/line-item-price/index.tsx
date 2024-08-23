@@ -6,6 +6,7 @@ import { getPercentageDiff } from '@lib/util/get-precentage-diff';
 import { CalculatedVariant } from 'types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { Text } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -22,18 +23,33 @@ const LineItemPrice = ({
     item,
     region,
     style = 'default',
-    currencyCode
+    currencyCode,
 }: LineItemPriceProps) => {
-    const unitPrice = item.variant.prices ?
-        (item.variant as CalculatedVariant).prices.find(p => p.currency_code == currencyCode)?.amount ?? 0 :
-        (item.variant as CalculatedVariant)?.original_price ?? 0;
-    const price = unitPrice * item.quantity;
-    const hasReducedPrice = (item.total || 0) < price;
+    console.log(currencyCode);
+    const [price, setPrice] = useState<number | null>(null);
+    const [reducedPrice, setReducedPrice] = useState<number | null>(null);
+    const [hasReducedPrice, setHasReducedPrice] = useState<boolean>(false);
+
+    useEffect(() => {
+        const originalTotal = item.original_total ?? null;
+        const totalItemAmount = item.subtotal ?? null;
+        const discountTotal = item.discount_total ?? null;
+        setPrice(totalItemAmount);
+        setReducedPrice(reducedPrice);
+
+        if (
+            discountTotal !== null &&
+            originalTotal !== null &&
+            discountTotal < originalTotal
+        ) {
+            setHasReducedPrice(true);
+        }
+    }, [item, currencyCode]);
 
     return (
         <div className="flex flex-col gap-x-2 text-ui-fg-subtle items-end">
             <div className="text-left">
-                {hasReducedPrice && (
+                {hasReducedPrice && reducedPrice !== null && (
                     <>
                         <p>
                             {style === 'default' && (
@@ -43,24 +59,24 @@ const LineItemPrice = ({
                             )}
                             <span className="line-through text-ui-fg-muted">
                                 {formatCryptoPrice(
-                                    price,
+                                    reducedPrice,
                                     currencyCode ?? 'usdc'
                                 )}{' '}
-                                {currencyCode?.toUpperCase() ?? 'usdc'}
+                                {currencyCode?.toUpperCase() ?? 'USDC'}
                             </span>
                         </p>
                         {style === 'default' && (
                             <span className="text-ui-fg-interactive">
                                 -
                                 {getPercentageDiff(
-                                    price,
+                                    reducedPrice,
                                     item.total || 0
                                 )}
                                 %
                             </span>
                         )}
                     </>
-                )}
+                )}{' '}
                 <Text
                     as="span"
                     fontSize={{ base: '14px', md: '24px' }}
@@ -70,13 +86,10 @@ const LineItemPrice = ({
                         'text-ui-fg-interactive': hasReducedPrice,
                     })}
                 >
-                    {!isNaN(price) &&
-                        formatCryptoPrice(
-                            price,
-                            currencyCode
-                        ) +
-                        ' ' +
-                        (currencyCode?.toUpperCase() ?? 'USDC')}
+                    {price !== null &&
+                        formatCryptoPrice(price, currencyCode) +
+                            ' ' +
+                            (currencyCode?.toUpperCase() ?? 'USDC')}
                 </Text>
             </div>
         </div>

@@ -35,6 +35,7 @@ const Shipping: React.FC<ShippingProps> = ({
     const router = useRouter();
     const pathname = usePathname();
     const { authData, preferred_currency_code } = useCustomerAuthStore();
+    console.log('user preferred currency code: ', preferred_currency_code);
 
     const isOpen = searchParams.get('step') === 'delivery';
     const cartId = isOpen ? searchParams.get('cart') : cart.id;
