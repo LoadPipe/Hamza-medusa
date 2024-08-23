@@ -88,7 +88,6 @@ const AccountNav = ({
                     my={'8'}
                     alignItems={'center'}
                     justifyContent="space-between"
-                    bg="gray.800"
                     color="white"
                     onClick={toggleCollapse}
                     cursor="pointer"

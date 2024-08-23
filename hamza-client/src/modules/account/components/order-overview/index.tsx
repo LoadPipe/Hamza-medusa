@@ -2,25 +2,11 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Order } from '@medusajs/medusa';
-import OrderCard from '../order-card';
-import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
-import Refund from '../../../order/templates/refund';
-import Delivered from '../../../order/templates/delivered';
-import Processing from '../../../order/templates/processing';
-import Shipped from '../../../order/templates/shipped';
-import All from '../../../order/templates/all';
-import Cancelled from '../../../order/templates/cancelled';
+import { renderTabContent, TABS } from '@modules/tab-rendered';
 
-import {
-    getVendors,
-    orderInformation,
-    orderDetails,
-    orderStatus,
-    orderBucket,
-    cancelOrder,
-} from '@lib/data';
+import { orderDetails, cancelOrder } from '@lib/data';
 import {
     Button,
     ButtonGroup,
@@ -99,14 +85,6 @@ enum OrderBucketType {
     CANCELLED = 5,
     REFUNDED = 6,
 }
-const TABS = {
-    ALL: 'All Orders',
-    PROCESSING: 'Processing',
-    SHIPPED: 'Shipped',
-    DELIVERED: 'Delivered',
-    CANCELLED: 'Cancelled',
-    REFUND: 'Refund',
-};
 const OrderOverview = ({ orders }: { orders: Order[] }) => {
     // Initialize state with the correct type
     const [detailedOrders, setDetailedOrders] = useState<DetailedOrder[]>([]);
@@ -137,25 +115,6 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
     if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY) countryCode = 'us';
 
     const router = useRouter();
-
-    const renderTabContent = () => {
-        switch (activeTab) {
-            case TABS.ALL:
-                return <All orders={orders} />;
-            case TABS.PROCESSING:
-                return <Processing orders={orders} />;
-            case TABS.SHIPPED:
-                return <Shipped orders={orders} />;
-            case TABS.DELIVERED:
-                return <Delivered />;
-            case TABS.CANCELLED:
-                return <Cancelled orders={orders} />;
-            case TABS.REFUND:
-                return <Refund orders={orders} />;
-            default:
-                return <div>Select a tab to view orders.</div>;
-        }
-    };
 
     const fetchAllOrders = async (customerId: string) => {
         setIsLoading(true);
@@ -251,7 +210,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                     </Button>
                 ))}
             </ButtonGroup>
-            {renderTabContent()}
+            {renderTabContent(activeTab, orders)}
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 <ModalOverlay />
                 <ModalContent>
