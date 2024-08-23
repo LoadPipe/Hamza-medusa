@@ -25,14 +25,14 @@ const Delivered = ({ orders }: { orders: any[] }) => {
     const [customerId, setCustomerId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    console.log(`ORDERS ARE ${JSON.stringify(orders)}`);
+    // console.log(`ORDERS ARE ${JSON.stringify(orders)}`);
     useEffect(() => {
-        console.log('Orders received in Cancelled:', orders);
+        // console.log('Orders received in Cancelled:', orders);
         if (orders && orders.length > 0) {
             const customer_id = orders[0]?.customer_id;
-            console.log(
-                `Running fetchAllOrders with customerID ${customer_id}`
-            );
+            // console.log(
+            //     `Running fetchAllOrders with customerID ${customer_id}`
+            // );
             fetchAllOrders(customer_id);
             setCustomerId(customer_id);
         }
