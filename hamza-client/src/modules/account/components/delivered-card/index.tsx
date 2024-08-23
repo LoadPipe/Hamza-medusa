@@ -177,14 +177,15 @@ const DeliveredCard = ({ order, handle }: OrderCardProps) => {
                 >
                     Return/Refund
                 </Button>
-                <Button
-                    ml={2}
-                    variant="outline"
-                    colorScheme="white"
-                    borderRadius={'37px'}
-                >
-                    Add A Review
-                </Button>
+                {/*// TODO: Probably makes sense to have this here but yahh*/}
+                {/*<Button*/}
+                {/*    ml={2}*/}
+                {/*    variant="outline"*/}
+                {/*    colorScheme="white"*/}
+                {/*    borderRadius={'37px'}*/}
+                {/*>*/}
+                {/*    Add A Review*/}
+                {/*</Button>*/}
             </Flex>
         </Box>
     );
