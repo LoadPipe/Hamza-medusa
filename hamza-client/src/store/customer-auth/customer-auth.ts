@@ -44,6 +44,7 @@ export const useCustomerAuthStore = create<State & Actions>()(
                 });
             },
             setCustomerPreferredCurrency: (currency) => {
+                console.log("CUSTOMER PREF CURRENCY IS ", currency)
                 set({ preferred_currency_code: currency });
             },
 

@@ -31,6 +31,7 @@ const ProductCardGroup = ({ vendorName, category }: Props) => {
     console.log(data);
 
     const { authData, preferred_currency_code } = useCustomerAuthStore();
+    console.log('user preferred currency code: ', preferred_currency_code);
 
     if (isLoading) {
         return <SkeletonProductGrid />;
