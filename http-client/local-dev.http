@@ -315,7 +315,7 @@ GET http://localhost:9000/custom/order/status
 Content-Type: application/json
 
 {
-  "order_id": "order_01J05M54MDN9AC5E5JNMYHFKB8"
+  "order_id": "order_01J5XB1MTXM9KRST8RKG5326ZN"
 }
 
 ### Get Vendor Name by Order_id

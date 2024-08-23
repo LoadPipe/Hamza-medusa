@@ -154,7 +154,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
             console.log('Order statuses: ', statusMap);
         };
 
-        if (Object.keys(customerOrder).length > 0) {
+        if (customerOrder) {
             fetchStatuses();
         }
     }, [customerOrder]);
