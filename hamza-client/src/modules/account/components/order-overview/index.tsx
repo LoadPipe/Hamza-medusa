@@ -156,6 +156,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
     const setOrderActiveTab = useOrderTabStore(
         (state) => state.setOrderActiveTab
     );
+
     const handleTabChange = (tab: any) => {
         setOrderActiveTab(tab);
         // navigate to OrderOverview or update the URL to reflect the active tab
@@ -163,8 +164,6 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
 
     const renderTabContent = () => {
         switch (orderActiveTab) {
-            case TABS.ALL:
-                return <All orders={orders} />;
             case TABS.PROCESSING:
                 return <Processing orders={orders} />;
             case TABS.SHIPPED:
@@ -176,7 +175,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
             case TABS.REFUND:
                 return <Refund orders={orders} />;
             default:
-                return <div>Select a tab to view orders.</div>;
+                return <All orders={orders} />;
         }
     };
 
