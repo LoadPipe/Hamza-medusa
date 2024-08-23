@@ -35,6 +35,7 @@ export default function Error({ error, reset }: ErrorPageProps) {
             justifyContent={'center'}
             alignItems={'center'}
             width={'100%'}
+            height={'100vh'}
             style={{
                 background:
                     'linear-gradient(to bottom, #020202 5vh, #2C272D 40vh)',
@@ -47,7 +48,6 @@ export default function Error({ error, reset }: ErrorPageProps) {
                 justifyContent={'center'}
                 alignItems={'center'}
                 color={'white'}
-                my="4rem"
             >
                 <Flex flexDir={'column'} gap={'32px'}>
                     <Flex flexDir={'column'} gap={'24px'}>
