@@ -39,10 +39,10 @@ type OrderCardProps = {
 const RefundCard = ({ order, handle }: OrderCardProps) => {
     const [vendor, setVendor] = useState('');
     const orderString = typeof order.currency_code;
-    console.log(
-        `Order Card details ${JSON.stringify(order.variant.product_id)}`
-    );
-    console.log(`Product details ${JSON.stringify(handle)} `);
+    // console.log(
+    //     `Order Card details ${JSON.stringify(order.variant.product_id)}`
+    // );
+    // console.log(`Product details ${JSON.stringify(handle)} `);
 
     useEffect(() => {
         // Fetch Vendor Name from product.id

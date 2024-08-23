@@ -45,8 +45,8 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
     // console.log(
     //     `Order Unit Price ${order.unit_price} and Currency Code ${order.currency_code} ${orderString}`
     // );
-    console.log(`Order Card details ${JSON.stringify(order)}`);
-    console.log(`Product details ${JSON.stringify(handle)} `);
+    // console.log(`Order Card details ${JSON.stringify(order)}`);
+    // console.log(`Product details ${JSON.stringify(handle)} `);
 
     return (
         <div className="flex flex-col">

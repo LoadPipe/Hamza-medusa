@@ -39,10 +39,10 @@ type OrderCardProps = {
 const ProcessingOrderCard = ({ order, handle }: OrderCardProps) => {
     const [vendor, setVendor] = useState('');
     const orderString = typeof order.currency_code;
-    console.log(
-        `Order Card details ${JSON.stringify(order.variant.product_id)}`
-    );
-    console.log(`Product details ${JSON.stringify(handle)} `);
+    // console.log(
+    //     `Order Card details ${JSON.stringify(order.variant.product_id)}`
+    // );
+    // console.log(`Product details ${JSON.stringify(handle)} `);
 
     const getAmount = (amount?: number | null) => {
         if (amount === null || amount === undefined) {

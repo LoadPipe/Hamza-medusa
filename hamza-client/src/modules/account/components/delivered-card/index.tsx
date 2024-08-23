@@ -46,10 +46,10 @@ const DeliveredCard = ({ order, handle }: OrderCardProps) => {
     let countryCode = useParams().countryCode as string;
     if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY) countryCode = 'us';
 
-    console.log(
-        `Order Card details ${JSON.stringify(order.variant.product_id)}`
-    );
-    console.log(`Product details ${JSON.stringify(handle)} `);
+    // console.log(
+    //     `Order Card details ${JSON.stringify(order.variant.product_id)}`
+    // );
+    // console.log(`Product details ${JSON.stringify(handle)} `);
 
     const getAmount = (amount?: number | null) => {
         if (amount === null || amount === undefined) {
