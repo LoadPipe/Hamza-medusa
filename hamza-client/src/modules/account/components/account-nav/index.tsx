@@ -21,12 +21,13 @@ import {
 } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import NextLink from 'next/link';
+import { useOrderTabStore } from '@store/order-tab-state';
 
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import NavLink from './components/nav-link';
-
+import { TABS } from 'modules/order-tab-management';
 const AccountNav = ({
     customer,
 }: {
@@ -55,6 +56,13 @@ const AccountNav = ({
 
     const toggleCollapse = () => setIsOpen(!isOpen);
     const toggleOrdersCollapse = () => setIsOrdersOpen(!isOrdersOpen);
+    const setOrderActiveTab = useOrderTabStore(
+        (state) => state.setOrderActiveTab
+    );
+    const handleTabChange = (tab) => {
+        setOrderActiveTab(tab);
+        // navigate to OrderOverview or update the URL to reflect the active tab
+    };
 
     useEffect(() => {
         if (searchParams.get('verify') === 'true') {
@@ -184,7 +192,7 @@ const AccountNav = ({
                             color="white"
                             bg="transparent"
                             _hover={{ color: 'primary.green.900' }} // Update hover color to primary.green.900
-                            onClick={() => renderTabContent(TABS.ALL)}
+                            onClick={() => handleTabChange(TABS.ALL)}
                         >
                             All Orders
                         </Box>
@@ -197,7 +205,7 @@ const AccountNav = ({
                             color="white"
                             bg="transparent"
                             _hover={{ color: 'primary.green.900' }}
-                            onClick={() => renderTabContent(TABS.PROCESSING)}
+                            onClick={() => handleTabChange(TABS.PROCESSING)}
                         >
                             Processing
                         </Box>
@@ -210,7 +218,7 @@ const AccountNav = ({
                             color="white"
                             bg="transparent"
                             _hover={{ color: 'primary.green.900' }}
-                            onClick={() => renderTabContent(TABS.SHIPPED)}
+                            onClick={() => handleTabChange(TABS.SHIPPED)}
                         >
                             Shipped
                         </Box>
@@ -223,7 +231,7 @@ const AccountNav = ({
                             color="white"
                             bg="transparent"
                             _hover={{ color: 'primary.green.900' }}
-                            onClick={() => renderTabContent(TABS.DELIVERED)}
+                            onClick={() => handleTabChange(TABS.DELIVERED)}
                         >
                             Delivered
                         </Box>
@@ -236,7 +244,7 @@ const AccountNav = ({
                             color="white"
                             bg="transparent"
                             _hover={{ color: 'primary.green.900' }}
-                            onClick={() => renderTabContent(TABS.CANCELLED)}
+                            onClick={() => handleTabChange(TABS.CANCELLED)}
                         >
                             Cancelled
                         </Box>
@@ -249,7 +257,7 @@ const AccountNav = ({
                             color="white"
                             bg="transparent"
                             _hover={{ color: 'primary.green.900' }}
-                            onClick={() => renderTabContent(TABS.REFUND)}
+                            onClick={() => handleTabChange(TABS.REFUND)}
                         >
                             Refund
                         </Box>
