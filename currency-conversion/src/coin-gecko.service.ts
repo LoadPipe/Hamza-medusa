@@ -3,8 +3,9 @@ import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 
 interface CacheEntry {
-    value: number; // Assuming conversion rates are numbers
-    timestamp: number;
+    value: number; // exchange rate
+    timestamp: number;  // time cached
+    refreshing: boolean; // true if currently refreshing 
 }
 
 @Injectable()
@@ -79,6 +80,14 @@ export class CoinGeckoService {
 
         if (cachedData && currentTime - cachedData.timestamp < this.cacheDuration) {
             return cachedData.value;
+        } else {
+            if (cachedData) {
+                if (cachedData.refreshing)
+                    return cachedData.value;
+
+                console.log('refreshing cache for ', cacheKey);
+                cachedData.refreshing = true;
+            }
         }
 
         // Check for cross-caching
@@ -100,7 +109,8 @@ export class CoinGeckoService {
             const rate = baseToEth / conversionToEth;
 
             // Cache this calculated rate
-            this.cache[cacheKey] = { value: rate, timestamp: currentTime };
+            console.log('refreshed cache for ', cacheKey);
+            this.cache[cacheKey] = { value: rate, timestamp: currentTime, refreshing: false };
             return rate;
         }
 
@@ -121,12 +131,13 @@ export class CoinGeckoService {
             const rate = baseToUsdc / conversionToUsdc;
 
             // Cache this calculated rate
-            this.cache[cacheKey] = { value: rate, timestamp: currentTime };
+            console.log('refreshed cache for ', cacheKey);
+            this.cache[cacheKey] = { value: rate, timestamp: currentTime, refreshing: false };
             return rate;
         }
 
         // Otherwise fetch normally
-        return this.fetchConversionRate(baseCurrency, conversionCurrency);
+        return this.fetchConversionRate(baseCurrency, conversionCurrency, true);
     }
 
     private async handleEthConversion(
@@ -163,14 +174,25 @@ export class CoinGeckoService {
     private async fetchConversionRate(
         contractAddress: string,
         vsCurrency: string,
+        force: boolean = false
     ): Promise<number> {
         const cacheKey = this.createCacheKey(contractAddress, vsCurrency);
         const cachedData = this.cache[cacheKey];
         const currentTime = this.getTimestamp();
 
-        if (cachedData && currentTime - cachedData.timestamp < this.cacheDuration) {
-            console.log(`Using cached data for ${contractAddress} to ${vsCurrency}`);
-            return cachedData.value;
+        if (!force) {
+            if (cachedData && currentTime - cachedData.timestamp < this.cacheDuration) {
+                console.log(`Using cached data for ${contractAddress} to ${vsCurrency}`);
+                return cachedData.value;
+            } else {
+                if (cachedData) {
+                    if (cachedData.refreshing)
+                        return cachedData.value;
+
+                    console.log('refreshing cache for ', cacheKey);
+                    cachedData.refreshing = true;
+                }
+            }
         }
 
         let url;
@@ -197,7 +219,8 @@ export class CoinGeckoService {
                 contractAddress === this.ETH
                     ? response.data.ethereum[vsCurrency]
                     : response.data[contractAddress][vsCurrency];
-            this.cache[cacheKey] = { value: newValue, timestamp: currentTime };
+            console.log('refreshed cache for ', cacheKey);
+            this.cache[cacheKey] = { value: newValue, timestamp: currentTime, refreshing: false };
             return newValue;
         } catch (error) {
             this.logger.error(`Error fetching data for ${contractAddress}`, error);
