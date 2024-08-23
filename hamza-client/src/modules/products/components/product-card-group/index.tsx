@@ -157,7 +157,7 @@ const ProductCardGroup = ({
                             avgRating.toFixed(2)
                         );
 
-                        const variantID = product.variants[0].id;
+                        const variantID = product.variants[0]?.id;
                         return (
                             <ProductCard
                                 key={index}
