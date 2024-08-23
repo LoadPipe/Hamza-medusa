@@ -85,6 +85,7 @@ const AccountNav = ({
                     width={'245px'}
                     height={'56px'}
                     padding="16px"
+                    my={'8'}
                     alignItems={'center'}
                     justifyContent="space-between"
                     bg="gray.800"
