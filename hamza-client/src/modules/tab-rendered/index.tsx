@@ -1,5 +1,3 @@
-// tabRenderer.js (or .tsx)
-
 import React from 'react';
 import All from '@modules/order/templates/all';
 import Processing from '@modules/order/templates/processing';
