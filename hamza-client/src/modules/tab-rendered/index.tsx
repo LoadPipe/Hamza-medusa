@@ -15,7 +15,7 @@ export const TABS = {
     REFUND: 'Refund',
 };
 
-export const renderTabContent = (activeTab, orders) => {
+export const renderTabContent = (activeTab: any, orders: any) => {
     switch (activeTab) {
         case TABS.ALL:
             return <All orders={orders} />;

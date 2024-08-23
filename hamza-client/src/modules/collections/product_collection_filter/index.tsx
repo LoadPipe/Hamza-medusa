@@ -26,6 +26,7 @@ const ProductCollections = ({ vendorName }: Props) => {
     );
 
     const { authData, preferred_currency_code } = useCustomerAuthStore();
+    console.log('user preferred currency code: ', preferred_currency_code);
 
     if (isLoading) {
         return null; // Suspense will handle the loading fallback.
@@ -82,8 +83,8 @@ const ProductCollections = ({ vendorName }: Props) => {
 
                                                 {authData.status ==
                                                     'authenticated' &&
-                                                preferred_currency_code &&
-                                                preferredPrice ? (
+                                                    preferred_currency_code &&
+                                                    preferredPrice ? (
                                                     <>
                                                         {' '}
                                                         {formatCryptoPrice(
