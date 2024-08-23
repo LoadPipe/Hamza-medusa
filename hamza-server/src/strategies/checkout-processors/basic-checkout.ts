@@ -299,7 +299,6 @@ export class BasicCheckoutProcessor {
         paymentGroups.forEach((group) => {
             const input = this.createPaymentInput(cart, group);
             input.amount += shippingCost;
-            console.log('payment input: ', input);
             paymentInputs.push(input);
         });
 
