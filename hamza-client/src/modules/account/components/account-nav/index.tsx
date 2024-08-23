@@ -59,7 +59,7 @@ const AccountNav = ({
     const setOrderActiveTab = useOrderTabStore(
         (state) => state.setOrderActiveTab
     );
-    const handleTabChange = (tab) => {
+    const handleTabChange = (tab: any) => {
         setOrderActiveTab(tab);
         // navigate to OrderOverview or update the URL to reflect the active tab
     };

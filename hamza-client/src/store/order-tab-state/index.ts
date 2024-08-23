@@ -7,5 +7,5 @@ interface OrderTabState {
 
 export const useOrderTabStore = create<OrderTabState>((set) => ({
     orderActiveTab: 'ALL', // Default tab
-    setOrderActiveTab: (tab) => set({ orderActiveTab: tab }),
+    setOrderActiveTab: (tab: any) => set({ orderActiveTab: tab }),
 }));

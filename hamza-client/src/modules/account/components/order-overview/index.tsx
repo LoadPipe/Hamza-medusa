@@ -156,7 +156,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
     const setOrderActiveTab = useOrderTabStore(
         (state) => state.setOrderActiveTab
     );
-    const handleTabChange = (tab) => {
+    const handleTabChange = (tab: any) => {
         setOrderActiveTab(tab);
         // navigate to OrderOverview or update the URL to reflect the active tab
     };
@@ -169,8 +169,8 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                 return <Processing orders={orders} />;
             case TABS.SHIPPED:
                 return <Shipped orders={orders} />;
-            case TABS.DELIVERED:
-                return <Delivered orders={orders} />;
+            // case TABS.DELIVERED:
+            //     return <Delivered orders={orders} />;
             case TABS.CANCELLED:
                 return <Cancelled orders={orders} />;
             case TABS.REFUND:
