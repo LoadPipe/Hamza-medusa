@@ -234,7 +234,7 @@ export class BasicCheckoutProcessor {
 
         //get total amount for the items
         let amount = itemsFromStore.reduce(
-            (a, i) => a + i.unit_price * i.quantity * 3,
+            (a, i) => a + i.unit_price * i.quantity,
             0
         );
 
@@ -299,6 +299,7 @@ export class BasicCheckoutProcessor {
         paymentGroups.forEach((group) => {
             const input = this.createPaymentInput(cart, group);
             input.amount += shippingCost;
+            console.log('payment input: ', input);
             paymentInputs.push(input);
         });
 
