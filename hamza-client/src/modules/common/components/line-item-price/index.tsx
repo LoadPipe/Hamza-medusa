@@ -33,6 +33,7 @@ const LineItemPrice = ({
     return (
         <div className="flex flex-col gap-x-2 text-ui-fg-subtle items-end">
             <div className="text-left">
+                {' '}
                 {hasReducedPrice && (
                     <>
                         <p>
@@ -46,7 +47,7 @@ const LineItemPrice = ({
                                     price,
                                     currencyCode ?? 'usdc'
                                 )}{' '}
-                                {currencyCode?.toUpperCase() ?? 'usdc'}
+                                {currencyCode?.toUpperCase() ?? 'USDC'}
                             </span>
                         </p>
                         {style === 'default' && (
@@ -61,6 +62,7 @@ const LineItemPrice = ({
                         )}
                     </>
                 )}
+                {' '}
                 <Text
                     as="span"
                     fontSize={{ base: '14px', md: '24px' }}
