@@ -73,23 +73,7 @@ export default class BuckydropService extends TransactionBaseService {
             count
         );
         this.logger.debug(`search returned ${searchResults.length} results`);
-        const productData = searchResults; //[searchResults[4], searchResults[5]];
-
-        //doing it this way incurs the wrath of the API rate limit
-        /*
-        let products: CreateProductInput[] = await Promise.all(
-            productData.map((p) =>
-                this.mapBuckyDataToProductInput(
-                    buckyClient,
-                    p,
-                    ProductStatus.PUBLISHED,
-                    storeId,
-                    collectionId,
-                    [salesChannelId]
-                )
-            )
-        );
-        */
+        const productData = searchResults;
 
         let productInputs: CreateProductInput[] = [];
         for (let p of productData) {
@@ -107,6 +91,8 @@ export default class BuckydropService extends TransactionBaseService {
 
         //filter out failures
         productInputs = productInputs.filter((p) => (p ? p : null));
+
+        this.logger.debug(`importing ${productInputs.length} products...`);
 
         //import the products
         const output = productInputs?.length
@@ -572,6 +558,8 @@ export default class BuckydropService extends TransactionBaseService {
 
             if (!output.variants?.length)
                 throw new Error(`No variants were detected for product ${item.spuCode}`);
+
+            return output;
         } catch (error) {
             this.logger.error(
                 'Error mapping Bucky data to product input',
