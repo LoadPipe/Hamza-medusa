@@ -5,6 +5,7 @@ import {
     MoneyAmount,
     ProductVariantMoneyAmount,
     Store,
+    ProductStatus,
 } from '@medusajs/medusa';
 import {
     CreateProductInput,
@@ -19,7 +20,7 @@ import CustomerService from '../services/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import { BuckyClient } from '../buckydrop/bucky-client';
 import { getCurrencyAddress } from '../currency.config';
-import { In } from 'typeorm';
+import { In, IsNull, Not } from 'typeorm';
 
 export type BulkImportProductInput = CreateProductInput;
 
@@ -214,10 +215,10 @@ class ProductService extends MedusaProductService {
 
     async getProductsFromStoreWithPrices(storeId: string): Promise<Product[]> {
         return await this.convertPrices(
-            await this.productRepository_.find({
-                where: { store_id: storeId },
+            (await this.productRepository_.find({
+                where: { store_id: storeId, status: ProductStatus.PUBLISHED },
                 relations: ['variants.prices', 'reviews'],
-            })
+            })).filter(p => p.variants?.length)
         );
     }
 
@@ -225,6 +226,7 @@ class ProductService extends MedusaProductService {
         const products = await this.convertPrices(
             await this.productRepository_.find({
                 relations: ['variants.prices', 'reviews'],
+                where: { status: ProductStatus.PUBLISHED, store_id: Not(IsNull()) }
             })
         );
 
@@ -237,17 +239,17 @@ class ProductService extends MedusaProductService {
                 return 1;
             }
             return 0;
-        });
+        }).filter(p => p.variants?.length);
 
         return sortedProducts;
     }
 
     async getProductsFromStore(storeId: string): Promise<Product[]> {
         // this.logger.log('store_id: ' + storeId); // Potential source of the error
-        return this.productRepository_.find({
-            where: { store_id: storeId },
+        return (await this.productRepository_.find({
+            where: { store_id: storeId, status: ProductStatus.PUBLISHED },
             // relations: ['store'],
-        });
+        })).filter(p => p.variants?.length);
     }
 
     async getCategoriesByStoreId(storeId: string): Promise<Product[]> {
