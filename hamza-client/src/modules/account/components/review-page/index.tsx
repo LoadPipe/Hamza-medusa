@@ -199,7 +199,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                             }
                                             colorScheme="green"
                                         >
-                                            Update Review
+                                            Edit
                                         </Button>
                                     )}
                                 </div>
@@ -273,7 +273,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                             }
                                             colorScheme="green"
                                         >
-                                            Write Review
+                                            Review
                                         </Button>
                                     </div>
                                 </CardBody>
