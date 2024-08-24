@@ -25,12 +25,12 @@ const Shipped = ({ orders }: { orders: any[] }) => {
     const [courierInfo, setCourierInfo] = useState(false);
 
     useEffect(() => {
-        console.log('Orders received in Cancelled:', orders);
+        // console.log('Orders received in Cancelled:', orders);
         if (orders && orders.length > 0) {
             const customer_id = orders[0]?.customer_id;
-            console.log(
-                `Running fetchAllOrders with customerID ${customer_id}`
-            );
+            // console.log(
+            //     `Running fetchAllOrders with customerID ${customer_id}`
+            // );
             fetchAllOrders(customer_id);
             setCustomerId(customer_id);
         }

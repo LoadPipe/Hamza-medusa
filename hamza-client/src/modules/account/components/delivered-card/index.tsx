@@ -4,6 +4,9 @@ import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
 import React, { useEffect, useState } from 'react';
 import { getStoreName } from '@lib/data';
+import { addToCart } from '@modules/cart/actions';
+import { useParams, useRouter } from 'next/navigation';
+
 type OrderDetails = {
     thumbnail: string;
     title: string;
@@ -36,9 +39,13 @@ type OrderCardProps = {
     handle: any;
 };
 
-const CancelCard = ({ order, handle }: OrderCardProps) => {
+const DeliveredCard = ({ order, handle }: OrderCardProps) => {
     const [vendor, setVendor] = useState('');
     const orderString = typeof order.currency_code;
+    const router = useRouter();
+    let countryCode = useParams().countryCode as string;
+    if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY) countryCode = 'us';
+
     // console.log(
     //     `Order Card details ${JSON.stringify(order.variant.product_id)}`
     // );
@@ -69,9 +76,25 @@ const CancelCard = ({ order, handle }: OrderCardProps) => {
         fetchVendor();
     }, [order]);
 
+    const handleReorder = async (order: any) => {
+        try {
+            await addToCart({
+                variantId: order.variant_id,
+                countryCode: countryCode,
+                currencyCode: order.currency_code,
+                quantity: order.quantity,
+            });
+        } catch (e) {
+            alert(`Product with name ${order.title} could not be added`);
+        }
+
+        router.push('/checkout');
+    };
+
     if (!order) {
         return <div>Loading...</div>; // Display loading message if order is undefined
     }
+    console.log(`What are order ITEMS? ${JSON.stringify(order)}`);
     return (
         <Box
             // bg={'#272727'}
@@ -100,95 +123,72 @@ const CancelCard = ({ order, handle }: OrderCardProps) => {
                 </Flex>
             </Flex>
 
-            <Flex justifyContent="space-between">
-                {/* Left Side: Existing Content */}
-                <Flex
-                    alignItems="center"
-                    justifyContent="space-between"
-                    flex="1"
-                >
-                    <Image
-                        borderRadius="lg"
-                        width={{ base: '60px', md: '120px' }}
-                        src={order.thumbnail}
-                        alt={`Thumbnail of ${order.title}`}
-                        mr={4}
-                    />
+            <Flex alignItems="center" justifyContent="space-between">
+                <Image
+                    borderRadius="lg"
+                    width={{ base: '60px', md: '120px' }}
+                    src={order.thumbnail}
+                    alt={`Thumbnail of ${order.title}`}
+                    mr={4}
+                />
 
-                    <Box flex="1">
-                        <Flex justifyContent="space-between" direction="row">
-                            <Flex direction="column">
-                                <Text
-                                    color={'rgba(85, 85, 85, 1.0)'}
-                                    fontSize="16px"
-                                >
-                                    Item Name
-                                </Text>
-                                <Text fontWeight="bold" fontSize="18px">
-                                    {order.title}
-                                </Text>
-                                <Flex direction="row" alignItems="center">
-                                    <Text
-                                        color={'rgba(85, 85, 85, 1.0)'}
-                                        fontSize="16px"
-                                        mr={1} // Add some space between "Variation:" and the description
-                                    >
-                                        Variation:
-                                    </Text>
-                                    <Text fontSize="14px">
-                                        {order.description}
-                                    </Text>
-                                </Flex>
-                            </Flex>
-                        </Flex>
-
-                        <Flex direction="column" mt={2}>
-                            <Text
-                                color={'rgba(85, 85, 85, 1.0)'}
-                                fontSize="16px"
-                            >
-                                Order Date
+                <Box flex="1">
+                    <Flex justifyContent="space-between">
+                        <Flex direction="column">
+                            <Text fontWeight="bold" fontSize="18px">
+                                {order.title}
                             </Text>
-                            <Text color={'white'} fontSize="16px">
-                                {new Date(
-                                    order.created_at
-                                ).toLocaleDateString()}
-                            </Text>
+                            <Text fontSize="14px">{order.description}</Text>
                         </Flex>
-                    </Box>
-                </Flex>
+                        <Text fontSize="24px" fontWeight="semibold">
+                            {getAmount(order.unit_price)}{' '}
+                            {order.currency_code.toUpperCase()}
+                        </Text>
+                    </Flex>
 
-                {/* Right Side: Courier and Address */}
-                <Flex
-                    direction="column"
-                    ml={4}
-                    minWidth="200px"
-                    maxWidth="300px"
-                >
-                    <Text fontSize="24px" fontWeight="semibold">
-                        {getAmount(order.unit_price)} {order.currency_code}
-                    </Text>
-                </Flex>
+                    <Flex
+                        justifyContent="space-between"
+                        alignItems="center"
+                        mt={2}
+                    >
+                        <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
+                            {new Date(order.created_at).toLocaleDateString()}
+                        </Text>
+                        <Text fontSize="sm">{order.quantity} item(s)</Text>
+                    </Flex>
+                </Box>
             </Flex>
-            <Flex justifyContent="flex-end" mt={2}>
+
+            <Flex justifyContent="flex-end" mt={2} gap={'4'}>
+                <Button
+                    variant="outline"
+                    colorScheme="white"
+                    borderRadius={'37px'}
+                    onClick={() => {
+                        handleReorder(order || []);
+                    }}
+                >
+                    Buy Again
+                </Button>
                 <Button
                     variant="outline"
                     colorScheme="white"
                     borderRadius={'37px'}
                 >
-                    View Cancellation Details
+                    Return/Refund
                 </Button>
-                <Button
-                    ml={2}
-                    variant="outline"
-                    colorScheme="white"
-                    borderRadius={'37px'}
-                >
-                    Contact Seller
-                </Button>
+                {/*// TODO: Probably makes sense to have this here but yahh*/}
+                {/*<Button*/}
+                {/*    ml={2}*/}
+                {/*    variant="outline"*/}
+                {/*    colorScheme="white"*/}
+                {/*    borderRadius={'37px'}*/}
+                {/*>*/}
+                {/*    Add A Review*/}
+                {/*</Button>*/}
             </Flex>
         </Box>
     );
 };
 
-export default CancelCard;
+export default DeliveredCard;
