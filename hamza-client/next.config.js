@@ -43,6 +43,14 @@ const nextConfig = withStoreConfig({
             },
             {
                 protocol: 'https',
+                hostname: 'img.alicdn.com', // Newly added entry
+            },
+            {
+                protocol: 'https',
+                hostname: 'alpha.hamza.biz', // Newly added entry
+            },
+            {
+                protocol: 'https',
                 hostname: 'nhci-aigc.oss-cn-zhangjiakou.aliyuncs.com', // Newly added entry
             },
         ],
