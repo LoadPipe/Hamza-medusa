@@ -48,18 +48,33 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     await handler.handle(async () => {
         const importData = await getImportData(
-            req.query.store.toString() ?? 'Medusa Merch'
+            req.query.store?.toString() ?? 'Medusa Merch'
         );
 
-        const output = await buckyService.importProductsByKeyword(
-            req.query.keyword.toString(),
-            importData.storeId,
-            importData.collectionId,
-            importData.salesChannelId,
-            parseInt(req.query.count?.toString() ?? '10'),
-            parseInt(req.query.page?.toString() ?? '1')
-        );
+        const goodsId = req.query.goodsId?.toString();
+        const link = req.query.link?.toString();
 
-        return res.status(201).json({ status: true, products: output });
+        let output = {};
+        if (link) {
+            output = await buckyService.importProductsByLink(
+                link,
+                importData.storeId,
+                importData.collectionId,
+                importData.salesChannelId
+            );
+        }
+        else {
+            output = await buckyService.importProductsByKeyword(
+                req.query.keyword.toString(),
+                importData.storeId,
+                importData.collectionId,
+                importData.salesChannelId,
+                parseInt(req.query.count?.toString() ?? '10'),
+                parseInt(req.query.page?.toString() ?? '1'),
+                goodsId
+            );
+        }
+
+        return res.status(201).json({ status: true, output });
     });
 };

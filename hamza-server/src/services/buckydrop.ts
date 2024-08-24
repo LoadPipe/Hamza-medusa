@@ -63,7 +63,8 @@ export default class BuckydropService extends TransactionBaseService {
         collectionId: string,
         salesChannelId: string,
         count: number = 10,
-        page: number = 1
+        page: number = 1,
+        goodsId: string = null
     ): Promise<Product[]> {
         //retrieve products from bucky and convert them
         const buckyClient: BuckyClient = new BuckyClient();
@@ -73,7 +74,10 @@ export default class BuckydropService extends TransactionBaseService {
             count
         );
         this.logger.debug(`search returned ${searchResults.length} results`);
-        const productData = searchResults;
+        let productData = searchResults;
+
+        if (goodsId)
+            productData = productData.filter(p => p.goodsId === goodsId);
 
         let productInputs: CreateProductInput[] = [];
         for (let p of productData) {
@@ -104,6 +108,32 @@ export default class BuckydropService extends TransactionBaseService {
 
         //TODO: best to return some type of report; what succeeded, what failed
         return output;
+    }
+
+    async importProductsByLink(
+        goodsLink: string,
+        storeId: string,
+        collectionId: string,
+        salesChannelId: string
+    ): Promise<Product[]> {
+        //retrieve products from bucky and convert them
+        const buckyClient: BuckyClient = new BuckyClient();
+
+        const input: CreateProductInput =
+            await this.mapBuckyDataToProductInput(
+                buckyClient,
+                { goodsLink },
+                ProductStatus.PUBLISHED,
+                storeId,
+                collectionId,
+                [salesChannelId]
+            )
+
+        //import if mapped
+        return input ? await this.productService_.bulkImportProducts(
+            storeId,
+            [input]
+        ) : [];
     }
 
     async calculateShippingPriceForCart(cartId: string): Promise<number> {
@@ -424,7 +454,7 @@ export default class BuckydropService extends TransactionBaseService {
         }
     }
 
-    private async mapVariants(item: any, productDetails: any) {
+    private async mapVariants(productDetails: any) {
         /*
         0: {
             "props": [{
@@ -535,29 +565,33 @@ export default class BuckydropService extends TransactionBaseService {
 
             const metadata = item;
             metadata.detail = productDetails.data;
+            const spuCode = item?.spuCode ?? productDetails?.data?.spuCode;
+
+            if (!spuCode?.length)
+                throw new Error('SPU code not found');
 
             const output = {
-                title: item.goodsName,
-                subtitle: item.goodsName, //TODO: find a better value
-                handle: item.spuCode,
+                title: item?.goodsName ?? productDetails?.data?.goodsName,
+                subtitle: item?.goodsName ?? productDetails?.data?.goodsName, //TODO: find a better value
+                handle: spuCode,
                 description: productDetails?.data?.goodsDetailHtml ?? '',
                 is_giftcard: false,
                 status: status as ProductStatus,
-                thumbnail: item.picUrl,
+                thumbnail: item?.picUrl ?? productDetails?.data?.mainItemImgs[0],
                 images: productDetails?.data?.mainItemImgs,
                 collection_id: collectionId,
-                weight: Math.round(item.weight || 100),
+                weight: Math.round(item?.weight ?? 100),
                 discountable: true,
                 store_id: storeId,
                 sales_channels: salesChannels.map((sc) => {
                     return { id: sc };
                 }),
                 bucky_metadata: JSON.stringify(metadata),
-                variants: await this.mapVariants(item, productDetails),
+                variants: await this.mapVariants(productDetails),
             };
 
             if (!output.variants?.length)
-                throw new Error(`No variants were detected for product ${item.spuCode}`);
+                throw new Error(`No variants were detected for product ${spuCode}`);
 
             return output;
         } catch (error) {
