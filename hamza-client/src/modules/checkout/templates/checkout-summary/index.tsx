@@ -16,8 +16,6 @@ const CheckoutSummary = async (params: any) => {
         return null;
     }
 
-    console.log('CheckoutSummary params currency:', cart);
-
     return (
         <div className="sticky top-0 flex flex-col-reverse small:flex-col gap-y-8 py-8 small:py-0 ">
             <div className="w-full bg-black flex flex-col">
