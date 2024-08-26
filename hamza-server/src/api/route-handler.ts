@@ -45,15 +45,15 @@ export class RouteHandler {
         }
 
         //handle security 
-        this.jwtToken = jwt.decode(req.cookies['_medusa_jwt']);
+        this.logger.debug(`auth header: ${req.headers.authorization}`);
+        this.jwtToken = jwt.decode(req.headers.authorization);
         this.customerId = this.jwtToken?.customer_id;
     }
 
     public async handle(fn: (_this?: RouteHandler) => void) {
         try {
-
             this.logger.info(
-                `******* ROUTE-HANDLER ********* ${this.method} ${this.route}`
+                `ROUTE-HANDLER: ${this.method} ${this.route}`
             );
             this.logger.debug(
                 `Input Params: ${JSON.stringify(this.inputParams)}`
@@ -73,9 +73,26 @@ export class RouteHandler {
             (!this.customerId) || (this.customerId !== customerId);
 
         if (unauthorized) {
+            this.logger.warn(`Unauthorized customer for route call ${this.method} ${this.route}`)
             this.response.status(401).json({ message: 'Unauthorized customer' });
         }
 
         return !unauthorized;
+    }
+
+    requireParams(params: string[]): boolean {
+        const missingParams = [];
+        for (let p of params) {
+            if (!p?.length)
+                missingParams.push(p);
+        }
+
+        if (missingParams.length) {
+            const message = `missing required param(s): ${missingParams.join()}`
+            this.response.status(400).json({ message });
+            return false;
+        }
+
+        return true;
     }
 }
