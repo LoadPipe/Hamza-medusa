@@ -26,6 +26,7 @@ import useStorePage from '@store/store-page/store-page';
 import useSideFilter from '@store/store-page/side-filter';
 import useModalFilter from '@store/store-page/filter-modal';
 import RangeSliderModal from './range-slider-modal';
+import useVendors from '../../../../home/components/search-and-filter-panel/data/data';
 
 interface FilterModalProps {
     isOpen: boolean;
@@ -59,6 +60,8 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
         setModalCategoryFilterSelect,
     } = useModalFilter();
 
+    const vendors = useVendors();
+
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
@@ -83,46 +86,15 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         wrap={'wrap'}
                         gap="16px"
                     >
-                        <CategoryModalButton
-                            categoryType="home_light"
-                            categoryName="All"
-                        />
-                        <CategoryModalButton
-                            categoryType="home_light"
-                            categoryName="Legendary Light Design"
-                        />
-                        <CategoryModalButton
-                            categoryType="gadgets"
-                            categoryName="Dauntless"
-                        />
-                        <CategoryModalButton
-                            categoryType="medusa_merch"
-                            categoryName="Medusa Merch"
-                        />
-                        <CategoryModalButton
-                            categoryType="games"
-                            categoryName="Drones"
-                        />
-                        <CategoryModalButton
-                            categoryType="games"
-                            categoryName="Legos"
-                        />
-                        <CategoryModalButton
-                            categoryType="board_games"
-                            categoryName="Board Games"
-                        />
-                        <CategoryModalButton
-                            categoryType="workout_gear"
-                            categoryName="Workout Gear"
-                        />
-                        <CategoryModalButton
-                            categoryType="games"
-                            categoryName="Echo Rift"
-                        />
-                        <CategoryModalButton
-                            categoryType="games"
-                            categoryName="Gaming Gear"
-                        />
+                        <Box>
+                            {vendors.map((vendor: any, index: number) => (
+                                <CategoryModalButton
+                                    key={index}
+                                    categoryType={vendor.vendorType}
+                                    categoryName={vendor.vendorName}
+                                />
+                            ))}
+                        </Box>
                     </Flex>
                     <Text
                         mt="1.5rem"
