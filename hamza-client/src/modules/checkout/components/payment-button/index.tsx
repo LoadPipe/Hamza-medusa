@@ -121,6 +121,7 @@ const CryptoPaymentButton = ({
 
     // Get the prescribed checkout mode from the server
     const getCheckoutMode = async () => {
+        //TODO: MOVE TO INDEX.TS
         const response = await axios.get(`${MEDUSA_SERVER_URL}/custom/config`);
         return response.data?.checkout_mode?.trim()?.toUpperCase();
     };
@@ -197,6 +198,7 @@ const CryptoPaymentButton = ({
      * @returns
      */
     const retrieveCheckoutData = async (cartId: string) => {
+        //TODO: MOVE TO INDEX.TS
         const response = await axios.get(
             `${MEDUSA_SERVER_URL}/custom/checkout?cart_id=${cartId}`
         );
@@ -238,6 +240,7 @@ const CryptoPaymentButton = ({
 
             //finalize the checkout, if wallet payment was successful
             if (output?.success) {
+                //TODO: MOVE TO INDEX.TS
                 const response = await axios.post(
                     `${MEDUSA_SERVER_URL}/custom/checkout`,
                     {
@@ -282,6 +285,7 @@ const CryptoPaymentButton = ({
 
     const cancelOrderFromCart = async () => {
         try {
+            //TODO: MOVE TO INDEX.TS
             let response = await axios.post(
                 `${MEDUSA_SERVER_URL}/custom/cart/cancel`,
                 { cart_id: cart.id }

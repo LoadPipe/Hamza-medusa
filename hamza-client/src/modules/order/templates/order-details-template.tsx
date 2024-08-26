@@ -70,12 +70,14 @@ const OrderDetailsTemplate: React.FC<OrderDetailsTemplateProps> = ({
     useEffect(() => {
         const fetchOrders = async () => {
             try {
+                //TODO: MOVE TO INDEX.TS
                 const { data } = await axios.post(
                     `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/order`,
                     {
                         cart_id: order.cart_id,
                     }
                 );
+                //TODO: MOVE TO INDEX.TS
                 const orderHandles = await axios.post(
                     `${BACKEND_URL}/custom/order/order-details`,
                     {
@@ -92,6 +94,7 @@ const OrderDetailsTemplate: React.FC<OrderDetailsTemplateProps> = ({
                 setDetailedOrders(updatedItems);
                 console.log(`Detailed Orders: ${JSON.stringify(updatedItems)}`);
 
+                //TODO: MOVE TO INDEX.TS
                 const vendor_resp = await axios.post(
                     `${BACKEND_URL}/custom/order/vendor`,
                     {

@@ -26,6 +26,7 @@ const VerifyEmail = () => {
     }
 
     const emailVerificationHandler = async () => {
+        //TODO: MOVE TO INDEX.TS
         let res = await axios.post(
             `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/confirmation-token/generate`,
             { customer_id: authData.customer_id, email: email },

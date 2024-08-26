@@ -21,6 +21,7 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
 }) => {
     const { authData, setCustomerAuthData } = useCustomerAuthStore();
     const accountVerificationFetcher = async () => {
+        //TODO: MOVE TO INDEX.TS
         const customerVerificationData = await axios.get(
             `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/get-verification-status?customer_id=${authData.customer_id}`
         );

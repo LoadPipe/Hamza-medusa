@@ -195,6 +195,7 @@ export default function ProductActions({
     };
 
     const whitelistedProductHandler = async () => {
+        //TODO: MOVE TO INDEX.TS
         let res = await axios.get(
             `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/product/get-store?product_id=${product.id}`
         );
