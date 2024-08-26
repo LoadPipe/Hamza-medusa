@@ -317,13 +317,6 @@ export default class OrderService extends MedusaOrderService {
         return order;
     }
 
-    async orderStatus(orderId: string) {
-        const order = await this.orderRepository_.findOne({
-            where: { id: orderId },
-        });
-        return order.status;
-    }
-
     async changeFulfillmentStatus(orderId: string, status: FulfillmentStatus) {
         const order = await this.orderRepository_.findOne({
             where: { id: orderId },

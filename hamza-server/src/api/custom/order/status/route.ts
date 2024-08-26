@@ -11,7 +11,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     await handler.handle(async () => {
         //validate 
-        if (!handler.requireParams(handler.inputParams.order_id))
+        if (!handler.requireParams(['order_id']))
             return;
 
         //get order 
