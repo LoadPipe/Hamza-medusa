@@ -16,6 +16,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         if (!handler.enforceCustomerId(handler.inputParams.customer_id))
             return;
 
+        //get the data 
         let customerData = await CustomerRepository.findOne({
             where: { id: handler.inputParams.customer_id.toString() },
             select: { is_verified: true },

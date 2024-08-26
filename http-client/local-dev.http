@@ -75,20 +75,6 @@ Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
 DELETE http://localhost:7700/indexes/products/documents
 Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
 
-### Create PaymentCollection
-POST localhost:9000/custom/payment-collection
-Content-Type: application/json
-
-{
-  "region_id": "reg_01HX63VQX1VHQJWAHJ55QY5TE7",
-  "store_id": "store_01HX63VQS0YX2QRT7TV9TKH8VA",
-  "payment_id": "pm_1IY1Z1CJPT60818GCHWD8GAT7",
-  "amount": 100,
-  "currency_code": "ETH",
-  "payment_method": "card",
-  "status": "succeeded"
-}
-
 
 ### Product Variant Response??
 POST http://localhost:9000/custom/variant
