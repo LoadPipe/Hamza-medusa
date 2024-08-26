@@ -106,4 +106,34 @@ export default class CustomerService extends MedusaCustomerService {
             throw e; // It might be helpful to rethrow the error for further handling by the caller.
         }
     }
+
+    async getCustomerCurrency(customerId: string): Promise<any> {
+        this.logger.debug('CustomerService getCustomerCurrency method running');
+
+        // Find the customer by ID
+        let customer = await this.customerRepository_.findOne({
+            where: { id: customerId },
+            select: { preferred_currency_id: true },
+        });
+
+        // Check if the customer exists
+        if (!customer) {
+            this.logger.debug(`Customer with id ${customerId} not found`);
+            return null;
+        }
+
+        this.logger.debug(`Customer Selected ${JSON.stringify(customer)}`);
+
+        // Return the preferred currency ID
+        try {
+            const currency = customer.preferred_currency_id;
+            this.logger.debug(
+                `Customer with id ${customerId} has preferred currency ID ${currency}`
+            );
+            return currency;
+        } catch (e) {
+            this.logger.error(`Error retrieving customer currency: ${e}`);
+            throw e; // Rethrow the error for further handling by the caller.
+        }
+    }
 }
