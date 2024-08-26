@@ -102,7 +102,7 @@ Content-Type: application/json
 }
 
 ### Update Currency
-POST http://localhost:9000/custom/update-currency
+PUT http://localhost:9000/custom/preferred-currency
 Content-Type: application/json
 
 {
@@ -363,15 +363,6 @@ Content-Type: application/json
   "payment_session_id": "ps_01J3M8JRV4050QQCK59NE75MQZ"
 }
 
-
-### Change Order Status for Development
-PUT http://localhost:9000/custom/order/change-status
-Content-Type: application/json
-
-{
-  "order_id": "order_01J3FN3JXTGQ90KA2XQG1DYFJD",
-  "status": "shipped"
-}
 
 
 ### Get Customer Orders without reviews. getNotReviewed

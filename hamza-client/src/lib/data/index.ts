@@ -513,7 +513,7 @@ export async function getStore(product_id: string) {
 
 export async function setCurrency(newCurrency: string, customer_id: string) {
     try {
-        await axios.post(`${BACKEND_URL}/custom/update-currency`,
+        await axios.put(`${BACKEND_URL}/custom/customer/preferred-currency`,
             {
                 customer_id: customer_id,
                 preferred_currency: newCurrency,

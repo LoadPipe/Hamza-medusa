@@ -23,6 +23,8 @@ type Props = {
 };
 
 const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
+
+    //TODO: MOVE TO INDEX.TS
     // Get products from vendor
     const { data, error, isLoading } = useQuery(
         ['products', { vendor: vendorName }],

@@ -96,7 +96,7 @@ export default class OrderService extends MedusaOrderService {
             order.updated_at = payment.updated_at;
 
             //save the order
-            order = await this.orderRepository_.save(order);
+            order = await this.orderRepository_.create(order);
 
             //update the cart
             cart.completed_at = new Date();
@@ -238,66 +238,71 @@ export default class OrderService extends MedusaOrderService {
         cartId: string,
         orders: Order[]
     ): Promise<void> {
-        for (const order of orders) {
-            const { variants, quantities } =
-                await this.getBuckyProductVariantsFromOrder(order);
-            if (variants?.length) {
-                const productList: ICreateBuckyOrderProduct[] = [];
+        try {
+            for (const order of orders) {
+                const { variants, quantities } =
+                    await this.getBuckyProductVariantsFromOrder(order);
+                if (variants?.length) {
+                    const productList: ICreateBuckyOrderProduct[] = [];
 
-                for (let n = 0; n < variants.length; n++) {
-                    const prodMetadata: any = JSON.parse(
-                        variants[n].product.bucky_metadata
-                    );
-                    const varMetadata: any = JSON.parse(
-                        variants[n].bucky_metadata
-                    );
+                    for (let n = 0; n < variants.length; n++) {
+                        const prodMetadata: any = JSON.parse(
+                            variants[n].product.bucky_metadata
+                        );
+                        const varMetadata: any = JSON.parse(
+                            variants[n].bucky_metadata
+                        );
 
-                    productList.push({
-                        spuCode: prodMetadata.spuCode,
-                        skuCode: varMetadata.skuCode,
-                        productCount: quantities[n],
-                        platform: prodMetadata.platform,
-                        productPrice: prodMetadata.proPrice.price, //TODO: price come from variant
-                        productName: prodMetadata.goodsName,
+                        productList.push({
+                            spuCode: prodMetadata.spuCode,
+                            skuCode: varMetadata.skuCode,
+                            productCount: quantities[n],
+                            platform: prodMetadata.platform,
+                            productPrice: prodMetadata?.proPrice?.price ?? prodMetadata?.price?.price ?? 0,
+                            productName: prodMetadata.goodsName,
+                        });
+                    }
+
+                    const cart: Cart = await this.cartService_.retrieve(cartId, {
+                        relations: ['billing_address.country', 'customer'],
                     });
+
+                    this.logger.debug('cart.email: ' + cart.email);
+
+                    //TODO: replace this with a BuckyService call, and get rid of buckyClient
+                    const output = await this.buckyClient.createOrder({
+                        partnerOrderNo: order.id.replace('_', ''),
+                        //partnerOrderNoName: order.id, //TODO: what go here?
+                        country: cart.billing_address.country.name ?? '', //TODO: what format?
+                        countryCode: cart.billing_address.country.iso_2 ?? '', //TODO: what format?
+                        province: cart.billing_address.province ?? '',
+                        city: cart.billing_address.city ?? '',
+                        detailAddress:
+                            `${cart.billing_address.address_1 ?? ''} ${cart.billing_address.address_2 ?? ''}`.trim(),
+                        postCode: cart.billing_address.postal_code,
+                        contactName:
+                            `${cart.billing_address.first_name ?? ''} ${cart.billing_address.last_name ?? ''}`.trim(),
+                        contactPhone: cart.billing_address.phone?.length
+                            ? cart.billing_address.phone
+                            : '0809997747',
+                        email: cart.email?.length
+                            ? cart.email
+                            : cart.customer.email,
+                        orderRemark: '',
+                        productList
+                    });
+
+                    //TODO: if not success, need to take some action
+                    order.bucky_metadata = JSON.stringify(output);
+                    await this.orderRepository_.save(order);
+
+                    this.logger.debug('BUCKY CREATED ORDER');
+                    this.logger.debug(JSON.stringify(output));
                 }
-
-                const cart: Cart = await this.cartService_.retrieve(cartId, {
-                    relations: ['billing_address.country', 'customer'],
-                });
-
-                this.logger.debug('cart.email: ' + cart.email);
-
-                //TODO: replace this with a BuckyService call, and get rid of buckyClient
-                const output = await this.buckyClient.createOrder({
-                    partnerOrderNo: order.id.replace('_', ''),
-                    //partnerOrderNoName: order.id, //TODO: what go here?
-                    country: cart.billing_address.country.name ?? '', //TODO: what format?
-                    countryCode: cart.billing_address.country.iso_2 ?? '', //TODO: what format?
-                    province: cart.billing_address.province ?? '',
-                    city: cart.billing_address.city ?? '',
-                    detailAddress:
-                        `${cart.billing_address.address_1 ?? ''} ${cart.billing_address.address_2 ?? ''}`.trim(),
-                    postCode: cart.billing_address.postal_code,
-                    contactName:
-                        `${cart.billing_address.first_name ?? ''} ${cart.billing_address.last_name ?? ''}`.trim(),
-                    contactPhone: cart.billing_address.phone?.length
-                        ? cart.billing_address.phone
-                        : '0809997747',
-                    email: cart.email?.length
-                        ? cart.email
-                        : cart.customer.email,
-                    orderRemark: '',
-                    productList,
-                });
-
-                //TODO: if not success, need to take some action
-                order.bucky_metadata = JSON.stringify(output);
-                await this.orderRepository_.save(order);
-
-                this.logger.debug('BUCKY CREATED ORDER');
-                this.logger.debug(JSON.stringify(output));
             }
+        }
+        catch (e) {
+            this.logger.error(`Failed to create buckydrop order for ${cartId}`);
         }
     }
 
