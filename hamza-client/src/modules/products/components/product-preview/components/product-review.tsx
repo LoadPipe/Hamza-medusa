@@ -6,68 +6,44 @@ import ReviewCardMobile from './review-card-mobile';
 
 import { allReviews } from '@lib/data';
 
-const fakeReviews = [
-    {
-        id: 1,
-        name: 'Inpachem Reskweiat',
-        location: 'Myanmar',
-        review: 'I thought that this was a pretty good product, if a little bit less so that what the Lori Wymar article said; still and all though, I was satisfied. I think I might get another in a different color.',
-        stars: 4,
-    },
-    {
-        id: 2,
-        name: 'Count Cagliostro',
-        location: 'California',
-        stars: 3,
-        review: 'Bro, this was exactly what I was looking for when they said "you gotta get in on this thing"! I was all no, really? And then I was yeah I guess I should. All good!',
-    },
-    {
-        id: 3,
-        name: 'Clothar Magnusson',
-        location: 'Iceland',
-        stars: 4,
-        review: 'Aside from all the lorem ipsum bulls**t, this product is actually the best one of its kind. If you think that it is not, let please teach you how to be a buff Icelandic giant. Plot twist: you gotta deadlift like every other day.',
-    },
-];
-
 const ProductReview = ({ productId }: { productId: string }) => {
     const [startIndex, setStartIndex] = useState(0);
     const reviewsToShow = 2;
-
-    const [reviews, setReviews] = useState<any>([]);
+    const [reviews, setReviews] = useState<any[]>([]);
 
     const handleNext = () => {
-        setStartIndex((prevIndex) => (prevIndex + 1) % reviews.length);
+        if (reviews.length > 2) {
+            setStartIndex((prevIndex) => (prevIndex + 1) % reviews.length);
+        }
     };
 
     const handlePrev = () => {
-        setStartIndex(
-            (prevIndex) => (prevIndex - 1 + reviews.length) % reviews.length
-        );
+        if (reviews.length > 2) {
+            setStartIndex(
+                (prevIndex) => (prevIndex - 1 + reviews.length) % reviews.length
+            );
+        }
     };
 
-    const displayedReviews = [
-        reviews[startIndex],
-        reviews[(startIndex + 1) % reviews.length],
-    ];
+    const displayedReviews = reviews.slice(
+        startIndex,
+        startIndex + reviewsToShow
+    );
 
     const reviewDataFetcher = async () => {
         try {
             let res = await allReviews(productId);
-            console.log(`Pulling products from ALLREVIEWS ${res}`);
             if (res) {
                 setReviews(
-                    res.map((a: any) => {
-                        return {
-                            id: a.id,
-                            name:
-                                `${a.customer.first_name} ${a.customer.last_name}` ||
-                                'Anonymous Customer',
-                            location: 'US',
-                            review: a.content,
-                            stars: a.rating,
-                        };
-                    })
+                    res.map((a: any) => ({
+                        id: a.id,
+                        name:
+                            `${a.customer.first_name} ${a.customer.last_name}` ||
+                            'Anonymous Customer',
+                        location: 'US',
+                        review: a.content,
+                        stars: a.rating,
+                    }))
                 );
             }
         } catch (error) {
@@ -75,12 +51,12 @@ const ProductReview = ({ productId }: { productId: string }) => {
         }
     };
 
-    console.log('product reviews are ', reviews, productId);
     useEffect(() => {
         if (productId) {
             reviewDataFetcher();
         }
     }, [productId]);
+
     return reviews.length > 0 ? (
         <Flex
             maxW="1280px"
@@ -102,7 +78,7 @@ const ProductReview = ({ productId }: { productId: string }) => {
                     alignSelf={'center'}
                     height="100%"
                     px="1.5rem"
-                    cursor={'pointer'}
+                    cursor={reviews.length > 2 ? 'pointer' : 'default'}
                     onClick={handlePrev}
                 >
                     <Flex alignSelf={'center'}>
@@ -125,19 +101,19 @@ const ProductReview = ({ productId }: { productId: string }) => {
                         )}
                     </Text>
                     <Flex mt="2rem" flexDirection="row" gap="26px">
-                        {displayedReviews.map((review) => {
-                            if (review) {
-                                return (
-                                    <ReviewCard
-                                        key={review.id}
-                                        name={review.name}
-                                        location={review.location}
-                                        review={review.review}
-                                        stars={review.stars}
-                                    />
-                                );
-                            }
-                        })}
+                        {displayedReviews.map((review, index) =>
+                            review ? (
+                                <ReviewCard
+                                    key={review.id}
+                                    name={review.name}
+                                    location={review.location}
+                                    review={review.review}
+                                    stars={review.stars}
+                                />
+                            ) : (
+                                <Box key={index} width={'506.63px'} />
+                            )
+                        )}
                     </Flex>
                 </Flex>
 
@@ -146,7 +122,7 @@ const ProductReview = ({ productId }: { productId: string }) => {
                     alignSelf={'center'}
                     height="100%"
                     px="1.5rem"
-                    cursor={'pointer'}
+                    cursor={reviews.length > 2 ? 'pointer' : 'default'}
                     onClick={handleNext}
                 >
                     <Flex alignSelf={'center'}>
