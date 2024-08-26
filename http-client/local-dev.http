@@ -397,7 +397,7 @@ Content-Type: application/json
 
 
 ### Get Customer Orders without reviews. getNotReviewed
-GET http://localhost:9000/custom/review/get-customer-not-reviewed?customer_id=cus_01J5NWK29Y8H16NDM2P2K8D09W
+GET http://localhost:9000/custom/review/get-customer-not-reviewed?customer_id=cus_01J5V004PET8A6DXW9211ATPC7
 
 ### POST Let's add products...
 POST http://localhost:9000/custom/product/add-product
