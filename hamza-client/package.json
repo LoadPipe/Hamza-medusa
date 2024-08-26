@@ -1,8 +1,8 @@
 {
-    "name": "medusa-next",
-    "version": "0.1.0",
+    "name": "hamza-client",
+    "version": "0.2.0",
     "private": true,
-    "author": "Garo Nazarian, Beau Troxclair, Jonny Bajada, John R. Kosinski",
+    "author": "Garo Nazarian, Beau Troxclair, Jonny Bajada, Karan Chugh, John R. Kosinski",
     "description": "Hamza Web Client",
     "keywords": [
         "medusa-storefront"

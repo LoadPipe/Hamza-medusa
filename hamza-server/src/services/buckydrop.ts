@@ -289,7 +289,7 @@ export default class BuckydropService extends TransactionBaseService {
                 //get the order status
                 if (orderDetail) {
                     const status =
-                        orderDetail.orderDetails?.data?.poOrderList[0]
+                        orderDetail?.data?.poOrderList[0]
                             ?.orderStatus;
                     if (status) {
                         //translate the status
@@ -327,7 +327,7 @@ export default class BuckydropService extends TransactionBaseService {
                             case 6:
                                 order.status = OrderStatus.PENDING;
                                 order.fulfillment_status =
-                                    FulfillmentStatus.NOT_FULFILLED;
+                                    FulfillmentStatus.SHIPPED;
                                 break;
                             case 7:
                                 order.status = OrderStatus.PENDING;
