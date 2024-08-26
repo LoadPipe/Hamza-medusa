@@ -2,7 +2,7 @@
 
 import { LineItem, Region } from '@medusajs/medusa';
 import { Table, clx } from '@medusajs/ui';
-
+import { Text, Flex } from '@chakra-ui/react';
 import Item from '@modules/cart/components/item-checkout';
 import SkeletonLineItem from '@modules/skeletons/components/skeleton-line-item';
 
@@ -30,28 +30,26 @@ const ItemsPreviewTemplate = ({
                     hasOverflow,
             })}
         >
-            <Table>
-                <Table.Body>
-                    {items && region
-                        ? items
-                              .sort((a, b) => {
-                                  return a.created_at > b.created_at ? -1 : 1;
-                              })
-                              .map((item) => {
-                                  return (
-                                      <Item
-                                          key={item.id}
-                                          item={item}
-                                          region={region}
-                                          currencyCode={currencyCode}
-                                      />
-                                  );
-                              })
-                        : Array.from(Array(5).keys()).map((i) => {
-                              return <SkeletonLineItem key={i} />;
-                          })}
-                </Table.Body>
-            </Table>
+            <Flex flexDir={'column'}>
+                {items && region
+                    ? items
+                          .sort((a, b) => {
+                              return a.created_at > b.created_at ? -1 : 1;
+                          })
+                          .map((item) => {
+                              return (
+                                  <Item
+                                      key={item.id}
+                                      item={item}
+                                      region={region}
+                                      currencyCode={currencyCode}
+                                  />
+                              );
+                          })
+                    : Array.from(Array(5).keys()).map((i) => {
+                          return <SkeletonLineItem key={i} />;
+                      })}
+            </Flex>
         </div>
     );
 };
