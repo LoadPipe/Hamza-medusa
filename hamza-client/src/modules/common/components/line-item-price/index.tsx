@@ -7,8 +7,7 @@ import { CalculatedVariant } from 'types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { getCustomer } from '@lib/data';
-import axios from 'axios';
+import { useCustomerProfileStore } from '@store/customer-profile/customer-profile';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -18,48 +17,17 @@ type LineItemPriceProps = {
     item: Omit<ExtendedLineItem, 'beforeInsert'>;
     region: Region;
     style?: 'default' | 'tight';
-    currencyCode?: string;
 };
 
 const LineItemPrice = ({
     item,
     region,
     style = 'default',
-    currencyCode,
 }: LineItemPriceProps) => {
-    console.log('this is the currenct we using', currencyCode);
+    const { perferredCurrency } = useCustomerProfileStore();
     const [price, setPrice] = useState<number | null>(null);
     const [reducedPrice, setReducedPrice] = useState<number | null>(null);
     const [hasReducedPrice, setHasReducedPrice] = useState<boolean>(false);
-    const [cCode, setCurrencyCode] = useState<string | undefined>(undefined);
-
-    useEffect(() => {
-        const fetchCustomerPreferredCurrency = async () => {
-            try {
-                const customer = await getCustomer().catch(() => null);
-                if (customer) {
-                    const response = await axios.get(
-                        'http://localhost:9000/custom/customer/get-currency',
-                        {
-                            params: {
-                                customer_id: customer.id, // Replace with your customer ID
-                            },
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        }
-                    );
-
-                    const customerCurrency = response.data;
-                    setCurrencyCode(customerCurrency.preferred_currency);
-                }
-            } catch (error) {
-                console.error('Error fetching customer currency:', error);
-            }
-        };
-
-        fetchCustomerPreferredCurrency();
-    }, []);
 
     useEffect(() => {
         const originalTotal = item.original_total ?? null;
@@ -67,8 +35,6 @@ const LineItemPrice = ({
         const discountTotal = item.discount_total ?? null;
         setPrice(totalItemAmount);
         setReducedPrice(reducedPrice);
-        setCurrencyCode(currencyCode);
-        console.log(currencyCode);
         if (
             discountTotal !== null &&
             originalTotal !== null &&
@@ -76,7 +42,7 @@ const LineItemPrice = ({
         ) {
             setHasReducedPrice(true);
         }
-    }, [item, currencyCode]);
+    }, [item]);
 
     return (
         <div className="flex flex-col gap-x-2 text-ui-fg-subtle items-end">
@@ -92,9 +58,9 @@ const LineItemPrice = ({
                             <span className="line-through text-ui-fg-muted">
                                 {formatCryptoPrice(
                                     reducedPrice,
-                                    currencyCode ?? 'usdc'
+                                    perferredCurrency ?? 'usdc'
                                 )}{' '}
-                                {currencyCode?.toUpperCase() ?? 'USDC'}
+                                {perferredCurrency?.toUpperCase()}
                             </span>
                         </p>
                         {style === 'default' && (
@@ -118,10 +84,13 @@ const LineItemPrice = ({
                         'text-ui-fg-interactive': hasReducedPrice,
                     })}
                 >
-                    {price !== null &&
-                        formatCryptoPrice(price, cCode) +
-                            ' ' +
-                            cCode?.toUpperCase()}
+                    {price && perferredCurrency && (
+                        <>
+                            {formatCryptoPrice(price, perferredCurrency) +
+                                ' ' +
+                                perferredCurrency?.toUpperCase()}
+                        </>
+                    )}
                 </Text>
             </div>
         </div>

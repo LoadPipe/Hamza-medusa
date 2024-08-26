@@ -5,6 +5,10 @@ import { Table, clx } from '@medusajs/ui';
 import { Text, Flex } from '@chakra-ui/react';
 import Item from '@modules/cart/components/item-checkout';
 import SkeletonLineItem from '@modules/skeletons/components/skeleton-line-item';
+import { getCustomer } from '@lib/data';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useCustomerProfileStore } from '@store/customer-profile/customer-profile';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -16,12 +20,38 @@ type ItemsTemplateProps = {
     currencyCode?: string;
 };
 
-const ItemsPreviewTemplate = ({
-    items,
-    region,
-    currencyCode,
-}: ItemsTemplateProps) => {
+const ItemsPreviewTemplate = ({ items, region }: ItemsTemplateProps) => {
     const hasOverflow = items && items.length > 4;
+
+    const { setCurrencyCode } = useCustomerProfileStore();
+
+    useEffect(() => {
+        const fetchCustomerPreferredCurrency = async () => {
+            try {
+                const customer = await getCustomer().catch(() => null);
+                if (customer) {
+                    const response = await axios.get(
+                        'http://localhost:9000/custom/customer/get-currency',
+                        {
+                            params: {
+                                customer_id: customer.id, // Replace with your customer ID
+                            },
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        }
+                    );
+
+                    const customerCurrency = response.data;
+                    setCurrencyCode(customerCurrency.preferred_currency);
+                }
+            } catch (error) {
+                console.error('Error fetching customer currency:', error);
+            }
+        };
+
+        fetchCustomerPreferredCurrency();
+    }, []);
 
     return (
         <div
@@ -42,7 +72,6 @@ const ItemsPreviewTemplate = ({
                                       key={item.id}
                                       item={item}
                                       region={region}
-                                      currencyCode={currencyCode}
                                   />
                               );
                           })
