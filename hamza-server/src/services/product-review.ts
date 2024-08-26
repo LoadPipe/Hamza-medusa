@@ -148,7 +148,7 @@ class ProductReviewService extends TransactionBaseService {
                 customer_id: customer_id,
                 status: Not(OrderStatus.ARCHIVED),
             },
-            relations: ['items'],
+            relations: ['items', 'items.variant.product'],
         });
 
         return unreviewedOrders;

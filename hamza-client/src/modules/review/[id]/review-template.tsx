@@ -29,10 +29,10 @@ const ReviewTemplate = ({
     const submitReview = async () => {
         const data = {
             customer_id: reviewItem?.customer_id,
-            product_id: reviewItem.items?.product.id,
+            product_id: reviewItem.items[0].variant.product.id,
             rating: rating,
             content: review,
-            title: 'Review for ' + reviewItem.items.product?.title,
+            title: 'Review for ' + reviewItem.items[0].title,
             order_id: reviewItem?.id,
         };
 
@@ -73,13 +73,13 @@ const ReviewTemplate = ({
                 <ModalBody>
                     <Box className="flex items-center mb-4">
                         <Image
-                            src={reviewItem.items?.product?.thumbnail}
-                            alt={reviewItem.items?.product?.title}
+                            src={reviewItem.items[0].thumbnail}
+                            alt={reviewItem.items[0].title}
                             className="w-24 h-24 mr-4"
                         />
                         <Box>
                             <h1 className="text-xl font-semibold">
-                                {reviewItem.items?.product?.title}
+                                {reviewItem.items[0].title}
                             </h1>
                         </Box>
                     </Box>
