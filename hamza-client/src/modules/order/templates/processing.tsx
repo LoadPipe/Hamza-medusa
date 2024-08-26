@@ -673,11 +673,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
                             <ModalCloseButton />
                             <ModalBody>
                                 <FormControl
-                                    isInvalid={
-                                        (cancelReason.trim().length < 50 &&
-                                            isAttemptedSubmit) ||
-                                        (!cancelReason && isAttemptedSubmit)
-                                    }
+                                    isInvalid={cancelReason.trim().length < 50}
                                 >
                                     <Textarea
                                         placeholder="Reason for cancellation"
@@ -686,38 +682,46 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                             setCancelReason(e.target.value)
                                         }
                                     />
-                                    {/* Error message for missing cancellation reason */}
+                                    {/* Show error message if the input is under 50 characters */}
+                                    {cancelReason.trim().length > 0 &&
+                                        cancelReason.trim().length < 50 && (
+                                            <FormErrorMessage>
+                                                Cancellation reason must be at
+                                                least 50 characters long.
+                                            </FormErrorMessage>
+                                        )}
+                                    {/* Show error message if no reason is provided when attempting to submit */}
                                     {!cancelReason && isAttemptedSubmit && (
                                         <FormErrorMessage>
                                             Cancellation reason is required.
                                         </FormErrorMessage>
                                     )}
-                                    {/* Error message for cancellation reason being too short */}
-                                    {cancelReason.trim().length < 50 &&
-                                        isAttemptedSubmit && (
-                                            <Text
-                                                color="red.500"
-                                                fontSize="sm"
-                                                mt={2}
-                                            >
-                                                Cancellation reason must be at
-                                                least 50 characters long.
-                                            </Text>
-                                        )}
                                 </FormControl>
                             </ModalBody>
                             <ModalFooter>
                                 <Button variant="ghost" onClick={closeModal}>
                                     Cancel
                                 </Button>
-                                <Button
-                                    colorScheme="blue"
-                                    ml={3}
+                                <Box
+                                    as="button"
+                                    mt={4}
+                                    borderRadius={'37px'}
+                                    backgroundColor={
+                                        cancelReason.trim().length < 50
+                                            ? 'gray.400'
+                                            : 'primary.indigo.900'
+                                    }
+                                    color={'white'}
+                                    fontSize={'18px'}
+                                    fontWeight={600}
+                                    height={'47px'}
+                                    width={'180px'}
+                                    ml={'20px'}
                                     onClick={handleCancel}
                                     disabled={cancelReason.trim().length < 50}
                                 >
                                     Submit
-                                </Button>
+                                </Box>
                             </ModalFooter>
                         </ModalContent>
                     </Modal>

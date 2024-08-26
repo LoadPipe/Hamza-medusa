@@ -1,10 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { Order } from '@medusajs/medusa';
 import { TABS } from 'modules/order-tab-management';
-
-import { orderDetails, cancelOrder } from '@lib/data';
 import { Button, ButtonGroup, Box } from '@chakra-ui/react';
 import All from '@modules/order/templates/all';
 import Processing from '@modules/order/templates/processing';
@@ -13,31 +10,6 @@ import Delivered from '@modules/order/templates/delivered';
 import Cancelled from '@modules/order/templates/cancelled';
 import Refund from '@modules/order/templates/refund';
 import { useOrderTabStore } from '@store/order-tab-state';
-// Define a type that extends the Order type with any additional data
-interface DetailedOrder extends Order {
-    details?: any; // Further specify if you have the structure of the details
-}
-type OrderDetails = {
-    thumbnail: string;
-    title: string;
-    description: string;
-};
-type OrderProps = {
-    id: string;
-    display_id: string;
-    created_at: string;
-    details: OrderDetails;
-    paid_total: number;
-    currency_code: string;
-    unit_price: number;
-    thumbnail: string;
-    title: string;
-    description: string;
-    region: {
-        id: string;
-        name: string;
-    };
-};
 
 const commonButtonStyles = {
     borderRadius: '8px',
@@ -60,17 +32,7 @@ const commonButtonStyles = {
     },
 };
 
-enum OrderBucketType {
-    TO_PAY = 1,
-    TO_SHIP = 2,
-    SHIPPED = 3,
-    COMPLETED = 4,
-    CANCELLED = 5,
-    REFUNDED = 6,
-}
 const OrderOverview = ({ orders }: { orders: Order[] }) => {
-    // Initialize state with the correct type
-
     const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
     const setOrderActiveTab = useOrderTabStore(
