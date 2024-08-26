@@ -1,5 +1,6 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import { readRequestBody } from '../utils/request-body';
+import jwt from 'jsonwebtoken';
 
 /**
  * Provides uniformity of logging and exception handling for all API routes.
@@ -12,6 +13,8 @@ export class RouteHandler {
     route: string;
     request: MedusaRequest;
     response: MedusaResponse;
+    jwtToken: any;
+    customerId: string;
     onError: (err: any) => void = null;
 
     constructor(
@@ -40,12 +43,17 @@ export class RouteHandler {
         if (req.query) {
             this.inputParams = { ...this.inputParams, ...req.query };
         }
+
+        //handle security 
+        this.logger.debug(`auth header: ${req.headers.authorization}`);
+        this.jwtToken = jwt.decode(req.headers.authorization);
+        this.customerId = this.jwtToken?.customer_id;
     }
 
     public async handle(fn: (_this?: RouteHandler) => void) {
         try {
             this.logger.info(
-                `******* ROUTE-HANDLER ********* ${this.method} ${this.route}`
+                `ROUTE-HANDLER: ${this.method} ${this.route}`
             );
             this.logger.debug(
                 `Input Params: ${JSON.stringify(this.inputParams)}`
@@ -57,5 +65,34 @@ export class RouteHandler {
             this.response.status(500).json(errorInfo);
             if (this.onError) this.onError(err);
         }
+    }
+
+    enforceCustomerId(customerId: string = null): boolean {
+        const unauthorized: boolean = (!customerId) ?
+            (!this.customerId) :
+            (!this.customerId) || (this.customerId !== customerId);
+
+        if (unauthorized) {
+            this.logger.warn(`Unauthorized customer for route call ${this.method} ${this.route}`)
+            this.response.status(401).json({ message: 'Unauthorized customer' });
+        }
+
+        return !unauthorized;
+    }
+
+    requireParams(params: string[]): boolean {
+        const missingParams = [];
+        for (let p of params) {
+            if (!p?.length)
+                missingParams.push(p);
+        }
+
+        if (missingParams.length) {
+            const message = `missing required param(s): ${missingParams.join()}`
+            this.response.status(400).json({ message });
+            return false;
+        }
+
+        return true;
     }
 }

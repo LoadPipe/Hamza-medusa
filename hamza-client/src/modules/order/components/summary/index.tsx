@@ -59,6 +59,7 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
+                //TODO: MOVE TO INDEX.TS
                 const response = await axios.post(
                     `${BACKEND_URL}/custom/order/complete-template`,
                     {

@@ -20,6 +20,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         req, res, 'POST', '/custom/verify', ['message', 'signature',]
     );
 
+    //TODO: this is just a whole entire mess to clean up; business logic in services
+
     await handler.handle(async () => {
         //get the service instances
         let created = false;

@@ -2,6 +2,8 @@ import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import ConfirmationTokenService from '../../../../services/confirmation-token';
 import { RouteHandler } from '../../../route-handler';
 
+//TODO: implement security 
+
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     let confirmationTokenService: ConfirmationTokenService =
         req.scope.resolve('confirmationTokenService');

@@ -28,6 +28,11 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
         let order = await orderService.cancelOrder(
             handler.inputParams.order_id
         );
+
+        //check customer id 
+        if (!handler.enforceCustomerId(order.customer_id))
+            return;
+
         if (!order) {
             handler.logger.error(
                 `Order not found or could not be canceled for order_id: ${handler.inputParams.order_id}`

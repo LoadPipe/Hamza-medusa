@@ -16,6 +16,7 @@ const VerifyEmail = () => {
     const { setCustomerAuthData, authData } = useCustomerAuthStore();
 
     const confirmationTokenHandler = async () => {
+        //TODO: MOVE TO INDEX.TS
         let res = await axios.get(
             `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/confirmation-token/verify?token=${token}`
         );

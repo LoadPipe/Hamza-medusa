@@ -15,7 +15,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         req,
         res,
         'GET',
-        '/custom/order/customer-orders'
+        '/custom/order/customer-order'
     );
 
     await handler.handle(async () => {
@@ -27,27 +27,33 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         if (!req.query.customer_id?.length) {
             res.status(400).json({ message: 'customer_id is required' });
         } else {
+            const customerId = req.query.customer_id.toString();
+
             //check for existence of customer
             if (
                 !(await customerService.retrieve(
-                    req.query.customer_id.toString()
+                    customerId
                 ))
             ) {
                 res.status(404).json({
-                    message: `Customer id ${req.query.customer_id.toString()} not found`,
+                    message: `Customer id ${customerId} not found`,
                 });
             } else {
+
+                //enforce security
+                if (!handler.enforceCustomerId(customerId))
+                    return;
+
                 if (req.query.bucket) {
                     const bucketValue = parseInt(req.query.bucket.toString());
-                    const customer_id = req.query.customer_id.toString();
                     const orders = await orderService.getCustomerOrderBucket(
-                        customer_id,
+                        customerId,
                         bucketValue
                     );
                     res.status(200).json({ orders });
                 } else {
                     const orders = await orderService.getCustomerOrders(
-                        req.query.customer_id.toString()
+                        customerId
                     );
                     res.status(200).json({ orders });
                 }
