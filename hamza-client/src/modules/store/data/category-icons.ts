@@ -11,13 +11,17 @@ import echo from '../../../../public/images/categories/echo.svg';
 import all from '../../../../public/images/categories/all.svg';
 
 const categoryIcons: Record<string, any> = {
-    clothes: clothes,
+    medusa_merch: clothes,
     games: games,
+    legendary_light_design: lights,
+    echo_rift: games,
     gadgets: gadgets,
     home_light: lights,
     workout_gear: workout,
     board_games: boardgames,
-    lego: lego,
+    legos: lego,
+    gaming_gear: games,
+    dauntless: echo,
     drones: drones,
     echo: echo,
     all: all,

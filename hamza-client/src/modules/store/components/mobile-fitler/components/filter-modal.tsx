@@ -96,7 +96,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                             categoryName="Dauntless"
                         />
                         <CategoryModalButton
-                            categoryType="clothes"
+                            categoryType="medusa_merch"
                             categoryName="Medusa Merch"
                         />
                         <CategoryModalButton
