@@ -3,6 +3,7 @@ import { readRequestBody } from '../../../../utils/request-body';
 import OrderService from '../../../../services/order';
 import { RouteHandler } from '../../../route-handler';
 
+//TODO: is this used?
 //TODO: why is this post?
 //GET all order for cart (given a cart id) 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {

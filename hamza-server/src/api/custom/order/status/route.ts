@@ -7,13 +7,16 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
 
     const handler = new RouteHandler(req, res, 'GET', '/custom/order/status', [
-        'order_id',
+        'order_id', 'token'
     ]);
 
     await handler.handle(async () => {
         const order = await orderService.orderStatus(
             handler.inputParams.order_id
         );
+
+        if (!handler.enforceCustomerId())
+            return false;
 
         res.status(200).json({ order });
     });
