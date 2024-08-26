@@ -674,7 +674,9 @@ const Processing = ({ orders }: { orders: any[] }) => {
                             <ModalBody>
                                 <FormControl
                                     isInvalid={
-                                        !cancelReason && isAttemptedSubmit
+                                        (cancelReason.trim().length < 50 &&
+                                            isAttemptedSubmit) ||
+                                        (!cancelReason && isAttemptedSubmit)
                                     }
                                 >
                                     <Textarea
@@ -684,11 +686,24 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                             setCancelReason(e.target.value)
                                         }
                                     />
+                                    {/* Error message for missing cancellation reason */}
                                     {!cancelReason && isAttemptedSubmit && (
                                         <FormErrorMessage>
                                             Cancellation reason is required.
                                         </FormErrorMessage>
                                     )}
+                                    {/* Error message for cancellation reason being too short */}
+                                    {cancelReason.trim().length < 50 &&
+                                        isAttemptedSubmit && (
+                                            <Text
+                                                color="red.500"
+                                                fontSize="sm"
+                                                mt={2}
+                                            >
+                                                Cancellation reason must be at
+                                                least 50 characters long.
+                                            </Text>
+                                        )}
                                 </FormControl>
                             </ModalBody>
                             <ModalFooter>
@@ -699,6 +714,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                     colorScheme="blue"
                                     ml={3}
                                     onClick={handleCancel}
+                                    disabled={cancelReason.trim().length < 50}
                                 >
                                     Submit
                                 </Button>
