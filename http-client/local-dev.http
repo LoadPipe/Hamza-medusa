@@ -244,7 +244,7 @@ Content-Type: application/json
 
 
 ### GET Store Name from Product ID
-POST http://localhost:9000/custom/get-store
+GET http://localhost:9000/custom/store
 Content-Type: application/json
 
 {
@@ -275,7 +275,7 @@ Content-Type: application/json
 
 
 ### Create Notification Types
-POST http://localhost:9000/custom/notification/add
+POST http://localhost:9000/custom/notification
 Content-Type: application/json
 
 {
@@ -285,7 +285,7 @@ Content-Type: application/json
 
 
 ### GET All Notifications for Customer
-POST http://localhost:9000/custom/notification/get
+GET http://localhost:9000/custom/notification
 Content-Type: application/json
 
 {
@@ -294,7 +294,7 @@ Content-Type: application/json
 
 
 ### Remove All Notifications for Customer
-DELETE http://localhost:9000/custom/notification/remove
+DELETE http://localhost:9000/custom/notification
 Content-Type: application/json
 
 {

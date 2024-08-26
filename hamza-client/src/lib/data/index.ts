@@ -217,9 +217,8 @@ export async function allReviews(product_id: string) {
 
 export async function getNotifications(customer_id: string) {
     try {
-        const response = await axios.post(
-            `${BACKEND_URL}/custom/notification/get`,
-            { customer_id: customer_id },
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/notification?customer_id=${customer_id}`,
             {
                 headers: {
                     'Content-Type': 'application/json',
@@ -236,7 +235,7 @@ export async function getNotifications(customer_id: string) {
 export async function removeNotifications(customer_id: string) {
     try {
         const response = await axios.delete(
-            `${BACKEND_URL}/custom/notification/remove`,
+            `${BACKEND_URL}/custom/notification`,
             {
                 headers: {
                     'Content-Type': 'application/json',
@@ -260,7 +259,7 @@ export async function addNotifications(
 ) {
     try {
         const response = await axios.post(
-            `${BACKEND_URL}/custom/notification/add`,
+            `${BACKEND_URL}/custom/notification`,
             {
                 customer_id: customer_id,
                 notification_type: notification_type,
@@ -488,12 +487,10 @@ export async function getInventoryCount(variant_id: string) {
 
 export async function getStore(product_id: string) {
     try {
-        const response = await axios.post(`${BACKEND_URL}/custom/get-store`, {
-            product_id: product_id,
-        });
+        const response = await axios.get(`${BACKEND_URL}/custom/store?product_id=${product_id}`);
         return response.data;
     } catch (error) {
-        console.error('Error fetching store name:', error);
+        console.error('Error fetching store:', error);
     }
 }
 
@@ -539,17 +536,6 @@ export async function vendorReviews(store_id: string) {
         return response.data;
     } catch (error) {
         console.error('Error fetching vendor reviews:', error);
-    }
-}
-
-export async function getStoreName(product_id: string) {
-    try {
-        const response = await axios.post(`${BACKEND_URL}/custom/get-store`, {
-            product_id: product_id,
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching store name:', error);
     }
 }
 
