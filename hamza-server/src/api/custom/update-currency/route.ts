@@ -1,6 +1,6 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
-import CustomerService from '../../../services/customer';
-import { RouteHandler } from '../../route-handler';
+import CustomerService from '../../../../services/customer';
+import { RouteHandler } from '../../../route-handler';
 
 //TODO: updates should be PUT 
 //TODO: should be under /customer
@@ -19,21 +19,4 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         );
         res.json(customer);
     });
-
-    /*
-    const logger: Logger = req.scope.resolve('logger');
-
-    const { customer_id, preferred_currency } = readRequestBody(req.body, [
-        'customer_id',
-        'preferred_currency',
-    ]);
-
-    try {
-    } catch (err) {
-        logger.error('Error updating customer currency', err);
-        res.status(500).json({
-            error: 'Failed to update customer currency',
-        });
-    }
-    */
 };

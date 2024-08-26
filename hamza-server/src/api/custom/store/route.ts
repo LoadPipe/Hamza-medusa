@@ -26,9 +26,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     ]);
 
     await handler.handle(async () => {
-        if (!handler.inputParams.wallet_address) {
-            return res.status(400).json({ message: 'Wallet address is required' });
-        }
+        if (!handler.requireParams(['wallet_address']))
+            return;
+
         const customerService = req.scope.resolve('customerService');
 
         const isVerified = await customerService.verifyWalletSignature(
@@ -38,6 +38,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         if (!isVerified) {
             return res.status(400).json({ message: 'Verification failed' });
         }
+
         const customer = await customerService.createCustomer(
             handler.inputParams.wallet_address.toString()
         );
