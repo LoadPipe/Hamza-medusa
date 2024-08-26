@@ -6,13 +6,14 @@ import FilterTags from './filter-tags';
 import { FaGreaterThan } from 'react-icons/fa';
 import { CgChevronRight } from 'react-icons/cg';
 import FilterBarStore from './filter-bar-store';
-import vendors from '@modules/home/components/search-and-filter-panel/data/data';
+import useVendors from '@modules/home/components/search-and-filter-panel/data/data';
 
 const StoreFilterDisplay = () => {
     const { categorySelect } = useStorePage();
     const [isClient, setIsClient] = useState(false);
     const [startIdx, setStartIdx] = useState(0); // State to keep track of the starting index of visible vendors
 
+    const vendors = useVendors();
     // Ensure that the components knows when it's running on the client
     useEffect(() => {
         setIsClient(true);

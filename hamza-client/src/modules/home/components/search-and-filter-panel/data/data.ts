@@ -1,64 +1,48 @@
-let vendors = [
-    {
-        id: 1,
-        vendorName: 'All',
-        vendorType: 'all',
-    },
-    {
-        id: 2,
-        vendorName: 'Legendary Light Design',
-        vendorType: 'home_light',
-    },
-    {
-        id: 3,
-        vendorName: 'Dauntless',
-        vendorType: 'gadgets',
-    },
-    {
-        id: 4,
-        vendorName: 'Medusa Merch',
-        vendorType: 'clothes',
-    },
-    {
-        id: 5,
-        vendorName: 'Drones',
-        vendorType: 'drones',
-    },
-    {
-        id: 6,
-        vendorName: 'Legos',
-        vendorType: 'lego',
-    },
-    {
-        id: 7,
-        vendorName: 'Board Games',
-        vendorType: 'board_games',
-    },
-    {
-        id: 8,
-        vendorName: 'Workout Gear',
-        vendorType: 'workout_gear',
-    },
-    {
-        id: 9,
-        vendorName: 'Echo Rift',
-        vendorType: 'echo',
-    },
-    {
-        id: 10,
-        vendorName: 'Gaming Gear',
-        vendorType: 'games',
-    },
-];
+import { useEffect, useState } from 'react';
+import { getAllStoreNames } from '@lib/data';
 
-if (process.env.NEXT_PUBLIC_ALT_SEED === '1') {
-    vendors = [
-        {
-            id: 1,
-            vendorName: 'All',
-            vendorType: 'all',
-        },
-    ];
-}
+const useVendors = () => {
+    const [vendors, setVendors] = useState([]);
 
-export default vendors;
+    useEffect(() => {
+        const fetchVendors = async () => {
+            let vendorList = [];
+
+            // Fetch the vendor names from the backend
+            const vendorNames = await getAllStoreNames();
+
+            // Format the vendors
+            vendorList = vendorNames.map((vendor: string, index: number) => ({
+                id: index + 1,
+                vendorName: vendor,
+                vendorType: vendor.toLowerCase().replace(/\s+/g, '_'),
+            }));
+
+            // Add the 'All' option at the beginning
+            vendorList.unshift({
+                id: 0,
+                vendorName: 'All',
+                vendorType: 'all',
+            });
+
+            // Check for the environment variable and adjust vendors
+            if (process.env.NEXT_PUBLIC_ALT_SEED === '1') {
+                vendorList = [
+                    {
+                        id: 1,
+                        vendorName: 'All',
+                        vendorType: 'all',
+                    },
+                ];
+            }
+
+            setVendors(vendorList);
+        };
+
+        fetchVendors();
+    }, []);
+
+    return vendors;
+};
+
+export default useVendors;

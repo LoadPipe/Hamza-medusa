@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Flex, Box } from '@chakra-ui/react';
 import CategoryTopButton from './category-top-button';
 import { CgChevronRight } from 'react-icons/cg';
-import vendors from '@modules/home/components/search-and-filter-panel/data/data';
+import useVendors from '@modules/home/components/search-and-filter-panel/data/data';
 
 const FilterBarStore = () => {
     const [startIdx, setStartIdx] = useState(0);
+    const vendors = useVendors();
 
     const toggleShowMore = () => {
         // Update the starting index to show the next set of vendors

@@ -90,15 +90,15 @@ const FilterModalHome: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                             categoryName="All"
                         />
                         <CategoryModalButton
-                            categoryType="home_light"
+                            categoryType="legendary_light_design"
                             categoryName="Legendary Light Design"
                         />
                         <CategoryModalButton
-                            categoryType="gadgets"
+                            categoryType="dauntless"
                             categoryName="Dauntless"
                         />
                         <CategoryModalButton
-                            categoryType="clothes"
+                            categoryType="medusa_merch"
                             categoryName="Medusa Merch"
                         />
                         <CategoryModalButton
