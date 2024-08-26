@@ -3,7 +3,7 @@ import ProductRepository from '@medusajs/medusa/dist/repositories/product';
 import { RouteHandler } from '../../../route-handler';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
-    const handler: RouteHandler = new RouteHandler(req, res, 'POST', '/custom/product/get-store');
+    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/product/get-store');
 
     await handler.handle(async () => {
         let { product_id } = req.query;
