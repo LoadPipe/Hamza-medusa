@@ -76,6 +76,7 @@ const useWishlistStore = create<WishlistType>()(
             loadWishlist: async (customer_id) => {
                 // console.log('Loading wishlist-dropdown');
                 try {
+                    //TODO: MOVE TO INDEX.TS
                     const response = await axios.get(
                         `${BACKEND_URL}/custom/wishlist?customer_id=${customer_id}`
                     );

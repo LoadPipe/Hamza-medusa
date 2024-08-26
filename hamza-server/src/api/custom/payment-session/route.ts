@@ -1,4 +1,4 @@
-import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
+import { MedusaRequest, MedusaResponse, Logger, CartService, PaymentSession, Cart, PaymentSessionResponse } from '@medusajs/medusa';
 import PaymentSessionRepository from '@medusajs/medusa/dist/repositories/payment-session';
 import { RouteHandler } from '../../route-handler';
 
@@ -8,14 +8,46 @@ import { RouteHandler } from '../../route-handler';
  * cart_id null. 
  */
 export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
+    const cartService: CartService = req.scope.resolve('cartService');
+    const paymentSessionRepository: typeof PaymentSessionRepository = req.scope.resolve('paymentSessionRepository');
+
     const handler: RouteHandler = new RouteHandler(
         req, res, 'PUT', '/custom/payment-session',
         ['cart_id', 'payment_session_id']
     );
 
     await handler.handle(async () => {
-        let session = await PaymentSessionRepository.save([{
-            id: handler.inputParams.payment_session_id,
+        //validate required parameters 
+        if (!handler.requireParams(['cart_id', 'payment_session_id']))
+            return;
+
+        const cartId = handler.inputParams.cart_id;
+        const paymentSessionId = handler.inputParams.cart_id;
+
+        //check for existence of cart
+        const cart: Cart = await cartService.retrieve(cartId);
+        if (!cart) {
+            res.status(404).json({ message: `Cart ${cartId} not found.` });
+        }
+        if (!cart) {
+            res.status(404).json({ message: `Cart ${cartId} not found.` });
+        }
+
+        //check for existence of payment session
+        const paymentSession: PaymentSession = await paymentSessionRepository.findOne(
+            { where: { id: paymentSessionId } }
+        );
+        if (!paymentSession) {
+            res.status(404).json({ message: `PaymentSession ${paymentSessionId} not found.` });
+        }
+
+        //secure 
+        if (!handler.enforceCustomerId(cart.customer_id))
+            return;
+
+        //save the payment session
+        let session = await paymentSessionRepository.save([{
+            id: paymentSessionId,
             cart_id: handler.inputParams.cart_id
         }]);
 

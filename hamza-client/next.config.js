@@ -53,6 +53,10 @@ const nextConfig = withStoreConfig({
                 protocol: 'https',
                 hostname: 'nhci-aigc.oss-cn-zhangjiakou.aliyuncs.com', // Newly added entry
             },
+            {
+                protocol: 'https',
+                hostname: 'global-img-cdn.1688.com'
+            }
         ],
     },
 });

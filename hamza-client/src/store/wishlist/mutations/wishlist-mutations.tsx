@@ -28,6 +28,7 @@ export function useWishlistMutations() {
             );
             addWishlistProduct(product);
             // Return the axios post call from the mutation function
+            //TODO: MOVE TO INDEX.TS
             return axios.post(`${BACKEND_URL}/custom/wishlist/item`, {
                 customer_id: customer_id, // Ensure customer_id is handled when null
                 product_id: product.id,
@@ -49,6 +50,7 @@ export function useWishlistMutations() {
         (product: WishlistProduct) => {
             // Return the axios delete call from the mutation function
             removeWishlistProduct(product.id);
+            //TODO: MOVE TO INDEX.TS
             return axios.delete(`${BACKEND_URL}/custom/wishlist/item`, {
                 data: {
                     customer_id: customer_id, // Ensure customer_id is handled when null

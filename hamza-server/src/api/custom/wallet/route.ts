@@ -11,6 +11,11 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     ]);
 
     await handler.handle(async () => {
+        //validate 
+        if (!handler.requireParams(['message', 'signature']))
+            return false;
+
+        //verify signature
         const isVerified = await customerService.verifyWalletSignature(
             handler.inputParams.signature,
             handler.inputParams.message
@@ -27,7 +32,6 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     });
 };
 
-//TODO: is this GET route used?
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const customerService = req.scope.resolve('customerService');
 

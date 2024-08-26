@@ -23,6 +23,8 @@ type Props = {
 };
 
 const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
+
+    //TODO: MOVE TO INDEX.TS
     // Get products from vendor
     const { data, error, isLoading } = useQuery(
         ['products', { vendor: vendorName }],
@@ -31,6 +33,8 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
                 vendorName === 'All'
                     ? `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products`
                     : `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products?store_name=${vendorName}`;
+
+            //TODO: MOVE TO INDEX.TS
             return axios.get(url);
         }
     );

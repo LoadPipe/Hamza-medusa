@@ -3,7 +3,7 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
 import React, { useEffect, useState } from 'react';
-import { getStoreName } from '@lib/data';
+import { getStore } from '@lib/data';
 type OrderDetails = {
     thumbnail: string;
     title: string;
@@ -56,7 +56,7 @@ const ProcessingOrderCard = ({ order, handle }: OrderCardProps) => {
         // Fetch Vendor Name from product.id
         const fetchVendor = async () => {
             try {
-                const data = await getStoreName(
+                const data = await getStore(
                     order.variant.product_id as string
                 );
                 // console.log(`Vendor: ${data}`);
