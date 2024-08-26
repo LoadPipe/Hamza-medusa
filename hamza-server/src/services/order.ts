@@ -585,7 +585,7 @@ export default class OrderService extends MedusaOrderService {
         return { orders: newOrderList, cartCount: cartCount };
     }
 
-    async orderDetails(cartId: string) {
+    async getOrderDetails(cartId: string) {
         const orderHandle = await this.orderRepository_.findOne({
             where: { cart_id: cartId, status: Not(OrderStatus.ARCHIVED) },
             relations: ['cart.items', 'cart.items.variant.product', 'cart'],

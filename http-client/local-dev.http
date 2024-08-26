@@ -336,15 +336,7 @@ Content-Type: application/json
 
 
 ### Get Specific Order Details
-POST http://localhost:9000/custom/order/order-details
-Content-Type: application/json
-
-{
-  "cart_id": "cart_01J14XTSA3X0TRQQHAPCR8QY2A"
-}
-
-### Get Specific Order all items
-POST http://localhost:9000/custom/order/all-orders
+GET http://localhost:9000/custom/order/details
 Content-Type: application/json
 
 {
