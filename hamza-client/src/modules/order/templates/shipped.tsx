@@ -67,7 +67,7 @@ const Shipped = ({ orders }: { orders: any[] }) => {
                         key={order.id} // Changed from cart_id to id since it's more reliable and unique
                         className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
                     >
-                        {order.cart?.items?.map(
+                        {order.items?.map(
                             (
                                 item: any // Adjusting the map to the correct path
                             ) => (

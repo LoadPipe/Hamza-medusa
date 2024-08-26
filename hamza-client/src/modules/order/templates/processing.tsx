@@ -49,7 +49,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
     }>({});
     const [customerOrder, setCustomerOrder] = useState<any[] | null>(null);
 
-    console.log(`ORDER FOR PROCESSING ${JSON.stringify(orders)}`);
+    // console.log(`ORDER FOR PROCESSING ${JSON.stringify(orders)}`);
     const openModal = (orderId: string) => {
         setSelectedOrderId(orderId);
         setIsModalOpen(true);
@@ -102,6 +102,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
             const bucket = await singleBucket(customerId, 1);
             if (Array.isArray(bucket)) {
                 setCustomerOrder(bucket);
+                console.log(`BUCKETS ${JSON.stringify(bucket)}`);
             } else {
                 console.error('Expected an array but got:', bucket);
                 setCustomerOrder([]);
@@ -116,6 +117,8 @@ const Processing = ({ orders }: { orders: any[] }) => {
     useEffect(() => {
         const fetchStatuses = async () => {
             if (!customerOrder || customerOrder.length === 0) return;
+
+            console.log(`Customer Order ${JSON.stringify(customerOrder)}`);
 
             const statuses = await Promise.allSettled(
                 customerOrder.map(async (order) => {
@@ -175,7 +178,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
                             <div
                                 key={order.id} // Changed from cart_id to id since it's more reliable and unique
                             >
-                                {order.cart?.items?.map(
+                                {order.items?.map(
                                     (
                                         item: any // Adjusting the map to the correct path
                                     ) => (
