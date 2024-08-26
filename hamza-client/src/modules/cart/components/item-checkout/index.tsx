@@ -24,9 +24,10 @@ type ItemProps = {
     item: Omit<ExtendedLineItem, 'beforeInsert'>;
     region: Region;
     type?: 'full' | 'preview';
+    currencyCode?: string;
 };
 
-const Item = ({ item, region, type = 'full' }: ItemProps) => {
+const Item = ({ item, region, currencyCode }: ItemProps) => {
     const [updating, setUpdating] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -89,71 +90,36 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
                             <LineItemOptions variant={item.variant} />
                         </Flex>
                         <Flex mt="auto">
-                            {type === 'preview' && (
-                                <Flex>
-                                    <Text
-                                        alignSelf={{
-                                            base: 'center',
-                                            md: 'normal',
-                                        }}
-                                        color={'#555555'}
-                                        fontSize={{ base: '14px', md: '18px' }}
-                                        mr="5px"
-                                    >
-                                        {item.quantity}x
-                                    </Text>
-                                    <LineItemUnitPrice
-                                        item={item}
-                                        region={region}
-                                        style="tight"
-                                    />
-                                </Flex>
-                            )}
-
-                            <LineItemPrice
-                                item={item}
-                                region={region}
-                                style="tight"
-                            />
+                            <Flex>
+                                <Text
+                                    alignSelf={{
+                                        base: 'center',
+                                        md: 'normal',
+                                    }}
+                                    color={'#555555'}
+                                    fontSize={{ base: '14px', md: '18px' }}
+                                    mr="5px"
+                                >
+                                    {item.quantity}x
+                                </Text>
+                                <LineItemUnitPrice
+                                    item={item}
+                                    region={region}
+                                    style="tight"
+                                    currencyCode={currencyCode}
+                                />
+                            </Flex>
                         </Flex>
                     </Flex>
-
-                    {/* What does full mean */}
-                    {/* {type === 'full' && (
-                        <Flex ml="auto" flexDirection={'column'}>
-                            <Flex
-                                ml="auto"
-                                mb={{ base: 'auto', md: '1.25rem' }}
-                            >
-                                <DeleteButton id={item.id} />
-                            </Flex>
-                            <CartItemSelect
-                                value={item.quantity}
-                                onChange={(value) =>
-                                    changeQuantity(parseInt(value.target.value))
-                                }
-                                className="w-12 h-8 md:w-14 md:h-10"
-                            >
-                                {Array.from(
-                                    {
-                                        length: Math.min(
-                                            item.variant.inventory_quantity > 0
-                                                ? item.variant
-                                                      .inventory_quantity
-                                                : 10,
-                                            10
-                                        ),
-                                    },
-                                    (_, i) => (
-                                        <option value={i + 1} key={i}>
-                                            {i + 1}
-                                        </option>
-                                    )
-                                )}
-                            </CartItemSelect>
-                        </Flex>
-                    )} */}
                 </Flex>
+            </Flex>
+            <Flex>
+                <LineItemPrice
+                    item={item}
+                    region={region}
+                    style="tight"
+                    currencyCode={currencyCode}
+                />
             </Flex>
         </Flex>
     );
@@ -273,6 +239,7 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
                         item={item}
                         region={region}
                         style="tight"
+                                        currencyCode={currencyCode}
                     />
                 </Table.Cell>
             )}
@@ -293,10 +260,12 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
                                 item={item}
                                 region={region}
                                 style="tight"
+                                        currencyCode={currencyCode}
                             />
                         </span>
                     )}
-                    <LineItemPrice item={item} region={region} style="tight" />
+                    <LineItemPrice item={item} region={region} style="tight" 
+                                currencyCode={currencyCode}/>
                 </span>
             </Table.Cell>
         </Table.Row>

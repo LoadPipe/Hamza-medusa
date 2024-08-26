@@ -13,9 +13,14 @@ type ExtendedLineItem = LineItem & {
 type ItemsTemplateProps = {
     items?: Omit<ExtendedLineItem, 'beforeInsert'>[];
     region?: Region;
+    currencyCode?: string;
 };
 
-const ItemsPreviewTemplate = ({ items, region }: ItemsTemplateProps) => {
+const ItemsPreviewTemplate = ({
+    items,
+    region,
+    currencyCode,
+}: ItemsTemplateProps) => {
     const hasOverflow = items && items.length > 4;
 
     return (
@@ -38,7 +43,7 @@ const ItemsPreviewTemplate = ({ items, region }: ItemsTemplateProps) => {
                                           key={item.id}
                                           item={item}
                                           region={region}
-                                          type="preview"
+                                          currencyCode={currencyCode}
                                       />
                                   );
                               })

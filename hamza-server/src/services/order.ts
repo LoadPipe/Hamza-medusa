@@ -56,7 +56,6 @@ export default class OrderService extends MedusaOrderService {
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly logger: Logger;
     protected buckyClient: BuckyClient;
-    protected buckyService: BuckydropService;
 
     constructor(container) {
         super(container);
@@ -197,7 +196,8 @@ export default class OrderService extends MedusaOrderService {
         });
 
         //do buckydrop order creation
-        await this.doBuckydropOrderCreation(cartId, orders);
+        if (process.env.BUCKY_ENABLE_PURCHASE)
+            await this.doBuckydropOrderCreation(cartId, orders);
 
         //calls to update inventory
         const inventoryPromises =
@@ -312,11 +312,6 @@ export default class OrderService extends MedusaOrderService {
             order.status = OrderStatus.CANCELED;
 
             await this.orderRepository_.save(order);
-        }
-
-        //special handling for buckydrop order 
-        if (order.bucky_metadata) {
-            order = await this.buckyService.cancelOrder(order.id);
         }
 
         return order;

@@ -25,6 +25,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         //c/onsole.log('orderNo is ', orderNo);
 
         const output = await buckyService.reconcileOrderStatus(orderId);
+        output.bucky_metadata = JSON.parse(output.bucky_metadata);
 
         return res
             .status(201)

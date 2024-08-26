@@ -1,21 +1,68 @@
 import {
     Cart,
+    FindConfig,
     CartService as MedusaCartService,
     MoneyAmount,
+    Logger
 } from '@medusajs/medusa';
 import CustomerRepository from '@medusajs/medusa/dist/repositories/customer';
 import ProductVariantRepository from '@medusajs/medusa/dist/repositories/product-variant';
 import { LineItem } from '../models/line-item';
 import { Lifetime } from 'awilix';
+import { PriceConverter } from '../strategies/price-selection';
+import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 
 export default class CartService extends MedusaCartService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
 
-    //protected customerRepository_: typeof CustomerRepository;
+    protected readonly customerRepository_: typeof CustomerRepository;
+    protected readonly lineItemRepository_: typeof LineItemRepository;
+    protected readonly priceConverter: PriceConverter = new PriceConverter();
+    protected readonly logger: Logger;
     //protected productVariantRepository_: typeof ProductVariantRepository;
 
     constructor(container) {
         super(container);
+        this.customerRepository_ = container.customerRepository;
+        this.lineItemRepository_ = container.lineItemRepository;
+        this.logger = container.logger;
+    }
+
+    async retrieve(cartId: string, options?: FindConfig<Cart>, totalsConfig?: { force_taxes?: boolean; }): Promise<Cart> {
+        const cart = await super.retrieve(cartId, options, totalsConfig);
+
+        if (cart?.items) {
+
+            let currencyCode = 'usdc';
+            if (cart.customer_id) {
+                if (cart.customer_id && !cart.customer)
+                    cart.customer = await this.customerRepository_.findOne({ where: { id: cart.customer_id } });
+
+                currencyCode = cart.customer?.preferred_currency_id ?? currencyCode;
+            }
+
+            const itemsToSave: LineItem[] = [];
+            for (let item of cart.items) {
+                if (item.currency_code != currencyCode) {
+                    this.logger.debug(`cart item with currency ${item.currency_code} amount ${item.unit_price} changing to ${currencyCode}`)
+                    item.currency_code = currencyCode;
+                    item.unit_price = await this.priceConverter.getPrice(
+                        { baseAmount: item.unit_price, baseCurrency: item.currency_code, toCurrency: currencyCode }
+                    );
+                    itemsToSave.push(item);
+                }
+            }
+
+
+            if (itemsToSave.length) {
+
+                await Promise.all(
+                    itemsToSave.map(i => this.lineItemRepository_.save(i))
+                );
+            }
+        }
+
+        return cart;
     }
 
     async addOrUpdateLineItems(

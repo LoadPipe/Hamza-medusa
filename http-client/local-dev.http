@@ -138,12 +138,9 @@ Content-Type: application/json
 }
 
 ### Get All Product Reviews
-POST http://localhost:9000/custom/review/all-reviews
+GET http://localhost:9000/custom/review/all-reviews?product_id=prod_01J5R22FTSYT5MSYDEHGJME9BH
 Content-Type: application/json
 
-{
-  "product_id": "prod_01HYYR4MV4TRXMWH1TQ9KTGWSF"
-}
 
 ### Get Specific Customers All Reviews
 POST http://localhost:9000/custom/review/customer-reviews
@@ -306,11 +303,11 @@ Content-Type: application/json
 
 
 ### Cancel Order
-POST http://localhost:9000/custom/order/cancel
+PUT http://localhost:9000/custom/order/cancel
 Content-Type: application/json
 
 {
-  "order_id": "order_01J5Q50W8EBRJY2058W581QSJZ"
+  "order_id": "order_01J5XBP0K1N4VBJQ2FEZNW93BX"
 }
 
 ### GET Order Status
@@ -318,7 +315,7 @@ GET http://localhost:9000/custom/order/status
 Content-Type: application/json
 
 {
-  "order_id": "order_01J05M54MDN9AC5E5JNMYHFKB8"
+  "order_id": "order_01J5XBJXJX1XPTA4XPV0W8ARHE"
 }
 
 ### Get Vendor Name by Order_id
@@ -377,7 +374,7 @@ Content-Type: application/json
 
 
 ### Get Single BUCKET
-GET http://localhost:9000/custom/order/customer-order?customer_id=cus_01J3CF43WK0QT2591VHG9JT07E&bucket=1
+GET http://localhost:9000/custom/order/customer-order?customer_id=cus_01J5V004PET8A6DXW9211ATPC7&bucket=3
 
 ### PUT cart_id to payment_session record 
 PUT http://localhost:9000/custom/payment-session

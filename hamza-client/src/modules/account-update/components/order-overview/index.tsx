@@ -83,7 +83,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
         setCancelReason('');
         setIsAttemptedSubmit(false);
     };
-    console.log('Orders: ', orders);
+    // console.log('Orders: ', orders);
 
     let countryCode = useParams().countryCode as string;
     if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY) countryCode = 'us';
@@ -107,9 +107,9 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                 const { data } = (await orderDetails(
                     orders[0]?.customer_id
                 )) as any;
-                console.log(
-                    `fetching all data in new style ${JSON.stringify(data.order.orders)}`
-                );
+                // console.log(
+                //     `fetching all data in new style ${JSON.stringify(data.order.orders)}`
+                // );
                 setCustomerOrder(data.order.orders);
             } catch (e) {
                 console.error('Error fetching all data in new style: ', e);
@@ -126,7 +126,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
 
             const statuses = await Promise.allSettled(
                 orders.map(async (order, index) => {
-                    console.log(`Fetching status for order ${order.id}`);
+                    // console.log(`Fetching status for order ${order.id}`);
                     try {
                         const statusRes = await orderStatus(order.id);
                         return {
@@ -159,7 +159,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
             });
 
             setOrderStatuses(statusMap);
-            console.log('Order statuses: ', statusMap);
+            // console.log('Order statuses: ', statusMap);
         };
 
         if (Object.keys(detailedOrders).length > 0) {

@@ -113,7 +113,7 @@ class ProductReviewService extends TransactionBaseService {
         console.log(`orders are ${JSON.stringify(orders)}`);
         // If no orders are found, throw an error
         if (!orders || orders.length === 0) {
-            throw new Error('No unreviewed orders found');
+            return [];
         }
 
         // Fetch all reviews for the customer
@@ -132,7 +132,6 @@ class ProductReviewService extends TransactionBaseService {
             .map((order) => order.id);
 
         if (unreviewedOrderIds.length === 0) {
-            throw new Error('No unreviewed orders left to fetch details for.');
             return [];
         }
 
@@ -369,14 +368,18 @@ class ProductReviewService extends TransactionBaseService {
         return await productReviewRepository.save(existingReview);
     }
 
-    async addProductReview(product_id, data) {
+    // TODO: lock to not allow multiple reviews for this item...
+    async addProductReview(
+        product_id,
+        { title, customer_id, content, rating, order_id }
+    ) {
         if (
             !product_id ||
-            !data.title ||
-            !data.customer_id ||
-            !data.content ||
-            !data.rating ||
-            !data.order_id
+            !title ||
+            !customer_id ||
+            !content ||
+            !rating ||
+            !order_id
         ) {
             throw new Error(
                 'Product review requires title, customer_id, content, and rating'
@@ -386,13 +389,23 @@ class ProductReviewService extends TransactionBaseService {
         const productReviewRepository =
             this.activeManager_.getRepository(ProductReview);
 
+        const reviews = await productReviewRepository.find({
+            where: { product_id, customer_id, order_id },
+        });
+
+        if (reviews.length > 0) {
+            return 'REVIEW EXISTS!';
+        } else {
+            console.log(`Review does not exist, lets create one`);
+        }
+
         const createdReview = productReviewRepository.create({
             product_id: product_id,
-            title: data.title,
-            customer_id: data.customer_id, // Assuming there is a customer_id field
-            content: data.content,
-            rating: data.rating,
-            order_id: data.order_id,
+            title: title,
+            customer_id: customer_id, // Assuming there is a customer_id field
+            content: content,
+            rating: rating,
+            order_id: order_id,
         });
         const productReview = await productReviewRepository.save(createdReview);
 

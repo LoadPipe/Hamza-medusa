@@ -11,7 +11,6 @@ import ProductVariantRepository from '@medusajs/medusa/dist/repositories/product
 import { CurrencyConversionClient } from '../currency-conversion/rest-client';
 import { In } from 'typeorm';
 import { getCurrencyAddress, getCurrencyPrecision } from '../currency.config';
-import { BigNumberish } from 'ethers';
 
 type InjectedDependencies = {
     customerService: CustomerService;
@@ -150,13 +149,18 @@ interface IPrice {
     baseAmount: number;
 }
 
+const EXTENDED_LOGGING = false;
+
 //TODO: maybe find a better place for this class
 export class PriceConverter {
     restClient: CurrencyConversionClient = new CurrencyConversionClient();
     cache: { [key: string]: { value: number, timestamp: number } } = {};
     expirationSeconds: 60;
 
-    //TODO: refactor: instead of taking a structure as input, take 3 params
+    async convertPrice(baseAmount: number, baseCurrency: string, toCurrency: string): Promise<number> {
+        return await this.getPrice({ baseAmount, baseCurrency, toCurrency })
+    }
+
     async getPrice(price: IPrice): Promise<number> {
         let rate: number = this.getFromCache(price);
 
@@ -172,15 +176,21 @@ export class PriceConverter {
         //convert the amount 
         const baseFactor: number = Math.pow(10, basePrecision.db);
 
-        //console.log('price:', price);
-        //console.log('baseFactor:', baseFactor);
-        //console.log('basePrecision:', basePrecision);
-        //console.log('toPrecision:', toPrecision);
-        //console.log('rate:', rate);
+
+        if (EXTENDED_LOGGING) {
+            console.log('price:', price);
+            console.log('baseFactor:', baseFactor);
+            console.log('basePrecision:', basePrecision);
+            console.log('toPrecision:', toPrecision);
+            console.log('rate:', rate);
+        }
+
         const displayAmount = price.baseAmount / baseFactor;
-        //console.log('displayAmount:', displayAmount);
+
+        if (EXTENDED_LOGGING)
+            console.log('displayAmount:', displayAmount);
+
         const output = Math.floor(displayAmount * rate * Math.pow(10, toPrecision.db));
-        //console.log(output);
         return output;
     }
 

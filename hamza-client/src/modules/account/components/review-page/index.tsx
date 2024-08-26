@@ -81,6 +81,15 @@ const ReviewPage = ({ region }: { region: Region }) => {
         }
     };
 
+    const handleReviewUpdated = async () => {
+        // This function will be called after a review is updated
+        await fetchReviews();
+    };
+
+    const handlePendingUpdated = async () => {
+        await fetchPendingReviews();
+    };
+
     const fetchPendingReviews = async () => {
         console.log('Fetching pending reviews...'); // For debugging
         try {
@@ -89,6 +98,8 @@ const ReviewPage = ({ region }: { region: Region }) => {
             );
             if (response.length !== 0) {
                 setPendingReviews(response);
+            } else {
+                setPendingReviews([]);
             }
             console.log(`Pending reviews: ${JSON.stringify(response)}`); // For debugging
         } catch (error) {
@@ -188,7 +199,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                             }
                                             colorScheme="green"
                                         >
-                                            Update Review
+                                            Edit
                                         </Button>
                                     )}
                                 </div>
@@ -221,53 +232,60 @@ const ReviewPage = ({ region }: { region: Region }) => {
                 </>
             )}
 
-            {activeButton === 'pending' && pendingReviews.length > 0 && (
+            {activeButton === 'pending' && (
                 <>
-                    <CardHeader>
-                        <Heading size="md">Pending Reviews</Heading>
-                    </CardHeader>
-                    <Stack divider={<StackDivider />} spacing={4}>
-                        {pendingReviews.map((review: any) => (
-                            <CardBody key={review.id}>
-                                <Text fontSize="16px">
-                                    <Text as="span" color="#555555">
-                                        Purchase Date:{' '}
+                    {pendingReviews.length > 0 ? (
+                        <Stack divider={<StackDivider />} spacing={4}>
+                            {pendingReviews.map((review: any) => (
+                                <CardBody key={review.id}>
+                                    <Text fontSize="16px">
+                                        <Text as="span" color="#555555">
+                                            Purchase Date:{' '}
+                                        </Text>
+                                        {format(
+                                            new Date(review.created_at),
+                                            'PPP'
+                                        )}
                                     </Text>
-                                    {format(new Date(review.created_at), 'PPP')}
-                                </Text>
-                                <div className="flex flex-row space-x-2 items-center">
-                                    <Image
-                                        rounded={'lg'}
-                                        width={'72px'}
-                                        height={'72px'}
-                                        src={
-                                            review.cart.items[0].variant.product
-                                                .thumbnail
-                                        } // Update to your data structure
-                                    />
-                                    <Text
-                                        fontSize={'18px'}
-                                        fontWeight={'bold'}
-                                        textTransform="uppercase"
-                                    >
-                                        {
-                                            review.cart.items[0].variant.product
-                                                .title
-                                        }{' '}
-                                        {/* Adjust title path */}
-                                    </Text>
-                                    <Button
-                                        onClick={() =>
-                                            handlePendingReview(review)
-                                        }
-                                        colorScheme="green"
-                                    >
-                                        Write Review
-                                    </Button>
-                                </div>
-                            </CardBody>
-                        ))}
-                    </Stack>
+                                    <div className="flex flex-row space-x-2 items-center">
+                                        <Image
+                                            rounded={'lg'}
+                                            width={'72px'}
+                                            height={'72px'}
+                                            src={
+                                                review.cart.items[0].variant
+                                                    .product.thumbnail
+                                            }
+                                        />
+                                        <Text
+                                            fontSize={'18px'}
+                                            fontWeight={'bold'}
+                                            textTransform="uppercase"
+                                        >
+                                            {
+                                                review.cart.items[0].variant
+                                                    .product.title
+                                            }
+                                        </Text>
+                                        <Button
+                                            onClick={() =>
+                                                handlePendingReview(review)
+                                            }
+                                            colorScheme="green"
+                                        >
+                                            Review
+                                        </Button>
+                                    </div>
+                                </CardBody>
+                            ))}
+                        </Stack>
+                    ) : (
+                        <Box textAlign="center" py={5}>
+                            <Text color="red.500" fontSize="lg">
+                                No pending reviews available.
+                            </Text>
+                        </Box>
+                    )}
                     <CardFooter />
                 </>
             )}
@@ -277,6 +295,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
                     reviewItem={selectedPendingReview}
                     isOpen={isReviewOpen}
                     onClose={onReviewClose}
+                    onPendingReviewUpdated={handlePendingUpdated}
                 />
             )}
 
@@ -285,6 +304,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
                     review={selectedReview}
                     isOpen={isEditReviewOpen}
                     onClose={onEditReviewClose}
+                    onReviewUpdated={handleReviewUpdated}
                 />
             )}
         </Card>

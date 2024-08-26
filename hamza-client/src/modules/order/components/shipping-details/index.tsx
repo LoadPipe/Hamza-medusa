@@ -4,6 +4,7 @@ import { Text } from '@chakra-ui/react';
 import { formatAmount } from '@lib/util/prices';
 
 import Divider from '@modules/common/components/divider';
+import { useEffect } from 'react';
 
 type ShippingDetailsProps = {
     order: Order;
@@ -45,7 +46,11 @@ const ShippingDetails = ({ order }: ShippingDetailsProps) => {
                     <Text className="txt-medium ">
                         {order.shipping_address.phone}
                     </Text>
-                    <Text className="txt-medium ">{order.email.endsWith('@evm.blockchain') ? order.email : ''}</Text>
+                    <Text className="txt-medium ">
+                        {order.email.includes('@evm.blockchain')
+                            ? ''
+                            : order.email}
+                    </Text>
                 </div>
 
                 <div className="flex flex-col w-1/3">

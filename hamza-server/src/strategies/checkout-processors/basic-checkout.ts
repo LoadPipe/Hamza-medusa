@@ -234,7 +234,7 @@ export class BasicCheckoutProcessor {
 
         //get total amount for the items
         let amount = itemsFromStore.reduce(
-            (a, i) => a + i.unit_price * i.quantity * 3,
+            (a, i) => a + i.unit_price * i.quantity,
             0
         );
 

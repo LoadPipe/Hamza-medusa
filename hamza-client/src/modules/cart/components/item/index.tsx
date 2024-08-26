@@ -9,12 +9,9 @@ import LineItemPrice from '@modules/common/components/line-item-price';
 import LineItemUnitPrice from '@modules/common/components/line-item-unit-price';
 import Thumbnail from '@modules/products/components/thumbnail';
 import { updateLineItem } from '@modules/cart/actions';
-import Spinner from '@modules/common/icons/spinner';
 import { useState } from 'react';
-import ErrorMessage from '@modules/checkout/components/error-message';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { Flex, Text, Divider } from '@chakra-ui/react';
-import { Radio, RadioGroup } from '@chakra-ui/react';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -24,9 +21,10 @@ type ItemProps = {
     item: Omit<ExtendedLineItem, 'beforeInsert'>;
     region: Region;
     type?: 'full' | 'preview';
+    currencyCode?: string;
 };
 
-const Item = ({ item, region, type = 'full' }: ItemProps) => {
+const Item = ({ item, region, type = 'full', currencyCode }: ItemProps) => {
     const [updating, setUpdating] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -100,6 +98,7 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
                                         item={item}
                                         region={region}
                                         style="tight"
+                                        currencyCode={currencyCode}
                                     />
                                 </Flex>
                             )}
@@ -107,6 +106,7 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
                                 item={item}
                                 region={region}
                                 style="tight"
+                                currencyCode={currencyCode}
                             />
                         </Flex>
                     </Flex>
@@ -266,6 +266,7 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
                         item={item}
                         region={region}
                         style="tight"
+                                        currencyCode={currencyCode}
                     />
                 </Table.Cell>
             )}
@@ -286,10 +287,12 @@ const Item = ({ item, region, type = 'full' }: ItemProps) => {
                                 item={item}
                                 region={region}
                                 style="tight"
+                                        currencyCode={currencyCode}
                             />
                         </span>
                     )}
-                    <LineItemPrice item={item} region={region} style="tight" />
+                    <LineItemPrice item={item} region={region} style="tight"
+                                currencyCode={currencyCode} />
                 </span>
             </Table.Cell>
         </Table.Row>

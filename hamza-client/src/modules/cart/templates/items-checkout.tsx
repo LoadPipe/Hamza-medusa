@@ -12,9 +12,10 @@ type ExtendedLineItem = LineItem & {
 type ItemsTemplateProps = {
     items?: Omit<ExtendedLineItem, 'beforeInsert'>[];
     region?: Region;
+    currencyCode: string;
 };
 
-const ItemsTemplate = ({ items, region }: ItemsTemplateProps) => {
+const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
     return (
         <Flex
             flexDir={'column'}
@@ -53,6 +54,7 @@ const ItemsTemplate = ({ items, region }: ItemsTemplateProps) => {
                                       key={item.id}
                                       item={item}
                                       region={region}
+                                      currencyCode={currencyCode}
                                   />
                               );
                           })

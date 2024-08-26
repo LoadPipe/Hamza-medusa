@@ -5,6 +5,7 @@ import DiscountCode from '@modules/checkout/components/discount-code';
 import CartTotals from '@modules/common/components/cart-totals';
 import Divider from '@modules/common/components/divider';
 import { retrieveCart } from '@modules/cart/actions';
+import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
 const CheckoutSummary = async (params: any) => {
     const cartId = params.cartId;
@@ -30,6 +31,7 @@ const CheckoutSummary = async (params: any) => {
                 <ItemsPreviewTemplate
                     region={cart?.region}
                     items={cart?.items}
+                    currencyCode={params.currencyCode ?? undefined}
                 />
                 <div className="my-6">
                     <DiscountCode cart={cart} />

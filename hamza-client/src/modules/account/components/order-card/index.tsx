@@ -39,10 +39,10 @@ type OrderCardProps = {
 const OrderCard = ({ order, handle }: OrderCardProps) => {
     const [vendor, setVendor] = useState('');
     const orderString = typeof order.currency_code;
-    console.log(
-        `Order Card details ${JSON.stringify(order.variant.product_id)}`
-    );
-    console.log(`Product details ${JSON.stringify(handle)} `);
+    // console.log(
+    //     `Order Card details ${JSON.stringify(order.variant.product_id)}`
+    // );
+    // console.log(`Product details ${JSON.stringify(handle)} `);
 
     const getAmount = (amount?: number | null) => {
         if (amount === null || amount === undefined) {
@@ -118,7 +118,8 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
                             <Text fontSize="14px">{order.description}</Text>
                         </Flex>
                         <Text fontSize="24px" fontWeight="semibold">
-                            {getAmount(order.unit_price)} {order.currency_code}
+                            {getAmount(order.unit_price)}{' '}
+                            {order.currency_code.toUpperCase()}
                         </Text>
                     </Flex>
 
