@@ -10,6 +10,7 @@ type State = {
     province: string | null;
     email: string | null;
     phone: string | null;
+    perferredCurrency: string | null;
 };
 
 type Actions = {
@@ -21,6 +22,7 @@ type Actions = {
     setProvince: (province: string) => void;
     setEmail: (email: string) => void;
     setPhone: (phone: string) => void;
+    setCurrencyCode: (perferredCurrency: string) => void;
 };
 
 export const useCustomerProfileStore = create<State & Actions>()(
@@ -34,6 +36,7 @@ export const useCustomerProfileStore = create<State & Actions>()(
             province: null,
             email: null,
             phone: null,
+            perferredCurrency: null,
             setFirstName: (first_name: string) => set({ first_name }),
             setLastName: (last_name: string) => set({ last_name }),
             setAddress: (address: string) => set({ address }),
@@ -42,6 +45,8 @@ export const useCustomerProfileStore = create<State & Actions>()(
             setProvince: (province: string) => set({ province }),
             setEmail: (email: string) => set({ email }),
             setPhone: (phone: string) => set({ phone }),
+            setCurrencyCode: (perferredCurrency: string) =>
+                set({ perferredCurrency }),
         }),
         {
             name: '__hamza_profile',
