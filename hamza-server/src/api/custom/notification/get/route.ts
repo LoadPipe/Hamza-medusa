@@ -17,22 +17,18 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
+        //validate 
+        if (!handler.requireParams(['customer_id']))
+            return;
+
+        //security 
+        if (!handler.enforceCustomerId(handler.inputParams.customer_id))
+            return;
+
         const types = await customerNotificationService.getNotifications(
             handler.inputParams.customer_id
         );
 
         res.status(200).json({ types });
     });
-
-    // try {
-    //     const types =
-    //         await customerNotificationService.getNotifications(customer_id);
-
-    //     res.status(200).json({ types });
-    // } catch (err) {
-    //     logger.error('Error creating notification types', err);
-    //     res.status(500).json({
-    //         error: 'Failed to create notification types',
-    //     });
-    // }
 };

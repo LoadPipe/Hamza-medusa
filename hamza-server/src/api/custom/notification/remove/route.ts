@@ -16,29 +16,18 @@ export const DELETE = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
+        //validate 
+        if (!handler.requireParams(['customer_id']))
+            return;
+
+        //security 
+        if (!handler.enforceCustomerId(handler.inputParams.customer_id))
+            return;
+
         const types = await customerNotificationService.removeNotification(
             handler.inputParams.customer_id
         );
 
         res.status(200).json({ types });
     });
-
-    // const { customer_id } = readRequestBody(req.body, ['customer_id']);
-    // if (!customer_id) {
-    //     return res.status(400).json({
-    //         message: 'customer_id is required',
-    //     });
-    // }
-
-    // try {
-    //     const types =
-    //         await customerNotificationService.removeNotification(customer_id);
-
-    //     res.status(200).json({ types });
-    // } catch (err) {
-    //     logger.error('Error creating notification types', err);
-    //     res.status(500).json({
-    //         error: 'Failed to create notification types',
-    //     });
-    // }
 };
