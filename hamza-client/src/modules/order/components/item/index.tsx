@@ -46,11 +46,7 @@ const Item = ({ item, region, currencyCode }: ItemProps) => {
                         />
                     </span>
 
-                    <LineItemPrice
-                        item={item}
-                        region={region}
-                        style="tight"
-                        currencyCode={currencyCode} />
+                    <LineItemPrice item={item} />
                 </span>
             </Table.Cell>
         </Table.Row>

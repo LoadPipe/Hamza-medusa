@@ -23,36 +23,6 @@ type ItemsTemplateProps = {
 const ItemsPreviewTemplate = ({ items, region }: ItemsTemplateProps) => {
     const hasOverflow = items && items.length > 4;
 
-    const { setCurrencyCode } = useCustomerProfileStore();
-
-    useEffect(() => {
-        const fetchCustomerPreferredCurrency = async () => {
-            try {
-                const customer = await getCustomer().catch(() => null);
-                if (customer) {
-                    const response = await axios.get(
-                        'http://localhost:9000/custom/customer/get-currency',
-                        {
-                            params: {
-                                customer_id: customer.id, // Replace with your customer ID
-                            },
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        }
-                    );
-
-                    const customerCurrency = response.data;
-                    setCurrencyCode(customerCurrency.preferred_currency);
-                }
-            } catch (error) {
-                console.error('Error fetching customer currency:', error);
-            }
-        };
-
-        fetchCustomerPreferredCurrency();
-    }, []);
-
     return (
         <div
             className={clx({
