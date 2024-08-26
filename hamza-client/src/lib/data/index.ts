@@ -400,6 +400,23 @@ export async function cancelOrder(order_id: string) {
     }
 }
 
+export async function getVerificationStatus(customer_id: string) {
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/customer/verification-status`, {
+            params: {
+                customer_id
+            },
+            headers: {
+                'authorization': cookies().get('_medusa_jwt')?.value
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error getting verification status:', error);
+    }
+}
+
 export async function averageRatings(product_id: string) {
     try {
         const response = await axios.post(

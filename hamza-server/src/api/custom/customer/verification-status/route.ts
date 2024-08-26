@@ -1,10 +1,10 @@
 import { MedusaRequest, MedusaResponse } from '@medusajs/medusa';
-import CustomerRepository from '../../../repositories/customer';
-import { RouteHandler } from '../../route-handler';
+import CustomerRepository from '../../../../repositories/customer';
+import { RouteHandler } from '../../../route-handler';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'GET', '/custom/get-verification-status', ['customer_id']
+        req, res, 'GET', '/custom/verification-status', ['customer_id']
     );
 
     await handler.handle(async () => {

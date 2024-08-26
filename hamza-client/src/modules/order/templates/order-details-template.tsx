@@ -78,10 +78,12 @@ const OrderDetailsTemplate: React.FC<OrderDetailsTemplateProps> = ({
                     }
                 );
                 //TODO: MOVE TO INDEX.TS
-                const orderHandles = await axios.post(
-                    `${BACKEND_URL}/custom/order/order-details`,
+                const orderHandles = await axios.get(
+                    `${BACKEND_URL}/custom/order/details`,
                     {
-                        cart_id: order.cart_id,
+                        params: {
+                            cart_id: order.cart_id,
+                        }
                     }
                 );
                 const updatedItems = data.order.map((item: Item) => ({

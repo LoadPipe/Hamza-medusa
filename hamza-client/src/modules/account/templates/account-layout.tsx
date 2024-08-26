@@ -9,6 +9,7 @@ import axios from 'axios';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
 import { Flex, Box } from '@chakra-ui/react';
+import { getVerificationStatus } from '@lib/data';
 
 interface AccountLayoutProps {
     customer: Omit<Customer, 'password_hash'> | null;
@@ -21,12 +22,7 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
 }) => {
     const { authData, setCustomerAuthData } = useCustomerAuthStore();
     const accountVerificationFetcher = async () => {
-        //TODO: MOVE TO INDEX.TS
-        const customerVerificationData = await axios.get(
-            `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/get-verification-status?customer_id=${authData.customer_id}`
-        );
-
-        let res = customerVerificationData.data;
+        let res = await getVerificationStatus(authData.customer_id);
         if (res.data == true) {
             setCustomerAuthData({ ...authData, is_verified: true });
         }
