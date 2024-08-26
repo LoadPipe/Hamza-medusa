@@ -234,6 +234,11 @@ Content-Type: application/json
 GET http://localhost:9000/custom/vendors
 Content-Type: application/json
 
+
+### Get All Store Names
+GET http://localhost:9000/custom/store/name
+Content-Type: application/json
+
 ### Get Products by Store_id
 POST http://localhost:9000/custom/vendors/vendor-products
 Content-Type: application/json
