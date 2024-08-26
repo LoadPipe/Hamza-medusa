@@ -68,7 +68,13 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
                 </Flex>
 
                 <Flex mt="1rem">{renderStars(stars)}</Flex>
-                <Text mt="1.5rem" color="white" noOfLines={4}>
+                <Text
+                    mt="1.5rem"
+                    color="white"
+                    noOfLines={6}
+                    maxWidth="480px"
+                    textOverflow="ellipsis"
+                >
                     {review}
                 </Text>
             </Flex>
