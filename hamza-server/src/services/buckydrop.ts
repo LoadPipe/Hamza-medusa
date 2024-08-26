@@ -327,7 +327,7 @@ export default class BuckydropService extends TransactionBaseService {
                             case 6:
                                 order.status = OrderStatus.PENDING;
                                 order.fulfillment_status =
-                                    FulfillmentStatus.NOT_FULFILLED;
+                                    FulfillmentStatus.SHIPPED;
                                 break;
                             case 7:
                                 order.status = OrderStatus.PENDING;
