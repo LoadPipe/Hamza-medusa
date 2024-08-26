@@ -119,7 +119,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                         {formatCryptoPrice(
                             shippingCost!,
                             currencyCode!
-                        ).toString()}{' '}
+                        ).toString()}
                     </Text>
                 </Flex>
 
@@ -163,16 +163,16 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                         Total
                     </Text>
                     <Flex flexDirection={'row'} alignItems="center">
-                        <Flex>
+                        <Flex mb="1px">
                             <Image
-                                height={21}
-                                width={21}
+                                height={20}
+                                width={20}
                                 src={currencyIcons[currencyCode]}
                                 alt="eth"
                             />
                         </Flex>
                         <Text
-                            ml="9px"
+                            ml="7px"
                             fontSize={{ base: '15px', md: '24px' }}
                             fontWeight={700}
                         >
