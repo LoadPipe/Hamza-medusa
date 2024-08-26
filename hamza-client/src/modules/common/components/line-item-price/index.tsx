@@ -76,7 +76,7 @@ const LineItemPrice = ({
                             </span>
                         )}
                     </>
-                )}{' '}
+                )}
                 <Text
                     as="span"
                     fontSize={{ base: '14px', md: '24px' }}

@@ -22,6 +22,7 @@ import Image from 'next/image';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { getObjectFit } from '@modules/get-object-fit';
+import currencyIcons from '../../../../public/images/currencies/crypto-currencies';
 
 interface ProductCardProps {
     variantID: string;
@@ -74,7 +75,6 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
     const { wishlist } = useWishlistStore();
     const [isWhitelisted, setIsWhitelisted] = useState(false);
 
-
     //Routing
     // const router = useRouter();
     //Toggle wish list
@@ -83,19 +83,19 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
         // console.log('toggle wishlist-dropdown item', product);
         wishlist.products.find((a) => a.id == productId)
             ? removeWishlistItemMutation.mutate({
-                id: productId!,
-                description: '',
-                handle: productHandle,
-                thumbnail: imageSrc,
-                title: productName,
-            })
+                  id: productId!,
+                  description: '',
+                  handle: productHandle,
+                  thumbnail: imageSrc,
+                  title: productName,
+              })
             : addWishlistItemMutation.mutate({
-                id: productId!,
-                description: '',
-                handle: productHandle,
-                thumbnail: imageSrc,
-                title: productName,
-            });
+                  id: productId!,
+                  description: '',
+                  handle: productHandle,
+                  thumbnail: imageSrc,
+                  title: productName,
+              });
     };
 
     // const router = useRouter();
@@ -168,7 +168,7 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
     const whitelistedProductHandler = async () => {
         const whitelistedProduct =
             whitelist_config.is_whitelisted &&
-                whitelist_config.whitelisted_stores.includes(storeId)
+            whitelist_config.whitelisted_stores.includes(storeId)
                 ? true
                 : false;
 
@@ -281,15 +281,11 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
                         </Flex>
 
                         <Flex alignItems="center">
-                            <Flex
-                                wrap={'nowrap'}
-                                width={{ base: '14px', md: '16px' }}
-                                height={{ base: '14px', md: '16px' }}
-                            >
+                            <Flex mb="1px">
                                 <Image
-                                    src={require('../../../../public/images/currencies/usdc-icon.svg')}
-                                    alt="usdc"
-                                    style={{ width: '100%', height: '100%' }}
+                                    className="sm:h-6 sm:w-6 md:h-4 md:w-4"
+                                    src={currencyIcons[currencyCode]}
+                                    alt="eth"
                                 />
                             </Flex>
 
@@ -302,8 +298,9 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
                                 fontWeight="700"
                                 fontSize={{ base: '14px', md: '18px' }}
                             >
-                                {`${productPrice} ${currencyCode.toUpperCase()} `}
+                                {`${productPrice}`}
                                 <Text
+                                    ml="5px"
                                     as="span"
                                     display={{
                                         base: 'none',

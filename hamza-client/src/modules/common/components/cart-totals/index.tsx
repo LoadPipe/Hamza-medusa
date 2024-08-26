@@ -165,14 +165,13 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                     <Flex flexDirection={'row'} alignItems="center">
                         <Flex mb="1px">
                             <Image
-                                height={20}
-                                width={20}
+                                className="sm:h-6 sm:w-6 md:h-5 md:w-5"
                                 src={currencyIcons[currencyCode]}
                                 alt="eth"
                             />
                         </Flex>
                         <Text
-                            ml="7px"
+                            ml="6px"
                             fontSize={{ base: '15px', md: '24px' }}
                             fontWeight={700}
                         >
