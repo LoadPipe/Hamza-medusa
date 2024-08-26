@@ -8,8 +8,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     // Extract customer_id from the query parameters
     const { customer_id } = req.query;
 
-    if (!customer_id) {
-        return res.status(400).json({ message: 'Customer ID is required.' });
+    if (!customer_id || typeof customer_id !== 'string') {
+        return res
+            .status(400)
+            .json({ message: 'Customer ID is required and must be a string.' });
     }
 
     try {
