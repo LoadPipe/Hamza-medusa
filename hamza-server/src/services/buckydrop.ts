@@ -289,7 +289,7 @@ export default class BuckydropService extends TransactionBaseService {
                 //get the order status
                 if (orderDetail) {
                     const status =
-                        orderDetail.orderDetails?.data?.poOrderList[0]
+                        orderDetail?.data?.poOrderList[0]
                             ?.orderStatus;
                     if (status) {
                         //translate the status
