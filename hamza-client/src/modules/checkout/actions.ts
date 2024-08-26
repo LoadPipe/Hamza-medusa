@@ -197,7 +197,7 @@ export async function placeOrder() {
             ? 'us'
             : cart.data.shipping_address?.country_code?.toLowerCase();
         cookies().set('_medusa_cart_id', '', { maxAge: -1 });
-        redirect(`/${countryCode}/order/confirmed/${cart?.data.id}`);
+        redirect(`/${countryCode}/order/confirmed/${cart?.data.id}?cart=${cartId}`);
     }
 
     return cart;

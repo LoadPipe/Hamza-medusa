@@ -11,7 +11,6 @@ import ProductVariantRepository from '@medusajs/medusa/dist/repositories/product
 import { CurrencyConversionClient } from '../currency-conversion/rest-client';
 import { In } from 'typeorm';
 import { getCurrencyAddress, getCurrencyPrecision } from '../currency.config';
-import { BigNumberish } from 'ethers';
 
 type InjectedDependencies = {
     customerService: CustomerService;
@@ -143,17 +142,24 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
     }
 }
 
+//TODO: change the name of this type
 interface IPrice {
     baseCurrency: string;
     toCurrency: string;
     baseAmount: number;
 }
 
+const EXTENDED_LOGGING = false;
+
 //TODO: maybe find a better place for this class
 export class PriceConverter {
     restClient: CurrencyConversionClient = new CurrencyConversionClient();
     cache: { [key: string]: { value: number, timestamp: number } } = {};
     expirationSeconds: 60;
+
+    async convertPrice(baseAmount: number, baseCurrency: string, toCurrency: string): Promise<number> {
+        return await this.getPrice({ baseAmount, baseCurrency, toCurrency })
+    }
 
     async getPrice(price: IPrice): Promise<number> {
         let rate: number = this.getFromCache(price);
@@ -164,28 +170,37 @@ export class PriceConverter {
         }
 
         //now we need currency precisions 
-        const basePrecision = getCurrencyPrecision(price.baseCurrency);
-        const toPrecision = getCurrencyPrecision(price.toCurrency);
+        const basePrecision = getCurrencyPrecision(price.baseCurrency) ?? { db: 2 };
+        const toPrecision = getCurrencyPrecision(price.toCurrency) ?? { db: 2 };
 
         //convert the amount 
         const baseFactor: number = Math.pow(10, basePrecision.db);
 
-        console.log('price:', price);
-        console.log('baseFactor:', baseFactor);
-        console.log('basePrecision:', basePrecision);
-        console.log('toPrecision:', toPrecision);
-        console.log('rate:', rate);
+
+        if (EXTENDED_LOGGING) {
+            console.log('price:', price);
+            console.log('baseFactor:', baseFactor);
+            console.log('basePrecision:', basePrecision);
+            console.log('toPrecision:', toPrecision);
+            console.log('rate:', rate);
+        }
+
         const displayAmount = price.baseAmount / baseFactor;
-        console.log('displayAmount:', displayAmount);
+
+        if (EXTENDED_LOGGING)
+            console.log('displayAmount:', displayAmount);
+
         const output = Math.floor(displayAmount * rate * Math.pow(10, toPrecision.db));
-        console.log(output);
         return output;
     }
 
     private async getFromApi(price: IPrice): Promise<number> {
         //convert to addresses 
-        const baseAddr = getCurrencyAddress(price.baseCurrency, 1);
-        const toAddr = getCurrencyAddress(price.toCurrency, 1);
+        let baseAddr = getCurrencyAddress(price.baseCurrency, 1);
+        let toAddr = getCurrencyAddress(price.toCurrency, 1);
+
+        if (baseAddr.length === 0) baseAddr = price.baseCurrency;
+        if (toAddr.length === 0) toAddr = price.toCurrency;
 
         return await this.restClient.getExchangeRate(
             baseAddr,

@@ -7,6 +7,7 @@ import { Tooltip } from '@medusajs/ui';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import React from 'react';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { Flex, Text, Divider } from '@chakra-ui/react';
 
 type CartTotalsProps = {
     data: Omit<Cart, 'refundable_amount' | 'refunded_total'> | Order;
@@ -27,15 +28,8 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
     } = data;
 
     const { preferred_currency_code } = useCustomerAuthStore();
+    console.log('user preferred currency code: ', preferred_currency_code);
 
-    const getAmount = (amount: number | null | undefined) => {
-        return formatAmount({
-            amount: amount || 0,
-            region: data.region,
-            includeTaxes: false,
-            currency_code: '',
-        });
-    };
 
     //TODO: this can be replaced later by extending the cart, if necessary
     const getCartSubtotals = (cart: any) => {
@@ -43,10 +37,11 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
 
         for (let n = 0; n < cart.items.length; n++) {
             const item: ExtendedLineItem = cart.items[n];
-            const currency: string = item.currency_code ?? '';
-            if (currency.length) {
+            const currency = preferred_currency_code ?? item.currency_code ?? 'usdc';
+
+            if (currency?.length) {
                 subtotals[currency] = subtotals[currency] ?? 0;
-                subtotals[currency] += item.unit_price * item.quantity;
+                subtotals[currency] += item.unit_price * item.quantity - (item.discount_total ?? 0);
             }
         }
 
@@ -54,48 +49,31 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
     };
 
     const subtotals = getCartSubtotals(data);
+    const currencyCode = preferred_currency_code ?? 'usdc';
+    const shippingCost = shipping_total ?? 0;
+    const taxTotal = tax_total ?? 0;
+    const grandTotal = (subtotals[currencyCode] ?? 0) + shippingCost + taxTotal;
 
     return (
         <div>
-            <div className="flex flex-col gap-y-2 txt-medium text-ui-fg-subtle ">
-                {subtotals['eth'] && (
-                    <div className="flex items-center justify-between">
-                        <span className="flex gap-x-1 items-center">
-                            Subtotal ETH
-                            <Tooltip content="Cart total excluding shipping and taxes.">
-                                <InformationCircleSolid color="var(--fg-muted)" />
-                            </Tooltip>
-                        </span>
-                        <span>
-                            {formatCryptoPrice(subtotals['eth'], 'eth')} ETH
-                        </span>
-                    </div>
-                )}
-                {subtotals['usdt'] && (
-                    <div className="flex items-center justify-between">
-                        <span className="flex gap-x-1 items-center">
-                            Subtotal USDT
-                            <Tooltip content="Cart total excluding shipping and taxes.">
-                                <InformationCircleSolid color="var(--fg-muted)" />
-                            </Tooltip>
-                        </span>
-                        <span>
-                            {formatCryptoPrice(subtotals['usdt'], 'usdt')} USDT
-                        </span>
-                    </div>
-                )}
-                {subtotals['usdc'] && (
-                    <div className="flex items-center justify-between">
-                        <span className="flex gap-x-1 items-center">
-                            Subtotal USDC
-                            <Tooltip content="Cart total excluding shipping and taxes.">
-                                <InformationCircleSolid color="var(--fg-muted)" />
-                            </Tooltip>
-                        </span>
-                        <span>
-                            {formatCryptoPrice(subtotals['usdc'], 'usdc')} USDC
-                        </span>
-                    </div>
+            <hr
+                style={{
+                    color: 'red',
+                    width: '100%',
+                    borderTop: '2px solid #3E3E3E',
+                    marginBottom: '1rem',
+                }}
+            />
+            <Flex flexDirection={'column'} color="white">
+                {subtotals[currencyCode] && (
+                    <Flex color={'white'}>
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
+                            Subtotal
+                        </Text>
+                        <Text ml="auto" fontSize={{ base: '14px', md: '16px' }}>
+                            {formatCryptoPrice(subtotals[currencyCode], currencyCode)}{' '}{currencyCode.toUpperCase()}
+                        </Text>
+                    </Flex>
                 )}
                 {!!discount_total && (
                     <div className="flex items-center justify-between">
@@ -107,22 +85,53 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                         <span>Gift card</span>
                     </div>
                 )}
-                <div className="flex items-center justify-between">
-                    <span>Shipping</span>
-                    <span>
+
+                <Flex>
+                    <Text fontSize={{ base: '14px', md: '16px' }}>
+                        Shipping
+                    </Text>
+                    <Text ml="auto" fontSize={{ base: '14px', md: '16px' }}>
                         {formatCryptoPrice(
-                            shipping_total!,
-                            preferred_currency_code!
+                            shippingCost!,
+                            currencyCode!
                         ).toString()}{' '}
-                        {preferred_currency_code?.toUpperCase()}
-                    </span>
-                </div>
-                <div className="flex justify-between">
-                    <span className="flex gap-x-1 items-center ">Taxes</span>
-                    <span>{getAmount(tax_total).toString()}</span>
-                </div>
-            </div>
-            <div className="h-px w-full border-b border-gray-200 mt-4" />
+                        {currencyCode.toUpperCase()}
+                    </Text>
+                </Flex>
+                <Flex>
+                    <Text fontSize={{ base: '14px', md: '16px' }}>Taxes</Text>
+                    <Text ml="auto" fontSize={{ base: '14px', md: '16px' }}>
+                        {formatCryptoPrice(taxTotal, currencyCode).toString()} {currencyCode.toUpperCase()}
+                    </Text>
+                </Flex>
+            </Flex>
+            {/* <div className="h-px w-full border-b border-gray-200 mt-4" /> */}
+            <hr
+                style={{
+                    color: 'red',
+                    width: '100%',
+                    borderTop: '2px dashed #3E3E3E',
+                    marginTop: '1rem',
+                    marginBottom: '1rem',
+                }}
+            />
+            {subtotals[currencyCode] && (
+                <Flex color={'white'}>
+                    <Text
+                        fontSize={{ base: '15px', md: '16px' }}
+                        alignSelf={'center'}
+                    >
+                        Total
+                    </Text>
+                    <Text
+                        ml="auto"
+                        fontSize={{ base: '15px', md: '24px' }}
+                        fontWeight={700}
+                    >
+                        {formatCryptoPrice(grandTotal, currencyCode)} {currencyCode.toUpperCase()}
+                    </Text>
+                </Flex>
+            )}
         </div>
     );
 };

@@ -6,6 +6,7 @@ import { getPercentageDiff } from '@lib/util/get-precentage-diff';
 import { CalculatedVariant } from 'types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerProfileStore } from '@store/customer-profile/customer-profile';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -15,15 +16,22 @@ type LineItemUnitPriceProps = {
     item: Omit<ExtendedLineItem, 'beforeInsert'>;
     region: Region;
     style?: 'default' | 'tight';
+    currencyCode?: string;
 };
 
 const LineItemUnitPrice = ({
     item,
     region,
     style = 'default',
+    currencyCode,
 }: LineItemUnitPriceProps) => {
-    const originalPrice = (item.variant as CalculatedVariant).original_price;
-    const hasReducedPrice = (originalPrice * item.quantity || 0) > item.total!;
+    const unitPrice = item.variant.prices
+        ? (item.variant as CalculatedVariant).prices.find(
+              (p) => p.currency_code == currencyCode
+          )?.amount ?? 0
+        : (item.variant as CalculatedVariant)?.original_price ?? 0;
+    const price = unitPrice * item.quantity;
+    const hasReducedPrice = (price * item.quantity || 0) > item.total!;
     const reducedPrice = (item.total || 0) / item.quantity!;
 
     return (
@@ -35,21 +43,13 @@ const LineItemUnitPrice = ({
                             <span className="text-ui-fg-muted">Original: </span>
                         )}
                         <span className="line-through">
-                            {formatCryptoPrice(
-                                originalPrice,
-                                item.currency_code ?? ''
-                            )}{' '}
+                            {formatCryptoPrice(price, item.currency_code ?? '')}{' '}
                             {item.currency_code?.toUpperCase() ?? ''}
                         </span>
                     </p>
                     {style === 'default' && (
                         <span className="text-ui-fg-interactive">
-                            -
-                            {getPercentageDiff(
-                                originalPrice,
-                                reducedPrice || 0
-                            )}
-                            %
+                            -{getPercentageDiff(price, reducedPrice || 0)}%
                         </span>
                     )}
                 </>

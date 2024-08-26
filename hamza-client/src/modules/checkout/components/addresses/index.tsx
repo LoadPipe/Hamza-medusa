@@ -57,10 +57,13 @@ const Addresses = ({
     };
 
     const [message, formAction] = useFormState(setAddresses, null);
-    const contactEmail = cart?.email ?
-        cart.email.endsWith('@evm.blockchain') ? '' : cart.email
+    console.log('cart.email == ', cart?.email);
+    const contactEmail = cart?.email
+        ? cart.email.endsWith('@evm.blockchain')
+            ? ''
+            : cart.email
         : '';
-    const contactPhone = cart?.shipping_address.phone ?? '';
+    const contactPhone = cart?.shipping_address?.phone ?? '';
 
     return (
         <div className="bg-black">
@@ -128,21 +131,25 @@ const Addresses = ({
                                         <Text className="text-medium text-white">
                                             {cart.shipping_address.country_code?.toUpperCase()}
                                         </Text>
+                                        <Text className="text-medium text-white">
+                                            {contactEmail}
+                                        </Text>
                                     </div>
 
-                                    {(contactEmail?.length > 0 && contactPhone?.length > 0) &&
-                                        <div className="flex flex-col w-full md:w-1/3 mb-4 md:mb-0">
-                                            <Text className="text-medium-plus text-white mb-1">
-                                                Contact
-                                            </Text>
-                                            <Text className="text-medium text-white">
-                                                {contactEmail}
-                                            </Text>
-                                            <Text className="text-medium text-white">
-                                                {contactPhone}
-                                            </Text>
-                                        </div>
-                                    }
+                                    {/* {contactEmail?.length > 0 &&
+                                        contactPhone?.length > 0 && (
+                                            <div className="flex flex-col w-full md:w-1/3 mb-4 md:mb-0">
+                                                <Text className="text-medium-plus text-white mb-1">
+                                                    Contact
+                                                </Text>
+                                                <Text className="text-medium text-white">
+                                                    {contactEmail}
+                                                </Text>
+                                                <Text className="text-medium text-white">
+                                                    {contactPhone}
+                                                </Text>
+                                            </div>
+                                        )} */}
                                 </div>
                             </div>
                         ) : (

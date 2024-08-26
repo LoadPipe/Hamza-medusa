@@ -10,7 +10,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const handler: RouteHandler = new RouteHandler(
         req,
         res,
-        'POST',
+        'GET',
         '/custom/review/all-customer-reviews',
         ['customer_id']
     );

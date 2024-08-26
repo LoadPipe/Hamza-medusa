@@ -35,6 +35,7 @@ const Shipping: React.FC<ShippingProps> = ({
     const router = useRouter();
     const pathname = usePathname();
     const { authData, preferred_currency_code } = useCustomerAuthStore();
+    console.log('user preferred currency code: ', preferred_currency_code);
 
     const isOpen = searchParams.get('step') === 'delivery';
     const cartId = isOpen ? searchParams.get('cart') : cart.id;
@@ -163,16 +164,7 @@ const Shipping: React.FC<ShippingProps> = ({
                                                 </span>
                                             </div>
                                             <span className="justify-self-end text-white">
-                                                {option.name ===
-                                                    'FakeEx Standard'
-                                                    ? preferred_currency_code ===
-                                                        'eth'
-                                                        ? '0.00001 '
-                                                        : '1.20'
-                                                    : preferred_currency_code ===
-                                                        'eth'
-                                                        ? '0.000025 '
-                                                        : '3.25'}{' '}
+                                                {formatCryptoPrice(option.amount ?? 0, preferred_currency_code ?? 'usdc')}{' '}
                                                 {preferred_currency_code?.toUpperCase()}
                                             </span>
                                         </RadioGroup.Option>
@@ -221,15 +213,7 @@ const Shipping: React.FC<ShippingProps> = ({
                                             .shipping_option.name
                                         : ' '}{' '}
                                     (
-                                    {cart.shipping_methods[0].shipping_option
-                                        .name === 'FakeEx Standard'
-                                        ? preferred_currency_code === 'eth'
-                                            ? '0.00001 '
-                                            : '1.20'
-                                        : preferred_currency_code === 'eth'
-                                            ? '0.000025 '
-                                            : '3.25'}{' '}
-                                    {preferred_currency_code?.toUpperCase()})
+                                    {cart.shipping_methods[0].shipping_option.amount})
                                 </Text>
                             </div>
                         )}

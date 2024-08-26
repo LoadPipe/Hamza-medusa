@@ -31,6 +31,7 @@ const ProductCardGroup = ({ vendorName, category }: Props) => {
     console.log(data);
 
     const { authData, preferred_currency_code } = useCustomerAuthStore();
+    console.log('user preferred currency code: ', preferred_currency_code);
 
     if (isLoading) {
         return <SkeletonProductGrid />;
@@ -89,7 +90,7 @@ const ProductCardGroup = ({ vendorName, category }: Props) => {
                                 discountValue={product.discountValue}
                                 productId={product.id}
                                 inventory={
-                                    product.variants[0].inventory_quantity
+                                    product.variants[0]?.inventory_quantity
                                 }
                                 allow_backorder={
                                     product.variants[0].allow_backorder

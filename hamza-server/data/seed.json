@@ -100,23 +100,14 @@
             "amount": 0
         },
         {
-            "name": "FakeEx Standard",
+            "name": "Provider Calculated",
             "region_id": "test-region-na",
             "provider_id": "manual",
             "data": {
-                "id": "manual-fulfillment"
+                "id": "bucky-fulfillment"
             },
             "price_type": "flat_rate",
-            "amount": 0
-        },
-        {
-            "name": "FakeEx Express",
-            "region_id": "test-region-na",
-            "provider_id": "manual",
-            "data": {
-                "id": "manual-fulfillment"
-            },
-            "price_type": "flat_rate",
+            "is_installed": true,
             "amount": 0
         },
         {
@@ -128,7 +119,7 @@
             },
             "price_type": "flat_rate",
             "is_return": true,
-            "amount": 0
+            "amount": 1
         },
         {
             "name": "I want to return it myself",

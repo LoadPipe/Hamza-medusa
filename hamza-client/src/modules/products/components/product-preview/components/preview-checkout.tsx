@@ -60,6 +60,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
     const [reviewCount, setReviewCount] = useState<number>(0);
 
     const { preferred_currency_code } = useCustomerAuthStore();
+    console.log('user preferred currency code: ', preferred_currency_code);
+
     const { whitelist_config, setWhitelistConfig, authData } =
         useCustomerAuthStore();
     const router = useRouter();
@@ -126,7 +128,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                 setVariantId(productData.variants[0].id);
             }
             let selectedProductVariant = productData.variants.find(
-                (a: any) => a.id == productData.variants[0].id
+                (a: any) => a.id == productData.variants[0]?.id
                 // (a: any) => a.id == variantId
             );
             console.log(`variantID is: ${variantId}`);
@@ -140,7 +142,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                 selectedProductVariant &&
                 (selectedProductVariant.prices.find(
                     (p: any) =>
-                        p.currency_code === preferred_currency_code ?? 'usdc'
+                        p.currency_code === (preferred_currency_code ?? 'usdc')
                 ) ??
                     selectedProductVariant.prices[0]);
             // console.log(`price is being set to ${price}`);

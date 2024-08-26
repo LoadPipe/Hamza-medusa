@@ -138,12 +138,9 @@ Content-Type: application/json
 }
 
 ### Get All Product Reviews
-POST http://localhost:9000/custom/review/all-reviews
+GET http://localhost:9000/custom/review/all-reviews?product_id=prod_01J5R22FTSYT5MSYDEHGJME9BH
 Content-Type: application/json
 
-{
-  "product_id": "prod_01HYYR4MV4TRXMWH1TQ9KTGWSF"
-}
 
 ### Get Specific Customers All Reviews
 POST http://localhost:9000/custom/review/customer-reviews
@@ -191,15 +188,15 @@ Content-Type: application/json
 }
 
 ### Update Product
-POST http://localhost:9000/custom/review/update
+PUT http://localhost:9000/custom/review/update
 Content-Type: application/json
 
 {
-  "customer_id": "cus_01HZGXW2JCY41TTZFSE256EDT4",
-  "product_id": "prod_01HZGXK5K93QD6132PNESEYBVS",
+  "customer_id": "cus_01J3CF43WK0QT2591VHG9JT07E",
+  "product_id": "prod_01J3CF1GXW1C0QSSMPBQR04GBK",
   "ratingUpdates": 10,
   "reviewUpdates": "CONTENT CONTENRT",
-  "order_id": "order_01HZGXXX8V51W8XQBTH7YPWTPP"
+  "order_id": "order_01J3CK60MX8XGWW52W4X0AZTSX"
 }
 
 
@@ -229,13 +226,9 @@ Content-Type: application/json
 }
 
 ### Return review and rating of existing product
-POST http://localhost:9000/custom/review/existing
+GET http://localhost:9000/custom/review/existing?order_id=order_01J3CK60MX8XGWW52W4X0AZTSX&product_id=prod_01J3CF1GXW1C0QSSMPBQR04GBK
 Content-Type: application/json
 
-{
-  "order_id": "order_01J00BJJVD3N6XGE7RYAVJ3EVX",
-  "product_id": "variant_01J008A6ZZJ9YM9ENWRJ36ZFN0"
-}
 
 ### Return all vendors
 GET http://localhost:9000/custom/vendors
@@ -277,12 +270,8 @@ Content-Type: application/json
 }
 
 ### Get Specific Customer All Reviews
-POST http://localhost:9000/custom/review/all-customer-reviews
+GET http://localhost:9000/custom/review/all-customer-reviews?customer_id=cus_01J3CF43WK0QT2591VHG9JT07E
 Content-Type: application/json
-
-{
-  "customer_id": "cus_01J0QK65HY311HDHQKN5W042GZ"
-}
 
 
 ### Create Notification Types
@@ -314,11 +303,11 @@ Content-Type: application/json
 
 
 ### Cancel Order
-DELETE http://localhost:9000/custom/order/cancel
+PUT http://localhost:9000/custom/order/cancel
 Content-Type: application/json
 
 {
-  "order_id": "order_01J05M54MDN9AC5E5JNMYHFKB8"
+  "order_id": "order_01J5XBP0K1N4VBJQ2FEZNW93BX"
 }
 
 ### GET Order Status
@@ -326,7 +315,7 @@ GET http://localhost:9000/custom/order/status
 Content-Type: application/json
 
 {
-  "order_id": "order_01J05M54MDN9AC5E5JNMYHFKB8"
+  "order_id": "order_01J5XBJXJX1XPTA4XPV0W8ARHE"
 }
 
 ### Get Vendor Name by Order_id
@@ -371,8 +360,12 @@ Content-Type: application/json
 }
 
 ### GET Request to cancel order
-GET http://localhost:9000/custom/cancel-order/cart_01J3CF7DMR72ZS436EM0NYDCGW
+POST http://localhost:9000/custom/cart/cancel
 Content-Type: application/json
+
+{
+    "cart_id": "cart_01J3CF7DMR72ZS436EM0NYDCGW"
+}
 
 
 ### Get Specific Customers All Orders METHOD: listCustomerOrders() in order.ts
@@ -381,7 +374,7 @@ Content-Type: application/json
 
 
 ### Get Single BUCKET
-GET http://localhost:9000/custom/order/customer-order?customer_id=cus_01J3CF43WK0QT2591VHG9JT07E&bucket=1
+GET http://localhost:9000/custom/order/customer-order?customer_id=cus_01J5V004PET8A6DXW9211ATPC7&bucket=3
 
 ### PUT cart_id to payment_session record 
 PUT http://localhost:9000/custom/payment-session
@@ -402,12 +395,16 @@ Content-Type: application/json
   "status": "shipped"
 }
 
+
+### Get Customer Orders without reviews. getNotReviewed
+GET http://localhost:9000/custom/review/get-customer-not-reviewed?customer_id=cus_01J5NWK29Y8H16NDM2P2K8D09W
+
 ### POST Let's add products...
 POST http://localhost:9000/custom/product/add-product
 Content-Type: application/json
 
 {
-  "keyword": "boxing",
+  "keyword": "fitness",
   "storeId": "store_01J4W6J3RXZ4JDH4XYZZQP4S2R",
   "collectionId": "pcol_01HSGAMXDJD725MR3VSW63B0RD", 
   "salesChannelId": "sc_01J4W6GT9V06AQF2G0T01ZPXVE"

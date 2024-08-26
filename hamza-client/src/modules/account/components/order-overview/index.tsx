@@ -2,25 +2,11 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Order } from '@medusajs/medusa';
-import OrderCard from '../order-card';
-import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
-import Refund from '../../../order/templates/refund';
-import Delivered from '../../../order/templates/delivered';
-import Processing from '../../../order/templates/processing';
-import Shipped from '../../../order/templates/shipped';
-import All from '../../../order/templates/all';
-import Cancelled from '../../../order/templates/cancelled';
+import { TABS } from 'modules/order-tab-management';
 
-import {
-    getVendors,
-    orderInformation,
-    orderDetails,
-    orderStatus,
-    orderBucket,
-    cancelOrder,
-} from '@lib/data';
+import { orderDetails, cancelOrder } from '@lib/data';
 import {
     Button,
     ButtonGroup,
@@ -37,7 +23,13 @@ import {
     Box,
     Flex,
 } from '@chakra-ui/react';
-
+import All from '@modules/order/templates/all';
+import Processing from '@modules/order/templates/processing';
+import Shipped from '@modules/order/templates/shipped';
+import Delivered from '@modules/order/templates/delivered';
+import Cancelled from '@modules/order/templates/cancelled';
+import Refund from '@modules/order/templates/refund';
+import { useOrderTabStore } from '@store/order-tab-state';
 // Define a type that extends the Order type with any additional data
 interface DetailedOrder extends Order {
     details?: any; // Further specify if you have the structure of the details
@@ -99,14 +91,6 @@ enum OrderBucketType {
     CANCELLED = 5,
     REFUNDED = 6,
 }
-const TABS = {
-    ALL: 'All Orders',
-    PROCESSING: 'Processing',
-    SHIPPED: 'Shipped',
-    DELIVERED: 'Delivered',
-    CANCELLED: 'Cancelled',
-    REFUND: 'Refund',
-};
 const OrderOverview = ({ orders }: { orders: Order[] }) => {
     // Initialize state with the correct type
     const [detailedOrders, setDetailedOrders] = useState<DetailedOrder[]>([]);
@@ -120,7 +104,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
     const [customerId, setCustomerId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [activeTab, setActiveTab] = useState(TABS.ALL);
+    const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
     const openModal = (orderId: string) => {
         setSelectedOrderId(orderId);
@@ -137,25 +121,6 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
     if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY) countryCode = 'us';
 
     const router = useRouter();
-
-    const renderTabContent = () => {
-        switch (activeTab) {
-            case TABS.ALL:
-                return <All orders={orders} />;
-            case TABS.PROCESSING:
-                return <Processing orders={orders} />;
-            case TABS.SHIPPED:
-                return <Shipped />;
-            case TABS.DELIVERED:
-                return <Delivered />;
-            case TABS.CANCELLED:
-                return <Cancelled />;
-            case TABS.REFUND:
-                return <Refund />;
-            default:
-                return <div>Select a tab to view orders.</div>;
-        }
-    };
 
     const fetchAllOrders = async (customerId: string) => {
         setIsLoading(true);
@@ -178,7 +143,8 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
     };
 
     useEffect(() => {
-        let customer_id = orders[0]?.customer_id;
+        if (orders.length === 0) return;
+        let customer_id = orders[0].customer_id;
         console.log(
             `this is runnning and we getting customerID ${customer_id}`
         );
@@ -187,6 +153,32 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
             setCustomerId(customer_id);
         }
     }, [orders]);
+    const setOrderActiveTab = useOrderTabStore(
+        (state) => state.setOrderActiveTab
+    );
+
+    const handleTabChange = (tab: string) => {
+        if (orderActiveTab !== tab) {
+            setOrderActiveTab(tab);
+        }
+    };
+
+    const renderTabContent = () => {
+        switch (orderActiveTab) {
+            case TABS.PROCESSING:
+                return <Processing orders={orders} />;
+            case TABS.SHIPPED:
+                return <Shipped orders={orders} />;
+            case TABS.DELIVERED:
+                return <Delivered orders={orders} />;
+            case TABS.CANCELLED:
+                return <Cancelled orders={orders} />;
+            case TABS.REFUND:
+                return <Refund orders={orders} />;
+            default:
+                return <All orders={orders} />;
+        }
+    };
 
     const handleCancel = async () => {
         if (!cancelReason) {
@@ -196,7 +188,10 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
         if (!selectedOrderId) return;
 
         try {
-            await cancelOrder(selectedOrderId);
+            const response = await cancelOrder(selectedOrderId);
+            console.log(
+                `selectedOrder cancelOrder?? ${JSON.stringify(response)}`
+            );
             setOrderStatuses((prevStatuses) => ({
                 ...prevStatuses,
                 [selectedOrderId]: 'canceled',
@@ -207,28 +202,6 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
         }
     };
 
-    const handleReorder = async (items: any) => {
-        // console.log('Reorder button clicked');
-        items.map(async (item: any) => {
-            try {
-                await addToCart({
-                    variantId: item.variant_id,
-                    countryCode: countryCode,
-                    currencyCode: item.currency_code,
-                    quantity: item.quantity,
-                });
-            } catch (e) {
-                alert(`Product with name ${item.title} could not be added`);
-            }
-        });
-
-        router.push('/checkout');
-
-        return;
-    };
-    const handleTabChange = (tab: any) => {
-        setActiveTab(tab);
-    };
     return (
         <Box
             display="flex"
@@ -244,7 +217,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                         key={tab}
                         onClick={() => handleTabChange(tab)}
                         {...commonButtonStyles}
-                        isActive={activeTab === tab}
+                        isActive={orderActiveTab === tab}
                     >
                         {tab}
                     </Button>
@@ -254,7 +227,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Request Cancellation</ModalHeader>
+                    <ModalHeader>Request Cancellations</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <FormControl isInvalid={!cancelReason && isModalOpen}>

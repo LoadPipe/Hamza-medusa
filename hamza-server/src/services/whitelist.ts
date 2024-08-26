@@ -43,7 +43,7 @@ export default class WhiteListService extends TransactionBaseService {
             return await this.whitelistRepository_.find({
                 where: {
                     store_id: storeId,
-                    wallet_address: In(customer.walletAddresses.map(w => w.wallet_address))
+                    wallet_address: In(customer.walletAddresses.map(w => w.wallet_address?.trim()?.toLowerCase() ?? ''))
                 },
                 //relations: ['items']
             });

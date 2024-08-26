@@ -2,27 +2,27 @@ import { Lifetime } from 'awilix';
 import {
     ProductService as MedusaProductService,
     Logger,
-    ProductVariant,
-    PriceSelectionResult,
     MoneyAmount,
-    Image,
     ProductVariantMoneyAmount,
+    Store,
+    ProductStatus,
 } from '@medusajs/medusa';
 import {
     CreateProductInput,
-    CreateProductProductSalesChannelInput,
     CreateProductProductVariantPriceInput,
-    FindProductConfig,
-    ProductSelector,
 } from '@medusajs/medusa/dist/types/product';
 import { Product } from '../models/product';
-import logger from '@medusajs/medusa-cli/dist/reporter';
 import { StoreRepository } from '../repositories/store';
-import PriceSelectionStrategy from '../strategies/price-selection';
+import PriceSelectionStrategy, {
+    PriceConverter,
+} from '../strategies/price-selection';
 import CustomerService from '../services/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import { BuckyClient } from '../buckydrop/bucky-client';
-import { ProductStatus } from '@medusajs/medusa';
+import { getCurrencyAddress } from '../currency.config';
+import { In, IsNull, Not } from 'typeorm';
+
+export type BulkImportProductInput = CreateProductInput;
 
 export type UpdateProductProductVariantDTO = {
     id?: string;
@@ -61,7 +61,6 @@ class ProductService extends MedusaProductService {
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly customerService_: CustomerService;
-    private buckyClient: BuckyClient;
 
     constructor(container) {
         super(container);
@@ -69,7 +68,6 @@ class ProductService extends MedusaProductService {
         this.storeRepository_ = container.storeRepository;
         this.productVariantRepository_ = container.productVariantRepository;
         this.customerService_ = container.customerService;
-        this.buckyClient = new BuckyClient();
     }
 
     async updateProduct(
@@ -97,27 +95,22 @@ class ProductService extends MedusaProductService {
             const variantMoneyAmounts = [];
 
             for (const price of prices) {
-                // Create a MoneyAmount entity for each currency
-                const currencies = ['eth', 'usdc', 'usdt'];
+                const moneyAmount = moneyAmountRepo.create({
+                    currency_code: price.currency_code,
+                    amount: price.amount, // Assuming the amount is the same for all currencies; adjust if needed
+                });
+                const savedMoneyAmount =
+                    await moneyAmountRepo.save(moneyAmount);
 
-                for (const currency of currencies) {
-                    const moneyAmount = moneyAmountRepo.create({
-                        currency_code: currency,
-                        amount: price.amount, // Assuming the amount is the same for all currencies; adjust if needed
+                moneyAmounts.push(savedMoneyAmount);
+
+                const productVariantMoneyAmount =
+                    productVariantMoneyAmountRepo.create({
+                        variant_id: variantId,
+                        money_amount_id: savedMoneyAmount.id,
                     });
-                    const savedMoneyAmount =
-                        await moneyAmountRepo.save(moneyAmount);
 
-                    moneyAmounts.push(savedMoneyAmount);
-
-                    const productVariantMoneyAmount =
-                        productVariantMoneyAmountRepo.create({
-                            variant_id: variantId,
-                            money_amount_id: savedMoneyAmount.id,
-                        });
-
-                    variantMoneyAmounts.push(productVariantMoneyAmount);
-                }
+                variantMoneyAmounts.push(productVariantMoneyAmount);
             }
 
             // Save all ProductVariantMoneyAmount entries in one go
@@ -130,69 +123,102 @@ class ProductService extends MedusaProductService {
         }
     }
 
+    // do the detection here does the product exist already / update product input
+
     async bulkImportProducts(
-        productsData: CreateProductInput[]
+        storeId: string,
+        productData: (CreateProductInput | UpdateProductInput)[]
     ): Promise<Product[]> {
         try {
-            const addedProducts = await Promise.all(
-                productsData.map((product) => super.create(product))
-            );
+            //get the store
+            const store: Store = await this.storeRepository_.findOne({
+                where: { id: storeId },
+            });
 
-            // Ensure all products have valid IDs
-            const validProducts = addedProducts.filter((p) => p && p.id);
-            if (validProducts.length !== addedProducts.length) {
-                throw new Error('Some products were not created successfully');
+            if (!store) {
+                throw new Error(`Store ${storeId} not found.`);
             }
 
-            // Create variants for each valid product
-            const variantCreationPromises = validProducts.map(
-                async (savedProduct) => {
-                    const variantData = {
-                        title: savedProduct.title,
-                        product_id: savedProduct.id,
-                        inventory_quantity: 10,
-                        allow_backorder: false,
-                        manage_inventory: true,
-                    };
+            //get existing products by handle
+            const productHandles: string[] = productData.map((p) => p.handle);
+            const existingProducts: Product[] =
+                await this.productRepository_.find({
+                    where: { handle: In(productHandles) },
+                    relations: ['variants'],
+                });
 
-                    const variant =
-                        this.productVariantRepository_.create(variantData);
-                    const savedVariant =
-                        await this.productVariantRepository_.save(variant);
+            const addedProducts = await Promise.all(
+                productData.map((product) => {
+                    return new Promise<Product>(async (resolve, reject) => {
+                        const productHandle = product.handle;
 
-                    // Define the prices for the variant in different currencies
-                    const prices = [
-                        { currency_code: 'eth', amount: 1000 },
-                        { currency_code: 'usdc', amount: 1200 },
-                        { currency_code: 'usdt', amount: 1300 },
-                    ];
+                        try {
+                            // Check if the product already exists by handle
+                            const existingProduct = existingProducts.find(
+                                (p) => p.handle === product.handle
+                            );
 
-                    // Update prices for the variant
-                    await this.updateVariantPrice(savedVariant.id, prices);
-
-                    return savedVariant;
-                }
+                            if (existingProduct) {
+                                // If the product exists, update it
+                                this.logger.info(
+                                    `Updating existing product with handle: ${productHandle}`
+                                );
+                                resolve(
+                                    await this.updateProduct(
+                                        existingProduct.id,
+                                        product as UpdateProductInput
+                                    )
+                                );
+                            } else {
+                                // If the product does not exist, create a new one
+                                this.logger.info(
+                                    `Creating new product with handle: ${productHandle}`
+                                );
+                                resolve(
+                                    await super.create(
+                                        product as CreateProductInput
+                                    )
+                                );
+                            }
+                        } catch (error) {
+                            this.logger.error(
+                                `Error processing product with handle: ${productHandle}`,
+                                error
+                            );
+                            resolve(null);
+                        }
+                    });
+                })
             );
 
-            // Wait for all variants to be created and priced
-            const variants = await Promise.all(variantCreationPromises);
+            // Ensure all products are non-null and have valid IDs
+            const validProducts = addedProducts.filter((p) => p && p.id);
+            this.logger.info(
+                `${validProducts.length} out of ${productData.length} products were imported`
+            );
+            if (validProducts.length !== addedProducts.length) {
+                this.logger.warn('Some products were not created successfully');
+            }
 
-            console.log(
+            this.logger.debug(
                 `Added products: ${validProducts.map((p) => p.id).join(', ')}`
             );
             return validProducts;
         } catch (error) {
-            console.error('Error in adding products from BuckyDrop:', error);
+            this.logger.error(
+                'Error in adding products from BuckyDrop:',
+                error
+            );
             throw error;
         }
     }
 
     async getProductsFromStoreWithPrices(storeId: string): Promise<Product[]> {
         return await this.convertPrices(
-            await this.productRepository_.find({
-                where: { store_id: storeId },
+            (await this.productRepository_.find({
+                where: { store_id: storeId, status: ProductStatus.PUBLISHED },
                 relations: ['variants.prices', 'reviews'],
-            })
+            })).filter(p => p.variants?.length)
         );
     }
 
@@ -200,6 +226,7 @@ class ProductService extends MedusaProductService {
         const products = await this.convertPrices(
             await this.productRepository_.find({
                 relations: ['variants.prices', 'reviews'],
+                where: { status: ProductStatus.PUBLISHED, store_id: Not(IsNull()) }
             })
         );
 
@@ -212,17 +239,39 @@ class ProductService extends MedusaProductService {
                 return 1;
             }
             return 0;
-        });
+        }).filter(p => p.variants?.length);
 
         return sortedProducts;
     }
 
     async getProductsFromStore(storeId: string): Promise<Product[]> {
         // this.logger.log('store_id: ' + storeId); // Potential source of the error
-        return this.productRepository_.find({
-            where: { store_id: storeId },
+        return (await this.productRepository_.find({
+            where: { store_id: storeId, status: ProductStatus.PUBLISHED },
             // relations: ['store'],
-        });
+        })).filter(p => p.variants?.length);
+    }
+
+    async getCategoriesByStoreId(storeId: string): Promise<Product[]> {
+        try {
+            const query = `
+                SELECT pc.*
+                FROM product p
+                JOIN product_category_product pcp ON p.id = pcp.product_id
+                JOIN product_category pc ON pcp.product_category_id = pc.id
+                WHERE p.store_id = $1
+            `;
+
+            const categories = await this.productRepository_.query(query, [
+                storeId,
+            ]);
+            return categories;
+        } catch (error) {
+            this.logger.error('Error fetching categories by store ID:', error);
+            throw new Error(
+                'Failed to fetch categories for the specified store.'
+            );
+        }
     }
 
     async getStoreFromProduct(productId: string): Promise<string> {
@@ -331,39 +380,67 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    private mapBuckyDataToProductInput(
-        item: any,
-        status: ProductStatus,
-        storeId: string,
-        collectionId: string,
-        salesChannels: string[]
-    ) {
-        console.log(salesChannels);
-        return {
-            title: item.productName,
-            handle: item.spuCode,
-            description: item.productName,
-            is_giftcard: false,
-            status: status as ProductStatus,
-            thumbnail: item.picUrl,
-            images: [item.picUrl],
-            collection_id: collectionId,
-            weight: Math.round(item.weight || 100),
-            discountable: true,
-            store_id: storeId,
-            sales_channels: salesChannels.map(sc => { return { id: sc } }),
-            bucky_metadata: JSON.stringify(item)
-        };
+    async findByBuckyMetadata(buckyMetadata: string): Promise<Product | null> {
+        try {
+            const product = await this.productRepository_.findOne({
+                where: { bucky_metadata: buckyMetadata },
+            });
+
+            if (!product) {
+                this.logger.info(
+                    `Product with bucky_metadata ${buckyMetadata} not found.`
+                );
+                return null;
+            }
+
+            return product;
+        } catch (error) {
+            this.logger.error(
+                'Error fetching product by bucky_metadata:',
+                error
+            );
+            throw new Error('Failed to fetch product by bucky_metadata');
+        }
     }
 
-    private async convertPrices(products: Product[], customerId: string = ''): Promise<Product[]> {
+    async findByGoodsId(goodsId: string): Promise<Product | null> {
+        try {
+            const product = await this.productRepository_
+                .createQueryBuilder('product')
+                .where('product.bucky_metadata LIKE :goodsId', {
+                    goodsId: `%${goodsId}%`,
+                })
+                .getOne();
+
+            if (!product) {
+                this.logger.info(
+                    `Product with goodsId ${goodsId} not found in bucky_metadata.`
+                );
+                return null;
+            }
+
+            return product;
+        } catch (error) {
+            this.logger.error('Error fetching product by goodsId:', error);
+            throw new Error(
+                'Failed to fetch product by goodsId in bucky_metadata'
+            );
+        }
+    }
+
+    private async convertPrices(
+        products: Product[],
+        customerId: string = ''
+    ): Promise<Product[]> {
         for (const prod of products) {
             for (const variant of prod.variants) {
-                const strategy: PriceSelectionStrategy = new PriceSelectionStrategy({
-                    customerService: this.customerService_,
-                    productVariantRepository: this.productVariantRepository_,
-                    logger: this.logger
-                });
+                const strategy: PriceSelectionStrategy =
+                    new PriceSelectionStrategy({
+                        customerService: this.customerService_,
+                        productVariantRepository:
+                            this.productVariantRepository_,
+                        logger: this.logger,
+                    });
                 const results = await strategy.calculateVariantPrice(
                     [{ variantId: variant.id, quantity: 1 }],
                     { customer_id: customerId }
@@ -373,7 +450,7 @@ class ProductService extends MedusaProductService {
             }
         }
 
-        return products
+        return products;
     }
 }
 

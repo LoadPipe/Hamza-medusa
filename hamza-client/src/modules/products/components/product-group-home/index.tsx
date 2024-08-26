@@ -36,6 +36,7 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
     );
 
     const { preferred_currency_code } = useCustomerAuthStore();
+    console.log('user preferred currency code: ', preferred_currency_code);
 
     const products = data?.data;
 
@@ -180,7 +181,7 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
                     const avgRating = totalRating / reviewCounter;
                     const roundedAvgRating = parseFloat(avgRating.toFixed(2));
 
-                    const variantID = product.variants[0].id;
+                    const variantID = product.variants[0]?.id;
                     return (
                         <GridItem
                             key={index}
@@ -204,10 +205,10 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
                                 discountValue={product.discountValue}
                                 productId={product.id}
                                 inventory={
-                                    product.variants[0].inventory_quantity
+                                    product.variants[0]?.inventory_quantity
                                 }
                                 allow_backorder={
-                                    product.variants[0].allow_backorder
+                                    product.variants[0]?.allow_backorder
                                 }
                                 storeId={product.store_id}
                             />

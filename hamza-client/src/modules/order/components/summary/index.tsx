@@ -1,7 +1,15 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Box, Flex, Heading, Text, Button, Stack } from '@chakra-ui/react';
+import {
+    Box,
+    Flex,
+    Heading,
+    Text,
+    Button,
+    Stack,
+    Divider,
+} from '@chakra-ui/react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import Thumbnail from '@modules/products/components/thumbnail';
 import Tweet from '@/components/tweet';
@@ -48,7 +56,6 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
     const router = useRouter();
     const { countryCode } = useParams();
 
-    console.log(`CART ID IS ${cart_id}`);
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -72,60 +79,43 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
     }, [cart_id]);
 
     return (
-        <Flex direction="column" gap={8}>
+        <Flex direction="column" width={'100%'}>
+            <Text fontWeight={600}>Your Order</Text>
             {products.map((product) => (
-                <Box
-                    key={product.id}
-                    borderWidth={{ base: '0px', md: '1px' }}
-                    borderRadius="lg"
-                    p={6}
-                    mb={8}
-                >
-                    <Tweet productHandle={product.handle} isPurchased={true} />
-                    <Box mb={4}>
-                        <Heading size="md">{product.title}</Heading>
-                        <div
-                            className="mt-2"
-                            dangerouslySetInnerHTML={{
-                                __html: product.description,
-                            }}
-                        ></div>
-                    </Box>
-                    <Stack spacing={2}>
-                        <Text>
-                            {new Date(product.created_at).toDateString()}
+                <Box key={product.id} mt="1rem">
+                    <Flex flexDir={'row'}>
+                        <LocalizedClientLink
+                            href={`/products/${product.handle}`}
+                        >
+                            <Flex width={'55px'} height={'55px'}>
+                                <Thumbnail
+                                    thumbnail={product.thumbnail}
+                                    images={[]}
+                                    size="small"
+                                />
+                            </Flex>
+                        </LocalizedClientLink>
+                        <Text ml="1rem" noOfLines={1}>
+                            {product.title}
                         </Text>
-                        <Text>Product SKU: {product.id}</Text>
-                        <Text>Order ID: {product.order_id}</Text>
-                        <Text>
+                        <Flex ml="auto">
+                            <Tweet
+                                productHandle={product.handle}
+                                isPurchased={true}
+                            />
+                        </Flex>
+                    </Flex>
+
+                    <Flex mt="2rem">
+                        <Text>Subtotal</Text>
+                        <Text ml="auto">
                             {formatCryptoPrice(
                                 product.unit_price,
                                 product.currency_code
                             )}{' '}
                             {product.currency_code.toUpperCase()}
                         </Text>
-                        <Text>Store Name: {product.store_name}</Text>
-                    </Stack>
-
-                    <LocalizedClientLink href={`/products/${product.handle}`}>
-                        <Thumbnail
-                            thumbnail={product.thumbnail}
-                            images={[]}
-                            size="small"
-                        />
-                    </LocalizedClientLink>
-                    <Button
-                        my={4}
-                        backgroundColor={'black'}
-                        color="white"
-                        onClick={() =>
-                            router.push(
-                                `/${countryCode}/vendor/${product.store_name}`
-                            )
-                        }
-                    >
-                        Vendor Store
-                    </Button>
+                    </Flex>
                 </Box>
             ))}
         </Flex>
@@ -133,3 +123,51 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
 };
 
 export default Summary;
+
+{
+    /* <Tweet productHandle={product.handle} isPurchased={true} />
+<Box mb={4}>
+    <Heading size="md">{product.title}</Heading>
+    <div
+        className="mt-2"
+        dangerouslySetInnerHTML={{
+            __html: product.description,
+        }}
+    ></div>
+</Box>
+<Stack spacing={2}>
+    <Text>
+        {new Date(product.created_at).toDateString()}
+    </Text>
+    <Text>Product SKU: {product.id}</Text>
+    <Text>Order ID: {product.order_id}</Text>
+    <Text>
+        {formatCryptoPrice(
+            product.unit_price,
+            product.currency_code
+        )}{' '}
+        {product.currency_code.toUpperCase()}
+    </Text>
+    <Text>Store Name: {product.store_name}</Text>
+</Stack>
+
+<LocalizedClientLink href={`/products/${product.handle}`}>
+    <Thumbnail
+        thumbnail={product.thumbnail}
+        images={[]}
+        size="small"
+    />
+</LocalizedClientLink>
+<Button
+    my={4}
+    backgroundColor={'black'}
+    color="white"
+    onClick={() =>
+        router.push(
+            `/${countryCode}/vendor/${product.store_name}`
+        )
+    }
+>
+    Vendor Store
+</Button> */
+}

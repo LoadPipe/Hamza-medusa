@@ -18,7 +18,8 @@ import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 import WhiteListService from '../../services/whitelist';
 import StoreRepository from '../../repositories/store';
-import { WhiteList } from 'src/models/whitelist';
+import { WhiteList } from '../../models/whitelist';
+import BuckydropService from '../../services/buckydrop';
 
 
 export interface IPaymentGroupData {
@@ -35,6 +36,7 @@ export class BasicCheckoutProcessor {
     protected readonly idempotencyKeyService: IdempotencyKeyService;
     protected readonly cartService: CartService;
     protected readonly productService: ProductService;
+    protected readonly buckydropService: BuckydropService;
     protected readonly paymentService: PaymentService;
     protected readonly orderService: OrderService;
     protected readonly whitelistService: WhiteListService;
@@ -55,6 +57,7 @@ export class BasicCheckoutProcessor {
         this.paymentService = container.paymentService;
         this.productService = container.productService;
         this.orderService = container.orderService;
+        this.buckydropService = container.buckydropService;
         this.paymentRepository = container.paymentRepository;
         this.orderRepository = container.orderRepository;
         this.lineItemRepository = container.lineItemRepository;
@@ -114,7 +117,7 @@ export class BasicCheckoutProcessor {
 
         //restrict by whitelist 
         if (await this.customerRestrictedByWhitelist()) {
-            throw { code: 401, message: 'Customer not Whitelisted' };
+            throw { code: 401, message: 'Customer not whitelisted' };
         }
 
         //group payments by store
@@ -230,7 +233,7 @@ export class BasicCheckoutProcessor {
         );
 
         //get total amount for the items
-        const amount = itemsFromStore.reduce(
+        let amount = itemsFromStore.reduce(
             (a, i) => a + i.unit_price * i.quantity,
             0
         );
@@ -287,10 +290,16 @@ export class BasicCheckoutProcessor {
         cart: Cart,
         paymentGroups: IPaymentGroupData[]
     ): Promise<Payment[]> {
+
+        //calculate shipping cost
+        const shippingCost = await this.buckydropService.calculateShippingPriceForCart(cart.id);
+
         //for each unique group, make payment input to create a payment
         const paymentInputs: PaymentDataInput[] = [];
         paymentGroups.forEach((group) => {
-            paymentInputs.push(this.createPaymentInput(cart, group));
+            const input = this.createPaymentInput(cart, group);
+            input.amount += shippingCost;
+            paymentInputs.push(input);
         });
 
         //create the payments

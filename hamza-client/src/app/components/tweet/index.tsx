@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { Box, Flex, Button, Text } from '@chakra-ui/react';
+import { FaXTwitter } from 'react-icons/fa6';
 
 type TweetProps = {
     productHandle: string;
@@ -33,8 +34,8 @@ const Tweet: React.FC<TweetProps> = ({
                     isDisabled={isDisabled}
                     bg="black"
                     color="white"
-                    px={6}
-                    py={2.5}
+                    px={4}
+                    py={4}
                     fontSize="xs"
                     fontWeight="medium"
                     textTransform="uppercase"
@@ -45,18 +46,9 @@ const Tweet: React.FC<TweetProps> = ({
                     _active={{ shadow: 'lg' }}
                 >
                     <Flex align="center">
-                        <Box as="span" mr={2}>
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="currentColor"
-                                viewBox="0 0 512 512"
-                                height="16"
-                                width="16"
-                            >
-                                <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
-                            </svg>
+                        <Box as="span">
+                            <FaXTwitter color="white" size={16} />
                         </Box>
-                        <Text>Tweet this product</Text>
                     </Flex>
                 </Button>
             </a>

@@ -111,29 +111,53 @@ const ProfileForm = () => {
             </Flex>
 
             <Flex
+                mt="-0.5rem"
+                flexDirection={{ base: 'column', md: 'row' }}
                 gap={'15px'}
-                maxW={{ base: '100%', md: '430px' }}
-                width={{ base: '100%', md: '50%' }}
             >
-                <ProfileCurrency
-                    preferred_currency_code={preferred_currency_code}
-                    setCustomerPreferredCurrency={setCustomerPreferredCurrency}
-                />
-                {/* Email input */}
-                {/* {emailValue?.length > 0 && (
-                    <>
+                <Flex
+                    gap={'15px'}
+                    maxW={{ base: '100%', md: '430px' }}
+                    width={{ base: '100%', md: '50%' }}
+                >
+                    <ProfileCurrency
+                        preferred_currency_code={preferred_currency_code}
+                        setCustomerPreferredCurrency={
+                            setCustomerPreferredCurrency
+                        }
+                    />
+                    {/* Email input */}
+                </Flex>
+                {emailValue?.length > 0 && (
+                    <Flex
+                        flexDirection={'column'}
+                        ml="auto"
+                        maxW={{ base: '100%', md: '430px' }}
+                        width={{ base: '100%', md: '50%' }}
+                    >
                         <Text
-                            fontSize={'18px'}
-                            fontWeight={600}
-                            color={'primary.indigo.900'}
+                            mb={'8px'}
+                            textTransform={'uppercase'}
+                            fontSize={'12px'}
+                            ml={{ base: 0, md: '1rem' }}
                         >
                             Email
                         </Text>
-                        <Text fontSize={'16px'} fontWeight={600}>
-                            {emailValue}
-                        </Text>
-                    </>
-                )} */}
+
+                        <Flex
+                            fontSize={{ base: '14px', md: '16px' }}
+                            borderRadius={'12px'}
+                            height={{ base: '50px', md: '52px' }}
+                            backgroundColor={'#020202'}
+                            border={'none'}
+                            pl="1rem"
+                        >
+                            <Text alignSelf={'center'} fontSize={'14px'}>
+                                {emailValue}
+                            </Text>
+                        </Flex>
+                    </Flex>
+                )}
             </Flex>
 
             <Button
