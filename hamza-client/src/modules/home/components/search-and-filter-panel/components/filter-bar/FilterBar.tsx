@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Flex, useDisclosure } from '@chakra-ui/react';
 import CategoryButtons from './components/CategoryButtons';
-import vendors from '../../data/data';
+import useVendors from '../../data/data';
 import FilterButton from './components/FilterButton';
 import { CgChevronRight } from 'react-icons/cg';
 import FilterModalHome from './components/FilterModal';
@@ -11,6 +11,7 @@ const FilterBar = () => {
     const [startIdx, setStartIdx] = useState(0); // State to keep track of the starting index of visible vendors
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    const vendors = useVendors();
     // Ensure that the components knows when it's running on the client
     useEffect(() => {
         setIsClient(true);
@@ -26,8 +27,7 @@ const FilterBar = () => {
         .slice(startIdx, startIdx + 6)
         .concat(vendors.slice(0, Math.max(0, 6 - (vendors.length - startIdx))));
 
-    if (vendors.length == 1)
-        visibleVendors = [visibleVendors[0]]
+    if (vendors.length == 1) visibleVendors = [visibleVendors[0]];
 
     return (
         <Flex

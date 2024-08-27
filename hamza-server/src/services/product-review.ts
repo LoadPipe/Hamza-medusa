@@ -103,14 +103,20 @@ class ProductReviewService extends TransactionBaseService {
             this.activeManager_.getRepository(ProductReview);
 
         // Fetch all non-archived orders for the customer
+        // TODO: This should be swapped to shipped in production
+        //            .andWhere('order.status != :status', { fulfillment_status: 'shipped?' })
         const orders = await orderRepository
             .createQueryBuilder('order')
             .select(['order.id', 'order.status'])
             .where('order.customer_id = :customer_id', { customer_id })
-            .andWhere('order.status != :status', { status: 'archived' })
+            .andWhere('order.status != :archivedStatus', {
+                archivedStatus: 'archived',
+            })
+            .andWhere('order.status != :cancelledStatus', {
+                cancelledStatus: 'canceled',
+            })
             .getMany();
 
-        console.log(`orders are ${JSON.stringify(orders)}`);
         // If no orders are found, throw an error
         if (!orders || orders.length === 0) {
             return [];
@@ -142,7 +148,7 @@ class ProductReviewService extends TransactionBaseService {
                 customer_id: customer_id,
                 status: Not(OrderStatus.ARCHIVED),
             },
-            relations: ['cart.items', 'cart', 'cart.items.variant.product'],
+            relations: ['items', 'items.variant.product'],
         });
 
         return unreviewedOrders;

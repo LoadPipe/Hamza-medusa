@@ -25,7 +25,7 @@ import useModalFilter from '@store/store-page/filter-modal';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
 import RangeSliderModal from '@modules/store/components/mobile-fitler/components/range-slider-modal';
-import vendors from '../../../data/data';
+import useVendors from '../../../data/data';
 interface FilterModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -54,6 +54,8 @@ const FilterModalHome: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
         setHomeModalCurrencyFilterSelect,
         setHomeModalCategoryFilterSelect,
     } = useHomeModalFilter();
+
+    const vendors = useVendors();
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -85,46 +87,15 @@ const FilterModalHome: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         wrap={'wrap'}
                         gap="16px"
                     >
-                        <CategoryModalButton
-                            categoryType="home_light"
-                            categoryName="All"
-                        />
-                        <CategoryModalButton
-                            categoryType="home_light"
-                            categoryName="Legendary Light Design"
-                        />
-                        <CategoryModalButton
-                            categoryType="gadgets"
-                            categoryName="Dauntless"
-                        />
-                        <CategoryModalButton
-                            categoryType="clothes"
-                            categoryName="Medusa Merch"
-                        />
-                        <CategoryModalButton
-                            categoryType="games"
-                            categoryName="Drones"
-                        />
-                        <CategoryModalButton
-                            categoryType="games"
-                            categoryName="Legos"
-                        />
-                        <CategoryModalButton
-                            categoryType="board_games"
-                            categoryName="Board Games"
-                        />
-                        <CategoryModalButton
-                            categoryType="workout_gear"
-                            categoryName="Workout Gear"
-                        />
-                        <CategoryModalButton
-                            categoryType="games"
-                            categoryName="Echo Rift"
-                        />
-                        <CategoryModalButton
-                            categoryType="games"
-                            categoryName="Gaming Gear"
-                        />
+                        <Box>
+                            {vendors.map((vendor: any, index: number) => (
+                                <CategoryModalButton
+                                    key={index}
+                                    categoryType={vendor.vendorType}
+                                    categoryName={vendor.vendorName}
+                                />
+                            ))}
+                        </Box>
                     </Flex>
                     <Text
                         mt="1.5rem"

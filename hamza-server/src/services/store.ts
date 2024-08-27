@@ -58,6 +58,13 @@ class StoreService extends MedusaStoreService {
         return await this.storeRepository_.find();
     }
 
+    async getStoreNames() {
+        const stores = await this.storeRepository_.find({
+            select: ['name'],
+        });
+        return stores.map((store) => store.name);
+    }
+
     async update(data: UpdateStoreInput) {
         return await super.update(data);
     }

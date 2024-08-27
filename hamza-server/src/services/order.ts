@@ -10,6 +10,7 @@ import {
     LineItem,
 } from '@medusajs/medusa';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
+import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 import PaymentRepository from '@medusajs/medusa/dist/repositories/payment';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import StoreRepository from '../repositories/store';
@@ -50,6 +51,7 @@ export default class OrderService extends MedusaOrderService {
 
     protected orderRepository_: typeof OrderRepository;
     protected lineItemService: LineItemService;
+    protected lineItemRepository_: typeof LineItemRepository;
     protected productRepository_: typeof ProductRepository;
     protected paymentRepository_: typeof PaymentRepository;
     protected readonly storeRepository_: typeof StoreRepository;
@@ -61,6 +63,7 @@ export default class OrderService extends MedusaOrderService {
         super(container);
         this.orderRepository_ = container.orderRepository;
         this.storeRepository_ = container.storeRepository;
+        this.lineItemRepository_ = container.lineItemRepository;
         this.paymentRepository_ = container.paymentRepository;
         this.productRepository_ = container.productRepository;
         this.productVariantRepository_ = container.productVariantRepository;
@@ -97,6 +100,15 @@ export default class OrderService extends MedusaOrderService {
 
             //save the order
             order = await this.orderRepository_.save(order);
+
+            order.items = cart.items;
+
+            const lineItemPromise = cart.items.map((item) => {
+                item.order_id = order.id;
+                return this.lineItemRepository_.save(item);
+            });
+
+            await Promise.all([...lineItemPromise]);
 
             //update the cart
             cart.completed_at = new Date();
@@ -392,6 +404,7 @@ export default class OrderService extends MedusaOrderService {
             case OrderBucketType.PROCESSING:
                 return await this.getCustomerOrdersByStatus(customerId, {
                     fulfillmentStatus: FulfillmentStatus.NOT_FULFILLED,
+                    orderStatus: OrderStatus.PENDING,
                 });
             case OrderBucketType.SHIPPED:
                 return await this.getCustomerOrdersByStatus(customerId, {
@@ -448,7 +461,7 @@ export default class OrderService extends MedusaOrderService {
 
         return await this.orderRepository_.find({
             where,
-            relations: ['cart.items', 'cart', 'cart.items.variant.product'],
+            relations: ['items'],
         });
     }
 
@@ -637,9 +650,9 @@ export default class OrderService extends MedusaOrderService {
 
         return relevantItems?.length
             ? {
-                products: relevantItems.map((i) => i.variant.product),
-                quantities: relevantItems.map((i) => i.quantity),
-            }
+                  products: relevantItems.map((i) => i.variant.product),
+                  quantities: relevantItems.map((i) => i.quantity),
+              }
             : { products: [], quantities: [] };
     }
 
@@ -653,9 +666,9 @@ export default class OrderService extends MedusaOrderService {
 
         return relevantItems?.length
             ? {
-                variants: relevantItems.map((i) => i.variant),
-                quantities: relevantItems.map((i) => i.quantity),
-            }
+                  variants: relevantItems.map((i) => i.variant),
+                  quantities: relevantItems.map((i) => i.quantity),
+              }
             : { variants: [], quantities: [] };
     }
 }

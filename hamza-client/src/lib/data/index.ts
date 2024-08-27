@@ -121,6 +121,16 @@ export async function getProductsByVendor(storeName: string) {
     }
 }
 
+// Get All Store Names
+export async function getAllStoreNames() {
+    try {
+        const response = await axios.get(`${BACKEND_URL}/custom/store/name`);
+        return response.data;
+    } catch (e) {
+        console.error(`Error fetching store names ${e}`);
+    }
+}
+
 // Get All Product reviews
 export async function getAllProductReviews(customer_id: string) {
     try {

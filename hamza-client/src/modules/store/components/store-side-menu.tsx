@@ -67,11 +67,11 @@ const SideMenu = () => {
                         categoryName="Legendary Light Design"
                     />
                     <CategoryButton
-                        categoryType="gadgets"
+                        categoryType="dauntless"
                         categoryName="Dauntless"
                     />
                     <CategoryButton
-                        categoryType="clothes"
+                        categoryType="medusa_merch"
                         categoryName="Medusa Merch"
                     />
                     <CategoryButton
@@ -88,7 +88,7 @@ const SideMenu = () => {
                         categoryName="Workout Gear"
                     />
                     <CategoryButton
-                        categoryType="games"
+                        categoryType="echo_rift"
                         categoryName="Echo Rift"
                     />
                     <CategoryButton

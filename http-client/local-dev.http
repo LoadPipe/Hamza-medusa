@@ -220,6 +220,11 @@ Content-Type: application/json
 GET http://localhost:9000/custom/vendors
 Content-Type: application/json
 
+
+### Get All Store Names
+GET http://localhost:9000/custom/store/name
+Content-Type: application/json
+
 ### Get Products by Store_id
 POST http://localhost:9000/custom/vendors/vendor-products
 Content-Type: application/json
@@ -352,7 +357,7 @@ Content-Type: application/json
 
 
 ### Get Single BUCKET
-GET http://localhost:9000/custom/order/customer-order?customer_id=cus_01J5V004PET8A6DXW9211ATPC7&bucket=3
+GET http://localhost:9000/custom/order/customer-order?customer_id=cus_01J5V004PET8A6DXW9211ATPC7&bucket=1
 
 ### PUT cart_id to payment_session record 
 PUT http://localhost:9000/custom/payment-session
@@ -366,7 +371,7 @@ Content-Type: application/json
 
 
 ### Get Customer Orders without reviews. getNotReviewed
-GET http://localhost:9000/custom/review/get-customer-not-reviewed?customer_id=cus_01J5NWK29Y8H16NDM2P2K8D09W
+GET http://localhost:9000/custom/review/get-customer-not-reviewed?customer_id=cus_01J5V004PET8A6DXW9211ATPC7
 
 ### POST Let's add products...
 POST http://localhost:9000/custom/product/add-product

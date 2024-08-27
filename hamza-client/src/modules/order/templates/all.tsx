@@ -1,10 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import {
-    orderBucket,
-    orderDetails,
-    singleBucket,
-    cancelOrder,
-} from '@lib/data';
+import React, { useState } from 'react';
+import { cancelOrder } from '@lib/data';
 import {
     Box,
     Button,
@@ -19,10 +14,8 @@ import {
     ModalOverlay,
     Text,
 } from '@chakra-ui/react';
-import OrderCard from '@modules/account/components/order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import CancelOrderModal from '../components/cancel-order-modal';
-import { Textarea } from '@medusajs/ui';
 import Processing from '@modules/order/templates/processing';
 import Shipped from '@modules/order/templates/shipped';
 import Delivered from '@modules/order/templates/delivered';
@@ -67,7 +60,6 @@ const All = ({ orders }: { orders: any[] }) => {
         setIsAttemptedSubmit(false);
     };
 
-    //TODO: this is duplicated code (3x); should be DRYed (likewise with the modal itself)
     const handleCancel = async () => {
         if ((cancelReason?.length ?? 0) < MIN_CANCEL_REASON_LENGTH) {
             setIsAttemptedSubmit(true);

@@ -23,11 +23,6 @@ import { getAllProductReviews, getNotReviewedOrders } from '@lib/data';
 import { EditIcon } from '@chakra-ui/icons';
 import EditReviewTemplate from '@modules/editreview/[id]/edit-review-template';
 import ReviewTemplate from '@modules/review/[id]/review-template';
-import {
-    TiStarFullOutline,
-    TiStarHalfOutline,
-    TiStarOutline,
-} from 'react-icons/ti';
 
 const commonButtonStyles = {
     borderRadius: '8px',
@@ -96,6 +91,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
             const response = await getNotReviewedOrders(
                 authData.customer_id as string
             );
+            console.log(`Response ${JSON.stringify(response)}`);
             if (response.length !== 0) {
                 setPendingReviews(response);
             } else {
@@ -238,44 +234,48 @@ const ReviewPage = ({ region }: { region: Region }) => {
                         <Stack divider={<StackDivider />} spacing={4}>
                             {pendingReviews.map((review: any) => (
                                 <CardBody key={review.id}>
-                                    <Text fontSize="16px">
-                                        <Text as="span" color="#555555">
-                                            Purchase Date:{' '}
-                                        </Text>
-                                        {format(
-                                            new Date(review.created_at),
-                                            'PPP'
-                                        )}
-                                    </Text>
-                                    <div className="flex flex-row space-x-2 items-center">
-                                        <Image
-                                            rounded={'lg'}
-                                            width={'72px'}
-                                            height={'72px'}
-                                            src={
-                                                review.cart.items[0].variant
-                                                    .product.thumbnail
-                                            }
-                                        />
-                                        <Text
-                                            fontSize={'18px'}
-                                            fontWeight={'bold'}
-                                            textTransform="uppercase"
-                                        >
-                                            {
-                                                review.cart.items[0].variant
-                                                    .product.title
-                                            }
-                                        </Text>
-                                        <Button
-                                            onClick={() =>
-                                                handlePendingReview(review)
-                                            }
-                                            colorScheme="green"
-                                        >
-                                            Review
-                                        </Button>
-                                    </div>
+                                    {review.items.length > 0 && (
+                                        <>
+                                            <Text fontSize="16px">
+                                                <Text as="span" color="#555555">
+                                                    Purchase Date:{' '}
+                                                </Text>
+                                                {format(
+                                                    new Date(review.created_at),
+                                                    'PPP'
+                                                )}
+                                            </Text>
+                                            <div className="flex flex-row space-x-2 items-center">
+                                                <Image
+                                                    rounded={'lg'}
+                                                    width={'72px'}
+                                                    height={'72px'}
+                                                    src={
+                                                        review.items[0]
+                                                            .thumbnail
+                                                    }
+                                                />
+                                                <Text
+                                                    fontSize={'18px'}
+                                                    fontWeight={'bold'}
+                                                    textTransform="uppercase"
+                                                >
+                                                    {review.items[0].title}
+                                                    Accessing the first item
+                                                </Text>
+                                                <Button
+                                                    onClick={() =>
+                                                        handlePendingReview(
+                                                            review
+                                                        )
+                                                    }
+                                                    colorScheme="green"
+                                                >
+                                                    Review
+                                                </Button>
+                                            </div>
+                                        </>
+                                    )}
                                 </CardBody>
                             ))}
                         </Stack>
