@@ -129,13 +129,8 @@ Content-Type: application/json
 
 
 ### Get Specific Customers All Reviews
-POST http://localhost:9000/custom/review/customer-reviews
-Content-Type: application/json
+GET http://localhost:9000/custom/review?customer_id=cus_01HYYRFGXRQ44NQXMJK9DDVNB3&product_id=prod_01HYYR4MV4TRXMWH1TQ9KTGWSF
 
-{
-  "customer_id": "cus_01HYYRFGXRQ44NQXMJK9DDVNB3",
-    "product_id": "prod_01HYYR4MV4TRXMWH1TQ9KTGWSF"
-}
 
 ### Get Review Count
 GET http://localhost:9000/custom/review/count?product_id=prod_01HYYR4MV4TRXMWH1TQ9KTGWSF
@@ -194,12 +189,7 @@ Content-Type: application/json
 }
 
 ### Check if customer already left a review
-POST http://localhost:9000/custom/review/exists
-Content-Type: application/json
-
-{
-  "order_id": "order_01HZGXXX8V51W8XQBTH7YPWTPP"
-}
+GET http://localhost:9000/custom/review/exists?order_id=order_01HZGXXX8V51W8XQBTH7YPWTPP
 
 ### Return review and rating of existing product
 GET http://localhost:9000/custom/review/existing?order_id=order_01J3CK60MX8XGWW52W4X0AZTSX&product_id=prod_01J3CF1GXW1C0QSSMPBQR04GBK
@@ -358,7 +348,7 @@ Content-Type: application/json
 
 
 ### Get Customer Orders without reviews. getNotReviewed
-GET http://localhost:9000/custom/review/get-customer-not-reviewed?customer_id=cus_01J5V004PET8A6DXW9211ATPC7
+GET http://localhost:9000/custom/review/not-reviewed?customer_id=cus_01J5V004PET8A6DXW9211ATPC7
 
 ### POST Let's add products...
 POST http://localhost:9000/custom/product/add-product
