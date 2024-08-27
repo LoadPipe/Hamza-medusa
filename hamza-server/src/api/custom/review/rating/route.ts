@@ -16,6 +16,14 @@ export const PATCH = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
+        //require parameters 
+        if (!handler.requireParams(['product_id', 'rating', 'customer_id']))
+            return;
+
+        //enforce security 
+        if (!handler.enforceCustomerId(handler.inputParams.customer_id))
+            return;
+
         const updatedReview = await productReviewService.updateProduct(
             handler.inputParams.product_id,
             handler.inputParams.rating,

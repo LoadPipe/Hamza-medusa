@@ -194,15 +194,10 @@ export async function getAllProductReviews(customer_id: string) {
 
 export async function checkReviewsExistence(order_id: string) {
     try {
-        const response = await axios.post(
+        const response = await axios.get(
             `${BACKEND_URL}/custom/review/exists`,
             {
-                order_id: order_id,
-            },
-            {
-                headers: {
-                    authorization: cookies().get('_medusa_jwt')?.value,
-                },
+                params: { order_id: order_id }
             }
         );
         return response.data;
@@ -237,7 +232,7 @@ export async function checkCustomerReviewExistence(
 export async function getNotReviewed(customer_id: string) {
     try {
         const response = await axios.get(
-            `${BACKEND_URL}/custom/review/get-customer-not-reviewed`,
+            `${BACKEND_URL}/custom/review/not-reviewed`,
             {
                 params: {
                     customer_id: customer_id,
@@ -409,7 +404,7 @@ export async function singleBucket(customer_id: string, bucket: number) {
 export async function getNotReviewedOrders(customer_id: string) {
     try {
         const response = await axios.get(
-            `${BACKEND_URL}/custom/review/get-customer-not-reviewed`,
+            `${BACKEND_URL}/custom/review/not-reviewed`,
             {
                 params: {
                     customer_id: customer_id,

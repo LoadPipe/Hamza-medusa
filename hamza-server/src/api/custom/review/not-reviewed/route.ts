@@ -11,11 +11,19 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         req,
         res,
         'GET',
-        '/custom/review/get-customer-not-reviewed',
+        '/custom/review/not-reviewed',
         ['customer_id']
     );
 
     await handler.handle(async () => {
+        //validate params 
+        if (!handler.requireParam('customer_id'))
+            return;
+
+        //security 
+        if (!handler.enforceCustomerId(handler.inputParams.customer_id))
+            return;
+
         const reviews = await productReviewService.getNotReviewedOrders(
             handler.inputParams.customer_id
         );

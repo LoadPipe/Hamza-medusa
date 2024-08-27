@@ -16,28 +16,49 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        if (handler.inputParams.customer_id?.length) {
+        const hasCustomerId = handler.inputParams.customer_id?.length;
+        const hasProductId = handler.inputParams.product_id?.length;
+
+        if (hasCustomerId) {
             //require security 
             if (!handler.enforceCustomerId(handler.inputParams.customer_id))
                 return;
 
+        }
+
+        let reviews = [];
+
+        if (hasCustomerId && !hasProductId) {
+
             //reviews by customer 
-            const reviews = await productReviewService.getAllCustomerReviews(
+            reviews = await productReviewService.getAllCustomerReviews(
                 handler.inputParams.customer_id
             );
 
             res.json(reviews);
         }
-        else if (handler.inputParams.product_id?.length) {
+        else if (hasProductId && !hasCustomerId) {
 
             //reviews by product
-            const reviews = await productReviewService.getReviews(
+            reviews = await productReviewService.getReviews(
                 handler.inputParams.product_id
             );
             res.json(reviews);
-        } else {
-            res.status(400).json({ message: 'Either customer_id or product_id is required' });
         }
+        else if (hasCustomerId && hasProductId) {
+
+            //reviews by product and customer
+            reviews = await productReviewService.getCustomerReviews(
+                handler.inputParams.product_id,
+                handler.inputParams.customer_id
+            );
+        }
+        else {
+            res.status(400).json({ message: 'Either customer_id or product_id is required' });
+            return;
+        }
+
+        res.json(reviews);
     });
 };
 
