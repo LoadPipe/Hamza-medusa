@@ -23,11 +23,11 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     };
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'GET', '/admin/custom/whitelist'
+        req, res, 'GET', '/admin/custom/whitelist', ['store']
     );
 
     await handler.handle(async () => {
-        await setUpWhitelist(req.query.store?.toString() ?? '');
+        await setUpWhitelist(handler.inputParams.store ?? '');
         res.json({});
     });
 };

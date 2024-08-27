@@ -14,7 +14,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     await handler.handle(async () => {
         await confirmationTokenService.verifyConfirmationToken(
-            req.query.token.toString()
+            handler.inputParams.token
         );
         return res.send({ status: true });
     });

@@ -15,7 +15,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         req,
         res,
         'GET',
-        '/custom/order/customer-orders'
+        '/custom/order/customer-orders',
+        ['customer_id', 'buckets']
     );
 
     await handler.handle(async () => {
@@ -41,7 +42,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                     message: `Customer id ${customerId} not found`,
                 });
             } else {
-                if (req.query.buckets) {
+                if (handler.inputParams.buckets) {
                     const orders = await orderService.getCustomerOrderBuckets(
                         customerId
                     );

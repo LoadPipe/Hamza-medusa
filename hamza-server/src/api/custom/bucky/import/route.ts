@@ -48,11 +48,11 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     await handler.handle(async () => {
         const importData = await getImportData(
-            req.query.store?.toString() ?? 'Medusa Merch'
+            handler.inputParams.store ?? 'Medusa Merch'
         );
 
-        const goodsId = req.query.goodsId?.toString();
-        const link = req.query.link?.toString();
+        const goodsId = handler.inputParams.goodsId?.toString();
+        const link = handler.inputParams.link?.toString();
 
         let output = {};
         if (link) {
@@ -65,12 +65,12 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         }
         else {
             output = await buckyService.importProductsByKeyword(
-                req.query.keyword.toString(),
+                handler.inputParams.keyword.toString(),
                 importData.storeId,
                 importData.collectionId,
                 importData.salesChannelId,
-                parseInt(req.query.count?.toString() ?? '10'),
-                parseInt(req.query.page?.toString() ?? '1'),
+                parseInt(handler.inputParams.count?.toString() ?? '10'),
+                parseInt(handler.inputParams.page?.toString() ?? '1'),
                 goodsId
             );
         }
