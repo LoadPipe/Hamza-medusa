@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useRef, useState } from 'react';
 import ProductCollections from '@modules/collections/product_collection_filter';
 import {
     Flex,
@@ -29,20 +29,11 @@ import {
     AlertIcon,
     AlertTitle,
     AlertDescription,
-    Card,
-    CardHeader,
-    CardBody,
-    Stack,
-    StackDivider,
-    CardFooter,
     FormErrorMessage,
     Divider,
 } from '@chakra-ui/react';
-import axios from 'axios';
-import ProductCardGroup from '@modules/products/components/product-group-vendor';
 import VendorProductDisplay from '@modules/vendors/components/products/vendor-product-display';
 import { getVendorStoreBySlug } from '@lib/data';
-import { format } from 'date-fns';
 import {
     MdOutlineKeyboardArrowRight,
     MdOutlineKeyboardArrowUp,
@@ -70,28 +61,29 @@ export default function Page({ params }: { params: { slug: string } }) {
     // reveal more text mobile about
     const [showMore, setShowMore] = useState(3);
     console.log(`slug name ${displaySlug}`);
-    // can I get a store_id from vendor name??
-    // yes you can so let's do that, /custom/vendors/vendor-reviews
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                //TODO: MOVE TO INDEX.TS
-                const response = await axios.post(
-                    `${BACKEND_URL}/custom/vendors/vendor-store`,
-                    {
-                        store_name: displaySlug,
-                    }
-                );
-                console.log(`Response ${JSON.stringify(response.data)}`);
-                setReviewStats(response.data);
-                console.log(`THUMBNAIL: ${response.data.icon}`);
-            } catch (error) {
-                console.log(`Error ${error}`);
-            }
-        };
 
-        fetchData();
-    }, [displaySlug]);
+    useEffect(() => {
+        getVendorPage();
+    }, [params.slug]);
+
+    const getVendorPage = async () => {
+        try {
+            console.log(`Display Slug is ${displaySlug}`);
+            const response = await getVendorStoreBySlug(displaySlug);
+            if (
+                response &&
+                JSON.stringify(response) !== JSON.stringify(reviewStats)
+            ) {
+                console.log(`Response ${JSON.stringify(response)}`);
+                setReviewStats(response);
+                console.log(`THUMBNAIL: ${response.thumbnail}`);
+            } else {
+                console.log('Response was null or no data changes');
+            }
+        } catch (error) {
+            console.log(`Error ${error}`);
+        }
+    };
 
     let readableDate = 'Invalid date';
     if (reviewStats.createdAt) {

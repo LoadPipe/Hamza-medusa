@@ -244,7 +244,7 @@ Content-Type: application/json
 
 
 ### Get Vendor by Store Name
-GET http://localhost:9000/custom/vendors/vendor-store?store_name=Legos
+GET http://localhost:9000/custom/vendors/vendor-store?store_name=Medusa Merch
 Content-Type: application/json
 
 

@@ -82,13 +82,13 @@ export async function getVendorStoreBySlug(store_name: string) {
             `${BACKEND_URL}/custom/vendors/vendor-store`,
             {
                 params: {
-                    store_name: store_name,
+                    store_name,
                 },
             }
         );
         return response.data;
     } catch (error) {
-        console.log(error);
+        console.error('API error:', error);
         return null;
     }
 }
