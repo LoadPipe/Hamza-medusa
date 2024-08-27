@@ -11,6 +11,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         'customer_id'
     ]);
 
+    //TODO: this doesn't need to be here; it exists elsewhere for sure
     await handler.handle(async () => {
         const verify =
             await productReviewService.customerIsVerified(handler.inputParams.customer_id);

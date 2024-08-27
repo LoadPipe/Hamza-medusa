@@ -95,4 +95,8 @@ export class RouteHandler {
 
         return true;
     }
+
+    requireParam(param: string): boolean {
+        return this.requireParams[param];
+    }
 }
