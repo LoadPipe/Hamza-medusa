@@ -79,17 +79,6 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                     </Flex>
                 </Flex>
 
-                {!!discount_total && (
-                    <div className="flex items-center justify-between">
-                        <span>Discount</span>
-                    </div>
-                )}
-                {!!gift_card_total && (
-                    <div className="flex items-center justify-between">
-                        <span>Gift card</span>
-                    </div>
-                )}
-
                 {/* Shipping Cost */}
                 <Flex color="#555555" justifyContent={'space-between'}>
                     <Text fontSize={{ base: '14px', md: '16px' }}>
