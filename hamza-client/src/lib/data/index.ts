@@ -178,14 +178,11 @@ export async function getAllStoreNames() {
 // Get All Product reviews
 export async function getAllProductReviews(customer_id: string) {
     try {
-        const response = await axios.get(
-            `${BACKEND_URL}/custom/review`,
-            {
-                params: {
-                    customer_id: customer_id,
-                },
-            }
-        );
+        const response = await axios.get(`${BACKEND_URL}/custom/review`, {
+            params: {
+                customer_id: customer_id,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -197,7 +194,7 @@ export async function checkReviewsExistence(order_id: string) {
         const response = await axios.get(
             `${BACKEND_URL}/custom/review/exists`,
             {
-                params: { order_id: order_id }
+                params: { order_id: order_id },
             }
         );
         return response.data;
@@ -229,6 +226,22 @@ export async function checkCustomerReviewExistence(
     }
 }
 
+export async function getCompleteTemplate(cart_id: string) {
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/order/complete-template`,
+            {
+                params: {
+                    cart_id,
+                },
+            }
+        );
+        return response.data;
+    } catch (e) {
+        console.log(`Can't Retrieve cart templatr ${e}`);
+    }
+}
+
 export async function getNotReviewed(customer_id: string) {
     try {
         const response = await axios.get(
@@ -250,14 +263,11 @@ export async function getNotReviewed(customer_id: string) {
 
 export async function allReviews(product_id: string) {
     try {
-        const response = await axios.get(
-            `${BACKEND_URL}/custom/review`,
-            {
-                params: {
-                    product_id: product_id,
-                },
-            }
-        );
+        const response = await axios.get(`${BACKEND_URL}/custom/review`, {
+            params: {
+                product_id: product_id,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -481,7 +491,7 @@ export async function averageRatings(product_id: string) {
             {
                 params: {
                     product_id: product_id,
-                }
+                },
             }
         );
         return response.data;
@@ -492,12 +502,9 @@ export async function averageRatings(product_id: string) {
 
 export async function reviewCounter(product_id: string) {
     try {
-        const response = await axios.get(
-            `${BACKEND_URL}/custom/review/count`,
-            {
-                params: { product_id: product_id }
-            }
-        );
+        const response = await axios.get(`${BACKEND_URL}/custom/review/count`, {
+            params: { product_id: product_id },
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching review count:', error);
@@ -606,7 +613,6 @@ export async function vendorReviews(store_id: string) {
 }
 
 export async function getCheckoutData(cart_id: string) {
-    //TODO: MOVE TO INDEX.TS
     const response = await axios.get(`${BACKEND_URL}/custom/checkout`, {
         params: {
             cart_id,

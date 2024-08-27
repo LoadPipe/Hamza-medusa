@@ -312,12 +312,9 @@ Content-Type: application/json
 }
 
 ### Get Order Template Information
-POST http://localhost:9000/custom/order/complete-template
+GET http://localhost:9000/custom/order/complete-template?cart_id=cart_01J5V15F5CD46RYN7YK2A9RH3D
 Content-Type: application/json
 
-{
-  "cart_id": "cart_01J1AD0YVD46WW4JWWNE33G2SX"
-}
 
 ### GET Request to cancel order
 POST http://localhost:9000/custom/cart/cancel
