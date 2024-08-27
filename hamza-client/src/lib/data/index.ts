@@ -79,7 +79,7 @@ export async function getVendors() {
 export async function getVendorStoreBySlug(store_name: string) {
     try {
         const response = await axios.get(
-            `${BACKEND_URL}/custom/vendors/vendor-store`,
+            `${BACKEND_URL}/custom/store`,
             {
                 params: {
                     store_name,
