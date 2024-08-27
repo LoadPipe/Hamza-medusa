@@ -2,8 +2,6 @@ import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import ProductReviewService from 'src/services/product-review';
 import { RouteHandler } from '../../../route-handler';
 
-//TODO: this and all-reviews, all-customer-reviews, customer-reviews, etc. can be consolidated 
-
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const productReviewService: ProductReviewService = req.scope.resolve(
         'productReviewService'

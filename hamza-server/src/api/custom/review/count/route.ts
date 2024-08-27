@@ -7,7 +7,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         'productReviewService'
     );
 
-    const handler: RouteHandler = new RouteHandler(req, res, 'POST', '/custom/review/count', [
+    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/review/count', [
         'product_id'
     ]);
 

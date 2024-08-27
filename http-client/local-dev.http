@@ -124,7 +124,7 @@ Content-Type: application/json
 }
 
 ### Get All Product Reviews
-GET http://localhost:9000/custom/review/all-reviews?product_id=prod_01J5R22FTSYT5MSYDEHGJME9BH
+GET http://localhost:9000/custom/review?product_id=prod_01J5R22FTSYT5MSYDEHGJME9BH
 Content-Type: application/json
 
 
@@ -138,20 +138,10 @@ Content-Type: application/json
 }
 
 ### Get Review Count
-POST http://localhost:9000/custom/review/count
-Content-Type: application/json
-
-{
-  "product_id": "prod_01HYYR4MV4TRXMWH1TQ9KTGWSF"
-}
+GET http://localhost:9000/custom/review/count?product_id=prod_01HYYR4MV4TRXMWH1TQ9KTGWSF
 
 ### Get Average Rating
-POST http://localhost:9000/custom/review/average
-Content-Type: application/json
-
-{
-  "product_id": "prod_01HYYR4MHSPM9Q2P5HNV55BJA1"
-}
+GET http://localhost:9000/custom/review/average?product_id=prod_01HYYR4MHSPM9Q2P5HNV55BJA1
 
 ### Update Product Review
 PATCH http://localhost:9000/custom/review/content
@@ -195,7 +185,7 @@ Content-Type: application/json
 }
 
 ### Check if Customer has bought product
-POST http://localhost:9000/custom/review/bought
+GET http://localhost:9000/custom/review/bought
 Content-Type: application/json
 
 {
@@ -261,7 +251,7 @@ Content-Type: application/json
 }
 
 ### Get Specific Customer All Reviews
-GET http://localhost:9000/custom/review/all-customer-reviews?customer_id=cus_01J3CF43WK0QT2591VHG9JT07E
+GET http://localhost:9000/custom/review?customer_id=cus_01J3CF43WK0QT2591VHG9JT07E
 Content-Type: application/json
 
 

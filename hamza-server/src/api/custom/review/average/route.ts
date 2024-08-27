@@ -1,18 +1,21 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import ProductReviewService from 'src/services/product-review';
-import { readRequestBody } from '../../../../utils/request-body';
 import { RouteHandler } from '../../../route-handler';
 
-export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
+export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const productReviewService: ProductReviewService = req.scope.resolve(
         'productReviewService'
     );
 
-    const handler: RouteHandler = new RouteHandler(req, res, 'POST', '/custom/review/average', [
+    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/review/average', [
         'product_id'
     ]);
 
     await handler.handle(async () => {
+        //validate params 
+        if (!handler.requireParam('product_id'))
+            return;
+
         const reviews = await productReviewService.getAverageRating(handler.inputParams.product_id);
         res.json(reviews);
     });

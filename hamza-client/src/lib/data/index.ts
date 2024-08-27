@@ -135,7 +135,7 @@ export async function getAllStoreNames() {
 export async function getAllProductReviews(customer_id: string) {
     try {
         const response = await axios.get(
-            `${BACKEND_URL}/custom/review/all-customer-reviews`,
+            `${BACKEND_URL}/custom/review`,
             {
                 params: {
                     customer_id: customer_id,
@@ -212,7 +212,7 @@ export async function getNotReviewed(customer_id: string) {
 export async function allReviews(product_id: string) {
     try {
         const response = await axios.get(
-            `${BACKEND_URL}/custom/review/all-reviews`,
+            `${BACKEND_URL}/custom/review`,
             {
                 params: {
                     product_id: product_id,
@@ -429,10 +429,12 @@ export async function getVerificationStatus(customer_id: string) {
 
 export async function averageRatings(product_id: string) {
     try {
-        const response = await axios.post(
+        const response = await axios.get(
             `${BACKEND_URL}/custom/review/average`,
             {
-                product_id: product_id,
+                params: {
+                    product_id: product_id,
+                }
             }
         );
         return response.data;
@@ -443,29 +445,15 @@ export async function averageRatings(product_id: string) {
 
 export async function reviewCounter(product_id: string) {
     try {
-        const response = await axios.post(
+        const response = await axios.get(
             `${BACKEND_URL}/custom/review/count`,
             {
-                product_id: product_id,
+                params: { product_id: product_id }
             }
         );
         return response.data;
     } catch (error) {
         console.error('Error fetching review count:', error);
-    }
-}
-
-export async function reviewResponse(product_id: string) {
-    try {
-        const response = await axios.post(
-            `${BACKEND_URL}/custom/review/all-reviews`,
-            {
-                product_id: product_id,
-            }
-        );
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching review response:', error);
     }
 }
 
