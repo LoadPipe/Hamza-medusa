@@ -1,14 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import React, { Suspense, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ProductCollections from '@modules/collections/product_collection_filter';
 import {
     Flex,
     Box,
-    Grid,
-    GridItem,
-    Heading,
     Text,
     Image,
     Button,
@@ -21,7 +18,6 @@ import {
     ModalCloseButton,
     FormControl,
     FormLabel,
-    Input,
     Textarea,
     Select,
     useDisclosure,
