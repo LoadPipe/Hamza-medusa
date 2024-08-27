@@ -328,7 +328,8 @@ export class BasicCheckoutProcessor {
             );
         }
 
-        return await Promise.all(promises);
+        const orders = await Promise.all(promises);
+        return orders;
     }
 
     protected async updatePaymentFromOrder(

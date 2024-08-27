@@ -7,10 +7,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const wishlistService: WishlistService =
         req.scope.resolve('wishlistService'); // Correctly retrieving from query parameters
 
-    const handler = new RouteHandler(req, res, 'GET', '/custom/wishlist');
+    const handler = new RouteHandler(req, res, 'GET', '/custom/wishlist', ['customer_id']);
 
     await handler.handle(async () => {
-        const customer_id = req.query.customer_id;
+        const customer_id = handler.inputParams.customer_id;
 
         if (!customer_id) {
             // Respond with an error if no customer_id is provided

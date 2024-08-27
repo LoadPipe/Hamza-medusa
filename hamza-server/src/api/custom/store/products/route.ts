@@ -21,7 +21,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         if (!handler.requireParams(['store_name']))
             return;
 
-        const storeName = handler.inputParams.storeName;
+        const storeName = handler.inputParams.store_name;
 
         let list_products = [];
         if (storeName?.length) {

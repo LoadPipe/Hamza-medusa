@@ -22,7 +22,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        const orders = await orderService.getOrdersForCart(req.query.cart_id.toString());
+        const orders = await orderService.getOrdersForCart(handler.inputParams.cart_id);
         const output: ICheckoutData[] = [];
         orders.forEach((o) => {
             output.push({
@@ -37,6 +37,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 orders,
             });
         });
+        console.log(output);
         handler.logger.debug(`returning checkout data: ${output}`);
         res.send({ orders: output });
     });
@@ -46,7 +47,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'POST', '/custom/checkout', ['cartProducts',
+        req, res, 'POST', '/custom/checkout', [
+        'cart_products',
         'cart_id',
         'transaction_id',
         'payer_address',
@@ -55,7 +57,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
     await handler.handle(async () => {
         await orderService.finalizeCheckout(
-            handler.inputParams.cartProducts,
+            handler.inputParams.cart_products,
             handler.inputParams.cart_id,
             handler.inputParams.transaction_id,
             handler.inputParams.payer_address,

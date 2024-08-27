@@ -12,11 +12,12 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         req,
         res,
         'GET',
-        '/admin/custom/bucky/track'
+        '/admin/custom/bucky/track',
+        ['order']
     );
 
     await handler.handle(async () => {
-        const orderId = req.query.order.toString();
+        const orderId = handler.inputParams.order;
 
         //const order: Order = await orderService.retrieve(orderId);
         //const metadata = JSON.parse(order.bucky_metadata);

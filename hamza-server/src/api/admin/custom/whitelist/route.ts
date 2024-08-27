@@ -27,7 +27,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        await setUpWhitelist(req.query.store?.toString() ?? '');
+        await setUpWhitelist(handler.inputParams.store ?? '');
         res.json({});
     });
 };

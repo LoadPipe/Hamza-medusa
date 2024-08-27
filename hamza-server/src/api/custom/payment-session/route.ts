@@ -22,13 +22,10 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
             return;
 
         const cartId = handler.inputParams.cart_id;
-        const paymentSessionId = handler.inputParams.cart_id;
+        const paymentSessionId = handler.inputParams.payment_session_id;
 
         //check for existence of cart
         const cart: Cart = await cartService.retrieve(cartId);
-        if (!cart) {
-            res.status(404).json({ message: `Cart ${cartId} not found.` });
-        }
         if (!cart) {
             res.status(404).json({ message: `Cart ${cartId} not found.` });
         }
