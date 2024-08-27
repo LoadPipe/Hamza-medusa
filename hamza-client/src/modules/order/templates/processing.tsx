@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-    cancelOrder,
-    orderBucket,
-    orderDetails,
-    orderStatus,
-    singleBucket,
-} from '@lib/data';
+import { cancelOrder, orderStatus, singleBucket } from '@lib/data';
 import {
     Box,
     Button,
@@ -32,6 +26,7 @@ import {
     Modal,
 } from '@chakra-ui/react';
 import { BsCircleFill } from 'react-icons/bs';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
 
 import ProcessingOrderCard from '@modules/account/components/processing-order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
@@ -82,6 +77,14 @@ const Processing = ({ orders }: { orders: any[] }) => {
         } catch (error) {
             console.error('Error cancelling order: ', error);
         }
+    };
+
+    const getAmount = (amount?: number | null, currency_code: string) => {
+        if (amount === null || amount === undefined) {
+            return;
+        }
+
+        return formatCryptoPrice(amount, currency_code || 'USDC');
     };
 
     useEffect(() => {
@@ -275,7 +278,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                         {/* Example timeline event */}
                                                                         {[
                                                                             {
-                                                                                status: 'Product Shipped',
+                                                                                status: `Shipment Status: \t ${item.has_shipping ? 'Item has shipped' : 'Item has not shipped yet'}`,
                                                                                 date: '18/07/2024 | 6:12 pm',
                                                                                 trackingNumber:
                                                                                     '5896-0991-7811',
@@ -295,26 +298,59 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     'DHL Express',
                                                                             },
                                                                             {
-                                                                                status: 'Order Confirmed',
-                                                                                date: '18/07/2024 | 3:49 pm',
+                                                                                status: `Order Confirmation: \t ${order.status}`,
+                                                                                date: `${new Date(
+                                                                                    order.created_at
+                                                                                ).toLocaleDateString(
+                                                                                    undefined,
+                                                                                    {
+                                                                                        year: 'numeric',
+                                                                                        month: '2-digit',
+                                                                                        day: '2-digit',
+                                                                                        hour: '2-digit',
+                                                                                        minute: '2-digit',
+                                                                                        second: '2-digit',
+                                                                                        hour12: true,
+                                                                                    }
+                                                                                )}`,
                                                                             },
                                                                             {
-                                                                                status: 'Payment Complete',
-                                                                                date: '18/07/2024 | 3:43 pm',
-                                                                                paymentDetails:
-                                                                                    'Paid with USDC via Binance Smart Chain. Total payment: 1499.99 USDC.',
+                                                                                status: `Payment Status: \t${order.payment_status}`,
+                                                                                date: `${new Date(
+                                                                                    order.created_at
+                                                                                ).toLocaleDateString(
+                                                                                    undefined,
+                                                                                    {
+                                                                                        year: 'numeric',
+                                                                                        month: '2-digit',
+                                                                                        day: '2-digit',
+                                                                                        hour: '2-digit',
+                                                                                        minute: '2-digit',
+                                                                                        second: '2-digit',
+                                                                                        hour12: true,
+                                                                                    }
+                                                                                )}`,
+                                                                                paymentDetails: `Paid with ${item.currency_code.toUpperCase()}. Total payment: ${getAmount(item.unit_price, item.currency_code)} ${item.currency_code.toUpperCase()}`,
                                                                                 receiptLink:
                                                                                     'View receipt',
                                                                             },
-                                                                            {
-                                                                                status: 'Payment On Process',
-                                                                                date: '18/07/2024 | 3:43 pm',
-                                                                                paymentDetails:
-                                                                                    'Paid with USDC via Binance Smart Chain. Total payment: 1499.99 USDC.',
-                                                                            },
+
                                                                             {
                                                                                 status: 'Order Placed',
-                                                                                date: '18/07/2024 | 3:43 pm',
+                                                                                date: `${new Date(
+                                                                                    item.created_at
+                                                                                ).toLocaleDateString(
+                                                                                    undefined,
+                                                                                    {
+                                                                                        year: 'numeric',
+                                                                                        month: '2-digit',
+                                                                                        day: '2-digit',
+                                                                                        hour: '2-digit',
+                                                                                        minute: '2-digit',
+                                                                                        second: '2-digit',
+                                                                                        hour12: true,
+                                                                                    }
+                                                                                )}`,
                                                                             },
                                                                         ].map(
                                                                             (
@@ -603,15 +639,31 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     Information:
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    Rock
-                                                                                    Rocks
-                                                                                    Pa
-                                                                                    Daet
-                                                                                    Sub-district,
-                                                                                    50100,
-                                                                                    Chiang
-                                                                                    Mai
-                                                                                    CA
+                                                                                    {
+                                                                                        order
+                                                                                            .shipping_address
+                                                                                            .address_1
+                                                                                    }{' '}
+                                                                                    {
+                                                                                        order
+                                                                                            .shipping_address
+                                                                                            .city
+                                                                                    }{' '}
+                                                                                    {
+                                                                                        order
+                                                                                            .shipping_address
+                                                                                            .province
+                                                                                    }{' '}
+                                                                                    {
+                                                                                        order
+                                                                                            .shipping_address
+                                                                                            .postal_code
+                                                                                    }{' '}
+                                                                                    {
+                                                                                        order
+                                                                                            .shipping_address
+                                                                                            .country_code
+                                                                                    }
                                                                                 </Text>
                                                                             </Box>
                                                                             <Box>
