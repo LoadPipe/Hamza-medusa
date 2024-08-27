@@ -1,4 +1,4 @@
-import { MedusaRequest, MedusaResponse, Logger, CartService, PaymentSession, Cart, PaymentSessionResponse } from '@medusajs/medusa';
+import { MedusaRequest, MedusaResponse, Logger, CartService, PaymentSession, Cart, PaymentSessionResponse, Payment, PaymentSessionStatus } from '@medusajs/medusa';
 import PaymentSessionRepository from '@medusajs/medusa/dist/repositories/payment-session';
 import { RouteHandler } from '../../route-handler';
 
@@ -22,7 +22,7 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
             return;
 
         const cartId = handler.inputParams.cart_id;
-        const paymentSessionId = handler.inputParams.cart_id;
+        const paymentSessionId = handler.inputParams.payment_session_id;
 
         //check for existence of cart
         const cart: Cart = await cartService.retrieve(cartId);
@@ -33,23 +33,33 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
             res.status(404).json({ message: `Cart ${cartId} not found.` });
         }
 
-        //check for existence of payment session
-        const paymentSession: PaymentSession = await paymentSessionRepository.findOne(
-            { where: { id: paymentSessionId } }
-        );
-        if (!paymentSession) {
-            res.status(404).json({ message: `PaymentSession ${paymentSessionId} not found.` });
-        }
-
         //secure 
         if (!handler.enforceCustomerId(cart.customer_id))
             return;
 
-        //save the payment session
-        let session = await paymentSessionRepository.save([{
-            id: paymentSessionId,
-            cart_id: handler.inputParams.cart_id
-        }]);
+        //check for existence of payment session
+        let session: PaymentSession = await paymentSessionRepository.findOne(
+            { where: { id: paymentSessionId } }
+        );
+        if (!session) {
+            session = await paymentSessionRepository.create();
+            session.cart_id = handler.inputParams.cart_id;
+            session.status = PaymentSessionStatus.PENDING;
+            session.provider_id = 'crypto';
+            session.amount = 0;
+
+            await paymentSessionRepository.save(session);
+        }
+        else {
+            session.cart_id = handler.inputParams.cart_id;
+
+            //save the payment session
+            await paymentSessionRepository.save([{
+                id: paymentSessionId,
+                cart_id: handler.inputParams.cart_id
+            }]);
+        }
+
 
         return res.status(200).send(session);
     });
