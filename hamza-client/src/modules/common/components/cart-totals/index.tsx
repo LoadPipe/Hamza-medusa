@@ -151,18 +151,11 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                 }}
             />
             {subtotals[currencyCode] && (
-                <Flex
-                    color={'white'}
-                    justifyContent={'space-between'}
-                    alignItems="center"
-                >
-                    <Text
-                        alignSelf="center"
-                        fontSize={{ base: '15px', md: '16px' }}
-                    >
+                <Flex color={'white'} justifyContent={'space-between'}>
+                    <Text mt="auto" fontSize={{ base: '15px', md: '16px' }}>
                         Total
                     </Text>
-                    <Flex flexDirection={'row'} alignItems="center">
+                    <Flex flexDirection={'row'}>
                         <Flex alignItems={'center'}>
                             <Image
                                 className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
