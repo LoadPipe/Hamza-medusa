@@ -13,7 +13,7 @@ import {
 } from '@medusajs/medusa';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { cache } from 'react';
-import jwt from 'jsonwebtoken';
+import { decode } from 'jsonwebtoken';
 
 import sortProducts from '@lib/util/sort-products';
 import transformProductPreview from '@lib/util/transform-product-preview';
@@ -887,8 +887,8 @@ export async function getSession() {
 export async function getCustomer() {
     const headers = getMedusaHeaders(['customer']);
     console.log(headers);
-    const token = jwt.decode(cookies().get('_medusa_jwt')?.value);
-    const customer_id: string = token.customer_id;
+    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? { customer_id: '' };
+    const customer_id: string = token?.customer_id ?? '';
 
     const response = await axios.get(
         `${BACKEND_URL}/custom/customer`, {
