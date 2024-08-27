@@ -22,6 +22,7 @@ import Image from 'next/image';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/router';
 import { getObjectFit } from '@modules/get-object-fit';
+import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
 
 interface ProductCardProps {
     variantID: string;
@@ -226,15 +227,11 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                         </Flex>
 
                         <Flex alignItems="center">
-                            <Flex
-                                wrap={'nowrap'}
-                                width={{ base: '14px', md: '16px' }}
-                                height={{ base: '14px', md: '16px' }}
-                            >
+                            <Flex mb="1px">
                                 <Image
-                                    src={require('../../../../../../public/images/currencies/usdc-icon.svg')}
-                                    alt="usdc"
-                                    style={{ width: '100%', height: '100%' }}
+                                    className="h-[18px] w-[18px] md:h-[20px] md:w-[20px]"
+                                    src={currencyIcons[currencyCode]}
+                                    alt={currencyCode}
                                 />
                             </Flex>
 
@@ -247,8 +244,9 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                                 fontWeight="700"
                                 fontSize={{ base: '14px', md: '18px' }}
                             >
-                                {`${productPrice} ${currencyCode.toUpperCase()} `}
+                                {`${productPrice}`}
                                 <Text
+                                    ml="5px"
                                     as="span"
                                     display={{
                                         base: 'none',

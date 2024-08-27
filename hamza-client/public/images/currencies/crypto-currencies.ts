@@ -1,11 +1,11 @@
-import ETH from './eth-icon.svg';
-import USDC from './usdc-icon.svg';
-import USDT from './usdt-icon.svg';
+import ethIcom from './eth-icon.svg';
+import usdcIcon from './usdc-icon.svg';
+import usdtIcon from './usdt-icon.svg';
 
 const currencyIcons: Record<string, any> = {
-    ETH: ETH,
-    USDC: USDC,
-    USDT: USDT,
+    eth: ethIcom,
+    usdc: usdcIcon,
+    usdt: usdtIcon,
 };
 
 export default currencyIcons;
