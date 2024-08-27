@@ -163,17 +163,20 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                         Total
                     </Text>
                     <Flex flexDirection={'row'} alignItems="center">
-                        <Flex mb="1px">
+                        <Flex alignItems={'center'}>
                             <Image
-                                className="sm:h-6 sm:w-6 md:h-5 md:w-5"
+                                className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
                                 src={currencyIcons[currencyCode]}
                                 alt="eth"
                             />
                         </Flex>
                         <Text
-                            ml="6px"
+                            ml={{ base: '0.4rem', md: '0.5rem' }}
                             fontSize={{ base: '15px', md: '24px' }}
                             fontWeight={700}
+                            lineHeight="1.1" // Fine-tune line height
+                            position="relative" // Allows for slight adjustments with top
+                            top="1px" // Adjust to fine-tune alignment
                         >
                             {formatCryptoPrice(grandTotal, currencyCode)}
                         </Text>

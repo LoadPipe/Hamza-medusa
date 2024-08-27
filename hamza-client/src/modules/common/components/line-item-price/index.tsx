@@ -1,16 +1,17 @@
 import { formatAmount } from '@lib/util/prices';
 import { LineItem, Region } from '@medusajs/medusa';
 import { clx } from '@medusajs/ui';
-
+import Image from 'next/image';
 import { getPercentageDiff } from '@lib/util/get-precentage-diff';
 import { CalculatedVariant } from 'types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { Text } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useCustomerProfileStore } from '@store/customer-profile/customer-profile';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { getCustomer } from '@lib/data';
 import axios from 'axios';
+import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -92,23 +93,29 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                         </span>
                     </>
                 )}
-                <Text
-                    as="span"
-                    fontSize={{ base: '14px', md: '24px' }}
-                    fontWeight={700}
-                    style={{ color: 'white' }}
-                    className={clx('text-base-regular', {
-                        'text-ui-fg-interactive': hasReducedPrice,
-                    })}
-                >
-                    {price && currencyCode && (
-                        <>
-                            {formatCryptoPrice(price, currencyCode) +
-                                ' ' +
-                                currencyCode?.toUpperCase()}
-                        </>
-                    )}
-                </Text>
+
+                {price && currencyCode && (
+                    <Flex flexDirection={'row'} alignItems="center">
+                        <Flex alignItems={'center'}>
+                            <Image
+                                className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
+                                src={currencyIcons[currencyCode]}
+                                alt="eth"
+                            />
+                        </Flex>
+                        <Text
+                            ml={{ base: '0.4rem', md: '0.5rem' }}
+                            fontSize={{ base: '15px', md: '24px' }}
+                            fontWeight={700}
+                            lineHeight="1.1" // Fine-tune line height
+                            position="relative" // Allows for slight adjustments with top
+                            top="1px" // Adjust to fine-tune alignment
+                            color={'white'}
+                        >
+                            {formatCryptoPrice(price, currencyCode)}
+                        </Text>
+                    </Flex>
+                )}
             </div>
         </div>
     );

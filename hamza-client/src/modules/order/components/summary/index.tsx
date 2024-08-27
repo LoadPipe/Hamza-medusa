@@ -15,6 +15,8 @@ import Thumbnail from '@modules/products/components/thumbnail';
 import Tweet from '@/components/tweet';
 import { useRouter, useParams } from 'next/navigation';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import Image from 'next/image';
+import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -106,15 +108,31 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
                         </Flex>
                     </Flex>
 
-                    <Flex mt="2rem">
-                        <Text>Subtotal</Text>
-                        <Text ml="auto">
-                            {formatCryptoPrice(
-                                product.unit_price,
-                                product.currency_code
-                            )}{' '}
-                            {product.currency_code.toUpperCase()}
+                    <Flex
+                        color="white"
+                        justifyContent={'space-between'}
+                        mt="2rem"
+                    >
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
+                            Subtotal
                         </Text>
+
+                        <Flex>
+                            <Image
+                                className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                src={currencyIcons[product.currency_code]}
+                                alt={product.currency_code}
+                            />
+                            <Text
+                                ml="0.4rem"
+                                fontSize={{ base: '14px', md: '16px' }}
+                            >
+                                {formatCryptoPrice(
+                                    product.unit_price,
+                                    product.currency_code
+                                )}
+                            </Text>
+                        </Flex>
                     </Flex>
                 </Box>
             ))}
@@ -123,51 +141,3 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
 };
 
 export default Summary;
-
-{
-    /* <Tweet productHandle={product.handle} isPurchased={true} />
-<Box mb={4}>
-    <Heading size="md">{product.title}</Heading>
-    <div
-        className="mt-2"
-        dangerouslySetInnerHTML={{
-            __html: product.description,
-        }}
-    ></div>
-</Box>
-<Stack spacing={2}>
-    <Text>
-        {new Date(product.created_at).toDateString()}
-    </Text>
-    <Text>Product SKU: {product.id}</Text>
-    <Text>Order ID: {product.order_id}</Text>
-    <Text>
-        {formatCryptoPrice(
-            product.unit_price,
-            product.currency_code
-        )}{' '}
-        {product.currency_code.toUpperCase()}
-    </Text>
-    <Text>Store Name: {product.store_name}</Text>
-</Stack>
-
-<LocalizedClientLink href={`/products/${product.handle}`}>
-    <Thumbnail
-        thumbnail={product.thumbnail}
-        images={[]}
-        size="small"
-    />
-</LocalizedClientLink>
-<Button
-    my={4}
-    backgroundColor={'black'}
-    color="white"
-    onClick={() =>
-        router.push(
-            `/${countryCode}/vendor/${product.store_name}`
-        )
-    }
->
-    Vendor Store
-</Button> */
-}

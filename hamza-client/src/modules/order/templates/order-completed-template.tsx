@@ -81,15 +81,6 @@ export default function OrderCompletedTemplate({
                     </Text>
                 </Flex>
             </Link>
-
-            {/* <CartTotals  /> */}
-            {/* <OrderDetails order={order} />
-                    <Heading as="h2" size="md" textAlign="center">
-                        Summary
-                    </Heading>
-                    <Summary cart_id={order.cart_id} />
-                    <PaymentDetails order={order} />
-                    <Help /> */}
         </Flex>
     );
 }
