@@ -79,7 +79,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
         }
     };
 
-    const getAmount = (amount?: number | null, currency_code: string) => {
+    const getAmount = (amount?: number | null, currency_code?: string) => {
         if (amount === null || amount === undefined) {
             return;
         }

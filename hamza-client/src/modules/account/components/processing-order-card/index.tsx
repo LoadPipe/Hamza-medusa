@@ -34,6 +34,8 @@ type Order = {
 type OrderCardProps = {
     order: Order;
     handle: any;
+    vendorName: string;
+    address: any;
 };
 
 const ProcessingOrderCard = ({
