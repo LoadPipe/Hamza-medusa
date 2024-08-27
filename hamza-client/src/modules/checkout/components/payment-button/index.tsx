@@ -24,7 +24,7 @@ import {
     getMasterSwitchAddress,
 } from 'contracts.config';
 import toast from 'react-hot-toast';
-import { checkoutMode, cancelOrderFromCart } from '@lib/data/index';
+import { checkoutMode, cancelOrderCart } from '@lib/data/index';
 
 //TODO: we need a global common function to replace this
 const MEDUSA_SERVER_URL =
@@ -271,7 +271,7 @@ const CryptoPaymentButton = ({
     const cancelOrderFromCart = async () => {
         try {
             //TODO: MOVE TO INDEX.TS
-            let response = await cancelOrderFromCart(cart.id);
+            let response = await cancelOrderCart(cart.id);
             return;
         } catch (e) {
             console.log('error in cancelling order ', e);

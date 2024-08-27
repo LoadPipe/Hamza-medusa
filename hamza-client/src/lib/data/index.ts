@@ -353,7 +353,7 @@ export async function removeNotifications(customer_id: string) {
     }
 }
 
-export async function cancelOrderFromCart(cart_id: string) {
+export async function cancelOrderCart(cart_id: string) {
     try {
         const response = await axios.post(`${BACKEND_URL}/custom/cart/cancel`, {
             data: {
