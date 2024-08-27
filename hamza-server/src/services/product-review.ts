@@ -24,21 +24,6 @@ class ProductReviewService extends TransactionBaseService {
         this.logger = container.logger;
     }
 
-    async customerIsVerified(customer_id) {
-        const customerRepository = this.activeManager_.getRepository(Customer);
-        this.logger.debug(`Customer ID is: ${customer_id}`);
-        const customer = await customerRepository.findOne({
-            where: { id: customer_id },
-        });
-        if (!customer) {
-            throw new Error('Customer not found');
-        }
-        this.logger.debug(`Customer Email is: ${customer.email}`);
-
-        // Returns true if the email does NOT include '@evm.blockchain'
-        return customer.email.includes('@evm.blockchain');
-    }
-
     async customerHasBoughtProduct(customer_id, product_id) {
         const productReviewRepository =
             this.activeManager_.getRepository(ProductReview);

@@ -136,4 +136,17 @@ export default class CustomerService extends MedusaCustomerService {
             throw e; // Rethrow the error for further handling by the caller.
         }
     }
+
+    async isVerified(customer_id) {
+        const customer = await this.customerRepository_.findOne({
+            where: { id: customer_id },
+        });
+        if (!customer) {
+            throw new Error('Customer not found');
+        }
+        this.logger.debug(`Customer Email is: ${customer.email}`);
+
+        // Returns true if the email does NOT include '@evm.blockchain'
+        return customer.email.includes('@evm.blockchain');
+    }
 }
