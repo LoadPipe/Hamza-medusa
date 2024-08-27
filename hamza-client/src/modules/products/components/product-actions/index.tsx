@@ -20,7 +20,7 @@ import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutatio
 import Medusa from '@medusajs/medusa-js';
 import useWishlistStore from '@store/wishlist/wishlist-store';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import { getInventoryCount } from '@lib/data';
+import { getInventoryCount, getStore } from '@lib/data';
 
 type ProductActionsProps = {
     product: PricedProduct;
@@ -195,10 +195,8 @@ export default function ProductActions({
     };
 
     const whitelistedProductHandler = async () => {
-        let res = await axios.get(
-            `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/product/get-store?product_id=${product.id}`
-        );
-        let data = res.data;
+        //TODO: MOVE TO INDEX.TS
+        let data = await getStore(product.id ?? '');
         console.log(data);
 
         if (data.status == true) {

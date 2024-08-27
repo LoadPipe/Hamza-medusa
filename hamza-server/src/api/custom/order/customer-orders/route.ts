@@ -15,7 +15,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         req,
         res,
         'GET',
-        '/custom/order/customer-orders'
+        '/custom/order/customer-orders',
+        ['customer_id', 'buckets']
     );
 
     await handler.handle(async () => {
@@ -24,27 +25,31 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             req.scope.resolve('customerService');
 
         //validate
-        if (!req.query.customer_id?.length) {
-            res.status(400).json({ message: 'customer_id is required' });
-        } else {
+        if (handler.requireParams(['customer_id'])) {
+            const customerId = handler.inputParams.customer_id;
+
+            //enforce security
+            if (!handler.enforceCustomerId(customerId))
+                return;
+
             //check for existence of customer
             if (
                 !(await customerService.retrieve(
-                    req.query.customer_id.toString()
+                    customerId
                 ))
             ) {
                 res.status(404).json({
-                    message: `Customer id ${req.query.customer_id.toString()} not found`,
+                    message: `Customer id ${customerId} not found`,
                 });
             } else {
-                if (req.query.buckets) {
+                if (handler.inputParams.buckets) {
                     const orders = await orderService.getCustomerOrderBuckets(
-                        req.query.customer_id.toString()
+                        customerId
                     );
                     res.status(200).json({ orders });
                 } else {
                     const orders = await orderService.getCustomerOrders(
-                        req.query.customer_id.toString()
+                        customerId
                     );
                     res.status(200).json({ orders });
                 }

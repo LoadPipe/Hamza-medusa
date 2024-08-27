@@ -15,7 +15,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         req,
         res,
         'GET',
-        '/custom/order/customer-orders'
+        '/custom/order/customer-order',
+        ['customer_id', 'bucket']
     );
 
     await handler.handle(async () => {
@@ -24,30 +25,36 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             req.scope.resolve('customerService');
 
         //validate
-        if (!req.query.customer_id?.length) {
+        if (!handler.inputParams.customer_id?.length) {
             res.status(400).json({ message: 'customer_id is required' });
         } else {
+            const customerId = handler.inputParams.customer_id;
+
             //check for existence of customer
             if (
                 !(await customerService.retrieve(
-                    req.query.customer_id.toString()
+                    customerId
                 ))
             ) {
                 res.status(404).json({
-                    message: `Customer id ${req.query.customer_id.toString()} not found`,
+                    message: `Customer id ${customerId} not found`,
                 });
             } else {
-                if (req.query.bucket) {
-                    const bucketValue = parseInt(req.query.bucket.toString());
-                    const customer_id = req.query.customer_id.toString();
+
+                //enforce security
+                if (!handler.enforceCustomerId(customerId))
+                    return;
+
+                if (handler.inputParams.bucket) {
+                    const bucketValue = parseInt(handler.inputParams.bucket);
                     const orders = await orderService.getCustomerOrderBucket(
-                        customer_id,
+                        customerId,
                         bucketValue
                     );
                     res.status(200).json({ orders });
                 } else {
                     const orders = await orderService.getCustomerOrders(
-                        req.query.customer_id.toString()
+                        customerId
                     );
                     res.status(200).json({ orders });
                 }

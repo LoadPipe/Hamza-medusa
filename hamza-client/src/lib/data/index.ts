@@ -96,7 +96,11 @@ export async function getVendorStoreBySlug(store_name: string) {
 // Set a review
 export async function createReview(data: any) {
     try {
-        const response = await axios.post(`${BACKEND_URL}/custom/review`, data);
+        const response = await axios.post(`${BACKEND_URL}/custom/review`, data, {
+            headers: {
+                'authorization': cookies().get('_medusa_jwt')?.value
+            }
+        });
         return response.data;
     } catch (error) {
         console.log(error);
@@ -105,10 +109,10 @@ export async function createReview(data: any) {
 }
 
 // Get Vendor Products
-export async function getProductsByVendor(vendorName: string) {
+export async function getProductsByVendor(storeName: string) {
     try {
         const response = await axios.get(
-            `${BACKEND_URL}/custom/store/products?store_name=${vendorName}`
+            `${BACKEND_URL}/custom/store/products?store_name=${storeName}`
         );
         return response.data.products;
     } catch (error) {
@@ -150,6 +154,11 @@ export async function checkReviewsExistence(order_id: string) {
             `${BACKEND_URL}/custom/review/exists`,
             {
                 order_id: order_id,
+            },
+            {
+                headers: {
+                    'authorization': cookies().get('_medusa_jwt')?.value
+                }
             }
         );
         return response.data;
@@ -170,6 +179,9 @@ export async function checkCustomerReviewExistence(
                     order_id: order_id,
                     variant_id: variant_id,
                 },
+                headers: {
+                    'authorization': cookies().get('_medusa_jwt')?.value
+                }
             }
         );
         return response.data;
@@ -186,6 +198,9 @@ export async function getNotReviewed(customer_id: string) {
                 params: {
                     customer_id: customer_id,
                 },
+                headers: {
+                    'authorization': cookies().get('_medusa_jwt')?.value
+                }
             }
         );
         return response.data;
@@ -212,12 +227,12 @@ export async function allReviews(product_id: string) {
 
 export async function getNotifications(customer_id: string) {
     try {
-        const response = await axios.post(
-            `${BACKEND_URL}/custom/notification/get`,
-            { customer_id: customer_id },
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/notification?customer_id=${customer_id}`,
             {
                 headers: {
                     'Content-Type': 'application/json',
+                    'authorization': cookies().get('_medusa_jwt')?.value
                 },
             }
         );
@@ -230,10 +245,11 @@ export async function getNotifications(customer_id: string) {
 export async function removeNotifications(customer_id: string) {
     try {
         const response = await axios.delete(
-            `${BACKEND_URL}/custom/notification/remove`,
+            `${BACKEND_URL}/custom/notification`,
             {
                 headers: {
                     'Content-Type': 'application/json',
+                    'authorization': cookies().get('_medusa_jwt')?.value
                 },
                 data: JSON.stringify({
                     customer_id: customer_id,
@@ -253,10 +269,15 @@ export async function addNotifications(
 ) {
     try {
         const response = await axios.post(
-            `${BACKEND_URL}/custom/notification/add`,
+            `${BACKEND_URL}/custom/notification`,
             {
                 customer_id: customer_id,
                 notification_type: notification_type,
+            },
+            {
+                headers: {
+                    'authorization': cookies().get('_medusa_jwt')?.value
+                }
             }
         );
         return response.data;
@@ -269,7 +290,12 @@ export async function orderInformation(cart_id: string) {
     try {
         const response = await axios.post(`${BACKEND_URL}/custom/order`, {
             cart_id: cart_id,
-        });
+        },
+            {
+                headers: {
+                    'authorization': cookies().get('_medusa_jwt')?.value
+                }
+            });
         return response;
     } catch (error) {
         console.error('Error fetching order information:', error);
@@ -282,6 +308,9 @@ export async function orderDetails(customer_id: string) {
             `${BACKEND_URL}/custom/order/customer-orders`,
             {
                 params: { customer_id: customer_id },
+                headers: {
+                    'authorization': cookies().get('_medusa_jwt')?.value
+                }
             }
         );
         return response.data.orders.orders;
@@ -299,6 +328,9 @@ export async function orderBucket(customer_id: string) {
                     customer_id: customer_id,
                     buckets: true,
                 },
+                headers: {
+                    'authorization': cookies().get('_medusa_jwt')?.value
+                }
             }
         );
         return response.data.orders;
@@ -316,6 +348,9 @@ export async function singleBucket(customer_id: string, bucket: number) {
                     customer_id: customer_id,
                     bucket: bucket,
                 },
+                headers: {
+                    'authorization': cookies().get('_medusa_jwt')?.value
+                }
             }
         );
         return response.data.orders;
@@ -332,6 +367,9 @@ export async function getNotReviewedOrders(customer_id: string) {
                 params: {
                     customer_id: customer_id,
                 },
+                headers: {
+                    'authorization': cookies().get('_medusa_jwt')?.value
+                }
             }
         );
         return response.data;
@@ -344,12 +382,15 @@ export async function orderStatus(order_id: string) {
     try {
         const response = await axios.get(`${BACKEND_URL}/custom/order/status`, {
             params: {
-                order_id: order_id,
+                order_id: order_id
             },
+            headers: {
+                'authorization': cookies().get('_medusa_jwt')?.value
+            }
         });
         return response.data;
     } catch (error) {
-        console.error('Error fetching order status:', error);
+        //console.error('Error fetching order status:', error);
         return [];
     }
 }
@@ -358,9 +399,31 @@ export async function cancelOrder(order_id: string) {
     try {
         await axios.put(`${BACKEND_URL}/custom/order/cancel`, {
             order_id,
-        });
+        },
+            {
+                headers: {
+                    'authorization': cookies().get('_medusa_jwt')?.value
+                }
+            });
     } catch (error) {
         console.error('Error cancelling order:', error);
+    }
+}
+
+export async function getVerificationStatus(customer_id: string) {
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/customer/verification-status`, {
+            params: {
+                customer_id
+            },
+            headers: {
+                'authorization': cookies().get('_medusa_jwt')?.value
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error getting verification status:', error);
     }
 }
 
@@ -422,6 +485,11 @@ export async function updateProductReview(
                 ratingUpdates: rating,
                 customer_id: customer_id,
                 order_id: order_id,
+            },
+            {
+                headers: {
+                    'authorization': cookies().get('_medusa_jwt')?.value
+                }
             }
         );
         return response.data;
@@ -446,21 +514,25 @@ export async function getInventoryCount(variant_id: string) {
 
 export async function getStore(product_id: string) {
     try {
-        const response = await axios.post(`${BACKEND_URL}/custom/get-store`, {
-            product_id: product_id,
-        });
+        const response = await axios.get(`${BACKEND_URL}/custom/store?product_id=${product_id}`);
         return response.data;
     } catch (error) {
-        console.error('Error fetching store name:', error);
+        console.error('Error fetching store:', error);
     }
 }
 
 export async function setCurrency(newCurrency: string, customer_id: string) {
     try {
-        await axios.post(`${BACKEND_URL}/custom/update-currency`, {
-            customer_id: customer_id,
-            preferred_currency: newCurrency,
-        });
+        await axios.put(`${BACKEND_URL}/custom/customer/preferred-currency`,
+            {
+                customer_id: customer_id,
+                preferred_currency: newCurrency,
+            },
+            {
+                headers: {
+                    'authorization': cookies().get('_medusa_jwt')?.value
+                }
+            });
     } catch (error) {
         console.error('Error updating currency', error);
     }
@@ -494,15 +566,43 @@ export async function vendorReviews(store_id: string) {
     }
 }
 
-export async function getStoreName(product_id: string) {
-    try {
-        const response = await axios.post(`${BACKEND_URL}/custom/get-store`, {
-            product_id: product_id,
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching store name:', error);
+export async function getCheckoutData(cart_id: string) {
+    //TODO: MOVE TO INDEX.TS
+    const response = await axios.get(
+        `${BACKEND_URL}/custom/checkout`, {
+        params: {
+            cart_id
+        },
+        headers: {
+            'authorization': cookies().get('_medusa_jwt')?.value
+        }
     }
+    );
+    return response.status == 200 && response.data ? response.data : {};
+}
+
+export async function finalizeCheckout(
+    cart_id: string,
+    transaction_id: string,
+    payer_address: string,
+    escrow_contract_address: string,
+    //cart_products: any
+) {
+    const response = await axios.post(
+        `${BACKEND_URL}/custom/checkout`,
+        {
+            //cart_products: JSON.stringify(cart_products ?? {}),
+            cart_id,
+            transaction_id,
+            payer_address,
+            escrow_contract_address,
+        }, {
+        headers: {
+            'authorization': cookies().get('_medusa_jwt')?.value
+        }
+    });
+
+    return response?.data;
 }
 
 // Cart actions
@@ -627,6 +727,11 @@ export async function updatePaymentSession(
                 {
                     cart_id: cartId,
                     payment_session_id: paymentSessionId,
+                },
+                {
+                    headers: {
+                        'authorization': cookies().get('_medusa_jwt')?.value
+                    }
                 }
             );
             return response.data;

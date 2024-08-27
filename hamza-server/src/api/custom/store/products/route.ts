@@ -13,20 +13,24 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const productService: ProductService =
         req.scope.resolve('productService');
 
-    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/store/products');
+    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/store/products', ['store_name']);
 
     await handler.handle(async () => {
-        //get store by name
-        console.log(req.query.store_name);
+
+        //validate 
+        if (!handler.requireParams(['store_name']))
+            return;
+
+        const storeName = handler.inputParams.store_name;
 
         let list_products = [];
-        if (req.query.store_name && req.query.store_name.length) {
+        if (storeName?.length) {
 
             const store = await storeService.getStoreByName(
-                req.query.store_name.toString()
+                storeName
             );
 
-            // Simple error handing
+            //check for store existence
             if (!store) {
                 return res.status(404).json({ message: 'Store not found' });
             }
@@ -42,42 +46,4 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         return res.json(list_products);
     });
-
-    /*
-    const logger = req.scope.resolve('logger') as Logger;
-    try {
-        logger.debug("/custom/store/products")
-
-        //get store by name
-        const storeService: StoreService = req.scope.resolve('storeService');
-        const productService: ProductService =
-            req.scope.resolve('productService');
-
-        let list_products = [];
-        if (req.query.store_name && req.query.store_name.length) {
-
-            const store = await storeService.getStoreByName(
-                req.query.store_name.toString()
-            );
-
-            // Simple error handing
-            if (!store) {
-                return res.status(404).json({ message: 'Store not found' });
-            }
-
-            // Chain query to get products
-            list_products =
-                await productService.getProductsFromStoreWithPrices(store.id);
-        }
-        else {
-            list_products =
-                await productService.getAllProductsFromStoreWithPrices();
-        }
-
-        return res.json(list_products);
-    } catch (error) {
-        logger.error(error);
-        return res.status(500).json({ message: 'Internal server error' });
-    }
-    */
 };

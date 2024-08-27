@@ -55,8 +55,7 @@ export default class CartService extends MedusaCartService {
 
 
             if (itemsToSave.length) {
-
-                await Promise.all(
+                Promise.all(
                     itemsToSave.map(i => this.lineItemRepository_.save(i))
                 );
             }

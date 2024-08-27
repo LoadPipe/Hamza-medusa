@@ -75,6 +75,7 @@ export default function Page({ params }: { params: { slug: string } }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
+                //TODO: MOVE TO INDEX.TS
                 const response = await axios.post(
                     `${BACKEND_URL}/custom/vendors/vendor-store`,
                     {

@@ -114,12 +114,11 @@ export default class OrderService extends MedusaOrderService {
             cart.completed_at = new Date();
             await this.cartService_.update(cart.id, cart);
 
-            //emitting event in event bus
-
             return order;
         } catch (e) {
             this.logger.error(`Error creating order: ${e}`);
         }
+        return null;
     }
 
     async getOrdersForCart(cartId: string): Promise<Order[]> {
@@ -189,13 +188,11 @@ export default class OrderService extends MedusaOrderService {
     }
 
     async finalizeCheckout(
-        cartProductsJson: string, //TODO: what in the actual fuck is this
         cartId: string,
         transactionId: string,
         payerAddress,
         escrowContractAddress
     ): Promise<Order[]> {
-        this.logger.debug(`Cart Products ${cartProductsJson}`);
         //get orders & order ids
         const orders: Order[] = await this.orderRepository_.find({
             where: { cart_id: cartId, status: OrderStatus.PENDING },
@@ -212,8 +209,8 @@ export default class OrderService extends MedusaOrderService {
             await this.doBuckydropOrderCreation(cartId, orders);
 
         //calls to update inventory
-        const inventoryPromises =
-            this.getPostCheckoutUpdateInventoryPromises(cartProductsJson);
+        //const inventoryPromises =
+        //    this.getPostCheckoutUpdateInventoryPromises(cartProductsJson);
 
         //calls to update payments
         const paymentPromises = this.getPostCheckoutUpdatePaymentPromises(
@@ -235,7 +232,7 @@ export default class OrderService extends MedusaOrderService {
         //execute all promises
         try {
             await Promise.all([
-                ...inventoryPromises,
+                //...inventoryPromises,
                 ...paymentPromises,
                 ...orderPromises,
             ]);
@@ -250,66 +247,71 @@ export default class OrderService extends MedusaOrderService {
         cartId: string,
         orders: Order[]
     ): Promise<void> {
-        for (const order of orders) {
-            const { variants, quantities } =
-                await this.getBuckyProductVariantsFromOrder(order);
-            if (variants?.length) {
-                const productList: ICreateBuckyOrderProduct[] = [];
+        try {
+            for (const order of orders) {
+                const { variants, quantities } =
+                    await this.getBuckyProductVariantsFromOrder(order);
+                if (variants?.length) {
+                    const productList: ICreateBuckyOrderProduct[] = [];
 
-                for (let n = 0; n < variants.length; n++) {
-                    const prodMetadata: any = JSON.parse(
-                        variants[n].product.bucky_metadata
-                    );
-                    const varMetadata: any = JSON.parse(
-                        variants[n].bucky_metadata
-                    );
+                    for (let n = 0; n < variants.length; n++) {
+                        const prodMetadata: any = JSON.parse(
+                            variants[n].product.bucky_metadata
+                        );
+                        const varMetadata: any = JSON.parse(
+                            variants[n].bucky_metadata
+                        );
 
-                    productList.push({
-                        spuCode: prodMetadata.spuCode,
-                        skuCode: varMetadata.skuCode,
-                        productCount: quantities[n],
-                        platform: prodMetadata.platform,
-                        productPrice: prodMetadata.proPrice.price, //TODO: price come from variant
-                        productName: prodMetadata.goodsName,
+                        productList.push({
+                            spuCode: prodMetadata?.detail.spuCode,
+                            skuCode: varMetadata.skuCode,
+                            productCount: quantities[n],
+                            platform: prodMetadata?.detail?.platform,
+                            productPrice: prodMetadata?.detail?.proPrice?.price ?? prodMetadata?.detail?.price?.price ?? 0,
+                            productName: prodMetadata?.detail?.goodsName,
+                        });
+                    }
+
+                    const cart: Cart = await this.cartService_.retrieve(cartId, {
+                        relations: ['billing_address.country', 'customer'],
                     });
+
+                    this.logger.debug('cart.email: ' + cart.email);
+
+                    //TODO: replace this with a BuckyService call, and get rid of buckyClient
+                    const output = await this.buckyClient.createOrder({
+                        partnerOrderNo: order.id.replace('_', ''),
+                        //partnerOrderNoName: order.id, //TODO: what go here?
+                        country: cart.billing_address.country.name ?? '', //TODO: what format?
+                        countryCode: cart.billing_address.country.iso_2 ?? '', //TODO: what format?
+                        province: cart.billing_address.province ?? '',
+                        city: cart.billing_address.city ?? '',
+                        detailAddress:
+                            `${cart.billing_address.address_1 ?? ''} ${cart.billing_address.address_2 ?? ''}`.trim(),
+                        postCode: cart.billing_address.postal_code,
+                        contactName:
+                            `${cart.billing_address.first_name ?? ''} ${cart.billing_address.last_name ?? ''}`.trim(),
+                        contactPhone: cart.billing_address.phone?.length
+                            ? cart.billing_address.phone
+                            : '0809997747',
+                        email: cart.email?.length
+                            ? cart.email
+                            : cart.customer.email,
+                        orderRemark: '',
+                        productList
+                    });
+
+                    //TODO: if not success, need to take some action
+                    order.bucky_metadata = JSON.stringify(output);
+                    await this.orderRepository_.save(order);
+
+                    this.logger.debug('BUCKY CREATED ORDER');
+                    this.logger.debug(JSON.stringify(output));
                 }
-
-                const cart: Cart = await this.cartService_.retrieve(cartId, {
-                    relations: ['billing_address.country', 'customer'],
-                });
-
-                this.logger.debug('cart.email: ' + cart.email);
-
-                //TODO: replace this with a BuckyService call, and get rid of buckyClient
-                const output = await this.buckyClient.createOrder({
-                    partnerOrderNo: order.id.replace('_', ''),
-                    //partnerOrderNoName: order.id, //TODO: what go here?
-                    country: cart.billing_address.country.name ?? '', //TODO: what format?
-                    countryCode: cart.billing_address.country.iso_2 ?? '', //TODO: what format?
-                    province: cart.billing_address.province ?? '',
-                    city: cart.billing_address.city ?? '',
-                    detailAddress:
-                        `${cart.billing_address.address_1 ?? ''} ${cart.billing_address.address_2 ?? ''}`.trim(),
-                    postCode: cart.billing_address.postal_code,
-                    contactName:
-                        `${cart.billing_address.first_name ?? ''} ${cart.billing_address.last_name ?? ''}`.trim(),
-                    contactPhone: cart.billing_address.phone?.length
-                        ? cart.billing_address.phone
-                        : '0809997747',
-                    email: cart.email?.length
-                        ? cart.email
-                        : cart.customer.email,
-                    orderRemark: '',
-                    productList,
-                });
-
-                //TODO: if not success, need to take some action
-                order.bucky_metadata = JSON.stringify(output);
-                await this.orderRepository_.save(order);
-
-                this.logger.debug('BUCKY CREATED ORDER');
-                this.logger.debug(JSON.stringify(output));
             }
+        }
+        catch (e) {
+            this.logger.error(`Failed to create buckydrop order for ${cartId}`);
         }
     }
 
@@ -327,13 +329,6 @@ export default class OrderService extends MedusaOrderService {
         }
 
         return order;
-    }
-
-    async orderStatus(orderId: string) {
-        const order = await this.orderRepository_.findOne({
-            where: { id: orderId },
-        });
-        return order.status;
     }
 
     async changeFulfillmentStatus(orderId: string, status: FulfillmentStatus) {
@@ -605,7 +600,7 @@ export default class OrderService extends MedusaOrderService {
         return { orders: newOrderList, cartCount: cartCount };
     }
 
-    async orderDetails(cartId: string) {
+    async getOrderDetails(cartId: string) {
         const orderHandle = await this.orderRepository_.findOne({
             where: { cart_id: cartId, status: Not(OrderStatus.ARCHIVED) },
             relations: ['cart.items', 'cart.items.variant.product', 'cart'],

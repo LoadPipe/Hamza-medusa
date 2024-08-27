@@ -19,7 +19,7 @@ import VendorBanner from '../components/product-preview/components/vendor-banner
 import SearchBar from '../components/product-preview/components/mobile-search';
 import Tweet from '@/components/tweet';
 import { MdChevronLeft } from 'react-icons/md';
-import { getStoreName } from '@lib/data';
+import { getStore } from '@lib/data';
 
 type ProductTemplateProps = {
     product: PricedProduct;
@@ -75,7 +75,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
         // Fetch Vendor Name from product.id
         const fetchVendor = async () => {
             try {
-                const data = await getStoreName(product.id as string);
+                const data = await getStore(product.id as string);
                 // console.log(`Vendor: ${data}`);
                 setVendor(data);
             } catch (error) {

@@ -248,6 +248,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
                                     color="#2775CA"
                                 />
                             </Box>
+
                             <Text
                                 color={'white'}
                                 ml="2"

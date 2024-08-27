@@ -22,7 +22,7 @@ import {
     TiStarOutline,
 } from 'react-icons/ti';
 import CartPopup from '../../cart-popup';
-import { averageRatings, reviewCounter } from '@lib/data';
+import { averageRatings, getStore, reviewCounter } from '@lib/data';
 
 const MEDUSA_SERVER_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -177,10 +177,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
     };
 
     const whitelistedProductHandler = async () => {
-        let res = await axios.get(
-            `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/product/get-store?product_id=${productData.id}`
-        );
-        let data = res.data;
+        let data = await getStore(productData.id);
         // console.log(data);
 
         if (data.status == true) {
