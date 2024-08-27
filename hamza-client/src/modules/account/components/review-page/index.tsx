@@ -23,11 +23,6 @@ import { getAllProductReviews, getNotReviewedOrders } from '@lib/data';
 import { EditIcon } from '@chakra-ui/icons';
 import EditReviewTemplate from '@modules/editreview/[id]/edit-review-template';
 import ReviewTemplate from '@modules/review/[id]/review-template';
-import {
-    TiStarFullOutline,
-    TiStarHalfOutline,
-    TiStarOutline,
-} from 'react-icons/ti';
 
 const commonButtonStyles = {
     borderRadius: '8px',
@@ -258,14 +253,14 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                                     src={
                                                         review.items[0]
                                                             .thumbnail
-                                                    } // Accessing the first item
+                                                    }
                                                 />
                                                 <Text
                                                     fontSize={'18px'}
                                                     fontWeight={'bold'}
                                                     textTransform="uppercase"
                                                 >
-                                                    {review.items[0].title} //
+                                                    {review.items[0].title}
                                                     Accessing the first item
                                                 </Text>
                                                 <Button
