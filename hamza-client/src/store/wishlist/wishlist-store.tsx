@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import axios from 'axios';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import wishlist from '@/components/wishlist-dropdown/icon/wishlist-icon';
+import { getWishlist } from '@lib/data/index';
 
 export type WishlistProduct = {
     id: string;
@@ -76,11 +77,8 @@ const useWishlistStore = create<WishlistType>()(
             loadWishlist: async (customer_id) => {
                 // console.log('Loading wishlist-dropdown');
                 try {
-                    //TODO: MOVE TO INDEX.TS
-                    const response = await axios.get(
-                        `${BACKEND_URL}/custom/wishlist?customer_id=${customer_id}`
-                    );
-                    const items = response.data.items;
+                    const response = await getWishlist(customer_id);
+                    const items = response.items;
                     const products = items.map((item: any) => item.product);
                     // console.log('Wishlist products:', products);
                     if (Array.isArray(items)) {

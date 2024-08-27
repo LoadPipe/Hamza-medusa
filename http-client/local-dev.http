@@ -244,12 +244,9 @@ Content-Type: application/json
 
 
 ### Get Vendor by Store Name
-POST http://localhost:9000/custom/vendors/vendor-store
+GET http://localhost:9000/custom/vendors/vendor-store?store_name=Legos
 Content-Type: application/json
 
-{
-  "store_name": "Legos"
-}
 
 
 ### Get Product Reviews by Store_id
