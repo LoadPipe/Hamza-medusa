@@ -220,7 +220,7 @@ export default class OrderService extends MedusaOrderService {
         //execute all promises
         try {
             await Promise.all([
-                ...inventoryPromises,
+                //...inventoryPromises,
                 ...paymentPromises,
                 ...orderPromises,
             ]);
