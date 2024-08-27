@@ -101,3 +101,49 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         res.status(500).json({ error: 'Failed to process review' });
     }
 };
+
+
+export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
+    const productReviewService: ProductReviewService = req.scope.resolve(
+        'productReviewService'
+    );
+
+    const handler: RouteHandler = new RouteHandler(
+        req,
+        res,
+        'PUT',
+        '/custom/review',
+        [
+            'product_id',
+            'reviewUpdates',
+            'ratingUpdates',
+            'customer_id',
+            'order_id',
+        ]
+    );
+
+    await handler.handle(async () => {
+        //validate parameters 
+        if (!handler.requireParams([
+            'product_id',
+            'reviewUpdates',
+            'ratingUpdates',
+            'customer_id',
+            'order_id',
+        ]))
+            return;
+
+        //security
+        if (!handler.enforceCustomerId(handler.inputParams.customer_id))
+            return;
+
+        const updatedReview = await productReviewService.updateProduct(
+            handler.inputParams.product_id,
+            handler.inputParams.reviewUpdates,
+            handler.inputParams.ratingUpdates,
+            handler.inputParams.customer_id,
+            handler.inputParams.order_id
+        );
+        res.json(updatedReview);
+    });
+};

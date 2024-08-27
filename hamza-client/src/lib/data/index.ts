@@ -513,7 +513,7 @@ export async function updateProductReview(
 ) {
     try {
         const response = await axios.put(
-            `${BACKEND_URL}/custom/review/update`,
+            `${BACKEND_URL}/custom/review`,
             {
                 product_id: product_id,
                 reviewUpdates: review,
