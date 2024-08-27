@@ -4,7 +4,7 @@ import usdtIcon from './usdt-icon.svg';
 
 const currencyIcons: Record<string, any> = {
     eth: ethIcom,
-    usd: usdcIcon,
+    usdc: usdcIcon,
     usdt: usdtIcon,
 };
 
