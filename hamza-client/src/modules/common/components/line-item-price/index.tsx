@@ -34,7 +34,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                 const customer = await getCustomer().catch(() => null);
                 if (customer) {
                     const response = await axios.get(
-                        'http://localhost:9000/custom/customer/get-currency',
+                        'http://localhost:9000/custom/customer/preferred-currency',
                         {
                             params: {
                                 customer_id: customer.id,
