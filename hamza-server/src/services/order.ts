@@ -96,18 +96,17 @@ export default class OrderService extends MedusaOrderService {
             order.updated_at = payment.updated_at;
 
             //save the order
-            order = await this.orderRepository_.create(order);
+            order = await this.orderRepository_.save(order);
 
             //update the cart
             cart.completed_at = new Date();
             await this.cartService_.update(cart.id, cart);
 
-            //emitting event in event bus
-
             return order;
         } catch (e) {
             this.logger.error(`Error creating order: ${e}`);
         }
+        return null;
     }
 
     async getOrdersForCart(cartId: string): Promise<Order[]> {
