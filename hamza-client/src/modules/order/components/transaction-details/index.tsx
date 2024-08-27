@@ -67,8 +67,7 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                 width={'100%'}
                 gap={'8px'}
             >
-                {/* Subtotal */}
-
+                {/* Discount */}
                 <Flex color="#555555" justifyContent={'space-between'}>
                     <Text fontSize={{ base: '14px', md: '16px' }}>
                         Discount
