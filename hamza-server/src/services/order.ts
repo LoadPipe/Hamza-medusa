@@ -176,13 +176,11 @@ export default class OrderService extends MedusaOrderService {
     }
 
     async finalizeCheckout(
-        cartProductsJson: string, //TODO: what in the actual fuck is this
         cartId: string,
         transactionId: string,
         payerAddress,
         escrowContractAddress
     ): Promise<Order[]> {
-        this.logger.debug(`Cart Products ${cartProductsJson}`);
         //get orders & order ids
         const orders: Order[] = await this.orderRepository_.find({
             where: { cart_id: cartId, status: OrderStatus.PENDING },
@@ -199,8 +197,8 @@ export default class OrderService extends MedusaOrderService {
             await this.doBuckydropOrderCreation(cartId, orders);
 
         //calls to update inventory
-        const inventoryPromises =
-            this.getPostCheckoutUpdateInventoryPromises(cartProductsJson);
+        //const inventoryPromises =
+        //    this.getPostCheckoutUpdateInventoryPromises(cartProductsJson);
 
         //calls to update payments
         const paymentPromises = this.getPostCheckoutUpdatePaymentPromises(
@@ -222,7 +220,7 @@ export default class OrderService extends MedusaOrderService {
         //execute all promises
         try {
             await Promise.all([
-                ...inventoryPromises,
+                //...inventoryPromises,
                 ...paymentPromises,
                 ...orderPromises,
             ]);
@@ -253,12 +251,12 @@ export default class OrderService extends MedusaOrderService {
                         );
 
                         productList.push({
-                            spuCode: prodMetadata.spuCode,
+                            spuCode: prodMetadata?.detail.spuCode,
                             skuCode: varMetadata.skuCode,
                             productCount: quantities[n],
-                            platform: prodMetadata.platform,
-                            productPrice: prodMetadata?.proPrice?.price ?? prodMetadata?.price?.price ?? 0,
-                            productName: prodMetadata.goodsName,
+                            platform: prodMetadata?.detail?.platform,
+                            productPrice: prodMetadata?.detail?.proPrice?.price ?? prodMetadata?.detail?.price?.price ?? 0,
+                            productName: prodMetadata?.detail?.goodsName,
                         });
                     }
 

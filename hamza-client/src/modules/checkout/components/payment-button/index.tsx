@@ -18,7 +18,7 @@ import { ethers, BigNumberish } from 'ethers';
 import { useCompleteCart, useUpdateCart } from 'medusa-react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { clearCart } from '@lib/data';
+import { clearCart, finalizeCheckout, getCheckoutData } from '@lib/data';
 import {
     getMassmarketPaymentAddress,
     getMasterSwitchAddress,
@@ -192,20 +192,6 @@ const CryptoPaymentButton = ({
     };
 
     /**
-     * Retrieves data from server that will be needed for checkout, including currencies,
-     * amounts, wallet addresses, etc.
-     * @param cartId
-     * @returns
-     */
-    const retrieveCheckoutData = async (cartId: string) => {
-        //TODO: MOVE TO INDEX.TS
-        const response = await axios.get(
-            `${MEDUSA_SERVER_URL}/custom/checkout?cart_id=${cartId}`
-        );
-        return response.status == 200 && response.data ? response.data : {};
-    };
-
-    /**
      * Redirects to order confirmation on successful checkout
      * @param orderId
      * @param countryCode
@@ -232,7 +218,7 @@ const CryptoPaymentButton = ({
      */
     const completeCheckout = async (cartId: string) => {
         //retrieve data (cart id, currencies, amounts etc.) that will be needed for wallet checkout
-        const data: CheckoutData = await retrieveCheckoutData(cartId);
+        const data: CheckoutData = await getCheckoutData(cartId);
 
         if (data) {
             //this sends the payment to the wallet for on-chain processing
@@ -241,15 +227,12 @@ const CryptoPaymentButton = ({
             //finalize the checkout, if wallet payment was successful
             if (output?.success) {
                 //TODO: MOVE TO INDEX.TS
-                const response = await axios.post(
-                    `${MEDUSA_SERVER_URL}/custom/checkout`,
-                    {
-                        cartProducts: JSON.stringify(cartRef.current),
-                        cart_id: cartId,
-                        transaction_id: output.transaction_id,
-                        payer_address: output.payer_address,
-                        escrow_contract_address: output.escrow_contract_address,
-                    }
+                await finalizeCheckout(
+                    cartId,
+                    output.transaction_id,
+                    output.payer_address,
+                    output.escrow_contract_address,
+                    //cartRef.current
                 );
 
                 //TODO: examine response
@@ -332,6 +315,7 @@ const CryptoPaymentButton = ({
                             },
                             onError: async (e) => {
                                 setSubmitting(false);
+                                console.error(e);
                                 if (
                                     e.message?.indexOf('status code 401') >= 0
                                 ) {

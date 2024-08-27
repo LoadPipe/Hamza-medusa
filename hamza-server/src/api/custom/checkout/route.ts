@@ -48,7 +48,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
     const handler: RouteHandler = new RouteHandler(
         req, res, 'POST', '/custom/checkout', [
-        'cart_products',
+        //'cart_products',
         'cart_id',
         'transaction_id',
         'payer_address',
@@ -57,7 +57,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
     await handler.handle(async () => {
         await orderService.finalizeCheckout(
-            handler.inputParams.cart_products,
+            //handler.inputParams.cart_products,
             handler.inputParams.cart_id,
             handler.inputParams.transaction_id,
             handler.inputParams.payer_address,
