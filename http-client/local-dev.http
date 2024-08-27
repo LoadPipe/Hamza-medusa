@@ -27,6 +27,9 @@ Content-Type: application/json
 GET http://localhost:9000/custom/store/products
 Content-Type: application/json
 
+### GET Vendor Names?
+GET http://localhost:9000/custom/store/categories?store_name=Echo Rift
+
 
 ### Create a Wishlist
 POST http://localhost:9000/custom/wishlist
@@ -35,6 +38,7 @@ Content-Type: application/json
 {
   "customer_id": "cus_01HW298CJPT60818GCHWD8GAT7"
 }
+
 
 ###
 

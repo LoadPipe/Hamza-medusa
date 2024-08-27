@@ -226,6 +226,22 @@ export async function checkCustomerReviewExistence(
     }
 }
 
+export async function getStoreCategories(vendorName: string) {
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/store/categories`,
+            {
+                params: {
+                    vendorName,
+                },
+            }
+        );
+        return response.data;
+    } catch (e) {
+        console.log(`Can't Retrieve Store Category ${e}`);
+    }
+}
+
 export async function getCompleteTemplate(cart_id: string) {
     try {
         const response = await axios.get(
