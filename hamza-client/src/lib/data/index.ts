@@ -109,10 +109,10 @@ export async function createReview(data: any) {
 }
 
 // Get Vendor Products
-export async function getProductsByVendor(vendorName: string) {
+export async function getProductsByVendor(storeName: string) {
     try {
         const response = await axios.get(
-            `${BACKEND_URL}/custom/store/products?store_name=${vendorName}`
+            `${BACKEND_URL}/custom/store/products?store_name=${storeName}`
         );
         return response.data.products;
     } catch (error) {
@@ -554,6 +554,45 @@ export async function vendorReviews(store_id: string) {
     } catch (error) {
         console.error('Error fetching vendor reviews:', error);
     }
+}
+
+export async function getCheckoutData(cart_id: string) {
+    //TODO: MOVE TO INDEX.TS
+    const response = await axios.get(
+        `${BACKEND_URL}/custom/checkout`, {
+        params: {
+            cart_id
+        },
+        headers: {
+            'authorization': cookies().get('_medusa_jwt')?.value
+        }
+    }
+    );
+    return response.status == 200 && response.data ? response.data : {};
+}
+
+export async function finalizeCheckout(
+    cart_id: string,
+    transaction_id: string,
+    payer_address: string,
+    escrow_contract_address: string,
+    //cart_products: any
+) {
+    const response = await axios.post(
+        `${BACKEND_URL}/custom/checkout`,
+        {
+            //cart_products: JSON.stringify(cart_products ?? {}),
+            cart_id,
+            transaction_id,
+            payer_address,
+            escrow_contract_address,
+        }, {
+        headers: {
+            'authorization': cookies().get('_medusa_jwt')?.value
+        }
+    });
+
+    return response?.data;
 }
 
 // Cart actions
