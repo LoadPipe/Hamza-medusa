@@ -13,6 +13,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     //TODO: this doesn't need to be here; it exists elsewhere for sure
     await handler.handle(async () => {
+        if (!handler.requireParam('customer_id'))
+            return;
+
         const verify =
             await customerService.isVerified(handler.inputParams.customer_id);
         res.json(verify);

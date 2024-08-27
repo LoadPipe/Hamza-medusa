@@ -176,12 +176,7 @@ Content-Type: application/json
 
 
 ### Verify Email
-POST http://localhost:9000/custom/review/verify
-Content-Type: application/json
-
-{
-  "customer_id":  "cus_01HYYRFGXRQ44NQXMJK9DDVNB3"
-}
+GET http://localhost:9000/custom/customer/verified?customer_id=cus_01HYYRFGXRQ44NQXMJK9DDVNB3
 
 ### Check if Customer has bought product
 GET http://localhost:9000/custom/review/bought
