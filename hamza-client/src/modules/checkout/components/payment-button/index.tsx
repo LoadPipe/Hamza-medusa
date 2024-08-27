@@ -24,6 +24,7 @@ import {
     getMasterSwitchAddress,
 } from 'contracts.config';
 import toast from 'react-hot-toast';
+import { checkoutMode, cancelOrderCart } from '@lib/data/index';
 
 //TODO: we need a global common function to replace this
 const MEDUSA_SERVER_URL =
@@ -55,10 +56,10 @@ declare global {
 const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
     const notReady =
         !cart ||
-            !cart.shipping_address ||
-            !cart.billing_address ||
-            !cart.email ||
-            cart.shipping_methods.length < 1
+        !cart.shipping_address ||
+        !cart.billing_address ||
+        !cart.email ||
+        cart.shipping_methods.length < 1
             ? true
             : false;
 
@@ -121,16 +122,15 @@ const CryptoPaymentButton = ({
 
     // Get the prescribed checkout mode from the server
     const getCheckoutMode = async () => {
-        //TODO: MOVE TO INDEX.TS
-        const response = await axios.get(`${MEDUSA_SERVER_URL}/custom/config`);
-        return response.data?.checkout_mode?.trim()?.toUpperCase();
+        const response = await checkoutMode();
+        return response.checkout_mode?.trim()?.toUpperCase();
     };
 
     //displays error to user
     const displayError = (errMsg: string) => {
         setErrorMessage(errMsg);
         toast.error(errMsg);
-    }
+    };
 
     /**
      * Sends the given payment data to the Switch by way of the user's connnected
@@ -203,7 +203,9 @@ const CryptoPaymentButton = ({
     ) => {
         //finally, if all good, redirect to order confirmation page
         if (orderId?.length) {
-            router.push(`/${countryCode}/order/confirmed/${orderId}?cart=${cartId}`);
+            router.push(
+                `/${countryCode}/order/confirmed/${orderId}?cart=${cartId}`
+            );
         }
     };
 
@@ -231,7 +233,7 @@ const CryptoPaymentButton = ({
                     cartId,
                     output.transaction_id,
                     output.payer_address,
-                    output.escrow_contract_address,
+                    output.escrow_contract_address
                     //cartRef.current
                 );
 
@@ -269,10 +271,7 @@ const CryptoPaymentButton = ({
     const cancelOrderFromCart = async () => {
         try {
             //TODO: MOVE TO INDEX.TS
-            let response = await axios.post(
-                `${MEDUSA_SERVER_URL}/custom/cart/cancel`,
-                { cart_id: cart.id }
-            );
+            let response = await cancelOrderCart(cart.id);
             return;
         } catch (e) {
             console.log('error in cancelling order ', e);
@@ -296,7 +295,7 @@ const CryptoPaymentButton = ({
             updateCart.mutate(
                 { context: {} },
                 {
-                    onSuccess: ({ }) => {
+                    onSuccess: ({}) => {
                         //this calls the CartCompletion routine
                         completeCart.mutate(void 0, {
                             onSuccess: async ({ data, type }) => {
@@ -307,9 +306,7 @@ const CryptoPaymentButton = ({
                                 } catch (e) {
                                     console.error(e);
                                     setSubmitting(false);
-                                    displayError(
-                                        'Checkout was not completed'
-                                    );
+                                    displayError('Checkout was not completed');
                                     await cancelOrderFromCart();
                                 }
                             },
@@ -321,9 +318,7 @@ const CryptoPaymentButton = ({
                                 ) {
                                     displayError('Customer not whitelisted');
                                 } else {
-                                    displayError(
-                                        'Checkout was not completed'
-                                    );
+                                    displayError('Checkout was not completed');
                                 }
 
                                 //TODO: this is a really bad way to do this

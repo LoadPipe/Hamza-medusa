@@ -323,6 +323,15 @@ export async function getNotifications(customer_id: string) {
     }
 }
 
+export async function checkoutMode() {
+    try {
+        const response = await axios.get(`${BACKEND_URL}/custom/config`);
+        return response.data;
+    } catch (e) {
+        console.log(`Failed to return checkoutMode data ${e}`);
+    }
+}
+
 export async function removeNotifications(customer_id: string) {
     try {
         const response = await axios.delete(
@@ -341,6 +350,19 @@ export async function removeNotifications(customer_id: string) {
         return response.data;
     } catch (error) {
         console.error('Error removing notification preferences:', error);
+    }
+}
+
+export async function cancelOrderCart(cart_id: string) {
+    try {
+        const response = await axios.post(`${BACKEND_URL}/custom/cart/cancel`, {
+            data: {
+                cart_id,
+            },
+        });
+        return response;
+    } catch (e) {
+        console.log(`Error Cancelling order ${e}`);
     }
 }
 
