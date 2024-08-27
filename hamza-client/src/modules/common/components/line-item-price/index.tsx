@@ -100,7 +100,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                             <Image
                                 className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
                                 src={currencyIcons[currencyCode]}
-                                alt="eth"
+                                alt={currencyCode}
                             />
                         </Flex>
                         <Text
