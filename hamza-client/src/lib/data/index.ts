@@ -242,6 +242,22 @@ export async function getStoreCategories(vendorName: string) {
     }
 }
 
+export async function verifyToken(token: string) {
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/confirmation-token/verify`,
+            {
+                params: {
+                    token,
+                },
+            }
+        );
+        return response.data;
+    } catch (e) {
+        console.log(`Failed to verify token ${e}`);
+    }
+}
+
 export async function getCompleteTemplate(cart_id: string) {
     try {
         const response = await axios.get(
@@ -325,6 +341,21 @@ export async function removeNotifications(customer_id: string) {
         return response.data;
     } catch (error) {
         console.error('Error removing notification preferences:', error);
+    }
+}
+
+export async function verifyEmail(customer_id: string, email: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/confirmation-token/generate`,
+            {
+                customer_id,
+                email,
+            }
+        );
+        return response;
+    } catch (e) {
+        console.log(`Failed to verify email ${e}`);
     }
 }
 
