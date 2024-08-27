@@ -68,30 +68,17 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                 gap={'8px'}
             >
                 {/* Subtotal */}
-                {subtotals[currencyCode] && (
-                    <Flex color="white" justifyContent={'space-between'}>
-                        <Text fontSize={{ base: '14px', md: '16px' }}>
-                            Subtotal
-                        </Text>
 
-                        <Flex>
-                            <Image
-                                className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                                src={currencyIcons[currencyCode]}
-                                alt="eth"
-                            />
-                            <Text
-                                ml="0.4rem"
-                                fontSize={{ base: '14px', md: '16px' }}
-                            >
-                                {formatCryptoPrice(
-                                    subtotals[currencyCode],
-                                    currencyCode
-                                )}
-                            </Text>
-                        </Flex>
+                <Flex color="#555555" justifyContent={'space-between'}>
+                    <Text fontSize={{ base: '14px', md: '16px' }}>
+                        Discount
+                    </Text>
+
+                    <Flex>
+                        <Text fontSize={{ base: '14px', md: '16px' }}> - </Text>
                     </Flex>
-                )}
+                </Flex>
+
                 {!!discount_total && (
                     <div className="flex items-center justify-between">
                         <span>Discount</span>
@@ -104,11 +91,8 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                 )}
 
                 {/* Shipping Cost */}
-                <Flex justifyContent={'space-between'}>
-                    <Text
-                        fontSize={{ base: '14px', md: '16px' }}
-                        color="#555555"
-                    >
+                <Flex color="#555555" justifyContent={'space-between'}>
+                    <Text fontSize={{ base: '14px', md: '16px' }}>
                         Shipping Cost
                     </Text>
 
@@ -116,11 +100,10 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                         <Image
                             className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
                             src={currencyIcons[currencyCode]}
-                            alt="eth"
+                            alt={currencyCode}
                         />
                         <Text
                             ml="0.4rem"
-                            color="#555555"
                             fontSize={{ base: '14px', md: '16px' }}
                         >
                             {formatCryptoPrice(
@@ -132,23 +115,17 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                 </Flex>
 
                 {/* Taxes */}
-                <Flex justifyContent={'space-between'}>
-                    <Text
-                        fontSize={{ base: '14px', md: '16px' }}
-                        color="#555555"
-                    >
-                        Taxes
-                    </Text>
+                <Flex color="#555555" justifyContent={'space-between'}>
+                    <Text fontSize={{ base: '14px', md: '16px' }}>Taxes</Text>
 
                     <Flex>
                         <Image
                             className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
                             src={currencyIcons[currencyCode]}
-                            alt="eth"
+                            alt={currencyCode}
                         />
                         <Text
                             ml="0.4rem"
-                            color="#555555"
                             fontSize={{ base: '14px', md: '16px' }}
                         >
                             {formatCryptoPrice(
@@ -170,7 +147,7 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                     <Image
                         className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
                         src={currencyIcons[currencyCode]}
-                        alt="eth"
+                        alt={currencyCode}
                     />
                     <Text ml="0.4rem">
                         {formatCryptoPrice(grandTotal, currencyCode)}
