@@ -286,12 +286,7 @@ Content-Type: application/json
 }
 
 ### Get Vendor Name by Order_id
-POST http://localhost:9000/custom/order/vendor
-Content-Type: application/json
-
-{
-  "order_id": "order_01J0N1CPD866R0TF9RVDZFZ125"
-}
+GET http://localhost:9000/custom/order/store?order_id=order_01J0N1CPD866R0TF9RVDZFZ125
 
 ### Get Specific Customers All Orders METHOD: listCustomerOrders() in order.ts
 POST http://localhost:9000/custom/order/customer-orders
