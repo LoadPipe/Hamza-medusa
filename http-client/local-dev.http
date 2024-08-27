@@ -352,7 +352,7 @@ Content-Type: application/json
 
 
 ### Get Specific Customers All Orders METHOD: listCustomerOrders() in order.ts
-GET http://localhost:9000/custom/order/customer-orders?customer_id=cus_01J3CF43WK0QT2591VHG9JT07E&buckets=true
+GET http://localhost:9000/custom/order/customer-orders?customer_id=cus_01J5V004PET8A6DXW9211ATPC7&buckets=true
 Content-Type: application/json
 
 

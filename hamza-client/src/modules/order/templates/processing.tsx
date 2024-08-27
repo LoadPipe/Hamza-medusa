@@ -193,6 +193,8 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                             <ProcessingOrderCard
                                                 key={item.id}
                                                 order={item}
+                                                vendorName={order.store.name}
+                                                address={order.shipping_address}
                                                 handle={
                                                     item.variant?.product
                                                         ?.handle || 'N/A'
@@ -468,7 +470,9 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     Number:
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    11
+                                                                                    {
+                                                                                        order.display_id
+                                                                                    }
                                                                                 </Text>
                                                                             </Box>
                                                                             <Box>
@@ -480,7 +484,9 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     ID:
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    item_11ijnovwd124
+                                                                                    {
+                                                                                        item.id
+                                                                                    }
                                                                                 </Text>
                                                                             </Box>
                                                                             <Box>
@@ -505,9 +511,9 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     Status:
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    Payment
-                                                                                    On
-                                                                                    Process
+                                                                                    {
+                                                                                        order.status
+                                                                                    }
                                                                                 </Text>
                                                                             </Box>
                                                                             <Box>
@@ -519,8 +525,9 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     Status:
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    On
-                                                                                    Process
+                                                                                    {
+                                                                                        order.payment_status
+                                                                                    }
                                                                                 </Text>
                                                                             </Box>
                                                                             <Box>
@@ -531,9 +538,11 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     Vendor:
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    Apple
-                                                                                    Official
-                                                                                    Store
+                                                                                    {
+                                                                                        order
+                                                                                            .store
+                                                                                            .name
+                                                                                    }
                                                                                 </Text>
                                                                             </Box>
                                                                         </VStack>
@@ -614,15 +623,30 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     Information:
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    Alfred
-                                                                                    Neuman
+                                                                                    {
+                                                                                        order
+                                                                                            .shipping_address
+                                                                                            .first_name
+                                                                                    }
+                                                                                    {
+                                                                                        order
+                                                                                            .shipping_address
+                                                                                            .last_name
+                                                                                    }
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    +01
-                                                                                    1234567890
+                                                                                    {
+                                                                                        order
+                                                                                            .shipping_address
+                                                                                            .phone
+                                                                                    }
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    alfredneuman@gmail.com
+                                                                                    {
+                                                                                        order
+                                                                                            .customer
+                                                                                            .email
+                                                                                    }{' '}
                                                                                 </Text>
                                                                             </Box>
                                                                         </VStack>

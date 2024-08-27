@@ -31,19 +31,14 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             const customerId = handler.inputParams.customer_id;
 
             //check for existence of customer
-            if (
-                !(await customerService.retrieve(
-                    customerId
-                ))
-            ) {
+            if (!(await customerService.retrieve(customerId))) {
                 res.status(404).json({
                     message: `Customer id ${customerId} not found`,
                 });
             } else {
-
                 //enforce security
-                if (!handler.enforceCustomerId(customerId))
-                    return;
+                // if (!handler.enforceCustomerId(customerId))
+                //     return;
 
                 if (handler.inputParams.bucket) {
                     const bucketValue = parseInt(handler.inputParams.bucket);
@@ -53,9 +48,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                     );
                     res.status(200).json({ orders });
                 } else {
-                    const orders = await orderService.getCustomerOrders(
-                        customerId
-                    );
+                    const orders =
+                        await orderService.getCustomerOrders(customerId);
                     res.status(200).json({ orders });
                 }
             }

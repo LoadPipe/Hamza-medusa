@@ -267,14 +267,20 @@ export default class OrderService extends MedusaOrderService {
                             skuCode: varMetadata.skuCode,
                             productCount: quantities[n],
                             platform: prodMetadata?.detail?.platform,
-                            productPrice: prodMetadata?.detail?.proPrice?.price ?? prodMetadata?.detail?.price?.price ?? 0,
+                            productPrice:
+                                prodMetadata?.detail?.proPrice?.price ??
+                                prodMetadata?.detail?.price?.price ??
+                                0,
                             productName: prodMetadata?.detail?.goodsName,
                         });
                     }
 
-                    const cart: Cart = await this.cartService_.retrieve(cartId, {
-                        relations: ['billing_address.country', 'customer'],
-                    });
+                    const cart: Cart = await this.cartService_.retrieve(
+                        cartId,
+                        {
+                            relations: ['billing_address.country', 'customer'],
+                        }
+                    );
 
                     this.logger.debug('cart.email: ' + cart.email);
 
@@ -298,7 +304,7 @@ export default class OrderService extends MedusaOrderService {
                             ? cart.email
                             : cart.customer.email,
                         orderRemark: '',
-                        productList
+                        productList,
                     });
 
                     //TODO: if not success, need to take some action
@@ -309,8 +315,7 @@ export default class OrderService extends MedusaOrderService {
                     this.logger.debug(JSON.stringify(output));
                 }
             }
-        }
-        catch (e) {
+        } catch (e) {
             this.logger.error(`Failed to create buckydrop order for ${cartId}`);
         }
     }
@@ -461,7 +466,7 @@ export default class OrderService extends MedusaOrderService {
 
         return await this.orderRepository_.find({
             where,
-            relations: ['items'],
+            relations: ['items', 'store', 'shipping_address', 'customer'],
         });
     }
 
