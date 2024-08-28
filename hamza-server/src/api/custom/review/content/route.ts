@@ -2,6 +2,7 @@ import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import ProductReviewService from '../../../../services/product-review';
 import { RouteHandler } from '../../../route-handler';
 
+//TODO: not used?
 export const PATCH = async (req: MedusaRequest, res: MedusaResponse) => {
     const productReviewService: ProductReviewService = req.scope.resolve(
         'productReviewService'

@@ -16,6 +16,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
+        //validate 
+        if (!handler.requireParams(['order_id', 'product_id']))
+            return;
+
         const verify = await productReviewService.getSpecificReview(
             handler.inputParams.order_id,
             handler.inputParams.product_id

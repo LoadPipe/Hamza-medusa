@@ -106,6 +106,10 @@ export class RouteHandler {
         return true;
     }
 
+    requireParam(param: string): boolean {
+        return this.requireParams[param];
+    }
+
     hasParam(param): boolean {
         return this.inputParams[param]?.length ? true : false;
     }

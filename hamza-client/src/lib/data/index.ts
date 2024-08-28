@@ -76,20 +76,22 @@ export async function getVendors() {
 // Get Vendor Store by slug
 export async function getVendorStoreBySlug(store_name: string) {
     try {
-        const response = await axios.post(
-            `${BACKEND_URL}/custom/vendors/vendor-store`,
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/store`,
             {
                 params: {
-                    store_name: store_name,
+                    store_name,
                 },
             }
         );
         return response.data;
     } catch (error) {
-        console.log(error);
+        console.error('API error:', error);
         return null;
     }
 }
+
+//
 
 // Set a review
 export async function createReview(data: any) {
@@ -110,16 +112,72 @@ export async function createReview(data: any) {
     }
 }
 
+// Get Wishlist
+export async function getWishlist(customer_id: string) {
+    try {
+        const response = await axios.get(`${BACKEND_URL}/custom/wishlist`, {
+            params: {
+                customer_id,
+            },
+            headers: {
+                authorization: cookies().get('_medusa_jwt')?.value,
+            },
+        });
+        return response.data;
+    } catch (e) {
+        console.log(`Error occurred instead of returning wishlist ${e}`);
+        throw e;
+    }
+}
+
+// DELETE Wishlist Item
+export async function deleteWishlistItem(
+    customer_id: string,
+    product_id: string
+) {
+    try {
+        console.log(`Passing customer_id ${customer_id} and ${product_id}`);
+        const response = await axios.delete(
+            `${BACKEND_URL}/custom/wishlist/item`,
+            {
+                data: {
+                    customer_id: customer_id, // Ensure customer_id is handled when null
+                    product_id: product_id,
+                },
+            }
+        );
+        return response;
+    } catch (e) {
+        console.log(`Error occurred instead of deleting wishlist item ${e}`);
+        throw e;
+    }
+}
+
 // Get Vendor Products
 export async function getProductsByVendor(storeName: string) {
     try {
         const response = await axios.get(
-            `${BACKEND_URL}/custom/store/products?store_name=${storeName}`
+            `${BACKEND_URL}/custom/store/products`,
+            {
+                params: {
+                    store_name: storeName,
+                },
+            }
         );
-        return response.data.products;
-    } catch (error) {
-        console.log(error);
-        throw error;
+        return response.data;
+    } catch (e) {
+        console.error(`Failed to return products for ${storeName}: ${e}`);
+        throw e;
+    }
+}
+
+// Get All Vendor Products
+export async function getAllVendorProducts() {
+    try {
+        const response = await axios.get(`${BACKEND_URL}/store/products`);
+        return response.data;
+    } catch (e) {
+        console.log(`Failed to return all vendor products: ${e}`);
     }
 }
 
@@ -136,14 +194,11 @@ export async function getAllStoreNames() {
 // Get All Product reviews
 export async function getAllProductReviews(customer_id: string) {
     try {
-        const response = await axios.get(
-            `${BACKEND_URL}/custom/review/all-customer-reviews`,
-            {
-                params: {
-                    customer_id: customer_id,
-                },
-            }
-        );
+        const response = await axios.get(`${BACKEND_URL}/custom/review`, {
+            params: {
+                customer_id: customer_id,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -152,15 +207,10 @@ export async function getAllProductReviews(customer_id: string) {
 
 export async function checkReviewsExistence(order_id: string) {
     try {
-        const response = await axios.post(
+        const response = await axios.get(
             `${BACKEND_URL}/custom/review/exists`,
             {
-                order_id: order_id,
-            },
-            {
-                headers: {
-                    authorization: cookies().get('_medusa_jwt')?.value,
-                },
+                params: { order_id: order_id },
             }
         );
         return response.data;
@@ -192,10 +242,58 @@ export async function checkCustomerReviewExistence(
     }
 }
 
+export async function getStoreCategories(vendorName: string) {
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/store/categories`,
+            {
+                params: {
+                    vendorName,
+                },
+            }
+        );
+        return response.data;
+    } catch (e) {
+        console.log(`Can't Retrieve Store Category ${e}`);
+    }
+}
+
+export async function verifyToken(token: string) {
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/confirmation-token/verify`,
+            {
+                params: {
+                    token,
+                },
+            }
+        );
+        return response.data;
+    } catch (e) {
+        console.log(`Failed to verify token ${e}`);
+    }
+}
+
+export async function getCompleteTemplate(cart_id: string) {
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/order/complete-template`,
+            {
+                params: {
+                    cart_id,
+                },
+            }
+        );
+        return response.data;
+    } catch (e) {
+        console.log(`Can't Retrieve cart templatr ${e}`);
+    }
+}
+
 export async function getNotReviewed(customer_id: string) {
     try {
         const response = await axios.get(
-            `${BACKEND_URL}/custom/review/get-customer-not-reviewed`,
+            `${BACKEND_URL}/custom/review/not-reviewed`,
             {
                 params: {
                     customer_id: customer_id,
@@ -213,14 +311,11 @@ export async function getNotReviewed(customer_id: string) {
 
 export async function allReviews(product_id: string) {
     try {
-        const response = await axios.get(
-            `${BACKEND_URL}/custom/review/all-reviews`,
-            {
-                params: {
-                    product_id: product_id,
-                },
-            }
-        );
+        const response = await axios.get(`${BACKEND_URL}/custom/review`, {
+            params: {
+                product_id: product_id,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -244,6 +339,15 @@ export async function getNotifications(customer_id: string) {
     }
 }
 
+export async function checkoutMode() {
+    try {
+        const response = await axios.get(`${BACKEND_URL}/custom/config`);
+        return response.data;
+    } catch (e) {
+        console.log(`Failed to return checkoutMode data ${e}`);
+    }
+}
+
 export async function removeNotifications(customer_id: string) {
     try {
         const response = await axios.delete(
@@ -262,6 +366,34 @@ export async function removeNotifications(customer_id: string) {
         return response.data;
     } catch (error) {
         console.error('Error removing notification preferences:', error);
+    }
+}
+
+export async function cancelOrderCart(cart_id: string) {
+    try {
+        const response = await axios.post(`${BACKEND_URL}/custom/cart/cancel`, {
+            data: {
+                cart_id,
+            },
+        });
+        return response;
+    } catch (e) {
+        console.log(`Error Cancelling order ${e}`);
+    }
+}
+
+export async function verifyEmail(customer_id: string, email: string) {
+    try {
+        const response = await axios.post(
+            `${BACKEND_URL}/custom/confirmation-token/generate`,
+            {
+                customer_id,
+                email,
+            }
+        );
+        return response;
+    } catch (e) {
+        console.log(`Failed to verify email ${e}`);
     }
 }
 
@@ -367,7 +499,7 @@ export async function singleBucket(customer_id: string, bucket: number) {
 export async function getNotReviewedOrders(customer_id: string) {
     try {
         const response = await axios.get(
-            `${BACKEND_URL}/custom/review/get-customer-not-reviewed`,
+            `${BACKEND_URL}/custom/review/not-reviewed`,
             {
                 params: {
                     customer_id: customer_id,
@@ -439,10 +571,12 @@ export async function getVerificationStatus(customer_id: string) {
 
 export async function averageRatings(product_id: string) {
     try {
-        const response = await axios.post(
+        const response = await axios.get(
             `${BACKEND_URL}/custom/review/average`,
             {
-                product_id: product_id,
+                params: {
+                    product_id: product_id,
+                },
             }
         );
         return response.data;
@@ -453,29 +587,12 @@ export async function averageRatings(product_id: string) {
 
 export async function reviewCounter(product_id: string) {
     try {
-        const response = await axios.post(
-            `${BACKEND_URL}/custom/review/count`,
-            {
-                product_id: product_id,
-            }
-        );
+        const response = await axios.get(`${BACKEND_URL}/custom/review/count`, {
+            params: { product_id: product_id },
+        });
         return response.data;
     } catch (error) {
         console.error('Error fetching review count:', error);
-    }
-}
-
-export async function reviewResponse(product_id: string) {
-    try {
-        const response = await axios.post(
-            `${BACKEND_URL}/custom/review/all-reviews`,
-            {
-                product_id: product_id,
-            }
-        );
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching review response:', error);
     }
 }
 
@@ -488,7 +605,7 @@ export async function updateProductReview(
 ) {
     try {
         const response = await axios.put(
-            `${BACKEND_URL}/custom/review/update`,
+            `${BACKEND_URL}/custom/review`,
             {
                 product_id: product_id,
                 reviewUpdates: review,

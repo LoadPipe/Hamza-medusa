@@ -1,9 +1,8 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import ProductReviewService from 'src/services/product-review';
-import { readRequestBody } from '../../../../utils/request-body';
 import { RouteHandler } from '../../../route-handler';
 
-export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
+export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const productReviewService: ProductReviewService = req.scope.resolve(
         'productReviewService'
     );
@@ -11,12 +10,15 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const handler: RouteHandler = new RouteHandler(
         req,
         res,
-        'POST',
+        'GET',
         '/custom/review/exists',
         ['order_id', 'customer_id', 'variant_id']
     );
 
     await handler.handle(async () => {
+        if (!handler.requireParams(['order_id', 'customer_id', 'variant_id']))
+            return;
+
         const verify = await productReviewService.customerHasLeftReview(
             handler.inputParams.order_id,
             handler.inputParams.customer_id,

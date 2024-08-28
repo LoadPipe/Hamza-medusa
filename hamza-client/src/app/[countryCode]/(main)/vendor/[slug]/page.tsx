@@ -1,14 +1,11 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ProductCollections from '@modules/collections/product_collection_filter';
 import {
     Flex,
     Box,
-    Grid,
-    GridItem,
-    Heading,
     Text,
     Image,
     Button,
@@ -21,7 +18,6 @@ import {
     ModalCloseButton,
     FormControl,
     FormLabel,
-    Input,
     Textarea,
     Select,
     useDisclosure,
@@ -29,25 +25,15 @@ import {
     AlertIcon,
     AlertTitle,
     AlertDescription,
-    Card,
-    CardHeader,
-    CardBody,
-    Stack,
-    StackDivider,
-    CardFooter,
     FormErrorMessage,
     Divider,
 } from '@chakra-ui/react';
-import axios from 'axios';
-import ProductCardGroup from '@modules/products/components/product-group-vendor';
 import VendorProductDisplay from '@modules/vendors/components/products/vendor-product-display';
-import { getStoreIdByName, getVendorStoreBySlug } from '@lib/data';
-import { format } from 'date-fns';
+import { getVendorStoreBySlug } from '@lib/data';
 import {
     MdOutlineKeyboardArrowRight,
     MdOutlineKeyboardArrowUp,
 } from 'react-icons/md';
-import useVendor from '@store/store-page/vendor';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -72,39 +58,28 @@ export default function Page({ params }: { params: { slug: string } }) {
     const [showMore, setShowMore] = useState(3);
     console.log(`slug name ${displaySlug}`);
 
-    // Get store id
-    const { setStoreId } = useVendor();
     useEffect(() => {
-        async function fetchStoreId() {
-            const id = await getStoreIdByName(displaySlug);
-            setStoreId(id);
-            console.log('store id:', id);
-        }
-        fetchStoreId();
-    }, [displaySlug]);
+        getVendorPage();
+    }, [params.slug]);
 
-    // can I get a store_id from vendor name??
-    // yes you can so let's do that, /custom/vendors/vendor-reviews
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                //TODO: MOVE TO INDEX.TS
-                const response = await axios.post(
-                    `${BACKEND_URL}/custom/vendors/vendor-store`,
-                    {
-                        store_name: displaySlug,
-                    }
-                );
-                console.log(`Response ${JSON.stringify(response.data)}`);
-                setReviewStats(response.data);
-                console.log(`THUMBNAIL: ${response.data.icon}`);
-            } catch (error) {
-                console.log(`Error ${error}`);
+    const getVendorPage = async () => {
+        try {
+            console.log(`Display Slug is ${displaySlug}`);
+            const response = await getVendorStoreBySlug(displaySlug);
+            if (
+                response &&
+                JSON.stringify(response) !== JSON.stringify(reviewStats)
+            ) {
+                console.log(`Response ${JSON.stringify(response)}`);
+                setReviewStats(response);
+                console.log(`THUMBNAIL: ${response.thumbnail}`);
+            } else {
+                console.log('Response was null or no data changes');
             }
-        };
-
-        fetchData();
-    }, [displaySlug]);
+        } catch (error) {
+            console.log(`Error ${error}`);
+        }
+    };
 
     let readableDate = 'Invalid date';
     if (reviewStats.createdAt) {

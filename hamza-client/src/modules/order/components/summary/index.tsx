@@ -17,7 +17,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import Image from 'next/image';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
-
+import { getCompleteTemplate } from '@lib/data/index';
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
 interface Product {
@@ -61,15 +61,9 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                //TODO: MOVE TO INDEX.TS
-                const response = await axios.post(
-                    `${BACKEND_URL}/custom/order/complete-template`,
-                    {
-                        cart_id: cart_id,
-                    }
-                );
+                const response = await getCompleteTemplate(cart_id);
                 // Assuming the response contains the products array in `response.data.products`
-                const fetchedProducts: Product[] = response.data.cart || [];
+                const fetchedProducts: Product[] = response.cart || [];
                 console.log(`Fetched products: ${JSON.stringify(response)}`);
                 setProducts(fetchedProducts);
             } catch (error) {

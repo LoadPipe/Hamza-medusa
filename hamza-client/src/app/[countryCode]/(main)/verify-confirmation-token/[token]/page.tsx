@@ -2,12 +2,12 @@
 
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import Input from '@modules/common/components/input';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Toast } from '@medusajs/ui';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { verifyToken } from '@lib/data/index';
 
-const VerifyEmail = () => {
+const VerifyEmail = async () => {
     const [message, setDisplayMessage] = useState(
         'loading results, Please wait!!!!'
     );
@@ -16,18 +16,15 @@ const VerifyEmail = () => {
     const { setCustomerAuthData, authData } = useCustomerAuthStore();
 
     const confirmationTokenHandler = async () => {
-        //TODO: MOVE TO INDEX.TS
-        let res = await axios.get(
-            `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/confirmation-token/verify?token=${token}`
-        );
+        let res = verifyToken(token as string);
 
-        let data = res.data;
-        if (data.status == true) {
+        let data: any = res;
+        if (data?.status == true) {
             setDisplayMessage('Email verified successfully!!!');
             setCustomerAuthData({ ...authData, is_verified: true });
             return;
         } else {
-            setDisplayMessage(data.message);
+            setDisplayMessage(data?.message);
             return;
         }
     };

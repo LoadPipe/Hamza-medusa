@@ -12,6 +12,7 @@ import toast from 'react-hot-toast';
 import { FcGoogle } from 'react-icons/fc';
 import { FaTwitter, FaDiscord } from 'react-icons/fa';
 import { Flex, Text, Heading } from '@chakra-ui/react';
+import { verifyEmail } from '@lib/data';
 
 const VerifyEmail = () => {
     const { authData, setCustomerAuthData } = useCustomerAuthStore();
@@ -26,14 +27,8 @@ const VerifyEmail = () => {
     }
 
     const emailVerificationHandler = async () => {
-        //TODO: MOVE TO INDEX.TS
-        let res = await axios.post(
-            `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/confirmation-token/generate`,
-            { customer_id: authData.customer_id, email: email },
-            {}
-        );
-
-        let data = res.data;
+        let res: any = await verifyEmail(authData.customer_id, email);
+        let data = res?.data;
         if (data.status == true) {
             toast.success('Email sent successfully!!');
             router.replace('/');

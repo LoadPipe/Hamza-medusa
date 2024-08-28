@@ -1,16 +1,19 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
-import { readRequestBody } from '../../../../utils/request-body';
 import OrderService from '../../../../services/order';
 import { RouteHandler } from '../../../route-handler';
 
-export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
+export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
 
-    const handler = new RouteHandler(req, res, 'POST', '/custom/order/vendor', [
+    const handler = new RouteHandler(req, res, 'GET', '/custom/order/store', [
         'order_id',
     ]);
 
     await handler.handle(async () => {
+        //validate 
+        if (!handler.requireParam('order_id'))
+            return;
+
         const order = await orderService.getVendorFromOrder(
             handler.inputParams.order_id
         );

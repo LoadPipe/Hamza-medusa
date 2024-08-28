@@ -10,12 +10,21 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        //validate 
-        if (!handler.requireParams(['product_id']))
-            return;
+        if (handler.inputParams.product_id?.length) {
+            const store_name = await productService.getStoreFromProduct(handler.inputParams.product_id);
+            res.json(store_name);
+        }
 
-        const store_name = await productService.getStoreFromProduct(handler.inputParams.product_id);
-        res.json(store_name);
+        else if (handler.inputParams.store_name?.length) {
+            const products = await productService.getProductsFromStoreName(
+                handler.inputParams.store_name
+            );
+            res.json(products);
+        }
+
+        else {
+            res.status(400).json({ message: 'Required parameters missing' });
+        }
     });
 };
 
