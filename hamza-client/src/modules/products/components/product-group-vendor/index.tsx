@@ -13,6 +13,7 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import ProductCardHome from '../product-group-home/component/home-product-card';
+import useVendor from '@store/store-page/vendor';
 
 type Props = {
     vendorName: string;
@@ -24,11 +25,12 @@ type Props = {
 const ProductCardGroup = ({ vendorName, handle }: Props) => {
     // get preferred currency
     const { preferred_currency_code } = useCustomerAuthStore();
+    const { storeId } = useVendor();
 
     const url =
         handle === 'all'
             ? `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products?store_name=${vendorName}`
-            : `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/products?store_id=store_01J5ZZRZ75TFWY30P96J6E89MZ&handle=${handle}`;
+            : `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/products?store_id=${storeId}&handle=${handle}`;
 
     // Fetch data using the useQuery hook
     const { data, error, isLoading } = useQuery(

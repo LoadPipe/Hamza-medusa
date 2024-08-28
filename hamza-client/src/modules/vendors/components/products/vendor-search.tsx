@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Flex } from '@chakra-ui/react';
 import VendorCatButton from './vendor-cat-button';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import ProductCardGroup from '@modules/products/components/product-group-vendor';
+import { getStoreIdByName } from '@lib/data';
 
 type Props = {
     vendorName: string;
@@ -15,6 +16,16 @@ const VendorSearch = ({ vendorName }: Props) => {
     // Category button hooks
     const [handle, setHandle] = useState('all');
     const [selectedButton, setSelectedButton] = useState('All Products'); // Track selected button
+    const [storeId, setStoreId] = useState<string | null>(null);
+
+    // Get store id
+    useEffect(() => {
+        async function fetchStoreId() {
+            const id = await getStoreIdByName(vendorName);
+            setStoreId(id);
+        }
+        fetchStoreId();
+    }, [vendorName]);
 
     // Get categories and update buttons
     const { data, error, isLoading } = useQuery(

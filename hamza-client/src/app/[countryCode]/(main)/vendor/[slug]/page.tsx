@@ -41,12 +41,13 @@ import {
 import axios from 'axios';
 import ProductCardGroup from '@modules/products/components/product-group-vendor';
 import VendorProductDisplay from '@modules/vendors/components/products/vendor-product-display';
-import { getVendorStoreBySlug } from '@lib/data';
+import { getStoreIdByName, getVendorStoreBySlug } from '@lib/data';
 import { format } from 'date-fns';
 import {
     MdOutlineKeyboardArrowRight,
     MdOutlineKeyboardArrowUp,
 } from 'react-icons/md';
+import useVendor from '@store/store-page/vendor';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -70,6 +71,18 @@ export default function Page({ params }: { params: { slug: string } }) {
     // reveal more text mobile about
     const [showMore, setShowMore] = useState(3);
     console.log(`slug name ${displaySlug}`);
+
+    // Get store id
+    const { setStoreId } = useVendor();
+    useEffect(() => {
+        async function fetchStoreId() {
+            const id = await getStoreIdByName(displaySlug);
+            setStoreId(id);
+            console.log('store id:', id);
+        }
+        fetchStoreId();
+    }, [displaySlug]);
+
     // can I get a store_id from vendor name??
     // yes you can so let's do that, /custom/vendors/vendor-reviews
     useEffect(() => {
