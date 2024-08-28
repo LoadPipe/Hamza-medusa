@@ -6,11 +6,11 @@ import {
     Logger
 } from '@medusajs/medusa';
 import CustomerRepository from '@medusajs/medusa/dist/repositories/customer';
-import ProductVariantRepository from '@medusajs/medusa/dist/repositories/product-variant';
 import { LineItem } from '../models/line-item';
 import { Lifetime } from 'awilix';
 import { PriceConverter } from '../strategies/price-selection';
 import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
+import { DatabaseLogger } from '../utils/logging/logger';
 
 export default class CartService extends MedusaCartService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
@@ -18,14 +18,13 @@ export default class CartService extends MedusaCartService {
     protected readonly customerRepository_: typeof CustomerRepository;
     protected readonly lineItemRepository_: typeof LineItemRepository;
     protected readonly priceConverter: PriceConverter = new PriceConverter();
-    protected readonly logger: Logger;
-    //protected productVariantRepository_: typeof ProductVariantRepository;
+    protected readonly logger: DatabaseLogger;
 
     constructor(container) {
         super(container);
         this.customerRepository_ = container.customerRepository;
         this.lineItemRepository_ = container.lineItemRepository;
-        this.logger = container.logger;
+        this.logger = new DatabaseLogger(container);
     }
 
     async retrieve(cartId: string, options?: FindConfig<Cart>, totalsConfig?: { force_taxes?: boolean; }): Promise<Cart> {
@@ -52,7 +51,6 @@ export default class CartService extends MedusaCartService {
                     itemsToSave.push(item);
                 }
             }
-
 
             if (itemsToSave.length) {
                 Promise.all(
