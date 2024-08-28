@@ -156,12 +156,27 @@ export async function deleteWishlistItem(
 export async function getProductsByVendor(storeName: string) {
     try {
         const response = await axios.get(
-            `${BACKEND_URL}/custom/store/products?store_name=${storeName}`
+            `${BACKEND_URL}/custom/store/products`,
+            {
+                params: {
+                    store_name: storeName,
+                },
+            }
         );
-        return response.data.products;
-    } catch (error) {
-        console.log(error);
-        throw error;
+        return response.data;
+    } catch (e) {
+        console.error(`Failed to return products for ${storeName}: ${e}`);
+        throw e;
+    }
+}
+
+// Get All Vendor Products
+export async function getAllVendorProducts() {
+    try {
+        const response = await axios.get(`${BACKEND_URL}/store/products`);
+        return response.data;
+    } catch (e) {
+        console.log(`Failed to return all vendor products: ${e}`);
     }
 }
 
