@@ -68,6 +68,9 @@ export class RouteHandler {
     }
 
     enforceCustomerId(customerId: string = null): boolean {
+        if (!customerId?.length)
+            return true;
+
         const unauthorized: boolean = (!customerId) ?
             (!this.customerId) :
             (!this.customerId) || (this.customerId !== customerId);

@@ -7,7 +7,7 @@ import ProfileName from '@modules/account/components/profile-name';
 import ProfilePassword from '@modules/account/components/profile-password';
 import ProfileCurrency from '@modules/account/components/profile-currency';
 
-import { getCustomer, listRegions, updateCustomer } from '@lib/data';
+import { getHamzaCustomer, listRegions, updateCustomer } from '@lib/data';
 import { notFound } from 'next/navigation';
 import { Flex, Text } from '@chakra-ui/react';
 import ProfileForm from './profile-form/profile-form';
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Profile() {
-    const customer = await getCustomer();
+    const customer = await getHamzaCustomer();
     const regions = await listRegions();
 
     if (!customer || !regions) {

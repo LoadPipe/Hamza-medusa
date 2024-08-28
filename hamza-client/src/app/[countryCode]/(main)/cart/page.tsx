@@ -6,7 +6,7 @@ import CartTemplate from '@modules/cart/templates';
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { getCheckoutStep } from '@lib/util/get-checkout-step';
 import { CartWithCheckoutStep } from 'types/global';
-import { getCustomer } from '@lib/data';
+import { getHamzaCustomer } from '@lib/data';
 
 export const metadata: Metadata = {
     title: 'Cart',
@@ -37,7 +37,7 @@ const fetchCart = async () => {
 
 export default async function Cart() {
     const cart = await fetchCart();
-    const customer = await getCustomer();
+    const customer = await getHamzaCustomer();
 
     return <CartTemplate cart={cart} customer={customer} />;
 }
