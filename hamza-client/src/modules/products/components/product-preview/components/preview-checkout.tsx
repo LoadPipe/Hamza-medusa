@@ -24,7 +24,6 @@ import {
 import CartPopup from '../../cart-popup';
 import { averageRatings, getStore, reviewCounter } from '@lib/data';
 import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
-
 const MEDUSA_SERVER_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
 interface PreviewCheckoutProps {
@@ -285,10 +284,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                 >
                     Listing Price
                 </Heading>
-                <Flex gap="10px" mb="-0.5rem">
+                <Flex gap={{ base: '5px', md: '10px' }} mb="-0.5rem">
                     <Image
-                        className="h-[14px] w-[14px] self-center"
-                        style={{ width: '24px', height: '24px' }}
+                        className="h-[14px] w-[14px] md:h-[24px!important] md:w-[24px!important] self-center"
                         src={currencyIcons[preferred_currency_code ?? 'USDC']}
                         alt={preferred_currency_code?.toUpperCase() ?? 'USDC'}
                     />
