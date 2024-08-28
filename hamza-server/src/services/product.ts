@@ -215,10 +215,15 @@ class ProductService extends MedusaProductService {
 
     async getProductsFromStoreWithPrices(storeId: string): Promise<Product[]> {
         return await this.convertPrices(
-            (await this.productRepository_.find({
-                where: { store_id: storeId, status: ProductStatus.PUBLISHED },
-                relations: ['variants.prices', 'reviews'],
-            })).filter(p => p.variants?.length)
+            (
+                await this.productRepository_.find({
+                    where: {
+                        store_id: storeId,
+                        status: ProductStatus.PUBLISHED,
+                    },
+                    relations: ['variants.prices', 'reviews'],
+                })
+            ).filter((p) => p.variants?.length)
         );
     }
 
@@ -226,30 +231,37 @@ class ProductService extends MedusaProductService {
         const products = await this.convertPrices(
             await this.productRepository_.find({
                 relations: ['variants.prices', 'reviews'],
-                where: { status: ProductStatus.PUBLISHED, store_id: Not(IsNull()) }
+                where: {
+                    status: ProductStatus.PUBLISHED,
+                    store_id: Not(IsNull()),
+                },
             })
         );
 
         // Sort products so those with weight 69 come first
-        const sortedProducts = products.sort((a, b) => {
-            if (a.weight === 69 && b.weight !== 69) {
-                return -1;
-            }
-            if (a.weight !== 69 && b.weight === 69) {
-                return 1;
-            }
-            return 0;
-        }).filter(p => p.variants?.length);
+        const sortedProducts = products
+            .sort((a, b) => {
+                if (a.weight === 69 && b.weight !== 69) {
+                    return -1;
+                }
+                if (a.weight !== 69 && b.weight === 69) {
+                    return 1;
+                }
+                return 0;
+            })
+            .filter((p) => p.variants?.length);
 
         return sortedProducts;
     }
 
     async getProductsFromStore(storeId: string): Promise<Product[]> {
         // this.logger.log('store_id: ' + storeId); // Potential source of the error
-        return (await this.productRepository_.find({
-            where: { store_id: storeId, status: ProductStatus.PUBLISHED },
-            // relations: ['store'],
-        })).filter(p => p.variants?.length);
+        return (
+            await this.productRepository_.find({
+                where: { store_id: storeId, status: ProductStatus.PUBLISHED },
+                // relations: ['store'],
+            })
+        ).filter((p) => p.variants?.length);
     }
 
     async getCategoriesByStoreId(storeId: string): Promise<Product[]> {
@@ -318,6 +330,54 @@ class ProductService extends MedusaProductService {
             );
             throw new Error('Failed to fetch products from review.');
         }
+    }
+
+    async getProductByHandle(storeId: string) {
+        try {
+            // Ensure the store exists
+            const store = await this.storeRepository_.findOne({
+                where: { id: storeId },
+            });
+
+            if (!store) {
+                return null;
+            }
+
+            // Query to get all products for the given store ID
+            const products = await this.productRepository_.find({
+                where: { store_id: store.id },
+                relations: [
+                    'product_category_product',
+                    'product_category',
+                    'product_variant',
+                ],
+            });
+
+            return products; // Return all product data
+        } catch (error) {
+            // Handle the error here
+            this.logger.error(
+                'Error occurred while fetching products by handle:',
+                error
+            );
+            throw new Error('Failed to fetch products by handle.');
+        }
+    }
+
+    async getAllProductsByHandle(storeId: string, handle: string) {
+        const productCategory = await this.productCategoryRepository_.findOne({
+            where: { handle: handle },
+            relations: ['products.variants.prices'],
+        });
+
+        if (!productCategory) {
+            throw new Error('Product category not found');
+        }
+
+        const products = productCategory.products.filter(
+            (product) => product.store_id === storeId
+        );
+        return products;
     }
 
     async getProductsFromStoreName(storeName: string) {
