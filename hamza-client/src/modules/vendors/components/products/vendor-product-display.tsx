@@ -23,7 +23,6 @@ const VendorProductDisplay = ({ vendorName }: Props) => {
         >
             {/* <SearchBar /> */}
             <VendorSearch vendorName={vendorName} />
-            <ProductCardGroup vendorName={vendorName} />
         </Flex>
     );
 };

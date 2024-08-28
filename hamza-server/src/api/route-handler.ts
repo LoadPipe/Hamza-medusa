@@ -67,9 +67,10 @@ export class RouteHandler {
         }
     }
 
-    enforceCustomerId(customerId: string = null): boolean {
-        if (!customerId?.length)
+    enforceCustomerId(customerId: string = null, requireValue: boolean = false): boolean {
+        if (!requireValue && !customerId?.length) {
             return true;
+        }
 
         const unauthorized: boolean = (!customerId) ?
             (!this.customerId) :
@@ -85,10 +86,10 @@ export class RouteHandler {
 
     requireParams(params: string[]): boolean {
         const missingParams = [];
-        for (let p of params) {
-            if (!p?.length)
+        /*for (let p of params) {
+            if (!this.hasParam(p))
                 missingParams.push(p);
-        }
+        }*/
 
         if (missingParams.length) {
             const message = `missing required param(s): ${missingParams.join()}`

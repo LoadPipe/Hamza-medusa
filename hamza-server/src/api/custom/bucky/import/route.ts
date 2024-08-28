@@ -21,7 +21,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         req,
         res,
         'GET',
-        '/admin/custom/bucky/import'
+        '/admin/custom/bucky/import',
+        ['count', 'page', 'link', 'store',]
     );
 
     const getImportData = async (storeName: string) => {
