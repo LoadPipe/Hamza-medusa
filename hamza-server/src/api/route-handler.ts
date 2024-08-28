@@ -68,6 +68,9 @@ export class RouteHandler {
     }
 
     enforceCustomerId(customerId: string = null, requireValue: boolean = false): boolean {
+        if (!process.env.ENFORCE_ROUTE_IDENTITY)
+            return true;
+
         if (!requireValue && !customerId?.length) {
             return true;
         }
@@ -86,15 +89,18 @@ export class RouteHandler {
 
     requireParams(params: string[]): boolean {
         const missingParams = [];
-        /*for (let p of params) {
-            if (!this.hasParam(p))
-                missingParams.push(p);
-        }*/
 
-        if (missingParams.length) {
-            const message = `missing required param(s): ${missingParams.join()}`
-            this.response.status(400).json({ message });
-            return false;
+        if (process.env.VALIDATE_ROUTE_PARAMS) {
+            for (let p of params) {
+                if (!this.hasParam(p))
+                    missingParams.push(p);
+            }
+
+            if (missingParams.length) {
+                const message = `missing required param(s): ${missingParams.join()}`
+                this.response.status(400).json({ message });
+                return false;
+            }
         }
 
         return true;
