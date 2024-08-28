@@ -651,7 +651,6 @@ export async function getStore(product_id: string) {
 
             maxContentLength: 50 * 1024 * 500,
         });
-        console.log(`Returning store data response: ${response.data}`);
         return response.data;
     } catch (error) {
         console.error('Error fetching store:', error);
@@ -1051,7 +1050,7 @@ export async function getHamzaCustomer(includeAddresses: boolean = true) {
     try {
         const response = await axios.get(`${BACKEND_URL}/custom/customer`, {
             params: {
-                customer_id,
+                customer_id: customer_id,
                 include_addresses: includeAddresses ? 'true' : 'false',
             },
             headers: {

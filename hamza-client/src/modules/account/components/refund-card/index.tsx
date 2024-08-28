@@ -48,11 +48,9 @@ const RefundCard = ({ order, handle }: OrderCardProps) => {
         // Fetch Vendor Name from product.id
         const fetchVendor = async () => {
             try {
-                const data = await getStore(
-                    order.variant.product_id as string
-                );
+                const data = await getStore(order.variant.product_id as string);
                 // console.log(`Vendor: ${data}`);
-                setVendor(data);
+                setVendor(data.name);
             } catch (error) {
                 console.error('Error fetching vendor: ', error);
             }
