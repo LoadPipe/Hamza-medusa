@@ -84,29 +84,51 @@ export async function addToCart({
     countryCode: string;
     currencyCode: string;
 }) {
-    if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY) countryCode = 'us';
-    const cart = await getOrSetCart(countryCode).then((cart) => cart);
+    console.log('addToCart function called with parameters:');
+    console.log('variantId:', variantId);
+    console.log('quantity:', quantity);
+    console.log('countryCode:', countryCode);
+    console.log('currencyCode:', currencyCode);
+
+    if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY) {
+        countryCode = 'us';
+        console.log('Country code forced to US:', countryCode);
+    }
+
+    const cart = await getOrSetCart(countryCode).then((cart) => {
+        console.log('Cart retrieved or set:', cart);
+        return cart;
+    });
 
     if (!cart) {
-        console.log('Missing cart ID ', countryCode);
+        console.log('Missing cart ID for country:', countryCode);
         return 'Missing cart ID';
     }
 
     if (!variantId) {
-        console.log('Missing var ID');
+        console.log('Missing product variant ID');
         return 'Missing product variant ID';
     }
 
     try {
+        console.log('Attempting to add item to cart:', {
+            cartId: cart.id,
+            variantId,
+            quantity,
+            currencyCode,
+        });
+
         await addItem({
             cartId: cart.id,
             variantId,
             quantity,
             currencyCode,
         });
+
+        console.log('Item added to cart successfully');
         revalidateTag('cart');
     } catch (e) {
-        console.error(e);
+        console.error('Error adding item to cart:', e);
         return 'Error adding item to cart';
     }
 }
@@ -172,9 +194,9 @@ export async function enrichLineItems(
     regionId: string
 ): Promise<
     | Omit<
-        ExtendedLineItem,
-        'beforeInsert' | 'beforeUpdate' | 'afterUpdateOrLoad'
-    >[]
+          ExtendedLineItem,
+          'beforeInsert' | 'beforeUpdate' | 'afterUpdateOrLoad'
+      >[]
     | undefined
 > {
     // Prepare query parameters

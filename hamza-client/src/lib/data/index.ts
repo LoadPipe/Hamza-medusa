@@ -23,10 +23,7 @@ import { medusaClient } from '../config';
 import medusaError from '@lib/util/medusa-error';
 import axios from 'axios';
 
-//TODO: is the following commented out code needed? (JK)
-// We need this or it changes the whole architecture
 import { cookies } from 'next/headers';
-import { signOut } from '@modules/account/actions';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
