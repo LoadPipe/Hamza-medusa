@@ -12,7 +12,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         if (!handler.enforceCustomerId(handler.inputParams.customer_id))
             return;
 
-        const includeAddresses: boolean = handler.inputParams.include_addresses?.toString() === 'true';
+        const includeAddresses: boolean = handler.inputParams.include_addresses?.toString() !== 'false';
 
         //get the data 
         const findParams: any = {
@@ -25,8 +25,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         const customer: Customer = await CustomerRepository.findOne(findParams);
 
-        if (!customer)
-            return res.status(404);
+        if (!customer) {
+            handler.logger.warn(`customer ${handler.inputParams.customer_id} not found`);
+            return res.status(404).json({ message: `customer ${handler.inputParams.customer_id} not found` });
+        }
 
         return res.send(customer);
     });

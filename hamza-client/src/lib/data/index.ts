@@ -885,7 +885,7 @@ export async function getSession() {
 }
 
 // Customer actions
-export async function getHamzaCustomer() {
+export async function getHamzaCustomer(includeAddresses: boolean = true) {
     const headers = getMedusaHeaders(['customer']);
     const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? { customer_id: '' };
     const customer_id: string = token?.customer_id ?? '';
@@ -895,7 +895,8 @@ export async function getHamzaCustomer() {
         const response = await axios.get(
             `${BACKEND_URL}/custom/customer`, {
             params: {
-                customer_id
+                customer_id,
+                include_addresses: (includeAddresses ? 'true' : 'false')
             },
             headers: {
                 'authorization': cookies().get('_medusa_jwt')?.value
