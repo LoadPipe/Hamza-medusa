@@ -1,19 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { singleBucket } from '@lib/data';
-import {
-    Box,
-    Button,
-    Collapse,
-    HStack,
-    Icon,
-    Tab,
-    TabList,
-    TabPanel,
-    TabPanels,
-    Tabs,
-    Text,
-    VStack,
-} from '@chakra-ui/react';
+import { Box, Button } from '@chakra-ui/react';
 import CancelCard from '@modules/account/components/cancel-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
