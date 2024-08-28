@@ -27,8 +27,8 @@ const VerifyEmail = () => {
     }
 
     const emailVerificationHandler = async () => {
-        let res = await verifyEmail(authData.customer_id, email);
-        let data = res.data;
+        let res: any = await verifyEmail(authData.customer_id, email);
+        let data = res?.data;
         if (data.status == true) {
             toast.success('Email sent successfully!!');
             router.replace('/');
