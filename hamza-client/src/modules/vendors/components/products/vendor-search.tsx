@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import ProductCardGroup from '@modules/products/components/product-group-vendor';
 import { getStoreIdByName } from '@lib/data';
+import useVendor from '@store/store-page/vendor';
 
 type Props = {
     vendorName: string;
@@ -16,16 +17,15 @@ const VendorSearch = ({ vendorName }: Props) => {
     // Category button hooks
     const [handle, setHandle] = useState('all');
     const [selectedButton, setSelectedButton] = useState('All Products'); // Track selected button
-    const [storeId, setStoreId] = useState<string | null>(null);
-
+    const { setStoreId } = useVendor();
     // Get store id
-    useEffect(() => {
-        async function fetchStoreId() {
-            const id = await getStoreIdByName(vendorName);
-            setStoreId(id);
-        }
-        fetchStoreId();
-    }, [vendorName]);
+    // useEffect(() => {
+    //     async function fetchStoreId() {
+    //         const id = await getStoreIdByName(vendorName);
+    //         setStoreId(id);
+    //     }
+    //     fetchStoreId();
+    // }, [vendorName]);
 
     // Get categories and update buttons
     const { data, error, isLoading } = useQuery(
@@ -45,11 +45,7 @@ const VendorSearch = ({ vendorName }: Props) => {
         data.data.forEach((item: any) => {
             const handle = item?.handle;
             if (handle) {
-                // Remove underscores and convert the string to a more readable format
-                const formattedHandle = handle
-                    .replace(/_/g, ' ')
-                    .replace(/\b\w/g, (char) => char.toUpperCase());
-                uniqueHandles.add(formattedHandle);
+                uniqueHandles.add(handle);
             }
         });
 

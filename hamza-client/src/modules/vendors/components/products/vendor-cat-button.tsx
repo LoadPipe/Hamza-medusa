@@ -14,6 +14,12 @@ const VendorCatButton: React.FC<VendorCatButtonProps> = ({
     setHandle,
     setSelected,
 }) => {
+    const formattedCatName =
+        catName === 'All Products'
+            ? catName
+            : catName
+                  .replace(/_/g, ' ')
+                  .replace(/\b\w/g, (char) => char.toUpperCase());
     return (
         <Flex
             width={{ base: '94px', md: '167px' }}
@@ -26,13 +32,13 @@ const VendorCatButton: React.FC<VendorCatButtonProps> = ({
             alignItems={'center'}
             cursor={'pointer'}
             onClick={() => {
-                setHandle(
-                    catName === 'All Products' ? 'all' : catName.toLowerCase()
-                );
+                setHandle(catName === 'All Products' ? 'all' : catName);
                 setSelected(catName);
             }}
         >
-            <Text fontSize={{ base: '10px', md: '16px' }}>{catName}</Text>
+            <Text fontSize={{ base: '10px', md: '16px' }}>
+                {formattedCatName}
+            </Text>
         </Flex>
     );
 };
