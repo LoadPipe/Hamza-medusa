@@ -8,19 +8,22 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        //validate 
-        if (!handler.requireParams(['customer_id']))
-            return;
-
         //security 
         if (!handler.enforceCustomerId(handler.inputParams.customer_id))
             return;
 
+        const includeAddresses: boolean = handler.inputParams.include_addresses?.toString() === 'true';
+
         //get the data 
-        const customer: Customer = await CustomerRepository.findOne({
-            where: { id: handler.inputParams.customer_id.toString(), },
-            relations: ['shipping_addresses', 'billing_address']
-        });
+        const findParams: any = {
+            where: { id: handler.inputParams.customer_id.toString(), }
+        };
+
+        if (includeAddresses) {
+            findParams.relations = ['shipping_addresses', 'billing_address'];
+        }
+
+        const customer: Customer = await CustomerRepository.findOne(findParams);
 
         if (!customer)
             return res.status(404);

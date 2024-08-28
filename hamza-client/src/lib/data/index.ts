@@ -893,7 +893,8 @@ export async function getCustomer() {
     const response = await axios.get(
         `${BACKEND_URL}/custom/customer`, {
         params: {
-            customer_id
+            customer_id,
+            include_addresses: 'true'
         },
         headers: {
             'authorization': cookies().get('_medusa_jwt')?.value
