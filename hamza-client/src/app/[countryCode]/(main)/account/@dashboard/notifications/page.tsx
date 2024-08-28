@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { Text } from '@chakra-ui/react';
 import Notification from '@modules/account/components/notifications';
 
-import { getCustomer } from '@lib/data';
+import { getHamzaCustomer } from '@lib/data';
 
 import { getRegion } from 'app/actions';
 import { headers } from 'next/headers';
@@ -18,7 +18,7 @@ export default async function Notifications() {
     const countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY
         ? 'us'
         : nextHeaders.get('next-url')?.split('/')[1] || '';
-    const customer = await getCustomer();
+    const customer = await getHamzaCustomer();
     const region = await getRegion(countryCode);
 
     if (!customer || !region) {

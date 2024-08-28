@@ -122,6 +122,9 @@ export async function getWishlist(customer_id: string) {
             params: {
                 customer_id,
             },
+            headers: {
+                authorization: cookies().get('_medusa_jwt')?.value,
+            },
         });
         return response.data;
     } catch (e) {
@@ -650,6 +653,24 @@ export async function getStore(product_id: string) {
     }
 }
 
+export async function getStoreIdByName(store_name: string) {
+    try {
+        const response = await axios.get(`${BACKEND_URL}/custom/store/id`, {
+            params: { store_name },
+        });
+
+        if (response.data && response.data.id) {
+            return response.data.id;
+        } else {
+            console.error(`No store found with the name ${store_name}`);
+            return null;
+        }
+    } catch (error) {
+        console.error(`Error fetching store ID for ${store_name}:`, error);
+        return null;
+    }
+}
+
 export async function setCurrency(newCurrency: string, customer_id: string) {
     try {
         await axios.put(
@@ -698,8 +719,7 @@ export async function vendorReviews(store_id: string) {
 }
 
 export async function getCheckoutData(cart_id: string) {
-    const response = await axios.get(
-        `${BACKEND_URL}/custom/checkout`, {
+    const response = await axios.get(`${BACKEND_URL}/custom/checkout`, {
         params: {
             cart_id,
         },
@@ -1015,21 +1035,57 @@ export async function getSession() {
 }
 
 // Customer actions
+export async function getHamzaCustomer(includeAddresses: boolean = true) {
+    const headers = getMedusaHeaders(['customer']);
+    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? { customer_id: '' };
+    const customer_id: string = token?.customer_id ?? '';
+    console.log(headers);
+
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/customer`, {
+            params: {
+                customer_id,
+                include_addresses: (includeAddresses ? 'true' : 'false')
+            },
+            headers: {
+                'authorization': cookies().get('_medusa_jwt')?.value
+            }
+        });
+
+        console.log("AUTH CUSTOMER RESPONSE STATUS IS ", response.status)
+        return response.status == 200 && response.data ? response.data : {};
+
+    } catch (e) {
+        try {
+            cookies().set('_medusa_jwt', '', {
+                maxAge: -1,
+            });
+        } catch (e) {
+            console.error(e);
+        }
+        console.log(e);
+        return null;
+    }
+}
+
+// Customer actions
 export async function getCustomer() {
     const headers = getMedusaHeaders(['customer']);
     console.log(headers);
-    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? { customer_id: '' };
+    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? {
+        customer_id: '',
+    };
     const customer_id: string = token?.customer_id ?? '';
 
-    const response = await axios.get(
-        `${BACKEND_URL}/custom/customer`, {
+    const response = await axios.get(`${BACKEND_URL}/custom/customer`, {
         params: {
             customer_id,
-            include_addresses: 'true'
+            include_addresses: 'true',
         },
         headers: {
-            'authorization': cookies().get('_medusa_jwt')?.value
-        }
+            authorization: cookies().get('_medusa_jwt')?.value,
+        },
     });
     return response.status == 200 && response.data ? response.data : {};
     /*

@@ -56,6 +56,8 @@ export const darkThemeConfig = darkTheme({
     overlayBlur: 'small',
 });
 
+const EXTRA_LOGGING = false;
+
 // TODO: Later can use this logic for custom Chain logos
 // // Extend the Sepolia chain configuration
 // const customSepolia = {
@@ -92,13 +94,13 @@ export const { chains, publicClient, webSocketPublicClient } = configureChains(
 );
 
 export function getAllowedChainsFromConfig() {
-    console.log('RB: getAllowedChainsFromConfig');
+    if (EXTRA_LOGGING) console.log('RB: getAllowedChainsFromConfig');
     let chains = process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS;
     if (!chains?.length) chains = '10'; ///default to mainnet
 
     const split: any[] = chains.split(',');
     split.forEach((v, i) => (split[i] = parseInt(v.trim())));
-    console.log('RB: allowed blockchains: ', split);
+    if (EXTRA_LOGGING) console.log('RB: allowed blockchains: ', split);
     if (!split.length)
         split.push(10);
     return split;
@@ -156,7 +158,7 @@ type Props = {
 
 
 export function getBlockchainNetworkName(chainId: number | string) {
-    console.log('RB: getBlockchainNetworkName', chainId);
+    if (EXTRA_LOGGING) console.log('RB: getBlockchainNetworkName', chainId);
 
     //ensure number 
     try { chainId = chainId ? parseInt(chainId.toString()) : 10; }
@@ -182,7 +184,7 @@ export function getBlockchainNetworkName(chainId: number | string) {
 
 // Add NEXT_PUBLIC_ALLOWED_BLOCKCHAINS = 11155111 to env
 export const SwitchNetwork = ({ enabled }: Props) => {
-    console.log('RB: SwitchNetwork');
+    if (EXTRA_LOGGING) console.log('RB: SwitchNetwork');
     // Modal Hook
     const [openModal, setOpenModal] = useState(false);
     const [preferredChainName, setPreferredChainName] = useState('');
@@ -195,7 +197,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     const { data: walletClient, isError } = useWalletClient();
 
     const { chain } = useNetwork();
-    console.log('CHAIN:', chain);
+    if (EXTRA_LOGGING) console.log('CHAIN:', chain);
 
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
@@ -206,7 +208,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
 
 
     const setSwitchNetwork = () => {
-        console.log('RB: setSwitchNetwork');
+        if (EXTRA_LOGGING) console.log('RB: setSwitchNetwork');
         let allowed = getAllowedChainsFromConfig()[0];
         setPreferredChainID(allowed);
         setPreferredChainName(getBlockchainNetworkName(allowed));
@@ -219,13 +221,13 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     useEffect(() => {
         const fetchChainId = async () => {
             setSwitchNetwork();
-            console.log('RB: fetchChainId');
+            if (EXTRA_LOGGING) console.log('RB: fetchChainId');
             if (walletClient && enabled) {
                 try {
-                    console.log('RB: calling getChainId');
+                    if (EXTRA_LOGGING) console.log('RB: calling getChainId');
                     const chainId =
                         chain?.id ?? (await getChainId(walletClient));
-                    console.log(
+                    if (EXTRA_LOGGING) console.log(
                         `RB: connected chain id is ${chainId}, preferred chain is ${preferredChainID}`
                     );
 
