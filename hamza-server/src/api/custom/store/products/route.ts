@@ -10,25 +10,25 @@ type ProductSelector = {
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const storeService: StoreService = req.scope.resolve('storeService');
-    const productService: ProductService =
-        req.scope.resolve('productService');
+    const productService: ProductService = req.scope.resolve('productService');
 
-    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/store/products', ['store_name']);
+    const handler: RouteHandler = new RouteHandler(
+        req,
+        res,
+        'GET',
+        '/custom/store/products',
+        ['store_name']
+    );
 
     await handler.handle(async () => {
-
-        //validate 
-        if (!handler.requireParams(['store_name']))
-            return;
+        //validate
+        if (!handler.requireParams(['store_name'])) return;
 
         const storeName = handler.inputParams.store_name;
 
         let list_products = [];
         if (storeName?.length) {
-
-            const store = await storeService.getStoreByName(
-                storeName
-            );
+            const store = await storeService.getStoreByName(storeName);
 
             //check for store existence
             if (!store) {
@@ -36,10 +36,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             }
 
             // Chain query to get products
-            list_products =
-                await productService.getProductsFromStoreWithPrices(store.id);
-        }
-        else {
+            list_products = await productService.getProductsFromStoreWithPrices(
+                store.id
+            );
+        } else {
             list_products =
                 await productService.getAllProductsFromStoreWithPrices();
         }
