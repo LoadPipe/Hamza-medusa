@@ -98,6 +98,11 @@ export default async function ProductPage({ params }: Props) {
         notFound();
     }
 
+    console.log('%%%%%%%%% HEEELLLLO ');
+    if (pricedProduct) {
+        console.log('Parent price', pricedProduct);
+    }
+
     return (
         <ProductTemplate
             product={pricedProduct}
