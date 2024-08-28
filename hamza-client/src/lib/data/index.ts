@@ -22,7 +22,6 @@ import { ProductCategoryWithChildren, ProductPreviewType } from 'types/global';
 import { medusaClient } from '../config';
 import medusaError from '@lib/util/medusa-error';
 import axios from 'axios';
-import { decode } from 'jsonwebtoken';
 
 //TODO: is the following commented out code needed? (JK)
 // We need this or it changes the whole architecture
