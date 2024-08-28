@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Flex, Box, Text, Input } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { Flex } from '@chakra-ui/react';
 import VendorCatButton from './vendor-cat-button';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -12,9 +12,9 @@ type Props = {
 };
 
 const VendorSearch = ({ vendorName }: Props) => {
-    const [allProducts, setAllProducts] = useState(true);
+    // Category button hooks
     const [handle, setHandle] = useState('all');
-    const [selectedButton, setSelectedButton] = useState('all'); // Track selected button
+    const [selectedButton, setSelectedButton] = useState('All Products'); // Track selected button
 
     // Get categories and update buttons
     const { data, error, isLoading } = useQuery(
@@ -25,6 +25,7 @@ const VendorSearch = ({ vendorName }: Props) => {
         }
     );
 
+    // Filter for unique hamdles
     let uniqueHandlesArray: string[] = [];
 
     if (data && data.data) {
@@ -47,15 +48,15 @@ const VendorSearch = ({ vendorName }: Props) => {
         console.log('No data available');
     }
 
+    // API is loading
     if (isLoading) {
         return <div>Loading...</div>;
     }
 
+    // Error reaching api
     if (error) {
         return <div>Error loading categories</div>;
     }
-
-    console.log(handle);
 
     return (
         <Flex flexDir={'column'} width={'100%'}>
