@@ -23,6 +23,7 @@ import {
 } from 'react-icons/ti';
 import CartPopup from '../../cart-popup';
 import { averageRatings, getStore, reviewCounter } from '@lib/data';
+import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
 
 const MEDUSA_SERVER_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -32,11 +33,8 @@ interface PreviewCheckoutProps {
 
 // TODO: REFACTOR THIS COMPONENT, POST DEMO - GN
 const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
-    const currencies: { [key: string]: 'ETH' | 'USDC' | 'USDT' } = {
-        ETH: 'ETH',
-        USDT: 'USDT',
-        USDC: 'USDC',
-    };
+    const currencies = ['eth', 'usdc', 'usdt'];
+
     const [options, setOptions] = useState<Record<string, string>>({});
     const [cartModalOpen, setCartModalOpen] = useState(false);
     const updateOptions = (update: Record<string, string>) => {
@@ -82,6 +80,23 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
         //     `ReviewCount ${reviewCount} AverageRating ${averageRating}`
         // );
     }, [productId]);
+
+    const showAvailableCurrencies = () => {
+        return (
+            <>
+                {currencies
+                    .filter((currency) => currency !== preferred_currency_code)
+                    .map((currency) => (
+                        <Image
+                            key={currency}
+                            className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
+                            src={currencyIcons[currency]}
+                            alt={currency}
+                        />
+                    ))}
+            </>
+        );
+    };
 
     const variantRecord = useMemo(() => {
         const map: Record<string, Record<string, string>> = {};
@@ -271,16 +286,17 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                     Listing Price
                 </Heading>
                 <Flex gap="10px" mb="-0.5rem">
-                    <CurrencyButtonPreview
-                        width="24px"
-                        height="24px"
-                        currencyName={currencies['USDC']}
+                    <Image
+                        className="h-[14px] w-[14px] self-center"
+                        style={{ width: '24px', height: '24px' }}
+                        src={currencyIcons[preferred_currency_code ?? 'USDC']}
+                        alt={preferred_currency_code?.toUpperCase() ?? 'USDC'}
                     />
                     <Heading
                         fontSize={{ base: '18px', md: '32px' }}
                         color="white"
                     >
-                        {`${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} ${preferred_currency_code?.toUpperCase() ?? 'USDC'}`}
+                        {`${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} `}
                     </Heading>
                     {/*<Text*/}
                     {/*    style={{ textDecoration: 'line-through' }}*/}
@@ -366,16 +382,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                     Also available in other currencies
                 </Heading>
                 <Flex display={{ base: 'none', md: 'flex' }} gap="10px">
-                    {Object.keys(currencies)
-                        .filter((key: string) => currencies[key] !== 'USDC')
-                        .map((key) => (
-                            <CurrencyButtonPreview
-                                width="20px"
-                                height="20px"
-                                key={key}
-                                currencyName={currencies[key]}
-                            />
-                        ))}
+                    {showAvailableCurrencies()}
                 </Flex>
             </Flex>
             <Divider
