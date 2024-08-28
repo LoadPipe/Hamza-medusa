@@ -67,7 +67,11 @@ export class RouteHandler {
         }
     }
 
-    enforceCustomerId(customerId: string = null): boolean {
+    enforceCustomerId(customerId: string = null, requireValue: boolean = false): boolean {
+        if (!requireValue && !customerId?.length) {
+            return true;
+        }
+
         const unauthorized: boolean = (!customerId) ?
             (!this.customerId) :
             (!this.customerId) || (this.customerId !== customerId);
@@ -83,7 +87,7 @@ export class RouteHandler {
     requireParams(params: string[]): boolean {
         const missingParams = [];
         for (let p of params) {
-            if (!p?.length)
+            if (!this.hasParam(p))
                 missingParams.push(p);
         }
 
@@ -94,5 +98,9 @@ export class RouteHandler {
         }
 
         return true;
+    }
+
+    hasParam(param: string): boolean {
+        return this.inputParams[param]?.length;
     }
 }
