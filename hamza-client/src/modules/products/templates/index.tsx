@@ -41,7 +41,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
     } = useProductPreview();
 
     const [vendor, setVendor] = useState('');
-
+    console.log('Get product data', product);
     // Only update product data when `product` changes
     useEffect(() => {
         if (product && product.id) {
