@@ -98,4 +98,8 @@ export class RouteHandler {
 
         return true;
     }
+
+    hasParam(param): boolean {
+        return this.inputParams[param]?.length ? true : false;
+    }
 }
