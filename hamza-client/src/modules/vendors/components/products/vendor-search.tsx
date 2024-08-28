@@ -13,7 +13,8 @@ type Props = {
 
 const VendorSearch = ({ vendorName }: Props) => {
     const [allProducts, setAllProducts] = useState(true);
-    const [handle, setHandle] = useState('shirts');
+    const [handle, setHandle] = useState('all');
+    const [selectedButton, setSelectedButton] = useState('all'); // Track selected button
 
     // Get categories and update buttons
     const { data, error, isLoading } = useQuery(
@@ -59,41 +60,36 @@ const VendorSearch = ({ vendorName }: Props) => {
     return (
         <Flex flexDir={'column'} width={'100%'}>
             <Flex
-                mx={{ base: '1rem', md: '0' }}
+                mx={'1rem'}
                 flexDir={'row'}
                 maxWidth={'1256.52px'}
                 width={'100%'}
                 my={{ base: '1rem', md: '3rem' }}
                 gap={'1rem'}
             >
-                <VendorCatButton catName="All Products" />
+                <VendorCatButton
+                    catName={'All Products'}
+                    setHandle={setHandle}
+                    setSelected={setSelectedButton}
+                    selected={selectedButton}
+                />
 
                 {uniqueHandlesArray.map((handle, index) => (
                     <VendorCatButton
                         key={index}
                         catName={handle}
                         setHandle={setHandle}
-                        setAllProducts={setAllProducts}
+                        setSelected={setSelectedButton}
+                        selected={selectedButton}
                     />
                 ))}
-                {/* <Flex ml="auto" alignSelf={'center'}>
-                    <Input
-                        height={'66px'}
-                        width={'385px'}
-                        borderRadius={'48px'}
-                        borderColor={'#555555'}
-                        backgroundColor={'#121212'}
-                    />
-                </Flex> */}
             </Flex>
-            <Box mt="2rem">
-                {/* Add margin to ensure buttons are not overlapped */}
-                <ProductCardGroup
-                    vendorName={vendorName}
-                    allProducts={true}
-                    handle={handle}
-                />
-            </Box>
+
+            <ProductCardGroup
+                vendorName={vendorName}
+                allProducts={true}
+                handle={handle}
+            />
         </Flex>
     );
 };

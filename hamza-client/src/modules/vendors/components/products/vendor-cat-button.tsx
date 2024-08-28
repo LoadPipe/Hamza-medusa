@@ -3,14 +3,16 @@ import { Flex, Text } from '@chakra-ui/react';
 
 type VendorCatButtonProps = {
     catName: string;
+    selected: string;
     setHandle: (handle: string) => void;
-    setAllProducts: (allProducts: boolean) => void;
+    setSelected: (selected: string) => void;
 };
 
 const VendorCatButton: React.FC<VendorCatButtonProps> = ({
     catName,
+    selected,
     setHandle,
-    setAllProducts,
+    setSelected,
 }) => {
     return (
         <Flex
@@ -18,12 +20,16 @@ const VendorCatButton: React.FC<VendorCatButtonProps> = ({
             height={{ base: '42px', md: '66px' }}
             borderRadius={'49px'}
             borderWidth={'1px'}
+            backgroundColor={selected === catName ? 'white' : 'transparent'}
+            color={selected === catName ? 'black' : 'white'}
             justifyContent={'center'}
             alignItems={'center'}
             cursor={'pointer'}
             onClick={() => {
-                setHandle(catName.toLowerCase());
-                setAllProducts(false);
+                setHandle(
+                    catName === 'All Products' ? 'all' : catName.toLowerCase()
+                );
+                setSelected(catName);
             }}
         >
             <Text fontSize={{ base: '10px', md: '16px' }}>{catName}</Text>
