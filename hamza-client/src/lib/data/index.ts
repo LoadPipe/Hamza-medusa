@@ -22,6 +22,7 @@ import { ProductCategoryWithChildren, ProductPreviewType } from 'types/global';
 import { medusaClient } from '../config';
 import medusaError from '@lib/util/medusa-error';
 import axios from 'axios';
+import { decode } from 'jsonwebtoken';
 
 //TODO: is the following commented out code needed? (JK)
 // We need this or it changes the whole architecture
@@ -915,6 +916,41 @@ export async function getSession() {
         .getSession(headers)
         .then(({ customer }) => customer)
         .catch((err) => medusaError(err));
+}
+
+// Customer actions
+export async function getHamzaCustomer(includeAddresses: boolean = true) {
+    const headers = getMedusaHeaders(['customer']);
+    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? { customer_id: '' };
+    const customer_id: string = token?.customer_id ?? '';
+    console.log(headers);
+
+    try {
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/customer`, {
+            params: {
+                customer_id,
+                include_addresses: (includeAddresses ? 'true' : 'false')
+            },
+            headers: {
+                'authorization': cookies().get('_medusa_jwt')?.value
+            }
+        });
+
+        console.log("AUTH CUSTOMER RESPONSE STATUS IS ", response.status)
+        return response.status == 200 && response.data ? response.data : {};
+
+    } catch (e) {
+        try {
+            cookies().set('_medusa_jwt', '', {
+                maxAge: -1,
+            });
+        } catch (e) {
+            console.error(e);
+        }
+        console.log(e);
+        return null;
+    }
 }
 
 // Customer actions

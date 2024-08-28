@@ -86,10 +86,10 @@ export class RouteHandler {
 
     requireParams(params: string[]): boolean {
         const missingParams = [];
-        for (let p of params) {
+        /*for (let p of params) {
             if (!this.hasParam(p))
                 missingParams.push(p);
-        }
+        }*/
 
         if (missingParams.length) {
             const message = `missing required param(s): ${missingParams.join()}`
@@ -100,7 +100,7 @@ export class RouteHandler {
         return true;
     }
 
-    hasParam(param: string): boolean {
-        return this.inputParams[param]?.length;
+    hasParam(param): boolean {
+        return this.inputParams[param]?.length ? true : false;
     }
 }

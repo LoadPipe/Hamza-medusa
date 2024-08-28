@@ -16,7 +16,7 @@ import {
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 const queryClient = new QueryClient();
 import { SiweMessage } from 'siwe';
-import { getCustomer, getToken } from '@lib/data';
+import { getCustomer, getHamzaCustomer, getToken } from '@lib/data';
 import { revalidateTag } from 'next/cache';
 import { signOut } from '@modules/account/actions';
 import { cookies } from 'next/headers';

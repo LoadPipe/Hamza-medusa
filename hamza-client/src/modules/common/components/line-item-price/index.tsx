@@ -9,7 +9,7 @@ import { Flex, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useCustomerProfileStore } from '@store/customer-profile/customer-profile';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import { getCustomer } from '@lib/data';
+import { getHamzaCustomer } from '@lib/data';
 import axios from 'axios';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 
@@ -32,7 +32,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
     useEffect(() => {
         const fetchCustomerPreferredCurrency = async () => {
             try {
-                const customer = await getCustomer().catch(() => null);
+                const customer = await getHamzaCustomer().catch(() => null);
                 if (customer) {
                     const response = await axios.get(
                         'http://localhost:9000/custom/customer/preferred-currency',

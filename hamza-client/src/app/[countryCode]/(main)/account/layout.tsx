@@ -1,4 +1,4 @@
-import { getCustomer } from '@lib/data';
+import { getHamzaCustomer } from '@lib/data';
 import AccountLayout from '@modules/account/templates/account-layout';
 import { Flex, Text } from '@chakra-ui/react';
 export default async function AccountPageLayout({
@@ -8,7 +8,7 @@ export default async function AccountPageLayout({
     dashboard?: React.ReactNode;
     login?: React.ReactNode;
 }) {
-    const customer = await getCustomer().catch(() => null);
+    const customer = await getHamzaCustomer().catch(() => null);
 
     return (
         <AccountLayout customer={customer}>
