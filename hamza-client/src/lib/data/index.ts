@@ -76,14 +76,11 @@ export async function getVendors() {
 // Get Vendor Store by slug
 export async function getVendorStoreBySlug(store_name: string) {
     try {
-        const response = await axios.get(
-            `${BACKEND_URL}/custom/store`,
-            {
-                params: {
-                    store_name,
-                },
-            }
-        );
+        const response = await axios.get(`${BACKEND_URL}/custom/store`, {
+            params: {
+                store_name,
+            },
+        });
         return response.data;
     } catch (error) {
         console.error('API error:', error);
@@ -197,6 +194,9 @@ export async function getAllProductReviews(customer_id: string) {
         const response = await axios.get(`${BACKEND_URL}/custom/review`, {
             params: {
                 customer_id: customer_id,
+            },
+            headers: {
+                authorization: cookies().get('_medusa_jwt')?.value,
             },
         });
         return response.data;
@@ -641,9 +641,17 @@ export async function getInventoryCount(variant_id: string) {
 
 export async function getStore(product_id: string) {
     try {
-        const response = await axios.get(
-            `${BACKEND_URL}/custom/store?product_id=${product_id}`
-        );
+        const response = await axios.get(`${BACKEND_URL}/custom/store`, {
+            params: {
+                product_id,
+            },
+            headers: {
+                authorization: cookies().get('_medusa_jwt')?.value,
+            },
+
+            maxContentLength: 50 * 1024 * 500,
+        });
+        console.log(`Returning store data response: ${response.data}`);
         return response.data;
     } catch (error) {
         console.error('Error fetching store:', error);
@@ -1034,25 +1042,25 @@ export async function getSession() {
 // Customer actions
 export async function getHamzaCustomer(includeAddresses: boolean = true) {
     const headers = getMedusaHeaders(['customer']);
-    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? { customer_id: '' };
+    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? {
+        customer_id: '',
+    };
     const customer_id: string = token?.customer_id ?? '';
     console.log(headers);
 
     try {
-        const response = await axios.get(
-            `${BACKEND_URL}/custom/customer`, {
+        const response = await axios.get(`${BACKEND_URL}/custom/customer`, {
             params: {
                 customer_id,
-                include_addresses: (includeAddresses ? 'true' : 'false')
+                include_addresses: includeAddresses ? 'true' : 'false',
             },
             headers: {
-                'authorization': cookies().get('_medusa_jwt')?.value
-            }
+                authorization: cookies().get('_medusa_jwt')?.value,
+            },
         });
 
-        console.log("AUTH CUSTOMER RESPONSE STATUS IS ", response.status)
+        console.log('AUTH CUSTOMER RESPONSE STATUS IS ', response.status);
         return response.status == 200 && response.data ? response.data : {};
-
     } catch (e) {
         try {
             cookies().set('_medusa_jwt', '', {
@@ -1069,15 +1077,12 @@ export async function getHamzaCustomer(includeAddresses: boolean = true) {
 // Customer actions
 export async function getCustomer() {
     const headers = getMedusaHeaders(['customer']);
-    console.log(headers);
-    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? {
-        customer_id: '',
-    };
+    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '');
     const customer_id: string = token?.customer_id ?? '';
 
     const response = await axios.get(`${BACKEND_URL}/custom/customer`, {
         params: {
-            customer_id,
+            customer_id: customer_id,
             include_addresses: 'true',
         },
         headers: {

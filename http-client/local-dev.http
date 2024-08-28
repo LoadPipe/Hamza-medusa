@@ -218,7 +218,7 @@ GET http://localhost:9000/custom/store
 Content-Type: application/json
 
 {
-  "product_id": "prod_01J00RYNARG6AXK0TRFPG0TPET"
+  "product_id": "prod_01J5TSX6P1QNYJXA2TCHK0RN1V"
 }
 
 
