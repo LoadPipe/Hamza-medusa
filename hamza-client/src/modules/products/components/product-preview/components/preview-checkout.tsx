@@ -124,18 +124,18 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
     useEffect(() => {
         if (productData && productData.variants) {
             if (!variantId) {
-                console.log(`variantId is not set yet`);
+                console.log(`variantId in PreviewCheckout comp is not set yet`);
                 setVariantId(productData.variants[0].id);
             }
             let selectedProductVariant = productData.variants.find(
                 (a: any) => a.id == productData.variants[0]?.id
                 // (a: any) => a.id == variantId
             );
-            console.log(`variantID is: ${variantId}`);
+            console.log(`variantID in PreviewCheckout comp is: ${variantId}`);
             if (!variantId) {
                 setVariantId(selectedProductVariant.id);
             }
-            console.log(`variantID is: ${variantId}`);
+            console.log(`variantID in PreviewCheckout comp is: ${variantId}`);
 
             setSelectedVariant(selectedProductVariant);
             const price =
@@ -145,7 +145,10 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                         p.currency_code === (preferred_currency_code ?? 'usdc')
                 ) ??
                     selectedProductVariant.prices[0]);
-            console.log('price is being set to', productData);
+            console.log(
+                'priceData object in PreviewCheckout comp',
+                productData
+            );
             setSelectedPrice(price?.amount ?? 0);
             // console.log(productData);
         }
