@@ -13,6 +13,7 @@ import {
 } from '@medusajs/medusa';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { cache } from 'react';
+import { decode } from 'jsonwebtoken';
 
 import sortProducts from '@lib/util/sort-products';
 import transformProductPreview from '@lib/util/transform-product-preview';
@@ -697,7 +698,8 @@ export async function vendorReviews(store_id: string) {
 }
 
 export async function getCheckoutData(cart_id: string) {
-    const response = await axios.get(`${BACKEND_URL}/custom/checkout`, {
+    const response = await axios.get(
+        `${BACKEND_URL}/custom/checkout`, {
         params: {
             cart_id,
         },
@@ -1015,6 +1017,23 @@ export async function getSession() {
 // Customer actions
 export async function getCustomer() {
     const headers = getMedusaHeaders(['customer']);
+    console.log(headers);
+    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? { customer_id: '' };
+    const customer_id: string = token?.customer_id ?? '';
+
+    const response = await axios.get(
+        `${BACKEND_URL}/custom/customer`, {
+        params: {
+            customer_id,
+            include_addresses: 'true'
+        },
+        headers: {
+            'authorization': cookies().get('_medusa_jwt')?.value
+        }
+    });
+    return response.status == 200 && response.data ? response.data : {};
+    /*
+    const headers = getMedusaHeaders(['customer']);
 
     return medusaClient.customers
         .retrieve(headers)
@@ -1029,6 +1048,7 @@ export async function getCustomer() {
             }
             return null;
         });
+        */
 }
 
 declare class StorePostCustomersReqCustom {
