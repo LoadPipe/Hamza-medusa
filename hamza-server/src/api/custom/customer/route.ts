@@ -1,4 +1,4 @@
-import { MedusaRequest, MedusaResponse } from '@medusajs/medusa';
+import { Customer, MedusaRequest, MedusaResponse } from '@medusajs/medusa';
 import CustomerRepository from '../../../repositories/customer';
 import { RouteHandler } from '../../route-handler';
 
@@ -17,8 +17,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             return;
 
         //get the data 
-        const customer = await CustomerRepository.findOne({
-            where: { id: handler.inputParams.customer_id.toString() }
+        const customer: Customer = await CustomerRepository.findOne({
+            where: { id: handler.inputParams.customer_id.toString(), },
+            relations: ['shipping_addresses', 'billing_address']
         });
 
         if (!customer)
