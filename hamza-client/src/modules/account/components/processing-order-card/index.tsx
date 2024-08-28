@@ -34,15 +34,17 @@ type Order = {
 type OrderCardProps = {
     order: Order;
     handle: any;
+    vendorName: string;
+    address: any;
 };
 
-const ProcessingOrderCard = ({ order, handle }: OrderCardProps) => {
-    const [vendor, setVendor] = useState('');
+const ProcessingOrderCard = ({
+    order,
+    handle,
+    vendorName,
+    address,
+}: OrderCardProps) => {
     const orderString = typeof order.currency_code;
-    // console.log(
-    //     `Order Card details ${JSON.stringify(order.variant.product_id)}`
-    // );
-    // console.log(`Product details ${JSON.stringify(handle)} `);
 
     const getAmount = (amount?: number | null) => {
         if (amount === null || amount === undefined) {
@@ -51,23 +53,6 @@ const ProcessingOrderCard = ({ order, handle }: OrderCardProps) => {
 
         return formatCryptoPrice(amount, order.currency_code || 'USDC');
     };
-
-    useEffect(() => {
-        // Fetch Vendor Name from product.id
-        const fetchVendor = async () => {
-            try {
-                const data = await getStore(
-                    order.variant.product_id as string
-                );
-                // console.log(`Vendor: ${data}`);
-                setVendor(data);
-            } catch (error) {
-                console.error('Error fetching vendor: ', error);
-            }
-        };
-
-        fetchVendor();
-    }, [order]);
 
     if (!order) {
         return <div>Loading...</div>; // Display loading message if order is undefined
@@ -89,7 +74,7 @@ const ProcessingOrderCard = ({ order, handle }: OrderCardProps) => {
                     fontWeight="bold"
                     noOfLines={1}
                 >
-                    {vendor}
+                    {vendorName}
                 </Text>
                 <Flex
                     display={{ base: 'none', md: 'flex' }}
@@ -179,8 +164,8 @@ const ProcessingOrderCard = ({ order, handle }: OrderCardProps) => {
                             Address
                         </Text>
                         <Text color={'white'} fontSize="16px">
-                            Rock Rocks Pa Daet Sub-district, 50100, Chiang Mai
-                            CA
+                            {address.address_1} {address.city}{' '}
+                            {address.province} {address.postal_code}
                         </Text>
                     </Box>
                 </Flex>
