@@ -1,6 +1,7 @@
 import { generateEntityId, Logger } from '@medusajs/medusa';
 import { AppLog } from 'src/models/app-log';
 import { AppLogRepository } from 'src/repositories/app-log';
+import { sessionStorage } from '../context';
 
 export interface ILogger {
     debug(log: any);
@@ -11,12 +12,10 @@ export interface ILogger {
 
 export class DatabaseLogger implements ILogger {
     private readonly logger: Logger;
-    private readonly sessionId: string;
     private readonly repository: typeof AppLogRepository;
 
-    constructor(container, sessionId?: string) {
+    constructor(container) {
         this.logger = container.logger;
-        this.sessionId = sessionId;
         this.repository = container.appLogRepository;
     }
 
@@ -48,7 +47,9 @@ export class DatabaseLogger implements ILogger {
         if (process.env.LOG_TO_DATABASE) {
             const entry = {
                 text,
-                session_id: this.sessionId,
+                session_id: sessionStorage.sessionId,
+                customer_id: sessionStorage.customerId,
+                request_id: sessionStorage.requestId,
                 log_level,
                 content,
                 timestamp: 1,
@@ -60,6 +61,6 @@ export class DatabaseLogger implements ILogger {
     }
 }
 
-export function createLogger(config: any, sessionId?: string) {
-    return new DatabaseLogger(config, sessionId);
+export function createLogger(config: any) {
+    return new DatabaseLogger(config);
 }
