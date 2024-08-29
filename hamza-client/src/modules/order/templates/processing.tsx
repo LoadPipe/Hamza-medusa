@@ -694,11 +694,13 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     }
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    {
-                                                                                        order
-                                                                                            .customer
-                                                                                            .email
-                                                                                    }{' '}
+                                                                                    {order.customer.email.endsWith(
+                                                                                        '@evm.blockchain'
+                                                                                    )
+                                                                                        ? ''
+                                                                                        : order
+                                                                                              .customer
+                                                                                              .email}
                                                                                 </Text>
                                                                             </Box>
                                                                         </VStack>
