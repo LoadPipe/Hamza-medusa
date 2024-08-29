@@ -44,7 +44,7 @@ export class RouteHandler {
             this.inputParams = { ...this.inputParams, ...req.query };
         }
 
-        //handle security 
+        //handle security
         this.logger.debug(`auth header: ${req.headers.authorization}`);
         this.jwtToken = jwt.decode(req.headers.authorization);
         this.customerId = this.jwtToken?.customer_id;
@@ -52,9 +52,7 @@ export class RouteHandler {
 
     public async handle(fn: (_this?: RouteHandler) => void) {
         try {
-            this.logger.info(
-                `ROUTE-HANDLER: ${this.method} ${this.route}`
-            );
+            this.logger.info(`ROUTE-HANDLER: ${this.method} ${this.route}`);
             this.logger.debug(
                 `Input Params: ${JSON.stringify(this.inputParams)}`
             );
@@ -67,21 +65,27 @@ export class RouteHandler {
         }
     }
 
-    enforceCustomerId(customerId: string = null, requireValue: boolean = false): boolean {
-        if (!process.env.ENFORCE_ROUTE_IDENTITY)
-            return true;
+    enforceCustomerId(
+        customerId: string = null,
+        requireValue: boolean = false
+    ): boolean {
+        if (!process.env.ENFORCE_ROUTE_IDENTITY) return true;
 
         if (!requireValue && !customerId?.length) {
             return true;
         }
 
-        const unauthorized: boolean = (!customerId) ?
-            (!this.customerId) :
-            (!this.customerId) || (this.customerId !== customerId);
+        const unauthorized: boolean = !customerId
+            ? !this.customerId
+            : !this.customerId || this.customerId !== customerId;
 
         if (unauthorized) {
-            this.logger.warn(`Unauthorized customer for route call ${this.method} ${this.route}`)
-            this.response.status(401).json({ message: 'Unauthorized customer' });
+            this.logger.warn(
+                `Unauthorized customer for route call ${this.method} ${this.route}`
+            );
+            this.response
+                .status(401)
+                .json({ message: 'Unauthorized customer' });
         }
 
         return !unauthorized;
@@ -92,12 +96,11 @@ export class RouteHandler {
 
         if (process.env.VALIDATE_ROUTE_PARAMS) {
             for (let p of params) {
-                if (!this.hasParam(p))
-                    missingParams.push(p);
+                if (!this.hasParam(p)) missingParams.push(p);
             }
 
             if (missingParams.length) {
-                const message = `missing required param(s): ${missingParams.join()}`
+                const message = `missing required param(s): ${missingParams.join()}`;
                 this.response.status(400).json({ message });
                 return false;
             }
@@ -107,7 +110,7 @@ export class RouteHandler {
     }
 
     requireParam(param: string): boolean {
-        return this.requireParams[param];
+        return this.requireParams([param]);
     }
 
     hasParam(param): boolean {

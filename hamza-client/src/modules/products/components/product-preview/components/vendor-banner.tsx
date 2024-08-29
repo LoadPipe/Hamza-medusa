@@ -6,6 +6,7 @@ import { FaCheckCircle } from 'react-icons/fa';
 
 type VendorProps = {
     vendor: string;
+    icon: string;
 };
 
 const VendorBanner = (props: VendorProps) => {
@@ -29,7 +30,7 @@ const VendorBanner = (props: VendorProps) => {
             <Flex gap={{ base: '10px', md: '20px' }}>
                 <Flex flexShrink={0} alignSelf={'center'}>
                     <Image
-                        src="https://images.hamza.biz/Hamza/logo.png"
+                        src={props.icon}
                         alt="Light Logo"
                         boxSize={{ base: '36.5px', md: '72px' }}
                         borderRadius="full"

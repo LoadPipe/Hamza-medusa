@@ -134,13 +134,16 @@ Content-Type: application/json
 
 ### Get Specific Customers All Reviews
 GET http://localhost:9000/custom/review?customer_id=cus_01HYYRFGXRQ44NQXMJK9DDVNB3&product_id=prod_01HYYR4MV4TRXMWH1TQ9KTGWSF
+Content-Type: application/json
 
 
 ### Get Review Count
-GET http://localhost:9000/custom/review/count?product_id=prod_01HYYR4MV4TRXMWH1TQ9KTGWSF
+GET http://localhost:9000/custom/review/count?product_id=prod_01J5TSX61NYKWW13B6WBQ485BN
+Content-Type: application/json
 
 ### Get Average Rating
-GET http://localhost:9000/custom/review/average?product_id=prod_01HYYR4MHSPM9Q2P5HNV55BJA1
+GET http://localhost:9000/custom/review/average?product_id=prod_01J5TSX61NYKWW13B6WBQ485BN
+Content-Type: application/json
 
 ### Update Product Review
 PATCH http://localhost:9000/custom/review/content
@@ -218,7 +221,7 @@ GET http://localhost:9000/custom/store
 Content-Type: application/json
 
 {
-  "product_id": "prod_01J00RYNARG6AXK0TRFPG0TPET"
+  "product_id": "prod_01J5TSX6P1QNYJXA2TCHK0RN1V"
 }
 
 
