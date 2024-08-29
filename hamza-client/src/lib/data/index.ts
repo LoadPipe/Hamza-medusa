@@ -1076,21 +1076,6 @@ export async function getHamzaCustomer(includeAddresses: boolean = true) {
 // Customer actions
 export async function getCustomer() {
     const headers = getMedusaHeaders(['customer']);
-    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '');
-    const customer_id: string = token?.customer_id ?? '';
-
-    const response = await axios.get(`${BACKEND_URL}/custom/customer`, {
-        params: {
-            customer_id: customer_id,
-            include_addresses: 'true',
-        },
-        headers: {
-            authorization: cookies().get('_medusa_jwt')?.value,
-        },
-    });
-    return response.status == 200 && response.data ? response.data : {};
-    /*
-    const headers = getMedusaHeaders(['customer']);
 
     return medusaClient.customers
         .retrieve(headers)
@@ -1105,7 +1090,6 @@ export async function getCustomer() {
             }
             return null;
         });
-        */
 }
 
 declare class StorePostCustomersReqCustom {
