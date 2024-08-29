@@ -38,6 +38,8 @@ export declare module '@medusajs/medusa/dist/models/store' {
     declare interface Store {
         owner?: User;
         owner_id?: string;
+        store_description?: string;
+        store_followers?: number;
         roles: Role[];
         numberOfFollowers: number;
         icon: string;
