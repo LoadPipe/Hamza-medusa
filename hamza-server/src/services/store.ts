@@ -52,7 +52,7 @@ class StoreService extends MedusaStoreService {
         newStore.icon = icon;
         newStore.store_followers = store_followers;
         newStore.store_description = store_description;
-        newStore.newStore.default_currency_code = 'eth';
+        newStore.default_currency_code = 'eth';
         newStore = await storeRepo.save(newStore);
         this.logger.debug('New Store Saved:' + newStore);
         await this.populateProductsWithStoreId(newStore, collection);
