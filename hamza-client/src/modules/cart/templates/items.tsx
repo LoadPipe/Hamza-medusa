@@ -52,7 +52,8 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
             <Box
                 mt="1rem"
                 maxHeight={{ base: '170px', md: '400px' }}
-                // overflowY="scroll"
+                overflow={'hidden'}
+                overflowY={'scroll'}
             >
                 {items && items.length > 0 && region ? (
                     items
