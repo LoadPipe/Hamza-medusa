@@ -47,6 +47,7 @@ export default function Page({ params }: { params: { slug: string } }) {
         createdAt: '',
         numberOfFollowers: 0,
         thumbnail: '',
+        description: '',
     });
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [abuseReason, setAbuseReason] = useState('');
@@ -361,12 +362,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                             mt={{ base: '0', md: '1rem' }}
                             noOfLines={{ base: showMore, md: 0 }}
                         >
-                            Welcome to <b>{displaySlug}</b>, your go-to
-                            destination for exclusive products! We're currently
-                            building our store, and we'll be adding more details
-                            soon. Stay tuned for exciting updates, and thank you
-                            for visiting. Feel free to reach out if you have any
-                            questions!
+                            {reviewStats.description}
                         </Text>
 
                         <Flex>
