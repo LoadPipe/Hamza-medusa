@@ -41,6 +41,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
     } = useProductPreview();
 
     const [vendor, setVendor] = useState('');
+    const [icon, setIcon] = useState('');
     console.log('Get product data', product);
     // Only update product data when `product` changes
     useEffect(() => {
@@ -77,7 +78,8 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
             try {
                 const data = await getStore(product.id as string);
                 // console.log(`Vendor: ${data}`);
-                setVendor(data);
+                setVendor(data.name);
+                setIcon(data.icon);
             } catch (error) {
                 console.error('Error fetching vendor: ', error);
             }
@@ -166,7 +168,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                     <PreviewCheckout productId={product.id as string} />
                 </Flex>
             </Flex>
-            <VendorBanner vendor={vendor} />
+            <VendorBanner vendor={vendor} icon={icon} />
             <Divider
                 color="#555555"
                 display={{ base: 'block', md: 'none' }}
