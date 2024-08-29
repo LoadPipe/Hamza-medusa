@@ -21,7 +21,7 @@ import { ProductVariantRepository } from '../repositories/product-variant';
 import { BuckyClient } from '../buckydrop/bucky-client';
 import { getCurrencyAddress } from '../currency.config';
 import { In, IsNull, Not } from 'typeorm';
-import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 export type BulkImportProductInput = CreateProductInput;
 
@@ -65,7 +65,7 @@ class ProductService extends MedusaProductService {
 
     constructor(container) {
         super(container);
-        this.logger = new DatabaseLogger(container);
+        this.logger = createLogger(container);
         this.storeRepository_ = container.storeRepository;
         this.productVariantRepository_ = container.productVariantRepository;
         this.customerService_ = container.customerService;

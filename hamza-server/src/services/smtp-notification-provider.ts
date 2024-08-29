@@ -6,7 +6,7 @@ import {
 import NotificationDataService from './notification-data-handler';
 import SmtpMailService from './smtp-mail';
 import ordersDataParser from '../utils/notification/order-data-handler';
-import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 class SmtpNotificationService extends AbstractNotificationService {
     static identifier = 'smtp-notification';
@@ -19,7 +19,7 @@ class SmtpNotificationService extends AbstractNotificationService {
         super(container);
         this.notificationDataService = new NotificationDataService(container);
         this.smtpMailService = new SmtpMailService();
-        this.logger = new DatabaseLogger(container);
+        this.logger = createLogger(container);
         this.orderService_ = container.orderService;
     }
 

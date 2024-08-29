@@ -22,34 +22,44 @@ export class DatabaseLogger implements ILogger {
 
     debug(text: any) {
         this.saveEntry(text, 'debug');
-        this.logger?.debug(text);
+        if (process.env.LOG_TO_CONSOLE)
+            this.logger?.debug(text);
     }
 
     info(text: any) {
         this.saveEntry(text, 'info');
-        this.logger?.info(text);
+        if (process.env.LOG_TO_CONSOLE)
+            this.logger?.info(text);
     }
 
     warn(text: any) {
         this.saveEntry(text, 'warn');
-        this.logger?.warn(text);
+        if (process.env.LOG_TO_CONSOLE)
+            this.logger?.warn(text);
     }
 
     error(text: any, error?: any) {
         this.saveEntry(text, 'error', error);
-        this.logger?.error(text, error);
+        if (process.env.LOG_TO_CONSOLE)
+            this.logger?.error(text, error);
     }
 
     private saveEntry(text: string, log_level: string, content?: any) {
-        const entry = {
-            text,
-            session_id: this.sessionId,
-            log_level,
-            content,
-            timestamp: 1,
-            id: generateEntityId()
-        }
+        if (process.env.LOG_TO_DATABASE) {
+            const entry = {
+                text,
+                session_id: this.sessionId,
+                log_level,
+                content,
+                timestamp: 1,
+                id: generateEntityId()
+            }
 
-        this.repository?.save(entry);
+            this.repository?.save(entry);
+        }
     }
+}
+
+export function createLogger(config: any, sessionId?: string) {
+    return new DatabaseLogger(config, sessionId);
 }

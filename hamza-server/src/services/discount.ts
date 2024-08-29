@@ -9,7 +9,7 @@ import {
     CreateDiscountInput,
     UpdateDiscountInput,
 } from '@medusajs/medusa/dist/types/discount';
-import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 type UpdateDiscount = UpdateDiscountInput & {
     store_id?: string;
@@ -26,7 +26,7 @@ export default class DiscountService extends MedusaDiscountService {
     constructor(container) {
         super(container);
         this.discountRepository_ = container.discountRepository;
-        this.logger = new DatabaseLogger(container);
+        this.logger = createLogger(container);
     }
 
     async update(id: string, input: UpdateDiscount): Promise<Discount> {

@@ -11,7 +11,7 @@ import ProductVariantRepository from '@medusajs/medusa/dist/repositories/product
 import { CurrencyConversionClient } from '../currency-conversion/rest-client';
 import { In } from 'typeorm';
 import { getCurrencyAddress, getCurrencyPrecision } from '../currency.config';
-import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 type InjectedDependencies = {
     customerService: CustomerService;

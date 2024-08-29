@@ -26,7 +26,7 @@ import {
 } from '../buckydrop/bucky-client';
 import ProductRepository from '@medusajs/medusa/dist/repositories/product';
 import BuckydropService from './buckydrop';
-import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
 // In medusa we have these 5 DEFAULT order.STATUS's {PENDING, COMPLETED, ARCHIVED, CANCELED, REQUIRES_ACTION}
@@ -68,7 +68,7 @@ export default class OrderService extends MedusaOrderService {
         this.paymentRepository_ = container.paymentRepository;
         this.productRepository_ = container.productRepository;
         this.productVariantRepository_ = container.productVariantRepository;
-        this.logger = new DatabaseLogger(container);
+        this.logger = createLogger(container);
         this.buckyClient = new BuckyClient();
     }
 

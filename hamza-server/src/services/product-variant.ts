@@ -5,7 +5,7 @@ import {
 import { ProductVariant } from '@medusajs/medusa';
 import { Lifetime } from 'awilix';
 import { ProductVariantRepository } from '../repositories/product-variant';
-import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 class ProductVariantService extends MedusaProductVariantService {
     static LIFE_TIME = Lifetime.SCOPED;
@@ -15,7 +15,7 @@ class ProductVariantService extends MedusaProductVariantService {
     constructor(container) {
         super(container);
         this.productVariantRepository_ = container.productVariantRepository;
-        this.logger = new DatabaseLogger(container);
+        this.logger = createLogger(container);
     }
 
     async checkInventory(variantId: string) {

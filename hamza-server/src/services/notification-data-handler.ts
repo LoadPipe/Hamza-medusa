@@ -17,7 +17,7 @@ import type {
     TotalsService,
     UserService,
 } from '@medusajs/medusa/dist/services';
-import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 class NotificationDataService extends TransactionBaseService {
     static identifier = 'notificationDataService';

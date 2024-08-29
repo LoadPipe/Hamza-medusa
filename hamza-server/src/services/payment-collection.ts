@@ -7,7 +7,7 @@ import { CreatePaymentCollectionInput as MedusaCreatePaymentCollectionInput } fr
 import PaymentCollectionRepository from '../repositories/payment-collection';
 import { PaymentCollection } from '../models/payment-collection';
 import { DeepPartial } from 'typeorm';
-import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 type CreatePaymentCollectionInput = MedusaCreatePaymentCollectionInput & {
     store_id?: string;
@@ -22,7 +22,7 @@ export default class PaymentCollectionService extends MedusaPaymentCollectionSer
         super(container);
         this.paymentCollectionRepository_ =
             container.paymentCollectionRepository;
-        this.logger = new DatabaseLogger(container);
+        this.logger = createLogger(container);
     }
 
     async create(

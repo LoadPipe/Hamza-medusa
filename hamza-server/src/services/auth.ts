@@ -1,7 +1,7 @@
 import { AuthService as MedusaAuthService, Logger } from '@medusajs/medusa';
 import { Lifetime } from 'awilix';
 import { AuthenticateResult } from '@medusajs/medusa/dist/types/auth';
-import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 type ExtendedAuthenticateResult = AuthenticateResult & {
     wallet_address?: string; // Optional property
@@ -14,7 +14,7 @@ export default class AuthService extends MedusaAuthService {
     constructor(container) {
         super(container);
         // Assuming you have additional setup or properties to include
-        this.logger = new DatabaseLogger(container);
+        this.logger = createLogger(container);
     }
 
     // Overload to keep the original authenticate method signature

@@ -21,7 +21,7 @@ import {
 import { CreateProductInput as MedusaCreateProductInput } from '@medusajs/medusa/dist/types/product';
 import { UpdateProductInput as MedusaUpdateProductInput } from '@medusajs/medusa/dist/types/product';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
-import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 type CreateProductInput = MedusaCreateProductInput & {
     store_id: string;
@@ -53,7 +53,7 @@ export default class BuckydropService extends TransactionBaseService {
         this.orderRepository_ = container.orderRepository;
         this.orderService_ = container.orderService;
         this.customerService_ = container.customerService;
-        this.logger = new DatabaseLogger(container);
+        this.logger = createLogger(container);
         this.priceConverter = new PriceConverter();
         this.buckyClient = new BuckyClient();
     }

@@ -20,7 +20,7 @@ import WhiteListService from '../../services/whitelist';
 import StoreRepository from '../../repositories/store';
 import { WhiteList } from '../../models/whitelist';
 import BuckydropService from '../../services/buckydrop';
-import { DatabaseLogger, ILogger } from '../../utils/logging/logger';
+import { createLogger, ILogger } from '../../utils/logging/logger';
 
 
 export interface IPaymentGroupData {
@@ -64,7 +64,7 @@ export class BasicCheckoutProcessor {
         this.lineItemRepository = container.lineItemRepository;
         this.whitelistService = container.whitelistService;
         this.storeRepository = container.storeRepository;
-        this.logger = new DatabaseLogger(container);
+        this.logger = createLogger(container);
     }
 
     /**

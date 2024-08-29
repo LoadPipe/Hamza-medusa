@@ -8,7 +8,7 @@ import {
     PaymentSessionStatus,
     Logger,
 } from '@medusajs/medusa'; //TODO: need?
-import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 /**
  * @description This is being used as a test right now for payment processing using
@@ -24,7 +24,7 @@ class CryptoPaymentService extends AbstractPaymentProcessor {
         //this.logger.debug(config);
         super(container, config);
         this.cartService = container.cartService;
-        this.logger = new DatabaseLogger(container);
+        this.logger = createLogger(container);
         this.logger.debug('CryptoPaymentService::config');
     }
 

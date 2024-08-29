@@ -10,7 +10,7 @@ import {
 import { ProductCollection } from '../models/product-collection';
 import { ProductCollectionRepository } from '../repositories/product-collection';
 import { In, UpdateResult } from 'typeorm';
-import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 type UpdateProductCollection = MedusaUpdateProductCollection & {
     store_id?: string;
@@ -29,7 +29,7 @@ export default class ProductCollectionService extends MedusaProductCollectionSer
         super(container);
         this.productCollectionRepository_ =
             container.productCollectionRepository;
-        this.logger = new DatabaseLogger(container);
+        this.logger = createLogger(container);
     }
 
     async update(

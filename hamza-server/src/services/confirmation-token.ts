@@ -9,7 +9,7 @@ import moment from 'moment';
 import { ethers } from 'ethers';
 import SmtpMailService from './smtp-mail';
 import dotenv from 'dotenv';
-import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 dotenv.config();
 
 export default class ConfirmationTokenService extends TransactionBaseService {
@@ -22,7 +22,7 @@ export default class ConfirmationTokenService extends TransactionBaseService {
         super(container);
         this.confirmationTokenRepository_ = ConfirmationTokenRepository;
         this.customerRepository_ = CustomerRepository;
-        this.logger = new DatabaseLogger(container);
+        this.logger = createLogger(container);
         this.eventBus_ = container.eventBusService;
     }
 

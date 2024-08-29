@@ -17,7 +17,7 @@ import { Config } from '../config';
 import SwitchCheckoutProcessor from './checkout-processors/switch-checkout';
 import { BasicCheckoutProcessor } from './checkout-processors/basic-checkout';
 import MassMarketCheckoutProcessor from './checkout-processors/massmarket-checkout';
-import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 type InjectedDependencies = {
     idempotencyKeyService: IdempotencyKeyService;

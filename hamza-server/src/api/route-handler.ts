@@ -1,7 +1,7 @@
 import { type MedusaRequest, type MedusaResponse, type Logger, generateEntityId } from '@medusajs/medusa';
 import { readRequestBody } from '../utils/request-body';
 import jwt from 'jsonwebtoken';
-import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 import { AppLogRepository } from 'src/repositories/app-log';
 
 /**
@@ -60,7 +60,7 @@ export class RouteHandler {
         }
 
         const sessionId: string = this.customerId?.length ? this.customerId : generateEntityId();
-        this.logger = new DatabaseLogger(loggerContext, sessionId);
+        this.logger = createLogger(loggerContext, sessionId);
     }
 
     public async handle(fn: (_this?: RouteHandler) => void) {

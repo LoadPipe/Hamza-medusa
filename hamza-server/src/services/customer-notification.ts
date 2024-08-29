@@ -2,7 +2,7 @@ import { Lifetime } from 'awilix';
 import { Logger, TransactionBaseService } from '@medusajs/medusa';
 import { CustomerNotificationRepository } from '../repositories/customer-notification';
 import { NotificationTypeRepository } from '../repositories/notification-type';
-import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 // import { NotificationType } from '../models/notification-type';
 
 const notificationTypes = [
@@ -25,7 +25,7 @@ class CustomerNotificationSerivce extends TransactionBaseService {
 
     constructor(container) {
         super(container);
-        this.logger = new DatabaseLogger(container);
+        this.logger = createLogger(container);
         this.customerNotificationRepository =
             container.customerNotificationRepository;
         this.notificationTypeRepository = container.notificationTypeRepository;

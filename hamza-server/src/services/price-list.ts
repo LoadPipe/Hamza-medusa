@@ -9,7 +9,7 @@ import {
     CreatePriceListInput as MedusaCreatePriceListInput,
 } from '@medusajs/medusa/dist/types/price-list';
 import PriceListRepository from '@medusajs/medusa/dist/repositories/price-list';
-import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 type UpdatePriceListInput = MedusaUpdatePriceListInput & {
     store_id?: string;
@@ -27,7 +27,7 @@ export default class PriceListService extends MedusaPriceListService {
     constructor(container) {
         super(container);
         this.priceListRepository_ = container.priceListRepository;
-        this.logger = new DatabaseLogger(container);
+        this.logger = createLogger(container);
     }
 
     //TODO: any needed functions go here

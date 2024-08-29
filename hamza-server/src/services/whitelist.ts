@@ -3,7 +3,7 @@ import CustomerRepository from '../repositories/customer';
 import { WhiteListRepository } from '../repositories/whitelist';
 import { WhiteList } from '../models/whitelist';
 import { In } from 'typeorm';
-import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 
 export default class WhiteListService extends TransactionBaseService {
@@ -15,7 +15,7 @@ export default class WhiteListService extends TransactionBaseService {
         super(container);
         this.customerRepository_ = CustomerRepository;
         this.whitelistRepository_ = WhiteListRepository;
-        this.logger = new DatabaseLogger(container);
+        this.logger = createLogger(container);
     }
 
     async create(storeId: string, walletAddress: string) {

@@ -4,7 +4,7 @@ import { MedusaError } from 'medusa-core-utils';
 import { Lifetime } from 'awilix';
 import { WishlistItem } from '../models/wishlist-item';
 import { Wishlist } from '../models/wishlist';
-import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 class WishlistService extends TransactionBaseService {
     static LIFE_TIME = Lifetime.SCOPED;
@@ -13,7 +13,7 @@ class WishlistService extends TransactionBaseService {
 
     constructor(container) {
         super(container);
-        this.logger = new DatabaseLogger(container);
+        this.logger = createLogger(container);
         this.customerService = container.customerService;
     }
 
