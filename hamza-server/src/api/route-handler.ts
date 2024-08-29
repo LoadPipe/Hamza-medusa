@@ -1,13 +1,15 @@
-import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
+import { type MedusaRequest, type MedusaResponse, type Logger, generateEntityId } from '@medusajs/medusa';
 import { readRequestBody } from '../utils/request-body';
 import jwt from 'jsonwebtoken';
+import { DatabaseLogger, ILogger } from '../utils/logging/logger';
+import { AppLogRepository } from 'src/repositories/app-log';
 
 /**
  * Provides uniformity of logging and exception handling for all API routes.
  * Should be used for handling all api routes.
  */
 export class RouteHandler {
-    logger: Logger;
+    logger: ILogger;
     inputParams: any;
     method: string;
     route: string;
@@ -24,7 +26,7 @@ export class RouteHandler {
         route: string,
         inputFieldNames: string[] = []
     ) {
-        this.logger = req.scope.resolve('logger');
+
         this.method = method;
         this.route = route;
         this.request = req;
@@ -45,9 +47,20 @@ export class RouteHandler {
         }
 
         //handle security
-        this.logger.debug(`auth header: ${req.headers.authorization}`);
         this.jwtToken = jwt.decode(req.headers.authorization);
         this.customerId = this.jwtToken?.customer_id;
+
+        //create the logger
+        const logger: Logger = req.scope.resolve('logger');
+        const appLogRepository: typeof AppLogRepository = req.scope.resolve('appLogRepository');
+
+        const loggerContext: any = {
+            logger,
+            appLogRepository
+        }
+
+        const sessionId: string = this.customerId?.length ? this.customerId : generateEntityId();
+        this.logger = new DatabaseLogger(loggerContext, sessionId);
     }
 
     public async handle(fn: (_this?: RouteHandler) => void) {

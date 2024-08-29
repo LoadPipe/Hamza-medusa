@@ -16,10 +16,8 @@ import {
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 const queryClient = new QueryClient();
 import { SiweMessage } from 'siwe';
-import { getCustomer, getHamzaCustomer, getToken } from '@lib/data';
-import { revalidateTag } from 'next/cache';
+import { getCustomer, getToken } from '@lib/data';
 import { signOut } from '@modules/account/actions';
-import { cookies } from 'next/headers';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import axios from 'axios';
 import Cookies from 'js-cookie';
