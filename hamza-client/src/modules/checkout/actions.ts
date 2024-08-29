@@ -2,6 +2,7 @@
 
 import { cookies } from 'next/headers';
 import {
+    addDefaultShippingMethod,
     addShippingMethod,
     completeCart,
     deleteDiscount,
@@ -13,6 +14,7 @@ import { GiftCard, StorePostCartsCartReq } from '@medusajs/medusa';
 import { revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { medusaClient } from '@lib/config';
+import axios from 'axios';
 
 export async function cartUpdate(data: StorePostCartsCartReq) {
     const cartId = cookies().get('_medusa_cart_id')?.value;
@@ -143,8 +145,9 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
     }
 
     try {
-        const cart = await getCart(cartId);
-        await setShippingMethod(cart?.shipping_methods[0]?.shipping_option_id);
+        //const cart = await getCart(cartId);
+        //await setShippingMethod(cart?.shipping_methods[0]?.shipping_option_id);
+        await addDefaultShippingMethod(cartId);
     } catch (error: any) {
         return error.toString();
     }
