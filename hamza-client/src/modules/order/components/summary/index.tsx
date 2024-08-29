@@ -81,52 +81,61 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
             {products.map((product) => (
                 <Box key={product.id} mt="1rem">
                     <Flex flexDir={'row'}>
-                        <LocalizedClientLink
-                            href={`/products/${product.handle}`}
-                        >
-                            <Flex width={'55px'} height={'55px'}>
-                                <Thumbnail
-                                    thumbnail={product.thumbnail}
-                                    images={[]}
-                                    size="small"
+                        <Flex flexDir={'column'}>
+                            <LocalizedClientLink
+                                href={`/products/${product.handle}`}
+                            >
+                                <Flex
+                                    width={'55px'}
+                                    height={'55px'}
+                                    alignSelf={'center'}
+                                >
+                                    <Thumbnail
+                                        thumbnail={product.thumbnail}
+                                        images={[]}
+                                        size="small"
+                                    />
+                                </Flex>
+                            </LocalizedClientLink>
+                            <Flex mt="1rem">
+                                <Tweet
+                                    productHandle={product.handle}
+                                    isPurchased={true}
                                 />
                             </Flex>
-                        </LocalizedClientLink>
-                        <Text ml="1rem" noOfLines={1}>
+                        </Flex>
+                        <Text ml="1rem" maxW={'336px'} width={'100%'}>
                             {product.title}
                         </Text>
+
                         <Flex ml="auto">
-                            <Tweet
-                                productHandle={product.handle}
-                                isPurchased={true}
-                            />
-                        </Flex>
-                    </Flex>
-
-                    <Flex
-                        color="white"
-                        justifyContent={'space-between'}
-                        mt="2rem"
-                    >
-                        <Text fontSize={{ base: '14px', md: '16px' }}>
-                            Subtotal
-                        </Text>
-
-                        <Flex>
-                            <Image
-                                className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                                src={currencyIcons[product.currency_code]}
-                                alt={product.currency_code}
-                            />
-                            <Text
-                                ml="0.4rem"
-                                fontSize={{ base: '14px', md: '16px' }}
+                            <Flex
+                                height={'22px'}
+                                alignItems={'center'}
+                                mb="auto"
                             >
-                                {formatCryptoPrice(
-                                    product.unit_price,
-                                    product.currency_code
-                                )}
-                            </Text>
+                                <Image
+                                    className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                    src={currencyIcons[product.currency_code]}
+                                    alt={product.currency_code}
+                                />
+                            </Flex>
+                            <Flex
+                                height={'22px'}
+                                alignItems={'center'}
+                                mb="auto"
+                            >
+                                <Text
+                                    ml="0.4rem"
+                                    alignSelf={'center'}
+                                    fontSize={{ base: '14px', md: '16px' }}
+                                >
+                                    {formatCryptoPrice(
+                                        product.unit_price,
+                                        product.currency_code
+                                    )}
+                                </Text>
+                            </Flex>
                         </Flex>
                     </Flex>
                 </Box>
