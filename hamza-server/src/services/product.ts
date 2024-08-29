@@ -426,7 +426,8 @@ class ProductService extends MedusaProductService {
                 avgRating,
                 productCount,
                 createdAt,
-                numberOfFollowers: store.numberOfFollowers,
+                numberOfFollowers: store.store_followers,
+                description: store.store_description,
                 thumbnail,
             };
 
