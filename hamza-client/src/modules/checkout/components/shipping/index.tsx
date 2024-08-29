@@ -18,6 +18,7 @@ import { useEffect, useState } from 'react';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { setPaymentMethod } from '@modules/checkout/actions';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { addDefaultShippingMethod } from '@lib/data';
 
 type ShippingProps = {
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
@@ -48,10 +49,12 @@ const Shipping: React.FC<ShippingProps> = ({
 
     const handleSubmit = () => {
         setIsLoading(true);
+        addDefaultShippingMethod(cart.id).then(() => {
+            router.push(pathname + '?step=review', {
+                scroll: false,
+            });
+        })
         //router.push(pathname + '?step=payment', { scroll: false });
-        router.push(pathname + '?step=review', {
-            scroll: false,
-        });
     };
 
     const set = async (id: string) => {
@@ -64,7 +67,6 @@ const Shipping: React.FC<ShippingProps> = ({
                 setError(err.toString());
                 setIsLoading(false);
             });
-
         //set payment method to crypto
         await setPaymentMethod('crypto')
             .catch((err) => setError(err.toString()))
@@ -80,6 +82,7 @@ const Shipping: React.FC<ShippingProps> = ({
     useEffect(() => {
         setIsLoading(false);
         setError(null);
+        set();
     }, [isOpen]);
 
     return (
