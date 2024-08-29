@@ -17,7 +17,7 @@ export default class CartService extends MedusaCartService {
 
     protected readonly customerRepository_: typeof CustomerRepository;
     protected readonly lineItemRepository_: typeof LineItemRepository;
-    protected readonly priceConverter: PriceConverter = new PriceConverter();
+    protected readonly priceConverter: PriceConverter;
     protected readonly logger: ILogger;
 
     constructor(container) {
@@ -25,6 +25,7 @@ export default class CartService extends MedusaCartService {
         this.customerRepository_ = container.customerRepository;
         this.lineItemRepository_ = container.lineItemRepository;
         this.logger = createLogger(container);
+        this.priceConverter = new PriceConverter(this.logger);
     }
 
     async retrieve(cartId: string, options?: FindConfig<Cart>, totalsConfig?: { force_taxes?: boolean; }): Promise<Cart> {
@@ -43,11 +44,15 @@ export default class CartService extends MedusaCartService {
             const itemsToSave: LineItem[] = [];
             for (let item of cart.items) {
                 if (item.currency_code != currencyCode) {
-                    this.logger.debug(`cart item with currency ${item.currency_code} amount ${item.unit_price} changing to ${currencyCode}`)
-                    item.currency_code = currencyCode;
-                    item.unit_price = await this.priceConverter.getPrice(
+                    this.logger.info(`cart item with currency ${item.currency_code} amount ${item.unit_price} changing to ${currencyCode}`)
+
+                    const newPrice = await this.priceConverter.getPrice(
                         { baseAmount: item.unit_price, baseCurrency: item.currency_code, toCurrency: currencyCode }
                     );
+                    item.unit_price = newPrice;
+                    item.currency_code = currencyCode;
+
+                    this.logger.info(`cart item with currency ${item.currency_code} amount ${item.unit_price} changed to ${currencyCode} with new price ${item.unit_price}`)
                     itemsToSave.push(item);
                 }
             }

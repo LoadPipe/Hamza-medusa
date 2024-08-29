@@ -91,7 +91,7 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
             string,
             PriceSelectionResult
         >();
-        const priceConverter: PriceConverter = new PriceConverter();
+        const priceConverter: PriceConverter = new PriceConverter(this.logger);
 
         //get the variant objects
         const variants: ProductVariant[] =
@@ -154,9 +154,14 @@ const EXTENDED_LOGGING = false;
 
 //TODO: maybe find a better place for this class
 export class PriceConverter {
-    restClient: CurrencyConversionClient = new CurrencyConversionClient();
-    cache: { [key: string]: { value: number, timestamp: number } } = {};
-    expirationSeconds: 60;
+    private readonly restClient: CurrencyConversionClient = new CurrencyConversionClient();
+    private readonly cache: { [key: string]: { value: number, timestamp: number } } = {};
+    private readonly expirationSeconds: number = 60;
+    private readonly logger: ILogger;
+
+    constructor(logger?: ILogger) {
+        this.logger = logger;
+    }
 
     async convertPrice(baseAmount: number, baseCurrency: string, toCurrency: string): Promise<number> {
         return await this.getPrice({ baseAmount, baseCurrency, toCurrency })
@@ -164,6 +169,7 @@ export class PriceConverter {
 
     async getPrice(price: IPrice): Promise<number> {
         let rate: number = this.getFromCache(price);
+        //this.logger?.debug(`cached rate for ${price.baseCurrency}-${price.toCurrency}: ${rate}`);
 
         if (!rate) {
             rate = await this.getFromApi(price);
@@ -192,6 +198,7 @@ export class PriceConverter {
             console.log('displayAmount:', displayAmount);
 
         const output = Math.floor(displayAmount * rate * Math.pow(10, toPrecision.db));
+        //this.logger?.debug(`price for converting ${price.baseAmount} ${price.baseCurrency} to ${price.toCurrency} at rate ${rate} is ${output}`)
         return output;
     }
 
