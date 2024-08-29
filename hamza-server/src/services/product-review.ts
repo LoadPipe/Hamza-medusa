@@ -8,20 +8,21 @@ import { Customer } from '../models/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import { Product } from '../models/product';
 import { In, Not } from 'typeorm';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 class ProductReviewService extends TransactionBaseService {
     static LIFE_TIME = Lifetime.SCOPED;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly productReviewRepository_: typeof ProductReviewRepository;
     protected readonly orderRepository_: typeof OrderRepository;
-    protected readonly logger: Logger;
+    protected readonly logger: ILogger;
 
     constructor(container) {
         super(container);
         this.productVariantRepository_ = container.productVariantRepository;
         this.productReviewRepository_ = container.productReviewRepository;
         this.orderRepository_ = container.orderRepository;
-        this.logger = container.logger;
+        this.logger = createLogger(container);
     }
 
     async customerHasBoughtProduct(customer_id, product_id) {

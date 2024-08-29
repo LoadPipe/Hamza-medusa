@@ -6,6 +6,7 @@ import { CreateCustomerInput } from '@medusajs/medusa/dist/types/customers';
 import { Lifetime } from 'awilix';
 import { CustomerRepository } from '../repositories/customer';
 import CustomerWalletAddressRepository from '../repositories/customer-wallet-address';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 interface CustomCustomerInput extends CreateCustomerInput {
     wallet_address: string;
@@ -15,12 +16,12 @@ export default class CustomerService extends MedusaCustomerService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
 
     protected customerRepository_: typeof CustomerRepository;
-    protected logger: Logger;
+    protected logger: ILogger;
 
     constructor(container) {
         super(container);
         this.customerRepository_ = container.customerRepository;
-        this.logger = container.logger;
+        this.logger = createLogger(container);
     }
 
     async create(input: CustomCustomerInput): Promise<any> {

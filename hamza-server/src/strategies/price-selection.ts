@@ -11,17 +11,18 @@ import ProductVariantRepository from '@medusajs/medusa/dist/repositories/product
 import { CurrencyConversionClient } from '../currency-conversion/rest-client';
 import { In } from 'typeorm';
 import { getCurrencyAddress, getCurrencyPrecision } from '../currency.config';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 type InjectedDependencies = {
     customerService: CustomerService;
     productVariantRepository: typeof ProductVariantRepository;
-    logger: Logger;
+    logger: ILogger;
 };
 
 export default class PriceSelectionStrategy extends AbstractPriceSelectionStrategy {
     protected readonly customerService_: CustomerService;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
-    protected readonly logger: Logger;
+    protected readonly logger: ILogger;
 
     constructor({
         customerService,

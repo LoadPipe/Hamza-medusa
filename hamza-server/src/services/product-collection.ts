@@ -10,6 +10,7 @@ import {
 import { ProductCollection } from '../models/product-collection';
 import { ProductCollectionRepository } from '../repositories/product-collection';
 import { In, UpdateResult } from 'typeorm';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 type UpdateProductCollection = MedusaUpdateProductCollection & {
     store_id?: string;
@@ -22,13 +23,13 @@ type CreateProductCollection = MedusaCreateProductCollection & {
 export default class ProductCollectionService extends MedusaProductCollectionService {
     static LIFE_TIME = Lifetime.SCOPED;
     protected readonly productCollectionRepository_: typeof ProductCollectionRepository;
-    protected readonly logger: Logger;
+    protected readonly logger: ILogger;
 
     constructor(container) {
         super(container);
         this.productCollectionRepository_ =
             container.productCollectionRepository;
-        this.logger = container.logger;
+        this.logger = createLogger(container);
     }
 
     async update(

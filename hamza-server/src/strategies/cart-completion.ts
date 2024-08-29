@@ -17,6 +17,7 @@ import { Config } from '../config';
 import SwitchCheckoutProcessor from './checkout-processors/switch-checkout';
 import { BasicCheckoutProcessor } from './checkout-processors/basic-checkout';
 import MassMarketCheckoutProcessor from './checkout-processors/massmarket-checkout';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 type InjectedDependencies = {
     idempotencyKeyService: IdempotencyKeyService;
@@ -27,7 +28,7 @@ type InjectedDependencies = {
     paymentRepository: typeof PaymentRepository;
     orderRepository: typeof OrderRepository;
     lineItemRepository: typeof LineItemRepository;
-    logger: Logger;
+    logger: ILogger;
 };
 
 class CartCompletionStrategy extends AbstractCartCompletionStrategy {
@@ -39,7 +40,7 @@ class CartCompletionStrategy extends AbstractCartCompletionStrategy {
     protected readonly paymentRepository: typeof PaymentRepository;
     protected readonly orderRepository: typeof OrderRepository;
     protected readonly lineItemRepository: typeof LineItemRepository;
-    protected readonly logger: Logger;
+    protected readonly logger: ILogger;
     private massMarketProcessor: MassMarketCheckoutProcessor;
     private switchProcessor: SwitchCheckoutProcessor;
     private basicProcessor: BasicCheckoutProcessor;

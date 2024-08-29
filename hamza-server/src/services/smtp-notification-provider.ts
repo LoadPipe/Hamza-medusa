@@ -6,19 +6,20 @@ import {
 import NotificationDataService from './notification-data-handler';
 import SmtpMailService from './smtp-mail';
 import ordersDataParser from '../utils/notification/order-data-handler';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 class SmtpNotificationService extends AbstractNotificationService {
     static identifier = 'smtp-notification';
     notificationDataService: NotificationDataService;
     smtpMailService: SmtpMailService;
-    logger: Logger;
+    logger: ILogger;
     orderService_: OrderService;
 
     constructor(container) {
         super(container);
         this.notificationDataService = new NotificationDataService(container);
         this.smtpMailService = new SmtpMailService();
-        this.logger = container.logger;
+        this.logger = createLogger(container);
         this.orderService_ = container.orderService;
     }
 

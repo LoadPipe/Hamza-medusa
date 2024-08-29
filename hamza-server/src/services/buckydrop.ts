@@ -21,6 +21,7 @@ import {
 import { CreateProductInput as MedusaCreateProductInput } from '@medusajs/medusa/dist/types/product';
 import { UpdateProductInput as MedusaUpdateProductInput } from '@medusajs/medusa/dist/types/product';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 type CreateProductInput = MedusaCreateProductInput & {
     store_id: string;
@@ -36,7 +37,7 @@ const SHIPPING_COST_MAX: number = parseInt(
 );
 
 export default class BuckydropService extends TransactionBaseService {
-    protected readonly logger: Logger;
+    protected readonly logger: ILogger;
     protected readonly productService_: ProductService;
     protected readonly cartService_: CartService;
     protected readonly customerService_: CustomerService;
@@ -52,7 +53,7 @@ export default class BuckydropService extends TransactionBaseService {
         this.orderRepository_ = container.orderRepository;
         this.orderService_ = container.orderService;
         this.customerService_ = container.customerService;
-        this.logger = container.logger;
+        this.logger = createLogger(container);
         this.priceConverter = new PriceConverter();
         this.buckyClient = new BuckyClient();
     }

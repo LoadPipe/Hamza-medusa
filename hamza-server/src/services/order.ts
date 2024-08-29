@@ -26,6 +26,7 @@ import {
 } from '../buckydrop/bucky-client';
 import ProductRepository from '@medusajs/medusa/dist/repositories/product';
 import BuckydropService from './buckydrop';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
 // In medusa we have these 5 DEFAULT order.STATUS's {PENDING, COMPLETED, ARCHIVED, CANCELED, REQUIRES_ACTION}
@@ -56,7 +57,7 @@ export default class OrderService extends MedusaOrderService {
     protected paymentRepository_: typeof PaymentRepository;
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
-    protected readonly logger: Logger;
+    protected readonly logger: ILogger;
     protected buckyClient: BuckyClient;
 
     constructor(container) {
@@ -67,7 +68,7 @@ export default class OrderService extends MedusaOrderService {
         this.paymentRepository_ = container.paymentRepository;
         this.productRepository_ = container.productRepository;
         this.productVariantRepository_ = container.productVariantRepository;
-        this.logger = container.logger;
+        this.logger = createLogger(container);
         this.buckyClient = new BuckyClient();
     }
 
@@ -655,9 +656,9 @@ export default class OrderService extends MedusaOrderService {
 
         return relevantItems?.length
             ? {
-                  products: relevantItems.map((i) => i.variant.product),
-                  quantities: relevantItems.map((i) => i.quantity),
-              }
+                products: relevantItems.map((i) => i.variant.product),
+                quantities: relevantItems.map((i) => i.quantity),
+            }
             : { products: [], quantities: [] };
     }
 
@@ -671,9 +672,9 @@ export default class OrderService extends MedusaOrderService {
 
         return relevantItems?.length
             ? {
-                  variants: relevantItems.map((i) => i.variant),
-                  quantities: relevantItems.map((i) => i.quantity),
-              }
+                variants: relevantItems.map((i) => i.variant),
+                quantities: relevantItems.map((i) => i.quantity),
+            }
             : { variants: [], quantities: [] };
     }
 }
