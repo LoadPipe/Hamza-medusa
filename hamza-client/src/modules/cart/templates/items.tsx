@@ -43,7 +43,7 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
                 {/* <Radio mr="2rem" display={{ base: 'none', md: 'flex' }} /> */}
                 <Text
                     fontWeight={600}
-                    fontSize={'18px'}
+                    fontSize={{ base: '16px', md: '18px' }}
                     color="primary.green.900"
                 >
                     Product Details
@@ -52,7 +52,8 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
             <Box
                 mt="1rem"
                 maxHeight={{ base: '170px', md: '400px' }}
-                overflowY="scroll"
+                overflow={'hidden'}
+                overflowY={'scroll'}
             >
                 {items && items.length > 0 && region ? (
                     items
@@ -73,36 +74,56 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
                     <Flex width={'100%'} flexDir={'column'}>
                         <Divider borderColor="#3E3E3E" borderWidth={'1px'} />
                         <Flex
-                            mt="1.5rem"
+                            mt={{ base: '0', md: '1.5rem' }}
                             maxW={'329px'}
                             height={{ base: '170px', md: '273px' }}
                             width={'100%'}
                             mx="auto"
                             flexDir={'column'}
-                            gap={30}
+                            gap={{ base: 3, md: 30 }}
                             justifyContent={'center'}
                             alignItems={'center'}
                         >
-                            <HiOutlineShoppingCart size={'56px'} />
-                            <Flex flexDir={'column'} mt="-1rem">
+                            <Flex
+                                flexDir={'column'}
+                                mt={{ base: '0', md: '-1rem' }}
+                                gap={{ base: 0, md: '8px' }}
+                            >
+                                <Flex
+                                    fontSize={{ base: '26px', md: '56px' }}
+                                    alignSelf={'center'}
+                                    mb="0.25rem"
+                                >
+                                    <HiOutlineShoppingCart />
+                                </Flex>
                                 <Text
                                     textAlign={'center'}
-                                    fontSize={'20px'}
+                                    fontSize={{ base: '14px', md: '20px' }}
                                     fontWeight={600}
                                     color="primary.green.900"
                                 >
                                     Your cart is empty
                                 </Text>
-                                <Text textAlign={'center'}>
+                                <Text
+                                    fontSize={{ base: '14px', md: '16px' }}
+                                    textAlign={'center'}
+                                >
                                     Looks like you haven't added anything to
                                     your cart yet.
                                 </Text>
                             </Flex>
-                            <Link href={'/store'}>
+                            <Link
+                                href={'/store'}
+                                textAlign={'center'}
+                                width={'100%'}
+                            >
                                 <Button
                                     backgroundColor={'primary.green.900'}
                                     color="black"
+                                    width={{ base: '100%', md: '174px' }}
                                     borderRadius={'30px'}
+                                    height={{ base: '42px', md: '52px' }}
+                                    fontSize={{ base: '14px', md: '16px' }}
                                 >
                                     Start Shopping
                                 </Button>
@@ -116,7 +137,3 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
 };
 
 export default ItemsTemplate;
-
-// Array.from(Array(5).keys()).map((i) => {
-//     return <SkeletonLineItem key={i} />;
-// })
