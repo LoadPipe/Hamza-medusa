@@ -10,7 +10,7 @@ import { LineItem } from '../models/line-item';
 import { Lifetime } from 'awilix';
 import { PriceConverter } from '../strategies/price-selection';
 import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
-import { DatabaseLogger } from '../utils/logging/logger';
+import { DatabaseLogger, ILogger } from '../utils/logging/logger';
 
 export default class CartService extends MedusaCartService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
@@ -18,7 +18,7 @@ export default class CartService extends MedusaCartService {
     protected readonly customerRepository_: typeof CustomerRepository;
     protected readonly lineItemRepository_: typeof LineItemRepository;
     protected readonly priceConverter: PriceConverter = new PriceConverter();
-    protected readonly logger: DatabaseLogger;
+    protected readonly logger: ILogger;
 
     constructor(container) {
         super(container);

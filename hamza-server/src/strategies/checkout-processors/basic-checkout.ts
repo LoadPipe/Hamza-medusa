@@ -20,6 +20,7 @@ import WhiteListService from '../../services/whitelist';
 import StoreRepository from '../../repositories/store';
 import { WhiteList } from '../../models/whitelist';
 import BuckydropService from '../../services/buckydrop';
+import { DatabaseLogger, ILogger } from '../../utils/logging/logger';
 
 
 export interface IPaymentGroupData {
@@ -44,7 +45,7 @@ export class BasicCheckoutProcessor {
     protected readonly orderRepository: typeof OrderRepository;
     protected readonly lineItemRepository: typeof LineItemRepository;
     protected readonly storeRepository: typeof StoreRepository;
-    protected readonly logger: Logger;
+    protected readonly logger: ILogger;
     protected cart: Cart = null;
     protected cartId: string = '';
     protected payments: Payment[] = [];
@@ -63,7 +64,7 @@ export class BasicCheckoutProcessor {
         this.lineItemRepository = container.lineItemRepository;
         this.whitelistService = container.whitelistService;
         this.storeRepository = container.storeRepository;
-        this.logger = container.logger;
+        this.logger = new DatabaseLogger(container);
     }
 
     /**

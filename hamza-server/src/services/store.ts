@@ -10,6 +10,7 @@ import axios from 'axios';
 import { UpdateStoreInput as MedusaUpdateStoreInput } from '@medusajs/medusa/dist/types/store';
 import { UpdateProductInput as MedusaUpdateProductInput } from '@medusajs/medusa/dist/types/product';
 import ProductRepository from '@medusajs/medusa/dist/repositories/product';
+import { DatabaseLogger, ILogger } from '../utils/logging/logger';
 
 type UpdateStoreInput = MedusaUpdateStoreInput & {
     massmarket_keycard?: string;
@@ -24,13 +25,13 @@ class StoreService extends MedusaStoreService {
     static LIFE_TIME = Lifetime.SCOPED;
     protected readonly productRepository_: typeof ProductRepository;
     protected readonly storeRepository_: typeof StoreRepository;
-    protected readonly logger: Logger;
+    protected readonly logger: ILogger;
 
     constructor(container) {
         super(container);
         this.storeRepository_ = container.storeRepository;
         this.productRepository_ = container.productRepository;
-        this.logger = container.logger;
+        this.logger = new DatabaseLogger(container);
     }
 
     async createStore(

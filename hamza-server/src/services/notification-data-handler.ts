@@ -17,6 +17,7 @@ import type {
     TotalsService,
     UserService,
 } from '@medusajs/medusa/dist/services';
+import { DatabaseLogger, ILogger } from '../utils/logging/logger';
 
 class NotificationDataService extends TransactionBaseService {
     static identifier = 'notificationDataService';
@@ -36,7 +37,7 @@ class NotificationDataService extends TransactionBaseService {
     protected readonly swapService_: SwapService;
     protected readonly totalsService_: TotalsService;
     protected readonly userService_: UserService;
-    protected readonly logger: Logger;
+    protected readonly logger: ILogger;
 
     constructor({
         cartService,
@@ -329,8 +330,8 @@ class NotificationDataService extends TransactionBaseService {
                             is_giftcard: false,
                             code: discount.code,
                             descriptor: `${discount.rule.value}${discount.rule.type === 'percentage'
-                                    ? '%'
-                                    : ` ${currencyCode}`
+                                ? '%'
+                                : ` ${currencyCode}`
                                 }`,
                         };
                     });

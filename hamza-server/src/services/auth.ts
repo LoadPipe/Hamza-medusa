@@ -1,7 +1,7 @@
 import { AuthService as MedusaAuthService, Logger } from '@medusajs/medusa';
 import { Lifetime } from 'awilix';
 import { AuthenticateResult } from '@medusajs/medusa/dist/types/auth';
-import { DatabaseLogger } from '../utils/logging/logger';
+import { DatabaseLogger, ILogger } from '../utils/logging/logger';
 
 type ExtendedAuthenticateResult = AuthenticateResult & {
     wallet_address?: string; // Optional property
@@ -9,7 +9,7 @@ type ExtendedAuthenticateResult = AuthenticateResult & {
 
 export default class AuthService extends MedusaAuthService {
     static LIFE_TIME = Lifetime.SINGLETON;
-    protected readonly logger: DatabaseLogger;
+    protected readonly logger: ILogger;
 
     constructor(container) {
         super(container);

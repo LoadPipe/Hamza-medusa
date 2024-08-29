@@ -21,6 +21,7 @@ import { ProductVariantRepository } from '../repositories/product-variant';
 import { BuckyClient } from '../buckydrop/bucky-client';
 import { getCurrencyAddress } from '../currency.config';
 import { In, IsNull, Not } from 'typeorm';
+import { DatabaseLogger, ILogger } from '../utils/logging/logger';
 
 export type BulkImportProductInput = CreateProductInput;
 
@@ -57,14 +58,14 @@ type UpdateProductInput = Omit<Partial<CreateProductInput>, 'variants'> & {
 
 class ProductService extends MedusaProductService {
     static LIFE_TIME = Lifetime.SCOPED;
-    protected readonly logger: Logger;
+    protected readonly logger: ILogger;
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly customerService_: CustomerService;
 
     constructor(container) {
         super(container);
-        this.logger = container.logger;
+        this.logger = new DatabaseLogger(container);
         this.storeRepository_ = container.storeRepository;
         this.productVariantRepository_ = container.productVariantRepository;
         this.customerService_ = container.customerService;
