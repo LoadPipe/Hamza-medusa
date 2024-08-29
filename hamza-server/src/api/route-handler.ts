@@ -59,8 +59,7 @@ export class RouteHandler {
             appLogRepository
         }
 
-        const sessionId: string = this.customerId?.length ? this.customerId : generateEntityId();
-        this.logger = createLogger(loggerContext, sessionId);
+        this.logger = createLogger(loggerContext);
     }
 
     public async handle(fn: (_this?: RouteHandler) => void) {

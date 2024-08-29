@@ -16,6 +16,12 @@ export class AppLog extends SoftDeletableEntity {
     @Column({ name: 'session_id' })
     session_id: string;
 
+    @Column({ name: 'request_id' })
+    request_id: string;
+
+    @Column({ name: 'customer_id' })
+    customer_id: string;
+
     @Column({ name: 'log_level' })
     log_level: string;
 
@@ -27,9 +33,6 @@ export class AppLog extends SoftDeletableEntity {
 
     @Column({ name: 'timestamp' })
     timestamp: number;
-
-    //@CreateDateColumn({ type: 'timestamptz' })
-    //created_at: Date;
 
     @BeforeInsert()
     private beforeInsert(): void {

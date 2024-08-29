@@ -7,8 +7,11 @@ import {
     type MedusaResponse,
     authenticateCustomer,
     Logger,
+    generateEntityId,
 } from '@medusajs/medusa';
+import { asyncLocalStorage, sessionStorage } from '../utils/context';
 import cors from 'cors';
+import jwt from 'jsonwebtoken';
 
 const STORE_CORS = process.env.STORE_CORS || 'http://localhost:8000';
 const ADMIN_CORS =
@@ -42,9 +45,15 @@ const registerLoggedInCustomer = async (
     res: MedusaResponse,
     next: MedusaNextFunction
 ) => {
-    const logger = req.scope.resolve('logger') as Logger;
-    logger.debug(req);
-    next();
+    const jwtToken: any = jwt.decode(req.headers.authorization);
+    const customerId = jwtToken?.customer_id;
+
+    asyncLocalStorage.run(new Map(), () => {
+        sessionStorage.customerId = customerId ?? 'unknown';
+        sessionStorage.requestId = generateEntityId();
+        sessionStorage.sessionId = '';
+        next();
+    });
 };
 
 export const permissions = async (
@@ -140,6 +149,7 @@ export const config: MiddlewaresConfig = {
                     origin: [STORE_CORS],
                     credentials: true,
                 }),
+                registerLoggedInCustomer
             ],
         },
         {
