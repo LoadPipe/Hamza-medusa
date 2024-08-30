@@ -357,3 +357,13 @@ Content-Type: application/json
 }
 
 
+#### VERIFICATION
+POST http://localhost:9000/custom/confirmation-token/generate
+Content-Type: application/json
+
+{
+  "email": "garonazarian09@gmail.com",
+  "customer_id": "cus_01J6FRW042PD32F7TVC0Z0D5V7"
+}
+
+

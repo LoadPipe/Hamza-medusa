@@ -391,7 +391,7 @@ export async function verifyEmail(customer_id: string, email: string) {
                 email,
             }
         );
-        return response;
+        return response.data.status;
     } catch (e) {
         console.log(`Failed to verify email ${e}`);
     }
