@@ -46,23 +46,33 @@ export default function OrderCompletedTemplate({
         >
             {isOnboarding && <OnboardingCta orderId={order.id} />}
 
-            <Box color="primary.green.900" mb="1rem">
-                <MdOutlineCheckCircle size={'72px'} />
+            <Box
+                color="primary.green.900"
+                mb="1rem"
+                fontSize={{ base: '40px', md: '72px' }}
+            >
+                <MdOutlineCheckCircle />
             </Box>
             <Text fontSize={'24px'} fontWeight={700}>
                 Payment Successful!
             </Text>
-            <Text fontWeight={600}>Thank you for your order!</Text>
+            <Text fontWeight={600} fontSize={{ base: '14px', md: '16px' }}>
+                Thank you for your order!
+            </Text>
 
-            <Text mt="1rem" textAlign={'center'}>
+            <Text
+                mt="1rem"
+                textAlign={'center'}
+                fontSize={{ base: '14px', md: '16px' }}
+            >
                 Order confirmation has been sent to your registered email
             </Text>
 
             {/* Order Body */}
             <OrderDetails order={order} />
             <Divider my="2rem" borderColor="#555555" />
-            <Summary cart_id={order.cart_id} />
-            <Divider my="1rem" borderColor="#555555" />
+            <Summary cart_id={order.cart_id} cart={cart} order={order} />
+
             <TransactionDetails data={cart} />
 
             {/* Check Order Buttin */}
