@@ -191,10 +191,10 @@ Content-Type: application/json
 }
 
 ### Check if customer already left a review
-GET http://localhost:9000/custom/review/exists?order_id=order_01HZGXXX8V51W8XQBTH7YPWTPP
+GET http://localhost:9000/custom/review/exists?order_id=order_01J6FTE8CVJYAF9X81FDA3VVV8&customer_id=cus_01J6FRW042PD32F7TVC0Z0D5V7&variant_id=variant_01J6FN17AVHC515FX8P41JYH60
 
 ### Return review and rating of existing product
-GET http://localhost:9000/custom/review/existing?order_id=order_01J3CK60MX8XGWW52W4X0AZTSX&product_id=prod_01J3CF1GXW1C0QSSMPBQR04GBK
+GET http://localhost:9000/custom/review/existing?order_id=order_01J6FRWMAJ49WY8910T1H5JX1E&product_id=prod_01J3CF1GXW1C0QSSMPBQR04GBK
 Content-Type: application/json
 
 
@@ -216,17 +216,14 @@ POST http://localhost:9000/custom/vendors/vendor-products
 Content-Type: application/json
 
 {
-  "store_id": "store_01HZGXTNW8CZ291Q1TACR6GQVW"
+  "store_id": "store_01J6FN28S1GDAPC37E3JC26CF5"
 }
 
 
 ### GET Store Name from Product ID
-GET http://localhost:9000/custom/store
+GET http://localhoyast:9000/custom/store?product_id=prod_01J6FN17AJS1JRSENKXTHZB1TT
 Content-Type: application/json
 
-{
-  "product_id": "prod_01J5TSX6P1QNYJXA2TCHK0RN1V"
-}
 
 
 ### Get Vendor by Store Name
@@ -253,7 +250,7 @@ POST http://localhost:9000/custom/notification
 Content-Type: application/json
 
 {
-  "customer_id": "cus_01J0JA3R9P1T1182517BPS48DM",
+  "customer_id": "cus_01J6FRW042PD32F7TVC0Z0D5V7",
     "notification_type": "orderShipped, newProduct, orderStatusChanged"
 }
 
@@ -263,7 +260,7 @@ GET http://localhost:9000/custom/notification
 Content-Type: application/json
 
 {
-  "customer_id": "cus_01J0JA3R9P1T1182517BPS48DM"
+  "customer_id": "cus_01J6FRW042PD32F7TVC0Z0D5V7"
 }
 
 
@@ -272,7 +269,7 @@ DELETE http://localhost:9000/custom/notification
 Content-Type: application/json
 
 {
-  "customer_id": "cus_01J0JA3R9P1T1182517BPS48DM"
+  "customer_id": "cus_01J6FRW042PD32F7TVC0Z0D5V7"
 }
 
 
@@ -314,7 +311,7 @@ POST http://localhost:9000/custom/cart/cancel
 Content-Type: application/json
 
 {
-    "cart_id": "cart_01J3CF7DMR72ZS436EM0NYDCGW"
+    "cart_id": "cart_01J6FRGW4Y4ZNVKVA2FHEM7N9A"
 }
 
 
@@ -338,7 +335,7 @@ Content-Type: application/json
 
 
 ### Get Customer Orders without reviews. getNotReviewed
-GET http://localhost:9000/custom/review/not-reviewed?customer_id=cus_01J5V004PET8A6DXW9211ATPC7
+GET http://localhost:9000/custom/review/not-reviewed?customer_id=cus_01J6FRW042PD32F7TVC0Z0D5V7
 
 ### POST Let's add products...
 POST http://localhost:9000/custom/product/add-product
@@ -349,6 +346,16 @@ Content-Type: application/json
   "storeId": "store_01J4W6J3RXZ4JDH4XYZZQP4S2R",
   "collectionId": "pcol_01HSGAMXDJD725MR3VSW63B0RD", 
   "salesChannelId": "sc_01J4W6GT9V06AQF2G0T01ZPXVE"
+}
+
+
+#### VERIFICATION
+POST http://localhost:9000/custom/confirmation-token/generate
+Content-Type: application/json
+
+{
+  "email": "garonazarian09@gmail.com",
+  "customer_id": "cus_01J6FRW042PD32F7TVC0Z0D5V7"
 }
 
 

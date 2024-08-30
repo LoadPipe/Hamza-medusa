@@ -28,12 +28,11 @@ const VerifyEmail = () => {
 
     const emailVerificationHandler = async () => {
         let res: any = await verifyEmail(authData.customer_id, email);
-        let data = res?.data;
-        if (data.status == true) {
+        if (res == true) {
             toast.success('Email sent successfully!!');
             router.replace('/');
         } else {
-            toast.error(data.message);
+            toast.error(res.message);
             return;
         }
     };
