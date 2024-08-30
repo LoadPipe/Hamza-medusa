@@ -1,24 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { singleBucket } from '@lib/data';
-import {
-    Box,
-    Button,
-    Collapse,
-    HStack,
-    Icon,
-    Tab,
-    TabList,
-    TabPanel,
-    TabPanels,
-    Tabs,
-    Text,
-    VStack,
-} from '@chakra-ui/react';
-import { BsCircleFill } from 'react-icons/bs';
+import { Box, Button } from '@chakra-ui/react';
+import Link from 'next/link';
+
 import DeliveredCard from '@modules/account/components/delivered-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { addToCart } from '@modules/cart/actions';
 
 const Delivered = ({ orders }: { orders: any[] }) => {
     const [customerOrder, setCustomerOrder] = useState<any[] | null>(null);

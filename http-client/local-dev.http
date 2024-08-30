@@ -295,14 +295,6 @@ Content-Type: application/json
 ### Get Vendor Name by Order_id
 GET http://localhost:9000/custom/order/store?order_id=order_01J0N1CPD866R0TF9RVDZFZ125
 
-### Get Specific Customers All Orders METHOD: listCustomerOrders() in order.ts
-POST http://localhost:9000/custom/order/customer-orders
-Content-Type: application/json
-
-{
-  "customer_id": "cus_01J3CF43WK0QT2591VHG9JT07E"
-}
-
 
 ### Get Specific Order Details
 GET http://localhost:9000/custom/order/details
@@ -327,12 +319,12 @@ Content-Type: application/json
 
 
 ### Get Specific Customers All Orders METHOD: listCustomerOrders() in order.ts
-GET http://localhost:9000/custom/order/customer-orders?customer_id=cus_01J5V004PET8A6DXW9211ATPC7&buckets=true
+GET http://localhost:9000/custom/order/customer-orders?customer_id=cus_01J6FRW042PD32F7TVC0Z0D5V7&buckets=true
 Content-Type: application/json
 
 
 ### Get Single BUCKET
-GET http://localhost:9000/custom/order/customer-order?customer_id=cus_01J5V004PET8A6DXW9211ATPC7&bucket=1
+GET http://localhost:9000/custom/order/customer-order?customer_id=cus_01J6FRW042PD32F7TVC0Z0D5V7&bucket=1
 
 ### PUT cart_id to payment_session record 
 PUT http://localhost:9000/custom/payment-session

@@ -7,16 +7,7 @@ import {
     useRouter,
     useSearchParams,
 } from 'next/navigation';
-import {
-    Flex,
-    Box,
-    Button,
-    Text,
-    Menu,
-    IconButton,
-    Collapse,
-    Link,
-} from '@chakra-ui/react';
+import { Flex, Box, Text, IconButton, Collapse } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import NextLink from 'next/link';
 import { useOrderTabStore } from '@store/order-tab-state';
@@ -145,7 +136,7 @@ const AccountNav = ({
                     alignItems="center"
                     justifyContent="space-between"
                     color="white"
-                    bg="gray.800"
+                    backgroundColor={'transparent'}
                     mt="4"
                     cursor="pointer"
                     onClick={toggleOrdersCollapse} // Toggle collapse when the whole Flex container is clicked
@@ -156,10 +147,11 @@ const AccountNav = ({
                         alignItems="center"
                         justifyContent="space-between"
                         width="100%"
+                        backgroundColor={'transparent'}
                         textDecoration="none"
                         _hover={{ textDecoration: 'none' }} // Remove underline on hover
                     >
-                        <Text fontWeight={600} color="white">
+                        <Text fontSize={'18px'} fontWeight={600} color="white">
                             Orders
                         </Text>
                         <IconButton
