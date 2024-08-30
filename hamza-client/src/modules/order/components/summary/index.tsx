@@ -168,6 +168,26 @@ const Summary: React.FC<SummaryProps> = ({ cart_id, cart, order }) => {
                     </Flex>
                 </Flex>
             ))}
+            {/* {subtotals[currencyCode] && (
+                <Flex justifyContent={'space-between'}>
+                    <Text
+                        alignSelf={'center'}
+                        fontSize={{ base: '14px', md: '16px' }}
+                    >
+                        Subtotal
+                    </Text>
+
+                    <Text
+                        fontSize={{ base: '14px', md: '16px' }}
+                        alignSelf="center"
+                    >
+                        {formatCryptoPrice(
+                            subtotals[currencyCode],
+                            currencyCode
+                        )}
+                    </Text>
+                </Flex>
+            )} */}
         </Flex>
     );
 };

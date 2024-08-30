@@ -47,8 +47,13 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
                 width={'100%'}
             >
                 <Flex flexDir={'column'}>
-                    <Text fontWeight={600}>Transaction Date</Text>
-                    <Text>
+                    <Text
+                        fontWeight={600}
+                        fontSize={{ base: '14px', md: '16px' }}
+                    >
+                        Transaction Date
+                    </Text>
+                    <Text fontSize={{ base: '14px', md: '16px' }}>
                         {new Date(order.created_at).toLocaleDateString(
                             'en-US',
                             {
@@ -68,8 +73,13 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
                     flexDir={'column'}
                     width={'200px'}
                 >
-                    <Text fontWeight={600}>Payment Method</Text>
-                    <Text>Crypto</Text>
+                    <Text
+                        fontWeight={600}
+                        fontSize={{ base: '14px', md: '16px' }}
+                    >
+                        Payment Method
+                    </Text>
+                    <Text fontSize={{ base: '14px', md: '16px' }}>Crypto</Text>
                 </Flex>
             </Flex>
 
@@ -80,8 +90,15 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
                 width={'100%'}
             >
                 <Flex flexDir={'column'}>
-                    <Text fontWeight={600}>Order ID</Text>
-                    <Text>{order.id}</Text>
+                    <Text
+                        fontWeight={600}
+                        fontSize={{ base: '14px', md: '16px' }}
+                    >
+                        Order ID
+                    </Text>
+                    <Text fontSize={{ base: '14px', md: '16px' }}>
+                        {order.id}
+                    </Text>
                 </Flex>
                 <Flex
                     mt={{ base: '1rem', md: '0' }}
@@ -89,8 +106,15 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
                     flexDir={'column'}
                     width={'200px'}
                 >
-                    <Text fontWeight={600}>Order Number</Text>
-                    <Text>{order.display_id}</Text>
+                    <Text
+                        fontWeight={600}
+                        fontSize={{ base: '14px', md: '16px' }}
+                    >
+                        Order Number
+                    </Text>
+                    <Text fontSize={{ base: '14px', md: '16px' }}>
+                        {order.display_id}
+                    </Text>
                 </Flex>
             </Flex>
 

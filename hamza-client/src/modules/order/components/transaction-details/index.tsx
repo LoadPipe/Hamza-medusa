@@ -60,13 +60,39 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
     console.log(subtotals);
 
     return (
-        <Flex width={'100%'} flexDir={'column'}>
+        <Flex width={'100%'} flexDir={'column'} mt="2rem">
             <Flex
                 flexDirection={'column'}
                 color="white"
                 width={'100%'}
                 gap={'8px'}
             >
+                {subtotals[currencyCode] && (
+                    <Flex flexDir={'column'}>
+                        <Flex color={'white'} justifyContent={'space-between'}>
+                            <Text fontSize={{ base: '14px', md: '16px' }}>
+                                Subtotal
+                            </Text>
+                            <Flex>
+                                <Image
+                                    className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                    src={currencyIcons[currencyCode]}
+                                    alt={currencyCode}
+                                />
+                                <Text
+                                    ml="0.4rem"
+                                    fontSize={{ base: '14px', md: '16px' }}
+                                >
+                                    {formatCryptoPrice(
+                                        subtotals[currencyCode],
+                                        currencyCode
+                                    )}
+                                </Text>
+                            </Flex>
+                        </Flex>
+                        <Divider my="1rem" borderColor="#555555" />
+                    </Flex>
+                )}
                 {/* Discount */}
                 <Flex color="#555555" justifyContent={'space-between'}>
                     <Text fontSize={{ base: '14px', md: '16px' }}>
