@@ -467,7 +467,13 @@ export default class OrderService extends MedusaOrderService {
 
         return await this.orderRepository_.find({
             where,
-            relations: ['items', 'store', 'shipping_address', 'customer'],
+            relations: [
+                'items',
+                'store',
+                'shipping_address',
+                'customer',
+                'items.variant.product',
+            ],
         });
     }
 
@@ -656,9 +662,9 @@ export default class OrderService extends MedusaOrderService {
 
         return relevantItems?.length
             ? {
-                products: relevantItems.map((i) => i.variant.product),
-                quantities: relevantItems.map((i) => i.quantity),
-            }
+                  products: relevantItems.map((i) => i.variant.product),
+                  quantities: relevantItems.map((i) => i.quantity),
+              }
             : { products: [], quantities: [] };
     }
 
@@ -672,9 +678,9 @@ export default class OrderService extends MedusaOrderService {
 
         return relevantItems?.length
             ? {
-                variants: relevantItems.map((i) => i.variant),
-                quantities: relevantItems.map((i) => i.quantity),
-            }
+                  variants: relevantItems.map((i) => i.variant),
+                  quantities: relevantItems.map((i) => i.quantity),
+              }
             : { variants: [], quantities: [] };
     }
 }

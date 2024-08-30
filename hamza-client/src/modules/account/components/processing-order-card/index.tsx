@@ -1,14 +1,12 @@
-import { formatAmount } from '@lib/util/prices';
-import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
+import { Box, Flex, Text, Image } from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
-import React, { useEffect, useState } from 'react';
-import { getStore } from '@lib/data';
+import React from 'react';
 type OrderDetails = {
     thumbnail: string;
     title: string;
     description: string;
 };
+import Link from 'next/link';
 
 type Order = {
     id: string;
@@ -44,19 +42,11 @@ const ProcessingOrderCard = ({
     vendorName,
     address,
 }: OrderCardProps) => {
-    const orderString = typeof order.currency_code;
-
-    const getAmount = (amount?: number | null) => {
-        if (amount === null || amount === undefined) {
-            return;
-        }
-
-        return formatCryptoPrice(amount, order.currency_code || 'USDC');
-    };
-
     if (!order) {
         return <div>Loading...</div>; // Display loading message if order is undefined
     }
+
+    console.log(`HANDLE ${handle}`);
     return (
         <Box
             // bg={'#272727'}
@@ -92,13 +82,15 @@ const ProcessingOrderCard = ({
                     justifyContent="space-between"
                     flex="1"
                 >
-                    <Image
-                        borderRadius="lg"
-                        width={{ base: '60px', md: '120px' }}
-                        src={order.thumbnail}
-                        alt={`Thumbnail of ${order.title}`}
-                        mr={4}
-                    />
+                    <Link href={`/us/products/${handle}`}>
+                        <Image
+                            borderRadius="lg"
+                            width={{ base: '60px', md: '120px' }}
+                            src={order.thumbnail}
+                            alt={`Thumbnail of ${order.title}`}
+                            mr={4}
+                        />
+                    </Link>
 
                     <Box flex="1">
                         <Flex justifyContent="space-between" direction="row">
