@@ -268,7 +268,7 @@ export async function verifyToken(token: string) {
                 },
             }
         );
-        return response.data;
+        return response.data.status;
     } catch (e) {
         console.log(`Failed to verify token ${e}`);
     }
