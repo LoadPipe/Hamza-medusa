@@ -18,7 +18,15 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import Image from 'next/image';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 import { getCompleteTemplate } from '@lib/data/index';
+import LineItemPrice from '@modules/common/components/line-item-price';
+import { Cart, Order } from '@medusajs/medusa';
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
+
+type SummaryProps = {
+    cart_id: string;
+    cart: Cart;
+    order: Order;
+};
 
 interface Product {
     store_id: string;
@@ -53,7 +61,7 @@ interface Product {
     metadata: Record<string, any> | null;
 }
 
-const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
+const Summary: React.FC<SummaryProps> = ({ cart_id, cart, order }) => {
     const [products, setProducts] = useState<Product[]>([]);
     const router = useRouter();
     const { countryCode } = useParams();
@@ -75,6 +83,10 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
         fetchProducts();
     }, [cart_id]);
 
+    console.log(products);
+    console.log('this is cart', cart.items);
+    console.log('this is order', order);
+
     return (
         <Flex direction="column" width={'100%'}>
             <Text fontWeight={600}>Your Order</Text>
@@ -82,10 +94,11 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
                 <Flex key={product.id} width={'100%'} flexDir={'column'}>
                     <Divider
                         mt="1rem"
+                        mb="0.5rem"
                         display={index !== 0 ? 'flex' : 'none'}
                         borderColor={'#555555'}
                     />
-                    <Flex mt="1rem" height={'110px'} width={'100%'}>
+                    <Flex mt="1rem" height={'70px'} width={'100%'}>
                         <Flex flexDir={'column'}>
                             <LocalizedClientLink
                                 href={`/products/${product.handle}`}
@@ -98,18 +111,13 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
                                     />
                                 </Flex>
                             </LocalizedClientLink>
-                            <Flex mt="0.75rem">
-                                <Tweet
-                                    productHandle={product.handle}
-                                    isPurchased={true}
-                                />
-                            </Flex>
                         </Flex>
                         <Text
                             ml="1rem"
-                            maxW={'336px'}
+                            maxW={{ base: '200px', md: '336px' }}
                             height={'46px'}
                             width={'100%'}
+                            fontSize={{ base: '14px', md: '16px' }}
                             noOfLines={2}
                         >
                             {product.title}
@@ -138,12 +146,25 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
                                     fontSize={{ base: '14px', md: '16px' }}
                                 >
                                     {formatCryptoPrice(
-                                        product.unit_price,
+                                        cart.items[index].quantity *
+                                            product.unit_price,
                                         product.currency_code
                                     )}
                                 </Text>
                             </Flex>
                         </Flex>
+                    </Flex>
+                    {/* Twitter and Quantity */}
+                    <Flex alignItems={'center'} height={'50px'} width={'100%'}>
+                        <Flex alignSelf={'center'}>
+                            <Tweet
+                                productHandle={product.handle}
+                                isPurchased={true}
+                            />
+                        </Flex>
+                        <Text ml="1rem" fontSize={{ base: '14px', md: '16px' }}>
+                            Quantity: {cart.items[index].quantity}
+                        </Text>
                     </Flex>
                 </Flex>
             ))}
