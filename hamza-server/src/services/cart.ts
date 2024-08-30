@@ -3,7 +3,8 @@ import {
     FindConfig,
     CartService as MedusaCartService,
     MoneyAmount,
-    Logger
+    Logger,
+    ShippingMethod
 } from '@medusajs/medusa';
 import CustomerRepository from '@medusajs/medusa/dist/repositories/customer';
 import { LineItem } from '../models/line-item';
@@ -11,12 +12,15 @@ import { Lifetime } from 'awilix';
 import { PriceConverter } from '../strategies/price-selection';
 import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 import { createLogger, ILogger } from '../utils/logging/logger';
+import ShippingMethodRepository from '@medusajs/medusa/dist/repositories/shipping-method';
+import ShippingOptionRepository from '@medusajs/medusa/dist/repositories/shipping-option';
 
 export default class CartService extends MedusaCartService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
 
     protected readonly customerRepository_: typeof CustomerRepository;
     protected readonly lineItemRepository_: typeof LineItemRepository;
+    protected readonly shippingOptionRepository_: typeof ShippingOptionRepository;
     protected readonly priceConverter: PriceConverter;
     protected readonly logger: ILogger;
 
@@ -24,6 +28,7 @@ export default class CartService extends MedusaCartService {
         super(container);
         this.customerRepository_ = container.customerRepository;
         this.lineItemRepository_ = container.lineItemRepository;
+        this.shippingOptionRepository_ = container.shippingOptionRepository;
         this.logger = createLogger(container);
         this.priceConverter = new PriceConverter(this.logger);
     }
@@ -65,6 +70,16 @@ export default class CartService extends MedusaCartService {
         }
 
         return cart;
+    }
+
+    async addDefaultShippingMethod(cartId: string): Promise<void> {
+        const cart = await super.retrieve(cartId, { relations: ['shipping_methods'] });
+
+        if (cart && cart.shipping_methods.length === 0) {
+            this.logger.debug(`Auto-adding shipping method for cart ${cart.id}`);
+            const option = await this.shippingOptionRepository_.findOne({ where: { provider_id: 'bucky-fulfillment' } });
+            await this.addShippingMethod(cart.id, option.id);
+        }
     }
 
     async addOrUpdateLineItems(
