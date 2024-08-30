@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { getStore } from '@lib/data';
 import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
-
+import Link from 'next/link';
 type OrderDetails = {
     thumbnail: string;
     title: string;
@@ -122,13 +122,15 @@ const DeliveredCard = ({ order, handle }: OrderCardProps) => {
             </Flex>
 
             <Flex alignItems="center" justifyContent="space-between">
-                <Image
-                    borderRadius="lg"
-                    width={{ base: '60px', md: '120px' }}
-                    src={order.thumbnail}
-                    alt={`Thumbnail of ${order.title}`}
-                    mr={4}
-                />
+                <Link href={`/us/products/${handle}`}>
+                    <Image
+                        borderRadius="lg"
+                        width={{ base: '60px', md: '120px' }}
+                        src={order.thumbnail}
+                        alt={`Thumbnail of ${order.title}`}
+                        mr={4}
+                    />
+                </Link>
 
                 <Box flex="1">
                     <Flex justifyContent="space-between">

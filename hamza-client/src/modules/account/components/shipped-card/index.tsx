@@ -4,6 +4,8 @@ import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
 import React, { useEffect, useState } from 'react';
 import { getStore } from '@lib/data';
+import Link from 'next/link';
+
 type OrderDetails = {
     thumbnail: string;
     title: string;
@@ -105,13 +107,15 @@ const ShippedCard = ({ order, handle }: OrderCardProps) => {
                     justifyContent="space-between"
                     flex="1"
                 >
-                    <Image
-                        borderRadius="lg"
-                        width={{ base: '60px', md: '120px' }}
-                        src={order.thumbnail}
-                        alt={`Thumbnail of ${order.title}`}
-                        mr={4}
-                    />
+                    <Link href={`/us/products/${handle}`}>
+                        <Image
+                            borderRadius="lg"
+                            width={{ base: '60px', md: '120px' }}
+                            src={order.thumbnail}
+                            alt={`Thumbnail of ${order.title}`}
+                            mr={4}
+                        />
+                    </Link>
 
                     <Box flex="1">
                         <Flex justifyContent="space-between" direction="row">
