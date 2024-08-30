@@ -26,7 +26,7 @@ const Tweet: React.FC<TweetProps> = ({
     }, [productHandle, isPurchased]);
 
     return (
-        <Box>
+        <Box mt="auto">
             <a href="#" id="tweet-button" target="_blank">
                 <Button
                     as="div"
