@@ -31,20 +31,33 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        if (!handler.requireParam('order'))
-            return;
+        let orderId: string;
+        if (handler.hasParam('order'))
+            orderId = handler.inputParams.order;
 
-        const orderId = handler.inputParams.order;
-        const orders = await buckydropService.getPendingOrders();
-        let order: Order = orders.find((o) => o.id === orderId);
-
-        if (!order) {
-            res.status(400).json({ message: `Order ${orderId} isn't valid or isn't a buckydrop pending order` });
+        let orders = await buckydropService.getPendingOrders();
+        if (orderId) {
+            orders = orders.filter(o => o.id === orderId);
         }
 
-        handler.logger.debug(`Processing order ${orderId}`);
-        order = await buckydropService.processPendingOrder(order.id);
+        if (!orders?.length) {
+            if (orderId)
+                res.status(400).json({ message: `Order ${orderId} isn't valid or isn't a buckydrop pending order` });
+            else
+                res.status(400).json({ message: `No pending buckydrop orders found` });
+        }
 
-        res.status(200).json({ order });
+        //process all selected orders 
+        const promises: Promise<Order>[] = [];
+
+        for (let order of orders) {
+            promises.push(new Promise(async (resolve, reject) => {
+                handler.logger.debug(`Processing order ${orderId}`);
+                resolve(await buckydropService.processPendingOrder(order.id));
+            }))
+        }
+        orders = await Promise.all(promises);
+
+        res.status(200).json({ orders });
     });
 };
