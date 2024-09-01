@@ -229,7 +229,7 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
             const inputs = this.createPaymentInput(data, payer_address, chainId);
             console.log('sending payments: ', inputs);
 
-            const tx = await client.placeMultiplePayments(inputs, false);
+            const tx = await client.placeMultiplePayments(inputs, true);
             transaction_id = tx.transaction_id;
         }
 
