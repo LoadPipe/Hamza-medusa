@@ -23,6 +23,7 @@ export interface IPaymentInput {
  */
 export interface ISwitchPaymentInput {
     id: BigNumberish;
+    orderId: string;
     receiver: HexString; //contract address
     payer: HexString;
     amount: BigNumberish;
@@ -50,7 +51,6 @@ export interface IMultiPaymentInput {
  * Input params for multiple concurrent payments to the switch.
  */
 export interface ISwitchMultiPaymentInput {
-    receiver: string;
     currency: string; //token address, or ethers.ZeroAddress for native
     payments: ISwitchPaymentInput[];
 }

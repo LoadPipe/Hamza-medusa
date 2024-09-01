@@ -252,10 +252,10 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
             data.orders.forEach((o: any) => {
                 const input: ISwitchMultiPaymentInput = {
                     currency: o.currency_code,
-                    receiver: o.wallet_address,
                     payments: [
                         {
                             id: 1, //o.order_id,
+                            orderId: o.order_id,
                             payer: payer,
                             receiver: o.wallet_address,
                             amount: this.convertToNativeAmount(o.currency_code, o.amount, chainId),
