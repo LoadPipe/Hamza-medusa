@@ -55,14 +55,20 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         'escrow_contract_address'
     ]);
 
-    await handler.handle(async () => {
-        await orderService.finalizeCheckout(
-            //handler.inputParams.cart_products,
-            handler.inputParams.cart_id,
-            handler.inputParams.transaction_id,
-            handler.inputParams.payer_address,
-            handler.inputParams.escrow_contract_address
-        );
-        res.send(true);
-    });
+    try {
+        await handler.handle(async () => {
+            await orderService.finalizeCheckout(
+                //handler.inputParams.cart_products,
+                handler.inputParams.cart_id,
+                handler.inputParams.transaction_id,
+                handler.inputParams.payer_address,
+                handler.inputParams.escrow_contract_address
+            );
+            res.send(true);
+        });
+    }
+    catch (e: any) {
+        handler.logger.error(e);
+        res.send(false);
+    }
 };
