@@ -47,11 +47,14 @@ type InjectDependencies = {
 
 type OrderBucketList = { [key: string]: Order[] };
 
+
+const BUCKY_ORDER_CREATION_MODE: 'old' | 'new' = 'new';
+
 export default class OrderService extends MedusaOrderService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
 
-    protected orderRepository_: typeof OrderRepository;
     protected lineItemService: LineItemService;
+    protected orderRepository_: typeof OrderRepository;
     protected lineItemRepository_: typeof LineItemRepository;
     protected productRepository_: typeof ProductRepository;
     protected paymentRepository_: typeof PaymentRepository;
@@ -207,7 +210,7 @@ export default class OrderService extends MedusaOrderService {
 
         //do buckydrop order creation
         if (process.env.BUCKY_ENABLE_PURCHASE)
-            await this.doBuckydropOrderCreation(cartId, orders);
+            await this.processBuckydropOrders(cartId, orders);
 
         //calls to update inventory
         //const inventoryPromises =
@@ -242,83 +245,6 @@ export default class OrderService extends MedusaOrderService {
         }
 
         return orders;
-    }
-
-    private async doBuckydropOrderCreation(
-        cartId: string,
-        orders: Order[]
-    ): Promise<void> {
-        try {
-            for (const order of orders) {
-                const { variants, quantities } =
-                    await this.getBuckyProductVariantsFromOrder(order);
-                if (variants?.length) {
-                    const productList: ICreateBuckyOrderProduct[] = [];
-
-                    for (let n = 0; n < variants.length; n++) {
-                        const prodMetadata: any = JSON.parse(
-                            variants[n].product.bucky_metadata
-                        );
-                        const varMetadata: any = JSON.parse(
-                            variants[n].bucky_metadata
-                        );
-
-                        productList.push({
-                            spuCode: prodMetadata?.detail.spuCode,
-                            skuCode: varMetadata.skuCode,
-                            productCount: quantities[n],
-                            platform: prodMetadata?.detail?.platform,
-                            productPrice:
-                                prodMetadata?.detail?.proPrice?.price ??
-                                prodMetadata?.detail?.price?.price ??
-                                0,
-                            productName: prodMetadata?.detail?.goodsName,
-                        });
-                    }
-
-                    const cart: Cart = await this.cartService_.retrieve(
-                        cartId,
-                        {
-                            relations: ['billing_address.country', 'customer'],
-                        }
-                    );
-
-                    this.logger.debug('cart.email: ' + cart.email);
-
-                    //TODO: replace this with a BuckyService call, and get rid of buckyClient
-                    const output = await this.buckyClient.createOrder({
-                        partnerOrderNo: order.id.replace('_', ''),
-                        //partnerOrderNoName: order.id, //TODO: what go here?
-                        country: cart.billing_address.country.name ?? '', //TODO: what format?
-                        countryCode: cart.billing_address.country.iso_2 ?? '', //TODO: what format?
-                        province: cart.billing_address.province ?? '',
-                        city: cart.billing_address.city ?? '',
-                        detailAddress:
-                            `${cart.billing_address.address_1 ?? ''} ${cart.billing_address.address_2 ?? ''}`.trim(),
-                        postCode: cart.billing_address.postal_code,
-                        contactName:
-                            `${cart.billing_address.first_name ?? ''} ${cart.billing_address.last_name ?? ''}`.trim(),
-                        contactPhone: cart.billing_address.phone?.length
-                            ? cart.billing_address.phone
-                            : '0809997747',
-                        email: cart.email?.length
-                            ? cart.email
-                            : cart.customer.email,
-                        orderRemark: '',
-                        productList,
-                    });
-
-                    //TODO: if not success, need to take some action
-                    order.bucky_metadata = JSON.stringify(output);
-                    await this.orderRepository_.save(order);
-
-                    this.logger.debug('BUCKY CREATED ORDER');
-                    this.logger.debug(JSON.stringify(output));
-                }
-            }
-        } catch (e) {
-            this.logger.error(`Failed to create buckydrop order for ${cartId}`);
-        }
     }
 
     async cancelOrder(orderId: string) {
@@ -433,93 +359,6 @@ export default class OrderService extends MedusaOrderService {
         }
 
         return [];
-    }
-
-    private async getCustomerOrdersByStatus(
-        customerId: string,
-        statusParams: {
-            orderStatus?: OrderStatus;
-            paymentStatus?: PaymentStatus;
-            fulfillmentStatus?: FulfillmentStatus;
-        }
-    ): Promise<Order[]> {
-        const where: {
-            customer_id: string;
-            status?: any;
-            payment_status?: any;
-            fulfillment_status?: any;
-        } = {
-            customer_id: customerId,
-            status: Not(OrderStatus.ARCHIVED),
-        };
-
-        if (statusParams.orderStatus) {
-            where.status = statusParams.orderStatus;
-        }
-
-        if (statusParams.paymentStatus) {
-            where.payment_status = statusParams.paymentStatus;
-        }
-
-        if (statusParams.fulfillmentStatus) {
-            where.fulfillment_status = statusParams.fulfillmentStatus;
-        }
-
-        return await this.orderRepository_.find({
-            where,
-            relations: [
-                'items',
-                'store',
-                'shipping_address',
-                'customer',
-                'items.variant.product',
-            ],
-        });
-    }
-
-    private getPostCheckoutUpdateInventoryPromises(
-        cartProductsJson: string
-    ): Promise<ProductVariant>[] {
-        const cartObject = JSON.parse(cartProductsJson);
-        return cartObject.map((item) => {
-            return this.updateInventory(
-                item.variant_id,
-                item.reduction_quantity
-            );
-        });
-    }
-
-    private getPostCheckoutUpdatePaymentPromises(
-        payments: Payment[],
-        transactionId: string,
-        payerAddress: string,
-        escrowContractAddress: string
-    ): Promise<Order | Payment>[] {
-        const promises: Promise<Order | Payment>[] = [];
-
-        //update payments with transaction info
-        payments.forEach((p, i) => {
-            promises.push(
-                this.updatePaymentAfterTransaction(p.id, {
-                    transaction_id: transactionId,
-                    payer_address: payerAddress,
-                    escrow_contract_address: escrowContractAddress,
-                })
-            );
-        });
-
-        return promises;
-    }
-
-    private getPostCheckoutUpdateOrderPromises(
-        orders: Order[]
-    ): Promise<Order>[] {
-        return orders.map((o) => {
-            return this.orderRepository_.save({
-                id: o.id,
-                payment_status: PaymentStatus.AWAITING,
-            });
-        });
     }
 
     async completeOrderTemplate(cartId: string) {
@@ -637,7 +476,7 @@ export default class OrderService extends MedusaOrderService {
         }
     }
 
-    private async getOrdersWithItems(orders: Order[]): Promise<Order[]> {
+    async getOrdersWithItems(orders: Order[]): Promise<Order[]> {
         let output: Order[] = [];
         for (const order of orders) {
             //TODO: do this with promises
@@ -652,23 +491,7 @@ export default class OrderService extends MedusaOrderService {
         return output;
     }
 
-    private async getBuckyProductsFromOrder(
-        order: Order
-    ): Promise<{ products: Product[]; quantities: number[] }> {
-        const orders: Order[] = await this.getOrdersWithItems([order]);
-        const relevantItems: LineItem[] = orders[0].cart.items.filter(
-            (i) => i.variant.product.bucky_metadata
-        );
-
-        return relevantItems?.length
-            ? {
-                  products: relevantItems.map((i) => i.variant.product),
-                  quantities: relevantItems.map((i) => i.quantity),
-              }
-            : { products: [], quantities: [] };
-    }
-
-    private async getBuckyProductVariantsFromOrder(
+    async getBuckyProductVariantsFromOrder(
         order: Order
     ): Promise<{ variants: ProductVariant[]; quantities: number[] }> {
         const orders: Order[] = await this.getOrdersWithItems([order]);
@@ -678,9 +501,117 @@ export default class OrderService extends MedusaOrderService {
 
         return relevantItems?.length
             ? {
-                  variants: relevantItems.map((i) => i.variant),
-                  quantities: relevantItems.map((i) => i.quantity),
-              }
+                variants: relevantItems.map((i) => i.variant),
+                quantities: relevantItems.map((i) => i.quantity),
+            }
             : { variants: [], quantities: [] };
+    }
+
+    private async processBuckydropOrders(
+        cartId: string,
+        orders: Order[]
+    ): Promise<void> {
+        try {
+            for (const order of orders) {
+                const { variants, quantities } =
+                    await this.getBuckyProductVariantsFromOrder(order);
+                if (variants?.length) {
+
+                    order.bucky_metadata = { status: 'pending' };
+                    await this.orderRepository_.save(order);
+
+                    this.logger.debug('BUCKY CREATED ORDER');
+                }
+            }
+        } catch (e) {
+            this.logger.error(`Failed to create buckydrop order for ${cartId}`);
+        }
+    }
+
+    private async getCustomerOrdersByStatus(
+        customerId: string,
+        statusParams: {
+            orderStatus?: OrderStatus;
+            paymentStatus?: PaymentStatus;
+            fulfillmentStatus?: FulfillmentStatus;
+        }
+    ): Promise<Order[]> {
+        const where: {
+            customer_id: string;
+            status?: any;
+            payment_status?: any;
+            fulfillment_status?: any;
+        } = {
+            customer_id: customerId,
+            status: Not(OrderStatus.ARCHIVED),
+        };
+
+        if (statusParams.orderStatus) {
+            where.status = statusParams.orderStatus;
+        }
+
+        if (statusParams.paymentStatus) {
+            where.payment_status = statusParams.paymentStatus;
+        }
+
+        if (statusParams.fulfillmentStatus) {
+            where.fulfillment_status = statusParams.fulfillmentStatus;
+        }
+
+        return await this.orderRepository_.find({
+            where,
+            relations: [
+                'items',
+                'store',
+                'shipping_address',
+                'customer',
+                'items.variant.product',
+            ],
+        });
+    }
+
+    private getPostCheckoutUpdateInventoryPromises(
+        cartProductsJson: string
+    ): Promise<ProductVariant>[] {
+        const cartObject = JSON.parse(cartProductsJson);
+        return cartObject.map((item) => {
+            return this.updateInventory(
+                item.variant_id,
+                item.reduction_quantity
+            );
+        });
+    }
+
+    private getPostCheckoutUpdatePaymentPromises(
+        payments: Payment[],
+        transactionId: string,
+        payerAddress: string,
+        escrowContractAddress: string
+    ): Promise<Order | Payment>[] {
+        const promises: Promise<Order | Payment>[] = [];
+
+        //update payments with transaction info
+        payments.forEach((p, i) => {
+            promises.push(
+                this.updatePaymentAfterTransaction(p.id, {
+                    transaction_id: transactionId,
+                    payer_address: payerAddress,
+                    escrow_contract_address: escrowContractAddress,
+                })
+            );
+        });
+
+        return promises;
+    }
+
+    private getPostCheckoutUpdateOrderPromises(
+        orders: Order[]
+    ): Promise<Order>[] {
+        return orders.map((o) => {
+            return this.orderRepository_.save({
+                id: o.id,
+                payment_status: PaymentStatus.AWAITING,
+            });
+        });
     }
 }

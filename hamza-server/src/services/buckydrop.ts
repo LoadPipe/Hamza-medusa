@@ -8,6 +8,7 @@ import {
     OrderStatus,
     FulfillmentStatus,
     CustomerService,
+    ProductVariant,
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
 import OrderService from '../services/order';
@@ -17,17 +18,17 @@ import { PriceConverter } from '../strategies/price-selection';
 import {
     BuckyClient,
     IBuckyShippingCostRequest,
+    ICreateBuckyOrderProduct,
 } from '../buckydrop/bucky-client';
 import { CreateProductInput as MedusaCreateProductInput } from '@medusajs/medusa/dist/types/product';
-import { UpdateProductInput as MedusaUpdateProductInput } from '@medusajs/medusa/dist/types/product';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import { createLogger, ILogger } from '../utils/logging/logger';
+import { IsNull, Not, FindManyOptions } from 'typeorm';
 
 type CreateProductInput = MedusaCreateProductInput & {
     store_id: string;
-    bucky_metadata?: string;
+    bucky_metadata?: Record<string, unknown>;
 };
-//type UpdateProductInput = MedusaUpdateProductInput & { store_id: string, bucky_metadata?: string };
 
 const SHIPPING_COST_MIN: number = parseInt(
     process.env.BUCKY_MIN_SHIPPING_COST_US_CENT ?? '1000'
@@ -181,12 +182,10 @@ export default class BuckydropService extends TransactionBaseService {
             //generate input for each product in cart that is bucky
             for (let item of cart.items) {
                 if (item.variant.bucky_metadata?.length) {
-                    const variantMetadata = JSON.parse(
-                        item.variant.bucky_metadata
-                    );
-                    const productMetadata = JSON.parse(
-                        item.variant.product.bucky_metadata
-                    );
+                    const variantMetadata: any =
+                        item.variant.bucky_metadata;
+                    const productMetadata: any =
+                        item.variant.product.bucky_metadata;
                     input.productList.push({
                         length: variantMetadata.length ?? 100,
                         width: variantMetadata.width ?? 100,
@@ -273,13 +272,85 @@ export default class BuckydropService extends TransactionBaseService {
         return 0;
     }
 
+    async processPendingOrder(orderId: string): Promise<Order> {
+        const order: Order = await this.orderRepository_.findOne({
+            where: { id: orderId }
+        });
+
+        if (order && order?.cart_id && order.bucky_metadata) {
+
+            //get cart 
+            const cart: Cart = await this.cartService_.retrieve(
+                order.cart_id,
+                {
+                    relations: ['billing_address.country', 'customer'],
+                }
+            );
+
+            //get data to send to bucky
+            const { variants, quantities } = await
+                this.orderService_.getBuckyProductVariantsFromOrder(order);
+
+            //create list of products
+            const productList: ICreateBuckyOrderProduct[] = [];
+            for (let n = 0; n < variants.length; n++) {
+                const prodMetadata: any = variants[n].product.bucky_metadata;
+                const varMetadata: any = variants[n].bucky_metadata;
+
+                productList.push({
+                    spuCode: prodMetadata?.detail.spuCode,
+                    skuCode: varMetadata.skuCode,
+                    productCount: quantities[n],
+                    platform: prodMetadata?.detail?.platform,
+                    productPrice:
+                        prodMetadata?.detail?.proPrice?.price ??
+                        prodMetadata?.detail?.price?.price ??
+                        0,
+                    productName: prodMetadata?.detail?.goodsName,
+                });
+            }
+
+            //create order via Bucky API 
+            this.logger.info(`Creating buckydrop order for ${orderId}`);
+            const output: any = await this.buckyClient.createOrder({
+                partnerOrderNo: order.id.replace('_', ''),
+                //partnerOrderNoName: order.id, //TODO: what go here?
+                country: cart.billing_address.country.name ?? '', //TODO: what format?
+                countryCode: cart.billing_address.country.iso_2 ?? '', //TODO: what format?
+                province: cart.billing_address.province ?? '',
+                city: cart.billing_address.city ?? '',
+                detailAddress:
+                    `${cart.billing_address.address_1 ?? ''} ${cart.billing_address.address_2 ?? ''}`.trim(),
+                postCode: cart.billing_address.postal_code,
+                contactName:
+                    `${cart.billing_address.first_name ?? ''} ${cart.billing_address.last_name ?? ''}`.trim(),
+                contactPhone: cart.billing_address.phone?.length
+                    ? cart.billing_address.phone
+                    : '0809997747',
+                email: cart.email?.length
+                    ? cart.email
+                    : cart.customer.email,
+                orderRemark: '',
+                productList,
+            });
+            this.logger.info(`Created buckydrop order for ${orderId}`);
+
+            //save the output 
+            order.bucky_metadata = output;
+            await this.orderRepository_.save(order);
+            this.logger.info(`Saved order ${orderId}`);
+        } else {
+            this.logger.warn(`Allegedly pending bucky drop order ${orderId} is either not found, has no cart, or has no buckydrop metadata`);
+        }
+
+        return order;
+    }
+
     async reconcileOrderStatus(orderId: string): Promise<Order> {
         try {
             //get order & metadata
             const order: Order = await this.orderService_.retrieve(orderId);
-            const buckyData = order.bucky_metadata?.length
-                ? JSON.parse(order.bucky_metadata)
-                : null;
+            const buckyData: any = order.bucky_metadata;
 
             if (order && buckyData) {
                 //get order details from buckydrop
@@ -365,7 +436,7 @@ export default class BuckydropService extends TransactionBaseService {
 
                     //save the tracking data
                     buckyData.tracking = orderDetail;
-                    order.bucky_metadata = JSON.stringify(buckyData);
+                    order.bucky_metadata = buckyData;
 
                     //save the order
                     await this.orderRepository_.save(order);
@@ -384,9 +455,7 @@ export default class BuckydropService extends TransactionBaseService {
     async cancelOrder(orderId: string): Promise<Order> {
         try {
             const order: Order = await this.orderService_.retrieve(orderId);
-            const buckyData = order.bucky_metadata?.length
-                ? JSON.parse(order.bucky_metadata)
-                : null;
+            const buckyData: any = order.bucky_metadata;
             let cancelOutput: any = null;
 
             if (order && buckyData) {
@@ -426,7 +495,7 @@ export default class BuckydropService extends TransactionBaseService {
 
                     if (cancelOutput) {
                         //save the tracking data
-                        order.bucky_metadata = JSON.stringify(buckyData);
+                        order.bucky_metadata = buckyData;
                         buckyData.cancel = cancelOutput;
 
                         //save the order
@@ -453,6 +522,14 @@ export default class BuckydropService extends TransactionBaseService {
         } catch (e) {
             this.logger.error(`Error cancelling order ${orderId}`, e);
         }
+    }
+
+    async getPendingOrders(): Promise<Order[]> {
+        const options: FindManyOptions<Order> = {
+            where: { status: OrderStatus.PENDING, bucky_metadata: Not(IsNull()) }
+        };
+        const orders: Order[] = await this.orderRepository_.find(options);
+        return orders?.filter(o => o.bucky_metadata?.status === 'pending') ?? [];
     }
 
     private async mapVariants(productDetails: any) {
@@ -587,7 +664,7 @@ export default class BuckydropService extends TransactionBaseService {
                 sales_channels: salesChannels.map((sc) => {
                     return { id: sc };
                 }),
-                bucky_metadata: JSON.stringify(metadata),
+                bucky_metadata: metadata,
                 variants: await this.mapVariants(productDetails),
             };
 

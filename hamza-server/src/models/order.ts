@@ -22,6 +22,6 @@ export class Order extends MedusaOrder {
     @Column()
     massmarket_amount?: string;
 
-    @Column()
-    bucky_metadata?: string;
+    @Column('jsonb')
+    bucky_metadata?: Record<string, unknown>;
 }
