@@ -517,20 +517,10 @@ export default class OrderService extends MedusaOrderService {
                     await this.getBuckyProductVariantsFromOrder(order);
                 if (variants?.length) {
 
-                    let output = {};
-                    if (BUCKY_ORDER_CREATION_MODE == 'old') {
-
-                    }
-                    else {
-                        output = { status: 'pending' };
-                    }
-
-                    //TODO: if not success, need to take some action
-                    order.bucky_metadata = JSON.stringify(output);
+                    order.bucky_metadata = { status: 'pending' };
                     await this.orderRepository_.save(order);
 
                     this.logger.debug('BUCKY CREATED ORDER');
-                    this.logger.debug(JSON.stringify(output));
                 }
             }
         } catch (e) {

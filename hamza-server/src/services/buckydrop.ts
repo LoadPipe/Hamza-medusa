@@ -21,19 +21,14 @@ import {
     ICreateBuckyOrderProduct,
 } from '../buckydrop/bucky-client';
 import { CreateProductInput as MedusaCreateProductInput } from '@medusajs/medusa/dist/types/product';
-import { UpdateProductInput as MedusaUpdateProductInput } from '@medusajs/medusa/dist/types/product';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import { createLogger, ILogger } from '../utils/logging/logger';
-import { IsNull, Not, FindManyOptions as TypeOrmFindManyOptions } from 'typeorm';
+import { IsNull, Not, FindManyOptions } from 'typeorm';
 
 type CreateProductInput = MedusaCreateProductInput & {
     store_id: string;
     bucky_metadata?: string;
 };
-
-type FindManyOptions<Order> = TypeOrmFindManyOptions<Order> & { bucky_metadata?: string };
-
-//type UpdateProductInput = MedusaUpdateProductInput & { store_id: string, bucky_metadata?: string };
 
 const SHIPPING_COST_MIN: number = parseInt(
     process.env.BUCKY_MIN_SHIPPING_COST_US_CENT ?? '1000'
@@ -347,7 +342,7 @@ export default class BuckydropService extends TransactionBaseService {
             this.logger.info(`Created buckydrop order for ${orderId}`);
 
             //save the output 
-            order.bucky_metadata = JSON.stringify(output);
+            order.bucky_metadata = output;
             await this.orderRepository_.save(order);
             this.logger.info(`Saved order ${orderId}`);
         } else {
@@ -361,9 +356,7 @@ export default class BuckydropService extends TransactionBaseService {
         try {
             //get order & metadata
             const order: Order = await this.orderService_.retrieve(orderId);
-            const buckyData = order.bucky_metadata?.length
-                ? JSON.parse(order.bucky_metadata)
-                : null;
+            const buckyData: any = order.bucky_metadata;
 
             if (order && buckyData) {
                 //get order details from buckydrop
@@ -449,7 +442,7 @@ export default class BuckydropService extends TransactionBaseService {
 
                     //save the tracking data
                     buckyData.tracking = orderDetail;
-                    order.bucky_metadata = JSON.stringify(buckyData);
+                    order.bucky_metadata = buckyData;
 
                     //save the order
                     await this.orderRepository_.save(order);
@@ -468,9 +461,7 @@ export default class BuckydropService extends TransactionBaseService {
     async cancelOrder(orderId: string): Promise<Order> {
         try {
             const order: Order = await this.orderService_.retrieve(orderId);
-            const buckyData = order.bucky_metadata?.length
-                ? JSON.parse(order.bucky_metadata)
-                : null;
+            const buckyData: any = order.bucky_metadata;
             let cancelOutput: any = null;
 
             if (order && buckyData) {
@@ -510,7 +501,7 @@ export default class BuckydropService extends TransactionBaseService {
 
                     if (cancelOutput) {
                         //save the tracking data
-                        order.bucky_metadata = JSON.stringify(buckyData);
+                        order.bucky_metadata = buckyData;
                         buckyData.cancel = cancelOutput;
 
                         //save the order
@@ -543,7 +534,8 @@ export default class BuckydropService extends TransactionBaseService {
         const options: FindManyOptions<Order> = {
             where: { status: OrderStatus.PENDING, bucky_metadata: Not(IsNull()) }
         };
-        return this.orderRepository_.find(options as TypeOrmFindManyOptions<Order>);
+        const orders: Order[] = await this.orderRepository_.find(options);
+        return orders?.filter(o => o.bucky_metadata?.status === 'pending') ?? [];
     }
 
     private async mapVariants(productDetails: any) {
