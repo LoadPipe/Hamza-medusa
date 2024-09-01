@@ -51,13 +51,13 @@ export declare module '@medusajs/medusa/dist/models/product' {
         store?: Store;
         store_id: string;
         reviews: ProductReview[];
-        bucky_metadata?: string;
+        bucky_metadata?: Record<string, unknown>;
     }
 }
 
 export declare module '@medusajs/medusa/dist/models/product-variant' {
     declare interface ProductVariant {
-        bucky_metadata?: string;
+        bucky_metadata?: Record<string, unknown>;
     }
 }
 

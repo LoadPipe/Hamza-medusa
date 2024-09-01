@@ -18,8 +18,6 @@ import PriceSelectionStrategy, {
 } from '../strategies/price-selection';
 import CustomerService from '../services/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
-import { BuckyClient } from '../buckydrop/bucky-client';
-import { getCurrencyAddress } from '../currency.config';
 import { In, IsNull, Not } from 'typeorm';
 import { createLogger, ILogger } from '../utils/logging/logger';
 
@@ -442,7 +440,9 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    async findByBuckyMetadata(buckyMetadata: string): Promise<Product | null> {
+    /*
+    //TODO: these seem to not be used; kill them?
+    async findByBuckyMetadata(buckyMetadata: Record<string, unknown>): Promise<Product | null> {
         try {
             const product = await this.productRepository_.findOne({
                 where: { bucky_metadata: buckyMetadata },
@@ -489,6 +489,7 @@ class ProductService extends MedusaProductService {
             );
         }
     }
+    */
 
     private async convertPrices(
         products: Product[],

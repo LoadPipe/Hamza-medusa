@@ -27,7 +27,7 @@ import { IsNull, Not, FindManyOptions } from 'typeorm';
 
 type CreateProductInput = MedusaCreateProductInput & {
     store_id: string;
-    bucky_metadata?: string;
+    bucky_metadata?: Record<string, unknown>;
 };
 
 const SHIPPING_COST_MIN: number = parseInt(
@@ -182,12 +182,10 @@ export default class BuckydropService extends TransactionBaseService {
             //generate input for each product in cart that is bucky
             for (let item of cart.items) {
                 if (item.variant.bucky_metadata?.length) {
-                    const variantMetadata = JSON.parse(
-                        item.variant.bucky_metadata
-                    );
-                    const productMetadata = JSON.parse(
-                        item.variant.product.bucky_metadata
-                    );
+                    const variantMetadata: any =
+                        item.variant.bucky_metadata;
+                    const productMetadata: any =
+                        item.variant.product.bucky_metadata;
                     input.productList.push({
                         length: variantMetadata.length ?? 100,
                         width: variantMetadata.width ?? 100,
@@ -296,12 +294,8 @@ export default class BuckydropService extends TransactionBaseService {
             //create list of products
             const productList: ICreateBuckyOrderProduct[] = [];
             for (let n = 0; n < variants.length; n++) {
-                const prodMetadata: any = JSON.parse(
-                    variants[n].product.bucky_metadata
-                );
-                const varMetadata: any = JSON.parse(
-                    variants[n].bucky_metadata
-                );
+                const prodMetadata: any = variants[n].product.bucky_metadata;
+                const varMetadata: any = variants[n].bucky_metadata;
 
                 productList.push({
                     spuCode: prodMetadata?.detail.spuCode,
@@ -670,7 +664,7 @@ export default class BuckydropService extends TransactionBaseService {
                 sales_channels: salesChannels.map((sc) => {
                     return { id: sc };
                 }),
-                bucky_metadata: JSON.stringify(metadata),
+                bucky_metadata: metadata,
                 variants: await this.mapVariants(productDetails),
             };
 
