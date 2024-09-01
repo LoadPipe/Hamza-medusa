@@ -37,8 +37,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 });
             } else {
                 //enforce security
-                // if (!handler.enforceCustomerId(customerId))
-                //     return;
+                if (!handler.enforceCustomerId(customerId))
+                    return;
 
                 if (handler.inputParams.bucket) {
                     const bucketValue = parseInt(handler.inputParams.bucket);
