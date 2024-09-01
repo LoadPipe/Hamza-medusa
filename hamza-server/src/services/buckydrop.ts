@@ -8,6 +8,7 @@ import {
     OrderStatus,
     FulfillmentStatus,
     CustomerService,
+    ProductVariant,
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
 import OrderService from '../services/order';
@@ -17,6 +18,7 @@ import { PriceConverter } from '../strategies/price-selection';
 import {
     BuckyClient,
     IBuckyShippingCostRequest,
+    ICreateBuckyOrderProduct,
 } from '../buckydrop/bucky-client';
 import { CreateProductInput as MedusaCreateProductInput } from '@medusajs/medusa/dist/types/product';
 import { UpdateProductInput as MedusaUpdateProductInput } from '@medusajs/medusa/dist/types/product';
@@ -275,6 +277,84 @@ export default class BuckydropService extends TransactionBaseService {
         product: Product
     ): Promise<number> {
         return 0;
+    }
+
+    async processPendingOrder(orderId: string): Promise<Order> {
+        const order: Order = await this.orderRepository_.findOne({
+            where: { id: orderId }
+        });
+
+        if (order && order?.cart_id && order.bucky_metadata) {
+
+            //get cart 
+            const cart: Cart = await this.cartService_.retrieve(
+                order.cart_id,
+                {
+                    relations: ['billing_address.country', 'customer'],
+                }
+            );
+
+            //get data to send to bucky
+            const { variants, quantities } = await
+                this.orderService_.getBuckyProductVariantsFromOrder(order);
+
+            //create list of products
+            const productList: ICreateBuckyOrderProduct[] = [];
+            for (let n = 0; n < variants.length; n++) {
+                const prodMetadata: any = JSON.parse(
+                    variants[n].product.bucky_metadata
+                );
+                const varMetadata: any = JSON.parse(
+                    variants[n].bucky_metadata
+                );
+
+                productList.push({
+                    spuCode: prodMetadata?.detail.spuCode,
+                    skuCode: varMetadata.skuCode,
+                    productCount: quantities[n],
+                    platform: prodMetadata?.detail?.platform,
+                    productPrice:
+                        prodMetadata?.detail?.proPrice?.price ??
+                        prodMetadata?.detail?.price?.price ??
+                        0,
+                    productName: prodMetadata?.detail?.goodsName,
+                });
+            }
+
+            //create order via Bucky API 
+            this.logger.info(`Creating buckydrop order for ${orderId}`);
+            const output: any = await this.buckyClient.createOrder({
+                partnerOrderNo: order.id.replace('_', ''),
+                //partnerOrderNoName: order.id, //TODO: what go here?
+                country: cart.billing_address.country.name ?? '', //TODO: what format?
+                countryCode: cart.billing_address.country.iso_2 ?? '', //TODO: what format?
+                province: cart.billing_address.province ?? '',
+                city: cart.billing_address.city ?? '',
+                detailAddress:
+                    `${cart.billing_address.address_1 ?? ''} ${cart.billing_address.address_2 ?? ''}`.trim(),
+                postCode: cart.billing_address.postal_code,
+                contactName:
+                    `${cart.billing_address.first_name ?? ''} ${cart.billing_address.last_name ?? ''}`.trim(),
+                contactPhone: cart.billing_address.phone?.length
+                    ? cart.billing_address.phone
+                    : '0809997747',
+                email: cart.email?.length
+                    ? cart.email
+                    : cart.customer.email,
+                orderRemark: '',
+                productList,
+            });
+            this.logger.info(`Created buckydrop order for ${orderId}`);
+
+            //save the output 
+            order.bucky_metadata = JSON.stringify(output);
+            await this.orderRepository_.save(order);
+            this.logger.info(`Saved order ${orderId}`);
+        } else {
+            this.logger.warn(`Allegedly pending bucky drop order ${orderId} is either not found, has no cart, or has no buckydrop metadata`);
+        }
+
+        return order;
     }
 
     async reconcileOrderStatus(orderId: string): Promise<Order> {

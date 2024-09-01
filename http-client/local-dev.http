@@ -359,3 +359,14 @@ Content-Type: application/json
 }
 
 
+#### GET Buckydrop pending orders
+GET http://localhost:9000/custom/bucky/orders
+
+
+### Process a Buckydrop pending order 
+PUT http://localhost:9000/custom/bucky/orders
+Content-Type: application/json
+
+{ "order": "order_01J6P8JMKWCA90DR96TXHFFNC0" }
+
+
