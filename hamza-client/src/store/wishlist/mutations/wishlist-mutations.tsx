@@ -4,6 +4,17 @@ import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import useWishlistStore, {
     WishlistProduct,
 } from '@store/wishlist/wishlist-store';
+import JSCookie from 'js-cookie';
+
+export function getCookie(name: string) {
+    if (typeof window === 'undefined') {
+        // Read a cookie server-side
+        return require('next/headers').cookies().get(name)?.value;
+    }
+
+    // Read a cookie client-side
+    return JSCookie.get(name);
+}
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -32,7 +43,12 @@ export function useWishlistMutations() {
             return axios.post(`${BACKEND_URL}/custom/wishlist/item`, {
                 customer_id: customer_id, // Ensure customer_id is handled when null
                 product_id: product.id,
-            });
+            },
+                {
+                    headers: {
+                        authorization: getCookie('_medusa_jwt'),
+                    }
+                });
         },
         {
             onSuccess: (data, product) => {
@@ -56,6 +72,9 @@ export function useWishlistMutations() {
                     customer_id: customer_id, // Ensure customer_id is handled when null
                     product_id: product.id,
                 },
+                headers: {
+                    authorization: getCookie('_medusa_jwt'),
+                }
             });
         },
         {

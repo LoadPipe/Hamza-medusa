@@ -13,7 +13,7 @@ class WishlistService extends TransactionBaseService {
 
     constructor(container) {
         super(container);
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'WishlistService');
         this.customerService = container.customerService;
     }
 

@@ -13,31 +13,37 @@ export interface ILogger {
 export class DatabaseLogger implements ILogger {
     private readonly logger: Logger;
     private readonly repository: typeof AppLogRepository;
+    private readonly prefix: string;
 
-    constructor(container) {
+    constructor(container: any, prefix?: string) {
         this.logger = container.logger;
         this.repository = container.appLogRepository;
+        this.prefix = prefix ?? '';
     }
 
     debug(text: any) {
+        text = this.prefix?.length ? `${this.prefix}: ${text}` : text;
         this.saveEntry(text, 'debug');
         if (process.env.LOG_TO_CONSOLE)
             this.logger?.debug(text);
     }
 
     info(text: any) {
+        text = this.prefix?.length ? `${this.prefix}: ${text}` : text;
         this.saveEntry(text, 'info');
         if (process.env.LOG_TO_CONSOLE)
             this.logger?.info(text);
     }
 
     warn(text: any) {
+        text = this.prefix?.length ? `${this.prefix}: ${text}` : text;
         this.saveEntry(text, 'warn');
         if (process.env.LOG_TO_CONSOLE)
             this.logger?.warn(text);
     }
 
     error(text: any, error?: any) {
+        text = this.prefix?.length ? `${this.prefix}: ${text}` : text;
         this.saveEntry(text, 'error', error);
         if (process.env.LOG_TO_CONSOLE)
             this.logger?.error(text, error);
@@ -61,6 +67,6 @@ export class DatabaseLogger implements ILogger {
     }
 }
 
-export function createLogger(config: any) {
-    return new DatabaseLogger(config);
+export function createLogger(config: any, prefix?: string) {
+    return new DatabaseLogger(config, prefix);
 }

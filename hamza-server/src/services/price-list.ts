@@ -27,7 +27,7 @@ export default class PriceListService extends MedusaPriceListService {
     constructor(container) {
         super(container);
         this.priceListRepository_ = container.priceListRepository;
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'PriceListService');
     }
 
     //TODO: any needed functions go here

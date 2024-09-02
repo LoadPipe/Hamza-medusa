@@ -1,6 +1,6 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
-import CustomerNotificationService from '../../../services/customer-notification';
-import { RouteHandler } from '../../route-handler';
+import CustomerNotificationService from '../../../../services/customer-notification';
+import { RouteHandler } from '../../../route-handler';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const customerNotificationService: CustomerNotificationService =
@@ -10,7 +10,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         req,
         res,
         'GET',
-        '/custom/notification',
+        '/custom/customer/notification',
         ['customer_id']
     );
 
@@ -39,7 +39,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         req,
         res,
         'POST',
-        '/custom/notification',
+        '/custom/customer/notification',
         ['customer_id', 'notification_type']
     );
 
@@ -69,7 +69,7 @@ export const DELETE = async (req: MedusaRequest, res: MedusaResponse) => {
         req,
         res,
         'DELETE',
-        '/custom/notification',
+        '/custom/customer/notification',
         ['customer_id']
     );
 

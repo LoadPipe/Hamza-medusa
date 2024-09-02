@@ -11,6 +11,7 @@ import { UpdateStoreInput as MedusaUpdateStoreInput } from '@medusajs/medusa/dis
 import { UpdateProductInput as MedusaUpdateProductInput } from '@medusajs/medusa/dist/types/product';
 import ProductRepository from '@medusajs/medusa/dist/repositories/product';
 import { createLogger, ILogger } from '../utils/logging/logger';
+import { IsNull, Not } from 'typeorm';
 
 type UpdateStoreInput = MedusaUpdateStoreInput & {
     massmarket_keycard?: string;
@@ -31,7 +32,7 @@ class StoreService extends MedusaStoreService {
         super(container);
         this.storeRepository_ = container.storeRepository;
         this.productRepository_ = container.productRepository;
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'StoreService');
     }
 
     async createStore(
@@ -60,12 +61,13 @@ class StoreService extends MedusaStoreService {
     }
 
     async getStores() {
-        return await this.storeRepository_.find();
+        return await this.storeRepository_.find({ where: { owner_id: Not(IsNull()) } });
     }
 
     async getStoreNames() {
         const stores = await this.storeRepository_.find({
             select: ['name'],
+            where: { owner_id: Not(IsNull()) }
         });
         return stores.map((store) => store.name);
     }

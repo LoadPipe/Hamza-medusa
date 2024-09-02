@@ -7,9 +7,13 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/product/get-store');
 
     await handler.handle(async () => {
-        let { product_id } = req.query;
+        if (!handler.requireParam('product_id'))
+            return;
+
+        const productId = handler.inputParams.productId;
+
         let productData = await ProductRepository.findOne({
-            where: { id: product_id.toString() },
+            where: { id: productId.toString() },
             select: { store_id: true },
         });
 

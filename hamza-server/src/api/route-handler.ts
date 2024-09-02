@@ -59,7 +59,7 @@ export class RouteHandler {
             appLogRepository
         }
 
-        this.logger = createLogger(loggerContext);
+        this.logger = createLogger(loggerContext, `${this.method} ${this.route}`);
     }
 
     public async handle(fn: (_this?: RouteHandler) => void) {
@@ -70,7 +70,7 @@ export class RouteHandler {
             );
             await fn(this);
         } catch (err: any) {
-            const errorInfo = `ERROR ${this.method} ${this.route}: ${err}`;
+            const errorInfo = `ERROR ${err}`;
             this.logger.error({ message: errorInfo });
             this.response.status(500).json(errorInfo);
             if (this.onError) this.onError(err);
@@ -98,6 +98,8 @@ export class RouteHandler {
             this.response
                 .status(401)
                 .json({ message: 'Unauthorized customer' });
+        } else {
+            console.log('customer ', this.customerId, ' is authorized');
         }
 
         return !unauthorized;
@@ -112,6 +114,7 @@ export class RouteHandler {
             }
 
             if (missingParams.length) {
+                this.logger?.warn(`Call rejected for missing params: ${JSON.stringify(missingParams)}`)
                 const message = `missing required param(s): ${missingParams.join()}`;
                 this.response.status(400).json({ message });
                 return false;

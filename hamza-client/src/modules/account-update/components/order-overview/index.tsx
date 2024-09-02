@@ -8,10 +8,10 @@ import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import {
-    getVendors,
-    orderInformation,
-    orderDetails,
-    orderStatus,
+    getStores,
+    getOrderInformation,
+    getOrderDetails,
+    getOrderStatus,
     cancelOrder,
 } from '@lib/data';
 import {
@@ -94,7 +94,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const { data } = (await orderInformation(
+                const { data } = (await getOrderInformation(
                     orders[0]?.customer_id
                 )) as any;
                 setDetailedOrders(data.order);
@@ -105,7 +105,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
 
         const fetchAll = async () => {
             try {
-                const { data } = (await orderDetails(
+                const { data } = (await getOrderDetails(
                     orders[0]?.customer_id
                 )) as any;
                 // console.log(
@@ -129,7 +129,7 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                 orders.map(async (order, index) => {
                     // console.log(`Fetching status for order ${order.id}`);
                     try {
-                        const statusRes = await orderStatus(order.id);
+                        const statusRes = await getOrderStatus(order.id);
                         return {
                             orderId: order.id,
                             status: statusRes.order,
@@ -218,69 +218,69 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
         <div className="flex flex-col gap-y-8 w-full bg-black text-white p-8">
             {customerOrder && customerOrder.length > 0
                 ? customerOrder.map((orderGroup) => (
-                      <div
-                          key={orderGroup.cart_id}
-                          className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
-                      >
-                          <div className="p-4 bg-gray-700">
-                              Cart ID {orderGroup.cart_id} - Total Items:{' '}
-                              {orderGroup.items.length}
-                              <span
-                                  className="pl-2 text-blue-400 underline underline-offset-1 cursor-pointer"
-                                  onClick={() => {
-                                      handleReorder(orderGroup.items);
-                                  }}
-                              >
-                                  Re-order
-                              </span>
-                          </div>
-                          {orderGroup.items.map((item) => {
-                              const handle =
-                                  item.variant?.product?.handle || 'N/A'; // Grab the handle from the product object
-                              return (
-                                  <div key={item.id}>
-                                      item: {item.id} <br /> Order_id list:{' '}
-                                      {/*{item.order_ids} <br />*/}
-                                      {/*item quantity: {item.quantity}*/}
-                                      <OrderCard
-                                          key={item.id}
-                                          order={item}
-                                          handle={handle} // Pass the handle here
-                                      />
-                                      <LocalizedClientLink
-                                          href={`/account/orders/details/${item.order_ids[0]}`}
-                                          passHref
-                                      >
-                                          <Button colorScheme="blue">
-                                              See details
-                                          </Button>
-                                      </LocalizedClientLink>
-                                      {orderStatuses[orderGroup.cart_id] ===
-                                      'canceled' ? (
-                                          <Button
-                                              colorScheme="red"
-                                              ml={4}
-                                              isDisabled
-                                          >
-                                              Cancellation Requested
-                                          </Button>
-                                      ) : (
-                                          <Button
-                                              variant="solid"
-                                              colorScheme="blue"
-                                              ml={4}
-                                              onClick={() =>
-                                                  openModal(orderGroup.cart_id)
-                                              }
-                                          >
-                                              Request Cancellation
-                                          </Button>
-                                      )}
-                                  </div>
-                              );
-                          })}
-                      </div>
-                  ))
+                    <div
+                        key={orderGroup.cart_id}
+                        className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
+                    >
+                        <div className="p-4 bg-gray-700">
+                            Cart ID {orderGroup.cart_id} - Total Items:{' '}
+                            {orderGroup.items.length}
+                            <span
+                                className="pl-2 text-blue-400 underline underline-offset-1 cursor-pointer"
+                                onClick={() => {
+                                    handleReorder(orderGroup.items);
+                                }}
+                            >
+                                Re-order
+                            </span>
+                        </div>
+                        {orderGroup.items.map((item) => {
+                            const handle =
+                                item.variant?.product?.handle || 'N/A'; // Grab the handle from the product object
+                            return (
+                                <div key={item.id}>
+                                    item: {item.id} <br /> Order_id list:{' '}
+                                    {/*{item.order_ids} <br />*/}
+                                    {/*item quantity: {item.quantity}*/}
+                                    <OrderCard
+                                        key={item.id}
+                                        order={item}
+                                        handle={handle} // Pass the handle here
+                                    />
+                                    <LocalizedClientLink
+                                        href={`/account/orders/details/${item.order_ids[0]}`}
+                                        passHref
+                                    >
+                                        <Button colorScheme="blue">
+                                            See details
+                                        </Button>
+                                    </LocalizedClientLink>
+                                    {orderStatuses[orderGroup.cart_id] ===
+                                        'canceled' ? (
+                                        <Button
+                                            colorScheme="red"
+                                            ml={4}
+                                            isDisabled
+                                        >
+                                            Cancellation Requested
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            variant="solid"
+                                            colorScheme="blue"
+                                            ml={4}
+                                            onClick={() =>
+                                                openModal(orderGroup.cart_id)
+                                            }
+                                        >
+                                            Request Cancellation
+                                        </Button>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                ))
                 : null}
             <Modal isOpen={isModalOpen} onClose={closeModal}>
                 <ModalOverlay />

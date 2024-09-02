@@ -54,7 +54,7 @@ export default class BuckydropService extends TransactionBaseService {
         this.orderRepository_ = container.orderRepository;
         this.orderService_ = container.orderService;
         this.customerService_ = container.customerService;
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'BuckydropService');
         this.priceConverter = new PriceConverter(this.logger);
         this.buckyClient = new BuckyClient();
     }

@@ -140,6 +140,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     setCustomerId(data.data.customer_id);
                     console.log('token response is ', tokenResponse);
                     Cookies.set('_medusa_jwt', tokenResponse);
+                    //localStorage.setItem('_medusa_jwt', tokenResponse);
 
                     setCustomerAuthData({
                         token: tokenResponse,

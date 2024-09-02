@@ -1,5 +1,6 @@
 import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import OrderService from '../../../services/order';
+import CartService from '../../../services/cart';
 import { RouteHandler } from '../../route-handler';
 
 interface ICheckoutData {
@@ -16,13 +17,28 @@ interface ICheckoutData {
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
+    const cartService: CartService = req.scope.resolve('cartService');
 
     const handler: RouteHandler = new RouteHandler(
         req, res, 'GET', '/custom/checkout'
     );
 
     await handler.handle(async () => {
-        const orders = await orderService.getOrdersForCart(handler.inputParams.cart_id);
+        //validate 
+        if (!handler.requireParam('cart_id'))
+            return;
+
+        const cartId = handler.inputParams.cart_id;
+
+        const cart = await cartService.retrieve(cartId);
+        if (!cart)
+            return res.status(404).json({ messsage: `Cart ${cartId} not found.` });
+
+        //enforce security
+        if (!handler.enforceCustomerId(cart.customer_id))
+            return;
+
+        const orders = await orderService.getOrdersForCart(cartId);
         const output: ICheckoutData[] = [];
         orders.forEach((o) => {
             output.push({
@@ -37,6 +53,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 orders,
             });
         });
+
         console.log(output);
         handler.logger.debug(`returning checkout data: ${output}`);
         res.send({ orders: output });
@@ -45,6 +62,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
+    const cartService: CartService = req.scope.resolve('cartService');
 
     const handler: RouteHandler = new RouteHandler(
         req, res, 'POST', '/custom/checkout', [
@@ -57,6 +75,21 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
     try {
         await handler.handle(async () => {
+
+            //validate 
+            if (!handler.requireParam('cart_id'))
+                return;
+
+            const cartId = handler.inputParams.cart_id;
+
+            const cart = await cartService.retrieve(cartId);
+            if (!cart)
+                return res.status(404).json({ message: `Cart ${cartId} not found` });
+
+            //enforce security
+            if (!handler.enforceCustomerId(cart.customer_id))
+                return;
+
             await orderService.finalizeCheckout(
                 //handler.inputParams.cart_products,
                 handler.inputParams.cart_id,

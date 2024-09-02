@@ -63,7 +63,7 @@ class ProductService extends MedusaProductService {
 
     constructor(container) {
         super(container);
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'ProductService');
         this.storeRepository_ = container.storeRepository;
         this.productVariantRepository_ = container.productVariantRepository;
         this.customerService_ = container.customerService;
