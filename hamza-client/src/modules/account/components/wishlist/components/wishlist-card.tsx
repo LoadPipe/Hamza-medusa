@@ -1,6 +1,9 @@
 import React from 'react';
-import { Flex, Text, Image, Button } from '@chakra-ui/react';
+import { Flex, Text, Image as ChakraImage, Button } from '@chakra-ui/react';
+import Image from 'next/image';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
+import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
 interface WishlistCardProps {
     vendorThumbnail: string;
@@ -17,6 +20,8 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
     productPrice,
     productImage,
 }) => {
+    const { preferred_currency_code } = useCustomerAuthStore();
+    const currencyCode = preferred_currency_code ?? 'usdc';
     return (
         <Flex
             maxWidth={'879px'}
@@ -31,7 +36,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                 </Flex>
                 <Flex flexDir={'row'}>
                     {/* Product image and Description */}
-                    <Image
+                    <ChakraImage
                         src={productImage}
                         alt={productImage}
                         width={'35px'}
@@ -42,9 +47,23 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                     </Text>
 
                     {/* Price */}
-                    <Text color={'white'} ml={'auto'} alignSelf={'center'}>
-                        {formatCryptoPrice(Number(productPrice), 'usdt')}
-                    </Text>
+                    <Flex ml="auto">
+                        <Flex height={'22px'} alignItems={'center'} mb="auto">
+                            <Image
+                                className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                src={currencyIcons[currencyCode]}
+                                alt={currencyCode}
+                            />
+                        </Flex>
+                        <Flex ml="0.5rem" height={'22px'} alignItems={'center'}>
+                            <Text color={'white'} alignSelf={'center'}>
+                                {formatCryptoPrice(
+                                    Number(productPrice),
+                                    currencyCode
+                                )}
+                            </Text>
+                        </Flex>
+                    </Flex>
                 </Flex>
             </Flex>
 
