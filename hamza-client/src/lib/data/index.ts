@@ -141,6 +141,9 @@ export async function deleteWishlistItem(
                     customer_id: customer_id, // Ensure customer_id is handled when null
                     product_id: product_id,
                 },
+                headers: {
+                    authorization: cookies().get('_medusa_jwt')?.value,
+                }
             }
         );
         return response;
