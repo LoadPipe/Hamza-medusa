@@ -14,6 +14,12 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     ]);
 
     await handler.handle(async () => {
+        if (!handler.requireParams(['customer_id', 'product_id']))
+            return;
+
+        if (!handler.enforceCustomerId(handler.inputParams.customer_id))
+            return;
+
         const wishlist = await wishlistService.addWishItem(
             handler.inputParams.customer_id,
             handler.inputParams.product_id
@@ -32,6 +38,12 @@ export const DELETE = async (req: MedusaRequest, res: MedusaResponse) => {
     ]);
 
     await handler.handle(async () => {
+        if (!handler.requireParams(['customer_id', 'product_id']))
+            return;
+
+        if (!handler.enforceCustomerId(handler.inputParams.customer_id))
+            return;
+
         // Call removeWishItem instead of addWishItem
         const wishlist = await wishlistService.removeWishItem(
             handler.inputParams.customer_id,

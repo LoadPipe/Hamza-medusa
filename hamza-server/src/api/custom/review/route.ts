@@ -115,8 +115,8 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
         '/custom/review',
         [
             'product_id',
-            'reviewUpdates',
-            'ratingUpdates',
+            'review_updates',
+            'rating_updates',
             'customer_id',
             'order_id',
         ]
@@ -126,8 +126,6 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
         //validate parameters 
         if (!handler.requireParams([
             'product_id',
-            'reviewUpdates',
-            'ratingUpdates',
             'customer_id',
             'order_id',
         ]))
@@ -139,8 +137,8 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
 
         const updatedReview = await productReviewService.updateProduct(
             handler.inputParams.product_id,
-            handler.inputParams.reviewUpdates,
-            handler.inputParams.ratingUpdates,
+            handler.inputParams.review_updates,
+            handler.inputParams.rating_updates,
             handler.inputParams.customer_id,
             handler.inputParams.order_id
         );

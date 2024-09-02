@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { cancelOrder, orderStatus, singleBucket } from '@lib/data';
+import { cancelOrder, getOrderStatus, getSingleBucket } from '@lib/data';
 import {
     Box,
     Button,
@@ -102,7 +102,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
     const fetchAllOrders = async (customerId: string) => {
         setIsLoading(true);
         try {
-            const bucket = await singleBucket(customerId, 1);
+            const bucket = await getSingleBucket(customerId, 1);
             if (Array.isArray(bucket)) {
                 setCustomerOrder(bucket);
                 console.log(`BUCKETS ${JSON.stringify(bucket)}`);
@@ -126,7 +126,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
             const statuses = await Promise.allSettled(
                 customerOrder.map(async (order) => {
                     try {
-                        const statusRes = await orderStatus(order.id);
+                        const statusRes = await getOrderStatus(order.id);
                         console.log(
                             `Fetching status for order ${order.id} StatusResponse ${statusRes.order}`
                         );
@@ -699,8 +699,8 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     )
                                                                                         ? ''
                                                                                         : order
-                                                                                              .customer
-                                                                                              .email}
+                                                                                            .customer
+                                                                                            .email}
                                                                                 </Text>
                                                                             </Box>
                                                                         </VStack>

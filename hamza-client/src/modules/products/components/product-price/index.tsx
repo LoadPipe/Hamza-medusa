@@ -18,7 +18,7 @@ import {
 } from '@lib/util/get-product-price';
 import { RegionInfo } from 'types/global';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import { averageRatings, reviewCounter, getStore } from '@lib/data';
+import { getAverageRatings, getReviewCount, getStore } from '@lib/data';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -46,7 +46,7 @@ export default function ProductPrice({
     useEffect(() => {
         const fetchReviewCount = async () => {
             try {
-                const response = await reviewCounter(product.id as string);
+                const response = await getReviewCount(product.id as string);
                 // console.log(`response.data.count is ${response.data}`);
                 setReviewCount(response); // Assuming the response contains the count directly
             } catch (error) {
@@ -56,7 +56,7 @@ export default function ProductPrice({
 
         const fetchAverageRating = async () => {
             try {
-                const response = await averageRatings(product.id as string);
+                const response = await getAverageRatings(product.id as string);
                 // console.log(`response.data.average is ${response.data}`);
                 setAverageRating(response); // Assuming the response contains the average directly
             } catch (error) {

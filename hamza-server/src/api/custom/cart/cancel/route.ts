@@ -1,18 +1,35 @@
-import { MedusaRequest, MedusaResponse } from '@medusajs/medusa';
+import { CartService, MedusaRequest, MedusaResponse } from '@medusajs/medusa';
 import OrderService from '../../../../services/order';
 import { RouteHandler } from '../../../route-handler';
 
 //TODO: should be under /order
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     let orderService: OrderService = req.scope.resolve('orderService');
+    let cartService: CartService = req.scope.resolve('cartService');
 
     const handler = new RouteHandler(req, res, 'POST', '/custom/cart/cancel', [
         'cart_id',
     ]);
 
     await handler.handle(async () => {
-        await orderService.cancelOrderFromCart(handler.inputParams.cart_id);
-        handler.logger.debug(`cancelled ${handler.inputParams.cart_id}`);
+
+        //validate
+        if (!handler.requireParam('cart_id'))
+            return;
+
+        const cartId = handler.inputParams.cart_id;
+
+        const cart = await cartService.retrieve(cartId);
+        if (!cart)
+            return res.status(404).json({ message: `Cart ${cartId} not found` });
+
+
+        //enforce security
+        await orderService.cancelOrderFromCart(cartId);
+        if (!handler.enforceCustomerId(cart.customer_id))
+            return;
+
+        handler.logger.debug(`cancelled ${cartId}`);
         return res.send({ status: true });
     });
 };

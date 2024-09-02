@@ -26,6 +26,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         //get the service instances
         let created = false;
 
+        //TODO: needs security 
+
         const { message, signature } = handler.inputParams;
 
         const wallet_address = message.address;

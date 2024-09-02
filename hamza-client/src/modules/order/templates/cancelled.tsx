@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { singleBucket } from '@lib/data';
+import { getSingleBucket } from '@lib/data';
 import { Box, Button } from '@chakra-ui/react';
 import CancelCard from '@modules/account/components/cancel-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
@@ -24,7 +24,7 @@ const Cancelled = ({ orders }: { orders: any[] }) => {
     const fetchAllOrders = async (customerId: string) => {
         setIsLoading(true);
         try {
-            const bucket = await singleBucket(customerId, 4);
+            const bucket = await getSingleBucket(customerId, 4);
             if (Array.isArray(bucket)) {
                 setCustomerOrder(bucket);
             } else {

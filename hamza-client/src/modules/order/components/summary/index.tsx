@@ -18,9 +18,7 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import Image from 'next/image';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 import { getCompleteTemplate } from '@lib/data/index';
-import LineItemPrice from '@modules/common/components/line-item-price';
 import { Cart, Order } from '@medusajs/medusa';
-const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
 type SummaryProps = {
     cart_id: string;
@@ -71,7 +69,7 @@ const Summary: React.FC<SummaryProps> = ({ cart_id, cart, order }) => {
             try {
                 const response = await getCompleteTemplate(cart_id);
                 // Assuming the response contains the products array in `response.data.products`
-                const fetchedProducts: Product[] = response.cart || [];
+                const fetchedProducts: Product[] = response.items || [];
                 console.log(`Fetched products: ${JSON.stringify(response)}`);
                 setProducts(fetchedProducts);
             } catch (error) {
@@ -147,7 +145,7 @@ const Summary: React.FC<SummaryProps> = ({ cart_id, cart, order }) => {
                                 >
                                     {formatCryptoPrice(
                                         cart.items[index].quantity *
-                                            product.unit_price,
+                                        product.unit_price,
                                         product.currency_code
                                     )}
                                 </Text>

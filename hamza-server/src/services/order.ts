@@ -361,16 +361,21 @@ export default class OrderService extends MedusaOrderService {
         return [];
     }
 
-    async completeOrderTemplate(cartId: string) {
+    //TODO: the return type of this is hard to work with
+    async completeOrderTemplate(cartId: string): Promise<{
+        cart: Cart,
+        items: any[]
+    }> {
         const orders = (await this.orderRepository_.find({
             where: { cart_id: cartId, status: Not(OrderStatus.ARCHIVED) },
             relations: ['cart.items.variant.product', 'store.owner'],
         })) as Order[];
-        // return orders;
 
         const products = [];
+        let cart: Cart = null;
 
         orders.forEach((order) => {
+            cart = order.cart;
             order.cart.items.forEach((item) => {
                 const product = {
                     ...item.variant.product,
@@ -384,16 +389,18 @@ export default class OrderService extends MedusaOrderService {
         });
 
         const seen = new Set();
-        const uniqueCart = [];
+        const items = [];
 
         for (const item of products) {
             if (!seen.has(item.id)) {
                 seen.add(item.id);
-                uniqueCart.push(item);
+                items.push(item);
             }
         }
 
-        return uniqueCart;
+        return {
+            cart, items
+        }
     }
 
     async getNotReviewedOrders(customer_id: string) {

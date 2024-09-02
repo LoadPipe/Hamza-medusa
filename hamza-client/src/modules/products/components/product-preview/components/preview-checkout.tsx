@@ -22,7 +22,7 @@ import {
     TiStarOutline,
 } from 'react-icons/ti';
 import CartPopup from '../../cart-popup';
-import { averageRatings, getStore, reviewCounter } from '@lib/data';
+import { getAverageRatings, getStore, getReviewCount } from '@lib/data';
 import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
 const MEDUSA_SERVER_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -67,8 +67,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
 
     useEffect(() => {
         const fetchProductReview = async () => {
-            const averageRatingResponse = await averageRatings(productId);
-            const reviewCountResponse = await reviewCounter(productId);
+            const averageRatingResponse = await getAverageRatings(productId);
+            const reviewCountResponse = await getReviewCount(productId);
 
             setAverageRating(averageRatingResponse);
             setReviewCount(reviewCountResponse);
@@ -201,7 +201,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
             console.log('white list config ', whitelist_config);
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                whitelist_config.whitelisted_stores.includes(data.data)
+                    whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -481,8 +481,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                     {!inStock && isWhitelisted
                         ? 'Add to cart'
                         : inStock
-                          ? 'Add to Cart'
-                          : 'Out of Stock'}
+                            ? 'Add to Cart'
+                            : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs text-white px-4 py-2">

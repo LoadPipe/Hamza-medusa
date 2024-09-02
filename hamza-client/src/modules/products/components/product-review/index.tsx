@@ -16,7 +16,7 @@ import {
     StackDivider,
     Box,
 } from '@chakra-ui/react';
-import { averageRatings, getAllProductReviews, reviewCounter } from '@lib/data';
+import { getAverageRatings, getAllProductReviews, getReviewCount } from '@lib/data';
 
 const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
@@ -52,8 +52,8 @@ const ProductReview: React.FC<ProductReviewProps> = ({
     useEffect(() => {
         const fetchReviewData = async () => {
             // API calls remain the same
-            const averageRatingResponse = await averageRatings(product.id);
-            const reviewCountResponse = await reviewCounter(product.id);
+            const averageRatingResponse = await getAverageRatings(product.id);
+            const reviewCountResponse = await getReviewCount(product.id);
             const reviewsResponse = await getAllProductReviews(product.id);
 
             setAverageRating(averageRatingResponse);

@@ -98,6 +98,8 @@ export class RouteHandler {
             this.response
                 .status(401)
                 .json({ message: 'Unauthorized customer' });
+        } else {
+            console.log('customer ', this.customerId, ' is authorized');
         }
 
         return !unauthorized;
@@ -112,6 +114,7 @@ export class RouteHandler {
             }
 
             if (missingParams.length) {
+                this.logger?.warn(`Call ${this.method} ${this.route} rejected for missing params: ${JSON.stringify(missingParams)}`)
                 const message = `missing required param(s): ${missingParams.join()}`;
                 this.response.status(400).json({ message });
                 return false;

@@ -10,20 +10,13 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     await handler.handle(async () => {
         const { store_name } = req.query; // Get the store_name from query parameters
 
-        if (!store_name || typeof store_name !== 'string') {
-            res.status(400).json({
-                error: 'store_name is required and must be a string',
-            });
+        if (!handler.requireParam('store_name'))
             return;
-        }
 
-        try {
-            const store = await storeService.getStoreByName(store_name);
-            res.json({ id: store.id, name: store.name });
-        } catch (error) {
-            res.status(404).json({
-                error: `Store with name ${store_name} not found`,
-            });
-        }
+        const store = await storeService.getStoreByName(handler.inputParams.store_name);
+        if (!store)
+            return res.status(404).json({ message: `Store with name ${handler.inputParams.store_name}  not found` });
+
+        res.status(200).json({ id: store.id, name: store.name });
     });
 };
