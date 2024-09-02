@@ -82,7 +82,9 @@ const Shipping: React.FC<ShippingProps> = ({
     useEffect(() => {
         setIsLoading(false);
         setError(null);
-        set();
+        set(cart.shipping_methods?.length
+            ? cart.shipping_methods[0]
+                ?.shipping_option_id : '');
     }, [isOpen]);
 
     return (
