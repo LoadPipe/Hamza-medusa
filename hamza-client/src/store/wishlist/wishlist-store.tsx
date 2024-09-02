@@ -12,6 +12,7 @@ export type WishlistProduct = {
     handle: string;
     description: string;
     price: string;
+    productVarientId: string | null;
 };
 
 type Wishlist = {

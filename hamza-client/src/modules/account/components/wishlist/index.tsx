@@ -16,8 +16,8 @@ const AccountWishList = () => {
                 <Box key={index} mt={index > 0 ? '1rem' : 0}>
                     <WishlistCard
                         key={index}
-                        vendorThumbnail="Vendor Thumbnail Here"
                         productId={product.id}
+                        productVarientId={product.productVarientId}
                         productImage={product.thumbnail}
                         productDescription={product.title}
                         productPrice={product.price.toString()}

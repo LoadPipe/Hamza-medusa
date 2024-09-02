@@ -11,13 +11,14 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { getStore } from '@lib/data';
+import { addToCart } from '@modules/cart/actions';
 
 interface WishlistCardProps {
-    vendorThumbnail: string;
     productDescription: string;
     productPrice: string;
     productImage: string;
     productId: string;
+    productVarientId: string | null;
 }
 
 interface StoreData {
@@ -41,11 +42,11 @@ interface StoreData {
 }
 
 const WishlistCard: React.FC<WishlistCardProps> = ({
-    vendorThumbnail,
     productDescription,
     productPrice,
     productId,
     productImage,
+    productVarientId,
 }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const currencyCode = preferred_currency_code ?? 'usdc';
@@ -64,6 +65,19 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
 
         fetchStoreData();
     }, [productId]);
+
+    const handleAddToCart = async () => {
+        try {
+            await addToCart({
+                variantId: productVarientId!,
+                quantity: 1,
+                countryCode: 'us',
+                currencyCode: 'eth',
+            });
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+        }
+    };
 
     return (
         <Flex maxWidth={'879px'} width={'100%'} flexDir={'column'}>
@@ -143,6 +157,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                         borderColor={'white'}
                         color={'white'}
                         borderRadius={'full'}
+                        onClick={() => handleAddToCart()}
                     >
                         Add To Cart
                     </Button>
