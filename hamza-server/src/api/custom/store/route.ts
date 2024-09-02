@@ -6,37 +6,41 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const productService: ProductService = req.scope.resolve('productService');
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'GET', '/custom/store', ['product_id']
+        req,
+        res,
+        'GET',
+        '/custom/store',
+        ['product_id']
     );
 
     await handler.handle(async () => {
         if (handler.inputParams.product_id?.length) {
-            const store_name = await productService.getStoreFromProduct(handler.inputParams.product_id);
+            const store_name = await productService.getStoreFromProduct(
+                handler.inputParams.product_id
+            );
             res.json(store_name);
-        }
-
-        else if (handler.inputParams.store_name?.length) {
+        } else if (handler.inputParams.store_name?.length) {
             const products = await productService.getProductsFromStoreName(
                 handler.inputParams.store_name
             );
             res.json(products);
-        }
-
-        else {
+        } else {
             res.status(400).json({ message: 'Required parameters missing' });
         }
     });
 };
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
-    const handler: RouteHandler = new RouteHandler(req, res, 'POST', '/custom/store', [
-        'wallet_address',
-        'signature',
-    ]);
+    const handler: RouteHandler = new RouteHandler(
+        req,
+        res,
+        'POST',
+        '/custom/store',
+        ['wallet_address', 'signature']
+    );
 
     await handler.handle(async () => {
-        if (!handler.requireParams(['wallet_address']))
-            return;
+        if (!handler.requireParams(['wallet_address'])) return;
 
         const customerService = req.scope.resolve('customerService');
 

@@ -67,6 +67,8 @@ const ProductInfo = () => {
 
     const isLoading = !productData || Object.keys(productData).length === 0;
 
+    console.log('this is product data', productData);
+
     if (isLoading) {
         return (
             <Flex

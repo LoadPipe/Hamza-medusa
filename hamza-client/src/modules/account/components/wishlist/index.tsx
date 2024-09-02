@@ -16,7 +16,7 @@ const AccountWishList = () => {
                 <WishlistCard
                     key={product.id}
                     vendorThumbnail="Vendor Thumbnail Here"
-                    vendorName={product.id}
+                    productId={product.id}
                     productImage={product.thumbnail}
                     productDescription={product.title}
                     productPrice={product.price.toString()}

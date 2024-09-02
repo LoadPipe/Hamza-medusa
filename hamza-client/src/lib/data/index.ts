@@ -936,9 +936,11 @@ export async function setPaymentSession({
 
 export async function addDefaultShippingMethod(cart_id: string) {
     try {
-        const response = await axios.put(`${BACKEND_URL}/custom/cart/shipping`, {
-            cart_id,
-        },
+        const response = await axios.put(
+            `${BACKEND_URL}/custom/cart/shipping`,
+            {
+                cart_id,
+            },
             {
                 headers: {
                     authorization: cookies().get('_medusa_jwt')?.value,

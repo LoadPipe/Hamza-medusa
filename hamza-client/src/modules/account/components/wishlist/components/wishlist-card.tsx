@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Flex,
     Text,
@@ -10,31 +10,76 @@ import Image from 'next/image';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { getStore } from '@lib/data';
 
 interface WishlistCardProps {
     vendorThumbnail: string;
-    vendorName: string;
     productDescription: string;
     productPrice: string;
     productImage: string;
+    productId: string;
+}
+
+interface StoreData {
+    id: string;
+    created_at: string;
+    updated_at: string;
+    name: string;
+    default_currency_code: string;
+    swap_link_template: string | null;
+    payment_link_template: string | null;
+    invite_link_template: string | null;
+    default_location_id: string | null;
+    metadata: Record<string, any> | null;
+    default_sales_channel_id: string | null;
+    owner_id: string;
+    massmarket_store_id: string | null;
+    store_description: string;
+    store_followers: number;
+    massmarket_keycard: string | null;
+    icon: string;
 }
 
 const WishlistCard: React.FC<WishlistCardProps> = ({
     vendorThumbnail,
-    vendorName,
     productDescription,
     productPrice,
+    productId,
     productImage,
 }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const currencyCode = preferred_currency_code ?? 'usdc';
+    const [storeData, setStoreData] = useState<StoreData>(null);
+
+    // Get store data by product_id
+    useEffect(() => {
+        const fetchStoreData = async () => {
+            try {
+                const data = await getStore(productId);
+                setStoreData(data);
+            } catch (error) {
+                console.error('Error fetching store data:', error);
+            }
+        };
+
+        fetchStoreData();
+    }, [productId]);
+
     return (
         <Flex maxWidth={'879px'} width={'100%'} flexDir={'column'}>
             <Flex height={'176px'} flexDir={'column'}>
                 <Flex flexDir={'column'} gap={21} flex={1}>
                     <Flex flexDir={'row'}>
-                        <Text>{vendorThumbnail}</Text>
-                        <Text ml="1rem">{vendorName}</Text>
+                        <ChakraImage
+                            src={storeData?.icon}
+                            alt={storeData?.icon}
+                            width={'32px'}
+                            height={'32px'}
+                            borderRadius={'full'}
+                        />
+                        <Text ml="1rem" alignSelf={'center'}>
+                            {storeData?.name}
+                        </Text>
                     </Flex>
                     <Flex flexDir={'row'}>
                         {/* Product image and Description */}
