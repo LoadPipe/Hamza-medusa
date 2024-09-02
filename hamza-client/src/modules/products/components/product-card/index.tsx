@@ -157,21 +157,23 @@ const ProductCard: React.FC<ProductCardProps> = ({
                                             (a) => a.id == productId
                                         )
                                             ? addWishlistItemMutation.mutate({
-                                                id: productId!,
-                                                description: '',
-                                                title: productName!,
-                                                thumbnail: imageSrc!,
-                                                handle: productHandle!,
-                                            })
+                                                  id: productId!,
+                                                  description: '',
+                                                  title: productName!,
+                                                  thumbnail: imageSrc!,
+                                                  handle: productHandle!,
+                                                  price: productPrice!,
+                                              })
                                             : removeWishlistItemMutation.mutate(
-                                                {
-                                                    id: productId!,
-                                                    description: '',
-                                                    title: productName!,
-                                                    thumbnail: imageSrc!,
-                                                    handle: productHandle!,
-                                                }
-                                            );
+                                                  {
+                                                      id: productId!,
+                                                      description: '',
+                                                      title: productName!,
+                                                      thumbnail: imageSrc!,
+                                                      handle: productHandle!,
+                                                      price: productPrice!,
+                                                  }
+                                              );
                                     }}
                                     sx={{
                                         userSelect: 'none',

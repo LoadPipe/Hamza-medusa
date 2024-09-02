@@ -1,5 +1,6 @@
 import React from 'react';
 import { Flex, Text, Image, Button } from '@chakra-ui/react';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
 
 interface WishlistCardProps {
     vendorThumbnail: string;
@@ -41,13 +42,14 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                     </Text>
 
                     {/* Price */}
-                    <Text ml={'auto'} alignSelf={'center'}>
-                        {productPrice}
+                    <Text color={'white'} ml={'auto'} alignSelf={'center'}>
+                        {formatCryptoPrice(Number(productPrice), 'usdt')}
                     </Text>
                 </Flex>
             </Flex>
 
             <Flex ml="auto">
+                {/* Add To Cart */}
                 <Button
                     width={'145px'}
                     height={'36px'}

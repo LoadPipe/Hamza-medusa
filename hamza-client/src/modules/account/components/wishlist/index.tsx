@@ -16,10 +16,10 @@ const AccountWishList = () => {
                 <WishlistCard
                     key={product.id}
                     vendorThumbnail="Vendor Thumbnail Here"
-                    vendorName={product.title}
+                    vendorName={product.id}
                     productImage={product.thumbnail}
                     productDescription={product.title}
-                    productPrice="$99.99"
+                    productPrice={product.price.toString()}
                 />
             ))}
         </Box>
