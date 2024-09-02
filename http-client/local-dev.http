@@ -199,7 +199,7 @@ Content-Type: application/json
 
 
 ### Return all vendors
-GET http://localhost:9000/custom/vendors
+GET http://localhost:9000/custom/store
 Content-Type: application/json
 
 
@@ -212,7 +212,7 @@ GET http://localhost:9000/custom/store?store_name=Gaming Gear
 Content-Type: application/json
 
 ### Get Products by Store_id
-GET http://localhost:9000/custom/vendors/vendor-products?store_id=store_01J6FN28S1GDAPC37E3JC26CF5
+GET http://localhost:9000/custom/store/products?store_id=store_01J6FN28S1GDAPC37E3JC26CF5
 
 
 ### GET Store Name from Product ID
@@ -228,7 +228,7 @@ Content-Type: application/json
 
 
 ### Get Product Reviews by Store_id
-POST http://localhost:9000/custom/vendors/vendor-reviews
+POST http://localhost:9000/custom/store/reviews
 Content-Type: application/json
 
 {
