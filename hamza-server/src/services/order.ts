@@ -47,7 +47,6 @@ type InjectDependencies = {
 
 type OrderBucketList = { [key: string]: Order[] };
 
-
 const BUCKY_ORDER_CREATION_MODE: 'old' | 'new' = 'new';
 
 export default class OrderService extends MedusaOrderService {
@@ -362,9 +361,9 @@ export default class OrderService extends MedusaOrderService {
     }
 
     //TODO: the return type of this is hard to work with
-    async completeOrderTemplate(cartId: string): Promise<{
-        cart: Cart,
-        items: any[]
+    async orderSummary(cartId: string): Promise<{
+        cart: Cart;
+        items: any[];
     }> {
         const orders = (await this.orderRepository_.find({
             where: { cart_id: cartId, status: Not(OrderStatus.ARCHIVED) },
@@ -399,8 +398,9 @@ export default class OrderService extends MedusaOrderService {
         }
 
         return {
-            cart, items
-        }
+            cart,
+            items,
+        };
     }
 
     async getNotReviewedOrders(customer_id: string) {
@@ -508,9 +508,9 @@ export default class OrderService extends MedusaOrderService {
 
         return relevantItems?.length
             ? {
-                variants: relevantItems.map((i) => i.variant),
-                quantities: relevantItems.map((i) => i.quantity),
-            }
+                  variants: relevantItems.map((i) => i.variant),
+                  quantities: relevantItems.map((i) => i.quantity),
+              }
             : { variants: [], quantities: [] };
     }
 
@@ -523,7 +523,6 @@ export default class OrderService extends MedusaOrderService {
                 const { variants, quantities } =
                     await this.getBuckyProductVariantsFromOrder(order);
                 if (variants?.length) {
-
                     order.bucky_metadata = { status: 'pending' };
                     await this.orderRepository_.save(order);
 

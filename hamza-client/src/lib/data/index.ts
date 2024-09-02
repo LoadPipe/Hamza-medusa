@@ -143,7 +143,7 @@ export async function deleteWishlistItem(
                 },
                 headers: {
                     authorization: cookies().get('_medusa_jwt')?.value,
-                }
+                },
             }
         );
         return response;
@@ -277,8 +277,8 @@ export async function verifyToken(token: string) {
     }
 }
 
-//TODO: rename? cause it's not really clear what this does 
-export async function getCompleteTemplate(cart_id: string) {
+//TODO: rename? cause it's not really clear what this does
+export async function getOrderSummary(cart_id: string) {
     try {
         const response = await axios.get(
             `${BACKEND_URL}/custom/order/complete-template`,
@@ -426,17 +426,14 @@ export async function addNotifications(
 
 export async function getOrderInformation(cart_id: string) {
     try {
-        const response = await axios.get(
-            `${BACKEND_URL}/custom/order`,
-            {
-                params: {
-                    cart_id: cart_id
-                },
-                headers: {
-                    authorization: cookies().get('_medusa_jwt')?.value,
-                }
-            }
-        );
+        const response = await axios.get(`${BACKEND_URL}/custom/order`, {
+            params: {
+                cart_id: cart_id,
+            },
+            headers: {
+                authorization: cookies().get('_medusa_jwt')?.value,
+            },
+        });
         return response;
     } catch (error) {
         console.error('Error fetching order information:', error);
@@ -703,7 +700,7 @@ export async function getStoreProducts(store_id: string) {
         const response = await axios.get(
             `${BACKEND_URL}/custom/store/products`,
             {
-                params: { store_id: store_id }
+                params: { store_id: store_id },
             }
         );
         return response.data;
