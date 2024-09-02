@@ -7,7 +7,7 @@ import LocalizedClientLink from '@modules/common/components/localized-client-lin
 import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
 import {
-    getVendors,
+    getStores,
     getOrderInformation,
     getOrderDetails,
     getOrderStatus,

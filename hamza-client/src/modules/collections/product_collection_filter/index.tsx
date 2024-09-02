@@ -9,7 +9,7 @@ import { SimpleGrid } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import { getProductsByVendor } from '@lib/data';
+import { getProductsByStoreName } from '@lib/data';
 
 type Props = {
     vendorName: string;
@@ -19,7 +19,7 @@ const ProductCollections = ({ vendorName }: Props) => {
     const { data, error, isLoading } = useQuery(
         ['products', { vendor: vendorName }],
         () =>
-            getProductsByVendor(vendorName).catch((err) => {
+            getProductsByStoreName(vendorName).catch((err) => {
                 console.log(err);
                 return null;
             })

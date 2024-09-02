@@ -1,9 +1,11 @@
-import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
+import type { MedusaRequest, MedusaResponse } from '@medusajs/medusa';
 import { RouteHandler } from '../../route-handler';
-import ProductService from 'src/services/product';
+import ProductService from '../../../services/product';
+import StoreService from '../../../services/store';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const productService: ProductService = req.scope.resolve('productService');
+    const storeService: StoreService = req.scope.resolve('storeService');
 
     const handler: RouteHandler = new RouteHandler(
         req, res, 'GET', '/custom/store', ['product_id']
@@ -23,7 +25,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         }
 
         else {
-            res.status(400).json({ message: 'Required parameters either store_name or product_id missing' });
+            const stores = await storeService.getStores();
+            res.json(stores);
         }
     });
 };

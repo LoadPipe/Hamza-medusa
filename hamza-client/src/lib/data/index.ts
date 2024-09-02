@@ -63,9 +63,9 @@ const getMedusaHeaders = (tags: string[] = []) => {
 };
 
 // Get Vendors
-export async function getVendors() {
+export async function getStores() {
     try {
-        const response = await axios.get(`${BACKEND_URL}/custom/vendors`);
+        const response = await axios.get(`${BACKEND_URL}/custom/store`);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -154,7 +154,7 @@ export async function deleteWishlistItem(
 }
 
 // Get Vendor Products
-export async function getProductsByVendor(storeName: string) {
+export async function getProductsByStoreName(storeName: string) {
     try {
         const response = await axios.get(
             `${BACKEND_URL}/custom/store/products`,
@@ -698,10 +698,10 @@ export async function setCurrency(newCurrency: string, customer_id: string) {
     }
 }
 
-export async function getVendorProducts(store_id: string) {
+export async function getStoreProducts(store_id: string) {
     try {
         const response = await axios.get(
-            `${BACKEND_URL}/custom/vendors/vendor-products`,
+            `${BACKEND_URL}/custom/store/products`,
             {
                 params: { store_id: store_id }
             }
@@ -712,12 +712,12 @@ export async function getVendorProducts(store_id: string) {
     }
 }
 
-export async function getVendorReviews(store_id: string) {
+export async function getStoreReviews(store_id: string) {
     try {
-        const response = await axios.post(
-            `${BACKEND_URL}/custom/vendors/vendor-reviews`,
+        const response = await axios.get(
+            `${BACKEND_URL}/custom/store/reviews`,
             {
-                store_id: store_id,
+                params: { store_id: store_id },
             }
         );
         return response.data;
