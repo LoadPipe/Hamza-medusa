@@ -13,8 +13,11 @@ import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { getStore } from '@lib/data';
 import { addToCart } from '@modules/cart/actions';
 import CartPopup from '@modules/products/components/cart-popup';
+import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
+import { WishlistProduct } from '@store/wishlist/wishlist-store';
 
 interface WishlistCardProps {
+    productData: WishlistProduct;
     productDescription: string;
     productPrice: string;
     productImage: string;
@@ -44,6 +47,7 @@ interface StoreData {
 }
 
 const WishlistCard: React.FC<WishlistCardProps> = ({
+    productData,
     productDescription,
     productPrice,
     productId,
@@ -51,12 +55,15 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
     productVarientId,
     countryCode,
 }) => {
+    // Zustand States
     const { preferred_currency_code } = useCustomerAuthStore();
-    const currencyCode = preferred_currency_code ?? 'usdc';
-    const [storeData, setStoreData] = useState<StoreData>();
+    const { removeWishlistItemMutation } = useWishlistMutations();
 
     // Open Add To Cart Success Modal
     const [cartModalOpen, setCartModalOpen] = useState(false);
+
+    const currencyCode = preferred_currency_code ?? 'usdc';
+    const [storeData, setStoreData] = useState<StoreData>();
 
     // Get store data by product_id
     useEffect(() => {
@@ -75,7 +82,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
     // Add wishlist product to cart
     const handleAddToCart = async (showPopup: boolean = true) => {
         if (!productVarientId) {
-            console.error('Selected variant is null or undefined.');
+            console.error('Variant is null or undefined.');
             return;
         }
 
@@ -165,10 +172,31 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                     </Flex>
                 </Flex>
 
-                <Flex ml="auto">
+                <Flex ml="auto" flexDir={'row'}>
                     {/* Add To Cart */}
                     <Button
-                        width={'145px'}
+                        height={'36px'}
+                        backgroundColor={'transparent'}
+                        borderWidth={'1px'}
+                        borderColor={'white'}
+                        color={'white'}
+                        borderRadius={'full'}
+                        onClick={() => {
+                            removeWishlistItemMutation.mutate({
+                                id: productData.id,
+                                description: productData.description,
+                                handle: productData.handle,
+                                thumbnail: productData.thumbnail,
+                                title: productData.title,
+                                price: productPrice || '',
+                                productVarientId: productVarientId || null,
+                            });
+                        }}
+                    >
+                        Remove From Wishlist
+                    </Button>
+                    <Button
+                        ml="1rem"
                         height={'36px'}
                         backgroundColor={'transparent'}
                         borderWidth={'1px'}

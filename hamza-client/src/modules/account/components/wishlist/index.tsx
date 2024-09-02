@@ -19,12 +19,13 @@ const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
                 <Box key={index} mt={index > 0 ? '1rem' : 0}>
                     <WishlistCard
                         key={index}
+                        productData={product}
                         productId={product.id}
                         productVarientId={product.productVarientId}
                         productImage={product.thumbnail}
                         productDescription={product.title}
                         productPrice={product.price.toString()}
-                        region={countryCode}
+                        countryCode={countryCode}
                     />
                 </Box>
             ))}
