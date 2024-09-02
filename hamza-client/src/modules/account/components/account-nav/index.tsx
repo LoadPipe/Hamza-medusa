@@ -1,4 +1,9 @@
 'use client';
+import { CgProfile } from 'react-icons/cg';
+import { LiaBoxOpenSolid } from 'react-icons/lia';
+import { FaRegHeart, FaRegBell } from 'react-icons/fa';
+import { PiNotePencilLight } from 'react-icons/pi';
+import { CiLogout } from 'react-icons/ci';
 
 import { Customer } from '@medusajs/medusa';
 import {
@@ -93,9 +98,19 @@ const AccountNav = ({
                     onClick={toggleCollapse}
                     cursor="pointer"
                 >
-                    <Text my="auto" fontSize={'18px'} fontWeight={600}>
-                        Manage My Account
-                    </Text>
+                    <Flex justifyContent={'center'} alignContent={'center'}>
+                        <CgProfile color="white" size={'28px'} />
+
+                        <Text
+                            ml={2}
+                            my="auto"
+                            fontSize={'18px'}
+                            fontWeight={600}
+                        >
+                            Manage My Account
+                        </Text>
+                    </Flex>
+
                     <IconButton
                         aria-label="Toggle Collapse"
                         icon={isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
@@ -141,6 +156,7 @@ const AccountNav = ({
                     cursor="pointer"
                     onClick={toggleOrdersCollapse} // Toggle collapse when the whole Flex container is clicked
                 >
+                    <LiaBoxOpenSolid color="white" size={'28px'} />
                     <Flex
                         as={NextLink}
                         href="/account/orders"
@@ -151,7 +167,12 @@ const AccountNav = ({
                         textDecoration="none"
                         _hover={{ textDecoration: 'none' }} // Remove underline on hover
                     >
-                        <Text fontSize={'18px'} fontWeight={600} color="white">
+                        <Text
+                            ml={2}
+                            fontSize={'18px'}
+                            fontWeight={600}
+                            color="white"
+                        >
                             Orders
                         </Text>
                         <IconButton
@@ -170,13 +191,6 @@ const AccountNav = ({
                         />
                     </Flex>
                 </Flex>
-
-                {/* Wishlist */}
-                <NavLink
-                    href="/account/wishlist"
-                    route={route!}
-                    title={'Wishlist'}
-                />
 
                 {/* Collapsible Panel for Orders */}
                 <Collapse in={isOrdersOpen} animateOpacity>
@@ -261,20 +275,35 @@ const AccountNav = ({
                     </Box>
                 </Collapse>
 
+                {/* Wishlist */}
+
+                <Box>
+                    <NavLink
+                        href="/account/wishlist"
+                        route={route!}
+                        title="Wishlist"
+                        icon={<FaRegHeart color="white" size="22px" />}
+                    />
+                </Box>
+
                 {authData.is_verified && (
                     <NavLink
                         href="/account/notifications"
                         route={route!}
-                        title={'Notifications'}
+                        title="Notifications"
+                        icon={<FaRegBell color="white" size="22px" />}
                     />
                 )}
+
                 {authData.is_verified && (
                     <NavLink
                         href="/account/reviews"
                         route={route!}
                         title={'Reviews'}
+                        icon={<PiNotePencilLight color="white" size={'22px'} />}
                     />
                 )}
+
                 <Box
                     as="button"
                     textAlign={'left'}
@@ -293,9 +322,17 @@ const AccountNav = ({
                     }}
                     onClick={handleLogout}
                 >
-                    <Text my="auto" fontSize={'18px'} fontWeight={600}>
-                        Logout
-                    </Text>
+                    <Flex>
+                        <CiLogout color="white" size={'22px'} />
+                        <Text
+                            ml={2}
+                            my="auto"
+                            fontSize={'18px'}
+                            fontWeight={600}
+                        >
+                            Logout
+                        </Text>
+                    </Flex>
                 </Box>
             </Flex>
         </Flex>

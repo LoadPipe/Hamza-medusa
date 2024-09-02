@@ -1,23 +1,13 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import {
-    Box,
-    Flex,
-    Heading,
-    Text,
-    Button,
-    Stack,
-    Divider,
-} from '@chakra-ui/react';
+import { Flex, Text, Divider } from '@chakra-ui/react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import Thumbnail from '@modules/products/components/thumbnail';
 import Tweet from '@/components/tweet';
-import { useRouter, useParams } from 'next/navigation';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import Image from 'next/image';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
-import { getCompleteTemplate } from '@lib/data/index';
+import { getOrderSummary } from '@lib/data/index';
 import { Cart, Order } from '@medusajs/medusa';
 
 type SummaryProps = {
@@ -61,13 +51,11 @@ interface Product {
 
 const Summary: React.FC<SummaryProps> = ({ cart_id, cart, order }) => {
     const [products, setProducts] = useState<Product[]>([]);
-    const router = useRouter();
-    const { countryCode } = useParams();
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await getCompleteTemplate(cart_id);
+                const response = await getOrderSummary(cart_id);
                 // Assuming the response contains the products array in `response.data.products`
                 const fetchedProducts: Product[] = response.items || [];
                 console.log(`Fetched products: ${JSON.stringify(response)}`);
@@ -145,7 +133,7 @@ const Summary: React.FC<SummaryProps> = ({ cart_id, cart, order }) => {
                                 >
                                     {formatCryptoPrice(
                                         cart.items[index].quantity *
-                                        product.unit_price,
+                                            product.unit_price,
                                         product.currency_code
                                     )}
                                 </Text>

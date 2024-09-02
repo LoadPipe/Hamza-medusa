@@ -16,16 +16,14 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        if (!handler.requireParam('cart_id'))
-            return;
+        if (!handler.requireParam('cart_id')) return;
 
         const cartId = handler.inputParams.cart_id;
 
-        const output = await orderService.completeOrderTemplate(cartId);
+        const output = await orderService.orderSummary(cartId);
 
         //enforce security
-        if (!handler.enforceCustomerId(output.cart.customer_id))
-            return;
+        if (!handler.enforceCustomerId(output.cart.customer_id)) return;
 
         res.status(200).json({ items: output.items });
     });

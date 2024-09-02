@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { getStore } from '@lib/data';
 import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 import Link from 'next/link';
 type OrderDetails = {
     thumbnail: string;
@@ -83,7 +84,7 @@ const DeliveredCard = ({ order, handle }: OrderCardProps) => {
                 quantity: order.quantity,
             });
         } catch (e) {
-            alert(`Product with name ${order.title} could not be added`);
+            toast.error(`Product with name ${order.title} could not be added`);
         }
 
         router.push('/checkout');
@@ -92,7 +93,6 @@ const DeliveredCard = ({ order, handle }: OrderCardProps) => {
     if (!order) {
         return <div>Loading...</div>; // Display loading message if order is undefined
     }
-    console.log(`What are order ITEMS? ${JSON.stringify(order)}`);
     return (
         <Box
             // bg={'#272727'}
