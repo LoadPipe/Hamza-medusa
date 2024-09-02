@@ -6,6 +6,7 @@ import OrderCard from '../order-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 import {
     getVendors,
     orderInformation,
@@ -197,7 +198,9 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
                     quantity: item.quantity,
                 });
             } catch (e) {
-                alert(`Product with name ${item.title} could not be added`);
+                toast.error(
+                    `Product with name ${item.title} could not be added`
+                );
             }
         });
 
