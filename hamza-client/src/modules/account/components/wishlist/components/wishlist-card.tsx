@@ -12,6 +12,7 @@ import currencyIcons from '../../../../../../public/images/currencies/crypto-cur
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { getStore } from '@lib/data';
 import { addToCart } from '@modules/cart/actions';
+import CartPopup from '@modules/products/components/cart-popup';
 
 interface WishlistCardProps {
     productDescription: string;
@@ -54,6 +55,9 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
     const currencyCode = preferred_currency_code ?? 'usdc';
     const [storeData, setStoreData] = useState<StoreData>();
 
+    // Open Add To Cart Success Modal
+    const [cartModalOpen, setCartModalOpen] = useState(false);
+
     // Get store data by product_id
     useEffect(() => {
         const fetchStoreData = async () => {
@@ -77,6 +81,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                 countryCode: countryCode,
                 currencyCode: currencyCode,
             });
+            setCartModalOpen(true);
         } catch (error) {
             console.error('Error adding to cart:', error);
         }
@@ -116,7 +121,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                             {productDescription}
                         </Text>
 
-                        {/* Price */}
+                        {/* Currency Icon and Price */}
                         <Flex ml="auto" alignSelf={'center'}>
                             <Flex
                                 height={'22px'}
@@ -167,6 +172,12 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                 </Flex>
             </Flex>
             <Divider mt="1rem" borderColor={'#555555'} />
+            <CartPopup
+                open={cartModalOpen}
+                closeModal={() => {
+                    setCartModalOpen(false);
+                }}
+            />
         </Flex>
     );
 };
