@@ -126,8 +126,6 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
         //validate parameters 
         if (!handler.requireParams([
             'product_id',
-            'review_updates',
-            'rating_updates',
             'customer_id',
             'order_id',
         ]))

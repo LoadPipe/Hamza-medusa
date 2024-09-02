@@ -36,10 +36,20 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     ]);
 
     await handler.handle(async () => {
+        if (!handler.requireParam('customer_id'))
+            return;
+
+        const customerId = handler.inputParams.customer_id;
+
+        //security
+        if (!handler.enforceCustomerId(customerId))
+            return;
+
         const wishlist = await wishlistService.create(
-            handler.inputParams.customer_id
+            customerId
         );
-        if (wishlist) res.status(201).json(wishlist);
+        if (wishlist)
+            res.status(201).json(wishlist);
         else
             res.status(424).json({
                 message:
