@@ -17,7 +17,7 @@ interface ICheckoutData {
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
-    const cartService: OrderService = req.scope.resolve('cartService');
+    const cartService: CartService = req.scope.resolve('cartService');
 
     const handler: RouteHandler = new RouteHandler(
         req, res, 'GET', '/custom/checkout'
@@ -62,6 +62,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
+    const cartService: CartService = req.scope.resolve('cartService');
 
     const handler: RouteHandler = new RouteHandler(
         req, res, 'POST', '/custom/checkout', [
@@ -74,6 +75,21 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
     try {
         await handler.handle(async () => {
+
+            //validate 
+            if (!handler.requireParam('cart_id'))
+                return;
+
+            const cartId = handler.inputParams.cart_id;
+
+            const cart = await cartService.retrieve(cartId);
+            if (!cart)
+                return res.status(404).json({ message: `Cart ${cartId} not found` });
+
+            //enforce security
+            if (!handler.enforceCustomerId(cart.customer_id))
+                return;
+
             await orderService.finalizeCheckout(
                 //handler.inputParams.cart_products,
                 handler.inputParams.cart_id,

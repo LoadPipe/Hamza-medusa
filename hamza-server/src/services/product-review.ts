@@ -251,7 +251,7 @@ class ProductReviewService extends TransactionBaseService {
         return averageRating;
     }
 
-    async updateProductReview(product_id, reviewUpdates, customer_id) {
+    async updateProductReview(product_id, review_updates, customer_id) {
         const productReviewRepository =
             this.activeManager_.getRepository(ProductReview);
 
@@ -265,15 +265,15 @@ class ProductReviewService extends TransactionBaseService {
             throw new Error('Review not found'); // Proper error handling if the review doesn't exist
         }
 
-        existingReview.content = reviewUpdates;
+        existingReview.content = review_updates;
 
         return await productReviewRepository.save(existingReview);
     }
 
     // async updateProduct(
     //     product_id,
-    //     reviewUpdates,
-    //     ratingUpdates,
+    //     review_updates,
+    //     rating_updates,
     //     customer_id,
     //     order_id
     // ) {
@@ -314,8 +314,8 @@ class ProductReviewService extends TransactionBaseService {
     //         throw new Error('Review not found'); // Proper error handling if the review doesn't exist
     //     }
     //
-    //     existingReview.content = reviewUpdates;
-    //     existingReview.rating = ratingUpdates;
+    //     existingReview.content = review_updates;
+    //     existingReview.rating = rating_updates;
     //
     //     return await productReviewRepository.save(existingReview);
     // }

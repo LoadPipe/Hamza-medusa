@@ -152,7 +152,7 @@ Content-Type: application/json
 {
   "customer_id": "cus_01HYW342BBBEK3GXETA26VJQSW",
   "product_id": "prod_01HYYR4MWE0TB0B8T79KH5BEFZ",
-  "reviewUpdates": "CONTENT CONTENRT"
+  "review_updates": "CONTENT CONTENRT"
 }
 
 ### Update Product Rating
@@ -172,8 +172,8 @@ Content-Type: application/json
 {
   "customer_id": "cus_01J3CF43WK0QT2591VHG9JT07E",
   "product_id": "prod_01J3CF1GXW1C0QSSMPBQR04GBK",
-  "ratingUpdates": 10,
-  "reviewUpdates": "CONTENT CONTENRT",
+  "rating_updates": 10,
+  "review_updates": "CONTENT CONTENRT",
   "order_id": "order_01J3CK60MX8XGWW52W4X0AZTSX"
 }
 
@@ -212,12 +212,7 @@ GET http://localhost:9000/custom/store?store_name=Gaming Gear
 Content-Type: application/json
 
 ### Get Products by Store_id
-POST http://localhost:9000/custom/vendors/vendor-products
-Content-Type: application/json
-
-{
-  "store_id": "store_01J6FN28S1GDAPC37E3JC26CF5"
-}
+GET http://localhost:9000/custom/vendors/vendor-products?store_id=store_01J6FN28S1GDAPC37E3JC26CF5
 
 
 ### GET Store Name from Product ID
@@ -246,7 +241,7 @@ Content-Type: application/json
 
 
 ### Create Notification Types
-POST http://localhost:9000/custom/notification
+POST http://localhost:9000/custom/customer/notification
 Content-Type: application/json
 
 {
@@ -256,7 +251,7 @@ Content-Type: application/json
 
 
 ### GET All Notifications for Customer
-GET http://localhost:9000/custom/notification
+GET http://localhost:9000/custom/customer/notification
 Content-Type: application/json
 
 {
@@ -265,7 +260,7 @@ Content-Type: application/json
 
 
 ### Remove All Notifications for Customer
-DELETE http://localhost:9000/custom/notification
+DELETE http://localhost:9000/custom/customer/notification
 Content-Type: application/json
 
 {

@@ -329,7 +329,7 @@ export async function allReviews(product_id: string) {
 export async function getNotifications(customer_id: string) {
     try {
         const response = await axios.get(
-            `${BACKEND_URL}/custom/notification?customer_id=${customer_id}`,
+            `${BACKEND_URL}/custom/customer/notification?customer_id=${customer_id}`,
             {
                 headers: {
                     'Content-Type': 'application/json',
@@ -355,7 +355,7 @@ export async function checkoutMode() {
 export async function removeNotifications(customer_id: string) {
     try {
         const response = await axios.delete(
-            `${BACKEND_URL}/custom/notification`,
+            `${BACKEND_URL}/custom/customer/notification`,
             {
                 headers: {
                     'Content-Type': 'application/json',
@@ -407,7 +407,7 @@ export async function addNotifications(
 ) {
     try {
         const response = await axios.post(
-            `${BACKEND_URL}/custom/notification`,
+            `${BACKEND_URL}/custom/customer/notification`,
             {
                 customer_id: customer_id,
                 notification_type: notification_type,
@@ -703,7 +703,7 @@ export async function getVendorProducts(store_id: string) {
         const response = await axios.get(
             `${BACKEND_URL}/custom/vendors/vendor-products`,
             {
-                store_id: store_id,
+                params: { store_id: store_id }
             }
         );
         return response.data;
