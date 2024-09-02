@@ -19,6 +19,7 @@ interface WishlistCardProps {
     productImage: string;
     productId: string;
     productVarientId: string | null;
+    countryCode: string;
 }
 
 interface StoreData {
@@ -47,6 +48,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
     productId,
     productImage,
     productVarientId,
+    countryCode,
 }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const currencyCode = preferred_currency_code ?? 'usdc';
@@ -66,13 +68,14 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
         fetchStoreData();
     }, [productId]);
 
+    // Add wishlist product to cart
     const handleAddToCart = async () => {
         try {
             await addToCart({
                 variantId: productVarientId!,
                 quantity: 1,
-                countryCode: 'us',
-                currencyCode: 'eth',
+                countryCode: countryCode,
+                currencyCode: currencyCode,
             });
         } catch (error) {
             console.error('Error adding to cart:', error);

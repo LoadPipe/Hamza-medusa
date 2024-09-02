@@ -5,7 +5,10 @@ import { Flex, Box, Text } from '@chakra-ui/react';
 import WishlistCard from './components/wishlist-card';
 import useWishlistStore from '@store/wishlist/wishlist-store';
 
-const AccountWishList = () => {
+interface AccountWishListProps {
+    countryCode: string; // Accept region as a prop
+}
+const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
     const { wishlist } = useWishlistStore((state) => ({
         wishlist: state.wishlist,
     }));
@@ -21,6 +24,7 @@ const AccountWishList = () => {
                         productImage={product.thumbnail}
                         productDescription={product.title}
                         productPrice={product.price.toString()}
+                        region={countryCode}
                     />
                 </Box>
             ))}

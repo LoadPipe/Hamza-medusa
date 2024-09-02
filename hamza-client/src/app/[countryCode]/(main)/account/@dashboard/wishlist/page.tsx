@@ -1,9 +1,15 @@
-import { getHamzaCustomer, listRegions, updateCustomer } from '@lib/data';
+import {
+    getHamzaCustomer,
+    getRegion,
+    listRegions,
+    updateCustomer,
+} from '@lib/data';
 import { notFound } from 'next/navigation';
 import { Flex, Button, Text, Box } from '@chakra-ui/react';
 import { Metadata } from 'next';
 import VerifyEmail from '@modules/account/components/verify';
 import AccountWishList from '@modules/account/components/wishlist';
+import { headers } from 'next/headers';
 
 export const metadata: Metadata = {
     title: 'Wishlist',
@@ -20,6 +26,11 @@ export default async function Wishlist() {
         console.log(customer);
     }
 
+    const nextHeaders = headers();
+    const countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY
+        ? 'us'
+        : nextHeaders.get('next-url')?.split('/')[1] || '';
+
     return (
         <Flex
             maxW={'927px'}
@@ -31,7 +42,7 @@ export default async function Wishlist() {
         >
             {/* Profile Form */}
 
-            <AccountWishList />
+            <AccountWishList countryCode={countryCode} />
         </Flex>
     );
 }
