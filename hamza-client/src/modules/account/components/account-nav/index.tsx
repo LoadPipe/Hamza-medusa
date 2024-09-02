@@ -171,6 +171,13 @@ const AccountNav = ({
                     </Flex>
                 </Flex>
 
+                {/* Wishlist */}
+                <NavLink
+                    href="/account/wishlist"
+                    route={route!}
+                    title={'Wishlist'}
+                />
+
                 {/* Collapsible Panel for Orders */}
                 <Collapse in={isOrdersOpen} animateOpacity>
                     <Box mt={2} pl={4}>
