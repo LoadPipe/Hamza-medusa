@@ -49,7 +49,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
 }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const currencyCode = preferred_currency_code ?? 'usdc';
-    const [storeData, setStoreData] = useState<StoreData>(null);
+    const [storeData, setStoreData] = useState<StoreData>();
 
     // Get store data by product_id
     useEffect(() => {
