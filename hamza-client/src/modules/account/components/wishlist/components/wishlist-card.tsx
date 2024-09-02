@@ -19,6 +19,7 @@ import { addToCart } from '@modules/cart/actions';
 import CartPopup from '@modules/products/components/cart-popup';
 import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
 import { WishlistProduct } from '@store/wishlist/wishlist-store';
+import { Spinner, Trash } from '@medusajs/icons';
 
 interface WishlistCardProps {
     productData: WishlistProduct;
@@ -127,6 +128,15 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                     width="150px"
                                 />
                             </Box>
+
+                            <Flex
+                                ml="auto"
+                                alignSelf={'center'}
+                                cursor={'pointer'}
+                                color="red"
+                            >
+                                <SkeletonCircle size="22px" />
+                            </Flex>
                         </Flex>
                         <Flex flexDir={'row'}>
                             {/* Product image and Description */}
@@ -145,30 +155,26 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
 
                             {/* Currency Icon and Price */}
                             <Flex ml="auto" alignSelf={'center'}>
-                                <SkeletonCircle size="22px" />
-                                <Skeleton
+                                <SkeletonCircle size="20px" />
+                                <SkeletonText
                                     ml="0.5rem"
-                                    height="24px"
-                                    width="100px"
+                                    noOfLines={1}
+                                    spacing="4"
+                                    alignSelf={'center'}
+                                    skeletonHeight="2"
+                                    width="50px"
                                 />
                             </Flex>
                         </Flex>
                     </Flex>
 
-                    <Flex ml="auto" flexDir={'row'}>
-                        {/* Add To Cart & Remove from Wishlist Buttons */}
-                        <Skeleton
-                            height={'36px'}
-                            width={'145px'}
-                            borderRadius={'full'}
-                        />
-                        <Skeleton
-                            ml="1rem"
-                            height={'36px'}
-                            width={'145px'}
-                            borderRadius={'full'}
-                        />
-                    </Flex>
+                    {/* Add To Cart */}
+                    <Skeleton
+                        ml="auto"
+                        height={'36px'}
+                        width={'145px'}
+                        borderRadius={'full'}
+                    />
                 </Flex>
                 <Divider mt="1rem" borderColor={'#555555'} />
             </Flex>
@@ -190,6 +196,29 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                         <Text ml="1rem" alignSelf={'center'}>
                             {storeData?.name}
                         </Text>
+
+                        <Flex
+                            ml="auto"
+                            alignSelf={'center'}
+                            cursor={'pointer'}
+                            color="red"
+                            _hover={{
+                                color: 'white',
+                            }}
+                            onClick={() => {
+                                removeWishlistItemMutation.mutate({
+                                    id: productData.id,
+                                    description: productData.description,
+                                    handle: productData.handle,
+                                    thumbnail: productData.thumbnail,
+                                    title: productData.title,
+                                    price: productPrice || '',
+                                    productVarientId: productVarientId || null,
+                                });
+                            }}
+                        >
+                            <Trash />
+                        </Flex>
                     </Flex>
                     <Flex flexDir={'row'}>
                         {/* Product image and Description */}
@@ -243,43 +272,22 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                     </Flex>
                 </Flex>
 
-                <Flex ml="auto" flexDir={'row'}>
-                    {/* Add To Cart */}
-                    <Button
-                        height={'36px'}
-                        backgroundColor={'transparent'}
-                        borderWidth={'1px'}
-                        borderColor={'white'}
-                        color={'white'}
-                        borderRadius={'full'}
-                        onClick={() => {
-                            removeWishlistItemMutation.mutate({
-                                id: productData.id,
-                                description: productData.description,
-                                handle: productData.handle,
-                                thumbnail: productData.thumbnail,
-                                title: productData.title,
-                                price: productPrice || '',
-                                productVarientId: productVarientId || null,
-                            });
-                        }}
-                    >
-                        Remove From Wishlist
-                    </Button>
-                    <Button
-                        ml="1rem"
-                        height={'36px'}
-                        backgroundColor={'transparent'}
-                        borderWidth={'1px'}
-                        borderColor={'white'}
-                        color={'white'}
-                        borderRadius={'full'}
-                        onClick={() => handleAddToCart()}
-                    >
-                        Add To Cart
-                    </Button>
-                </Flex>
+                {/* Add To Cart */}
+
+                <Button
+                    ml="auto"
+                    height={'36px'}
+                    backgroundColor={'transparent'}
+                    borderWidth={'1px'}
+                    borderColor={'white'}
+                    color={'white'}
+                    borderRadius={'full'}
+                    onClick={() => handleAddToCart()}
+                >
+                    Add To Cart
+                </Button>
             </Flex>
+
             <Divider mt="1rem" borderColor={'#555555'} />
             <CartPopup
                 open={cartModalOpen}
