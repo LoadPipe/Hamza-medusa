@@ -163,67 +163,110 @@ const ReviewPage = ({ region }: { region: Region }) => {
             </ButtonGroup>
             {activeButton === 'reviews' && reviews.length > 0 && (
                 <>
-                    <CardHeader>
-                        <Heading size="md">My Product Reviews</Heading>
-                    </CardHeader>
                     <Stack divider={<StackDivider />} spacing={4}>
                         {reviews.map((review: any) => (
                             <CardBody key={review.id}>
-                                <Text fontSize="16px" pb={8}>
-                                    <Text as="span" color="#555555">
-                                        Purchase Date:{' '}
-                                    </Text>
-                                    {format(new Date(review.created_at), 'PPP')}
-                                </Text>
-                                <div className="flex flex-row space-x-2 items-center">
-                                    <Image
-                                        rounded={'lg'}
-                                        width={'72px'}
-                                        height={'72px'}
-                                        src={review.product.thumbnail}
-                                    />
-                                    <Text
-                                        maxWidth={'500px'}
-                                        fontSize={'18px'}
-                                        fontWeight={'bold'}
-                                        textTransform="uppercase"
-                                    >
-                                        {review.title}
-                                    </Text>
-                                    {review.order_id && (
-                                        <Button
-                                            p={8}
-                                            onClick={() =>
-                                                handleReviewEdit(review)
-                                            }
-                                            colorScheme="green"
+                                <Flex
+                                    direction={{ base: 'column', md: 'row' }}
+                                    justify="space-between"
+                                    align="flex-start" // Adjust alignment for better vertical alignment
+                                    gap={4}
+                                >
+                                    {/* Combined Content Column */}
+                                    <Box flex="1" pr={{ base: 0, md: 4 }}>
+                                        <Text
+                                            fontSize={{
+                                                base: '14px',
+                                                md: '16px',
+                                            }}
+                                            pb={4}
                                         >
-                                            Edit
-                                        </Button>
-                                    )}
-                                </div>
-                                <Box my={'4'}>
-                                    <Text
-                                        mb={'2'}
-                                        fontSize={'16px'}
-                                        fontWeight={'bold'}
-                                        color={'rgba(85, 85, 85, 0.6)'}
-                                    >
-                                        Your Product rating & review:
-                                    </Text>
-                                    <Text p={'2'} fontSize="sm">
-                                        {renderStars(review.rating)}
-                                    </Text>
-                                    <Text
-                                        rounded={'lg'}
-                                        fontSize="sm"
-                                        bg={'black'}
-                                        m={2}
-                                        p={8}
-                                    >
-                                        {review.content}
-                                    </Text>
-                                </Box>
+                                            <Text as="span" color="#555555">
+                                                Purchase Date:{' '}
+                                            </Text>
+                                            {format(
+                                                new Date(review.created_at),
+                                                'PPP'
+                                            )}
+                                        </Text>
+                                        <Flex alignItems="center" gap={2}>
+                                            <Image
+                                                rounded={'lg'}
+                                                width={{
+                                                    base: '50px',
+                                                    md: '72px',
+                                                }}
+                                                height={{
+                                                    base: '50px',
+                                                    md: '72px',
+                                                }}
+                                                src={review.product.thumbnail}
+                                            />
+                                            <Text
+                                                maxWidth={{
+                                                    base: '300px',
+                                                    md: '500px',
+                                                }}
+                                                fontSize={{
+                                                    base: '14px',
+                                                    md: '18px',
+                                                }}
+                                                fontWeight={'bold'}
+                                                textTransform="uppercase"
+                                                isTruncated
+                                            >
+                                                {review.title}
+                                            </Text>
+                                        </Flex>
+                                        <Text
+                                            my={2}
+                                            fontSize={{
+                                                base: '14px',
+                                                md: '16px',
+                                            }}
+                                            fontWeight="bold"
+                                            color="rgba(85, 85, 85, 0.6)"
+                                        >
+                                            Your Product rating & review:
+                                        </Text>
+                                        <Text
+                                            p={2}
+                                            fontSize={{
+                                                base: '12px',
+                                                md: 'sm',
+                                            }}
+                                        >
+                                            {renderStars(review.rating)}
+                                        </Text>
+                                        <Text
+                                            rounded="lg"
+                                            fontSize={{
+                                                base: '12px',
+                                                md: 'sm',
+                                            }}
+                                            bg="black"
+                                            m={2}
+                                            p={{ base: 4, md: 8 }}
+                                        >
+                                            {review.content}
+                                        </Text>
+                                        {review.order_id && (
+                                            <Button
+                                                m={4}
+                                                onClick={() =>
+                                                    handleReviewEdit(review)
+                                                }
+                                                colorScheme="green"
+                                                width={{
+                                                    base: 'full',
+                                                    md: 'auto',
+                                                }} // Full width on smaller screens
+                                            >
+                                                Edit
+                                            </Button>
+                                        )}
+                                    </Box>
+                                </Flex>
                             </CardBody>
                         ))}
                     </Stack>
@@ -246,7 +289,10 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                             >
                                                 {/* Left Column */}
                                                 <Box flex="1" pr={4}>
-                                                    <Text fontSize="16px">
+                                                    <Text
+                                                        fontSize="16px"
+                                                        pb={8}
+                                                    >
                                                         <Text
                                                             as="span"
                                                             color="#555555"
