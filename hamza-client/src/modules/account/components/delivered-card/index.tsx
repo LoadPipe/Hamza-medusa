@@ -93,7 +93,6 @@ const DeliveredCard = ({ order, handle }: OrderCardProps) => {
     if (!order) {
         return <div>Loading...</div>; // Display loading message if order is undefined
     }
-    console.log(`What are order ITEMS? ${JSON.stringify(order)}`);
     return (
         <Box
             // bg={'#272727'}

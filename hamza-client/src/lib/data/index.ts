@@ -274,7 +274,7 @@ export async function verifyToken(token: string) {
     }
 }
 
-export async function getCompleteTemplate(cart_id: string) {
+export async function getOrderSummary(cart_id: string) {
     try {
         const response = await axios.get(
             `${BACKEND_URL}/custom/order/complete-template`,

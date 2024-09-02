@@ -11,12 +11,12 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         req,
         res,
         'GET',
-        '/custom/order/complete-template',
+        '/custom/order/order-summary',
         ['cart_id']
     );
 
     await handler.handle(async () => {
-        const cart = await orderService.completeOrderTemplate(
+        const cart = await orderService.OrderSummary(
             handler.inputParams.cart_id
         );
 
