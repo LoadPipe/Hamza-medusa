@@ -360,7 +360,7 @@ export default class OrderService extends MedusaOrderService {
         return [];
     }
 
-    async OrderSummary(cartId: string) {
+    async orderSummary(cartId: string) {
         const orders = (await this.orderRepository_.find({
             where: { cart_id: cartId, status: Not(OrderStatus.ARCHIVED) },
             relations: ['cart.items.variant.product', 'store.owner'],

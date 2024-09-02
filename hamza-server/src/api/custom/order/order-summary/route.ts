@@ -16,7 +16,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        const cart = await orderService.OrderSummary(
+        const cart = await orderService.orderSummary(
             handler.inputParams.cart_id
         );
 
