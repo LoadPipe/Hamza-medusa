@@ -5,6 +5,7 @@ import {
     Image as ChakraImage,
     Button,
     Divider,
+    Skeleton,
 } from '@chakra-ui/react';
 import Image from 'next/image';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
@@ -64,6 +65,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
 
     const currencyCode = preferred_currency_code ?? 'usdc';
     const [storeData, setStoreData] = useState<StoreData>();
+    const [loading, setLoading] = useState(true);
 
     // Get store data by product_id
     useEffect(() => {
@@ -73,6 +75,8 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                 setStoreData(data);
             } catch (error) {
                 console.error('Error fetching store data:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -103,6 +107,14 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
             console.error('Error adding to cart:', error);
         }
     };
+
+    if (loading) {
+        return (
+            <Flex maxWidth={'879px'} width={'100%'} flexDir={'column'}>
+                <Skeleton height={'176px'} width="100%" borderRadius="md" />
+            </Flex>
+        );
+    }
 
     return (
         <Flex maxWidth={'879px'} width={'100%'} flexDir={'column'}>
