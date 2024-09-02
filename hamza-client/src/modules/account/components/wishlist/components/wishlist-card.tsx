@@ -39,15 +39,20 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                     <ChakraImage
                         src={productImage}
                         alt={productImage}
-                        width={'35px'}
-                        height={'35px'}
+                        width={'75px'}
+                        height={'75px'}
                     />
-                    <Text ml="1rem" alignSelf={'center'}>
+                    <Text
+                        ml="1rem"
+                        alignSelf={'center'}
+                        fontSize={'18px'}
+                        fontWeight={700}
+                    >
                         {productDescription}
                     </Text>
 
                     {/* Price */}
-                    <Flex ml="auto">
+                    <Flex ml="auto" alignSelf={'center'}>
                         <Flex height={'22px'} alignItems={'center'} mb="auto">
                             <Image
                                 className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
@@ -56,7 +61,12 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                             />
                         </Flex>
                         <Flex ml="0.5rem" height={'22px'} alignItems={'center'}>
-                            <Text color={'white'} alignSelf={'center'}>
+                            <Text
+                                color={'white'}
+                                alignSelf={'center'}
+                                fontSize={'24px'}
+                                fontWeight={700}
+                            >
                                 {formatCryptoPrice(
                                     Number(productPrice),
                                     currencyCode
