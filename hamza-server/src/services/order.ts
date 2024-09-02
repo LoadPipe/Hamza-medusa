@@ -71,7 +71,7 @@ export default class OrderService extends MedusaOrderService {
         this.paymentRepository_ = container.paymentRepository;
         this.productRepository_ = container.productRepository;
         this.productVariantRepository_ = container.productVariantRepository;
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'OrderService');
         this.buckyClient = new BuckyClient();
     }
 

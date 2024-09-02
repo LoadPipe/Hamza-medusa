@@ -26,7 +26,7 @@ export default class DiscountService extends MedusaDiscountService {
     constructor(container) {
         super(container);
         this.discountRepository_ = container.discountRepository;
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'DiscountService');
     }
 
     async update(id: string, input: UpdateDiscount): Promise<Discount> {
