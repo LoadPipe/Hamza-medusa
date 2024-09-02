@@ -277,6 +277,7 @@ export async function verifyToken(token: string) {
     }
 }
 
+//TODO: rename? cause it's not really clear what this does 
 export async function getCompleteTemplate(cart_id: string) {
     try {
         const response = await axios.get(
@@ -423,17 +424,17 @@ export async function addNotifications(
     }
 }
 
-export async function orderInformation(cart_id: string) {
+export async function getOrderInformation(cart_id: string) {
     try {
-        const response = await axios.post(
+        const response = await axios.get(
             `${BACKEND_URL}/custom/order`,
             {
-                cart_id: cart_id,
-            },
-            {
+                params: {
+                    cart_id: cart_id
+                },
                 headers: {
                     authorization: cookies().get('_medusa_jwt')?.value,
-                },
+                }
             }
         );
         return response;
@@ -442,7 +443,7 @@ export async function orderInformation(cart_id: string) {
     }
 }
 
-export async function orderDetails(customer_id: string) {
+export async function getOrderDetails(customer_id: string) {
     try {
         const response = await axios.get(
             `${BACKEND_URL}/custom/order/customer-orders`,
@@ -459,7 +460,7 @@ export async function orderDetails(customer_id: string) {
     }
 }
 
-export async function orderBucket(customer_id: string) {
+export async function getOrderBucket(customer_id: string) {
     try {
         const response = await axios.get(
             `${BACKEND_URL}/custom/order/customer-orders`,
@@ -479,7 +480,7 @@ export async function orderBucket(customer_id: string) {
     }
 }
 
-export async function singleBucket(customer_id: string, bucket: number) {
+export async function getSingleBucket(customer_id: string, bucket: number) {
     try {
         const response = await axios.get(
             `${BACKEND_URL}/custom/order/customer-order`,
@@ -518,7 +519,7 @@ export async function getNotReviewedOrders(customer_id: string) {
     }
 }
 
-export async function orderStatus(order_id: string) {
+export async function getOrderStatus(order_id: string) {
     try {
         const response = await axios.get(`${BACKEND_URL}/custom/order/status`, {
             params: {
@@ -572,7 +573,7 @@ export async function getVerificationStatus(customer_id: string) {
     }
 }
 
-export async function averageRatings(product_id: string) {
+export async function getAverageRatings(product_id: string) {
     try {
         const response = await axios.get(
             `${BACKEND_URL}/custom/review/average`,
@@ -588,7 +589,7 @@ export async function averageRatings(product_id: string) {
     }
 }
 
-export async function reviewCounter(product_id: string) {
+export async function getReviewCount(product_id: string) {
     try {
         const response = await axios.get(`${BACKEND_URL}/custom/review/count`, {
             params: { product_id: product_id },
@@ -697,9 +698,9 @@ export async function setCurrency(newCurrency: string, customer_id: string) {
     }
 }
 
-export async function vendorProducts(store_id: string) {
+export async function getVendorProducts(store_id: string) {
     try {
-        const response = await axios.post(
+        const response = await axios.get(
             `${BACKEND_URL}/custom/vendors/vendor-products`,
             {
                 store_id: store_id,
@@ -711,7 +712,7 @@ export async function vendorProducts(store_id: string) {
     }
 }
 
-export async function vendorReviews(store_id: string) {
+export async function getVendorReviews(store_id: string) {
     try {
         const response = await axios.post(
             `${BACKEND_URL}/custom/vendors/vendor-reviews`,

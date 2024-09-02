@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@medusajs/ui';
 import { Box, Grid, GridItem, Heading, Text } from '@chakra-ui/react'; // Import Chakra UI components
 import Thumbnail from '@modules/products/components/thumbnail';
-import { vendorProducts, vendorReviews } from '@lib/data';
+import { getVendorProducts, getVendorReviews } from '@lib/data';
 
 const VendorTemplate = ({ vendors }: any) => {
     const [selectedVendor, setSelectedVendor] = useState(vendors[1]); // Set the second vendor as default selected
@@ -21,7 +21,7 @@ const VendorTemplate = ({ vendors }: any) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await vendorProducts(selectedVendor.id);
+                const response = await getVendorProducts(selectedVendor.id);
                 setProducts(response); // Set the fetched products to state
                 // console.log(`Response ${JSON.stringify(data)}`);
             } catch (error) {
@@ -31,7 +31,7 @@ const VendorTemplate = ({ vendors }: any) => {
 
         const fetchReviewStats = async () => {
             try {
-                const response = await vendorReviews(selectedVendor.id);
+                const response = await getVendorReviews(selectedVendor.id);
                 setReviewStats(response);
             } catch (error) {
                 console.log(`Error fetching review stats: ${error}`);
