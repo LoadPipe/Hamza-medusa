@@ -13,6 +13,7 @@ import {
     useDisclosure,
     CardFooter,
     ButtonGroup,
+    Flex,
     Button,
     Image,
 } from '@chakra-ui/react';
@@ -126,7 +127,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
 
     return (
         <Card
-            width={'900px'}
+            width={{ base: '100%', sm: '400px', md: '700px', lg: '900px' }}
             bg={'rgba(18, 18, 18, 0.9)'}
             p={8}
             textColor={'white'}
@@ -168,7 +169,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
                     <Stack divider={<StackDivider />} spacing={4}>
                         {reviews.map((review: any) => (
                             <CardBody key={review.id}>
-                                <Text fontSize="16px">
+                                <Text fontSize="16px" pb={8}>
                                     <Text as="span" color="#555555">
                                         Purchase Date:{' '}
                                     </Text>
@@ -182,6 +183,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                         src={review.product.thumbnail}
                                     />
                                     <Text
+                                        maxWidth={'500px'}
                                         fontSize={'18px'}
                                         fontWeight={'bold'}
                                         textTransform="uppercase"
@@ -190,6 +192,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                     </Text>
                                     {review.order_id && (
                                         <Button
+                                            p={8}
                                             onClick={() =>
                                                 handleReviewEdit(review)
                                             }
@@ -235,34 +238,56 @@ const ReviewPage = ({ region }: { region: Region }) => {
                             {pendingReviews.map((review: any) => (
                                 <CardBody key={review.id}>
                                     {review.items.length > 0 && (
-                                        <>
-                                            <Text fontSize="16px">
-                                                <Text as="span" color="#555555">
-                                                    Purchase Date:{' '}
+                                        <Flex
+                                            direction="row"
+                                            justify="space-between"
+                                            align="center"
+                                        >
+                                            {/* Left Column */}
+                                            <Box flex="1" pr={4}>
+                                                {' '}
+                                                {/* Right padding to give some space between columns */}
+                                                <Text fontSize="16px">
+                                                    <Text
+                                                        as="span"
+                                                        color="#555555"
+                                                    >
+                                                        Purchase Date:{' '}
+                                                    </Text>
+                                                    {format(
+                                                        new Date(
+                                                            review.created_at
+                                                        ),
+                                                        'PPP'
+                                                    )}
                                                 </Text>
-                                                {format(
-                                                    new Date(review.created_at),
-                                                    'PPP'
-                                                )}
-                                            </Text>
-                                            <div className="flex flex-row space-x-2 items-center">
-                                                <Image
-                                                    rounded={'lg'}
-                                                    width={'72px'}
-                                                    height={'72px'}
-                                                    src={
-                                                        review.items[0]
-                                                            .thumbnail
-                                                    }
-                                                />
-                                                <Text
-                                                    fontSize={'18px'}
-                                                    fontWeight={'bold'}
-                                                    textTransform="uppercase"
+                                                <Flex
+                                                    flexDir="row"
+                                                    alignItems="center"
+                                                    gap={2}
                                                 >
-                                                    {review.items[0].title}
-                                                    Accessing the first item
-                                                </Text>
+                                                    <Image
+                                                        rounded={'lg'}
+                                                        width={'72px'}
+                                                        height={'72px'}
+                                                        src={
+                                                            review.items[0]
+                                                                .thumbnail
+                                                        }
+                                                    />
+                                                    <Text
+                                                        fontSize={'18px'}
+                                                        maxWidth={'500px'}
+                                                        fontWeight={'bold'}
+                                                        textTransform="uppercase"
+                                                    >
+                                                        {review.items[0].title}
+                                                    </Text>
+                                                </Flex>
+                                            </Box>
+
+                                            {/* Right Column */}
+                                            <Box>
                                                 <Button
                                                     onClick={() =>
                                                         handlePendingReview(
@@ -270,11 +295,12 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                                         )
                                                     }
                                                     colorScheme="green"
+                                                    m={8} // Margin for spacing, adjust as necessary
                                                 >
                                                     Review
                                                 </Button>
-                                            </div>
-                                        </>
+                                            </Box>
+                                        </Flex>
                                     )}
                                 </CardBody>
                             ))}
