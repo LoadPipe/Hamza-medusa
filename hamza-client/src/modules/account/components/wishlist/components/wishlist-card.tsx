@@ -6,6 +6,9 @@ import {
     Button,
     Divider,
     Skeleton,
+    SkeletonText,
+    SkeletonCircle,
+    Box,
 } from '@chakra-ui/react';
 import Image from 'next/image';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
@@ -111,7 +114,63 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
     if (loading) {
         return (
             <Flex maxWidth={'879px'} width={'100%'} flexDir={'column'}>
-                <Skeleton height={'176px'} width="100%" borderRadius="md" />
+                <Flex height={'176px'} flexDir={'column'}>
+                    <Flex flexDir={'column'} gap={21} flex={1}>
+                        <Flex flexDir={'row'}>
+                            <SkeletonCircle size={'32px'} />
+                            <Box flex="1" ml="1rem" alignSelf={'center'}>
+                                <SkeletonText
+                                    noOfLines={1}
+                                    spacing="4"
+                                    alignSelf={'center'}
+                                    skeletonHeight="2"
+                                    width="150px"
+                                />
+                            </Box>
+                        </Flex>
+                        <Flex flexDir={'row'}>
+                            {/* Product image and Description */}
+                            <Skeleton
+                                height="75px"
+                                width="75px"
+                                borderRadius="8px"
+                            />
+                            <SkeletonText
+                                ml="1rem"
+                                alignSelf={'center'}
+                                noOfLines={2}
+                                spacing="4"
+                                width="300px"
+                            />
+
+                            {/* Currency Icon and Price */}
+                            <Flex ml="auto" alignSelf={'center'}>
+                                <SkeletonCircle size="22px" />
+                                <Skeleton
+                                    ml="0.5rem"
+                                    height="24px"
+                                    width="100px"
+                                />
+                            </Flex>
+                        </Flex>
+                    </Flex>
+
+                    <Flex ml="auto" flexDir={'row'}>
+                        {/* Add To Cart & Remove from Wishlist Buttons */}
+                        <Skeleton
+                            height={'36px'}
+                            width={'145px'}
+                            borderRadius={'full'}
+                        />
+                        <Skeleton
+                            ml="1rem"
+                            height={'36px'}
+                            width={'145px'}
+                            borderRadius={'full'}
+                        />
+                    </Flex>
+                </Flex>
+                <Divider mt="1rem" borderColor={'#555555'} />
             </Flex>
         );
     }
