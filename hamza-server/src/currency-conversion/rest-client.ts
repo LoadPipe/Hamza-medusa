@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-
+import logger from './logger';
 //TODO: re-create this as a service
 export type HexString = `0x${string}`;
 
@@ -8,7 +8,7 @@ const REST_URL =
 try {
     new URL(REST_URL);
 } catch (error) {
-    console.error('Invalid REST_SERVER_URL:', REST_URL);
+    logger.error('Invalid REST_SERVER_URL:', REST_URL);
     process.exit(1); // Exit the process if the URL is invalid
 }
 
@@ -20,6 +20,7 @@ export class CurrencyConversionClient {
             baseURL: REST_URL,
             timeout: 13000,
         });
+        logger.info('CurrencyConversionClient instantiated successfully');
     }
 
     /**
@@ -32,7 +33,7 @@ export class CurrencyConversionClient {
             const response = await this.client.get('/');
             return response.status === 200;
         } catch (error) {
-            console.error('Error checking status:', error.message);
+            logger.error('Error checking status:', error.message);
             return false;
         }
     }
@@ -62,20 +63,24 @@ export class CurrencyConversionClient {
                 case '0x0000000000000000000000000000000000000000':
                     return 2517.26;
                 case 'cny':
-                    if (toCurrency !== '0x0000000000000000000000000000000000000000')
+                    if (
+                        toCurrency !==
+                        '0x0000000000000000000000000000000000000000'
+                    )
                         return 0.14;
-                    else
-                        return 0.000051;
+                    else return 0.000051;
                 default:
-                    if (toCurrency !== '0x0000000000000000000000000000000000000000') {
-                        if (toCurrency === 'cny')
-                            return 7.14
+                    if (
+                        toCurrency !==
+                        '0x0000000000000000000000000000000000000000'
+                    ) {
+                        if (toCurrency === 'cny') return 7.14;
                         return 1;
                     }
                     return 0.00041;
             }
         } catch (error) {
-            console.error('Error getting exchange rate:', error.message);
+            logger.error('Error getting exchange rate:', error.message);
             return 1;
         }
     }
