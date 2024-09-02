@@ -10,6 +10,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
+        if (!handler.requireParam('store_id'))
+            return;
+
         //TODO: are these products being returned?
         const products = await productService.getProductsFromReview(handler.inputParams.store_id);
         res.json(products);

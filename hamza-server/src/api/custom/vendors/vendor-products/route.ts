@@ -14,6 +14,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
+        if (!handler.requireParam('store_id'))
+            return;
+
         const products = await productService.getProductsFromStore(
             handler.inputParams.store_id
         );

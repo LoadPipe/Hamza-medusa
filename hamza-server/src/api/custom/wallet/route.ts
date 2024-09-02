@@ -15,6 +15,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         if (!handler.requireParams(['message', 'signature']))
             return false;
 
+        //TODO: possibly needs security 
+
         //verify signature
         const isVerified = await customerService.verifyWalletSignature(
             handler.inputParams.signature,

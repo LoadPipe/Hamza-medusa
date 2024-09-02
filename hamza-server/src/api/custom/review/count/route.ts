@@ -16,6 +16,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
+        if (!handler.requireParam('product_id'))
+            return;
+
         const reviews = await productReviewService.getReviewCount(
             handler.inputParams.product_id
         );

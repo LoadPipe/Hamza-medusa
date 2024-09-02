@@ -10,12 +10,12 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        if (handler.inputParams.product_id?.length) {
+        if (handler.hasParam('product_id')) {
             const store_name = await productService.getStoreFromProduct(handler.inputParams.product_id);
             res.json(store_name);
         }
 
-        else if (handler.inputParams.store_name?.length) {
+        else if (handler.hasParam('store_name')) {
             const products = await productService.getProductsFromStoreName(
                 handler.inputParams.store_name
             );
@@ -23,12 +23,14 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         }
 
         else {
-            res.status(400).json({ message: 'Required parameters missing' });
+            res.status(400).json({ message: 'Required parameters either store_name or product_id missing' });
         }
     });
 };
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
+    const customerService = req.scope.resolve('customerService');
+
     const handler: RouteHandler = new RouteHandler(req, res, 'POST', '/custom/store', [
         'wallet_address',
         'signature',
@@ -37,8 +39,6 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     await handler.handle(async () => {
         if (!handler.requireParams(['wallet_address']))
             return;
-
-        const customerService = req.scope.resolve('customerService');
 
         const isVerified = await customerService.verifyWalletSignature(
             handler.inputParams.wallet_address,

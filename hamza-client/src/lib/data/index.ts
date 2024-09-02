@@ -612,8 +612,8 @@ export async function updateProductReview(
             `${BACKEND_URL}/custom/review`,
             {
                 product_id: product_id,
-                reviewUpdates: review,
-                ratingUpdates: rating,
+                review_updates: review,
+                rating_updates: rating,
                 customer_id: customer_id,
                 order_id: order_id,
             },

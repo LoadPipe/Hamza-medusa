@@ -24,29 +24,19 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         const { store_name } = req.query;
 
         // Validate the request
-        if (!store_name) {
-            return res.status(400).json({ message: 'store_id is required' });
-        }
+        if (handler.requireParam('store_name'))
+            return;
 
         // Fetch the categories by store ID
-        try {
-            const storeData = await storeService.getStoreByName(
-                store_name.toString()
-            );
-            console.log('Retrieved store data:', storeData);
-            const products = await productService.getCategoriesByStoreId(
-                storeData.id.toString()
-            );
-            console.log('Retrieved products:', products);
+        const storeData = await storeService.getStoreByName(
+            store_name.toString()
+        );
+        const products = await productService.getCategoriesByStoreId(
+            storeData.id.toString()
+        );
 
-            // Return the products with categories
-            return res.json(products);
-        } catch (error) {
-            return res.status(500).json({
-                message: 'Failed to fetch categories',
-                error: error.message,
-            });
-        }
+        // Return the products with categories
+        return res.json(products);
     });
 };
 
