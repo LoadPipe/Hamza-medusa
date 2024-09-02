@@ -73,7 +73,12 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
     }, [productId]);
 
     // Add wishlist product to cart
-    const handleAddToCart = async () => {
+    const handleAddToCart = async (showPopup: boolean = true) => {
+        if (!productVarientId) {
+            console.error('Selected variant is null or undefined.');
+            return;
+        }
+
         try {
             await addToCart({
                 variantId: productVarientId!,
@@ -81,7 +86,12 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                 countryCode: countryCode,
                 currencyCode: currencyCode,
             });
-            setCartModalOpen(true);
+            if (showPopup) {
+                setCartModalOpen(true);
+                setTimeout(() => {
+                    setCartModalOpen(false);
+                }, 3000);
+            }
         } catch (error) {
             console.error('Error adding to cart:', error);
         }
