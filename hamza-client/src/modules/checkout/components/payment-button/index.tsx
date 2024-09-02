@@ -4,7 +4,6 @@ import {
     IWalletPaymentHandler,
     FakeWalletPaymentHandler,
     MassmarketWalletPaymentHandler,
-    SwitchWalletPaymentHandler,
     LiteSwitchWalletPaymentHandler,
     DirectWalletPaymentHandler,
 } from './payment-handlers';
@@ -19,12 +18,9 @@ import { useCompleteCart, useUpdateCart } from 'medusa-react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { clearCart, finalizeCheckout, getCheckoutData } from '@lib/data';
-import {
-    getMassmarketPaymentAddress,
-    getMasterSwitchAddress,
-} from 'contracts.config';
 import toast from 'react-hot-toast';
-import { checkoutMode, cancelOrderCart } from '@lib/data/index';
+import { checkoutMode } from '@lib/data/index';
+import JSCookie from 'js-cookie';
 
 //TODO: we need a global common function to replace this
 const MEDUSA_SERVER_URL =
@@ -56,15 +52,25 @@ declare global {
 const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
     const notReady =
         !cart ||
-        !cart.shipping_address ||
-        !cart.billing_address ||
-        !cart.email ||
-        cart.shipping_methods.length < 1
+            !cart.shipping_address ||
+            !cart.billing_address ||
+            !cart.email ||
+            cart.shipping_methods.length < 1
             ? true
             : false;
 
     return <CryptoPaymentButton notReady={notReady} cart={cart} />;
 };
+
+export function getCookie(name: string) {
+    if (typeof window === 'undefined') {
+        // Read a cookie server-side
+        return require('next/headers').cookies().get(name)?.value;
+    }
+
+    // Read a cookie client-side
+    return JSCookie.get(name);
+}
 
 // TODO: (For G) Typescriptify this function with verbose error handling
 const CryptoPaymentButton = ({
@@ -270,9 +276,14 @@ const CryptoPaymentButton = ({
 
     const cancelOrderFromCart = async () => {
         try {
-            //TODO: MOVE TO INDEX.TS
-            let response = await cancelOrderCart(cart.id);
-            return;
+            const response = await axios.post(`${MEDUSA_SERVER_URL}/custom/cart/cancel`, {
+                cart_id: cart.id,
+            }, {
+                headers: {
+                    authorization: getCookie('_medusa_jwt'),
+                },
+            });
+            return response;
         } catch (e) {
             console.log('error in cancelling order ', e);
             return;
@@ -295,7 +306,7 @@ const CryptoPaymentButton = ({
             updateCart.mutate(
                 { context: {} },
                 {
-                    onSuccess: ({}) => {
+                    onSuccess: ({ }) => {
                         //this calls the CartCompletion routine
                         completeCart.mutate(void 0, {
                             onSuccess: async ({ data, type }) => {

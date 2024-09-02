@@ -376,8 +376,10 @@ export async function removeNotifications(customer_id: string) {
 export async function cancelOrderCart(cart_id: string) {
     try {
         const response = await axios.post(`${BACKEND_URL}/custom/cart/cancel`, {
-            data: {
-                cart_id,
+            cart_id,
+        }, {
+            headers: {
+                authorization: cookies().get('_medusa_jwt')?.value,
             },
         });
         return response;
