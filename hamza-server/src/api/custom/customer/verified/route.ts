@@ -16,6 +16,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         if (!handler.requireParam('customer_id'))
             return;
 
+        //enforce security
+        if (!handler.enforceCustomerId(handler.inputParams.customer_id))
+            return;
+
         const verify =
             await customerService.isVerified(handler.inputParams.customer_id);
         res.json(verify);
