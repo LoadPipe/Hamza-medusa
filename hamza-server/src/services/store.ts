@@ -32,7 +32,7 @@ class StoreService extends MedusaStoreService {
         super(container);
         this.storeRepository_ = container.storeRepository;
         this.productRepository_ = container.productRepository;
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'StoreService');
     }
 
     async createStore(

@@ -29,7 +29,7 @@ export default class CartService extends MedusaCartService {
         this.customerRepository_ = container.customerRepository;
         this.lineItemRepository_ = container.lineItemRepository;
         this.shippingOptionRepository_ = container.shippingOptionRepository;
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'CartService');
         this.priceConverter = new PriceConverter(this.logger);
     }
 

@@ -22,7 +22,7 @@ class ProductReviewService extends TransactionBaseService {
         this.productVariantRepository_ = container.productVariantRepository;
         this.productReviewRepository_ = container.productReviewRepository;
         this.orderRepository_ = container.orderRepository;
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'ProductReviewService');
     }
 
     async customerHasBoughtProduct(customer_id, product_id) {

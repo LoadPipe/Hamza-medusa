@@ -29,7 +29,7 @@ export default class ProductCollectionService extends MedusaProductCollectionSer
         super(container);
         this.productCollectionRepository_ =
             container.productCollectionRepository;
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'ProductCollectionService');
     }
 
     async update(

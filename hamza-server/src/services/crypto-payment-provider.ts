@@ -24,7 +24,7 @@ class CryptoPaymentService extends AbstractPaymentProcessor {
         //this.logger.debug(config);
         super(container, config);
         this.cartService = container.cartService;
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'CryptoPaymentService');
         this.logger.debug('CryptoPaymentService::config');
     }
 

@@ -15,7 +15,7 @@ class ProductVariantService extends MedusaProductVariantService {
     constructor(container) {
         super(container);
         this.productVariantRepository_ = container.productVariantRepository;
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'ProductVariantService');
     }
 
     async checkInventory(variantId: string) {
