@@ -88,6 +88,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                             alt={productImage}
                             width={'75px'}
                             height={'75px'}
+                            style={{ borderRadius: '8px' }}
                         />
                         <Text
                             ml="1rem"
