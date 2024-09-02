@@ -715,33 +715,44 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                     )
                                 )}
                             </div>
-                            <Flex
-                                justifyContent="flex-end"
-                                my={8}
-                                gap={'4'}
-                                borderBottom="1px solid"
-                                borderColor="gray.200"
-                                pb={6}
-                                _last={{
-                                    pb: 0,
-                                    borderBottom: 'none',
-                                }}
-                            >
-                                {orderStatuses[order.id] === 'canceled' ? (
-                                    <Button colorScheme="red" ml={4} isDisabled>
-                                        Cancellation Requested
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        variant="solid"
-                                        colorScheme="blue"
-                                        ml={4}
-                                        onClick={() => openModal(order.id)}
+                            <>
+                                {order.items && order.items.length > 0 && (
+                                    <Flex
+                                        justifyContent="flex-end"
+                                        my={8}
+                                        gap={'4'}
+                                        borderBottom="1px solid"
+                                        borderColor="gray.200"
+                                        pb={6}
+                                        _last={{
+                                            pb: 0,
+                                            borderBottom: 'none',
+                                        }}
                                     >
-                                        Request Cancellation
-                                    </Button>
+                                        {orderStatuses[order.id] ===
+                                        'canceled' ? (
+                                            <Button
+                                                colorScheme="red"
+                                                ml={4}
+                                                isDisabled
+                                            >
+                                                Cancellation Requested
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="solid"
+                                                colorScheme="blue"
+                                                ml={4}
+                                                onClick={() =>
+                                                    openModal(order.id)
+                                                }
+                                            >
+                                                Request Cancellation
+                                            </Button>
+                                        )}
+                                    </Flex>
                                 )}
-                            </Flex>
+                            </>
                         </>
                     ))}
                     <Modal isOpen={isModalOpen} onClose={closeModal}>
