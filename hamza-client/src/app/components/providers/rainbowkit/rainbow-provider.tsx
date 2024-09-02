@@ -58,6 +58,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         if (authData.status === 'authenticated' && customer_id) {
             loadWishlist(customer_id);
+            router.refresh();
         }
     }, [authData.status, customer_id]); // Dependency array includes any state variables that trigger a reload
 
