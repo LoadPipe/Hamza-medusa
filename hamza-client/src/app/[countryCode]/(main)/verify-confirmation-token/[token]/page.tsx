@@ -7,7 +7,7 @@ import { Toast } from '@medusajs/ui';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { verifyToken } from '@lib/data/index';
 
-const VerifyEmail = async () => {
+const VerifyEmail = () => {
     const [message, setDisplayMessage] = useState(
         'loading results, Please wait!!!!'
     );
@@ -15,19 +15,19 @@ const VerifyEmail = async () => {
     const { token } = useParams();
     const { setCustomerAuthData, authData } = useCustomerAuthStore();
 
-    const confirmationTokenHandler = async () => {
-        let res: any = verifyToken(token as string);
-        if (res == true) {
-            setDisplayMessage('Email verified successfully!!!');
-            setCustomerAuthData({ ...authData, is_verified: true });
-            return;
-        } else {
-            setDisplayMessage(res?.message);
-            return;
-        }
-    };
-
     useEffect(() => {
+        const confirmationTokenHandler = async () => {
+            let res: any = verifyToken(token as string);
+            console.log(`WTF tf does this even return`);
+            if (res == true) {
+                setDisplayMessage('Email verified successfully!!!');
+                setCustomerAuthData({ ...authData, is_verified: true });
+                return;
+            } else {
+                setDisplayMessage(res?.message);
+                return;
+            }
+        };
         confirmationTokenHandler();
     }, []);
 

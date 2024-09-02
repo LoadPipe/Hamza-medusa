@@ -8,7 +8,11 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const storeService: StoreService = req.scope.resolve('storeService');
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'GET', '/custom/store', ['product_id']
+        req,
+        res,
+        'GET',
+        '/custom/store',
+        ['product_id']
     );
 
     await handler.handle(async () => {
@@ -40,8 +44,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     ]);
 
     await handler.handle(async () => {
-        if (!handler.requireParams(['wallet_address']))
-            return;
+        if (!handler.requireParams(['wallet_address'])) return;
 
         const isVerified = await customerService.verifyWalletSignature(
             handler.inputParams.wallet_address,

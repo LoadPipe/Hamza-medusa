@@ -53,35 +53,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     productHandle,
     productId,
 }) => {
-    const [loadingBuy, setLoadingBuy] = useState(false);
-    const [loadingAddToCart, setLoadingAddToCard] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
-    const { wishlist } = useWishlistStore();
-    const { addWishlistItemMutation, removeWishlistItemMutation } =
-        useWishlistMutations();
-    const { authData } = useCustomerAuthStore();
-
-    const handleAddToCart = async () => {
-        setLoadingAddToCard(true);
-        await addToCart({
-            variantId: variantID ?? '',
-            quantity: 1,
-            countryCode: countryCode ?? '',
-            currencyCode: 'eth',
-        });
-        setLoadingAddToCard(false);
-    };
-
-    const handleBuyNow = async () => {
-        setLoadingBuy(true);
-        await addToCart({
-            variantId: variantID ?? '',
-            quantity: 1,
-            countryCode: countryCode ?? '',
-            currencyCode: 'eth',
-        });
-        setLoadingBuy(false);
-    };
 
     const objectFit = getObjectFit(productHandle);
 
@@ -135,66 +107,6 @@ const ProductCard: React.FC<ProductCardProps> = ({
                             {productName}
                         </Text>
                         {/* wish list heart code */}
-
-                        {authData.status == 'authenticated' && (
-                            <Box
-                                p="5px"
-                                ml="auto"
-                                display={{ base: 'none', md: 'flex' }}
-                            >
-                                <Flex
-                                    justifyContent="center"
-                                    alignItems="center"
-                                    width="40px"
-                                    height="40px"
-                                    borderRadius="full"
-                                    borderWidth="2px"
-                                    borderColor="#7B61FF"
-                                    cursor="pointer"
-                                    onClick={() => {
-                                        console.log('adding ', productId);
-                                        !wishlist.products.find(
-                                            (a) => a.id == productId
-                                        )
-                                            ? addWishlistItemMutation.mutate({
-                                                id: productId!,
-                                                description: '',
-                                                title: productName!,
-                                                thumbnail: imageSrc!,
-                                                handle: productHandle!,
-                                            })
-                                            : removeWishlistItemMutation.mutate(
-                                                {
-                                                    id: productId!,
-                                                    description: '',
-                                                    title: productName!,
-                                                    thumbnail: imageSrc!,
-                                                    handle: productHandle!,
-                                                }
-                                            );
-                                    }}
-                                    sx={{
-                                        userSelect: 'none',
-                                    }}
-                                >
-                                    <Flex alignSelf="center">
-                                        {!wishlist.products.find(
-                                            (a) => a.id == productId
-                                        ) ? (
-                                            <FaRegHeart
-                                                color="#7B61FF"
-                                                size={20}
-                                            />
-                                        ) : (
-                                            <FaHeart
-                                                color="#7B61FF"
-                                                size={20}
-                                            />
-                                        )}
-                                    </Flex>
-                                </Flex>
-                            </Box>
-                        )}
                     </Flex>
 
                     {/* revew + currency */}
@@ -289,31 +201,3 @@ const ProductCard: React.FC<ProductCardProps> = ({
 };
 
 export default ProductCard;
-
-{
-    /* add to cart / buy button */
-}
-{
-    /* <Flex
-                            direction={{ base: 'column', md: 'row' }} // Stack vertically on small screens, horizontally on medium and up
-                            gap="14px"
-                            py={2}
-                        >
-                            <CartButton
-                                handleBuyNow={() => handleAddToCart()}
-                                loader={loadingAddToCart}
-                                styles={'w-full'}
-                                outOfStock={false}
-                                title={'Add to Cart'}
-                            />
-                            <LocalizedClientLink href="/checkout?step=address">
-                                <BuyButton
-                                    handleBuyNow={() => handleBuyNow()}
-                                    loader={loadingBuy}
-                                    styles={'w-full'}
-                                    outOfStock={false}
-                                    title="Buy Now"
-                                />
-                            </LocalizedClientLink>
-                        </Flex> */
-}
