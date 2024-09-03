@@ -331,7 +331,7 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    async getProductByHandle(storeId: string) {
+    async getProductByCategoryHandle(storeId: string) {
         try {
             // Ensure the store exists
             const store = await this.storeRepository_.findOne({
