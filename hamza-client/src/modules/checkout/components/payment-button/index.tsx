@@ -52,10 +52,10 @@ declare global {
 const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
     const notReady =
         !cart ||
-            !cart.shipping_address ||
-            !cart.billing_address ||
-            !cart.email ||
-            cart.shipping_methods.length < 1
+        !cart.shipping_address ||
+        !cart.billing_address ||
+        !cart.email ||
+        cart.shipping_methods.length < 1
             ? true
             : false;
 
@@ -276,13 +276,17 @@ const CryptoPaymentButton = ({
 
     const cancelOrderFromCart = async () => {
         try {
-            const response = await axios.post(`${MEDUSA_SERVER_URL}/custom/cart/cancel`, {
-                cart_id: cart.id,
-            }, {
-                headers: {
-                    authorization: getCookie('_medusa_jwt'),
+            const response = await axios.post(
+                `${MEDUSA_SERVER_URL}/custom/cart/cancel`,
+                {
+                    cart_id: cart.id,
                 },
-            });
+                {
+                    headers: {
+                        authorization: getCookie('_medusa_jwt'),
+                    },
+                }
+            );
             return response;
         } catch (e) {
             console.log('error in cancelling order ', e);
@@ -295,57 +299,63 @@ const CryptoPaymentButton = ({
      * @returns
      */
     const handlePayment = async () => {
-        try {
-            setSubmitting(true);
+        if (!isConnected) {
+            if (openConnectModal) openConnectModal();
+        } else {
+            try {
+                setSubmitting(true);
 
-            //here connect wallet and sign in, if not connected
-            // causes bug when connected with mobile
-
-            connect();
-
-            updateCart.mutate(
-                { context: {} },
-                {
-                    onSuccess: ({ }) => {
-                        //this calls the CartCompletion routine
-                        completeCart.mutate(void 0, {
-                            onSuccess: async ({ data, type }) => {
-                                //TODO: data is undefined
-                                try {
-                                    //this does wallet payment, and everything after
-                                    completeCheckout(cart.id);
-                                } catch (e) {
-                                    console.error(e);
+                updateCart.mutate(
+                    { context: {} },
+                    {
+                        onSuccess: ({}) => {
+                            //this calls the CartCompletion routine
+                            completeCart.mutate(void 0, {
+                                onSuccess: async ({ data, type }) => {
+                                    //TODO: data is undefined
+                                    try {
+                                        //this does wallet payment, and everything after
+                                        completeCheckout(cart.id);
+                                    } catch (e) {
+                                        console.error(e);
+                                        setSubmitting(false);
+                                        displayError(
+                                            'Checkout was not completed'
+                                        );
+                                        await cancelOrderFromCart();
+                                    }
+                                },
+                                onError: async (e) => {
                                     setSubmitting(false);
-                                    displayError('Checkout was not completed');
+                                    console.error(e);
+                                    if (
+                                        e.message?.indexOf('status code 401') >=
+                                        0
+                                    ) {
+                                        displayError(
+                                            'Customer not whitelisted'
+                                        );
+                                    } else {
+                                        displayError(
+                                            'Checkout was not completed'
+                                        );
+                                    }
+
+                                    //TODO: this is a really bad way to do this
                                     await cancelOrderFromCart();
-                                }
-                            },
-                            onError: async (e) => {
-                                setSubmitting(false);
-                                console.error(e);
-                                if (
-                                    e.message?.indexOf('status code 401') >= 0
-                                ) {
-                                    displayError('Customer not whitelisted');
-                                } else {
-                                    displayError('Checkout was not completed');
-                                }
+                                },
+                            });
+                        },
+                    }
+                );
 
-                                //TODO: this is a really bad way to do this
-                                await cancelOrderFromCart();
-                            },
-                        });
-                    },
-                }
-            );
-
-            return;
-        } catch (e) {
-            console.error(e);
-            setSubmitting(false);
-            displayError('Checkout was not completed');
-            await cancelOrderFromCart();
+                return;
+            } catch (e) {
+                console.error(e);
+                setSubmitting(false);
+                displayError('Checkout was not completed');
+                await cancelOrderFromCart();
+            }
         }
     };
 
