@@ -30,7 +30,7 @@ const ProductCardGroup = ({ vendorName, handle }: Props) => {
     const url =
         handle === 'all'
             ? `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products?store_name=${vendorName}`
-            : `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/products?store_id=${storeId}&handle=${handle}`;
+            : `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/products?store_name=${vendorName}&handle=${handle}`;
 
     // Fetch data using the useQuery hook
     const { data, error, isLoading } = useQuery(
