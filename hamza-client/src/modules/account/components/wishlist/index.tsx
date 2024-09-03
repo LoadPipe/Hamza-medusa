@@ -15,20 +15,32 @@ const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
 
     return (
         <Box color={'white'}>
-            {wishlist.products?.map((product, index) => (
-                <Box key={index} mt={index > 0 ? '1rem' : 0}>
-                    <WishlistCard
-                        key={index}
-                        productData={product}
-                        productId={product.id}
-                        productVarientId={product.productVarientId}
-                        productImage={product.thumbnail}
-                        productDescription={product.title}
-                        productPrice={product.price.toString()}
-                        countryCode={countryCode}
-                    />
-                </Box>
-            ))}
+            {wishlist.products && wishlist.products.length > 0 ? (
+                wishlist.products.map((product, index) => (
+                    <Box key={index} mt={index > 0 ? '1rem' : 0}>
+                        <WishlistCard
+                            key={index}
+                            productData={product}
+                            productId={product.id}
+                            productVariantId={product.productVariantId}
+                            productImage={product.thumbnail}
+                            productDescription={product.title}
+                            productPrice={product.price.toString()}
+                            countryCode={countryCode}
+                        />
+                    </Box>
+                ))
+            ) : (
+                <Flex
+                    justifyContent="center"
+                    alignItems="center"
+                    height="100vh"
+                >
+                    <Text fontSize="lg" color="white">
+                        Your wishlist is currently empty.
+                    </Text>
+                </Flex>
+            )}
         </Box>
     );
 };
