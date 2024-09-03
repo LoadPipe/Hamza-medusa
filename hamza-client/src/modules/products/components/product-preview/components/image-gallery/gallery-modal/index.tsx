@@ -3,16 +3,17 @@ import {
     Modal,
     ModalOverlay,
     ModalContent,
-    ModalHeader,
-    ModalFooter,
-    ModalBody,
     ModalCloseButton,
+    ModalBody,
     Button,
     Image,
     Box,
     Grid,
     Flex,
+    IconButton,
 } from '@chakra-ui/react';
+import { MdChevronLeft, MdChevronRight } from 'react-icons/md';
+import { FaCircle } from 'react-icons/fa';
 
 interface ImageGalleryModalProps {
     isOpen: boolean;
@@ -26,6 +27,19 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
     images,
 }) => {
     const [selectedImage, setSelectedImage] = useState<string>(images[0]);
+    const [currentIndex, setCurrentIndex] = useState<number>(0);
+
+    const handlePrevious = () => {
+        const newIndex = (currentIndex - 1 + images.length) % images.length;
+        setCurrentIndex(newIndex);
+        setSelectedImage(images[newIndex]);
+    };
+
+    const handleNext = () => {
+        const newIndex = (currentIndex + 1) % images.length;
+        setCurrentIndex(newIndex);
+        setSelectedImage(images[newIndex]);
+    };
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="4xl">
@@ -37,16 +51,16 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                 maxH="883px"
                 px="24px" // Horizontal padding
                 py="40px" // Vertical padding at the top
+                backgroundColor="#121212"
             >
-                <ModalCloseButton />
+                <ModalCloseButton color="white" />
                 <ModalBody>
-                    {/* Large Image Display */}
-
                     <Flex
                         flexDir={'column'}
                         justifyContent={'center'}
                         alignItems={'center'}
                         height={'100%'}
+                        position="relative"
                     >
                         <Box mb={4} width="840px" height="598px" mx="auto">
                             <Image
@@ -59,19 +73,50 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                             />
                         </Box>
 
+                        {/* Left and Right Navigation Buttons */}
+                        <IconButton
+                            aria-label="Previous Image"
+                            icon={<MdChevronLeft />}
+                            position="absolute"
+                            top="40%"
+                            left="-25px" // Positioned outside the left side of the image
+                            transform="translateY(-50%)"
+                            size="lg"
+                            onClick={handlePrevious}
+                            backgroundColor="rgba(0, 0, 0, 0.5)"
+                            _hover={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+                            color="white"
+                            borderRadius="full"
+                        />
+                        <IconButton
+                            aria-label="Next Image"
+                            icon={<MdChevronRight />}
+                            position="absolute"
+                            top="40%"
+                            right="-25px" // Positioned outside the right side of the image
+                            transform="translateY(-50%)"
+                            size="lg"
+                            onClick={handleNext}
+                            backgroundColor="rgba(0, 0, 0, 0.5)"
+                            _hover={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+                            color="white"
+                            borderRadius="full"
+                        />
+
                         {/* Thumbnail Images */}
                         <Grid
                             templateColumns="repeat(5, 145px)"
                             justifyContent="center"
                             justifyItems="center"
                             gap={7}
+                            mt={4}
                         >
                             {images.map((image, index) => (
                                 <Box
                                     key={index}
                                     border={
                                         selectedImage === image
-                                            ? '2px solid #3182ce'
+                                            ? '2px solid #ffff'
                                             : '2px solid transparent'
                                     }
                                     borderRadius="md"
@@ -79,7 +124,10 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                                     cursor="pointer"
                                     width="145px"
                                     height="145px" // Ensures the thumbnails are square
-                                    onClick={() => setSelectedImage(image)}
+                                    onClick={() => {
+                                        setSelectedImage(image);
+                                        setCurrentIndex(index);
+                                    }}
                                 >
                                     <Image
                                         src={image}
@@ -91,6 +139,22 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                                 </Box>
                             ))}
                         </Grid>
+
+                        {/* Dots Indicator */}
+                        <Flex mt={4} justifyContent="center">
+                            {images.map((_, index) => (
+                                <Box key={index} mx={1}>
+                                    <FaCircle
+                                        size={8}
+                                        color={
+                                            index === currentIndex
+                                                ? 'green'
+                                                : '#666'
+                                        }
+                                    />
+                                </Box>
+                            ))}
+                        </Flex>
                     </Flex>
                 </ModalBody>
             </ModalContent>
