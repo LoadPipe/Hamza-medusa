@@ -22,7 +22,7 @@ export default class ConfirmationTokenService extends TransactionBaseService {
         super(container);
         this.confirmationTokenRepository_ = ConfirmationTokenRepository;
         this.customerRepository_ = CustomerRepository;
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'ConfirmationTokenService');
         this.eventBus_ = container.eventBusService;
     }
 

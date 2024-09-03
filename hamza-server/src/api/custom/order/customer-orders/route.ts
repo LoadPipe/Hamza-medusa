@@ -25,7 +25,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             req.scope.resolve('customerService');
 
         //validate
-        if (handler.requireParams(['customer_id'])) {
+        if (handler.requireParam('customer_id')) {
             const customerId = handler.inputParams.customer_id;
 
             //enforce security

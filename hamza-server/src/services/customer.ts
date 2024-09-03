@@ -21,7 +21,7 @@ export default class CustomerService extends MedusaCustomerService {
     constructor(container) {
         super(container);
         this.customerRepository_ = container.customerRepository;
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'CustomerService');
     }
 
     async create(input: CustomCustomerInput): Promise<any> {

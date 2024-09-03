@@ -1,14 +1,12 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import ItemsTemplate from './items';
 import Summary from './summary';
-import EmptyCartMessage from '../components/empty-cart-message';
 import { CartWithCheckoutStep } from 'types/global';
 import SignInPrompt from '../components/sign-in-prompt';
 import Divider from '@modules/common/components/divider';
 import { Customer } from '@medusajs/medusa';
-import { Box, Flex, Text } from '@chakra-ui/react';
-import CartShippingAddress from '../components/address';
+import { Flex } from '@chakra-ui/react';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
 const CartTemplate = ({

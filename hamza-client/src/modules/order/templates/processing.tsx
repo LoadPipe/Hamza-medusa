@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { cancelOrder, orderStatus, singleBucket } from '@lib/data';
+import { cancelOrder, getOrderStatus, getSingleBucket } from '@lib/data';
 import {
     Box,
     Button,
@@ -102,7 +102,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
     const fetchAllOrders = async (customerId: string) => {
         setIsLoading(true);
         try {
-            const bucket = await singleBucket(customerId, 1);
+            const bucket = await getSingleBucket(customerId, 1);
             if (Array.isArray(bucket)) {
                 setCustomerOrder(bucket);
                 console.log(`BUCKETS ${JSON.stringify(bucket)}`);
@@ -126,7 +126,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
             const statuses = await Promise.allSettled(
                 customerOrder.map(async (order) => {
                     try {
-                        const statusRes = await orderStatus(order.id);
+                        const statusRes = await getOrderStatus(order.id);
                         console.log(
                             `Fetching status for order ${order.id} StatusResponse ${statusRes.order}`
                         );
@@ -699,8 +699,8 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     )
                                                                                         ? ''
                                                                                         : order
-                                                                                              .customer
-                                                                                              .email}
+                                                                                            .customer
+                                                                                            .email}
                                                                                 </Text>
                                                                             </Box>
                                                                         </VStack>
@@ -715,33 +715,44 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                     )
                                 )}
                             </div>
-                            <Flex
-                                justifyContent="flex-end"
-                                my={8}
-                                gap={'4'}
-                                borderBottom="1px solid"
-                                borderColor="gray.200"
-                                pb={6}
-                                _last={{
-                                    pb: 0,
-                                    borderBottom: 'none',
-                                }}
-                            >
-                                {orderStatuses[order.id] === 'canceled' ? (
-                                    <Button colorScheme="red" ml={4} isDisabled>
-                                        Cancellation Requested
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        variant="solid"
-                                        colorScheme="blue"
-                                        ml={4}
-                                        onClick={() => openModal(order.id)}
+                            <>
+                                {order.items && order.items.length > 0 && (
+                                    <Flex
+                                        justifyContent="flex-end"
+                                        my={8}
+                                        gap={'4'}
+                                        borderBottom="1px solid"
+                                        borderColor="gray.200"
+                                        pb={6}
+                                        _last={{
+                                            pb: 0,
+                                            borderBottom: 'none',
+                                        }}
                                     >
-                                        Request Cancellation
-                                    </Button>
+                                        {orderStatuses[order.id] ===
+                                        'canceled' ? (
+                                            <Button
+                                                colorScheme="red"
+                                                ml={4}
+                                                isDisabled
+                                            >
+                                                Cancellation Requested
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="solid"
+                                                colorScheme="blue"
+                                                ml={4}
+                                                onClick={() =>
+                                                    openModal(order.id)
+                                                }
+                                            >
+                                                Request Cancellation
+                                            </Button>
+                                        )}
+                                    </Flex>
                                 )}
-                            </Flex>
+                            </>
                         </>
                     ))}
                     <Modal isOpen={isModalOpen} onClose={closeModal}>

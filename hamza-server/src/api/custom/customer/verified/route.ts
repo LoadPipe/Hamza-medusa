@@ -7,13 +7,17 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         'customerService'
     );
 
-    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/verify', [
+    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/customer/verified', [
         'customer_id'
     ]);
 
     //TODO: this doesn't need to be here; it exists elsewhere for sure
     await handler.handle(async () => {
         if (!handler.requireParam('customer_id'))
+            return;
+
+        //enforce security
+        if (!handler.enforceCustomerId(handler.inputParams.customer_id))
             return;
 
         const verify =

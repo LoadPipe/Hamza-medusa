@@ -64,7 +64,7 @@ export class BasicCheckoutProcessor {
         this.lineItemRepository = container.lineItemRepository;
         this.whitelistService = container.whitelistService;
         this.storeRepository = container.storeRepository;
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'BasicCheckoutProcessor');
     }
 
     /**

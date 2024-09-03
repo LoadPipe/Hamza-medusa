@@ -10,6 +10,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const handler: RouteHandler = new RouteHandler(req, res, 'POST', '/custom/variant/count', ['variant_id']);
 
     await handler.handle(async () => {
+        if (!handler.requireParam('variant_id'))
+            return;
+
         const variant = await productVariantService.checkInventory(
             handler.inputParams.variant_id as string
         );

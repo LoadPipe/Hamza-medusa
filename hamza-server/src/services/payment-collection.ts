@@ -22,7 +22,7 @@ export default class PaymentCollectionService extends MedusaPaymentCollectionSer
         super(container);
         this.paymentCollectionRepository_ =
             container.paymentCollectionRepository;
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'PaymentCollectionService');
     }
 
     async create(

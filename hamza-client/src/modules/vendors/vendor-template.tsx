@@ -3,10 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@medusajs/ui';
 import { Box, Grid, GridItem, Heading, Text } from '@chakra-ui/react'; // Import Chakra UI components
 import Thumbnail from '@modules/products/components/thumbnail';
-import { vendorProducts, vendorReviews } from '@lib/data';
+import { getStoreProducts, getStoreReviews } from '@lib/data';
 
 const VendorTemplate = ({ vendors }: any) => {
-    const [selectedVendor, setSelectedVendor] = useState(vendors[1]); // Set the second vendor as default selected
+    const [selectedStore, setSelectedVendor] = useState(vendors[1]); // Set the second vendor as default selected
     const [products, setProducts] = useState([]); // State to hold the products
     const [reviewStats, setReviewStats] = useState({
         reviewCount: 0,
@@ -21,7 +21,7 @@ const VendorTemplate = ({ vendors }: any) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await vendorProducts(selectedVendor.id);
+                const response = await getStoreProducts(selectedStore.id);
                 setProducts(response); // Set the fetched products to state
                 // console.log(`Response ${JSON.stringify(data)}`);
             } catch (error) {
@@ -31,7 +31,7 @@ const VendorTemplate = ({ vendors }: any) => {
 
         const fetchReviewStats = async () => {
             try {
-                const response = await vendorReviews(selectedVendor.id);
+                const response = await getStoreReviews(selectedStore.id);
                 setReviewStats(response);
             } catch (error) {
                 console.log(`Error fetching review stats: ${error}`);
@@ -40,7 +40,7 @@ const VendorTemplate = ({ vendors }: any) => {
 
         fetchData();
         fetchReviewStats();
-    }, [selectedVendor]);
+    }, [selectedStore]);
 
     // console.log(`Vendors ${JSON.stringify(vendors)}`);
 
@@ -54,7 +54,7 @@ const VendorTemplate = ({ vendors }: any) => {
                             onClick={() => handleSelectVendor(vendor)}
                             style={{
                                 backgroundColor:
-                                    vendor === selectedVendor
+                                    vendor === selectedStore
                                         ? 'orange'
                                         : 'initial',
                             }}
@@ -66,7 +66,7 @@ const VendorTemplate = ({ vendors }: any) => {
                 ))}
             </div>
             <Box mt={4}>
-                <Heading>Selected Vendor: {selectedVendor.name}</Heading>
+                <Heading>Selected Vendor: {selectedStore.name}</Heading>
                 <Text>Total Products: {products.length}</Text>{' '}
                 <Box>
                     <Heading as="h2" size="md" mt={4}>

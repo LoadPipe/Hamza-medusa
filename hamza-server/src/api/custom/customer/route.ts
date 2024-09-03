@@ -8,6 +8,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
+        //validation 
+        if (!handler.requireParam('customer_id'))
+            return;
+
         //security 
         if (!handler.enforceCustomerId(handler.inputParams.customer_id))
             return;

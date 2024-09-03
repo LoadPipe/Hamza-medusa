@@ -15,7 +15,7 @@ export default class WhiteListService extends TransactionBaseService {
         super(container);
         this.customerRepository_ = CustomerRepository;
         this.whitelistRepository_ = WhiteListRepository;
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'WhiteListService');
     }
 
     async create(storeId: string, walletAddress: string) {

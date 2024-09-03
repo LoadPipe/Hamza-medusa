@@ -14,7 +14,7 @@ export default class AuthService extends MedusaAuthService {
     constructor(container) {
         super(container);
         // Assuming you have additional setup or properties to include
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'AuthService');
     }
 
     // Overload to keep the original authenticate method signature

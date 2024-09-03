@@ -19,7 +19,7 @@ class SmtpNotificationService extends AbstractNotificationService {
         super(container);
         this.notificationDataService = new NotificationDataService(container);
         this.smtpMailService = new SmtpMailService();
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'SmtpNotificationService');
         this.orderService_ = container.orderService;
     }
 

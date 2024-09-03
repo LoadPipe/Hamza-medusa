@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { singleBucket } from '@lib/data';
+import { getSingleBucket } from '@lib/data';
 import {
     Box,
     Button,
@@ -43,7 +43,7 @@ const Shipped = ({ orders }: { orders: any[] }) => {
     const fetchAllOrders = async (customerId: string) => {
         setIsLoading(true);
         try {
-            const bucket = await singleBucket(customerId, 2);
+            const bucket = await getSingleBucket(customerId, 2);
             if (Array.isArray(bucket)) {
                 setCustomerOrder(bucket);
             } else {

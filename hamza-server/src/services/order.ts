@@ -47,7 +47,6 @@ type InjectDependencies = {
 
 type OrderBucketList = { [key: string]: Order[] };
 
-
 const BUCKY_ORDER_CREATION_MODE: 'old' | 'new' = 'new';
 
 export default class OrderService extends MedusaOrderService {
@@ -71,7 +70,7 @@ export default class OrderService extends MedusaOrderService {
         this.paymentRepository_ = container.paymentRepository;
         this.productRepository_ = container.productRepository;
         this.productVariantRepository_ = container.productVariantRepository;
-        this.logger = createLogger(container);
+        this.logger = createLogger(container, 'OrderService');
         this.buckyClient = new BuckyClient();
     }
 
@@ -361,16 +360,21 @@ export default class OrderService extends MedusaOrderService {
         return [];
     }
 
-    async completeOrderTemplate(cartId: string) {
+    //TODO: the return type of this is hard to work with
+    async orderSummary(cartId: string): Promise<{
+        cart: Cart;
+        items: any[];
+    }> {
         const orders = (await this.orderRepository_.find({
             where: { cart_id: cartId, status: Not(OrderStatus.ARCHIVED) },
             relations: ['cart.items.variant.product', 'store.owner'],
         })) as Order[];
-        // return orders;
 
         const products = [];
+        let cart: Cart = null;
 
         orders.forEach((order) => {
+            cart = order.cart;
             order.cart.items.forEach((item) => {
                 const product = {
                     ...item.variant.product,
@@ -384,16 +388,19 @@ export default class OrderService extends MedusaOrderService {
         });
 
         const seen = new Set();
-        const uniqueCart = [];
+        const items = [];
 
         for (const item of products) {
             if (!seen.has(item.id)) {
                 seen.add(item.id);
-                uniqueCart.push(item);
+                items.push(item);
             }
         }
 
-        return uniqueCart;
+        return {
+            cart,
+            items,
+        };
     }
 
     async getNotReviewedOrders(customer_id: string) {
@@ -501,9 +508,9 @@ export default class OrderService extends MedusaOrderService {
 
         return relevantItems?.length
             ? {
-                variants: relevantItems.map((i) => i.variant),
-                quantities: relevantItems.map((i) => i.quantity),
-            }
+                  variants: relevantItems.map((i) => i.variant),
+                  quantities: relevantItems.map((i) => i.quantity),
+              }
             : { variants: [], quantities: [] };
     }
 
@@ -516,7 +523,6 @@ export default class OrderService extends MedusaOrderService {
                 const { variants, quantities } =
                     await this.getBuckyProductVariantsFromOrder(order);
                 if (variants?.length) {
-
                     order.bucky_metadata = { status: 'pending' };
                     await this.orderRepository_.save(order);
 

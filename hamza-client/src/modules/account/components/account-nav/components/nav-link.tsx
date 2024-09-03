@@ -2,13 +2,15 @@ import React from 'react';
 import { Flex, Text } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { ReactElement } from 'react';
 
 type AccountNavLinkProps = {
     href: string;
     title: string;
     route: string;
+    icon?: ReactElement;
 };
-const NavLink = ({ href, route, title }: AccountNavLinkProps) => {
+const NavLink = ({ href, route, title, icon }: AccountNavLinkProps) => {
     const { countryCode }: { countryCode: string } = useParams();
     const active = route.split(countryCode)[1] === href;
     return (
@@ -22,7 +24,9 @@ const NavLink = ({ href, route, title }: AccountNavLinkProps) => {
                 backgroundColor={active ? '#121212' : 'transparent'}
                 alignItems={'center'}
             >
+                {icon && icon}
                 <Text
+                    ml={2}
                     my="auto"
                     fontSize={'18px'}
                     color={active ? 'primary.green.900' : 'white'}

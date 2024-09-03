@@ -5,18 +5,24 @@ import {
     GridItem,
     Image,
     useBreakpointValue,
+    useDisclosure,
 } from '@chakra-ui/react';
 import { getObjectFit } from '@modules/get-object-fit';
 import useProductPreview from '@store/product-preview/product-preview';
 import React, { useEffect, useState } from 'react';
+import ImageGalleryModal from './image-gallery/gallery-modal';
 
 const PreviewGallery = () => {
     const { productData } = useProductPreview();
-    const [images, setImages] = useState([]);
+    const [images, setImages] = useState<string[]>([]);
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 
     useEffect(() => {
         if (productData !== null) {
-            setImages(productData?.images || []);
+            setImages(
+                productData?.images?.map((img: { url: any }) => img.url) || []
+            );
         }
     }, [productData]);
 
@@ -30,19 +36,21 @@ const PreviewGallery = () => {
         }
     );
 
-    console.log("PRODUCT HANDLE IS", productData.handle)
     const objectFit = getObjectFit(productData.handle);
-    console.log("objectFit IS", objectFit)
 
-    //TODO: If each product needs 5 images how will we handle blank images?
+    const openGallery = (index: number) => {
+        setSelectedImageIndex(index);
+        onOpen();
+    };
+
     return (
         <Flex maxWidth={'1280px'} width={'100%'} flexDirection={'column'}>
             <Grid templateColumns={gridTemplate} gap={4}>
-                <GridItem
-                    display={'flex'}
-                >
+                <GridItem display={'flex'}>
                     <Flex
-                        backgroundColor={objectFit === 'cover' ? 'black' : 'white'}
+                        backgroundColor={
+                            objectFit === 'cover' ? 'black' : 'white'
+                        }
                         width={'100%'}
                         minH={'312.22px'}
                         maxH={'504.11px'}
@@ -50,10 +58,12 @@ const PreviewGallery = () => {
                         overflow="hidden"
                         borderLeftRadius={'16px'}
                         borderRightRadius={{ base: '16px', md: 'none' }}
+                        onClick={() => openGallery(0)} // Open gallery on click
+                        cursor="pointer"
                     >
                         {images.length > 0 && (
                             <Image
-                                src={(images[0] as any).url}
+                                src={images[0]}
                                 alt="Left Image"
                                 width="100%"
                                 height="100%"
@@ -70,119 +80,41 @@ const PreviewGallery = () => {
                         }}
                         gap={3.5}
                     >
-                        <GridItem>
-                            <Flex
-                                backgroundColor={'white'}
-                                width={{ base: '100%', md: '257.4px' }}
-                                minW="80px"
-                                minH={'80px'}
-                                maxH={'245.18px'}
-                                borderRadius={{ base: '16px', md: 'none' }}
-                                overflow={'hidden'}
-                            >
-                                {images.length > 0 && (
+                        {images.slice(1, 5).map((image, index) => (
+                            <GridItem key={index}>
+                                <Flex
+                                    backgroundColor={'white'}
+                                    width={{ base: '100%', md: '257.4px' }}
+                                    minW="80px"
+                                    minH={'80px'}
+                                    maxH={'245.18px'}
+                                    borderRadius={{ base: '16px', md: 'none' }}
+                                    overflow={'hidden'}
+                                    onClick={() => openGallery(index + 1)} // Open gallery on click
+                                    cursor="pointer"
+                                >
                                     <Image
-                                        // src="path/to/your/image2.jpg"
-                                        src={
-                                            images.length > 1
-                                                ? (images[1] as any).url
-                                                : (images[0] as any).url
-                                        }
-                                        alt="Top Left Image"
+                                        src={image}
+                                        alt={`Image ${index + 1}`}
                                         width="100%"
                                         height="100%"
                                         objectFit="cover"
                                     />
-                                )}
-                            </Flex>
-                        </GridItem>
-                        <GridItem>
-                            <Flex
-                                borderRadius={{
-                                    base: '16px',
-                                    md: '0px 16px 0px 0px',
-                                }}
-                                backgroundColor={'white'}
-                                width={{ base: '100%', md: '257.4px' }}
-                                minW="80px"
-                                minH={'80px'}
-                                maxH={'245.18px'}
-                                overflow={'hidden'}
-                            >
-                                {images.length > 0 && (
-                                    <Image
-                                        // src="path/to/your/image2.jpg"
-                                        src={
-                                            images.length > 2
-                                                ? (images[2] as any).url
-                                                : (images[0] as any).url
-                                        }
-                                        alt="Top Right Image"
-                                        width="100%"
-                                        height="100%"
-                                        objectFit="cover"
-                                    />
-                                )}
-                            </Flex>
-                        </GridItem>
-                        <GridItem>
-                            <Flex
-                                backgroundColor={'white'}
-                                width={{ base: '100%', md: '257.4px' }}
-                                minW="80px"
-                                minH={'80px'}
-                                maxH={'245.18px'}
-                                borderRadius={{ base: '16px', md: 'none' }}
-                                overflow={'hidden'}
-                            >
-                                {images.length > 0 && (
-                                    <Image
-                                        // src="path/to/your/image2.jpg"
-                                        src={
-                                            images.length > 3
-                                                ? (images[3] as any).url
-                                                : (images[0] as any).url
-                                        }
-                                        alt="Bottom Left Image"
-                                        width="100%"
-                                        height="100%"
-                                        objectFit="cover"
-                                    />
-                                )}
-                            </Flex>
-                        </GridItem>
-                        <GridItem>
-                            <Flex
-                                borderRadius={{
-                                    base: '16px',
-                                    md: '0px 0px 16px 0px',
-                                }}
-                                backgroundColor={'white'}
-                                width={{ base: '100%', md: '257.4px' }}
-                                minW="80px"
-                                minH={'80px'}
-                                maxH={'245.18px'}
-                                overflow={'hidden'}
-                            >
-                                {images.length > 0 && (
-                                    <Image
-                                        // src="path/to/your/image2.jpg"
-                                        src={
-                                            images.length > 4
-                                                ? (images[4] as any).url
-                                                : (images[0] as any).url
-                                        }
-                                        alt="Bottom Right Image"
-                                        width="100%"
-                                        height="100%"
-                                        objectFit="cover"
-                                    />
-                                )}
-                            </Flex>
-                        </GridItem>
+                                </Flex>
+                            </GridItem>
+                        ))}
                     </Grid>
                 </GridItem>
             </Grid>
+
+            {/* Image Gallery Modal */}
+            {images.length > 0 && (
+                <ImageGalleryModal
+                    isOpen={isOpen}
+                    onClose={onClose}
+                    images={images}
+                />
+            )}
         </Flex>
     );
 };

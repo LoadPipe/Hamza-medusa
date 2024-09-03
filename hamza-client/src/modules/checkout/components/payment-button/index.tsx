@@ -4,7 +4,6 @@ import {
     IWalletPaymentHandler,
     FakeWalletPaymentHandler,
     MassmarketWalletPaymentHandler,
-    SwitchWalletPaymentHandler,
     LiteSwitchWalletPaymentHandler,
     DirectWalletPaymentHandler,
 } from './payment-handlers';
@@ -19,12 +18,9 @@ import { useCompleteCart, useUpdateCart } from 'medusa-react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { clearCart, finalizeCheckout, getCheckoutData } from '@lib/data';
-import {
-    getMassmarketPaymentAddress,
-    getMasterSwitchAddress,
-} from 'contracts.config';
 import toast from 'react-hot-toast';
-import { checkoutMode, cancelOrderCart } from '@lib/data/index';
+import { checkoutMode } from '@lib/data/index';
+import JSCookie from 'js-cookie';
 
 //TODO: we need a global common function to replace this
 const MEDUSA_SERVER_URL =
@@ -65,6 +61,16 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
 
     return <CryptoPaymentButton notReady={notReady} cart={cart} />;
 };
+
+export function getCookie(name: string) {
+    if (typeof window === 'undefined') {
+        // Read a cookie server-side
+        return require('next/headers').cookies().get(name)?.value;
+    }
+
+    // Read a cookie client-side
+    return JSCookie.get(name);
+}
 
 // TODO: (For G) Typescriptify this function with verbose error handling
 const CryptoPaymentButton = ({
@@ -270,9 +276,18 @@ const CryptoPaymentButton = ({
 
     const cancelOrderFromCart = async () => {
         try {
-            //TODO: MOVE TO INDEX.TS
-            let response = await cancelOrderCart(cart.id);
-            return;
+            const response = await axios.post(
+                `${MEDUSA_SERVER_URL}/custom/cart/cancel`,
+                {
+                    cart_id: cart.id,
+                },
+                {
+                    headers: {
+                        authorization: getCookie('_medusa_jwt'),
+                    },
+                }
+            );
+            return response;
         } catch (e) {
             console.log('error in cancelling order ', e);
             return;
@@ -284,57 +299,63 @@ const CryptoPaymentButton = ({
      * @returns
      */
     const handlePayment = async () => {
-        try {
-            setSubmitting(true);
+        if (!isConnected) {
+            if (openConnectModal) openConnectModal();
+        } else {
+            try {
+                setSubmitting(true);
 
-            //here connect wallet and sign in, if not connected
-            // causes bug when connected with mobile
-
-            connect();
-
-            updateCart.mutate(
-                { context: {} },
-                {
-                    onSuccess: ({}) => {
-                        //this calls the CartCompletion routine
-                        completeCart.mutate(void 0, {
-                            onSuccess: async ({ data, type }) => {
-                                //TODO: data is undefined
-                                try {
-                                    //this does wallet payment, and everything after
-                                    completeCheckout(cart.id);
-                                } catch (e) {
-                                    console.error(e);
+                updateCart.mutate(
+                    { context: {} },
+                    {
+                        onSuccess: ({}) => {
+                            //this calls the CartCompletion routine
+                            completeCart.mutate(void 0, {
+                                onSuccess: async ({ data, type }) => {
+                                    //TODO: data is undefined
+                                    try {
+                                        //this does wallet payment, and everything after
+                                        completeCheckout(cart.id);
+                                    } catch (e) {
+                                        console.error(e);
+                                        setSubmitting(false);
+                                        displayError(
+                                            'Checkout was not completed'
+                                        );
+                                        await cancelOrderFromCart();
+                                    }
+                                },
+                                onError: async (e) => {
                                     setSubmitting(false);
-                                    displayError('Checkout was not completed');
+                                    console.error(e);
+                                    if (
+                                        e.message?.indexOf('status code 401') >=
+                                        0
+                                    ) {
+                                        displayError(
+                                            'Customer not whitelisted'
+                                        );
+                                    } else {
+                                        displayError(
+                                            'Checkout was not completed'
+                                        );
+                                    }
+
+                                    //TODO: this is a really bad way to do this
                                     await cancelOrderFromCart();
-                                }
-                            },
-                            onError: async (e) => {
-                                setSubmitting(false);
-                                console.error(e);
-                                if (
-                                    e.message?.indexOf('status code 401') >= 0
-                                ) {
-                                    displayError('Customer not whitelisted');
-                                } else {
-                                    displayError('Checkout was not completed');
-                                }
+                                },
+                            });
+                        },
+                    }
+                );
 
-                                //TODO: this is a really bad way to do this
-                                await cancelOrderFromCart();
-                            },
-                        });
-                    },
-                }
-            );
-
-            return;
-        } catch (e) {
-            console.error(e);
-            setSubmitting(false);
-            displayError('Checkout was not completed');
-            await cancelOrderFromCart();
+                return;
+            } catch (e) {
+                console.error(e);
+                setSubmitting(false);
+                displayError('Checkout was not completed');
+                await cancelOrderFromCart();
+            }
         }
     };
 
