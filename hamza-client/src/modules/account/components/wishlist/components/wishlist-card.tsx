@@ -9,6 +9,7 @@ import {
     SkeletonText,
     SkeletonCircle,
     Box,
+    Badge,
 } from '@chakra-ui/react';
 import Image from 'next/image';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
@@ -20,6 +21,9 @@ import CartPopup from '@modules/products/components/cart-popup';
 import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
 import { WishlistProduct } from '@store/wishlist/wishlist-store';
 import { Spinner, Trash } from '@medusajs/icons';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
+import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
 interface WishlistCardProps {
     productData: WishlistProduct;
@@ -27,7 +31,7 @@ interface WishlistCardProps {
     productPrice: string;
     productImage: string;
     productId: string;
-    productVarientId: string | null;
+    productVarientId: string;
     countryCode: string;
 }
 
@@ -60,6 +64,21 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
     productVarientId,
     countryCode,
 }) => {
+    const { data, error, isLoading } = useQuery(
+        ['products', productVarientId], // Use the variant ID directly as part of the query key
+        async () => {
+            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/inventory?variant_id=${productVarientId}`;
+            const response = await axios.get(url);
+            return response.data; // Return only the data part of the response
+        },
+        {
+            enabled: !!productVarientId, // Ensure the query only runs if productVarientId is defined
+        }
+    );
+
+    // Get inventory data
+    const productInventory = data?.data ?? 0;
+
     // Zustand States
     const { preferred_currency_code } = useCustomerAuthStore();
     const { removeWishlistItemMutation } = useWishlistMutations();
@@ -112,7 +131,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
         }
     };
 
-    if (loading) {
+    if (isLoading || loading) {
         return (
             <Flex maxWidth={'879px'} width={'100%'} flexDir={'column'}>
                 <Flex height={'176px'} flexDir={'column'}>
@@ -128,15 +147,6 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                     width="150px"
                                 />
                             </Box>
-
-                            <Flex
-                                ml="auto"
-                                alignSelf={'center'}
-                                cursor={'pointer'}
-                                color="red"
-                            >
-                                <SkeletonCircle size="22px" />
-                            </Flex>
                         </Flex>
                         <Flex flexDir={'row'}>
                             {/* Product image and Description */}
@@ -169,12 +179,28 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                     </Flex>
 
                     {/* Add To Cart */}
-                    <Skeleton
-                        ml="auto"
-                        height={'36px'}
-                        width={'145px'}
-                        borderRadius={'full'}
-                    />
+                    <Flex>
+                        <SkeletonText
+                            alignSelf={'center'}
+                            noOfLines={1}
+                            spacing="4"
+                            width="120px"
+                        />
+                        <Skeleton
+                            ml="auto"
+                            height={'36px'}
+                            width={'145px'}
+                            borderRadius={'full'}
+                        />
+                        <Flex
+                            ml="1rem"
+                            alignSelf={'center'}
+                            cursor={'pointer'}
+                            color="red"
+                        >
+                            <SkeletonCircle size="36px" />
+                        </Flex>
+                    </Flex>
                 </Flex>
                 <Divider mt="1rem" borderColor={'#555555'} />
             </Flex>
@@ -196,39 +222,20 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                         <Text ml="1rem" alignSelf={'center'}>
                             {storeData?.name}
                         </Text>
-
-                        <Flex
-                            ml="auto"
-                            alignSelf={'center'}
-                            cursor={'pointer'}
-                            color="red"
-                            _hover={{
-                                color: 'white',
-                            }}
-                            onClick={() => {
-                                removeWishlistItemMutation.mutate({
-                                    id: productData.id,
-                                    description: productData.description,
-                                    handle: productData.handle,
-                                    thumbnail: productData.thumbnail,
-                                    title: productData.title,
-                                    price: productPrice || '',
-                                    productVarientId: productVarientId || null,
-                                });
-                            }}
-                        >
-                            <Trash />
-                        </Flex>
                     </Flex>
                     <Flex flexDir={'row'}>
                         {/* Product image and Description */}
-                        <ChakraImage
-                            src={productImage}
-                            alt={productImage}
-                            width={'75px'}
-                            height={'75px'}
-                            style={{ borderRadius: '8px' }}
-                        />
+                        <LocalizedClientLink
+                            href={`/products/${productData.handle}`}
+                        >
+                            <ChakraImage
+                                src={productImage}
+                                alt={productImage}
+                                width={'75px'}
+                                height={'75px'}
+                                style={{ borderRadius: '8px' }}
+                            />
+                        </LocalizedClientLink>
                         <Text
                             ml="1rem"
                             alignSelf={'center'}
@@ -273,19 +280,67 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                 </Flex>
 
                 {/* Add To Cart */}
-
-                <Button
-                    ml="auto"
-                    height={'36px'}
-                    backgroundColor={'transparent'}
-                    borderWidth={'1px'}
-                    borderColor={'white'}
-                    color={'white'}
-                    borderRadius={'full'}
-                    onClick={() => handleAddToCart()}
-                >
-                    Add To Cart
-                </Button>
+                <Flex>
+                    <Text alignSelf={'center'}>
+                        <Badge
+                            backgroundColor={
+                                productInventory < 1
+                                    ? 'primary.yellow.900'
+                                    : 'primary.green.900'
+                            }
+                            color={'black'}
+                            borderRadius="full"
+                            px="2"
+                            py="1"
+                            fontSize="0.8rem"
+                            textTransform="capitalize"
+                        >
+                            {productInventory < 1
+                                ? 'Out Of Stock'
+                                : `${productInventory} in stock`}
+                        </Badge>
+                    </Text>
+                    <Button
+                        ml="auto"
+                        height={'36px'}
+                        backgroundColor={'transparent'}
+                        borderWidth={'1px'}
+                        borderColor={'white'}
+                        color={'white'}
+                        borderRadius={'full'}
+                        isDisabled={productInventory < 1}
+                        onClick={() => handleAddToCart()}
+                    >
+                        Add To Cart
+                    </Button>
+                    <Flex
+                        ml="0.75rem"
+                        alignSelf={'center'}
+                        cursor={'pointer'}
+                        color="red"
+                        borderWidth={'1px'}
+                        borderRadius={'full'}
+                        padding="5px"
+                        borderColor={'red'}
+                        _hover={{
+                            color: 'white',
+                            borderColor: 'white',
+                        }}
+                        onClick={() => {
+                            removeWishlistItemMutation.mutate({
+                                id: productData.id,
+                                description: productData.description,
+                                handle: productData.handle,
+                                thumbnail: productData.thumbnail,
+                                title: productData.title,
+                                price: productPrice || '',
+                                productVarientId: productVarientId || null,
+                            });
+                        }}
+                    >
+                        <Trash />
+                    </Flex>
+                </Flex>
             </Flex>
 
             <Divider mt="1rem" borderColor={'#555555'} />
