@@ -128,7 +128,7 @@ const CryptoPaymentButton = ({
 
     // Get the prescribed checkout mode from the server
     const getCheckoutMode = async () => {
-        const response = await getCheckoutMode();
+        const response: any = await getCheckoutMode();
         return response.checkout_mode?.trim()?.toUpperCase();
     };
 

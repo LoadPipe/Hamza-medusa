@@ -16,14 +16,26 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     // Return error if no products in store
     await handler.handle(async () => {
-        const { store_id, handle } = req.query;
 
-        if (!handler.requireParams(['store_id', 'handle']))
+        if (!handler.requireParams(['handle']))
             return;
 
-        const products = await productService.getAllProductsByHandle(
-            store_id.toString(),
-            handle.toString()
+        let storeId = handler.inputParams.store_id;
+        if (!handler.hasParam('store_id')) {
+            if (handler.hasParam('store_name')) {
+                const store = await storeService.getStoreByName(handler.inputParams.store_name);
+                if (!store) {
+                    return res.status(404).json({ message: `Store ${handler.inputParams.store_name} not found` });
+                }
+                storeId = store.id;
+            } else {
+                return res.status(401).json({ message: 'Either store_name or store_id is required' });
+            }
+        }
+
+        const products = await productService.getAllProductsByCategoryHandle(
+            storeId,
+            handler.inputParams.handle
         );
 
         if (!products || products.length === 0) {
