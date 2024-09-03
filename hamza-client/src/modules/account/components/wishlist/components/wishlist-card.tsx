@@ -179,8 +179,15 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                     </Flex>
 
                     {/* Add To Cart */}
-                    <Flex ml="auto">
+                    <Flex>
+                        <SkeletonText
+                            alignSelf={'center'}
+                            noOfLines={1}
+                            spacing="4"
+                            width="300px"
+                        />
                         <Skeleton
+                            ml="auto"
                             height={'36px'}
                             width={'145px'}
                             borderRadius={'full'}
