@@ -64,8 +64,6 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
     productVarientId,
     countryCode,
 }) => {
-    // http://localhost:9000/custom/product/inventory?variant_id=variant_01J6HC3MHFYJ81664YA7Y6FBYH
-
     const { data, error, isLoading } = useQuery(
         ['products', productVarientId], // Use the variant ID directly as part of the query key
         async () => {
@@ -316,7 +314,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                         Add To Cart
                     </Button>
                     <Flex
-                        ml="1rem"
+                        ml="0.75rem"
                         alignSelf={'center'}
                         cursor={'pointer'}
                         color="red"
