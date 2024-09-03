@@ -20,6 +20,8 @@ import CartPopup from '@modules/products/components/cart-popup';
 import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
 import { WishlistProduct } from '@store/wishlist/wishlist-store';
 import { Spinner, Trash } from '@medusajs/icons';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 
 interface WishlistCardProps {
     productData: WishlistProduct;
@@ -27,7 +29,7 @@ interface WishlistCardProps {
     productPrice: string;
     productImage: string;
     productId: string;
-    productVarientId: string | null;
+    productVarientId: string;
     countryCode: string;
 }
 
@@ -60,6 +62,23 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
     productVarientId,
     countryCode,
 }) => {
+    // http://localhost:9000/custom/product/inventory?variant_id=variant_01J6HC3MHFYJ81664YA7Y6FBYH
+
+    const { data, error, isLoading } = useQuery(
+        ['products', productVarientId], // Use the variant ID directly as part of the query key
+        async () => {
+            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/inventory?variant_id=${productVarientId}`;
+            const response = await axios.get(url);
+            return response.data; // Return only the data part of the response
+        },
+        {
+            enabled: !!productVarientId, // Ensure the query only runs if productVarientId is defined
+        }
+    );
+
+    // Get inventory data
+    const productInventory = data.data;
+
     // Zustand States
     const { preferred_currency_code } = useCustomerAuthStore();
     const { removeWishlistItemMutation } = useWishlistMutations();
@@ -196,29 +215,6 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                         <Text ml="1rem" alignSelf={'center'}>
                             {storeData?.name}
                         </Text>
-
-                        <Flex
-                            ml="auto"
-                            alignSelf={'center'}
-                            cursor={'pointer'}
-                            color="red"
-                            _hover={{
-                                color: 'white',
-                            }}
-                            onClick={() => {
-                                removeWishlistItemMutation.mutate({
-                                    id: productData.id,
-                                    description: productData.description,
-                                    handle: productData.handle,
-                                    thumbnail: productData.thumbnail,
-                                    title: productData.title,
-                                    price: productPrice || '',
-                                    productVarientId: productVarientId || null,
-                                });
-                            }}
-                        >
-                            <Trash />
-                        </Flex>
                     </Flex>
                     <Flex flexDir={'row'}>
                         {/* Product image and Description */}
@@ -273,19 +269,45 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                 </Flex>
 
                 {/* Add To Cart */}
-
-                <Button
-                    ml="auto"
-                    height={'36px'}
-                    backgroundColor={'transparent'}
-                    borderWidth={'1px'}
-                    borderColor={'white'}
-                    color={'white'}
-                    borderRadius={'full'}
-                    onClick={() => handleAddToCart()}
-                >
-                    Add To Cart
-                </Button>
+                <Flex>
+                    <Text alignSelf={'center'}>
+                        Inventory: {productInventory}
+                    </Text>
+                    <Button
+                        ml="auto"
+                        height={'36px'}
+                        backgroundColor={'transparent'}
+                        borderWidth={'1px'}
+                        borderColor={'white'}
+                        color={'white'}
+                        borderRadius={'full'}
+                        onClick={() => handleAddToCart()}
+                    >
+                        Add To Cart
+                    </Button>
+                    <Flex
+                        ml="1rem"
+                        alignSelf={'center'}
+                        cursor={'pointer'}
+                        color="red"
+                        _hover={{
+                            color: 'white',
+                        }}
+                        onClick={() => {
+                            removeWishlistItemMutation.mutate({
+                                id: productData.id,
+                                description: productData.description,
+                                handle: productData.handle,
+                                thumbnail: productData.thumbnail,
+                                title: productData.title,
+                                price: productPrice || '',
+                                productVarientId: productVarientId || null,
+                            });
+                        }}
+                    >
+                        <Trash />
+                    </Flex>
+                </Flex>
             </Flex>
 
             <Divider mt="1rem" borderColor={'#555555'} />
