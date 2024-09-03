@@ -5,7 +5,6 @@ import {
     ModalContent,
     ModalCloseButton,
     ModalBody,
-    Button,
     Image,
     Box,
     Grid,
@@ -50,7 +49,7 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                 maxW="1030px"
                 maxH="883px"
                 px="24px" // Horizontal padding
-                py="40px" // Vertical padding at the top
+                py="40px" // Vertical padding
                 backgroundColor="#121212"
             >
                 <ModalCloseButton color="white" />
@@ -123,7 +122,7 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                                     overflow="hidden"
                                     cursor="pointer"
                                     width="145px"
-                                    height="145px" // Ensures the thumbnails are square
+                                    height="145px"
                                     onClick={() => {
                                         setSelectedImage(image);
                                         setCurrentIndex(index);

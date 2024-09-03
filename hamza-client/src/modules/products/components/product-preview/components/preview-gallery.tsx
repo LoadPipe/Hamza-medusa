@@ -20,7 +20,9 @@ const PreviewGallery = () => {
 
     useEffect(() => {
         if (productData !== null) {
-            setImages(productData?.images?.map((img) => img.url) || []);
+            setImages(
+                productData?.images?.map((img: { url: any }) => img.url) || []
+            );
         }
     }, [productData]);
 
@@ -111,7 +113,6 @@ const PreviewGallery = () => {
                     isOpen={isOpen}
                     onClose={onClose}
                     images={images}
-                    initialIndex={selectedImageIndex} // Pass the selected image index
                 />
             )}
         </Flex>
