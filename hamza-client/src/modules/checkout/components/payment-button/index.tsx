@@ -19,7 +19,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { clearCart, finalizeCheckout, getCheckoutData } from '@lib/data';
 import toast from 'react-hot-toast';
-import { getCheckoutMode } from '@lib/data/index';
+import { getServerConfig } from '@lib/data/index';
 import JSCookie from 'js-cookie';
 
 //TODO: we need a global common function to replace this

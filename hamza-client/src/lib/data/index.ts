@@ -246,42 +246,15 @@ export async function getNotReviewed(customer_id: string) {
 }
 
 export async function allReviews(product_id: string) {
-    try {
-        const response = await axios.get(`${BACKEND_URL}/custom/review`, {
-            params: {
-                product_id: product_id,
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching reviews:', error);
-    }
+    return await getSecure('/custom/review', { product_id });
 }
 
 export async function getNotifications(customer_id: string) {
-    try {
-        const response = await axios.get(
-            `${BACKEND_URL}/custom/customer/notification?customer_id=${customer_id}`,
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    authorization: cookies().get('_medusa_jwt')?.value,
-                },
-            }
-        );
-        return response.data.types;
-    } catch (error) {
-        console.error('Error fetching notification preferences:', error);
-    }
+    return await getSecure('/custom/customer/notification', { customer_id });
 }
 
-export async function getCheckoutMode() {
-    try {
-        const response = await axios.get(`${BACKEND_URL}/custom/config`);
-        return response.data;
-    } catch (e) {
-        console.log(`Failed to return checkoutMode data ${e}`);
-    }
+export async function getServerConfig() {
+    return await get('/custom/config');
 }
 
 export async function deleteNotifications(customer_id: string) {
@@ -292,18 +265,7 @@ export async function deleteNotifications(customer_id: string) {
 }
 
 export async function cancelOrderCart(cart_id: string) {
-    try {
-        const response = await axios.post(`${BACKEND_URL}/custom/cart/cancel`, {
-            cart_id,
-        }, {
-            headers: {
-                authorization: cookies().get('_medusa_jwt')?.value,
-            },
-        });
-        return response;
-    } catch (e) {
-        console.log(`Error Cancelling order ${e}`);
-    }
+    return await postSecure('/custom/cart/cancel', { cart_id });
 }
 
 export async function verifyEmail(customer_id: string, email: string) {
@@ -321,130 +283,51 @@ export async function addNotifications(
 }
 
 export async function getOrderInformation(cart_id: string) {
-    try {
-        const response = await axios.get(`${BACKEND_URL}/custom/order`, {
-            params: {
-                cart_id: cart_id,
-            },
-            headers: {
-                authorization: cookies().get('_medusa_jwt')?.value,
-            },
-        });
-        return response;
-    } catch (error) {
-        console.error('Error fetching order information:', error);
-    }
+    return await getSecure('/custom/order', {
+        cart_id,
+    });
 }
 
 export async function getOrderDetails(customer_id: string) {
-    try {
-        const response = await axios.get(
-            `${BACKEND_URL}/custom/order/customer-orders`,
-            {
-                params: { customer_id: customer_id },
-                headers: {
-                    authorization: cookies().get('_medusa_jwt')?.value,
-                },
-            }
-        );
-        return response.data.orders.orders;
-    } catch (error) {
-        console.error('Error fetching order details:', error);
-    }
+    const output = await getSecure('/custom/order/customer-orders', {
+        customer_id,
+    });
+
+    //TODO: why orders.orders?
+    return output.orders.orders;
 }
 
 export async function getOrderBucket(customer_id: string) {
-    try {
-        const response = await axios.get(
-            `${BACKEND_URL}/custom/order/customer-orders`,
-            {
-                params: {
-                    customer_id: customer_id,
-                    buckets: true,
-                },
-                headers: {
-                    authorization: cookies().get('_medusa_jwt')?.value,
-                },
-            }
-        );
-        return response.data.orders;
-    } catch (error) {
-        console.error('Error fetching order bucket:', error);
-    }
+    const response = await getSecure('/custom/order/customer-orders', {
+        customer_id,
+        buckets: true,
+    });
+    return response.orders;
 }
 
+//TODO: why is bucket a number?
 export async function getSingleBucket(customer_id: string, bucket: number) {
-    try {
-        const response = await axios.get(
-            `${BACKEND_URL}/custom/order/customer-order`,
-            {
-                params: {
-                    customer_id: customer_id,
-                    bucket: bucket,
-                },
-                headers: {
-                    authorization: cookies().get('_medusa_jwt')?.value,
-                },
-            }
-        );
-        return response.data.orders;
-    } catch (error) {
-        console.error('Error fetching single bucket:', error);
-    }
+    const response = await getSecure('/custom/order/customer-order', {
+        customer_id,
+        bucket,
+    });
+    return response.orders;
 }
 
 export async function getNotReviewedOrders(customer_id: string) {
-    try {
-        const response = await axios.get(
-            `${BACKEND_URL}/custom/review/not-reviewed`,
-            {
-                params: {
-                    customer_id: customer_id,
-                },
-                headers: {
-                    authorization: cookies().get('_medusa_jwt')?.value,
-                },
-            }
-        );
-        return response.data;
-    } catch (e) {
-        console.error(`Error fetching all non reviewed orders ${e}`);
-    }
+    return await getSecure('/custom/review/not-reviewed', {
+        customer_id,
+    });
 }
 
 export async function getOrderStatus(order_id: string) {
-    try {
-        const response = await axios.get(`${BACKEND_URL}/custom/order/status`, {
-            params: {
-                order_id: order_id,
-            },
-            headers: {
-                authorization: cookies().get('_medusa_jwt')?.value,
-            },
-        });
-        return response.data;
-    } catch (error) {
-        //console.error('Error fetching order status:', error);
-        return [];
-    }
+    return await getSecure('/custom/order/status', {
+        order_id: order_id,
+    });
 }
 
 export async function cancelOrder(order_id: string) {
-    try {
-        await axios.put(
-            `${BACKEND_URL}/custom/order/cancel`,
-            {
-                order_id,
-            },
-            {
-                headers: {
-                    authorization: cookies().get('_medusa_jwt')?.value,
-                },
-            }
-        );
-    } catch (error) {
-        console.error('Error cancelling order:', error);
-    }
+    return await putSecure('/custom/order/cancel', { order_id });
 }
 
 export async function getVerificationStatus(customer_id: string) {
@@ -803,32 +686,13 @@ export async function getHamzaCustomer(includeAddresses: boolean = true) {
         customer_id: '',
     };
     const customer_id: string = token?.customer_id ?? '';
-    console.log(headers);
 
-    try {
-        const response = await axios.get(`${BACKEND_URL}/custom/customer`, {
-            params: {
-                customer_id: customer_id,
-                include_addresses: includeAddresses ? 'true' : 'false',
-            },
-            headers: {
-                authorization: cookies().get('_medusa_jwt')?.value,
-            },
-        });
+    const response = await getSecure('/custom/customer', {
+        customer_id,
+        include_addresses: includeAddresses ? 'true' : 'false',
+    });
 
-        console.log('AUTH CUSTOMER RESPONSE STATUS IS ', response.status);
-        return response.status == 200 && response.data ? response.data : {};
-    } catch (e) {
-        try {
-            cookies().set('_medusa_jwt', '', {
-                maxAge: -1,
-            });
-        } catch (e) {
-            console.error(e);
-        }
-        console.log(e);
-        return null;
-    }
+    return response ?? {};
 }
 
 // Customer actions
