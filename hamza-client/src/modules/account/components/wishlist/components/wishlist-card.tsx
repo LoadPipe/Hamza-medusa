@@ -22,6 +22,7 @@ import { WishlistProduct } from '@store/wishlist/wishlist-store';
 import { Spinner, Trash } from '@medusajs/icons';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
+import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
 interface WishlistCardProps {
     productData: WishlistProduct;
@@ -225,13 +226,17 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                     </Flex>
                     <Flex flexDir={'row'}>
                         {/* Product image and Description */}
-                        <ChakraImage
-                            src={productImage}
-                            alt={productImage}
-                            width={'75px'}
-                            height={'75px'}
-                            style={{ borderRadius: '8px' }}
-                        />
+                        <LocalizedClientLink
+                            href={`/products/${productData.handle}`}
+                        >
+                            <ChakraImage
+                                src={productImage}
+                                alt={productImage}
+                                width={'75px'}
+                                height={'75px'}
+                                style={{ borderRadius: '8px' }}
+                            />
+                        </LocalizedClientLink>
                         <Text
                             ml="1rem"
                             alignSelf={'center'}
