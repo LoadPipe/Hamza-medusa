@@ -24,6 +24,7 @@ import { Spinner, Trash } from '@medusajs/icons';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
+import { LuBadgeCheck } from 'react-icons/lu';
 
 interface WishlistCardProps {
     productData: WishlistProduct;
@@ -222,6 +223,11 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                         <Text ml="1rem" alignSelf={'center'}>
                             {storeData?.name}
                         </Text>
+                        <LuBadgeCheck
+                            className={'ml-2 self-center'}
+                            color="#3196DF"
+                            size={'16.35px'}
+                        />
                     </Flex>
                     <Flex flexDir={'row'}>
                         {/* Product image and Description */}
