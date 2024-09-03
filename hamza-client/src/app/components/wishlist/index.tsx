@@ -35,7 +35,7 @@ const Wishlist: React.FC<WishlistPopoverItemProps> = () => {
                 },
             }}
         >
-            <LocalizedClientLink className="w-full" href="/account/wishlist">
+            <LocalizedClientLink className="w-full" href="/wishlist">
                 <Flex width={'100%'} flex={1} color="white">
                     <Flex flexDirection={'row'} alignSelf={'center'}>
                         <Flex

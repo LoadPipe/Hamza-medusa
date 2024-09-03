@@ -31,7 +31,7 @@ interface WishlistCardProps {
     productPrice: string;
     productImage: string;
     productId: string;
-    productVarientId: string;
+    productVariantId: string | null;
     countryCode: string;
 }
 
@@ -61,18 +61,18 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
     productPrice,
     productId,
     productImage,
-    productVarientId,
+    productVariantId,
     countryCode,
 }) => {
     const { data, error, isLoading } = useQuery(
-        ['products', productVarientId], // Use the variant ID directly as part of the query key
+        ['products', productVariantId], // Use the variant ID directly as part of the query key
         async () => {
-            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/inventory?variant_id=${productVarientId}`;
+            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/inventory?variant_id=${productVariantId}`;
             const response = await axios.get(url);
             return response.data; // Return only the data part of the response
         },
         {
-            enabled: !!productVarientId, // Ensure the query only runs if productVarientId is defined
+            enabled: !!productVariantId, // Ensure the query only runs if productVarientId is defined
         }
     );
 
@@ -108,14 +108,14 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
 
     // Add wishlist product to cart
     const handleAddToCart = async (showPopup: boolean = true) => {
-        if (!productVarientId) {
+        if (!productVariantId) {
             console.error('Variant is null or undefined.');
             return;
         }
 
         try {
             await addToCart({
-                variantId: productVarientId!,
+                variantId: productVariantId!,
                 quantity: 1,
                 countryCode: countryCode,
                 currencyCode: currencyCode,
@@ -334,7 +334,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                 thumbnail: productData.thumbnail,
                                 title: productData.title,
                                 price: productPrice || '',
-                                productVarientId: productVarientId || null,
+                                productVariantId: productVariantId || null,
                             });
                         }}
                     >
