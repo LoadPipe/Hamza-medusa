@@ -9,9 +9,9 @@ import {
     ModalCloseButton,
     Button,
     Image,
-    Flex,
     Box,
     Grid,
+    Flex,
 } from '@chakra-ui/react';
 
 interface ImageGalleryModalProps {
@@ -30,53 +30,69 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="4xl">
             <ModalOverlay />
-            <ModalContent>
-                <ModalHeader>Image Gallery</ModalHeader>
+            <ModalContent
+                width="1030px"
+                height="883px"
+                maxW="1030px"
+                maxH="883px"
+                px="24px" // Horizontal padding
+                py="40px" // Vertical padding at the top
+            >
                 <ModalCloseButton />
                 <ModalBody>
                     {/* Large Image Display */}
-                    <Box mb={4}>
-                        <Image
-                            src={selectedImage}
-                            alt="Selected Image"
-                            width="100%"
-                            height="auto"
-                            borderRadius="md"
-                        />
-                    </Box>
 
-                    {/* Thumbnail Images */}
-                    <Grid templateColumns="repeat(5, 1fr)" gap={4}>
-                        {images.map((image, index) => (
-                            <Box
-                                key={index}
-                                border={
-                                    selectedImage === image
-                                        ? '2px solid #3182ce'
-                                        : '2px solid transparent'
-                                }
+                    <Flex
+                        flexDir={'column'}
+                        justifyContent={'center'}
+                        alignItems={'center'}
+                        height={'100%'}
+                    >
+                        <Box mb={4} width="840px" height="598px" mx="auto">
+                            <Image
+                                src={selectedImage}
+                                alt="Selected Image"
+                                width="100%"
+                                height="100%"
                                 borderRadius="md"
-                                overflow="hidden"
-                                cursor="pointer"
-                                onClick={() => setSelectedImage(image)}
-                            >
-                                <Image
-                                    src={image}
-                                    alt={`Image ${index + 1}`}
-                                    width="100%"
-                                    height="100%"
-                                    objectFit="cover"
-                                />
-                            </Box>
-                        ))}
-                    </Grid>
-                </ModalBody>
+                                objectFit="fill"
+                            />
+                        </Box>
 
-                <ModalFooter>
-                    <Button colorScheme="blue" mr={3} onClick={onClose}>
-                        Close
-                    </Button>
-                </ModalFooter>
+                        {/* Thumbnail Images */}
+                        <Grid
+                            templateColumns="repeat(5, 145px)"
+                            justifyContent="center"
+                            justifyItems="center"
+                            gap={7}
+                        >
+                            {images.map((image, index) => (
+                                <Box
+                                    key={index}
+                                    border={
+                                        selectedImage === image
+                                            ? '2px solid #3182ce'
+                                            : '2px solid transparent'
+                                    }
+                                    borderRadius="md"
+                                    overflow="hidden"
+                                    cursor="pointer"
+                                    width="145px"
+                                    height="145px" // Ensures the thumbnails are square
+                                    onClick={() => setSelectedImage(image)}
+                                >
+                                    <Image
+                                        src={image}
+                                        alt={`Image ${index + 1}`}
+                                        width="100%"
+                                        height="100%"
+                                        objectFit="cover"
+                                    />
+                                </Box>
+                            ))}
+                        </Grid>
+                    </Flex>
+                </ModalBody>
             </ModalContent>
         </Modal>
     );
