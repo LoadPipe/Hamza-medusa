@@ -9,6 +9,7 @@ import {
     SkeletonText,
     SkeletonCircle,
     Box,
+    Badge,
 } from '@chakra-ui/react';
 import Image from 'next/image';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
@@ -283,7 +284,18 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                 {/* Add To Cart */}
                 <Flex>
                     <Text alignSelf={'center'}>
-                        Inventory: {productInventory}
+                        <Badge
+                            colorScheme={productInventory < 1 ? 'red' : 'green'}
+                            borderRadius="full"
+                            px="2"
+                            py="1"
+                            fontSize="0.8rem"
+                            textTransform="capitalize"
+                        >
+                            {productInventory < 1
+                                ? 'Out Of Stock'
+                                : `${productInventory} in stock`}
+                        </Badge>
                     </Text>
                     <Button
                         ml="auto"
