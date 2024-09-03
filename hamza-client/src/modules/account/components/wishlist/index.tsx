@@ -22,7 +22,7 @@ const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
                             key={index}
                             productData={product}
                             productId={product.id}
-                            productVarientId={product.productVarientId}
+                            productVariantId={product.productVariantId}
                             productImage={product.thumbnail}
                             productDescription={product.title}
                             productPrice={product.price.toString()}

@@ -132,7 +132,7 @@ const ProductInfo = () => {
                                         thumbnail: productData.thumbnail,
                                         title: productData.title,
                                         price: selectedPrice || '',
-                                        productVarientId: variantId || null,
+                                        productVariantId: variantId || null,
                                     });
                                 }}
                                 className="text-white text-6xl cursor-pointer"
@@ -147,7 +147,7 @@ const ProductInfo = () => {
                                         thumbnail: productData.thumbnail,
                                         title: productData.title,
                                         price: selectedPrice || '',
-                                        productVarientId: variantId || null,
+                                        productVariantId: variantId || null,
                                     });
                                 }}
                                 className="text-white text-6xl cursor-pointer"
