@@ -285,7 +285,12 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                 <Flex>
                     <Text alignSelf={'center'}>
                         <Badge
-                            colorScheme={productInventory < 1 ? 'red' : 'green'}
+                            backgroundColor={
+                                productInventory < 1
+                                    ? 'primary.yellow.900'
+                                    : 'primary.green.900'
+                            }
+                            color={'black'}
                             borderRadius="full"
                             px="2"
                             py="1"
