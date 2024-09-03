@@ -228,71 +228,21 @@ export async function checkCustomerReviewExistence(
 }
 
 export async function getStoreCategories(vendorName: string) {
-    try {
-        const response = await axios.get(
-            `${BACKEND_URL}/custom/store/categories`,
-            {
-                params: {
-                    vendorName,
-                },
-            }
-        );
-        return response.data;
-    } catch (e) {
-        console.log(`Can't Retrieve Store Category ${e}`);
-    }
+    return await get('/custom/store/categories', { vendorName });
+    //TODO: change vendorName to store_name
 }
 
 export async function verifyToken(token: string) {
-    try {
-        const response = await axios.get(
-            `${BACKEND_URL}/custom/confirmation-token/verify`,
-            {
-                params: {
-                    token,
-                },
-            }
-        );
-        return response.data.status;
-    } catch (e) {
-        console.log(`Failed to verify token ${e}`);
-    }
+    return await getSecure('/custom/confirmation-token/verify', { token });
 }
 
 //TODO: rename? cause it's not really clear what this does
 export async function getOrderSummary(cart_id: string) {
-    try {
-        const response = await axios.get(
-            `${BACKEND_URL}/custom/order/complete-template`,
-            {
-                params: {
-                    cart_id,
-                },
-            }
-        );
-        return response.data;
-    } catch (e) {
-        console.log(`Can't Retrieve cart templatr ${e}`);
-    }
+    return await get('/custom/order/complete-template', { cart_id });
 }
 
 export async function getNotReviewed(customer_id: string) {
-    try {
-        const response = await axios.get(
-            `${BACKEND_URL}/custom/review/not-reviewed`,
-            {
-                params: {
-                    customer_id: customer_id,
-                },
-                headers: {
-                    authorization: cookies().get('_medusa_jwt')?.value,
-                },
-            }
-        );
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching reviews:', error);
-    }
+    return await getSecure('/custom/review/not-reviewed', { customer_id });
 }
 
 export async function allReviews(product_id: string) {
@@ -335,24 +285,10 @@ export async function getCheckoutMode() {
 }
 
 export async function deleteNotifications(customer_id: string) {
-    try {
-        const response = await axios.delete(
-            `${BACKEND_URL}/custom/customer/notification`,
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    authorization: cookies().get('_medusa_jwt')?.value,
-                },
-                data: JSON.stringify({
-                    customer_id: customer_id,
-                    notification_type: 'none',
-                }),
-            }
-        );
-        return response.data;
-    } catch (error) {
-        console.error('Error removing notification preferences:', error);
-    }
+    return await delSecure('/custom/customer/notification', {
+        customer_id: customer_id,
+        notification_type: 'none',
+    });
 }
 
 export async function cancelOrderCart(cart_id: string) {
