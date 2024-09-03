@@ -77,7 +77,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
     );
 
     // Get inventory data
-    const productInventory = data.data;
+    const productInventory = data?.data ?? 0;
 
     // Zustand States
     const { preferred_currency_code } = useCustomerAuthStore();
@@ -131,7 +131,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
         }
     };
 
-    if (loading) {
+    if (isLoading || loading) {
         return (
             <Flex maxWidth={'879px'} width={'100%'} flexDir={'column'}>
                 <Flex height={'176px'} flexDir={'column'}>
@@ -147,15 +147,6 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                     width="150px"
                                 />
                             </Box>
-
-                            <Flex
-                                ml="auto"
-                                alignSelf={'center'}
-                                cursor={'pointer'}
-                                color="red"
-                            >
-                                <SkeletonCircle size="22px" />
-                            </Flex>
                         </Flex>
                         <Flex flexDir={'row'}>
                             {/* Product image and Description */}
@@ -188,12 +179,21 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                     </Flex>
 
                     {/* Add To Cart */}
-                    <Skeleton
-                        ml="auto"
-                        height={'36px'}
-                        width={'145px'}
-                        borderRadius={'full'}
-                    />
+                    <Flex ml="auto">
+                        <Skeleton
+                            height={'36px'}
+                            width={'145px'}
+                            borderRadius={'full'}
+                        />
+                        <Flex
+                            ml="1rem"
+                            alignSelf={'center'}
+                            cursor={'pointer'}
+                            color="red"
+                        >
+                            <SkeletonCircle size="36px" />
+                        </Flex>
+                    </Flex>
                 </Flex>
                 <Divider mt="1rem" borderColor={'#555555'} />
             </Flex>
@@ -281,6 +281,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                         borderColor={'white'}
                         color={'white'}
                         borderRadius={'full'}
+                        isDisabled={productInventory < 1}
                         onClick={() => handleAddToCart()}
                     >
                         Add To Cart
@@ -290,8 +291,13 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                         alignSelf={'center'}
                         cursor={'pointer'}
                         color="red"
+                        borderWidth={'1px'}
+                        borderRadius={'full'}
+                        padding="5px"
+                        borderColor={'red'}
                         _hover={{
                             color: 'white',
+                            borderColor: 'white',
                         }}
                         onClick={() => {
                             removeWishlistItemMutation.mutate({
