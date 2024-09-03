@@ -250,7 +250,8 @@ export async function allReviews(product_id: string) {
 }
 
 export async function getNotifications(customer_id: string) {
-    return await getSecure('/custom/customer/notification', { customer_id });
+    const response: any = getSecure('/custom/customer/notification', { customer_id });
+    return response;
 }
 
 export async function getServerConfig() {
