@@ -186,7 +186,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                             alignSelf={'center'}
                             noOfLines={1}
                             spacing="4"
-                            width="300px"
+                            width="120px"
                         />
                         <Skeleton
                             ml="auto"
