@@ -51,15 +51,15 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} isCentered size="4xl">
+        <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
             <ModalContent
                 width="100%"
                 height="100%"
-                maxW={{ base: '338px', md: '1030px' }} // Make modal width responsive
-                maxH={{ base: '409px', md: '883px' }} // Make modal height responsive
-                px={{ base: '29.63px', md: '40px' }} // Adjust padding for mobile
-                py={{ base: '29.63px', md: '24px' }} // Adjust vertical padding
+                maxW={{ base: '338px', md: '1030px' }}
+                maxH={{ base: '409px', md: '883px' }}
+                px={{ base: '29.63px', md: '40px' }}
+                py={{ base: '29.63px', md: '24px' }}
                 backgroundColor="#121212"
             >
                 <ModalCloseButton color="white" />
@@ -131,7 +131,7 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
 
                         {/* Thumbnail Images */}
                         <Grid
-                            templateColumns="repeat(5, 1fr)" // Always 5 images per row
+                            templateColumns="repeat(5, 1fr)"
                             justifyContent="center"
                             justifyItems="center"
                             gap={{ base: 3, md: 7 }} // Adjust gap for mobile and larger screens
@@ -151,8 +151,8 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                                     overflow="hidden"
                                     cursor="pointer"
                                     aspectRatio={'1 / 1'}
-                                    width="100%" // Make sure each image takes up the full space within its grid cell
-                                    maxW={'145px'} // Control max width for images
+                                    width="100%"
+                                    maxW={'145px'}
                                     onClick={() => {
                                         setSelectedImage(image);
                                         setCurrentIndex(index);
