@@ -51,7 +51,7 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} size="4xl">
+        <Modal isOpen={isOpen} onClose={onClose} isCentered size="4xl">
             <ModalOverlay />
             <ModalContent
                 width="100%"
@@ -91,29 +91,40 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                         </Box>
 
                         {/* Left and Right Navigation Buttons */}
+
                         <IconButton
                             aria-label="Previous Image"
-                            icon={<MdChevronLeft size={'50px'} />}
+                            icon={
+                                <MdChevronLeft className="w-[15px] h-[15px] md:w-[50px] md:h-[50px]" />
+                            }
                             position="absolute"
                             top="40%"
-                            left={{ base: '-40px', md: '-40px' }} // Adjust button position for mobile
+                            left={{ base: '-50px', md: '-40px' }} // Adjust button position for mobile
                             transform="translateY(-50%)"
                             size="lg"
                             onClick={handlePrevious}
                             backgroundColor="transparent"
+                            _hover={{
+                                backgroundColor: 'rgba(85, 85, 85, 0.7)',
+                            }}
                             color="white"
                             borderRadius="full"
                         />
                         <IconButton
                             aria-label="Next Image"
-                            icon={<MdChevronRight size={'50px'} />}
+                            icon={
+                                <MdChevronRight className="w-[15px] h-[15px] md:w-[50px] md:h-[50px]" />
+                            }
                             position="absolute"
                             top="40%"
-                            right={{ base: '-40px', md: '-40px' }} // Adjust button position for mobile
+                            right={{ base: '-50px', md: '-40px' }} // Adjust button position for mobile
                             transform="translateY(-50%)"
                             size="lg"
                             onClick={handleNext}
                             backgroundColor="transparent"
+                            _hover={{
+                                backgroundColor: 'rgba(85, 85, 85, 0.7)',
+                            }}
                             color="white"
                             borderRadius="full"
                         />
@@ -124,7 +135,7 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                             justifyContent="center"
                             justifyItems="center"
                             gap={{ base: 3, md: 7 }} // Adjust gap for mobile and larger screens
-                            mt={4}
+                            mt={{ base: 0, md: 4 }}
                             width="100%"
                             maxWidth="840px"
                         >
