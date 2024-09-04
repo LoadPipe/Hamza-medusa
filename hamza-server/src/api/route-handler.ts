@@ -105,9 +105,7 @@ export class RouteHandler {
             this.logger.warn(
                 `Unauthorized customer for route call ${this.method} ${this.route}`
             );
-            this.response
-                .status(401)
-                .json({ message: 'Unauthorized customer' });
+            this.returnStatusWithMessage(401, `Unauthorized customer ${this.customerId}`);
         } else {
             console.log('customer ', this.customerId, ' is authorized');
         }
@@ -126,7 +124,7 @@ export class RouteHandler {
             if (missingParams.length) {
                 this.logger?.warn(`Call rejected for missing params: ${JSON.stringify(missingParams)}`)
                 const message = `missing required param(s): ${missingParams.join()}`;
-                this.response.status(400).json({ message });
+                this.returnStatusWithMessage(400, message);
                 return false;
             }
         }
