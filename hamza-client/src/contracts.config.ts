@@ -59,7 +59,8 @@ const chainConfig: any = {
             address: '0x0',
         },
         lite_switch: {
-            address: '0xa8866FF28D26cdf312e5C902e8BFDbCf663a36ce'
+            //address: '0xa8866FF28D26cdf312e5C902e8BFDbCf663a36ce'
+            address: '0x5b691FFdc872eC40d63fe34f471e3Edb16dAE154'
         },
         dao: {
             address: '0x214bef460Fda073a328aD02371C48E69Bd13442B'
