@@ -71,7 +71,7 @@ const PreviewGallery = () => {
                                 alt="Main Image"
                                 width="100%"
                                 height="100%"
-                                objectFit={objectFit}
+                                objectFit={'fill'}
                             />
                         )}
                     </Box>
@@ -116,7 +116,7 @@ const PreviewGallery = () => {
                                         alt={`Thumbnail ${index + 1}`}
                                         width="100%"
                                         height="100%"
-                                        objectFit={objectFit}
+                                        objectFit={'fill'}
                                     />
                                 </Box>
                             </GridItem>
