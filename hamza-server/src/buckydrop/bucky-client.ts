@@ -270,8 +270,8 @@ export class BuckyClient {
             });
     }
 
-    async getShippingCostEstimate(size: number, current: number, item: IBuckyShippingCostRequest): Promise<any> {
-        const params = JSON.stringify({ size, current, item });
+    async getShippingCostEstimate(item: IBuckyShippingCostRequest): Promise<any> {
+        const params = JSON.stringify({ size: 10, item });
         return this.client
             .post(this.formatApiUrl('/logistics/channel-carriage-list', params), params)
             .then((response) => response.data)
