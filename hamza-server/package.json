@@ -26,6 +26,7 @@
         "setup-0": "sudo chmod +x ./scripts/setup-0.sh && ./scripts/setup-0.sh",
         "setup-1": "sudo chmod +x ./scripts/setup-1.sh && ./scripts/setup-1.sh",
         "migrate": "sudo chmod +x ./scripts/create-migration.sh && ./scripts/create-migration.sh",
+        "migration": "npx medusa migrations run",
         "seed": "cross-env medusa seed -f data/seed.json",
         "start": "cross-env npm run build && medusa start",
         "nuke-old": "sudo docker-compose down --volumes --rmi all",
