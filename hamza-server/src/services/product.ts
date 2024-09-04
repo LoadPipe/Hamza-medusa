@@ -366,7 +366,9 @@ class ProductService extends MedusaProductService {
     async getAllProductsByCategoryHandle(storeId: string, handle: string) {
         console.log(storeId);
         const productCategory = await this.productCategoryRepository_.findOne({
-            where: { handle: handle },
+            where: {
+                handle: handle
+            },
             relations: ['products.variants.prices'],
         });
 
@@ -375,7 +377,9 @@ class ProductService extends MedusaProductService {
         }
 
         const products = productCategory.products.filter(
-            (product) => product.store_id === storeId
+            (product) => product.store_id === storeId &&
+                product.status === ProductStatus.PUBLISHED &&
+                product.store_id
         );
         return productCategory.products;
     }
@@ -394,7 +398,10 @@ class ProductService extends MedusaProductService {
             let totalRating = 0;
 
             const products = await this.productRepository_.find({
-                where: { store_id: store.id },
+                where: {
+                    store_id: store.id,
+                    status: ProductStatus.PUBLISHED,
+                },
                 relations: ['reviews'],
             });
 
