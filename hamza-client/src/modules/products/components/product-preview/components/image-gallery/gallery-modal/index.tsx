@@ -91,12 +91,12 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                         </Box>
 
                         {/* Left and Right Navigation Buttons */}
-                        {/* <IconButton
+                        <IconButton
                             aria-label="Previous Image"
-                            icon={<MdChevronLeft />}
+                            icon={<MdChevronLeft size={'40px'} />}
                             position="absolute"
                             top="40%"
-                            left={{ base: '-15px', md: '-25px' }} // Adjust button position for mobile
+                            left={{ base: '-40px', md: '-40px' }} // Adjust button position for mobile
                             transform="translateY(-50%)"
                             size="lg"
                             onClick={handlePrevious}
@@ -107,18 +107,17 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                         />
                         <IconButton
                             aria-label="Next Image"
-                            icon={<MdChevronRight />}
+                            icon={<MdChevronRight size={'40px'} />}
                             position="absolute"
                             top="40%"
-                            right={{ base: '-15px', md: '-25px' }} // Adjust button position for mobile
+                            right={{ base: '-40px', md: '-40px' }} // Adjust button position for mobile
                             transform="translateY(-50%)"
-                            size="lg"
                             onClick={handleNext}
                             backgroundColor="rgba(0, 0, 0, 0.5)"
                             _hover={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
                             color="white"
                             borderRadius="full"
-                        /> */}
+                        />
 
                         {/* Thumbnail Images */}
                         <Grid
