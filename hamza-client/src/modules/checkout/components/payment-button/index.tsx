@@ -19,7 +19,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { clearCart, finalizeCheckout, getCheckoutData } from '@lib/data';
 import toast from 'react-hot-toast';
-import { checkoutMode } from '@lib/data/index';
+import { getServerConfig } from '@lib/data/index';
 import JSCookie from 'js-cookie';
 
 //TODO: we need a global common function to replace this
@@ -52,10 +52,10 @@ declare global {
 const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
     const notReady =
         !cart ||
-        !cart.shipping_address ||
-        !cart.billing_address ||
-        !cart.email ||
-        cart.shipping_methods.length < 1
+            !cart.shipping_address ||
+            !cart.billing_address ||
+            !cart.email ||
+            cart.shipping_methods.length < 1
             ? true
             : false;
 
@@ -128,7 +128,7 @@ const CryptoPaymentButton = ({
 
     // Get the prescribed checkout mode from the server
     const getCheckoutMode = async () => {
-        const response = await checkoutMode();
+        const response: any = await getServerConfig();
         return response.checkout_mode?.trim()?.toUpperCase();
     };
 
@@ -308,7 +308,7 @@ const CryptoPaymentButton = ({
                 updateCart.mutate(
                     { context: {} },
                     {
-                        onSuccess: ({}) => {
+                        onSuccess: ({ }) => {
                             //this calls the CartCompletion routine
                             completeCart.mutate(void 0, {
                                 onSuccess: async ({ data, type }) => {

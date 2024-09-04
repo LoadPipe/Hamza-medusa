@@ -19,7 +19,7 @@ import toast from 'react-hot-toast';
 import {
     addNotifications,
     getNotifications,
-    removeNotifications,
+    deleteNotifications,
 } from '@lib/data';
 
 const ToggleNotifications = ({ region }: { region: Region }) => {
@@ -39,7 +39,7 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                         authData.customer_id
                     );
                     console.log('Notification Data:', response);
-                    setSelectedNotifications(response);
+                    setSelectedNotifications(response.types);
                 } catch (error) {
                     console.error(
                         'Error fetching notification preferences:',
@@ -73,7 +73,7 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
         try {
             if (selectedNotifications.includes('none' as never)) {
                 // Call the delete route if 'none' is selected
-                await removeNotifications(authData.customer_id);
+                await deleteNotifications(authData.customer_id);
             } else {
                 // Call the add/update route with the selected notifications
                 const notificationsString = selectedNotifications.join(', ');

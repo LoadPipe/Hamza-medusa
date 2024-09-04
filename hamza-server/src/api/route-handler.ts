@@ -62,13 +62,15 @@ export class RouteHandler {
         this.logger = createLogger(loggerContext, `${this.method} ${this.route}`);
     }
 
-    public async handle(fn: (_this?: RouteHandler) => void) {
+    public async handle(fn: (_this?: RouteHandler) => any) {
         try {
-            this.logger.info(`ROUTE-HANDLER: ${this.method} ${this.route}`);
-            this.logger.debug(
+            this.logger.info(
                 `Input Params: ${JSON.stringify(this.inputParams)}`
             );
-            await fn(this);
+            const response: any = await fn(this);
+            if (response) {
+                this.logger.info(`response: ${JSON.stringify(response)}`);
+            }
         } catch (err: any) {
             const errorInfo = `ERROR ${err}`;
             this.logger.error({ message: errorInfo });

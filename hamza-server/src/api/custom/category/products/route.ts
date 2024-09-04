@@ -33,7 +33,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             }
         }
 
-        const products = await productService.getAllProductsByHandle(
+        const products = await productService.getAllProductsByCategoryHandle(
             storeId,
             handler.inputParams.handle
         );

@@ -331,7 +331,7 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    async getProductByHandle(storeId: string) {
+    async getProductByCategoryHandle(storeId: string) {
         try {
             // Ensure the store exists
             const store = await this.storeRepository_.findOne({
@@ -363,7 +363,8 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    async getAllProductsByHandle(storeId: string, handle: string) {
+    async getAllProductsByCategoryHandle(storeId: string, handle: string) {
+        console.log(storeId);
         const productCategory = await this.productCategoryRepository_.findOne({
             where: { handle: handle },
             relations: ['products.variants.prices'],
@@ -376,7 +377,7 @@ class ProductService extends MedusaProductService {
         const products = productCategory.products.filter(
             (product) => product.store_id === storeId
         );
-        return products;
+        return productCategory.products;
     }
 
     async getProductsFromStoreName(storeName: string) {
@@ -439,57 +440,6 @@ class ProductService extends MedusaProductService {
             throw new Error('Failed to fetch products from review.');
         }
     }
-
-    /*
-    //TODO: these seem to not be used; kill them?
-    async findByBuckyMetadata(buckyMetadata: Record<string, unknown>): Promise<Product | null> {
-        try {
-            const product = await this.productRepository_.findOne({
-                where: { bucky_metadata: buckyMetadata },
-            });
-
-            if (!product) {
-                this.logger.info(
-                    `Product with bucky_metadata ${buckyMetadata} not found.`
-                );
-                return null;
-            }
-
-            return product;
-        } catch (error) {
-            this.logger.error(
-                'Error fetching product by bucky_metadata:',
-                error
-            );
-            throw new Error('Failed to fetch product by bucky_metadata');
-        }
-    }
-
-    async findByGoodsId(goodsId: string): Promise<Product | null> {
-        try {
-            const product = await this.productRepository_
-                .createQueryBuilder('product')
-                .where('product.bucky_metadata LIKE :goodsId', {
-                    goodsId: `%${goodsId}%`,
-                })
-                .getOne();
-
-            if (!product) {
-                this.logger.info(
-                    `Product with goodsId ${goodsId} not found in bucky_metadata.`
-                );
-                return null;
-            }
-
-            return product;
-        } catch (error) {
-            this.logger.error('Error fetching product by goodsId:', error);
-            throw new Error(
-                'Failed to fetch product by goodsId in bucky_metadata'
-            );
-        }
-    }
-    */
 
     private async convertPrices(
         products: Product[],

@@ -19,7 +19,7 @@ const VerifyEmail = () => {
         const confirmationTokenHandler = async () => {
             let res: any = verifyToken(token as string);
             console.log(`WTF tf does this even return`);
-            if (res == true) {
+            if (res.status) {
                 setDisplayMessage('Email verified successfully!!!');
                 setCustomerAuthData({ ...authData, is_verified: true });
                 return;
