@@ -4,8 +4,8 @@ import {
     Grid,
     GridItem,
     Image,
-    useBreakpointValue,
     useDisclosure,
+    useBreakpointValue,
 } from '@chakra-ui/react';
 import { getObjectFit } from '@modules/get-object-fit';
 import useProductPreview from '@store/product-preview/product-preview';
@@ -26,16 +26,6 @@ const PreviewGallery = () => {
         }
     }, [productData]);
 
-    const gridTemplate = useBreakpointValue(
-        {
-            base: '1fr', // On mobile, stack vertically
-            md: '2fr 1fr', // On medium screens and up, use 2 columns
-        },
-        {
-            fallback: 'md',
-        }
-    );
-
     const objectFit = getObjectFit(productData.handle);
 
     const openGallery = (index: number) => {
@@ -43,64 +33,90 @@ const PreviewGallery = () => {
         onOpen();
     };
 
+    // Responsive layout adjustment for the grid
+    const gridTemplateColumns = useBreakpointValue({
+        base: '1fr', // On mobile, only 1 column
+        md: '1fr 1fr', // On medium screens and up, 2 columns
+    });
+
+    const gridTemplateRows = useBreakpointValue({
+        base: 'auto auto', // On mobile, stack the big image on top of the small images
+        md: '1fr', // On medium screens and up, 1 row for side-by-side layout
+    });
+
     return (
         <Flex maxWidth={'1280px'} width={'100%'} flexDirection={'column'}>
-            <Grid templateColumns={gridTemplate} gap={4}>
-                <GridItem display={'flex'}>
-                    <Flex
+            <Grid
+                templateColumns={gridTemplateColumns}
+                templateRows={gridTemplateRows}
+                gap={4}
+            >
+                {/* Main Square Image on the top (mobile) or left (desktop) */}
+                <GridItem>
+                    <Box
+                        width={'100%'}
+                        aspectRatio="1 / 1"
+                        overflow="hidden"
+                        onClick={() => openGallery(0)}
+                        cursor="pointer"
+                        borderRadius={'16px'}
                         backgroundColor={
                             objectFit === 'cover' ? 'black' : 'white'
                         }
-                        width={'100%'}
-                        minH={'312.22px'}
-                        maxH={'504.11px'}
-                        maxW={'736.04px'}
-                        overflow="hidden"
-                        borderLeftRadius={'16px'}
-                        borderRightRadius={{ base: '16px', md: 'none' }}
-                        onClick={() => openGallery(0)} // Open gallery on click
-                        cursor="pointer"
                     >
                         {images.length > 0 && (
                             <Image
                                 src={images[0]}
-                                alt="Left Image"
+                                alt="Main Image"
                                 width="100%"
                                 height="100%"
                                 objectFit={objectFit}
                             />
                         )}
-                    </Flex>
+                    </Box>
                 </GridItem>
+
+                {/* 4 Square Images below (mobile) or to the right (desktop) */}
                 <GridItem>
                     <Grid
                         templateColumns={{
-                            base: 'repeat(4, 1fr)',
-                            md: '1fr 1fr',
+                            base: 'repeat(4, 1fr)', // 2 columns on mobile
+                            md: 'repeat(2, 1fr)', // 2 columns on desktop as well
                         }}
-                        gap={3.5}
+                        templateRows={{
+                            base: 'repeat(1, 1fr)', // 2 rows on mobile
+                            md: 'repeat(2, 1fr)', // 2 rows on desktop
+                        }}
+                        gap={4}
                     >
                         {images.slice(1, 5).map((image, index) => (
                             <GridItem key={index}>
-                                <Flex
-                                    backgroundColor={'white'}
-                                    width={{ base: '100%', md: '257.4px' }}
-                                    minW="80px"
-                                    minH={'80px'}
-                                    maxH={'245.18px'}
-                                    borderRadius={{ base: '16px', md: 'none' }}
-                                    overflow={'hidden'}
-                                    onClick={() => openGallery(index + 1)} // Open gallery on click
+                                <Box
+                                    width="100%"
+                                    aspectRatio="1 / 1"
+                                    overflow="hidden"
+                                    borderRadius={{
+                                        base: '16px',
+                                        md: 'none',
+                                    }}
+                                    borderTopRightRadius={{
+                                        md: index === 1 ? '16px' : 'none',
+                                    }}
+                                    borderBottomRightRadius={{
+                                        md: index === 3 ? '16px' : 'none',
+                                    }}
+                                    onClick={() => openGallery(index + 1)}
                                     cursor="pointer"
+                                    backgroundColor="white"
                                 >
                                     <Image
                                         src={image}
-                                        alt={`Image ${index + 1}`}
+                                        alt={`Thumbnail ${index + 1}`}
                                         width="100%"
                                         height="100%"
-                                        objectFit="cover"
+                                        objectFit={objectFit}
                                     />
-                                </Flex>
+                                </Box>
                             </GridItem>
                         ))}
                     </Grid>
@@ -113,6 +129,7 @@ const PreviewGallery = () => {
                     isOpen={isOpen}
                     onClose={onClose}
                     images={images}
+                    selectedImageIndex={selectedImageIndex} // Pass the selected image index
                 />
             )}
         </Flex>

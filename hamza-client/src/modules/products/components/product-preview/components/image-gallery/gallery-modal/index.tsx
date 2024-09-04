@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Modal,
     ModalOverlay,
@@ -18,15 +18,25 @@ interface ImageGalleryModalProps {
     isOpen: boolean;
     onClose: () => void;
     images: string[]; // Array of image URLs
+    selectedImageIndex: number; // Selected image index passed from PreviewGallery
 }
 
 const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
     isOpen,
     onClose,
     images,
+    selectedImageIndex, // Use this index to initialize the selected image
 }) => {
-    const [selectedImage, setSelectedImage] = useState<string>(images[0]);
-    const [currentIndex, setCurrentIndex] = useState<number>(0);
+    const [selectedImage, setSelectedImage] = useState<string>(
+        images[selectedImageIndex]
+    );
+    const [currentIndex, setCurrentIndex] =
+        useState<number>(selectedImageIndex);
+
+    useEffect(() => {
+        setSelectedImage(images[selectedImageIndex]);
+        setCurrentIndex(selectedImageIndex);
+    }, [selectedImageIndex, images]);
 
     const handlePrevious = () => {
         const newIndex = (currentIndex - 1 + images.length) % images.length;
@@ -78,7 +88,7 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                             icon={<MdChevronLeft />}
                             position="absolute"
                             top="40%"
-                            left="-25px" // Positioned outside the left side of the image
+                            left="-25px"
                             transform="translateY(-50%)"
                             size="lg"
                             onClick={handlePrevious}
@@ -92,7 +102,7 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                             icon={<MdChevronRight />}
                             position="absolute"
                             top="40%"
-                            right="-25px" // Positioned outside the right side of the image
+                            right="-25px"
                             transform="translateY(-50%)"
                             size="lg"
                             onClick={handleNext}
