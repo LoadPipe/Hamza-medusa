@@ -26,8 +26,8 @@ export default async function StorePage({ searchParams, params }: Params) {
 
 // import { Metadata } from 'next';
 
-// import { SortOptions } from '@modules/store/components/refinement-list/sort-products';
-// import StoreTemplate from '@modules/store/templates';
+// import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
+// import StoreTemplate from '@modules/shop/templates';
 
 // export const metadata: Metadata = {
 //     title: 'Store',
