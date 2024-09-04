@@ -56,8 +56,8 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
             <ModalContent
                 width="100%"
                 height="100%"
-                maxW={{ base: '90vw', md: '1030px' }} // Make modal width responsive
-                maxH={{ base: '80vh', md: '883px' }} // Make modal height responsive
+                maxW={{ base: '338px', md: '1030px' }} // Make modal width responsive
+                maxH={{ base: '409px', md: '883px' }} // Make modal height responsive
                 px={{ base: '29.63px', md: '40px' }} // Adjust padding for mobile
                 py={{ base: '29.63px', md: '24px' }} // Adjust vertical padding
                 backgroundColor="#121212"
@@ -161,11 +161,16 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                         </Grid>
 
                         {/* Dots Indicator */}
-                        <Flex mt={4} justifyContent="center">
+                        <Flex
+                            justifyContent="center"
+                            position="absolute"
+                            bottom={{ base: '-17px', md: '-5px' }}
+                            mt={2}
+                        >
                             {images.map((_, index) => (
-                                <Box key={index} mx={1}>
+                                <Box key={index} mx={1.5}>
                                     <FaCircle
-                                        size={8}
+                                        size={9}
                                         color={
                                             index === currentIndex
                                                 ? 'green'
