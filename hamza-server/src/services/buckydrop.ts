@@ -200,8 +200,6 @@ export default class BuckydropService extends TransactionBaseService {
 
             if (subtotal > 0) {
                 const estimate = await this.buckyClient.getShippingCostEstimate(
-                    10,
-                    1,
                     input
                 );
 
