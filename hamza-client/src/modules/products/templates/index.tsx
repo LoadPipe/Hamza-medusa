@@ -135,7 +135,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
 
                 <SearchBar />
             </Flex>
-            <Flex mt="2rem">
+            <Flex mt="2rem" mb={{ base: '-1rem', md: '0' }}>
                 <PreviewGallery />
             </Flex>
             <Flex
