@@ -5,7 +5,7 @@ import { Box, Grid, GridItem, Heading, Text } from '@chakra-ui/react'; // Import
 import Thumbnail from '@modules/products/components/thumbnail';
 import { getStoreProducts, getStoreReviews } from '@lib/data';
 
-const VendorTemplate = ({ vendors }: any) => {
+const StoreTemplate = ({ vendors }: any) => {
     const [selectedStore, setSelectedVendor] = useState(vendors[1]); // Set the second vendor as default selected
     const [products, setProducts] = useState([]); // State to hold the products
     const [reviewStats, setReviewStats] = useState({
@@ -42,7 +42,7 @@ const VendorTemplate = ({ vendors }: any) => {
         fetchReviewStats();
     }, [selectedStore]);
 
-    // console.log(`Vendors ${JSON.stringify(vendors)}`);
+    // console.log(`Vendors ${JSON.stringify(store)}`);
 
     return (
         <div className="bg-black text-white text-center p-4">
@@ -126,4 +126,4 @@ const VendorTemplate = ({ vendors }: any) => {
     );
 };
 
-export default VendorTemplate;
+export default StoreTemplate;

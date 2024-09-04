@@ -28,7 +28,7 @@ import {
     FormErrorMessage,
     Divider,
 } from '@chakra-ui/react';
-import VendorProductDisplay from '@modules/vendors/components/products/vendor-product-display';
+import StoreProductDisplay from '@modules/store/components/products/store-product-display';
 import { getVendorStoreBySlug } from '@lib/data';
 import {
     MdOutlineKeyboardArrowRight,
@@ -396,7 +396,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                 </Flex>
             </Flex>
 
-            <VendorProductDisplay vendorName={displaySlug} />
+            <StoreProductDisplay storeName={displaySlug} />
 
             {/* <Flex>
                 <Flex

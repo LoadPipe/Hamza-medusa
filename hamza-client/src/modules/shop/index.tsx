@@ -18,7 +18,7 @@ const ShopTemplate = () => {
     const { categorySelect } = useStorePage();
     const { reviewFilterSelect } = useSideFilter();
 
-    //TODO: make zustand state for default vendor "all"
+    //TODO: make zustand state for default store "all"
     const [vendorName, setVendorName] = useState('All');
     useEffect(() => {
         if (categorySelect) {
