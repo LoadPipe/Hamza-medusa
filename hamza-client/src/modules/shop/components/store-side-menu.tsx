@@ -31,25 +31,6 @@ const SideMenu = () => {
             {/* Slider end */}
 
             {/* Crypto Currencies */}
-            <Box mt="2rem">
-                <Heading as="h2" size="h2">
-                    Cryptocurrency
-                </Heading>
-                <Text mt="5px" color="secondary.davy.900">
-                    Pay with different cryptocurrencies
-                </Text>
-
-                <Flex mt="1rem" flexDirection={'column'} gap="16px">
-                    {Object.keys(currencies).map((key) => (
-                        <CurrencyButton
-                            key={key}
-                            currencyName={
-                                (currencies as { [key: string]: any })[key]
-                            }
-                        />
-                    ))}
-                </Flex>
-            </Box>
 
             {/* Categories */}
             <Box mt="2rem">
@@ -99,7 +80,7 @@ const SideMenu = () => {
             </Box>
 
             {/* Rating */}
-            <Box mt="2rem">
+            {/* <Box mt="2rem">
                 <Heading as="h2" size="h2">
                     Rating
                 </Heading>
@@ -111,7 +92,7 @@ const SideMenu = () => {
                     <ReviewButton title={'2 Stars'} value={'2'} />
                     <ReviewButton title={'1 Star'} value={'1'} />
                 </Flex>
-            </Box>
+            </Box> */}
 
             <Box mt="2rem">
                 <FilterButton />
