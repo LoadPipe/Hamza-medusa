@@ -18,7 +18,7 @@ const chainConfig: any = {
         eth: {
             contract_address: '0x0000000000000000000000000000000000000000',
             precision: {
-                db: 8,
+                db: 5,
                 native: 18,
             },
         },
@@ -63,7 +63,7 @@ const chainConfig: any = {
         eth: {
             contract_address: '0x0000000000000000000000000000000000000000',
             precision: {
-                db: 8,
+                db: 5,
                 native: 18,
             },
         },
@@ -87,7 +87,7 @@ const chainConfig: any = {
         eth: {
             contract_address: '0x0000000000000000000000000000000000000000',
             precision: {
-                db: 8,
+                db: 5,
                 native: 18,
             },
         },

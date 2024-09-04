@@ -4,8 +4,8 @@ const chainConfig: any = {
         usdc: {
             contract_address: '0x822585D682B973e4b1B47C0311f162b29586DD02', //'0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
             precision: {
-                db: 2,
-                native: 12,
+                db: 2, // Display 2 decimal places in the app
+                native: 12, // Token has 12 decimal places on the blockchain
             },
         },
         usdt: {
@@ -18,7 +18,7 @@ const chainConfig: any = {
         eth: {
             contract_address: '0x0000000000000000000000000000000000000000',
             precision: {
-                db: 8,
+                db: 5,
                 native: 18,
             },
         },
@@ -63,7 +63,7 @@ const chainConfig: any = {
         eth: {
             contract_address: '0x0000000000000000000000000000000000000000',
             precision: {
-                db: 8,
+                db: 5,
                 native: 18,
             },
         },
@@ -87,7 +87,7 @@ const chainConfig: any = {
         eth: {
             contract_address: '0x0000000000000000000000000000000000000000',
             precision: {
-                db: 8,
+                db: 5,
                 native: 18,
             },
         },
