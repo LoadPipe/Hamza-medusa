@@ -46,7 +46,7 @@ async function axiosCall(
     requiresSecurity: boolean = false
 ): Promise<any> {
     try {
-        console.log(`calling ${verb.toUpperCase()} ${path} ${JSON.stringify(payload) ?? ''}`);
+        console.log(`calling ${verb.toUpperCase()} ${path} ${payload ? JSON.stringify(payload) : ''}`);
         let url = path;
         if (!url.startsWith('/')) url = '/' + url;
         url = `${BACKEND_URL}${url}`;
@@ -534,7 +534,7 @@ export async function updatePaymentSession(
 }
 
 export async function addDefaultShippingMethod(cart_id: string) {
-    return await postSecure('/custom/cart/shipping', {
+    return await putSecure('/custom/cart/shipping', {
         cart_id,
     });
 }
