@@ -60,7 +60,7 @@ const PreviewGallery = () => {
                         overflow="hidden"
                         onClick={() => openGallery(0)}
                         cursor="pointer"
-                        borderRadius={'16px'}
+                        borderRadius={{ base: '16px', md: '16px 0 0 16px' }}
                         backgroundColor={
                             objectFit === 'cover' ? 'black' : 'white'
                         }
