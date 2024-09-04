@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
-import { SortOptions } from '@modules/store/components/refinement-list/sort-products';
-import StoreTemplate from 'modules/store';
+import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
+import ShopTemplate from 'modules/shop';
 
 export const metadata: Metadata = {
     title: 'Store',
@@ -18,10 +18,10 @@ type Params = {
     };
 };
 
-export default async function StorePage({ searchParams, params }: Params) {
+export default async function ShopPage({ searchParams, params }: Params) {
     const { sortBy, page } = searchParams;
 
-    return <StoreTemplate />;
+    return <ShopTemplate />;
 }
 
 // import { Metadata } from 'next';

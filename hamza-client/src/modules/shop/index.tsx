@@ -3,15 +3,15 @@
 import React, { useEffect, useState } from 'react';
 import { Flex, Container, Box } from '@chakra-ui/react';
 // import ProductCardGroup from '@modules/products/components/product-card-group';
-import SideMenu from '@modules/store/components/store-side-menu';
+import SideMenu from '@modules/shop/components/store-side-menu';
 import useStorePage from '@store/store-page/store-page';
 import useSideFilter from '@store/store-page/side-filter';
-import MobileFilter from '@modules/store/components/mobile-fitler/mobile-filter';
+import MobileFilter from '@modules/shop/components/mobile-fitler/mobile-filter';
 import ProductCardGroup from '@modules/products/components/product-group-store';
-import StoreFilterDisplay from '@modules/store/components/store-filter-display';
-import RangeSliderComponent from '@modules/store/components/range-slider';
+import StoreFilterDisplay from '@modules/shop/components/store-filter-display';
+import RangeSliderComponent from '@modules/shop/components/range-slider';
 
-const StoreTemplate = () => {
+const ShopTemplate = () => {
     //ipad pro 1024px
     //ipad air 820px (hide left)
 
@@ -66,7 +66,7 @@ const StoreTemplate = () => {
     );
 };
 
-export default StoreTemplate;
+export default ShopTemplate;
 
 // <Flex justifyContent={'center'}>
 //     <Flex
