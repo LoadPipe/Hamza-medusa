@@ -192,7 +192,10 @@ export class PriceConverter {
         const toPrecision = getCurrencyPrecision(price.toCurrency) ?? { db: 2 };
 
         //convert the amount
-        const baseFactor: number = Math.pow(10, basePrecision.db);
+        const baseFactor: number = Math.pow(
+            10,
+            basePrecision.display_precision
+        );
 
         if (EXTENDED_LOGGING) {
             console.log('price:', price);
@@ -210,12 +213,15 @@ export class PriceConverter {
         let output = displayAmount * rate;
 
         // Apply the custom rounding logic directly
-        output = this.applyCustomRounding(output, toPrecision.db);
+        output = this.applyCustomRounding(
+            output,
+            toPrecision.display_precision
+        );
 
         if (EXTENDED_LOGGING) console.log(`Final output: ${output}`);
 
         // Multiply by the factor to adjust precision
-        return output * Math.pow(10, toPrecision.db);
+        return output * Math.pow(10, toPrecision.display_precision);
     }
 
     applyCustomRounding(amount: number, precision: number): number {
