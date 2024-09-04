@@ -54,6 +54,7 @@ const PreviewGallery = () => {
                 {/* Main Square Image on the top (mobile) or left (desktop) */}
                 <GridItem>
                     <Box
+                        minWidth={'300px'}
                         width={'100%'}
                         aspectRatio="1 / 1"
                         overflow="hidden"
@@ -80,11 +81,11 @@ const PreviewGallery = () => {
                 <GridItem>
                     <Grid
                         templateColumns={{
-                            base: 'repeat(4, 1fr)', // 2 columns on mobile
-                            md: 'repeat(2, 1fr)', // 2 columns on desktop as well
+                            base: 'repeat(4, 1fr)', // 4 columns on mobile
+                            md: 'repeat(2, 1fr)', // 2 columns on desktop
                         }}
                         templateRows={{
-                            base: 'repeat(1, 1fr)', // 2 rows on mobile
+                            base: 'repeat(1, 1fr)', // 1 row on mobile
                             md: 'repeat(2, 1fr)', // 2 rows on desktop
                         }}
                         gap={4}
@@ -92,7 +93,8 @@ const PreviewGallery = () => {
                         {images.slice(1, 5).map((image, index) => (
                             <GridItem key={index}>
                                 <Box
-                                    width="100%"
+                                    minWidth={'50px'}
+                                    width={'100%'}
                                     aspectRatio="1 / 1"
                                     overflow="hidden"
                                     borderRadius={{
