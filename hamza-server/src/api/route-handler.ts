@@ -62,21 +62,29 @@ export class RouteHandler {
         this.logger = createLogger(loggerContext, `${this.method} ${this.route}`);
     }
 
-    public async handle(fn: (_this?: RouteHandler) => any) {
+    async handle(fn: (_this?: RouteHandler) => any) {
         try {
             this.logger.info(
                 `Input Params: ${JSON.stringify(this.inputParams)}`
             );
             const response: any = await fn(this);
-            if (response) {
-                this.logger.info(`response: ${JSON.stringify(response)}`);
-            }
         } catch (err: any) {
-            const errorInfo = `ERROR ${err}`;
-            this.logger.error({ message: errorInfo });
-            this.response.status(500).json(errorInfo);
+            const errorInfo = `ERROR ${JSON.stringify(err)}`;
+            this.returnStatusWithMessage(500, errorInfo);
             if (this.onError) this.onError(err);
         }
+    }
+
+    returnStatus(status: number, payload: any) {
+        if (status == 500)
+            this.logger.error(`Returning ${status} with ${JSON.stringify(payload)}`);
+        else
+            this.logger.info(`Returning ${status} with ${JSON.stringify(payload)}`);
+        return this.response.status(status).json(payload);
+    }
+
+    returnStatusWithMessage(status: number, message: string) {
+        return this.returnStatus(status, { message });
     }
 
     enforceCustomerId(

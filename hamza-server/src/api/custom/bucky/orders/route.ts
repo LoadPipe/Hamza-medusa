@@ -15,7 +15,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     await handler.handle(async () => {
         const orders = await buckydropService.getPendingOrders();
 
-        res.status(200).json({ orders });
+        return handler.returnStatus(200, { orders });
     });
 };
 
@@ -58,6 +58,6 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
         }
         orders = await Promise.all(promises);
 
-        res.status(200).json({ orders });
+        return handler.returnStatus(200, { orders });
     });
 };
