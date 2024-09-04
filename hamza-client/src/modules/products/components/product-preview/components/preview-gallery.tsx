@@ -26,8 +26,6 @@ const PreviewGallery = () => {
         }
     }, [productData]);
 
-    const objectFit = getObjectFit(productData.handle);
-
     const openGallery = (index: number) => {
         setSelectedImageIndex(index);
         onOpen();
@@ -61,9 +59,6 @@ const PreviewGallery = () => {
                         onClick={() => openGallery(0)}
                         cursor="pointer"
                         borderRadius={{ base: '16px', md: '16px 0 0 16px' }}
-                        backgroundColor={
-                            objectFit === 'cover' ? 'black' : 'white'
-                        }
                     >
                         {images.length > 0 && (
                             <Image
