@@ -131,7 +131,7 @@ const PreviewGallery = () => {
                     isOpen={isOpen}
                     onClose={onClose}
                     images={images}
-                    selectedImageIndex={selectedImageIndex} // Pass the selected image index
+                    selectedImageIndex={selectedImageIndex}
                 />
             )}
         </Flex>

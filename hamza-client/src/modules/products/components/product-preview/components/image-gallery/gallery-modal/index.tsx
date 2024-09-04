@@ -54,12 +54,12 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
         <Modal isOpen={isOpen} onClose={onClose} size="4xl">
             <ModalOverlay />
             <ModalContent
-                width="1030px"
-                height="883px"
-                maxW="1030px"
-                maxH="883px"
-                px="24px" // Horizontal padding
-                py="40px" // Vertical padding
+                width="100%"
+                height="100%"
+                maxW={{ base: '90vw', md: '1030px' }} // Make modal width responsive
+                maxH={{ base: '80vh', md: '883px' }} // Make modal height responsive
+                px={'24px'} // Adjust padding for mobile
+                py={'40px'} // Adjust vertical padding
                 backgroundColor="#121212"
             >
                 <ModalCloseButton color="white" />
@@ -71,14 +71,21 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                         height={'100%'}
                         position="relative"
                     >
-                        <Box mb={4} width="840px" height="598px" mx="auto">
+                        <Box
+                            mb={4}
+                            maxH={'598px'}
+                            maxWidth={'840px'}
+                            width={'100%'}
+                            aspectRatio={'1 / 1'}
+                            mx="auto"
+                        >
                             <Image
                                 src={selectedImage}
                                 alt="Selected Image"
                                 width="100%"
                                 height="100%"
                                 borderRadius="md"
-                                objectFit="fill"
+                                objectFit="cover"
                             />
                         </Box>
 
@@ -88,7 +95,7 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                             icon={<MdChevronLeft />}
                             position="absolute"
                             top="40%"
-                            left="-25px"
+                            left={{ base: '-15px', md: '-25px' }} // Adjust button position for mobile
                             transform="translateY(-50%)"
                             size="lg"
                             onClick={handlePrevious}
@@ -102,7 +109,7 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                             icon={<MdChevronRight />}
                             position="absolute"
                             top="40%"
-                            right="-25px"
+                            right={{ base: '-15px', md: '-25px' }} // Adjust button position for mobile
                             transform="translateY(-50%)"
                             size="lg"
                             onClick={handleNext}
@@ -114,25 +121,26 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
 
                         {/* Thumbnail Images */}
                         <Grid
-                            templateColumns="repeat(5, 145px)"
+                            templateColumns="repeat(5, 1fr)" // Always 5 images per row
                             justifyContent="center"
                             justifyItems="center"
-                            gap={7}
+                            gap={{ base: 3, md: 7 }} // Adjust gap for mobile and larger screens
                             mt={4}
+                            maxWidth={'840px'}
                         >
                             {images.map((image, index) => (
                                 <Box
                                     key={index}
                                     border={
                                         selectedImage === image
-                                            ? '2px solid #ffff'
+                                            ? '2px solid primary.indigo.900'
                                             : '2px solid transparent'
                                     }
                                     borderRadius="md"
                                     overflow="hidden"
                                     cursor="pointer"
-                                    width="145px"
-                                    height="145px"
+                                    aspectRatio={'1 / 1'}
+                                    maxW={'145px'}
                                     onClick={() => {
                                         setSelectedImage(image);
                                         setCurrentIndex(index);
@@ -143,7 +151,7 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                                         alt={`Image ${index + 1}`}
                                         width="100%"
                                         height="100%"
-                                        objectFit="cover"
+                                        objectFit="fill"
                                     />
                                 </Box>
                             ))}
