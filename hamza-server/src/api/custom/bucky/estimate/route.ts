@@ -30,10 +30,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             detailAddress: '228/32 Soi Mu Ban Lanna Thara Village',
             postCode: '50230',
             productList: [{
-                length: 0,
-                width: 0,
-                height: 0,
-                weight: 0,
+                length: 1,
+                width: 1,
+                height: 1,
+                weight: 1,
                 categoryCode: '50009032',
             }],
         })

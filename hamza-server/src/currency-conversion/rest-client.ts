@@ -19,7 +19,6 @@ export class CurrencyConversionClient {
             baseURL: REST_URL,
             timeout: 13000,
         });
-        console.info('CurrencyConversionClient instantiated successfully');
     }
 
     /**
