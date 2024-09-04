@@ -16,7 +16,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     await handler.handle(async () => {
         const cfg = Config.allConfig;
         if (!cfg) {
-            return res.status(400).send({ message: 'Config not found' });
+            return handler.returnStatusWithMessage(400, 'Config not found');
         }
         return res.status(200).send(cfg);
     });

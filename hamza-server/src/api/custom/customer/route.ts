@@ -4,23 +4,26 @@ import { RouteHandler } from '../../route-handler';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'GET', '/custom/customer', ['customer_id']
+        req,
+        res,
+        'GET',
+        '/custom/customer',
+        ['customer_id']
     );
 
     await handler.handle(async () => {
-        //validation 
-        if (!handler.requireParam('customer_id'))
-            return;
+        //validation
+        if (!handler.requireParam('customer_id')) return;
 
-        //security 
-        if (!handler.enforceCustomerId(handler.inputParams.customer_id))
-            return;
+        //security
+        if (!handler.enforceCustomerId(handler.inputParams.customer_id)) return;
 
-        const includeAddresses: boolean = handler.inputParams.include_addresses?.toString() !== 'false';
+        const includeAddresses: boolean =
+            handler.inputParams.include_addresses?.toString() !== 'false';
 
-        //get the data 
+        //get the data
         const findParams: any = {
-            where: { id: handler.inputParams.customer_id.toString(), }
+            where: { id: handler.inputParams.customer_id.toString() },
         };
 
         if (includeAddresses) {
@@ -30,8 +33,13 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         const customer: Customer = await CustomerRepository.findOne(findParams);
 
         if (!customer) {
-            handler.logger.warn(`customer ${handler.inputParams.customer_id} not found`);
-            return res.status(404).json({ message: `customer ${handler.inputParams.customer_id} not found` });
+            handler.logger.warn(
+                `customer ${handler.inputParams.customer_id} not found`
+            );
+            return handler.returnStatusWithMessage(
+                404,
+                `customer ${handler.inputParams.customer_id} not found`
+            );
         }
 
         return res.send(customer);
