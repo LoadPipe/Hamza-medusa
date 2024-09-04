@@ -115,33 +115,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                     </Text>
 
                     <RangeSliderModal />
-
-                    <Text
-                        mt="2rem"
-                        fontWeight={'600'}
-                        fontSize={'16px'}
-                        color="white"
-                    >
-                        Cryptocurrency
-                    </Text>
-                    <Text
-                        // mx={'1.5rem'}
-                        mt="0.25rem"
-                        fontSize={'14px'}
-                        color="secondary.davy.900"
-                    >
-                        Pay with different cryptocurrencies
-                    </Text>
-                    <Flex mt="1.5rem" flexDirection={'row'} gap="12px">
-                        {Object.keys(currencies).map((key) => (
-                            <CurrencyModalButton
-                                key={key}
-                                currencyName={
-                                    (currencies as { [key: string]: any })[key]
-                                }
-                            />
-                        ))}
-                    </Flex>
+                    {/* 
                     <Text
                         my="1.5rem"
                         fontWeight={'600'}
@@ -162,7 +136,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         <ReviewModalButton title={'3 Stars'} value={'3'} />
                         <ReviewModalButton title={'2 Stars'} value={'2'} />
                         <ReviewModalButton title={'1 Star'} value={'1'} />
-                    </Flex>
+                    </Flex> */}
                     <Divider mt="2rem" opacity={'0.5'} />
                 </ModalBody>
 
