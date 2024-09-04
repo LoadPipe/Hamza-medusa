@@ -13,7 +13,8 @@ const chainConfig: any = {
             address: '0x3d9DbbD22E4903274171ED3e94F674Bb52bCF015',
         },
         lite_switch: {
-            address: '0x08EdF664EB5617d7eCf4F1ec74Ee49d9e99Fbd5f'
+            //address: '0x08EdF664EB5617d7eCf4F1ec74Ee49d9e99Fbd5f'
+            address: '0x1fFc6ba4FcdfC3Ca72a53c2b64db3807B4A5aec8'
         },
         dao: {
             address: '0x8bA35513C3F5ac659907D222e3DaB38b20f8F52A'
