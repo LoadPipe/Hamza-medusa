@@ -1,5 +1,4 @@
 import axios, { AxiosInstance } from 'axios';
-import logger from './logger';
 //TODO: re-create this as a service
 export type HexString = `0x${string}`;
 
@@ -8,7 +7,7 @@ const REST_URL =
 try {
     new URL(REST_URL);
 } catch (error) {
-    logger.error('Invalid REST_SERVER_URL:', REST_URL);
+    console.error('Invalid REST_SERVER_URL:', REST_URL);
     process.exit(1); // Exit the process if the URL is invalid
 }
 
@@ -20,7 +19,7 @@ export class CurrencyConversionClient {
             baseURL: REST_URL,
             timeout: 13000,
         });
-        logger.info('CurrencyConversionClient instantiated successfully');
+        console.info('CurrencyConversionClient instantiated successfully');
     }
 
     /**
@@ -33,7 +32,7 @@ export class CurrencyConversionClient {
             const response = await this.client.get('/');
             return response.status === 200;
         } catch (error) {
-            logger.error('Error checking status:', error.message);
+            console.error('Error checking status:', error.message);
             return false;
         }
     }
@@ -80,7 +79,7 @@ export class CurrencyConversionClient {
                     return 0.00041;
             }
         } catch (error) {
-            logger.error('Error getting exchange rate:', error.message);
+            console.error('Error getting exchange rate:', error.message);
             return 1;
         }
     }

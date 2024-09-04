@@ -100,7 +100,7 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
                 relations: ['product', 'prices', 'product.store'],
             });
 
-        //get the store 
+        //get the store
         const store: Store = variants[0].product.store;
 
         //if no preferred currency, just return all prices
@@ -109,13 +109,15 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
 
             //convert all currency prices according to base price
             const baseCurrency = store?.default_currency_code;
-            const baseAmount = prices.find((p) => p.currency_code === baseCurrency)?.amount;
+            const baseAmount = prices.find(
+                (p) => p.currency_code === baseCurrency
+            )?.amount;
             if (baseAmount && baseCurrency) {
                 for (let n = 0; n < prices.length; n++) {
                     prices[n].amount = await priceConverter.getPrice({
                         baseAmount,
                         baseCurrency,
-                        toCurrency: prices[n].currency_code
+                        toCurrency: prices[n].currency_code,
                     });
                 }
             }
@@ -154,8 +156,11 @@ const EXTENDED_LOGGING = false;
 
 //TODO: maybe find a better place for this class
 export class PriceConverter {
-    private readonly restClient: CurrencyConversionClient = new CurrencyConversionClient();
-    private readonly cache: { [key: string]: { value: number, timestamp: number } } = {};
+    private readonly restClient: CurrencyConversionClient =
+        new CurrencyConversionClient();
+    private readonly cache: {
+        [key: string]: { value: number; timestamp: number };
+    } = {};
     private readonly expirationSeconds: number = 60;
     private readonly logger: ILogger;
 
@@ -163,8 +168,12 @@ export class PriceConverter {
         this.logger = logger;
     }
 
-    async convertPrice(baseAmount: number, baseCurrency: string, toCurrency: string): Promise<number> {
-        return await this.getPrice({ baseAmount, baseCurrency, toCurrency })
+    async convertPrice(
+        baseAmount: number,
+        baseCurrency: string,
+        toCurrency: string
+    ): Promise<number> {
+        return await this.getPrice({ baseAmount, baseCurrency, toCurrency });
     }
 
     async getPrice(price: IPrice): Promise<number> {
@@ -176,13 +185,17 @@ export class PriceConverter {
             this.writeToCache(price, rate);
         }
 
-        //now we need currency precisions 
-        const basePrecision = getCurrencyPrecision(price.baseCurrency) ?? { db: 2 };
+        //now we need currency precisions
+        const basePrecision = getCurrencyPrecision(price.baseCurrency) ?? {
+            db: 2,
+        };
         const toPrecision = getCurrencyPrecision(price.toCurrency) ?? { db: 2 };
 
-        //convert the amount 
-        const baseFactor: number = Math.pow(10, basePrecision.db);
-
+        //convert the amount
+        const baseFactor: number = Math.pow(
+            10,
+            basePrecision.display_precision
+        );
 
         if (EXTENDED_LOGGING) {
             console.log('price:', price);
@@ -194,31 +207,59 @@ export class PriceConverter {
 
         const displayAmount = price.baseAmount / baseFactor;
 
-        if (EXTENDED_LOGGING)
-            console.log('displayAmount:', displayAmount);
+        if (EXTENDED_LOGGING) console.log('displayAmount:', displayAmount);
 
-        const output = Math.floor(displayAmount * rate * Math.pow(10, toPrecision.db));
-        //this.logger?.debug(`price for converting ${price.baseAmount} ${price.baseCurrency} to ${price.toCurrency} at rate ${rate} is ${output}`)
-        return output;
+        // Calculate output without truncating
+        let output = displayAmount * rate;
+
+        // Apply the custom rounding logic directly
+        output = this.applyCustomRounding(
+            output,
+            toPrecision.display_precision
+        );
+
+        if (EXTENDED_LOGGING) console.log(`Final output: ${output}`);
+
+        // Multiply by the factor to adjust precision
+        return output * Math.pow(10, toPrecision.display_precision);
+    }
+
+    applyCustomRounding(amount: number, precision: number): number {
+        const factor = Math.pow(10, precision);
+
+        // First, round to the nearest precision
+        let roundedAmount = Math.round(amount * factor) / factor;
+
+        // Convert the number to a string and check for trailing nines
+        const amountStr = roundedAmount.toFixed(precision + 2); // Extra precision for checking
+        const regex = /\.([0-9]*)(9{3,})$/; // Matches 3 or more trailing 9s after decimal
+
+        if (regex.test(amountStr)) {
+            // If there are 3 or more trailing 9s, round up the preceding digit
+            roundedAmount = Math.ceil(amount * factor) / factor;
+        }
+
+        return roundedAmount;
     }
 
     private async getFromApi(price: IPrice): Promise<number> {
-        //convert to addresses 
+        //convert to addresses
         let baseAddr = getCurrencyAddress(price.baseCurrency, 1);
         let toAddr = getCurrencyAddress(price.toCurrency, 1);
 
         if (baseAddr.length === 0) baseAddr = price.baseCurrency;
         if (toAddr.length === 0) toAddr = price.toCurrency;
 
-        return await this.restClient.getExchangeRate(
-            baseAddr,
-            toAddr
-        );
+        return await this.restClient.getExchangeRate(baseAddr, toAddr);
     }
 
     private getFromCache(price: IPrice): number {
         const key: string = this.getKey(price.baseCurrency, price.toCurrency);
-        if (this.cache[key] && (this.getTimestamp() - this.cache[key].timestamp >= this.expirationSeconds)) {
+        if (
+            this.cache[key] &&
+            this.getTimestamp() - this.cache[key].timestamp >=
+                this.expirationSeconds
+        ) {
             this.cache[key] = null;
         }
 
@@ -231,7 +272,7 @@ export class PriceConverter {
     }
 
     private hasCached(price: IPrice): boolean {
-        return (this.getFromCache(price) ? true : false);
+        return this.getFromCache(price) ? true : false;
     }
 
     private getKey(base: string, to: string): string {
