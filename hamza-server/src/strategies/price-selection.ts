@@ -194,7 +194,7 @@ export class PriceConverter {
         //convert the amount
         const baseFactor: number = Math.pow(
             10,
-            basePrecision.display_precision
+            basePrecision.db
         );
 
         if (EXTENDED_LOGGING) {
@@ -209,6 +209,10 @@ export class PriceConverter {
 
         if (EXTENDED_LOGGING) console.log('displayAmount:', displayAmount);
 
+        const output = Math.floor(displayAmount * rate * Math.pow(10, toPrecision.db));
+        return output;
+        /*
+
         // Calculate output without truncating
         let output = displayAmount * rate;
 
@@ -217,11 +221,14 @@ export class PriceConverter {
             output,
             toPrecision.display_precision
         );
+        
+        return output;
 
         if (EXTENDED_LOGGING) console.log(`Final output: ${output}`);
 
         // Multiply by the factor to adjust precision
         return output * Math.pow(10, toPrecision.display_precision);
+        */
     }
 
     applyCustomRounding(amount: number, precision: number): number {
@@ -258,7 +265,7 @@ export class PriceConverter {
         if (
             this.cache[key] &&
             this.getTimestamp() - this.cache[key].timestamp >=
-                this.expirationSeconds
+            this.expirationSeconds
         ) {
             this.cache[key] = null;
         }
