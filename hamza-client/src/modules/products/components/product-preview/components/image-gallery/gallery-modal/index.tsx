@@ -93,28 +93,27 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                         {/* Left and Right Navigation Buttons */}
                         <IconButton
                             aria-label="Previous Image"
-                            icon={<MdChevronLeft size={'40px'} />}
+                            icon={<MdChevronLeft size={'50px'} />}
                             position="absolute"
                             top="40%"
                             left={{ base: '-40px', md: '-40px' }} // Adjust button position for mobile
                             transform="translateY(-50%)"
                             size="lg"
                             onClick={handlePrevious}
-                            backgroundColor="rgba(0, 0, 0, 0.5)"
-                            _hover={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+                            backgroundColor="transparent"
                             color="white"
                             borderRadius="full"
                         />
                         <IconButton
                             aria-label="Next Image"
-                            icon={<MdChevronRight size={'40px'} />}
+                            icon={<MdChevronRight size={'50px'} />}
                             position="absolute"
                             top="40%"
                             right={{ base: '-40px', md: '-40px' }} // Adjust button position for mobile
                             transform="translateY(-50%)"
+                            size="lg"
                             onClick={handleNext}
-                            backgroundColor="rgba(0, 0, 0, 0.5)"
-                            _hover={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
+                            backgroundColor="transparent"
                             color="white"
                             borderRadius="full"
                         />
