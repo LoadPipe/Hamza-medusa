@@ -206,14 +206,16 @@ export class PriceConverter {
 
         if (EXTENDED_LOGGING) console.log('displayAmount:', displayAmount);
 
-        let output = Math.floor(
-            displayAmount * rate * Math.pow(10, toPrecision.db)
-        );
+        // Calculate output without truncating
+        let output = displayAmount * rate;
 
+        // Apply the custom rounding logic directly
         output = this.applyCustomRounding(output, toPrecision.db);
 
-        //this.logger?.debug(`price for converting ${price.baseAmount} ${price.baseCurrency} to ${price.toCurrency} at rate ${rate} is ${output}`)
-        return output;
+        if (EXTENDED_LOGGING) console.log(`Final output: ${output}`);
+
+        // Multiply by the factor to adjust precision
+        return output * Math.pow(10, toPrecision.db);
     }
 
     applyCustomRounding(amount: number, precision: number): number {
