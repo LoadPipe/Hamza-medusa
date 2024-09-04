@@ -58,8 +58,8 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                 height="100%"
                 maxW={{ base: '90vw', md: '1030px' }} // Make modal width responsive
                 maxH={{ base: '80vh', md: '883px' }} // Make modal height responsive
-                px={'24px'} // Adjust padding for mobile
-                py={'40px'} // Adjust vertical padding
+                px={{ base: '29.63px', md: '24px' }} // Adjust padding for mobile
+                py={{ base: '29.63px', md: '40px' }} // Adjust vertical padding
                 backgroundColor="#121212"
             >
                 <ModalCloseButton color="white" />
