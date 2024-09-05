@@ -53,6 +53,8 @@ const PreviewGallery = () => {
                 <GridItem>
                     <Box
                         minWidth={'300px'}
+                        maxH={'600px'}
+                        maxW={'600px'}
                         width={'100%'}
                         aspectRatio="1 / 1"
                         overflow="hidden"
