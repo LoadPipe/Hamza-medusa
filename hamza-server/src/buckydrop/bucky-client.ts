@@ -316,8 +316,9 @@ export class BuckyClient {
             input,
             output,
             context,
-            timestamp: new Date().toISOString(), // ISO formatted timestamp
+            timestamp: Date.now(), // ISO formatted timestamp
             id: generateEntityId(),
         };
+        this.repository?.save(entry);
     }
 }
