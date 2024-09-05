@@ -5,6 +5,8 @@ import useVendors from '../../data/data';
 import FilterButton from './components/FilterButton';
 import { CgChevronRight } from 'react-icons/cg';
 import FilterModalHome from './components/FilterModal';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 
 const FilterBar = () => {
     const [isClient, setIsClient] = useState(false);
@@ -29,6 +31,24 @@ const FilterBar = () => {
 
     if (vendors.length == 1) visibleVendors = [visibleVendors[0]];
 
+    const { data, error, isLoading } = useQuery(
+        ['categories'], // Use a unique key here to identify the query
+        async () => {
+            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
+
+            const response = await axios.get(url);
+            return response.data; // Return the data from the response
+        }
+    );
+
+    const categories = data;
+
+    const uniqueCategories = data
+        ? Array.from(new Set(data.map((category: any) => category.name)))
+        : [];
+
+    console.log('category data', uniqueCategories);
+
     return (
         <Flex
             mt={{ base: '0.5rem', md: '2rem' }}
@@ -47,21 +67,20 @@ const FilterBar = () => {
                 position="relative"
             >
                 <FilterButton onClick={() => onOpen()} />
-                {/* <Flex
+                <Flex
                     maxW={'1100px'}
                     width={'100%'}
                     overflow={'hidden'}
                     gap={{ base: '12px', md: '20px' }}
                 >
-                    {visibleVendors.map((vendor: any, index) => (
+                    {uniqueCategories.map((categoryName: any, index) => (
                         <CategoryButtons
                             key={index}
-                            categoryType={vendor.vendorType}
-                            // categoryType="lego"
-                            categoryName={vendor.vendorName}
+                            categoryType={categoryName}
+                            categoryName={categoryName}
                         />
                     ))}
-                </Flex> */}
+                </Flex>
                 <Flex
                     w="123px"
                     height={{ base: '42px', md: '63px' }}
