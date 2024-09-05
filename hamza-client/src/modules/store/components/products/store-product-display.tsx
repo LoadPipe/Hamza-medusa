@@ -4,14 +4,14 @@ import React, { useState, useEffect, Suspense } from 'react';
 import ProductCardGroup from '@modules/products/components/product-group-vendor';
 import { Flex } from '@chakra-ui/react';
 import SearchBar from '@modules/home/components/search-and-filter-panel/components/SearchBar';
-import VendorSearch from './vendor-search';
+import StoreSearch from './store-search';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 
 type Props = {
-    vendorName: string;
+    storeName: string;
 };
 
-const VendorProductDisplay = ({ vendorName }: Props) => {
+const StoreProductDisplay = ({ storeName }: Props) => {
     return (
         <Flex
             mx={'auto'}
@@ -22,9 +22,9 @@ const VendorProductDisplay = ({ vendorName }: Props) => {
             alignItems={'center'}
         >
             {/* <SearchBar /> */}
-            <VendorSearch vendorName={vendorName} />
+            <StoreSearch storeName={storeName} />
         </Flex>
     );
 };
 
-export default VendorProductDisplay;
+export default StoreProductDisplay;

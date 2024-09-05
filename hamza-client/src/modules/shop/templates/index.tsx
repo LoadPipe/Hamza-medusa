@@ -1,9 +1,9 @@
 import { Suspense } from 'react';
 
 import SkeletonProductGrid from '@modules/skeletons/templates/skeleton-product-grid';
-import RefinementList from '@modules/store/components/refinement-list';
+import RefinementList from '@modules/shop/components/refinement-list';
 // Removed SortOptions import since it's no longer used here
-// import { SortOptions } from "@modules/store/components/refinement-list/sort-products";
+// import { SortOptions } from "@modules/shop/components/refinement-list/sort-products";
 
 import PaginatedProducts from './paginated-products';
 

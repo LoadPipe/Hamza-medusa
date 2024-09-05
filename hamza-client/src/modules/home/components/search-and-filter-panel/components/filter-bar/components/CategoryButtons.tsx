@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
-import categoryIcons from '@modules/store/data/category-icons';
+import categoryIcons from '@modules/shop/data/category-icons';
 import Image from 'next/image';
 
 interface CategoryButtonProps {

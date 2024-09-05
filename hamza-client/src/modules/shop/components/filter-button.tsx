@@ -13,7 +13,7 @@ interface FilterButtonProps {
 }
 
 const FilterButton: React.FC<FilterButtonProps> = ({ category }) => {
-    // Use Zustand store to handle filter object
+    // Use Zustand shop to handle filter object
     const {
         setCurrencySelect,
         setReviewStarsSelect,
