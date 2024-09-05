@@ -384,6 +384,7 @@ class ProductService extends MedusaProductService {
         );
         return productCategory.products;
     }
+
     async getAllProductCategories() {
         try {
             const productCategoriesRaw = await this.productCategoryRepository_
@@ -393,10 +394,17 @@ class ProductService extends MedusaProductService {
                     'product_category_product',
                     'product_category_product.product_category_id = product_category.id'
                 )
+                .innerJoin(
+                    'product',
+                    'product',
+                    'product.id = product_category_product.product_id'
+                )
+                .innerJoin('store', 'store', 'product.store_id = store.id')
                 .select([
                     'product_category.id AS category_id',
                     'product_category.name AS category_name',
                     'product_category_product.product_id AS product_id',
+                    'store.*', // Selecting all columns from the store table
                 ])
                 .getRawMany(); // Fetch raw results
 
@@ -410,6 +418,7 @@ class ProductService extends MedusaProductService {
                         acc[categoryId] = {
                             id: categoryId,
                             name: curr.category_name,
+                            store: { ...curr }, // Store all columns dynamically
                             products: [],
                         };
                     }
