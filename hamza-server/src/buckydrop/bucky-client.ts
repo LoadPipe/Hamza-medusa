@@ -1,5 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { createHash } from 'crypto';
+import { BuckyLogRepository } from 'src/repositories/bucky-log';
+import { generateEntityId, Logger } from '@medusajs/medusa';
 
 const BUCKY_URL = process.env.BUCKY_URL || 'https://dev.buckydrop.com';
 const APP_CODE = process.env.BUCKY_APP_CODE || '0077651952683977';
@@ -62,13 +64,14 @@ export interface IBuckyShippingCostRequest {
     }[];
 }
 
-//TODO: comment the methods 
-//TODO: proper return types 
+//TODO: comment the methods
+//TODO: proper return types
 
 export class BuckyClient {
     private client: AxiosInstance;
+    private readonly repository: typeof BuckyLogRepository;
 
-    constructor() {
+    constructor(container) {
         this.client = axios.create({
             baseURL: BUCKY_URL,
             headers: {
@@ -77,6 +80,7 @@ export class BuckyClient {
             },
             timeout: 13000, // Optional: sets a timeout limit for requests
         });
+        this.repository = container.buckyLogRepository;
     }
 
     // Method to get product details
@@ -122,7 +126,11 @@ export class BuckyClient {
             });
     }
 
-    async searchProductByImage(base64Image, currentPage = 1, pageSize = 10): Promise<any> {
+    async searchProductByImage(
+        base64Image,
+        currentPage = 1,
+        pageSize = 10
+    ): Promise<any> {
         const params = JSON.stringify({
             curent: currentPage,
             size: pageSize,
@@ -135,7 +143,7 @@ export class BuckyClient {
             this.client
                 //TODO: get correct url for this
                 .post(
-                    //TODO: use adapt/adaptation url here   
+                    //TODO: use adapt/adaptation url here
                     ``,
                     //`/api/rest/v2/adapt/openapi/product/image-search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                     params,
@@ -156,8 +164,8 @@ export class BuckyClient {
         //TODO: add more detailed parameters
         return this.client
             .get(
-                //TODO: use adapt/adaptation url here   
-                ``,
+                //TODO: use adapt/adaptation url here
+                ``
                 //`/api/rest/v2/adapt/openapi/product/category/list-tree?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}?lang=en`
                 //`/api/rest/v2/adapt/openapi/product/category/list-tree?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`
             )
@@ -185,12 +193,14 @@ export class BuckyClient {
             });
     }
 
-    async cancelShopOrder(shopOrderNo: string, partnerOrderNo?: string): Promise<any> {
+    async cancelShopOrder(
+        shopOrderNo: string,
+        partnerOrderNo?: string
+    ): Promise<any> {
         const params = JSON.stringify({
             shopOrderNo,
             partnerOrderNo,
         });
-
 
         return this.client
             .post(
@@ -211,27 +221,25 @@ export class BuckyClient {
 
     async cancelPurchaseOrder(orderCode: string): Promise<any> {
         const params = JSON.stringify({
-            orderCode
+            orderCode,
         });
 
-
         return this.client
-            .post(
-                this.formatApiUrl('/order/po-cancel', params),
-                params,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }
-            )
+            .post(this.formatApiUrl('/order/po-cancel', params), params, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
             .then((response) => response.data)
             .catch((error) => {
                 throw error;
             });
     }
 
-    async getOrderDetails(shopOrderNo: string, partnerOrderNo?: string): Promise<any> {
+    async getOrderDetails(
+        shopOrderNo: string,
+        partnerOrderNo?: string
+    ): Promise<any> {
         const params = JSON.stringify({
             shopOrderNo,
             partnerOrderNo,
@@ -270,10 +278,15 @@ export class BuckyClient {
             });
     }
 
-    async getShippingCostEstimate(item: IBuckyShippingCostRequest): Promise<any> {
+    async getShippingCostEstimate(
+        item: IBuckyShippingCostRequest
+    ): Promise<any> {
         const params = JSON.stringify({ size: 10, item });
         return this.client
-            .post(this.formatApiUrl('/logistics/channel-carriage-list', params), params)
+            .post(
+                this.formatApiUrl('/logistics/channel-carriage-list', params),
+                params
+            )
             .then((response) => response.data)
             .catch((error) => {
                 throw error;
@@ -282,8 +295,7 @@ export class BuckyClient {
 
     private formatApiUrl(route: string, params: any = {}): string {
         route = route.trim();
-        if (!route.startsWith('/'))
-            route = '/' + route;
+        if (!route.startsWith('/')) route = '/' + route;
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
         const url = `/api/rest/v2/adapt/adaptation${route}?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`;
@@ -296,5 +308,16 @@ export class BuckyClient {
         const hash = createHash('md5');
         const data = `${APP_CODE}${params}${timestamp}${APP_SECRET}`;
         return hash.update(data).digest('hex');
+    }
+
+    private saveEntry(endpoint: string, input: any, output: any, context: any) {
+        const entry = {
+            endpoint,
+            input,
+            output,
+            context,
+            timestamp: new Date().toISOString(), // ISO formatted timestamp
+            id: generateEntityId(),
+        };
     }
 }
