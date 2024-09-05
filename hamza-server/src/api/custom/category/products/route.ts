@@ -16,20 +16,26 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     // Return error if no products in store
     await handler.handle(async () => {
-
-        if (!handler.requireParams(['handle']))
-            return;
+        if (!handler.requireParams(['handle'])) return;
 
         let storeId = handler.inputParams.store_id;
         if (!handler.hasParam('store_id')) {
             if (handler.hasParam('store_name')) {
-                const store = await storeService.getStoreByName(handler.inputParams.store_name);
+                const store = await storeService.getStoreByName(
+                    handler.inputParams.store_name
+                );
                 if (!store) {
-                    return res.status(404).json({ message: `Store ${handler.inputParams.store_name} not found` });
+                    return handler.returnStatusWithMessage(
+                        404,
+                        `Store ${handler.inputParams.store_name} not found`
+                    );
                 }
                 storeId = store.id;
             } else {
-                return res.status(401).json({ message: 'Either store_name or store_id is required' });
+                return handler.returnStatusWithMessage(
+                    401,
+                    `Either store_name or store_id is required`
+                );
             }
         }
 
@@ -39,12 +45,12 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         );
 
         if (!products || products.length === 0) {
-            return res.status(404).json({
-                message:
-                    'No products found for the specified store and handle.',
-            });
+            return handler.returnStatusWithMessage(
+                404,
+                'No products found for the specified store and handle.'
+            );
         }
 
-        return res.status(200).json(products);
+        return handler.returnStatus(200, { products });
     });
 };

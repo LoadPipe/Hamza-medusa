@@ -34,9 +34,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         const cart = await cartService.retrieve(cartId);
         if (!cart)
-            return res
-                .status(404)
-                .json({ messsage: `Cart ${cartId} not found.` });
+            return handler.returnStatusWithMessage(
+                404,
+                `Cart ${cartId} not found.`
+            );
 
         //enforce security
         if (!handler.enforceCustomerId(cart.customer_id)) return;
@@ -59,7 +60,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         console.log(output);
         handler.logger.debug(`returning checkout data: ${output}`);
-        res.send({ orders: output });
+        handler.returnStatus(200, { orders: output });
     });
 };
 
@@ -105,10 +106,13 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 handler.inputParams.payer_address,
                 handler.inputParams.escrow_contract_address
             );
-            res.send(true);
+            handler.returnStatusWithMessage(
+                200,
+                'successfully finalized checkout'
+            );
         });
     } catch (e: any) {
         handler.logger.error(e);
-        res.send(false);
+        handler.returnStatusWithMessage(500, 'Failed to finalize checkout');
     }
 };
