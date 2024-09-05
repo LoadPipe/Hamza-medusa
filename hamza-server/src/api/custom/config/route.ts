@@ -18,6 +18,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         if (!cfg) {
             return handler.returnStatusWithMessage(400, 'Config not found');
         }
-        return res.status(200).send(cfg);
+        return handler.returnStatus(200, cfg);
     });
 };

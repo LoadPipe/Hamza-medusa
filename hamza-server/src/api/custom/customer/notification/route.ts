@@ -15,19 +15,17 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        //validate 
-        if (!handler.requireParams(['customer_id']))
-            return;
+        //validate
+        if (!handler.requireParams(['customer_id'])) return;
 
-        //security 
-        if (!handler.enforceCustomerId(handler.inputParams.customer_id))
-            return;
+        //security
+        if (!handler.enforceCustomerId(handler.inputParams.customer_id)) return;
 
         const types = await customerNotificationService.getNotifications(
             handler.inputParams.customer_id
         );
 
-        res.status(200).json({ types });
+        handler.returnStatus(200, types);
     });
 };
 
@@ -44,20 +42,18 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        //validate 
-        if (!handler.requireParams(['customer_id']))
-            return;
+        //validate
+        if (!handler.requireParams(['customer_id'])) return;
 
-        //security 
-        if (!handler.enforceCustomerId(handler.inputParams.customer_id))
-            return;
+        //security
+        if (!handler.enforceCustomerId(handler.inputParams.customer_id)) return;
 
         const types = await customerNotificationService.addOrUpdateNotification(
             handler.inputParams.customer_id,
             handler.inputParams.notification_type
         );
 
-        res.status(201).json({ types });
+        handler.returnStatus(201, types);
     });
 };
 
@@ -74,18 +70,16 @@ export const DELETE = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        //validate 
-        if (!handler.requireParams(['customer_id']))
-            return;
+        //validate
+        if (!handler.requireParams(['customer_id'])) return;
 
-        //security 
-        if (!handler.enforceCustomerId(handler.inputParams.customer_id))
-            return;
+        //security
+        if (!handler.enforceCustomerId(handler.inputParams.customer_id)) return;
 
         const types = await customerNotificationService.removeNotification(
             handler.inputParams.customer_id
         );
 
-        res.status(204).json({ types });
+        handler.returnStatus(204, types);
     });
 };
