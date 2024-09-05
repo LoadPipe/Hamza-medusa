@@ -176,8 +176,13 @@ const ShippingAddress = ({
                     type="email"
                     title="Enter a valid email address."
                     autoComplete="email"
-                    value={formData.email.includes('@evm.blockchain') ? '' : formData.email}
+                    value={
+                        formData.email.includes('@evm.blockchain')
+                            ? ''
+                            : formData.email
+                    }
                     onChange={handleChange}
+                    required
                 />
                 <Input
                     label="Phone"
