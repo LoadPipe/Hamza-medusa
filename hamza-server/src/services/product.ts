@@ -404,11 +404,19 @@ class ProductService extends MedusaProductService {
                     'product_category.id AS category_id',
                     'product_category.name AS category_name',
                     'product_category_product.product_id AS product_id',
-                    'store.*', // Selecting all columns from the store table
+                    'product.title AS product_title',
+                    'product.subtitle AS product_subtitle',
+                    'product.description AS product_description',
+                    'product.handle AS product_handle',
+                    'product.is_giftcard AS is_giftcard',
+                    'product.thumbnail AS product_thumbnail',
+                    'store.id AS store_id',
+                    'store.name AS store_name',
+                    'store.*', // Selecting all store columns dynamically
                 ])
                 .getRawMany(); // Fetch raw results
 
-            // Grouping the product categories by category ID and pushing product IDs into an array
+            // Grouping the product categories by category ID and pushing product details with store information into an array
             const productCategories = productCategoriesRaw.reduce(
                 (acc, curr) => {
                     const categoryId = curr.category_id;
@@ -418,13 +426,22 @@ class ProductService extends MedusaProductService {
                         acc[categoryId] = {
                             id: categoryId,
                             name: curr.category_name,
-                            store: { ...curr }, // Store all columns dynamically
                             products: [],
                         };
                     }
 
-                    // Push product_id into the products array
-                    acc[categoryId].products.push(curr.product_id);
+                    // Push product details including store info into the products array
+                    acc[categoryId].products.push({
+                        product_id: curr.product_id,
+                        title: curr.product_title,
+                        subtitle: curr.product_subtitle,
+                        description: curr.product_description,
+                        handle: curr.product_handle,
+                        is_giftcard: curr.is_giftcard,
+                        thumbnail: curr.product_thumbnail,
+                        store_id: curr.store_id,
+                        store_name: curr.store_name,
+                    });
 
                     return acc;
                 },
