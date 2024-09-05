@@ -73,7 +73,7 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                     >
                         <Box
                             mb={4}
-                            maxH={'598px'}
+                            maxH={'592px'}
                             minH={'242px'}
                             maxWidth="840px"
                             width={'100%'}
@@ -135,7 +135,6 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                             justifyContent="center"
                             justifyItems="center"
                             gap={{ base: 3, md: 7 }} // Adjust gap for mobile and larger screens
-                            mt={{ base: 0, md: 4 }}
                             width="100%"
                             maxWidth="840px"
                         >
@@ -153,6 +152,7 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                                     aspectRatio={'1 / 1'}
                                     width="100%"
                                     maxW={'145px'}
+                                    maxH={'138px'}
                                     onClick={() => {
                                         setSelectedImage(image);
                                         setCurrentIndex(index);
@@ -173,8 +173,7 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                         <Flex
                             justifyContent="center"
                             position="absolute"
-                            bottom={{ base: '-17px', md: '-5px' }}
-                            mt={2}
+                            bottom={{ base: '-17px', md: '-17px' }}
                         >
                             {images.map((_, index) => (
                                 <Box key={index} mx={1.5}>
