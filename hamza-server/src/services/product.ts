@@ -367,7 +367,7 @@ class ProductService extends MedusaProductService {
         console.log(storeId);
         const productCategory = await this.productCategoryRepository_.findOne({
             where: {
-                handle: handle
+                handle: handle,
             },
             relations: ['products.variants.prices'],
         });
@@ -377,11 +377,59 @@ class ProductService extends MedusaProductService {
         }
 
         const products = productCategory.products.filter(
-            (product) => product.store_id === storeId &&
+            (product) =>
+                product.store_id === storeId &&
                 product.status === ProductStatus.PUBLISHED &&
                 product.store_id
         );
         return productCategory.products;
+    }
+    async getAllProductCategories() {
+        try {
+            const productCategoriesRaw = await this.productCategoryRepository_
+                .createQueryBuilder('product_category')
+                .innerJoin(
+                    'product_category_product',
+                    'product_category_product',
+                    'product_category_product.product_category_id = product_category.id'
+                )
+                .select([
+                    'product_category.id AS category_id',
+                    'product_category.name AS category_name',
+                    'product_category_product.product_id AS product_id',
+                ])
+                .getRawMany(); // Fetch raw results
+
+            // Grouping the product categories by category ID and pushing product IDs into an array
+            const productCategories = productCategoriesRaw.reduce(
+                (acc, curr) => {
+                    const categoryId = curr.category_id;
+
+                    // If the category is not in the accumulator, add it
+                    if (!acc[categoryId]) {
+                        acc[categoryId] = {
+                            id: categoryId,
+                            name: curr.category_name,
+                            products: [],
+                        };
+                    }
+
+                    // Push product_id into the products array
+                    acc[categoryId].products.push(curr.product_id);
+
+                    return acc;
+                },
+                {}
+            );
+
+            // Convert the result to an array
+            const result = Object.values(productCategories);
+
+            return result;
+        } catch (error) {
+            this.logger.error('Error fetching product categories:', error);
+            throw new Error('Failed to fetch product categories.');
+        }
     }
 
     async getProductsFromStoreName(storeName: string) {
