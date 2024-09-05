@@ -14,7 +14,7 @@ interface StoreState {
 
 // Create the Zustand store
 const useHomeProductsPage = create<StoreState>((set) => ({
-    categorySelect: null,
+    categorySelect: 'Merch',
     categoryTypeSelect: null,
     currencySelect: null,
     reviewStarsSelect: null,

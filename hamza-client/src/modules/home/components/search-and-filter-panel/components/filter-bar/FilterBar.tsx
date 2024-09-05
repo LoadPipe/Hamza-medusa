@@ -41,8 +41,6 @@ const FilterBar = () => {
         }
     );
 
-    const categories = data;
-
     const uniqueCategories = data
         ? Array.from(new Set(data.map((category: any) => category.name)))
         : [];
