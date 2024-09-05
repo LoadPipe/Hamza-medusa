@@ -73,7 +73,7 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                     >
                         <Box
                             mb={4}
-                            maxH={'598px'}
+                            maxH={'592px'}
                             minH={'242px'}
                             maxWidth="840px"
                             width={'100%'}
