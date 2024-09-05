@@ -47,7 +47,7 @@ const FilterBar = () => {
                 position="relative"
             >
                 <FilterButton onClick={() => onOpen()} />
-                <Flex
+                {/* <Flex
                     maxW={'1100px'}
                     width={'100%'}
                     overflow={'hidden'}
@@ -61,7 +61,7 @@ const FilterBar = () => {
                             categoryName={vendor.vendorName}
                         />
                     ))}
-                </Flex>
+                </Flex> */}
                 <Flex
                     w="123px"
                     height={{ base: '42px', md: '63px' }}
