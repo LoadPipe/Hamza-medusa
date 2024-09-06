@@ -71,6 +71,10 @@ const FilterBar = () => {
                     overflow={'hidden'}
                     gap={{ base: '12px', md: '20px' }}
                 >
+                    <CategoryButtons
+                        categoryType={'All'}
+                        categoryName={'All'}
+                    />
                     {uniqueCategories.map((categoryName: any, index) => (
                         <CategoryButtons
                             key={index}
