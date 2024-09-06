@@ -124,6 +124,11 @@ const ProductCardGroup = () => {
                         variant?.prices?.[0]?.amount ||
                         0; // Get the price for the preferred currency or fallback to the first price
 
+                    const formattedPrice = formatCryptoPrice(
+                        productPricing ?? 0,
+                        preferred_currency_code as string
+                    );
+
                     return (
                         <GridItem
                             key={index}
@@ -139,7 +144,7 @@ const ProductCardGroup = () => {
                                 variantID={variant?.id}
                                 countryCode={product.origin_country}
                                 productName={product.title}
-                                productPrice={productPricing}
+                                productPrice={formattedPrice}
                                 currencyCode={'usdc'}
                                 imageSrc={product.thumbnail}
                                 hasDiscount={product.is_giftcard}

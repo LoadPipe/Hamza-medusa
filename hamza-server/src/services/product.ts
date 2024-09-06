@@ -394,6 +394,29 @@ class ProductService extends MedusaProductService {
                     relations: ['products', 'products.variants.prices'],
                 });
 
+            // Loop through each category and update product prices using getProductsFromStoreWithPrices
+            for (const category of productCategories) {
+                for (const product of category.products) {
+                    if (product.store_id) {
+                        // Fetch updated product prices from the store
+                        const updatedProducts =
+                            await this.getProductsFromStoreWithPrices(
+                                product.store_id
+                            );
+
+                        // Update prices for products in the category
+                        const updatedProduct = updatedProducts.find(
+                            (p) => p.id === product.id
+                        );
+
+                        if (updatedProduct) {
+                            // Update the product's variants and prices
+                            product.variants = updatedProduct.variants;
+                        }
+                    }
+                }
+            }
+
             // Return the raw product categories with relations
             return productCategories;
         } catch (error) {
@@ -404,79 +427,6 @@ class ProductService extends MedusaProductService {
             throw new Error('Failed to fetch product categories with prices.');
         }
     }
-
-    // async getAllProductCategories() {
-    //     try {
-    //         const productCategoriesRaw = await this.productCategoryRepository_
-    //             .createQueryBuilder('product_category')
-    //             .innerJoin(
-    //                 'product_category_product',
-    //                 'product_category_product',
-    //                 'product_category_product.product_category_id = product_category.id'
-    //             )
-    //             .innerJoin(
-    //                 'product',
-    //                 'product',
-    //                 'product.id = product_category_product.product_id'
-    //             )
-    //             .innerJoin('store', 'store', 'product.store_id = store.id')
-    //             .select([
-    //                 'product_category.id AS category_id',
-    //                 'product_category.name AS category_name',
-    //                 'product_category_product.product_id AS product_id',
-    //                 'product.title AS product_title',
-    //                 'product.subtitle AS product_subtitle',
-    //                 'product.description AS product_description',
-    //                 'product.handle AS product_handle',
-    //                 'product.is_giftcard AS is_giftcard',
-    //                 'product.thumbnail AS product_thumbnail',
-    //                 'store.id AS store_id',
-    //                 'store.name AS store_name',
-    //                 'store.*', // Selecting all store columns dynamically
-    //             ])
-    //             .getRawMany(); // Fetch raw results
-
-    //         // Grouping the product categories by category ID and pushing product details with store information into an array
-    //         const productCategories = productCategoriesRaw.reduce(
-    //             (acc, curr) => {
-    //                 const categoryId = curr.category_id;
-
-    //                 // If the category is not in the accumulator, add it
-    //                 if (!acc[categoryId]) {
-    //                     acc[categoryId] = {
-    //                         id: categoryId,
-    //                         name: curr.category_name,
-    //                         products: [],
-    //                     };
-    //                 }
-
-    //                 // Push product details including store info into the products array
-    //                 acc[categoryId].products.push({
-    //                     product_id: curr.product_id,
-    //                     title: curr.product_title,
-    //                     subtitle: curr.product_subtitle,
-    //                     description: curr.product_description,
-    //                     handle: curr.product_handle,
-    //                     is_giftcard: curr.is_giftcard,
-    //                     thumbnail: curr.product_thumbnail,
-    //                     store_id: curr.store_id,
-    //                     store_name: curr.store_name,
-    //                 });
-
-    //                 return acc;
-    //             },
-    //             {}
-    //         );
-
-    //         // Convert the result to an array
-    //         const result = Object.values(productCategories);
-
-    //         return result;
-    //     } catch (error) {
-    //         this.logger.error('Error fetching product categories:', error);
-    //         throw new Error('Failed to fetch product categories.');
-    //     }
-    // }
 
     async getProductsFromStoreName(storeName: string) {
         try {
