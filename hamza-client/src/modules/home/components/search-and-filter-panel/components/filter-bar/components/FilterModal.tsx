@@ -29,9 +29,14 @@ import useVendors from '../../../data/data';
 interface FilterModalProps {
     isOpen: boolean;
     onClose: () => void;
+    categories: Array<{ name: string; id: string }>; // Add categories prop with array of category objects
 }
 
-const FilterModalHome: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
+const FilterModalHome: React.FC<FilterModalProps> = ({
+    isOpen,
+    onClose,
+    categories,
+}) => {
     const {
         setCurrencySelect,
         setReviewStarsSelect,
@@ -88,11 +93,11 @@ const FilterModalHome: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         gap="16px"
                     >
                         <Box>
-                            {vendors.map((vendor: any, index: number) => (
+                            {categories.map((category: any, index: number) => (
                                 <CategoryModalButton
                                     key={index}
-                                    categoryType={vendor.vendorType}
-                                    categoryName={vendor.vendorName}
+                                    categoryType={category.name}
+                                    categoryName={category.name}
                                 />
                             ))}
                         </Box>

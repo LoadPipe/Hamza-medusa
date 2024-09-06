@@ -8,12 +8,18 @@ import FilterModalHome from './components/FilterModal';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 
+// Define the category structure
+interface Category {
+    id: string;
+    name: string;
+}
+
 const FilterBar = () => {
     const [startIdx, setStartIdx] = useState(0); // State to keep track of the starting index of visible categories
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     // Fetching categories data
-    const { data } = useQuery(
+    const { data } = useQuery<Category[]>(
         ['categories'], // Use a unique key here to identify the query
         async () => {
             const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
@@ -22,9 +28,9 @@ const FilterBar = () => {
         }
     );
 
-    // Extract unique category names
-    const uniqueCategories = data
-        ? Array.from(new Set(data.map((category: any) => category.name)))
+    // Extract unique category names with id
+    const uniqueCategories: Category[] = data
+        ? data.map((category) => ({ name: category.name, id: category.id }))
         : [];
 
     // Show more logic for categories (next or previous)
@@ -81,11 +87,11 @@ const FilterBar = () => {
                         categoryType={'All'}
                         categoryName={'All'}
                     />
-                    {visibleCategories.map((categoryName: any, index) => (
+                    {visibleCategories.map((category, index) => (
                         <CategoryButtons
                             key={index}
-                            categoryType={categoryName}
-                            categoryName={categoryName}
+                            categoryType={category.id}
+                            categoryName={category.name}
                         />
                     ))}
                 </Flex>
@@ -121,7 +127,11 @@ const FilterBar = () => {
                     </Flex>
                 </Flex>
             </Flex>
-            <FilterModalHome isOpen={isOpen} onClose={onClose} />
+            <FilterModalHome
+                categories={uniqueCategories}
+                isOpen={isOpen}
+                onClose={onClose}
+            />
         </Flex>
     );
 };
