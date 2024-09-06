@@ -139,13 +139,13 @@ const ProductCardGroup = () => {
                             <ProductCardHome
                                 key={index}
                                 productHandle={product.handle}
-                                reviewCount={10}
+                                reviewCount={product.review}
                                 totalRating={10}
                                 variantID={variant?.id}
                                 countryCode={product.origin_country}
                                 productName={product.title}
                                 productPrice={formattedPrice}
-                                currencyCode={'usdc'}
+                                currencyCode={preferred_currency_code || 'usdc'}
                                 imageSrc={product.thumbnail}
                                 hasDiscount={product.is_giftcard}
                                 discountValue={product.discountValue}

@@ -387,37 +387,16 @@ class ProductService extends MedusaProductService {
 
     async getAllProductCategories() {
         try {
-            // Use the 'find' method with basic relations to fetch data
             const productCategories =
                 await this.productCategoryRepository_.find({
                     select: ['id', 'name'],
-                    relations: ['products', 'products.variants.prices'],
+                    relations: [
+                        'products',
+                        'products.variants.prices',
+                        'products.reviews',
+                    ],
                 });
 
-            // Loop through each category and update product prices using getProductsFromStoreWithPrices
-            for (const category of productCategories) {
-                for (const product of category.products) {
-                    if (product.store_id) {
-                        // Fetch updated product prices from the store
-                        const updatedProducts =
-                            await this.getProductsFromStoreWithPrices(
-                                product.store_id
-                            );
-
-                        // Update prices for products in the category
-                        const updatedProduct = updatedProducts.find(
-                            (p) => p.id === product.id
-                        );
-
-                        if (updatedProduct) {
-                            // Update the product's variants and prices
-                            product.variants = updatedProduct.variants;
-                        }
-                    }
-                }
-            }
-
-            // Return the raw product categories with relations
             return productCategories;
         } catch (error) {
             this.logger.error(
