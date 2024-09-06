@@ -32,11 +32,18 @@ const ProductCardGroup = () => {
         }
     );
 
-    const products = data
-        ? data
-              .filter((category: any) => category.name === categorySelect) // Match the category name
-              .flatMap((category: any) => category.products) // Extract products
+    // productsAll will contain all products from all categories
+    const productsAll = data
+        ? data.flatMap((category: any) => category.products) // Extract all products from all categories
         : [];
+
+    // products will contain filtered products based on category selection
+    const products =
+        categorySelect === 'All'
+            ? productsAll
+            : data
+                  ?.filter((category: any) => category.name === categorySelect) // Match the category name
+                  .flatMap((category: any) => category.products) || []; // Extract products for the selected category
 
     console.log('Filtered products:', products);
     if (isLoading) {
