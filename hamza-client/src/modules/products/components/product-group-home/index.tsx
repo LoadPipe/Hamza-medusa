@@ -8,6 +8,7 @@ import {
     Grid,
     GridItem,
     Flex,
+    Button,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
@@ -20,6 +21,8 @@ import useHomeProductsPage from '@store/home-page/product-layout/product-layout'
 const ProductCardGroup = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const { categorySelect } = useHomeProductsPage();
+    const [visibleProductsCount, setVisibleProductsCount] = useState(16); // State to manage visible products count (4 rows, 16 items)
+
     //TODO: MOVE TO INDEX.TS
     // Get products from vendor
     const { data, error, isLoading } = useQuery(
@@ -44,6 +47,13 @@ const ProductCardGroup = () => {
             : data
                   ?.filter((category: any) => category.name === categorySelect) // Match the category name
                   .flatMap((category: any) => category.products) || []; // Extract products for the selected category
+
+    const handleViewMore = () => {
+        // Increase the visible products count by 16 (4 rows of 4 products)
+        setVisibleProductsCount((prevCount) => prevCount + 16);
+    };
+
+    const visibleProducts = products.slice(0, visibleProductsCount);
 
     console.log('Filtered products:', products);
     if (isLoading) {
@@ -107,6 +117,7 @@ const ProductCardGroup = () => {
             maxW={'1280px'}
             width="100%"
             mx="auto"
+            flexDir={'column'}
             justifyContent={'center'}
             alignItems={'center'}
         >
@@ -120,7 +131,7 @@ const ProductCardGroup = () => {
                 }}
                 gap={{ base: '4', md: '25.5px' }}
             >
-                {products.map((product: any, index: number) => {
+                {visibleProducts.map((product: any, index: number) => {
                     // Extract product details
                     const variant = product.variants[0]; // Assuming you want the first variant
                     const productPricing =
@@ -165,6 +176,18 @@ const ProductCardGroup = () => {
                     );
                 })}
             </Grid>
+
+            {/* Show the "View More" button only if there are more products to display */}
+            {visibleProductsCount < products.length && (
+                <Button
+                    mt="2rem"
+                    onClick={handleViewMore}
+                    colorScheme="blue"
+                    variant="solid"
+                >
+                    View More
+                </Button>
+            )}
         </Flex>
     );
 };
