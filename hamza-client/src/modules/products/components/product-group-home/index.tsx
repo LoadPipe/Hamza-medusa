@@ -182,10 +182,12 @@ const ProductCardGroup = () => {
                 <Button
                     mt="2rem"
                     onClick={handleViewMore}
-                    colorScheme="blue"
                     variant="solid"
+                    borderRadius={'full'}
+                    backgroundColor={'white'}
+                    color="black"
                 >
-                    View More
+                    Show More
                 </Button>
             )}
         </Flex>
