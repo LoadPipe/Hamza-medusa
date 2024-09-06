@@ -1,51 +1,56 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Flex, useDisclosure } from '@chakra-ui/react';
 import CategoryButtons from './components/CategoryButtons';
 import useVendors from '../../data/data';
 import FilterButton from './components/FilterButton';
-import { CgChevronRight } from 'react-icons/cg';
+import { CgChevronRight, CgChevronLeft } from 'react-icons/cg'; // Import both chevrons
 import FilterModalHome from './components/FilterModal';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 
 const FilterBar = () => {
-    const [isClient, setIsClient] = useState(false);
-    const [startIdx, setStartIdx] = useState(0); // State to keep track of the starting index of visible vendors
+    const [startIdx, setStartIdx] = useState(0); // State to keep track of the starting index of visible categories
     const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const vendors = useVendors();
-    // Ensure that the components knows when it's running on the client
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
-
-    const toggleShowMore = () => {
-        // Update the starting index to show the next set of vendors
-        const nextIndex = (startIdx + 1) % vendors.length; // Cycle through the list
-        setStartIdx(nextIndex);
-    };
-
-    let visibleVendors = vendors
-        .slice(startIdx, startIdx + 6)
-        .concat(vendors.slice(0, Math.max(0, 6 - (vendors.length - startIdx))));
-
-    if (vendors.length == 1) visibleVendors = [visibleVendors[0]];
-
-    const { data, error, isLoading } = useQuery(
+    // Fetching categories data
+    const { data } = useQuery(
         ['categories'], // Use a unique key here to identify the query
         async () => {
             const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
-
             const response = await axios.get(url);
             return response.data; // Return the data from the response
         }
     );
 
+    // Extract unique category names
     const uniqueCategories = data
         ? Array.from(new Set(data.map((category: any) => category.name)))
         : [];
 
-    console.log('category data', uniqueCategories);
+    // Show more logic for categories (next or previous)
+    const toggleShowMore = () => {
+        const isAtEnd = startIdx + 6 >= uniqueCategories.length;
+        const nextIndex = isAtEnd
+            ? (startIdx - 1 + uniqueCategories.length) % uniqueCategories.length // Go back if at the end
+            : (startIdx + 1) % uniqueCategories.length; // Go forward otherwise
+        setStartIdx(nextIndex);
+    };
+
+    // Logic to display only 6 categories at a time
+    let visibleCategories = uniqueCategories
+        .slice(startIdx, startIdx + 6)
+        .concat(
+            uniqueCategories.slice(
+                0,
+                Math.max(0, 6 - (uniqueCategories.length - startIdx))
+            )
+        );
+
+    if (uniqueCategories.length === 1)
+        visibleCategories = [visibleCategories[0]];
+
+    // Determine if the user is at the end to toggle the chevron direction
+    const isAtEnd = startIdx + 6 >= uniqueCategories.length;
 
     return (
         <Flex
@@ -64,7 +69,8 @@ const FilterBar = () => {
                 gap={{ base: '12px', md: '20px' }}
                 position="relative"
             >
-                <FilterButton onClick={() => onOpen()} />
+                <FilterButton onClick={onOpen} />
+
                 <Flex
                     maxW={'1100px'}
                     width={'100%'}
@@ -75,7 +81,7 @@ const FilterBar = () => {
                         categoryType={'All'}
                         categoryName={'All'}
                     />
-                    {uniqueCategories.map((categoryName: any, index) => (
+                    {visibleCategories.map((categoryName: any, index) => (
                         <CategoryButtons
                             key={index}
                             categoryType={categoryName}
@@ -83,6 +89,8 @@ const FilterBar = () => {
                         />
                     ))}
                 </Flex>
+
+                {/* Conditional rendering of Chevron */}
                 <Flex
                     w="123px"
                     height={{ base: '42px', md: '63px' }}
@@ -93,7 +101,7 @@ const FilterBar = () => {
                     position="absolute"
                     right="0"
                     top="0"
-                    bg="linear-gradient(90deg, rgba(44, 39, 45, 0) 0%, #2C272D 75%)" // Applying linear gradient
+                    bg="linear-gradient(90deg, rgba(44, 39, 45, 0) 0%, #2C272D 75%)"
                     userSelect={'none'}
                 >
                     <Flex
@@ -105,7 +113,11 @@ const FilterBar = () => {
                         alignItems={'center'}
                         alignSelf={'center'}
                     >
-                        <CgChevronRight size="4rem" color="white" />
+                        {isAtEnd ? (
+                            <CgChevronLeft size="4rem" color="white" /> // Show left chevron when at the end
+                        ) : (
+                            <CgChevronRight size="4rem" color="white" /> // Show right chevron otherwise
+                        )}
                     </Flex>
                 </Flex>
             </Flex>

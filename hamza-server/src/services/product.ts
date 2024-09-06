@@ -344,7 +344,10 @@ class ProductService extends MedusaProductService {
 
             // Query to get all products for the given store ID
             const products = await this.productRepository_.find({
-                where: { store_id: store.id },
+                where: {
+                    status: ProductStatus.PUBLISHED,
+                    store_id: Not(IsNull()),
+                },
                 relations: [
                     'product_category_product',
                     'product_category',
@@ -387,6 +390,7 @@ class ProductService extends MedusaProductService {
 
     async getAllProductCategories() {
         try {
+            // Fetch categories along with related products, variants, prices, and reviews
             const productCategories =
                 await this.productCategoryRepository_.find({
                     select: ['id', 'name'],
@@ -397,7 +401,12 @@ class ProductService extends MedusaProductService {
                     ],
                 });
 
-            return productCategories;
+            // Filter out categories that have no associated products
+            const filteredCategories = productCategories.filter(
+                (category) => category.products && category.products.length > 0
+            );
+
+            return filteredCategories; // Return the filtered categories
         } catch (error) {
             this.logger.error(
                 'Error fetching product categories with prices:',
@@ -406,7 +415,6 @@ class ProductService extends MedusaProductService {
             throw new Error('Failed to fetch product categories with prices.');
         }
     }
-
     async getProductsFromStoreName(storeName: string) {
         try {
             const store = await this.storeRepository_.findOne({
