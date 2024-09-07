@@ -20,7 +20,7 @@ import axios from 'axios';
 import { clearCart, finalizeCheckout, getCheckoutData } from '@lib/data';
 import toast from 'react-hot-toast';
 import { getServerConfig } from '@lib/data/index';
-import JSCookie from 'js-cookie';
+import { getClientCookie } from '@lib/util/get-client-cookies';
 
 //TODO: we need a global common function to replace this
 const MEDUSA_SERVER_URL =
@@ -61,16 +61,6 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
 
     return <CryptoPaymentButton notReady={notReady} cart={cart} />;
 };
-
-export function getCookie(name: string) {
-    if (typeof window === 'undefined') {
-        // Read a cookie server-side
-        return require('next/headers').cookies().get(name)?.value;
-    }
-
-    // Read a cookie client-side
-    return JSCookie.get(name);
-}
 
 // TODO: (For G) Typescriptify this function with verbose error handling
 const CryptoPaymentButton = ({
@@ -283,7 +273,7 @@ const CryptoPaymentButton = ({
                 },
                 {
                     headers: {
-                        authorization: getCookie('_medusa_jwt'),
+                        authorization: getClientCookie('_medusa_jwt')('_medusa_jwt'),
                     },
                 }
             );
