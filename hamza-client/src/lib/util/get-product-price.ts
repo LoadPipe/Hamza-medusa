@@ -112,7 +112,7 @@ export function formatCryptoPrice(
             ? Number(amount).toFixed(2)
             : parseFloat(Number(amount).toFixed(displayPrecision));
 
-        output = limitPrecision(parseFloat(output.toString()), getCurrencyPrecision(currencyCode).display);
+        output = displayPrecision <= 2 ? output : limitPrecision(parseFloat(output.toString()), getCurrencyPrecision(currencyCode).display);
         console.log('after limiting precision: ', output);
 
         return output;
@@ -123,16 +123,12 @@ export function formatCryptoPrice(
 }
 
 function limitPrecision(value: number, maxDigits: number): string {
-    let output = value.toString();
-    const decIndex = output.indexOf('.');
-    if (decIndex >= 0) {
-        const numDigits = output.length - decIndex;
-        console.log(numDigits);
-        console.log(maxDigits);
-        if (numDigits > maxDigits) {
-            output = output.substring(0, output.length - (numDigits - maxDigits));
-        }
-    }
+    return removeTrailingZeros(value.toFixed(maxDigits));
+}
 
-    return output;
+function removeTrailingZeros(value: string): string {
+    if (value.indexOf('.') >= 0) {
+        value = value.replace(/\.?0+$/, '');
+    }
+    return value;
 }
