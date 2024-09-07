@@ -108,11 +108,31 @@ export function formatCryptoPrice(
         const displayPrecision = getCurrencyPrecision(currencyCode).db ?? 2;
         amount = amount / 10 ** displayPrecision;
 
-        return displayPrecision <= 2
+        let output = displayPrecision <= 2
             ? Number(amount).toFixed(2)
             : parseFloat(Number(amount).toFixed(displayPrecision));
+
+        output = limitPrecision(parseFloat(output.toString()), getCurrencyPrecision(currencyCode).display);
+        console.log('after limiting precision: ', output);
+
+        return output;
     } catch (e) {
         console.error(e);
         return '0.00';
     }
+}
+
+function limitPrecision(value: number, maxDigits: number): string {
+    let output = value.toString();
+    const decIndex = output.indexOf('.');
+    if (decIndex >= 0) {
+        const numDigits = output.length - decIndex;
+        console.log(numDigits);
+        console.log(maxDigits);
+        if (numDigits > maxDigits) {
+            output = output.substring(0, output.length - (numDigits - maxDigits));
+        }
+    }
+
+    return output;
 }

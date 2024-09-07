@@ -209,26 +209,7 @@ export class PriceConverter {
 
         if (EXTENDED_LOGGING) console.log('displayAmount:', displayAmount);
 
-        const output = Math.floor(displayAmount * rate * Math.pow(10, toPrecision.db));
-        return output;
-        /*
-
-        // Calculate output without truncating
-        let output = displayAmount * rate;
-
-        // Apply the custom rounding logic directly
-        output = this.applyCustomRounding(
-            output,
-            toPrecision.display_precision
-        );
-        
-        return output;
-
-        if (EXTENDED_LOGGING) console.log(`Final output: ${output}`);
-
-        // Multiply by the factor to adjust precision
-        return output * Math.pow(10, toPrecision.display_precision);
-        */
+        return Math.floor(displayAmount * rate * Math.pow(10, toPrecision.db));
     }
 
     applyCustomRounding(amount: number, precision: number): number {
