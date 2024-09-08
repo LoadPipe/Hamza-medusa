@@ -82,9 +82,9 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                     Filters
                 </ModalHeader>
                 <ModalCloseButton color={'white'} />
-                <ModalBody maxW={'771px'} padding={'1rem'} mx="auto">
+                <ModalBody maxW={'771px'} width="100%" mx="auto">
                     <Text fontWeight={'600'} fontSize={'16px'} color="white">
-                        Vendors
+                        Category
                     </Text>
                     <Flex
                         mt="1.5rem"
@@ -92,15 +92,13 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                         wrap={'wrap'}
                         gap="16px"
                     >
-                        <Box>
-                            {categories.map((category: any, index: number) => (
-                                <CategoryModalButton
-                                    key={index}
-                                    categoryType={category.name}
-                                    categoryName={category.name}
-                                />
-                            ))}
-                        </Box>
+                        {categories.map((category: any, index: number) => (
+                            <CategoryModalButton
+                                key={index}
+                                categoryType={category.name}
+                                categoryName={category.name}
+                            />
+                        ))}
                     </Flex>
                     <Text
                         mt="1.5rem"
@@ -142,15 +140,18 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                         <ReviewModalButton title={'2 Stars'} value={'2'} />
                         <ReviewModalButton title={'1 Star'} value={'1'} />
                     </Flex> */}
-                    <Divider mt="2rem" opacity={'0.5'} />
+                    <Divider
+                        mt="2rem"
+                        opacity={'0.5'}
+                        borderColor={'#3E3E3E'}
+                    />
                 </ModalBody>
 
                 <ModalFooter
                     maxW={'771px'}
                     width={'100%'}
-                    mx="auto"
-                    px={'1rem'}
                     pb="2.5rem"
+                    mx="auto"
                 >
                     <Button
                         fontSize={'16px'}
@@ -189,6 +190,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                             setHomeModalCategoryTypeFilterSelect(null);
                             onClose();
                         }}
+                        ml="auto"
                         fontSize={'16px'}
                         fontWeight={'400'}
                         leftIcon={
