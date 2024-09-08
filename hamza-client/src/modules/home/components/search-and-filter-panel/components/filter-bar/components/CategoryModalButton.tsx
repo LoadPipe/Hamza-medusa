@@ -52,7 +52,7 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                         setHomeModalCategoryTypeFilterSelect(categoryType);
                 }}
             >
-                <Image src={categoryIcons[categoryType]} alt={categoryName} />
+                {/* <Image src={categoryIcons[categoryType]} alt={categoryName} /> */}
                 <Text ml="10px" fontSize={{ base: '14px', md: '16px' }}>
                     {categoryName}
                 </Text>
