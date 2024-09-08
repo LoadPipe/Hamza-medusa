@@ -16,6 +16,7 @@ interface Category {
 
 const FilterBar = () => {
     const [startIdx, setStartIdx] = useState(0); // State to keep track of the starting index of visible categories
+    const [showLeftChevron, setShowLeftChevron] = useState(false); // Track if left chevron should be shown
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     // Fetching categories data
@@ -34,14 +35,24 @@ const FilterBar = () => {
         : [];
 
     // Show more logic for categories (next or previous)
-    const toggleShowMore = () => {
+    const toggleShowMore = (direction: 'next' | 'prev') => {
+        const isAtStart = startIdx === 0;
         const isAtEnd = startIdx + 6 >= uniqueCategories.length;
-        const nextIndex = isAtEnd
-            ? (startIdx - 1 + uniqueCategories.length) % uniqueCategories.length // Go back if at the end
-            : (startIdx + 1) % uniqueCategories.length; // Go forward otherwise
+
+        let nextIndex;
+
+        if (direction === 'next') {
+            nextIndex = isAtEnd ? 0 : startIdx + 1;
+            setShowLeftChevron(true); // Show left chevron when moving to next
+        } else {
+            nextIndex = isAtStart ? uniqueCategories.length - 1 : startIdx - 1;
+            if (nextIndex === 0) {
+                setShowLeftChevron(false); // Hide left chevron when back to the start
+            }
+        }
+
         setStartIdx(nextIndex);
     };
-
     // Logic to display only 6 categories at a time
     let visibleCategories = uniqueCategories
         .slice(startIdx, startIdx + 6)
@@ -77,16 +88,36 @@ const FilterBar = () => {
             >
                 <FilterButton onClick={onOpen} />
 
+                <CategoryButtons categoryType={'All'} categoryName={'All'} />
                 <Flex
                     maxW={'1100px'}
                     width={'100%'}
                     overflow={'hidden'}
                     gap={{ base: '12px', md: '20px' }}
                 >
-                    <CategoryButtons
-                        categoryType={'All'}
-                        categoryName={'All'}
-                    />
+                    {/* <Flex
+                        w="123px" // Same width as right chevron
+                        height={{ base: '42px', md: '63px' }}
+                        cursor="pointer"
+                        onClick={() => toggleShowMore('prev')} // Handle going backward
+                        position="absolute"
+                        left="0" // Align left
+                        top="0"
+                        bg="linear-gradient(270deg, rgba(44, 39, 45, 0) 0%, #2C272D 75%)"
+                        // Same gradient but mirrored
+                        userSelect={'none'}
+                    >
+                        <Flex
+                            w="35px"
+                            ml="0.75rem"
+                            height={'100%'}
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                            alignSelf={'center'}
+                        >
+                            <CgChevronLeft size="4rem" color="white" />
+                        </Flex>
+                    </Flex> */}
                     {visibleCategories.map((category, index) => (
                         <CategoryButtons
                             key={index}
@@ -119,11 +150,7 @@ const FilterBar = () => {
                         alignItems={'center'}
                         alignSelf={'center'}
                     >
-                        {isAtEnd ? (
-                            <CgChevronLeft size="4rem" color="white" /> // Show left chevron when at the end
-                        ) : (
-                            <CgChevronRight size="4rem" color="white" /> // Show right chevron otherwise
-                        )}
+                        <CgChevronRight size="4rem" color="white" />
                     </Flex>
                 </Flex>
             </Flex>
