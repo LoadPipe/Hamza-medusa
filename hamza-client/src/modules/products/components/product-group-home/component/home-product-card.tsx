@@ -29,6 +29,8 @@ interface ProductCardProps {
     storeId: string;
 }
 
+import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+
 const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
     variantID,
     countryCode,
@@ -47,6 +49,7 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
     storeId,
 }) => {
     const [imageLoaded, setImageLoaded] = useState(false);
+    const { preferred_currency_code } = useCustomerAuthStore();
 
     const objectFit = getObjectFit(productHandle);
 
@@ -150,8 +153,12 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                             <Flex mb="1px">
                                 <Image
                                     className="h-[18px] w-[18px] md:h-[20px] md:w-[20px]"
-                                    src={currencyIcons[currencyCode]}
-                                    alt={currencyCode}
+                                    src={
+                                        currencyIcons[
+                                            preferred_currency_code || 'usdc'
+                                        ]
+                                    }
+                                    alt={preferred_currency_code || 'usdc'}
                                 />
                             </Flex>
 

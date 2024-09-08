@@ -135,7 +135,7 @@ const MainMenu = () => {
                             <Text ml="0.5rem">Home</Text>
                         </MenuItem>
                     </NavLink>
-                    <NavLink href={`/store`}>
+                    <NavLink href={`/shop`}>
                         <MenuItem
                             fontWeight={'600'}
                             pl="1rem"
@@ -150,7 +150,7 @@ const MainMenu = () => {
                             >
                                 <MdOutlineSell size={25} />
                             </Flex>
-                            <Text ml="0.5rem"> Market</Text>
+                            <Text ml="0.5rem">Shop</Text>
                         </MenuItem>
                     </NavLink>
 
