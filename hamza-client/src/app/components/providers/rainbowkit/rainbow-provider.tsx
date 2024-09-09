@@ -92,23 +92,17 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
             console.log(
                 `Creating message with nonce: ${nonce}, address: ${address}, chainId: ${chainId}`
             );
-            try {
-                const message = new SiweMessage({
-                    domain: window.location.host,
-                    address,
-                    statement: 'Sign in with Ethereum to the app.',
-                    uri: window.location.origin,
-                    version: '1',
-                    chainId,
-                    nonce,
-                });
-                console.log('Message Created', message);
-                return message;
-            }
-            catch (e) {
-                console.log(e);
-            }
-            return '';
+            const message = new SiweMessage({
+                domain: window.location.host,
+                address,
+                statement: 'Sign in with Ethereum to the app.',
+                uri: window.location.origin,
+                version: '1',
+                chainId,
+                nonce,
+            });
+            console.log('Message Created', message);
+            return message;
         },
 
         getMessageBody: ({ message }) => {
