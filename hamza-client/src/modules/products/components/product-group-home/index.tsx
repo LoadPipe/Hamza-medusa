@@ -133,15 +133,14 @@ const ProductCardGroup = () => {
             >
                 {visibleProducts.map((product: any, index: number) => {
                     // Extract product details
-                    const variant = product.variants[0]; // Assuming you want the first variant
+                    const variant = product.variants[0];
                     const productPricing =
                         variant?.prices?.find(
                             (price: any) =>
                                 price.currency_code === preferred_currency_code
                         )?.amount ||
                         variant?.prices?.[0]?.amount ||
-                        0; // Get the price for the preferred currency or fallback to the first price
-
+                        0;
                     const formattedPrice = formatCryptoPrice(
                         productPricing ?? 0,
                         preferred_currency_code as string
