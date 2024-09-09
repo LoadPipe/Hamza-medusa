@@ -46,8 +46,8 @@ const ProductCardGroup = () => {
         categorySelect === 'All'
             ? productsAll
             : data
-                  ?.filter((category: any) => category.name === categorySelect) // Match the category name
-                  .flatMap((category: any) => category.products) || []; // Extract products for the selected category
+                ?.filter((category: any) => category.name === categorySelect) // Match the category name
+                .flatMap((category: any) => category.products) || []; // Extract products for the selected category
 
     const handleViewMore = () => {
         // Increase the visible products count by 16 (4 rows of 4 products)
