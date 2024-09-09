@@ -17,12 +17,24 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
+        //validate params
+        if (!handler.requireParam('token'))
+            return;
+
+        //validate token 
+        const token = await confirmationTokenService.getConfirmationToken(handler.inputParams.token);
+        if (!token)
+            handler.returnStatusWithMessage(404, 'Confirmation token not found');
+
+        //enforce security 
+        if (!handler.enforceCustomerId(token.customer_id))
+            return;
+
+        //verify the token 
         await confirmationTokenService.verifyConfirmationToken(
             handler.inputParams.token
         );
-        return handler.returnStatusWithMessage(
-            200,
-            'successful nonce handshake complete.'
-        );
+
+        return handler.returnStatus(200, { status: true });
     });
 };

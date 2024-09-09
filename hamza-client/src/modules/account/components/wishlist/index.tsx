@@ -25,7 +25,7 @@ const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
                             productVariantId={product.productVariantId}
                             productImage={product.thumbnail}
                             productDescription={product.title}
-                            productPrice={product.price.toString()}
+                            productPrice={product?.price?.toString() ?? ''}
                             countryCode={countryCode}
                         />
                     </Box>

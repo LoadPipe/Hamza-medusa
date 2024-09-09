@@ -5,15 +5,26 @@ import UnderlineLink from '@modules/common/components/interactive-link';
 
 import AccountNav from '../components/account-nav';
 import { Customer } from '@medusajs/medusa';
-import axios from 'axios';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
 import { Flex, Box } from '@chakra-ui/react';
-import { getVerificationStatus } from '@lib/data';
+import axios from 'axios';
+import { getClientCookie } from '@lib/util/get-client-cookies';
 
 interface AccountLayoutProps {
     customer: Omit<Customer, 'password_hash'> | null;
     children: React.ReactNode;
+}
+
+async function getVerificationStatus(customer_id: string): Promise<boolean> {
+    const res: any = axios.get(`${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/customer/verification-status`, {
+        params: { customer_id },
+        headers: {
+            authorization: getClientCookie('_medusa_jwt')
+        }
+    });
+
+    return res?.data == true;
 }
 
 const AccountLayout: React.FC<AccountLayoutProps> = ({
@@ -21,13 +32,13 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
     children,
 }) => {
     const { authData, setCustomerAuthData } = useCustomerAuthStore();
-    const accountVerificationFetcher = async () => {
-        let res = await getVerificationStatus(authData.customer_id);
-        if (res.data == true) {
-            setCustomerAuthData({ ...authData, is_verified: true });
-        }
-
-        return;
+    const accountVerificationFetcher = () => {
+        const res = { data: true }
+        getVerificationStatus(authData.customer_id).then(r => {
+            if (r) {
+                setCustomerAuthData({ ...authData, is_verified: true });
+            }
+        });
     };
     useEffect(() => {
         if (authData.status == 'authenticated') {

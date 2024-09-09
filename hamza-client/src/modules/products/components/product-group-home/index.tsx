@@ -8,6 +8,7 @@ import {
     Grid,
     GridItem,
     Flex,
+    Button,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
@@ -15,77 +16,46 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import ProductCardHome from './component/home-product-card';
 import SkeletonProductGrid from '@modules/skeletons/components/skeleton-product-grid';
+import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 
-type Props = {
-    vendorName: string;
-    filterByRating?: string | null;
-    category?: string | null;
-};
-
-const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
+const ProductCardGroup = () => {
+    const { preferred_currency_code } = useCustomerAuthStore();
+    const { categorySelect } = useHomeProductsPage();
+    const [visibleProductsCount, setVisibleProductsCount] = useState(16); // State to manage visible products count (4 rows, 16 items)
 
     //TODO: MOVE TO INDEX.TS
     // Get products from vendor
     const { data, error, isLoading } = useQuery(
-        ['products', { vendor: vendorName }],
-        () => {
-            const url =
-                vendorName === 'All'
-                    ? `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products`
-                    : `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products?store_name=${vendorName}`;
+        ['categories'], // Use a unique key here to identify the query
+        async () => {
+            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
 
-            //TODO: MOVE TO INDEX.TS
-            return axios.get(url);
+            const response = await axios.get(url);
+            return response.data; // Return the data from the response
         }
     );
 
-    const { preferred_currency_code } = useCustomerAuthStore();
-    console.log('user preferred currency code: ', preferred_currency_code);
+    // productsAll will contain all products from all categories
+    const productsAll = data
+        ? data.flatMap((category: any) => category.products) // Extract all products from all categories
+        : [];
 
-    const products = data?.data;
+    // products will contain filtered products based on category selection
+    const products =
+        categorySelect === 'All'
+            ? productsAll
+            : data
+                  ?.filter((category: any) => category.name === categorySelect) // Match the category name
+                  .flatMap((category: any) => category.products) || []; // Extract products for the selected category
 
-    const err: any = error ? error : null;
-    if (err) return <div>Error: {err?.message}</div>;
-
-    // Function to filter products by rating
-    const filterProductsByRating = (
-        products: any[],
-        filterByRating: string | null | undefined
-    ) => {
-        if (!filterByRating || filterByRating === 'All') {
-            return products;
-        }
-
-        const ratingThreshold = parseFloat(filterByRating);
-        return products.filter((product) => {
-            const reviewCounter = product.reviews.length;
-            const totalRating = product.reviews.reduce(
-                (acc: number, review: any) => acc + review.rating,
-                0
-            );
-            const avgRating = totalRating / reviewCounter;
-            const roundedAvgRating = parseFloat(avgRating.toFixed(2));
-
-            console.log(`avgRating is ${roundedAvgRating}`);
-
-            switch (ratingThreshold) {
-                case 4:
-                    console.log('5');
-                    return roundedAvgRating >= 4.0 && roundedAvgRating <= 5.0;
-                case 3:
-                    return roundedAvgRating > 2.0 && roundedAvgRating <= 3.0;
-                case 2:
-                    return roundedAvgRating > 1.0 && roundedAvgRating <= 2.0;
-                case 1:
-                    return roundedAvgRating >= 0.0 && roundedAvgRating <= 1.0;
-                default:
-                    return true;
-            }
-        });
+    const handleViewMore = () => {
+        // Increase the visible products count by 16 (4 rows of 4 products)
+        setVisibleProductsCount((prevCount) => prevCount + 16);
     };
 
-    const filteredProducts = filterProductsByRating(products, filterByRating);
+    const visibleProducts = products.slice(0, visibleProductsCount);
 
+    console.log('Filtered products:', products);
     if (isLoading) {
         return (
             <Flex
@@ -147,6 +117,7 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
             maxW={'1280px'}
             width="100%"
             mx="auto"
+            flexDir={'column'}
             justifyContent={'center'}
             alignItems={'center'}
         >
@@ -160,66 +131,65 @@ const ProductCardGroup = ({ vendorName, filterByRating, category }: Props) => {
                 }}
                 gap={{ base: '4', md: '25.5px' }}
             >
-                {filteredProducts.map((product: any, index: number) => {
-                    const variantPrices = product.variants
-                        .map((variant: any) => variant.prices)
-                        .flat();
+                {visibleProducts.map((product: any, index: number) => {
+                    // Extract product details
+                    const variant = product.variants[0]; // Assuming you want the first variant
+                    const productPricing =
+                        variant?.prices?.find(
+                            (price: any) =>
+                                price.currency_code === preferred_currency_code
+                        )?.amount ||
+                        variant?.prices?.[0]?.amount ||
+                        0; // Get the price for the preferred currency or fallback to the first price
 
-                    const selectedPrice =
-                        variantPrices.find(
-                            (p: any) =>
-                                p.currency_code === preferred_currency_code
-                        ) ??
-                        variantPrices.find(
-                            (p: any) => p.currency_code === 'usdc'
-                        );
-                    const productPricing = formatCryptoPrice(
-                        selectedPrice?.amount ?? 0,
+                    const formattedPrice = formatCryptoPrice(
+                        productPricing ?? 0,
                         preferred_currency_code as string
                     );
-                    const reviewCounter = product.reviews.length;
-                    const totalRating = product.reviews.reduce(
-                        (acc: number, review: any) => acc + review.rating,
-                        0
-                    );
-                    const avgRating = totalRating / reviewCounter;
-                    const roundedAvgRating = parseFloat(avgRating.toFixed(2));
 
-                    const variantID = product.variants[0]?.id;
                     return (
                         <GridItem
                             key={index}
-                            //   maxW={'295px'}
                             minHeight={'243.73px'}
                             height={{ base: '100%', md: '399px' }}
                             width="100%"
                         >
                             <ProductCardHome
                                 key={index}
-                                productHandle={products[index].handle}
-                                reviewCount={reviewCounter}
-                                totalRating={avgRating}
-                                variantID={variantID}
-                                countryCode={product.countryCode}
+                                productHandle={product.handle}
+                                reviewCount={product.review}
+                                totalRating={10}
+                                variantID={variant?.id}
+                                countryCode={product.origin_country}
                                 productName={product.title}
-                                productPrice={productPricing}
-                                currencyCode={preferred_currency_code ?? 'usdc'}
+                                productPrice={formattedPrice}
+                                currencyCode={preferred_currency_code || 'usdc'}
                                 imageSrc={product.thumbnail}
                                 hasDiscount={product.is_giftcard}
                                 discountValue={product.discountValue}
                                 productId={product.id}
-                                inventory={
-                                    product.variants[0]?.inventory_quantity
-                                }
-                                allow_backorder={
-                                    product.variants[0]?.allow_backorder
-                                }
+                                inventory={variant?.inventory_quantity}
+                                allow_backorder={variant?.allow_backorder}
                                 storeId={product.store_id}
                             />
                         </GridItem>
                     );
                 })}
             </Grid>
+
+            {/* Show the "View More" button only if there are more products to display */}
+            {visibleProductsCount < products.length && (
+                <Button
+                    mt="2rem"
+                    onClick={handleViewMore}
+                    variant="solid"
+                    borderRadius={'full'}
+                    backgroundColor={'white'}
+                    color="black"
+                >
+                    Show More
+                </Button>
+            )}
         </Flex>
     );
 };

@@ -28,7 +28,7 @@ const SearchAndFilterPanel = () => {
         >
             <SearchBar />
             <FilterBar />
-            <ProductCardGroup vendorName={vendorName} />
+            <ProductCardGroup />
         </Flex>
     );
 };
