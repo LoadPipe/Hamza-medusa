@@ -20,14 +20,11 @@ const FilterBar = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     // Fetching categories data
-    const { data } = useQuery<Category[]>(
-        ['categories'], // Use a unique key here to identify the query
-        async () => {
-            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
-            const response = await axios.get(url);
-            return response.data; // Return the data from the response
-        }
-    );
+    const { data } = useQuery<Category[]>(['categories'], async () => {
+        const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
+        const response = await axios.get(url);
+        return response.data;
+    });
 
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
@@ -53,6 +50,7 @@ const FilterBar = () => {
 
         setStartIdx(nextIndex);
     };
+
     // Logic to display only 6 categories at a time
     let visibleCategories = uniqueCategories
         .slice(startIdx, startIdx + 6)
@@ -133,7 +131,7 @@ const FilterBar = () => {
                     height={{ base: '42px', md: '63px' }}
                     justifyContent={'center'}
                     alignItems={'center'}
-                    onClick={toggleShowMore}
+                    onClick={() => toggleShowMore('next')}
                     cursor="pointer"
                     position="absolute"
                     right="0"
