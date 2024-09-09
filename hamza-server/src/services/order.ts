@@ -16,16 +16,13 @@ import { ProductVariantRepository } from '../repositories/product-variant';
 import StoreRepository from '../repositories/store';
 import { LineItemService } from '@medusajs/medusa';
 import { Order } from '../models/order';
-import { Product } from '../models/product';
 import { Payment } from '../models/payment';
 import { Lifetime } from 'awilix';
 import { In, Not } from 'typeorm';
 import {
-    BuckyClient,
-    ICreateBuckyOrderProduct,
+    BuckyClient
 } from '../buckydrop/bucky-client';
 import ProductRepository from '@medusajs/medusa/dist/repositories/product';
-import BuckydropService from './buckydrop';
 import { createLogger, ILogger } from '../utils/logging/logger';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
@@ -508,10 +505,17 @@ export default class OrderService extends MedusaOrderService {
 
         return relevantItems?.length
             ? {
-                  variants: relevantItems.map((i) => i.variant),
-                  quantities: relevantItems.map((i) => i.quantity),
-              }
+                variants: relevantItems.map((i) => i.variant),
+                quantities: relevantItems.map((i) => i.quantity),
+            }
             : { variants: [], quantities: [] };
+    }
+
+    async getOrdersWithUnverifiedPayments() {
+        return await this.orderRepository_.find({
+            where: { payment_status: PaymentStatus.AWAITING },
+            relations: ['payments']
+        });
     }
 
     private async processBuckydropOrders(
