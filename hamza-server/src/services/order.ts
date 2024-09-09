@@ -9,6 +9,7 @@ import {
     ProductVariant,
     LineItem,
 } from '@medusajs/medusa';
+import { BuckyLogRepository } from '../repositories/bucky-log';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 import PaymentRepository from '@medusajs/medusa/dist/repositories/payment';
@@ -61,6 +62,7 @@ export default class OrderService extends MedusaOrderService {
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly logger: ILogger;
     protected buckyClient: BuckyClient;
+    protected readonly buckyRepository: typeof BuckyLogRepository;
 
     constructor(container) {
         super(container);
@@ -71,7 +73,7 @@ export default class OrderService extends MedusaOrderService {
         this.productRepository_ = container.productRepository;
         this.productVariantRepository_ = container.productVariantRepository;
         this.logger = createLogger(container, 'OrderService');
-        this.buckyClient = new BuckyClient();
+        this.buckyClient = new BuckyClient(this.buckyRepository);
     }
 
     async createFromPayment(
