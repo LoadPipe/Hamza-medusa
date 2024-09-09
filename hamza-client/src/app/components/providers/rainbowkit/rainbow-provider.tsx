@@ -83,26 +83,32 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         getNonce: async () => {
             console.log('FETCHING NONCE.....');
             const response = await fetch(GET_NONCE);
-            const data = await response.text();
-            console.log('NONCE DATA: ', data);
-            return data;
+            const data = await response.json();
+            console.log('NONCE DATA: ', data.nonce);
+            return data?.nonce ?? '';
         },
 
         createMessage: ({ nonce, address, chainId }) => {
             console.log(
                 `Creating message with nonce: ${nonce}, address: ${address}, chainId: ${chainId}`
             );
-            const message = new SiweMessage({
-                domain: window.location.host,
-                address,
-                statement: 'Sign in with Ethereum to the app.',
-                uri: window.location.origin,
-                version: '1',
-                chainId,
-                nonce,
-            });
-            console.log('Message Created', message);
-            return message;
+            try {
+                const message = new SiweMessage({
+                    domain: window.location.host,
+                    address,
+                    statement: 'Sign in with Ethereum to the app.',
+                    uri: window.location.origin,
+                    version: '1',
+                    chainId,
+                    nonce,
+                });
+                console.log('Message Created', message);
+                return message;
+            }
+            catch (e) {
+                console.log(e);
+            }
+            return '';
         },
 
         getMessageBody: ({ message }) => {
