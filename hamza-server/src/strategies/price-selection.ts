@@ -209,44 +209,7 @@ export class PriceConverter {
 
         if (EXTENDED_LOGGING) console.log('displayAmount:', displayAmount);
 
-        const output = Math.floor(displayAmount * rate * Math.pow(10, toPrecision.db));
-        return output;
-        /*
-
-        // Calculate output without truncating
-        let output = displayAmount * rate;
-
-        // Apply the custom rounding logic directly
-        output = this.applyCustomRounding(
-            output,
-            toPrecision.display_precision
-        );
-        
-        return output;
-
-        if (EXTENDED_LOGGING) console.log(`Final output: ${output}`);
-
-        // Multiply by the factor to adjust precision
-        return output * Math.pow(10, toPrecision.display_precision);
-        */
-    }
-
-    applyCustomRounding(amount: number, precision: number): number {
-        const factor = Math.pow(10, precision);
-
-        // First, round to the nearest precision
-        let roundedAmount = Math.round(amount * factor) / factor;
-
-        // Convert the number to a string and check for trailing nines
-        const amountStr = roundedAmount.toFixed(precision + 2); // Extra precision for checking
-        const regex = /\.([0-9]*)(9{3,})$/; // Matches 3 or more trailing 9s after decimal
-
-        if (regex.test(amountStr)) {
-            // If there are 3 or more trailing 9s, round up the preceding digit
-            roundedAmount = Math.ceil(amount * factor) / factor;
-        }
-
-        return roundedAmount;
+        return Math.floor(displayAmount * rate * Math.pow(10, toPrecision.db));
     }
 
     private async getFromApi(price: IPrice): Promise<number> {

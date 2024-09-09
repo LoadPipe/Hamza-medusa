@@ -8,24 +8,26 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         'productReviewService'
     );
 
-    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/review/bought', [
-        'product_id', 'customer_id'
-    ]);
+    const handler: RouteHandler = new RouteHandler(
+        req,
+        res,
+        'GET',
+        '/custom/review/bought',
+        ['product_id', 'customer_id']
+    );
 
     await handler.handle(async () => {
-        //validate params 
-        if (!handler.requireParams(['product_id', 'customer_id']))
-            return;
+        //validate params
+        if (!handler.requireParams(['product_id', 'customer_id'])) return;
 
-        //enforce security 
-        if (!handler.enforceCustomerId(handler.inputParams.customer_id))
-            return;
+        //enforce security
+        if (!handler.enforceCustomerId(handler.inputParams.customer_id)) return;
 
         const verify = await productReviewService.customerHasBoughtProduct(
             handler.inputParams.customer_id,
             handler.inputParams.product_id
         );
 
-        res.json(verify);
+        handler.returnStatus(200, verify);
     });
 };

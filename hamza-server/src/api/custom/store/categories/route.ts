@@ -24,8 +24,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         const { store_name } = req.query;
 
         // Validate the request
-        if (!handler.requireParam('store_name'))
-            return;
+        if (!handler.requireParam('store_name')) return;
 
         // Fetch the categories by store ID
         const storeData = await storeService.getStoreByName(
@@ -36,6 +35,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         );
 
         // Return the products with categories
-        return res.json(products);
+        return handler.returnStatus(200, products);
     });
 };

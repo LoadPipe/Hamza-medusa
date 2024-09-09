@@ -20,45 +20,41 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         const hasProductId = handler.inputParams.product_id?.length;
 
         if (hasCustomerId) {
-            //require security 
+            //require security
             if (!handler.enforceCustomerId(handler.inputParams.customer_id))
                 return;
-
         }
 
         let reviews = [];
 
         if (hasCustomerId && !hasProductId) {
-
-            //reviews by customer 
+            //reviews by customer
             reviews = await productReviewService.getAllCustomerReviews(
                 handler.inputParams.customer_id
             );
 
             res.json(reviews);
-        }
-        else if (hasProductId && !hasCustomerId) {
-
+        } else if (hasProductId && !hasCustomerId) {
             //reviews by product
             reviews = await productReviewService.getReviews(
                 handler.inputParams.product_id
             );
-            res.json(reviews);
-        }
-        else if (hasCustomerId && hasProductId) {
-
+            handler.returnStatus(200, reviews);
+        } else if (hasCustomerId && hasProductId) {
             //reviews by product and customer
             reviews = await productReviewService.getCustomerReviews(
                 handler.inputParams.product_id,
                 handler.inputParams.customer_id
             );
-        }
-        else {
-            res.status(400).json({ message: 'Either customer_id or product_id is required' });
+        } else {
+            handler.returnStatusWithMessage(
+                400,
+                `Either customer_id or product_id is required`
+            );
             return;
         }
 
-        res.json(reviews);
+        handler.returnStatus(200, reviews);
     });
 };
 
@@ -102,7 +98,6 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     }
 };
 
-
 export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
     const productReviewService: ProductReviewService = req.scope.resolve(
         'productReviewService'
@@ -123,17 +118,12 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        //validate parameters 
-        if (!handler.requireParams([
-            'product_id',
-            'customer_id',
-            'order_id',
-        ]))
+        //validate parameters
+        if (!handler.requireParams(['product_id', 'customer_id', 'order_id']))
             return;
 
         //security
-        if (!handler.enforceCustomerId(handler.inputParams.customer_id))
-            return;
+        if (!handler.enforceCustomerId(handler.inputParams.customer_id)) return;
 
         const updatedReview = await productReviewService.updateProduct(
             handler.inputParams.product_id,
@@ -142,6 +132,6 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
             handler.inputParams.customer_id,
             handler.inputParams.order_id
         );
-        res.json(updatedReview);
+        handler.returnStatus(200, updatedReview);
     });
 };

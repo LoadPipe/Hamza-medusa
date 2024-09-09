@@ -1,4 +1,9 @@
-import { type MedusaRequest, type MedusaResponse, type Logger, generateEntityId } from '@medusajs/medusa';
+import {
+    type MedusaRequest,
+    type MedusaResponse,
+    type Logger,
+    generateEntityId,
+} from '@medusajs/medusa';
 import { readRequestBody } from '../utils/request-body';
 import jwt from 'jsonwebtoken';
 import { createLogger, ILogger } from '../utils/logging/logger';
@@ -26,7 +31,6 @@ export class RouteHandler {
         route: string,
         inputFieldNames: string[] = []
     ) {
-
         this.method = method;
         this.route = route;
         this.request = req;
@@ -52,14 +56,18 @@ export class RouteHandler {
 
         //create the logger
         const logger: Logger = req.scope.resolve('logger');
-        const appLogRepository: typeof AppLogRepository = req.scope.resolve('appLogRepository');
+        const appLogRepository: typeof AppLogRepository =
+            req.scope.resolve('appLogRepository');
 
         const loggerContext: any = {
             logger,
-            appLogRepository
-        }
+            appLogRepository,
+        };
 
-        this.logger = createLogger(loggerContext, `${this.method} ${this.route}`);
+        this.logger = createLogger(
+            loggerContext,
+            `${this.method} ${this.route}`
+        );
     }
 
     async handle(fn: (_this?: RouteHandler) => any) {
@@ -76,10 +84,19 @@ export class RouteHandler {
     }
 
     returnStatus(status: number, payload: any) {
-        if (status == 500)
-            this.logger.error(`Returning ${status} with ${JSON.stringify(payload)}`);
-        else
-            this.logger.info(`Returning ${status} with ${JSON.stringify(payload)}`);
+        if (status === 500) {
+            this.logger.error(
+                `Returning ${status} with ${JSON.stringify(payload)}`
+            );
+        } else if (status === 404) {
+            this.logger.warn(
+                `Returning ${status} - Not Found: ${JSON.stringify(payload)}`
+            );
+        } else {
+            this.logger.info(
+                `Returning ${status} with ${JSON.stringify(payload)}`
+            );
+        }
         return this.response.status(status).json(payload);
     }
 
@@ -105,9 +122,10 @@ export class RouteHandler {
             this.logger.warn(
                 `Unauthorized customer for route call ${this.method} ${this.route}`
             );
-            this.response
-                .status(401)
-                .json({ message: 'Unauthorized customer' });
+            this.returnStatusWithMessage(
+                401,
+                `Unauthorized customer ${this.customerId}`
+            );
         } else {
             console.log('customer ', this.customerId, ' is authorized');
         }
@@ -124,9 +142,11 @@ export class RouteHandler {
             }
 
             if (missingParams.length) {
-                this.logger?.warn(`Call rejected for missing params: ${JSON.stringify(missingParams)}`)
+                this.logger?.warn(
+                    `Call rejected for missing params: ${JSON.stringify(missingParams)}`
+                );
                 const message = `missing required param(s): ${missingParams.join()}`;
-                this.response.status(400).json({ message });
+                this.returnStatusWithMessage(400, message);
                 return false;
             }
         }

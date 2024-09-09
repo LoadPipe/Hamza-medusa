@@ -7,16 +7,21 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         'productReviewService'
     );
 
-    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/review/average', [
-        'product_id'
-    ]);
+    const handler: RouteHandler = new RouteHandler(
+        req,
+        res,
+        'GET',
+        '/custom/review/average',
+        ['product_id']
+    );
 
     await handler.handle(async () => {
-        //validate params 
-        if (!handler.requireParam('product_id'))
-            return;
+        //validate params
+        if (!handler.requireParam('product_id')) return;
 
-        const reviews = await productReviewService.getAverageRating(handler.inputParams.product_id);
-        res.json(reviews);
+        const reviews = await productReviewService.getAverageRating(
+            handler.inputParams.product_id
+        );
+        handler.returnStatus(200, reviews);
     });
 };

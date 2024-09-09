@@ -14,9 +14,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         const { variant_id } = req.query;
 
         if (!variant_id) {
-            return res
-                .status(400)
-                .json({ status: false, message: 'Product ID is required' });
+            return handler.returnStatus(400, {
+                status: false,
+                message: 'Product ID is required',
+            });
         }
 
         const inventoryData = await ProductVariantRepository.findOne({
@@ -25,13 +26,15 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         });
 
         if (!inventoryData) {
-            return res
-                .status(404)
-                .json({ status: false, message: 'Product not found' });
+            return handler.returnStatus(404, {
+                status: false,
+                message: 'Product not found',
+            });
         }
 
-        return res
-            .status(200)
-            .json({ status: true, data: inventoryData.inventory_quantity });
+        return handler.returnStatus(200, {
+            status: true,
+            data: inventoryData.inventory_quantity,
+        });
     });
 };
