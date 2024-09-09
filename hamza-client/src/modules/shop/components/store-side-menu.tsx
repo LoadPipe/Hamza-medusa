@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Box, Text, Heading, Flex, useMediaQuery } from '@chakra-ui/react';
+import { Box, Text, Heading, Flex, Skeleton } from '@chakra-ui/react';
 import CurrencyButton from './currency-button';
 import CategoryButton from './category-button';
 import currencies from '../data/currency-category';
@@ -32,6 +32,19 @@ const SideMenu = () => {
         ? data.map((category) => ({ name: category.name, id: category.id }))
         : [];
 
+    // Skeletons for loading state
+    const skeletonButtons = Array(12)
+        .fill(null)
+        .map((_, index) => (
+            <Skeleton
+                key={index}
+                height="48px"
+                maxWidth={'145px'}
+                width="100%"
+                borderRadius="full"
+            />
+        ));
+
     return (
         <Box
             display={{ base: 'none', md: 'block' }}
@@ -61,13 +74,15 @@ const SideMenu = () => {
                 </Heading>
 
                 <Flex mt="1rem" flexDirection={'column'} gap="16px">
-                    {uniqueCategories.map((category, index) => (
-                        <CategoryButton
-                            key={index}
-                            categoryType={category.id}
-                            categoryName={category.name}
-                        />
-                    ))}
+                    {isLoading
+                        ? skeletonButtons // Show skeletons while loading
+                        : uniqueCategories.map((category, index) => (
+                              <CategoryButton
+                                  key={index}
+                                  categoryType={category.id}
+                                  categoryName={category.name}
+                              />
+                          ))}
                 </Flex>
             </Box>
 
