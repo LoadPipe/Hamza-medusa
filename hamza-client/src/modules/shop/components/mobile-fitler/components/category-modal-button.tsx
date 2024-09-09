@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import Image from 'next/image';
 import useModalFilter from '@store/store-page/filter-modal';
-import categoryIcons from '../../../data/category-icons';
+import categoryIcons from '@modules/shop/data/category-icons';
 
 interface CategoryButtonProps {
     categoryName: string;
@@ -48,10 +48,13 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                 }}
                 onClick={() => {
                     setModalCategoryFilterSelect(categoryName),
-                        setModalCategoryTypeFilterSelect(categoryType);
+                        setModalCategoryTypeFilterSelect(categoryName);
                 }}
             >
-                <Image src={categoryIcons[categoryType]} alt={categoryName} />
+                <Image
+                    src={categoryIcons[categoryName.toLowerCase()]}
+                    alt={categoryName}
+                />
                 <Text ml="10px" fontSize={{ base: '14px', md: '16px' }}>
                     {categoryName}
                 </Text>

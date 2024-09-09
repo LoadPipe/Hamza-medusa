@@ -14,7 +14,7 @@ interface StoreState {
 
 // Create the Zustand store
 const useStorePage = create<StoreState>((set) => ({
-    categorySelect: null,
+    categorySelect: 'All',
     categoryTypeSelect: null,
     currencySelect: null,
     reviewStarsSelect: null,

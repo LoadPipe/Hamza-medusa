@@ -27,10 +27,17 @@ import useSideFilter from '@store/store-page/side-filter';
 import useModalFilter from '@store/store-page/filter-modal';
 import RangeSliderModal from './range-slider-modal';
 import useVendors from '../../../../home/components/search-and-filter-panel/data/data';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 interface FilterModalProps {
     isOpen: boolean;
     onClose: () => void;
+}
+
+interface Category {
+    id: string;
+    name: string;
 }
 
 const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
@@ -62,6 +69,21 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
 
     const vendors = useVendors();
 
+    // Fetching categories data
+    const { data, isLoading } = useQuery<Category[]>(
+        ['categories'],
+        async () => {
+            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
+            const response = await axios.get(url);
+            return response.data;
+        }
+    );
+
+    // Extract unique category names with id
+    const uniqueCategories: Category[] = data
+        ? data.map((category) => ({ name: category.name, id: category.id }))
+        : [];
+
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
@@ -78,7 +100,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                 <ModalCloseButton color={'white'} />
                 <ModalBody padding={'1rem'}>
                     <Text fontWeight={'600'} fontSize={'16px'} color="white">
-                        Categories
+                        Category
                     </Text>
                     <Flex
                         mt="1.5rem"
@@ -86,15 +108,15 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         wrap={'wrap'}
                         gap="16px"
                     >
-                        <Box>
-                            {vendors.map((vendor: any, index: number) => (
+                        {uniqueCategories.map(
+                            (category: any, index: number) => (
                                 <CategoryModalButton
                                     key={index}
-                                    categoryType={vendor.vendorType}
-                                    categoryName={vendor.vendorName}
+                                    categoryType={category.name}
+                                    categoryName={category.name}
                                 />
-                            ))}
-                        </Box>
+                            )
+                        )}
                     </Flex>
                     <Text
                         mt="1.5rem"

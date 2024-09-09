@@ -63,7 +63,6 @@ const ProductCardGroup = () => {
                 mb={'4rem'}
                 maxW={'1280px'}
                 width="100%"
-                mx="auto"
                 justifyContent={'center'}
                 alignItems={'center'}
             >
@@ -116,14 +115,13 @@ const ProductCardGroup = () => {
             mb={'4rem'}
             maxW={'1280px'}
             width="100%"
-            mx="auto"
             flexDir={'column'}
             justifyContent={'center'}
             alignItems={'center'}
+            px="1rem"
         >
             <Grid
                 maxWidth={'1256.52px'}
-                mx="1rem"
                 width="100%"
                 templateColumns={{
                     base: 'repeat(2, 1fr)',

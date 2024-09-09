@@ -31,6 +31,7 @@ const CategoryButtons: React.FC<CategoryButtonProps> = ({
             }
             display={'flex'}
             flexDirection={'row'}
+            justifyContent={'center'}
             alignItems={'center'}
             borderWidth={'1px'}
             borderRadius={'49px'}
@@ -50,7 +51,7 @@ const CategoryButtons: React.FC<CategoryButtonProps> = ({
         >
             <Image
                 src={categoryIcons[categoryName.toLowerCase()]}
-                alt={'all'}
+                alt={categoryName}
             />
             <Text ml="10px" fontSize={{ base: '14px', md: '18px' }}>
                 {categoryName}
