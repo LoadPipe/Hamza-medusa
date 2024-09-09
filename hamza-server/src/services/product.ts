@@ -401,10 +401,13 @@ class ProductService extends MedusaProductService {
                     ],
                 });
 
-            // Filter out categories that have no associated products
+            // Filter out categories that have no associated products that are published
             const filteredCategories = productCategories.filter(
                 (category) => category.products && category.products.length > 0
             );
+
+            //convert price currencies as needed
+            await Promise.all(filteredCategories.map(cat => this.convertPrices(cat.products)));
 
             return filteredCategories; // Return the filtered categories
         } catch (error) {
