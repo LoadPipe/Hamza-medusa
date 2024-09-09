@@ -95,7 +95,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                         {categories.map((category: any, index: number) => (
                             <CategoryModalButton
                                 key={index}
-                                categoryType={category.name}
+                                categoryType={category.id}
                                 categoryName={category.name}
                             />
                         ))}

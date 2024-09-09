@@ -9,21 +9,26 @@ import lego from '../../../../public/images/categories/lego.svg';
 import drones from '../../../../public/images/categories/drones.svg';
 import echo from '../../../../public/images/categories/echo.svg';
 import all from '../../../../public/images/categories/all.svg';
+import fire from '../../../../public/images/categories/fire.svg';
 
 const categoryIcons: Record<string, any> = {
-    medusa_merch: clothes,
-    games: games,
+    merch: clothes,
+    pants: clothes,
+    shirts: clothes,
+    gaming: games,
     legendary_light_design: lights,
     echo_rift: games,
     gadgets: gadgets,
-    home_light: lights,
-    workout_gear: workout,
-    board_games: boardgames,
-    legos: lego,
+    'home lighting': lights,
+    workout: workout,
+    'board games': boardgames,
+    lego: lego,
     gaming_gear: games,
     dauntless: echo,
     drones: drones,
-    echo: echo,
+    headphones: echo,
+    'vr headphones': echo,
+    'hidden homepage featured': fire,
     all: all,
 };
 
