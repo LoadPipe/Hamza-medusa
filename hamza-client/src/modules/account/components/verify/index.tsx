@@ -27,6 +27,11 @@ const VerifyEmail = () => {
     }
 
     const emailVerificationHandler = async () => {
+        if (email === '') {
+            toast.error('Email address cannot be empty!');
+            return;
+        }
+
         let res: any = await verifyEmail(authData.customer_id, email);
         if (res == true) {
             toast.success('Email sent successfully!!');
