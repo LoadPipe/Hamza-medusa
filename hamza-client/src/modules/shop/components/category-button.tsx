@@ -47,10 +47,13 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
                 }}
                 onClick={() => {
                     setCategoryFilterSelect(categoryName),
-                        setCategoryTypeFilterSelect(categoryType);
+                        setCategoryTypeFilterSelect(categoryName);
                 }}
             >
-                <Image src={categoryIcons[categoryType]} alt={categoryName} />
+                <Image
+                    src={categoryIcons[categoryName.toLowerCase()]}
+                    alt={categoryName}
+                />
                 <Text ml="10px" fontSize={{ base: '14px', md: '16px' }}>
                     {categoryName}
                 </Text>

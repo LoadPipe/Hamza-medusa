@@ -8,8 +8,30 @@ import currencies from '../data/currency-category';
 import ReviewButton from './review-button';
 import FilterButton from './filter-button';
 import RangeSlider from './range-slider';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+
+interface Category {
+    id: string;
+    name: string;
+}
 
 const SideMenu = () => {
+    // Fetching categories data
+    const { data, isLoading } = useQuery<Category[]>(
+        ['categories'],
+        async () => {
+            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
+            const response = await axios.get(url);
+            return response.data;
+        }
+    );
+
+    // Extract unique category names with id
+    const uniqueCategories: Category[] = data
+        ? data.map((category) => ({ name: category.name, id: category.id }))
+        : [];
+
     return (
         <Box
             display={{ base: 'none', md: 'block' }}
@@ -35,47 +57,17 @@ const SideMenu = () => {
             {/* Categories */}
             <Box mt="2rem">
                 <Heading as="h2" size="h2">
-                    Stores
+                    Categories
                 </Heading>
 
                 <Flex mt="1rem" flexDirection={'column'} gap="16px">
-                    <CategoryButton
-                        categoryType="home_light"
-                        categoryName="All"
-                    />
-                    <CategoryButton
-                        categoryType="home_light"
-                        categoryName="Legendary Light Design"
-                    />
-                    <CategoryButton
-                        categoryType="dauntless"
-                        categoryName="Dauntless"
-                    />
-                    <CategoryButton
-                        categoryType="medusa_merch"
-                        categoryName="Medusa Merch"
-                    />
-                    <CategoryButton
-                        categoryType="games"
-                        categoryName="Drones"
-                    />
-                    <CategoryButton categoryType="games" categoryName="Legos" />
-                    <CategoryButton
-                        categoryType="board_games"
-                        categoryName="Board Games"
-                    />
-                    <CategoryButton
-                        categoryType="workout_gear"
-                        categoryName="Workout Gear"
-                    />
-                    <CategoryButton
-                        categoryType="echo_rift"
-                        categoryName="Echo Rift"
-                    />
-                    <CategoryButton
-                        categoryType="games"
-                        categoryName="Gaming Gear"
-                    />
+                    {uniqueCategories.map((category, index) => (
+                        <CategoryButton
+                            key={index}
+                            categoryType={category.id}
+                            categoryName={category.name}
+                        />
+                    ))}
                 </Flex>
             </Box>
 
