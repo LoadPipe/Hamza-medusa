@@ -71,8 +71,9 @@ export interface IBuckyShippingCostRequest {
 export class BuckyClient {
     private client: AxiosInstance;
     protected readonly buckyLogRepository: typeof BuckyLogRepository;
+    private readonly logger: Logger;
 
-    constructor(buckyLogRepository: typeof BuckyLogRepository) {
+    constructor(buckyLogRepository: typeof BuckyLogRepository, logger: Logger) {
         this.client = axios.create({
             baseURL: BUCKY_URL,
             headers: {
@@ -82,9 +83,8 @@ export class BuckyClient {
             timeout: 13000,
         });
         this.buckyLogRepository = buckyLogRepository;
+        this.logger = logger;
     }
-
-
 
     // Method to get product details
     async getProductDetails(productLink: string): Promise<any> {
@@ -92,7 +92,12 @@ export class BuckyClient {
             goodsLink: productLink,
         });
 
-        const logRecord = await this.saveLogInput(productLink, params, 'random', 'test');
+        const logRecord = await this.saveLogInput(
+            productLink,
+            params,
+            'random',
+            'test'
+        );
 
         const output = await this.client
             .post(
@@ -321,8 +326,13 @@ export class BuckyClient {
         return hash.update(data).digest('hex');
     }
 
-    //TODO: need logger also 
-    private async saveLogInput(endpoint: string, input: any, output: any, context: any): Promise<BuckyLog> {
+    //TODO: need logger also
+    private async saveLogInput(
+        endpoint: string,
+        input: any,
+        output: any,
+        context: any
+    ): Promise<BuckyLog> {
         try {
             const entry = {
                 endpoint,
@@ -341,11 +351,13 @@ export class BuckyClient {
         return null;
     }
 
-    //TODO: need logger also 
+    //TODO: need logger also
     private async saveLogOutput(record: BuckyLog): Promise<void> {
         try {
+            this.logger.log(`Saving Buckylog record ${record}`);
             await this.buckyLogRepository?.save(record);
         } catch (e) {
+            this.logger.error(`Failed to save buckylog record ${e}`);
             console.error(e);
         }
 
