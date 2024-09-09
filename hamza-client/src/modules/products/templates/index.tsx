@@ -103,7 +103,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                 width="100%"
                 flexDirection={'row'}
             >
-                <LocalizedClientLink href="/store">
+                <LocalizedClientLink href="/shop">
                     <Flex
                         ml="-0.5rem"
                         height={'52px'}
