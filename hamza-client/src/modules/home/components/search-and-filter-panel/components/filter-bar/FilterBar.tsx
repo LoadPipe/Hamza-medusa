@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Flex, useDisclosure } from '@chakra-ui/react';
+import { Flex, useDisclosure, Skeleton } from '@chakra-ui/react';
 import CategoryButtons from './components/CategoryButtons';
 import useVendors from '../../data/data';
 import FilterButton from './components/FilterButton';
@@ -20,11 +20,14 @@ const FilterBar = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     // Fetching categories data
-    const { data } = useQuery<Category[]>(['categories'], async () => {
-        const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
-        const response = await axios.get(url);
-        return response.data;
-    });
+    const { data, isLoading } = useQuery<Category[]>(
+        ['categories'],
+        async () => {
+            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
+            const response = await axios.get(url);
+            return response.data;
+        }
+    );
 
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
@@ -66,6 +69,18 @@ const FilterBar = () => {
 
     // Determine if the user is at the end to toggle the chevron direction
     const isAtEnd = startIdx + 6 >= uniqueCategories.length;
+
+    // Placeholder skeletons to be shown while loading
+    const skeletons = Array(7)
+        .fill(null)
+        .map((_, index) => (
+            <Skeleton
+                key={index}
+                height={{ base: '42px', md: '63px' }}
+                width="123px"
+                borderRadius="49px"
+            />
+        ));
 
     return (
         <Flex
@@ -116,13 +131,15 @@ const FilterBar = () => {
                             <CgChevronLeft size="4rem" color="white" />
                         </Flex>
                     </Flex> */}
-                    {visibleCategories.map((category, index) => (
-                        <CategoryButtons
-                            key={index}
-                            categoryType={category.id}
-                            categoryName={category.name}
-                        />
-                    ))}
+                    {isLoading
+                        ? skeletons // Show skeletons while loading
+                        : visibleCategories.map((category, index) => (
+                              <CategoryButtons
+                                  key={index}
+                                  categoryType={category.id}
+                                  categoryName={category.name}
+                              />
+                          ))}
                 </Flex>
 
                 {/* Conditional rendering of Chevron */}
