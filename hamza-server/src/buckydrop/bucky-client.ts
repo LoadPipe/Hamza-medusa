@@ -88,6 +88,8 @@ export class BuckyClient {
             goodsLink: productLink,
         });
 
+        this.saveEntry(productLink, params, 'random', 'test');
+
         return this.client
             .post(
                 //`/api/rest/v2/adapt/openapi/product/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,

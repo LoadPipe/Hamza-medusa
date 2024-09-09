@@ -8,9 +8,9 @@ import { BuckyClient } from '../../../../buckydrop/bucky-client';
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const storeService: StoreService = req.scope.resolve('storeService');
     let buckyService: BuckydropService = req.scope.resolve('buckydropService');
-    let buckRepository: typeof BuckyLogRepository =
+    let buckyLogRepository: typeof BuckyLogRepository =
         req.scope.resolve('buckyLogRepository');
-    let buckyClient: BuckyClient = new BuckyClient(buckRepository);
+    let buckyClient: BuckyClient = new BuckyClient(buckyLogRepository);
 
     const handler: RouteHandler = new RouteHandler(
         req,
