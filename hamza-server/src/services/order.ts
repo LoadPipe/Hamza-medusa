@@ -62,7 +62,7 @@ export default class OrderService extends MedusaOrderService {
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly logger: ILogger;
     protected buckyClient: BuckyClient;
-    protected readonly buckyRepository: typeof BuckyLogRepository;
+    protected readonly buckyLogRepository: typeof BuckyLogRepository;
 
     constructor(container) {
         super(container);
@@ -73,7 +73,8 @@ export default class OrderService extends MedusaOrderService {
         this.productRepository_ = container.productRepository;
         this.productVariantRepository_ = container.productVariantRepository;
         this.logger = createLogger(container, 'OrderService');
-        this.buckyClient = new BuckyClient(this.buckyRepository);
+        this.buckyLogRepository = container.buckyLogRepository;
+        this.buckyClient = new BuckyClient(container.buckyLogRepository);
     }
 
     async createFromPayment(
