@@ -2,6 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import { createHash } from 'crypto';
 import { BuckyLogRepository } from 'src/repositories/bucky-log';
 import { generateEntityId, Logger } from '@medusajs/medusa';
+import { BuckyLog } from 'src/models/bucky-log';
 
 const BUCKY_URL = process.env.BUCKY_URL || 'https://dev.buckydrop.com';
 const APP_CODE = process.env.BUCKY_APP_CODE || '0077651952683977';
@@ -71,7 +72,7 @@ export class BuckyClient {
     private client: AxiosInstance;
     protected readonly buckyLogRepository: typeof BuckyLogRepository;
 
-    constructor(container) {
+    constructor(buckyLogRepository: typeof BuckyLogRepository) {
         this.client = axios.create({
             baseURL: BUCKY_URL,
             headers: {
@@ -80,17 +81,20 @@ export class BuckyClient {
             },
             timeout: 13000,
         });
-        this.buckyLogRepository = container.buckyLogRepository;
+        this.buckyLogRepository = buckyLogRepository;
     }
+
+
+
     // Method to get product details
     async getProductDetails(productLink: string): Promise<any> {
         const params = JSON.stringify({
             goodsLink: productLink,
         });
 
-        this.saveEntry(productLink, params, 'random', 'test');
+        const logRecord = await this.saveLogInput(productLink, params, 'random', 'test');
 
-        return this.client
+        const output = await this.client
             .post(
                 //`/api/rest/v2/adapt/openapi/product/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
                 this.formatApiUrl('product/query', params), //`/api/rest/v2/adapt/adaptation/product/query?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
@@ -101,6 +105,10 @@ export class BuckyClient {
             .catch((error) => {
                 throw error;
             });
+
+        logRecord.output = output;
+        this.saveLogOutput(logRecord);
+        return output;
     }
 
     async searchProducts(
@@ -311,15 +319,34 @@ export class BuckyClient {
         return hash.update(data).digest('hex');
     }
 
-    private saveEntry(endpoint: string, input: any, output: any, context: any) {
-        const entry = {
-            endpoint,
-            input,
-            output,
-            context,
-            timestamp: Date.now(), // ISO formatted timestamp
-            id: generateEntityId(),
-        };
-        this.buckyLogRepository?.save(entry);
+    //TODO: need logger also 
+    private async saveLogInput(endpoint: string, input: any, output: any, context: any): Promise<BuckyLog> {
+        try {
+            const entry = {
+                endpoint,
+                input,
+                output,
+                context,
+                timestamp: Date.now(), // ISO formatted timestamp
+                id: generateEntityId(),
+            };
+            const record = await this.buckyLogRepository?.save(entry);
+            return record;
+        } catch (e) {
+            console.error(e);
+        }
+
+        return null;
+    }
+
+    //TODO: need logger also 
+    private async saveLogOutput(record: BuckyLog): Promise<void> {
+        try {
+            await this.buckyLogRepository?.save(record);
+        } catch (e) {
+            console.error(e);
+        }
+
+        return null;
     }
 }
