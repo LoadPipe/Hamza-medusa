@@ -113,7 +113,6 @@ export function formatCryptoPrice(
             : parseFloat(Number(amount).toFixed(displayPrecision));
 
         output = displayPrecision <= 2 ? output : limitPrecision(parseFloat(output.toString()), getCurrencyPrecision(currencyCode).display);
-        console.log('after limiting precision: ', output);
 
         return output;
     } catch (e) {
