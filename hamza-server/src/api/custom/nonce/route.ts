@@ -21,6 +21,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         const nonce = generateNonce();
         req.session.nonce = nonce;
         await req.session.save();
-        handler.returnStatus(200, req.session.nonce);
+        handler.returnStatus(200, { nonce: req.session.nonce });
     });
 };
