@@ -20,23 +20,27 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const cartService: CartService = req.scope.resolve('cartService');
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'GET', '/custom/checkout'
+        req,
+        res,
+        'GET',
+        '/custom/checkout'
     );
 
     await handler.handle(async () => {
-        //validate 
-        if (!handler.requireParam('cart_id'))
-            return;
+        //validate
+        if (!handler.requireParam('cart_id')) return;
 
         const cartId = handler.inputParams.cart_id;
 
         const cart = await cartService.retrieve(cartId);
         if (!cart)
-            return res.status(404).json({ messsage: `Cart ${cartId} not found.` });
+            return handler.returnStatusWithMessage(
+                404,
+                `Cart ${cartId} not found.`
+            );
 
         //enforce security
-        if (!handler.enforceCustomerId(cart.customer_id))
-            return;
+        if (!handler.enforceCustomerId(cart.customer_id)) return;
 
         const orders = await orderService.getOrdersForCart(cartId);
         const output: ICheckoutData[] = [];
@@ -56,7 +60,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         console.log(output);
         handler.logger.debug(`returning checkout data: ${output}`);
-        res.send({ orders: output });
+        handler.returnStatus(200, { orders: output });
     });
 };
 
@@ -65,30 +69,35 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const cartService: CartService = req.scope.resolve('cartService');
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'POST', '/custom/checkout', [
-        //'cart_products',
-        'cart_id',
-        'transaction_id',
-        'payer_address',
-        'escrow_contract_address'
-    ]);
+        req,
+        res,
+        'POST',
+        '/custom/checkout',
+        [
+            //'cart_products',
+            'cart_id',
+            'transaction_id',
+            'payer_address',
+            'escrow_contract_address',
+        ]
+    );
 
     try {
         await handler.handle(async () => {
-
-            //validate 
-            if (!handler.requireParam('cart_id'))
-                return;
+            //validate
+            if (!handler.requireParam('cart_id')) return;
 
             const cartId = handler.inputParams.cart_id;
 
             const cart = await cartService.retrieve(cartId);
             if (!cart)
-                return res.status(404).json({ message: `Cart ${cartId} not found` });
+                return handler.returnStatusWithMessage(
+                    404,
+                    `Cart ${cartId} not found`
+                );
 
             //enforce security
-            if (!handler.enforceCustomerId(cart.customer_id))
-                return;
+            if (!handler.enforceCustomerId(cart.customer_id)) return;
 
             await orderService.finalizeCheckout(
                 //handler.inputParams.cart_products,
@@ -97,11 +106,13 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 handler.inputParams.payer_address,
                 handler.inputParams.escrow_contract_address
             );
-            res.send(true);
+            handler.returnStatusWithMessage(
+                200,
+                'successfully finalized checkout'
+            );
         });
-    }
-    catch (e: any) {
+    } catch (e: any) {
         handler.logger.error(e);
-        res.send(false);
+        handler.returnStatusWithMessage(500, 'Failed to finalize checkout');
     }
 };

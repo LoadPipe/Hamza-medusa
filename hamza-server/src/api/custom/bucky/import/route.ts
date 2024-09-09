@@ -22,7 +22,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         res,
         'GET',
         '/admin/custom/bucky/import',
-        ['count', 'page', 'link', 'store',]
+        ['count', 'page', 'link', 'store']
     );
 
     const getImportData = async (storeName: string) => {
@@ -63,8 +63,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 importData.collectionId,
                 importData.salesChannelId
             );
-        }
-        else {
+        } else {
             output = await buckyService.importProductsByKeyword(
                 handler.inputParams.keyword.toString(),
                 importData.storeId,
@@ -76,6 +75,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             );
         }
 
-        return res.status(201).json({ status: true, output });
+        return handler.returnStatus(201, { output });
     });
 };

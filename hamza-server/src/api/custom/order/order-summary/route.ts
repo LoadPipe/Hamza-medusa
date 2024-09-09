@@ -25,6 +25,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         //enforce security
         if (!handler.enforceCustomerId(output.cart.customer_id)) return;
 
-        res.status(200).json({ items: output.items });
+        handler.returnStatus(200, { items: output.items });
     });
 };

@@ -2,19 +2,28 @@ import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import CustomerService from '../../../../services/customer';
 import { RouteHandler } from '../../../route-handler';
 
-//TODO: needs work 
+//TODO: needs work
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const customerService = req.scope.resolve(
         'customerService'
     ) as CustomerService;
 
+    const handler: RouteHandler = new RouteHandler(
+        req,
+        res,
+        'GET',
+        '/custom/customer/preferred-currency',
+        ['customer_id']
+    );
+
     // Extract customer_id from the query parameters
     const { customer_id } = req.query;
 
     if (!customer_id || typeof customer_id !== 'string') {
-        return res
-            .status(400)
-            .json({ message: 'Customer ID is required and must be a string.' });
+        return handler.returnStatusWithMessage(
+            400,
+            'Customer ID is required and must be a string.'
+        );
     }
 
     try {
@@ -29,38 +38,40 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 .json({ message: 'Customer or preferred currency not found.' });
         }
     } catch (error) {
-        return res.status(500).json({
-            message: `Error retrieving customer currency: ${error.message}`,
-        });
+        return handler.returnStatusWithMessage(
+            500,
+            `Error retrieving customer currency: ${error.message}`
+        );
     }
 };
 
-
-//TODO: updates should be PUT 
+//TODO: updates should be PUT
 //TODO: should be under /customer
 export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
     const customerService: CustomerService =
         req.scope.resolve('customerService');
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'PUT', '/custom/customer/preferred-currency', ['customer_id', 'preferred_currency']
+        req,
+        res,
+        'PUT',
+        '/custom/customer/preferred-currency',
+        ['customer_id', 'preferred_currency']
     );
 
     await handler.handle(async () => {
-
         //validate
         if (!handler.requireParams(['customer_id', 'preferred_currency']))
             return;
 
-        //enforce security 
-        if (!handler.enforceCustomerId(handler.inputParams.customer_id))
-            return;
+        //enforce security
+        if (!handler.enforceCustomerId(handler.inputParams.customer_id)) return;
 
-        //update preferred currency 
+        //update preferred currency
         const customer = await customerService.updateCurrency(
             handler.inputParams.customer_id,
             handler.inputParams.preferred_currency
         );
-        res.json(customer);
+        handler.returnStatus(200, customer);
     });
 };

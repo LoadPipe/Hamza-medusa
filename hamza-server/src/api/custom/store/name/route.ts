@@ -9,6 +9,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     await handler.handle(async () => {
         const stores = await storeService.getStoreNames();
-        res.json(stores);
+        handler.returnStatus(200, stores);
     });
 };

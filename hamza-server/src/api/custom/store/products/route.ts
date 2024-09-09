@@ -21,8 +21,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 handler.inputParams.store_id
             );
             res.json(products);
-        }
-        else if (handler.hasParam('store_name')) {
+        } else if (handler.hasParam('store_name')) {
             const storeName = handler.inputParams.store_name;
 
             let list_products = [];
@@ -31,24 +30,27 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
                 //check for store existence
                 if (!store) {
-                    return res.status(404).json({ message: 'Store not found' });
+                    return handler.returnStatusWithMessage(
+                        404,
+                        `Store not found`
+                    );
                 }
 
                 // Chain query to get products
-                list_products = await productService.getProductsFromStoreWithPrices(
-                    store.id
-                );
+                list_products =
+                    await productService.getProductsFromStoreWithPrices(
+                        store.id
+                    );
             } else {
                 list_products =
                     await productService.getAllProductsFromStoreWithPrices();
             }
 
             return res.json(list_products);
-        }
-        else {
+        } else {
             const products =
                 await productService.getAllProductsFromStoreWithPrices();
-            return res.json(products);
+            return handler.returnStatus(200, products);
         }
     });
 };

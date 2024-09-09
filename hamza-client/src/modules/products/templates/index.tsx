@@ -42,7 +42,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
 
     const [store, setStore] = useState('');
     const [icon, setIcon] = useState('');
-    console.log('Get product data', product);
+
     // Only update product data when `product` changes
     useEffect(() => {
         if (product && product.id) {

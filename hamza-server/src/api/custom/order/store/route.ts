@@ -10,14 +10,13 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     ]);
 
     await handler.handle(async () => {
-        //validate 
-        if (!handler.requireParam('order_id'))
-            return;
+        //validate
+        if (!handler.requireParam('order_id')) return;
 
         const order = await orderService.getVendorFromOrder(
             handler.inputParams.order_id
         );
 
-        res.status(200).json(order);
+        handler.returnStatus(200, order);
     });
 };
