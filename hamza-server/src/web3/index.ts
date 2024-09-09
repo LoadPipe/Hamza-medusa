@@ -1,18 +1,17 @@
 import { BigNumberish, ethers } from 'ethers';
-import { HexString } from 'ethers/lib.commonjs/utils/data';
-import { createPublicClient, http } from 'viem';
-import { mainnet, optimism, sepolia } from 'viem/chains';
-import { liteSwitchAbi } from './abi/lite-switch-abi';
-import { getContractAddress } from 'src/contracts.config';
+import { LiteSwitchClient } from './contracts/lite-switch';
 
 
-export async function verifyPaymentForOrder(orderId: string, amount: BigNumberish): Promise<boolean> {
-    const switchClient = new LiteSwitchClient();
+export async function verifyPaymentForOrder(chainId: number, orderId: string, amount: BigNumberish): Promise<boolean> {
+    const switchClient = new LiteSwitchClient(chainId);
     const events = await switchClient.findPaymentEvents(orderId);
+    console.log('events: ', events);
+
     let total: BigNumberish = 0;
     if (events.length) {
         events.map(e => total += e.amount);
     }
 
+    console.log('total vs. amount: ', total, amount);
     return (BigInt(total) >= BigInt(amount));
 }
