@@ -1,5 +1,5 @@
 import { BeforeInsert, Column, Entity, PrimaryColumn } from 'typeorm';
-import { BaseEntity, SoftDeletableEntity } from '@medusajs/medusa';
+import { SoftDeletableEntity } from '@medusajs/medusa';
 import { generateEntityId } from '@medusajs/medusa/dist/utils';
 
 // - endpoint: string → the url endpoint (e.g. /api/v1/order/details)

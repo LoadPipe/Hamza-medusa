@@ -71,7 +71,7 @@ export class BuckyClient {
     private client: AxiosInstance;
     private readonly repository: typeof BuckyLogRepository;
 
-    constructor(container) {
+    constructor() {
         this.client = axios.create({
             baseURL: BUCKY_URL,
             headers: {
@@ -80,7 +80,7 @@ export class BuckyClient {
             },
             timeout: 13000, // Optional: sets a timeout limit for requests
         });
-        this.repository = container.buckyLogRepository;
+        this.repository = this.buckyLogRepository;
     }
 
     // Method to get product details
