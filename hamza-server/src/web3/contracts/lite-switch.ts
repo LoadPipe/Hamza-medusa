@@ -17,6 +17,7 @@ export class LiteSwitchClient {
         chainId: number
     ) {
         this.contractAddress = getContractAddress('lite_switch', chainId);
+        console.log(this.contractAddress);
 
         this.client = createPublicClient({
             chain: sepolia, //TODO: get from chain id
@@ -32,6 +33,7 @@ export class LiteSwitchClient {
         const events = await this.client.getContractEvents({
             address: this.contractAddress,
             abi: liteSwitchAbi,
+            fromBlock: '0x6529B4', //TODO: get actual block starting block (contract creation block)
             eventName: eventName,
             args,
         });

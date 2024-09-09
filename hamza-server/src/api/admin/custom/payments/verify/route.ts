@@ -10,6 +10,10 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        await paymentVerificationService.verifyPayments();
+        if (handler.hasParam('order_id'))
+            await paymentVerificationService.verifyPayments(handler.inputParams.order_id);
+        else
+            await paymentVerificationService.verifyPayments();
+        return res.json({ ok: 'ok' })
     });
 };

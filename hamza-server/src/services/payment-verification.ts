@@ -13,22 +13,24 @@ import { verifyPaymentForOrder } from '../web3';
 
 export default class PaymentVerificationService extends TransactionBaseService {
     static LIFE_TIME = Lifetime.SCOPED;
-    protected readonly paymentRepository_: typeof PaymentRepository;
     protected readonly orderRepository_: typeof OrderRepository;
     protected readonly orderService_: OrderService;
     protected readonly logger: ILogger;
 
     constructor(container) {
         super(container);
-        this.paymentRepository_ = container.paymentRepository;
+        this.orderRepository_ = container.orderRepository;
         this.orderService_ = container.orderService;
         this.logger = createLogger(container, 'PaymentVerificationService');
     }
 
-    async verifyPayments(): Promise<void> {
+    async verifyPayments(order_id: string = null): Promise<void> {
         //const payments = await this.getPaymentsToVerify();
-        const orders = await this.orderService_.getOrdersWithUnverifiedPayments();
+        let orders = await this.orderService_.getOrdersWithUnverifiedPayments();
         console.log('orders:', orders.length);
+
+        if (order_id)
+            orders = orders.filter(o => o.id == order_id);
 
         for (let order of orders) {
             console.log('verifying payment for ', order.id);

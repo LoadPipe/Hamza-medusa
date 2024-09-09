@@ -7,11 +7,11 @@ export async function verifyPaymentForOrder(chainId: number, orderId: string, am
     const events = await switchClient.findPaymentEvents(orderId);
     console.log('events: ', events);
 
-    let total: BigNumberish = 0;
+    let total: bigint = BigInt(0);
     if (events.length) {
-        events.map(e => total += e.amount);
+        events.map(e => total = total + BigInt(e.args.amount.toString()));
     }
 
-    console.log('total vs. amount: ', total, amount);
+    console.log('total vs. amount: ', total, amount); //TODO: amount must be adjusted 
     return (BigInt(total) >= BigInt(amount));
 }
