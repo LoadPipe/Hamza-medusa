@@ -22,7 +22,7 @@ import useStorePage from '@store/store-page/store-page';
 const ProductCardGroup = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const { categorySelect } = useStorePage();
-    const [visibleProductsCount, setVisibleProductsCount] = useState(16); // State to manage visible products count (4 rows, 16 items)
+    const [visibleProductsCount, setVisibleProductsCount] = useState(15); // State to manage visible products count (4 rows, 16 items)
 
     //TODO: MOVE TO INDEX.TS
     // Get products from vendor
@@ -112,25 +112,15 @@ const ProductCardGroup = () => {
     }
 
     return (
-        <Flex
-            mt={{ base: '0', md: '1rem' }}
-            mb={'4rem'}
-            maxW={'1280px'}
-            width="100%"
-            mx="auto"
-            flexDir={'column'}
-            justifyContent={'center'}
-            alignItems={'center'}
-        >
+        <Box maxW={'941px'} w="100%">
             <Grid
-                maxWidth={'1256.52px'}
-                mx="1rem"
-                width="100%"
+                mt={{ base: '0px', md: '2rem' }}
+                mx={{ base: '1rem', md: '0' }}
                 templateColumns={{
                     base: 'repeat(2, 1fr)',
-                    lg: 'repeat(3, 1fr)',
+                    md: 'repeat(3, 1fr)',
                 }}
-                gap={{ base: '4', md: '25.5px' }}
+                gap={{ base: 4, md: 7 }}
             >
                 {visibleProducts.map((product: any, index: number) => {
                     // Extract product details
@@ -179,19 +169,24 @@ const ProductCardGroup = () => {
             </Grid>
 
             {/* Show the "View More" button only if there are more products to display */}
-            {visibleProductsCount < products.length && (
-                <Button
-                    mt="2rem"
-                    onClick={handleViewMore}
-                    variant="solid"
-                    borderRadius={'full'}
-                    backgroundColor={'white'}
-                    color="black"
-                >
-                    Show More
-                </Button>
-            )}
-        </Flex>
+            <Flex>
+                {visibleProductsCount < products.length && (
+                    <Button
+                        mt="2rem"
+                        mx="auto"
+                        alignSelf={'center'}
+                        textAlign={'center'}
+                        onClick={handleViewMore}
+                        variant="solid"
+                        borderRadius={'full'}
+                        backgroundColor={'white'}
+                        color="black"
+                    >
+                        Show More
+                    </Button>
+                )}
+            </Flex>
+        </Box>
     );
 };
 
