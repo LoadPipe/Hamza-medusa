@@ -24,10 +24,10 @@ export class BuckyLog extends SoftDeletableEntity {
     input: any;
 
     @Column({ name: 'output', type: 'jsonb' })
-    output: any;
+    output?: any;
 
     @Column({ name: 'context', type: 'jsonb' })
-    context: any;
+    context?: any;
 
     @BeforeInsert()
     private beforeInsert(): void {
