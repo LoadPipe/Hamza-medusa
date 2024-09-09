@@ -14,6 +14,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import ProductCardHome from '../product-group-home/component/home-product-card';
 import useVendor from '@store/store-page/vendor';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
 
 type Props = {
     vendorName: string;
@@ -49,6 +50,8 @@ const ProductCardGroup = ({ vendorName, handle }: Props) => {
     // Return error if api fails
     const err: any = error ? error : null;
     if (err) return <div>Error: {err?.message}</div>;
+
+    console.log('these are the products for vendor', products);
 
     if (isLoading) {
         return (
@@ -117,6 +120,18 @@ const ProductCardGroup = ({ vendorName, handle }: Props) => {
                 gap={{ base: '4', md: '25.5px' }}
             >
                 {products.map((product: any, index: number) => {
+                    const variant = product.variants[0];
+                    const productPricing =
+                        variant?.prices?.find(
+                            (price: any) =>
+                                price.currency_code === preferred_currency_code
+                        )?.amount ||
+                        variant?.prices?.[0]?.amount ||
+                        0;
+                    const formattedPrice = formatCryptoPrice(
+                        productPricing ?? 0,
+                        preferred_currency_code as string
+                    );
                     return (
                         <GridItem
                             key={index}
@@ -133,7 +148,7 @@ const ProductCardGroup = ({ vendorName, handle }: Props) => {
                                 variantID={'0'}
                                 countryCode={product.countryCode}
                                 productName={product.title}
-                                productPrice={'productPricing'}
+                                productPrice={formattedPrice}
                                 currencyCode={preferred_currency_code ?? 'usdc'}
                                 imageSrc={product.thumbnail}
                                 hasDiscount={product.is_giftcard}
