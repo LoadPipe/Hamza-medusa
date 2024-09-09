@@ -69,20 +69,19 @@ export interface IBuckyShippingCostRequest {
 
 export class BuckyClient {
     private client: AxiosInstance;
-    private readonly repository: typeof BuckyLogRepository;
+    protected readonly buckyRepository: typeof BuckyLogRepository;
 
-    constructor() {
+    constructor(container) {
         this.client = axios.create({
             baseURL: BUCKY_URL,
             headers: {
                 'User-Agent': 'Apifox/1.0.0 (https://apifox.com)',
                 'Content-Type': 'application/json',
             },
-            timeout: 13000, // Optional: sets a timeout limit for requests
+            timeout: 13000,
         });
-        this.repository = this.buckyLogRepository;
+        this.buckyRepository = container.buckyRepository;
     }
-
     // Method to get product details
     async getProductDetails(productLink: string): Promise<any> {
         const params = JSON.stringify({
@@ -319,6 +318,6 @@ export class BuckyClient {
             timestamp: Date.now(), // ISO formatted timestamp
             id: generateEntityId(),
         };
-        this.repository?.save(entry);
+        this.buckyRepository?.save(entry);
     }
 }
