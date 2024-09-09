@@ -51,13 +51,6 @@ const FilterBar = () => {
         setStartIdx(nextIndex);
     };
 
-    // single button toggle
-    // const toggleShowMore = () => {
-    //     const isAtEnd = startIdx + 6 >= uniqueCategories.length;
-    //     const nextIndex = isAtEnd ? 0 : startIdx + 1; // Go back to the start when at the end
-    //     setStartIdx(nextIndex);
-    // };
-
     // Logic to display only 6 categories at a time
     let visibleCategories = uniqueCategories
         .slice(startIdx, startIdx + 6)
