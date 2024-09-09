@@ -9,6 +9,7 @@ import lego from '../../../../public/images/categories/lego.svg';
 import drones from '../../../../public/images/categories/drones.svg';
 import echo from '../../../../public/images/categories/echo.svg';
 import all from '../../../../public/images/categories/all.svg';
+import fire from '../../../../public/images/categories/fire.svg';
 
 const categoryIcons: Record<string, any> = {
     merch: clothes,
@@ -27,6 +28,7 @@ const categoryIcons: Record<string, any> = {
     drones: drones,
     headphones: echo,
     'vr headphones': echo,
+    'hidden homepage featured': fire,
     all: all,
 };
 
