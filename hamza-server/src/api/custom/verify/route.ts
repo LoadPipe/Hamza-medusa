@@ -16,9 +16,10 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         req.scope.resolve('customerService');
     const authService: AuthService = req.scope.resolve('authService');
 
-    const handler = new RouteHandler(
-        req, res, 'POST', '/custom/verify', ['message', 'signature',]
-    );
+    const handler = new RouteHandler(req, res, 'POST', '/custom/verify', [
+        'message',
+        'signature',
+    ]);
 
     //TODO: this is just a whole entire mess to clean up; business logic in services
 
@@ -26,7 +27,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         //get the service instances
         let created = false;
 
-        //TODO: needs security 
+        //TODO: needs security
 
         const { message, signature } = handler.inputParams;
 
@@ -56,7 +57,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             throw new Error('Error in validating wallet address signature');
         }
 
-        handler.logger.debug('customer data is ' + checkCustomerWithWalletAddress);
+        handler.logger.debug(
+            'customer data is ' + checkCustomerWithWalletAddress
+        );
         let newCustomerData: Customer;
         if (!checkCustomerWithWalletAddress) {
             handler.logger.debug('creating new customer ');
@@ -104,6 +107,6 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 whitelisted_stores: whitelistStatus.map((a) => a.store_id),
             },
         };
-        res.send({ status: true, data: body });
+        handler.returnStatus(200, { status: true, data: body });
     });
 };

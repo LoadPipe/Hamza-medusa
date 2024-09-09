@@ -51,6 +51,6 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
         handler.logger.debug(
             `Order ${handler.inputParams.order_id} cancelled.`
         );
-        res.status(200).json({ order });
+        handler.returnStatus(200, order);
     });
 };

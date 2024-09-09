@@ -79,7 +79,7 @@ export default class BuckydropService extends TransactionBaseService {
         let productData = searchResults;
 
         if (goodsId)
-            productData = productData.filter(p => p.goodsId === goodsId);
+            productData = productData.filter((p) => p.goodsId === goodsId);
 
         let productInputs: CreateProductInput[] = [];
         for (let p of productData) {
@@ -103,9 +103,9 @@ export default class BuckydropService extends TransactionBaseService {
         //import the products
         const output = productInputs?.length
             ? await this.productService_.bulkImportProducts(
-                storeId,
-                productInputs
-            )
+                  storeId,
+                  productInputs
+              )
             : [];
 
         //TODO: best to return some type of report; what succeeded, what failed
@@ -121,21 +121,19 @@ export default class BuckydropService extends TransactionBaseService {
         //retrieve products from bucky and convert them
         const buckyClient: BuckyClient = new BuckyClient();
 
-        const input: CreateProductInput =
-            await this.mapBuckyDataToProductInput(
-                buckyClient,
-                { goodsLink },
-                ProductStatus.PUBLISHED,
-                storeId,
-                collectionId,
-                [salesChannelId]
-            )
+        const input: CreateProductInput = await this.mapBuckyDataToProductInput(
+            buckyClient,
+            { goodsLink },
+            ProductStatus.PUBLISHED,
+            storeId,
+            collectionId,
+            [salesChannelId]
+        );
 
         //import if mapped
-        return input ? await this.productService_.bulkImportProducts(
-            storeId,
-            [input]
-        ) : [];
+        return input
+            ? await this.productService_.bulkImportProducts(storeId, [input])
+            : [];
     }
 
     async calculateShippingPriceForCart(cartId: string): Promise<number> {
@@ -182,8 +180,7 @@ export default class BuckydropService extends TransactionBaseService {
             //generate input for each product in cart that is bucky
             for (let item of cart.items) {
                 if (item.variant.bucky_metadata?.length) {
-                    const variantMetadata: any =
-                        item.variant.bucky_metadata;
+                    const variantMetadata: any = item.variant.bucky_metadata;
                     const productMetadata: any =
                         item.variant.product.bucky_metadata;
                     input.productList.push({
@@ -199,11 +196,8 @@ export default class BuckydropService extends TransactionBaseService {
             }
 
             if (subtotal > 0) {
-                const estimate = await this.buckyClient.getShippingCostEstimate(
-                    10,
-                    1,
-                    input
-                );
+                const estimate =
+                    await this.buckyClient.getShippingCostEstimate(input);
 
                 //convert to usd first
                 if (estimate?.data?.total) {
@@ -274,22 +268,20 @@ export default class BuckydropService extends TransactionBaseService {
 
     async processPendingOrder(orderId: string): Promise<Order> {
         const order: Order = await this.orderRepository_.findOne({
-            where: { id: orderId }
+            where: { id: orderId },
         });
 
         if (order && order?.cart_id && order.bucky_metadata) {
-
-            //get cart 
-            const cart: Cart = await this.cartService_.retrieve(
-                order.cart_id,
-                {
-                    relations: ['billing_address.country', 'customer'],
-                }
-            );
+            //get cart
+            const cart: Cart = await this.cartService_.retrieve(order.cart_id, {
+                relations: ['billing_address.country', 'customer'],
+            });
 
             //get data to send to bucky
-            const { variants, quantities } = await
-                this.orderService_.getBuckyProductVariantsFromOrder(order);
+            const { variants, quantities } =
+                await this.orderService_.getBuckyProductVariantsFromOrder(
+                    order
+                );
 
             //create list of products
             const productList: ICreateBuckyOrderProduct[] = [];
@@ -310,7 +302,7 @@ export default class BuckydropService extends TransactionBaseService {
                 });
             }
 
-            //create order via Bucky API 
+            //create order via Bucky API
             this.logger.info(`Creating buckydrop order for ${orderId}`);
             const output: any = await this.buckyClient.createOrder({
                 partnerOrderNo: order.id.replace('_', ''),
@@ -327,20 +319,20 @@ export default class BuckydropService extends TransactionBaseService {
                 contactPhone: cart.billing_address.phone?.length
                     ? cart.billing_address.phone
                     : '0809997747',
-                email: cart.email?.length
-                    ? cart.email
-                    : cart.customer.email,
+                email: cart.email?.length ? cart.email : cart.customer.email,
                 orderRemark: '',
                 productList,
             });
             this.logger.info(`Created buckydrop order for ${orderId}`);
 
-            //save the output 
+            //save the output
             order.bucky_metadata = output;
             await this.orderRepository_.save(order);
             this.logger.info(`Saved order ${orderId}`);
         } else {
-            this.logger.warn(`Allegedly pending bucky drop order ${orderId} is either not found, has no cart, or has no buckydrop metadata`);
+            this.logger.warn(
+                `Allegedly pending bucky drop order ${orderId} is either not found, has no cart, or has no buckydrop metadata`
+            );
         }
 
         return order;
@@ -361,8 +353,7 @@ export default class BuckydropService extends TransactionBaseService {
                 //get the order status
                 if (orderDetail) {
                     const status =
-                        orderDetail?.data?.poOrderList[0]
-                            ?.orderStatus;
+                        orderDetail?.data?.poOrderList[0]?.orderStatus;
                     if (status) {
                         //translate the status
                         switch (parseInt(status)) {
@@ -526,10 +517,15 @@ export default class BuckydropService extends TransactionBaseService {
 
     async getPendingOrders(): Promise<Order[]> {
         const options: FindManyOptions<Order> = {
-            where: { status: OrderStatus.PENDING, bucky_metadata: Not(IsNull()) }
+            where: {
+                status: OrderStatus.PENDING,
+                bucky_metadata: Not(IsNull()),
+            },
         };
         const orders: Order[] = await this.orderRepository_.find(options);
-        return orders?.filter(o => o.bucky_metadata?.status === 'pending') ?? [];
+        return (
+            orders?.filter((o) => o.bucky_metadata?.status === 'pending') ?? []
+        );
     }
 
     private async mapVariants(productDetails: any) {
@@ -590,7 +586,7 @@ export default class BuckydropService extends TransactionBaseService {
         };
 
         if (!productDetails.data.skuList?.length) {
-            console.log("EMPTY SKU LIST");
+            console.log('EMPTY SKU LIST');
         }
 
         for (const variant of productDetails.data.skuList) {
@@ -639,14 +635,15 @@ export default class BuckydropService extends TransactionBaseService {
             );
 
             if (!productDetails)
-                throw new Error(`No product details were retrieved for product ${item.spuCode}`);
+                throw new Error(
+                    `No product details were retrieved for product ${item.spuCode}`
+                );
 
             const metadata = item;
             metadata.detail = productDetails.data;
             const spuCode = item?.spuCode ?? productDetails?.data?.spuCode;
 
-            if (!spuCode?.length)
-                throw new Error('SPU code not found');
+            if (!spuCode?.length) throw new Error('SPU code not found');
 
             const output = {
                 title: item?.goodsName ?? productDetails?.data?.goodsName,
@@ -655,7 +652,8 @@ export default class BuckydropService extends TransactionBaseService {
                 description: productDetails?.data?.goodsDetailHtml ?? '',
                 is_giftcard: false,
                 status: status as ProductStatus,
-                thumbnail: item?.picUrl ?? productDetails?.data?.mainItemImgs[0],
+                thumbnail:
+                    item?.picUrl ?? productDetails?.data?.mainItemImgs[0],
                 images: productDetails?.data?.mainItemImgs,
                 collection_id: collectionId,
                 weight: Math.round(item?.weight ?? 100),
@@ -669,7 +667,9 @@ export default class BuckydropService extends TransactionBaseService {
             };
 
             if (!output.variants?.length)
-                throw new Error(`No variants were detected for product ${spuCode}`);
+                throw new Error(
+                    `No variants were detected for product ${spuCode}`
+                );
 
             return output;
         } catch (error) {

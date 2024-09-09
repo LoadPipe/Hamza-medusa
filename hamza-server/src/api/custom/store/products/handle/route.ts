@@ -24,8 +24,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         const { store_name, product_handle } = req.query;
 
         // Validate the request
-        if (!handler.requireParam('store_name'))
-            return;
+        if (!handler.requireParam('store_name')) return;
 
         // Fetch the store data by name
         const storeData = await storeService.getStoreByName(
@@ -43,12 +42,11 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         let filteredProducts = products;
         if (product_handle) {
             filteredProducts = products.filter(
-                (product: any) =>
-                    product.handle === product_handle.toString()
+                (product: any) => product.handle === product_handle.toString()
             );
         }
 
         // Return the filtered products
-        return res.json(filteredProducts);
+        return handler.returnStatus(200, filteredProducts);
     });
 };

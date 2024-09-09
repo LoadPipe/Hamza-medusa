@@ -42,6 +42,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             );
         }
 
-        return res.send(customer);
+        return handler.returnStatus(200, customer);
     });
 };
