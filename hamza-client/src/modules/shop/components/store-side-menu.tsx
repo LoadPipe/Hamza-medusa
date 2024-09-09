@@ -57,7 +57,7 @@ const SideMenu = () => {
             {/* Categories */}
             <Box mt="2rem">
                 <Heading as="h2" size="h2">
-                    Categories
+                    Category
                 </Heading>
 
                 <Flex mt="1rem" flexDirection={'column'} gap="16px">
