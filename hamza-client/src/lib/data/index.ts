@@ -17,7 +17,7 @@ import { decode } from 'jsonwebtoken';
 
 import sortProducts from '@lib/util/sort-products';
 import transformProductPreview from '@lib/util/transform-product-preview';
-import { SortOptions } from '@modules/store/components/refinement-list/sort-products';
+import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
 import { ProductCategoryWithChildren, ProductPreviewType } from 'types/global';
 import { medusaClient } from '../config';
 import medusaError from '@lib/util/medusa-error';
@@ -38,7 +38,6 @@ const emptyResponse = {
     nextPage: null,
 };
 
-
 async function axiosCall(
     verb: 'get' | 'post' | 'patch' | 'put' | 'delete',
     path: string,
@@ -46,33 +45,39 @@ async function axiosCall(
     requiresSecurity: boolean = false
 ): Promise<any> {
     try {
-        console.log(`calling ${verb.toUpperCase()} ${path} ${payload ? JSON.stringify(payload) : ''}`);
+        console.log(
+            `calling ${verb.toUpperCase()} ${path} ${payload ? JSON.stringify(payload) : ''}`
+        );
         let url = path;
         if (!url.startsWith('/')) url = '/' + url;
         url = `${BACKEND_URL}${url}`;
 
         let config = undefined;
         if (requiresSecurity) {
-            config = { headers: { authorization: cookies().get('_medusa_jwt')?.value } }
+            config = {
+                headers: { authorization: cookies().get('_medusa_jwt')?.value },
+            };
         }
 
         let response = { data: undefined };
         switch (verb) {
-            case 'get': {
-                const input: any = {};
-                if (payload) input.params = payload;
-                if (requiresSecurity) input.headers = config?.headers;
+            case 'get':
+                {
+                    const input: any = {};
+                    if (payload) input.params = payload;
+                    if (requiresSecurity) input.headers = config?.headers;
 
-                response = await axios.get(url, input);
-            }
+                    response = await axios.get(url, input);
+                }
                 break;
-            case 'delete': {
-                const input: any = {};
-                if (payload) input.data = payload;
-                if (requiresSecurity) input.headers = config?.headers;
+            case 'delete':
+                {
+                    const input: any = {};
+                    if (payload) input.data = payload;
+                    if (requiresSecurity) input.headers = config?.headers;
 
-                response = await axios.delete(url, input);
-            }
+                    response = await axios.delete(url, input);
+                }
                 break;
             case 'put':
                 response = await axios.put(url, payload, config);
@@ -87,27 +92,50 @@ async function axiosCall(
 
         return response.data;
     } catch (error) {
-        console.error(`${verb.toUpperCase()} ${path} ${JSON.stringify(payload) ?? ''} error: `, error);
+        console.error(
+            `${verb.toUpperCase()} ${path} ${JSON.stringify(payload) ?? ''} error: `,
+            error
+        );
     }
 }
 
-async function get(url: string, params: any = null, requiresSecurity: boolean = false): Promise<any> {
+async function get(
+    url: string,
+    params: any = null,
+    requiresSecurity: boolean = false
+): Promise<any> {
     return await axiosCall('get', url, params, requiresSecurity);
 }
 
-async function post(url: string, payload: any, requiresSecurity: boolean = false): Promise<any> {
+async function post(
+    url: string,
+    payload: any,
+    requiresSecurity: boolean = false
+): Promise<any> {
     return await axiosCall('post', url, payload, requiresSecurity);
 }
 
-async function put(url: string, payload: any, requiresSecurity: boolean = false): Promise<any> {
+async function put(
+    url: string,
+    payload: any,
+    requiresSecurity: boolean = false
+): Promise<any> {
     return await axiosCall('put', url, payload, requiresSecurity);
 }
 
-async function del(url: string, payload: any, requiresSecurity: boolean = false): Promise<any> {
+async function del(
+    url: string,
+    payload: any,
+    requiresSecurity: boolean = false
+): Promise<any> {
     return await axiosCall('delete', url, payload, requiresSecurity);
 }
 
-async function patch(url: string, payload: any, requiresSecurity: boolean = false): Promise<any> {
+async function patch(
+    url: string,
+    payload: any,
+    requiresSecurity: boolean = false
+): Promise<any> {
     return await axiosCall('patch', url, payload, requiresSecurity);
 }
 
@@ -186,7 +214,10 @@ export async function deleteWishlistItem(
     customer_id: string,
     product_id: string
 ) {
-    return await delSecure('/custom/wishlist/item', { customer_id, product_id });
+    return await delSecure('/custom/wishlist/item', {
+        customer_id,
+        product_id,
+    });
 }
 
 // Get Vendor Products
@@ -250,7 +281,9 @@ export async function allReviews(product_id: string) {
 }
 
 export async function getNotifications(customer_id: string) {
-    const response: any = getSecure('/custom/customer/notification', { customer_id });
+    const response: any = getSecure('/custom/customer/notification', {
+        customer_id,
+    });
     return response;
 }
 
@@ -270,7 +303,10 @@ export async function cancelOrderCart(cart_id: string) {
 }
 
 export async function verifyEmail(customer_id: string, email: string) {
-    return await postSecure('/custom/confirmation-token/generate', { customer_id, email });
+    return await postSecure('/custom/confirmation-token/generate', {
+        customer_id,
+        email,
+    });
 }
 
 export async function addNotifications(
@@ -332,7 +368,9 @@ export async function cancelOrder(order_id: string) {
 }
 
 export async function getVerificationStatus(customer_id: string) {
-    return await getSecure('/custom/customer/verification-status', { customer_id });
+    return await getSecure('/custom/customer/verification-status', {
+        customer_id,
+    });
 }
 
 export async function getAverageRatings(product_id: string) {
@@ -372,7 +410,10 @@ export async function getStoreIdByName(store_name: string) {
     return response.id;
 }
 
-export async function setCurrency(preferred_currency: string, customer_id: string) {
+export async function setCurrency(
+    preferred_currency: string,
+    customer_id: string
+) {
     return await putSecure('/custom/customer/preferred-currency', {
         customer_id,
         preferred_currency,
