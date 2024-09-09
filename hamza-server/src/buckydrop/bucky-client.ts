@@ -106,8 +106,10 @@ export class BuckyClient {
                 throw error;
             });
 
-        logRecord.output = output;
-        this.saveLogOutput(logRecord);
+        if (logRecord) {
+            logRecord.output = output;
+            this.saveLogOutput(logRecord);
+        }
         return output;
     }
 
