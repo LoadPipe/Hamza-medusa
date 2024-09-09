@@ -174,12 +174,14 @@ const CryptoPaymentButton = ({
             }
 
             //get the handler to return value
-            return await handler.doWalletPayment(
+            const output = await handler.doWalletPayment(
                 provider,
                 signer,
                 chainId,
                 data
             );
+
+            return output;
         } catch (e) {
             console.error('error has occured during transaction', e);
             displayError('Checkout was not completed.');
@@ -229,7 +231,8 @@ const CryptoPaymentButton = ({
                     cartId,
                     output.transaction_id,
                     output.payer_address,
-                    output.escrow_contract_address
+                    output.escrow_contract_address,
+                    output.chain_id
                     //cartRef.current
                 );
 

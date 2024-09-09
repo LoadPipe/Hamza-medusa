@@ -190,8 +190,9 @@ export default class OrderService extends MedusaOrderService {
     async finalizeCheckout(
         cartId: string,
         transactionId: string,
-        payerAddress,
-        escrowContractAddress
+        payerAddress: string,
+        escrowContractAddress: string,
+        chainId: number
     ): Promise<Order[]> {
         //get orders & order ids
         const orders: Order[] = await this.orderRepository_.find({
@@ -217,7 +218,8 @@ export default class OrderService extends MedusaOrderService {
             payments,
             transactionId,
             payerAddress,
-            escrowContractAddress
+            escrowContractAddress,
+            chainId
         );
 
         //calls to update orders
@@ -596,7 +598,8 @@ export default class OrderService extends MedusaOrderService {
         payments: Payment[],
         transactionId: string,
         payerAddress: string,
-        escrowContractAddress: string
+        escrowContractAddress: string,
+        chainId: number
     ): Promise<Order | Payment>[] {
         const promises: Promise<Order | Payment>[] = [];
 
@@ -607,6 +610,7 @@ export default class OrderService extends MedusaOrderService {
                     transaction_id: transactionId,
                     payer_address: payerAddress,
                     escrow_contract_address: escrowContractAddress,
+                    chain_id: chainId
                 })
             );
         });

@@ -1,4 +1,4 @@
-import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
+import type { MedusaRequest, MedusaResponse, Logger, Payment } from '@medusajs/medusa';
 import { RouteHandler } from '../../../../route-handler';
 import PaymentVerificationService from '../../../../../services/payment-verification';
 
@@ -10,10 +10,24 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
+        let payments: Payment[];
         if (handler.hasParam('order_id'))
-            await paymentVerificationService.verifyPayments(handler.inputParams.order_id);
+            payments = await paymentVerificationService.verifyPayments(handler.inputParams.order_id);
         else
-            await paymentVerificationService.verifyPayments();
-        return res.json({ ok: 'ok' })
+            payments = await paymentVerificationService.verifyPayments();
+
+        return handler.returnStatus(200, {
+            verified: payments.map(p => {
+                return {
+                    id: p.id,
+                    order_id:
+                        p.order_id,
+                    amount:
+                        p.amount,
+                    currency:
+                        p.currency_code
+                }
+            })
+        });
     });
 };

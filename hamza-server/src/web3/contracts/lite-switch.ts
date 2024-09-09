@@ -1,8 +1,13 @@
 import { BigNumberish, ethers } from 'ethers';
 import { liteSwitchAbi } from '../abi/lite-switch-abi';
 import { createPublicClient, http, PublicClient } from 'viem';
-import { sepolia } from 'viem/chains';
+import * as chains from 'viem/chains';
 import { getContractAddress } from '../../contracts.config';
+
+function getChainById(chainId: number) {
+    const allChains = Object.values(chains);
+    return allChains.find(chain => chain.id === chainId) || null;
+}
 
 export class LiteSwitchClient {
     contractAddress: `0x${string}`;
@@ -20,7 +25,7 @@ export class LiteSwitchClient {
         console.log(this.contractAddress);
 
         this.client = createPublicClient({
-            chain: sepolia, //TODO: get from chain id
+            chain: chains[getChainById(chainId).name],
             transport: http(),
         });
     }

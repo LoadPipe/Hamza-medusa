@@ -1,4 +1,4 @@
-import { BigNumberish, ethers } from 'ethers';
+import { BigNumberish } from 'ethers';
 import { LiteSwitchClient } from './contracts/lite-switch';
 
 
@@ -12,6 +12,6 @@ export async function verifyPaymentForOrder(chainId: number, orderId: string, am
         events.map(e => total = total + BigInt(e.args.amount.toString()));
     }
 
-    console.log('total vs. amount: ', total, amount); //TODO: amount must be adjusted 
+    console.log('total vs. amount: ', total, amount); //TODO: amount must be adjusted for currency
     return (BigInt(total) >= BigInt(amount));
 }
