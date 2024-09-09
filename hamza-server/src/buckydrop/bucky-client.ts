@@ -69,7 +69,7 @@ export interface IBuckyShippingCostRequest {
 
 export class BuckyClient {
     private client: AxiosInstance;
-    protected readonly buckyRepository: typeof BuckyLogRepository;
+    protected readonly buckyLogRepository: typeof BuckyLogRepository;
 
     constructor(container) {
         this.client = axios.create({
@@ -80,7 +80,7 @@ export class BuckyClient {
             },
             timeout: 13000,
         });
-        this.buckyRepository = container.buckyRepository;
+        this.buckyLogRepository = container.buckyLogRepository;
     }
     // Method to get product details
     async getProductDetails(productLink: string): Promise<any> {
@@ -318,6 +318,6 @@ export class BuckyClient {
             timestamp: Date.now(), // ISO formatted timestamp
             id: generateEntityId(),
         };
-        this.buckyRepository?.save(entry);
+        this.buckyLogRepository?.save(entry);
     }
 }
