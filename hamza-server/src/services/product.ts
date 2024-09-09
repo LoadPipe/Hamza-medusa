@@ -404,7 +404,7 @@ class ProductService extends MedusaProductService {
             //remove products that aren't published
             for (let cat of productCategories) {
                 if (cat.products)
-                    cat.products = cat.products.filter(p => p.status == ProductStatus.PUBLISHED);
+                    cat.products = cat.products.filter(p => p.status == ProductStatus.PUBLISHED && p.store_id);
             }
 
             // Filter out categories that have no associated products that are published
