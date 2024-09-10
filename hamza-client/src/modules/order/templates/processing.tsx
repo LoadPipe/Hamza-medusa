@@ -173,9 +173,10 @@ const Processing = ({ orders }: { orders: any[] }) => {
     return (
         <div>
             {/* Processing-specific content */}
-            <h1>Processing Orders</h1>
             {customerOrder && customerOrder.length > 0 ? (
                 <>
+                    <h1>Processing Orders</h1>
+
                     {customerOrder.map((order) => (
                         <>
                             <div
@@ -699,8 +700,8 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     )
                                                                                         ? ''
                                                                                         : order
-                                                                                            .customer
-                                                                                            .email}
+                                                                                              .customer
+                                                                                              .email}
                                                                                 </Text>
                                                                             </Box>
                                                                         </VStack>
@@ -815,15 +816,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
                         </ModalContent>
                     </Modal>
                 </>
-            ) : (
-                <div className="flex flex-col items-center w-full bg-black text-white p-8">
-                    <h2>Nothing to see here</h2>
-                    <p>You don't have any orders yet, let us change that :)</p>
-                    <LocalizedClientLink href="/" passHref>
-                        <Button>Continue shopping</Button>
-                    </LocalizedClientLink>
-                </div>
-            )}
+            ) : null}
         </div>
     );
 };
