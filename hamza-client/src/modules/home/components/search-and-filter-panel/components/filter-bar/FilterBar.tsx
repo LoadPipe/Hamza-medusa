@@ -7,11 +7,15 @@ import { CgChevronRight, CgChevronLeft } from 'react-icons/cg'; // Import both c
 import FilterModalHome from './components/FilterModal';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
+import categoryIcon from '@images/categories/board-games.svg';
 
 // Define the category structure
 interface Category {
     id: string;
     name: string;
+    metadata: {
+        icon_url: string;
+    };
 }
 
 const FilterBar = () => {
@@ -31,8 +35,14 @@ const FilterBar = () => {
 
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
-        ? data.map((category) => ({ name: category.name, id: category.id }))
+        ? data.map((category) => ({
+              name: category.name,
+              id: category.id,
+              metadata: category.metadata,
+          }))
         : [];
+
+    console.log('data from filter bar', uniqueCategories);
 
     // Show more logic for categories (next or previous)
     const toggleShowMore = (direction: 'next' | 'prev') => {
@@ -101,7 +111,11 @@ const FilterBar = () => {
             >
                 <FilterButton onClick={onOpen} />
 
-                <CategoryButtons categoryType={'All'} categoryName={'All'} />
+                <CategoryButtons
+                    categoryType={'All'}
+                    categoryName={'All'}
+                    url={''}
+                />
                 <Flex
                     maxW={'1100px'}
                     width={'100%'}
@@ -133,13 +147,16 @@ const FilterBar = () => {
                     </Flex> */}
                     {isLoading
                         ? skeletons // Show skeletons while loading
-                        : visibleCategories.map((category, index) => (
-                              <CategoryButtons
-                                  key={index}
-                                  categoryType={category.id}
-                                  categoryName={category.name}
-                              />
-                          ))}
+                        : visibleCategories.map((category, index) => {
+                              return (
+                                  <CategoryButtons
+                                      key={index}
+                                      categoryType={category.id}
+                                      categoryName={category.name}
+                                      url={category.metadata.icon_url}
+                                  />
+                              );
+                          })}
                 </Flex>
 
                 {/* Conditional rendering of Chevron */}

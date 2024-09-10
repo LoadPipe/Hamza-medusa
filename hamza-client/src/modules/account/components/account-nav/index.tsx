@@ -143,54 +143,56 @@ const AccountNav = ({
                     />
                 )}
 
-                <Flex
-                    borderRadius="8px"
-                    width="245px"
-                    height="56px"
-                    padding="12px 16px"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    color="white"
-                    backgroundColor={'transparent'}
-                    mt="4"
-                    cursor="pointer"
-                    onClick={toggleOrdersCollapse} // Toggle collapse when the whole Flex container is clicked
-                >
-                    <LiaBoxOpenSolid color="white" size={'28px'} />
+                {authData.is_verified && (
                     <Flex
-                        as={NextLink}
-                        href="/account/orders"
+                        borderRadius="8px"
+                        width="245px"
+                        height="56px"
+                        padding="12px 16px"
                         alignItems="center"
                         justifyContent="space-between"
-                        width="100%"
+                        color="white"
                         backgroundColor={'transparent'}
-                        textDecoration="none"
-                        _hover={{ textDecoration: 'none' }} // Remove underline on hover
+                        mt="4"
+                        cursor="pointer"
+                        onClick={toggleOrdersCollapse} // Toggle collapse when the whole Flex container is clicked
                     >
-                        <Text
-                            ml={2}
-                            fontSize={'18px'}
-                            fontWeight={600}
-                            color="white"
+                        <LiaBoxOpenSolid color="white" size={'28px'} />
+                        <Flex
+                            as={NextLink}
+                            href="/account/orders"
+                            alignItems="center"
+                            justifyContent="space-between"
+                            width="100%"
+                            backgroundColor={'transparent'}
+                            textDecoration="none"
+                            _hover={{ textDecoration: 'none' }} // Remove underline on hover
                         >
-                            Orders
-                        </Text>
-                        <IconButton
-                            aria-label="Toggle Collapse"
-                            icon={
-                                isOrdersOpen ? (
-                                    <ChevronUpIcon />
-                                ) : (
-                                    <ChevronDownIcon />
-                                )
-                            }
-                            variant="ghost"
-                            color="white"
-                            size="sm" // Adjust icon button size for better alignment
-                            onClick={toggleOrdersCollapse} // Toggle collapse when the Chevron icon is clicked
-                        />
+                            <Text
+                                ml={2}
+                                fontSize={'18px'}
+                                fontWeight={600}
+                                color="white"
+                            >
+                                Orders
+                            </Text>
+                            <IconButton
+                                aria-label="Toggle Collapse"
+                                icon={
+                                    isOrdersOpen ? (
+                                        <ChevronUpIcon />
+                                    ) : (
+                                        <ChevronDownIcon />
+                                    )
+                                }
+                                variant="ghost"
+                                color="white"
+                                size="sm" // Adjust icon button size for better alignment
+                                onClick={toggleOrdersCollapse} // Toggle collapse when the Chevron icon is clicked
+                            />
+                        </Flex>
                     </Flex>
-                </Flex>
+                )}
 
                 {/* Collapsible Panel for Orders */}
                 <Collapse in={isOrdersOpen} animateOpacity>
@@ -277,14 +279,16 @@ const AccountNav = ({
 
                 {/* Wishlist */}
 
-                <Box>
-                    <NavLink
-                        href="/account/wishlist"
-                        route={route!}
-                        title="Wishlist"
-                        icon={<FaRegHeart color="white" size="22px" />}
-                    />
-                </Box>
+                {authData.is_verified && (
+                    <Box>
+                        <NavLink
+                            href="/account/wishlist"
+                            route={route!}
+                            title="Wishlist"
+                            icon={<FaRegHeart color="white" size="22px" />}
+                        />
+                    </Box>
+                )}
 
                 {authData.is_verified && (
                     <NavLink

@@ -91,7 +91,12 @@ export class RouteHandler {
         customerId: string = null,
         requireValue: boolean = false
     ): boolean {
-        if (!process.env.ENFORCE_ROUTE_IDENTITY) return true;
+        if (
+            !process.env.ENFORCE_ROUTE_IDENTITY ||
+            process.env.ENFORCE_ROUTE_IDENTITY === 'false'
+        ) {
+            return true;
+        }
 
         if (!requireValue && !customerId?.length) {
             return true;
