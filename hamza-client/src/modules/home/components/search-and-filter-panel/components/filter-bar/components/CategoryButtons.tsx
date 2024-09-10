@@ -52,7 +52,7 @@ const CategoryButtons: React.FC<CategoryButtonProps> = ({
             }}
         >
             <Image
-                src={'https://images.hamza.biz/category-icons/all.svg'}
+                src={url}
                 alt={categoryName}
                 width={20} // Set appropriate width
                 height={20} // Set appropriate height
