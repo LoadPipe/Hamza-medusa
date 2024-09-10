@@ -3,7 +3,7 @@ import { RouteHandler } from '../../../../route-handler';
 import { Order } from '../../../../../models/order';
 import { Payment } from '../../../../../models/payment';
 import PaymentVerificationService from '../../../../../services/payment-verification';
-import BuckydropService from 'src/services/buckydrop';
+import BuckydropService from '../../../../../services/buckydrop';
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const paymentVerificationService: PaymentVerificationService = req.scope.resolve('paymentVerificationService');
