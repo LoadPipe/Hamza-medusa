@@ -84,14 +84,11 @@ export class BuckyClient {
         this.buckyLogRepository = buckyLogRepository;
     }
 
-    // Method to get product details
-    async getProductDetails(productLink: string): Promise<any> {
-        const params = JSON.stringify({
-            goodsLink: productLink,
-        });
+    private async post(url: string, params: any): Promise<any> {
+        url = this.formatApiUrl(url, JSON.stringify(params));
 
         const logRecord = await this.saveLogInput(
-            productLink,
+            url,
             params,
             null,
             null
@@ -99,8 +96,7 @@ export class BuckyClient {
 
         const output = await this.client
             .post(
-                //`/api/rest/v2/adapt/openapi/product/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                this.formatApiUrl('product/query', params), //`/api/rest/v2/adapt/adaptation/product/query?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                url,
                 params,
                 { timeout: 600000 }
             )
@@ -113,7 +109,13 @@ export class BuckyClient {
             logRecord.output = output;
             this.saveLogOutput(logRecord);
         }
-        return output;
+    }
+
+    // Method to get product details
+    async getProductDetails(productLink: string): Promise<any> {
+        return await this.post('product/query', {
+            goodsLink: productLink,
+        });
     }
 
     async searchProducts(
@@ -122,36 +124,11 @@ export class BuckyClient {
         pageSize: number = 10
     ): Promise<any[]> {
 
-        const params = JSON.stringify({
+        return await this.post('product/search', {
             curent: currentPage, // Note the typo "curent" should be "current" if API docs are correct
             size: pageSize,
             item: { keyword: keyword },
         });
-
-        const logRecord = await this.saveLogInput(
-            `product/search/`,
-            params,
-            null,
-            null
-        );
-
-        const output = await this.client
-            .post(
-                //`/api/rest/v2/adapt/openapi/product/search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                this.formatApiUrl('/product/search', params), //?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                params,
-                { timeout: 600000 }
-            )
-            .then((response) => response.data?.data?.records)
-            .catch((error) => {
-                throw error;
-            });
-        if (logRecord) {
-            console.log(`does this run?`);
-            logRecord.output = output;
-            this.saveLogOutput(logRecord);
-        }
-        return output;
     }
 
     async searchProductByImage(
@@ -168,30 +145,8 @@ export class BuckyClient {
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
 
-        const logRecord = await this.saveLogInput(
-            `product/image-search`,
-            params,
-            null,
-            null
-        );
-        const output = await this.client
-            //TODO: get correct url for this
-            .post(
-                //TODO: use adapt/adaptation url here
-                ``,
-                //`/api/rest/v2/adapt/openapi/product/image-search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                params,
-                { timeout: 600000 }
-            )
-            .then((response) => response.data)
-            .catch((error) => {
-                throw error;
-            });
-        if (logRecord) {
-            logRecord.output = output;
-            this.saveLogOutput(logRecord);
-        }
-        return output;
+        //TODO: get correct url for this
+        return await this.post('', params);
     }
 
     async listProductCategories(): Promise<any> {
@@ -230,207 +185,47 @@ export class BuckyClient {
     async createOrder(
         createOrderParams: ICreateBuckyOrderParams
     ): Promise<any> {
-
-        const params = JSON.stringify(createOrderParams);
-
-        const logRecord = await this.saveLogInput(
-            '/order/shop-order/create',
-            params,
-            null,
-            null
-        );
-
-        const output = await this.client
-            .post(
-                this.formatApiUrl('/order/shop-order/create', params), //?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                //`/api/rest/v2/adapt/openapi/order/create?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                params
-            )
-            .then((response) => response.data)
-            .catch((error) => {
-                throw error;
-            });
-        if (logRecord) {
-            logRecord.output = output;
-            this.saveLogOutput(logRecord);
-        }
-        return output;
+        return await this.post('/order/shop-order/create', createOrderParams);
     }
 
     async cancelShopOrder(
         shopOrderNo: string,
         partnerOrderNo?: string
     ): Promise<any> {
-
-        const params = JSON.stringify({
+        return await this.post('/order/shop-order/cancel', {
             shopOrderNo,
             partnerOrderNo,
         });
-
-        const logRecord = await this.saveLogInput(
-            '/order/shop-order/cancel',
-            params,
-            null,
-            null
-        );
-        const output = await this.client
-            .post(
-                this.formatApiUrl('/order/shop-order/cancel', params), //?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                //`/api/rest/v2/adapt/openapi/order/cancel?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                params,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }
-            )
-            .then((response) => response.data)
-            .catch((error) => {
-                throw error;
-            });
-        if (logRecord) {
-            logRecord.output = output;
-            this.saveLogOutput(logRecord);
-        }
-        return output;
     }
 
     async cancelPurchaseOrder(orderCode: string): Promise<any> {
-
-        const params = JSON.stringify({
-            orderCode,
-        });
-
-        const logRecord = await this.saveLogInput(
-            '/order/po-cancel',
-            params,
-            null,
-            null
-        );
-
-        const output = await this.client
-            .post(this.formatApiUrl('/order/po-cancel', params), params, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-            .then((response) => response.data)
-            .catch((error) => {
-                throw error;
-            });
-        if (logRecord) {
-            logRecord.output = output;
-            this.saveLogOutput(logRecord);
-        }
-        return output;
+        return await this.post('/order/po-cancel', { orderCode });
     }
 
     async getOrderDetails(
         shopOrderNo: string,
         partnerOrderNo?: string
     ): Promise<any> {
-
-        const params = JSON.stringify({
+        return await this.post('/order/detail', {
             shopOrderNo,
             partnerOrderNo,
         });
-
-        const logRecord = await this.saveLogInput(
-            '/order/detail',
-            params,
-            null,
-            null
-        );
-
-        const output = await this.client
-            .post(
-                this.formatApiUrl('/order/detail', params), //?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                //`/api/rest/v2/adapt/openapi/order/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                params
-            )
-            .then((response) => response.data)
-            .catch((error) => {
-                console.error(error);
-                throw error;
-            });
-        if (logRecord) {
-            logRecord.output = output;
-            this.saveLogOutput(logRecord);
-        }
-        return output;
     }
 
     async getLogisticsInfo(packageCode: string): Promise<any> {
-
-        const params = JSON.stringify({ packageCode });
-        const logRecord = await this.saveLogInput(
-            '/logistics/query-info',
-            params,
-            null,
-            null
-        );
-        const output = await this.client
-            .post(this.formatApiUrl('/logistics/query-info', params), params) //query-info?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`, params)
-            .then((response) => response.data)
-            .catch((error) => {
-                throw error;
-            });
-        if (logRecord) {
-            logRecord.output = output;
-            this.saveLogOutput(logRecord);
-        }
-        return output;
+        return await this.post('/logistics/query-info', { packageCode });
     }
 
     async getParcelDetails(packageCode: string): Promise<any> {
-
-        const params = JSON.stringify({ packageCode });
-        const logRecord = await this.saveLogInput(
-            '/pkg/detail',
-            params,
-            null,
-            null
-        );
-        const output = await this.client
-            .post(this.formatApiUrl('/pkg/detail', params), params)
-            .then((response) => response.data)
-            .catch((error) => {
-                throw error;
-            });
-
-        if (logRecord) {
-            logRecord.output = output;
-            this.saveLogOutput(logRecord);
-        }
-        return output;
+        return await this.post('/pkg/detail', { packageCode });
     }
 
     async getShippingCostEstimate(
         item: IBuckyShippingCostRequest
     ): Promise<any> {
-
-        const params = JSON.stringify({ size: 10, item });
-        const logRecord = await this.saveLogInput(
-            '/logistics/channel-carriage-list',
-            params,
-            null,
-            null
-        );
-        const output = await this.client
-            .post(
-                this.formatApiUrl('/logistics/channel-carriage-list', params),
-                params
-            )
-            .then((response) => response.data)
-            .catch((error) => {
-                throw error;
-            });
-        if (logRecord) {
-            logRecord.output = output;
-            this.saveLogOutput(logRecord);
-        }
-        return output;
+        return await this.post('/logistics/channel-carriage-list', { size: 10, item });
     }
+
 
     private formatApiUrl(route: string, params: any = {}): string {
         route = route.trim();
