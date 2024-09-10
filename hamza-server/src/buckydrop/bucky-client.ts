@@ -86,7 +86,6 @@ export class BuckyClient {
 
     // Method to get product details
     async getProductDetails(productLink: string): Promise<any> {
-        console.log(`DOES THIS RUN`);
         const params = JSON.stringify({
             goodsLink: productLink,
         });
@@ -94,8 +93,8 @@ export class BuckyClient {
         const logRecord = await this.saveLogInput(
             productLink,
             params,
-            'random',
-            'test'
+            null,
+            null
         );
 
         const output = await this.client
@@ -122,7 +121,6 @@ export class BuckyClient {
         currentPage: number = 1,
         pageSize: number = 10
     ): Promise<any[]> {
-        console.log(`DOES THIS RUN`);
 
         const params = JSON.stringify({
             curent: currentPage, // Note the typo "curent" should be "current" if API docs are correct
@@ -133,8 +131,8 @@ export class BuckyClient {
         const logRecord = await this.saveLogInput(
             `product/search/`,
             params,
-            'random',
-            'test'
+            null,
+            null
         );
 
         const output = await this.client
@@ -161,7 +159,6 @@ export class BuckyClient {
         currentPage = 1,
         pageSize = 10
     ): Promise<any> {
-        console.log(`DOES THIS RUN`);
 
         const params = JSON.stringify({
             curent: currentPage,
@@ -174,8 +171,8 @@ export class BuckyClient {
         const logRecord = await this.saveLogInput(
             `product/image-search`,
             params,
-            'random',
-            'test'
+            null,
+            null
         );
         const output = await this.client
             //TODO: get correct url for this
@@ -198,7 +195,6 @@ export class BuckyClient {
     }
 
     async listProductCategories(): Promise<any> {
-        console.log(`DOES THIS RUN`);
 
         const params = ''; // Assuming no body is required
         const timestamp = Date.now();
@@ -207,8 +203,8 @@ export class BuckyClient {
         const logRecord = await this.saveLogInput(
             `product/category/list-tree`,
             params,
-            'random',
-            'test'
+            null,
+            null
         );
 
         //TODO: add more detailed parameters
@@ -234,15 +230,14 @@ export class BuckyClient {
     async createOrder(
         createOrderParams: ICreateBuckyOrderParams
     ): Promise<any> {
-        console.log(`DOES THIS RUN`);
 
         const params = JSON.stringify(createOrderParams);
 
         const logRecord = await this.saveLogInput(
             '/order/shop-order/create',
             params,
-            'random',
-            'test'
+            null,
+            null
         );
 
         const output = await this.client
@@ -266,7 +261,6 @@ export class BuckyClient {
         shopOrderNo: string,
         partnerOrderNo?: string
     ): Promise<any> {
-        console.log(`DOES THIS RUN`);
 
         const params = JSON.stringify({
             shopOrderNo,
@@ -276,8 +270,8 @@ export class BuckyClient {
         const logRecord = await this.saveLogInput(
             '/order/shop-order/cancel',
             params,
-            'random',
-            'test'
+            null,
+            null
         );
         const output = await this.client
             .post(
@@ -302,7 +296,6 @@ export class BuckyClient {
     }
 
     async cancelPurchaseOrder(orderCode: string): Promise<any> {
-        console.log(`DOES THIS RUN`);
 
         const params = JSON.stringify({
             orderCode,
@@ -311,8 +304,8 @@ export class BuckyClient {
         const logRecord = await this.saveLogInput(
             '/order/po-cancel',
             params,
-            'random',
-            'test'
+            null,
+            null
         );
 
         const output = await this.client
@@ -336,7 +329,6 @@ export class BuckyClient {
         shopOrderNo: string,
         partnerOrderNo?: string
     ): Promise<any> {
-        console.log(`DOES THIS RUN`);
 
         const params = JSON.stringify({
             shopOrderNo,
@@ -346,8 +338,8 @@ export class BuckyClient {
         const logRecord = await this.saveLogInput(
             '/order/detail',
             params,
-            'random',
-            'test'
+            null,
+            null
         );
 
         const output = await this.client
@@ -369,14 +361,13 @@ export class BuckyClient {
     }
 
     async getLogisticsInfo(packageCode: string): Promise<any> {
-        console.log(`DOES THIS RUN`);
 
         const params = JSON.stringify({ packageCode });
         const logRecord = await this.saveLogInput(
             '/logistics/query-info',
             params,
-            'random',
-            'test'
+            null,
+            null
         );
         const output = await this.client
             .post(this.formatApiUrl('/logistics/query-info', params), params) //query-info?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`, params)
@@ -392,14 +383,13 @@ export class BuckyClient {
     }
 
     async getParcelDetails(packageCode: string): Promise<any> {
-        console.log(`DOES THIS RUN`);
 
         const params = JSON.stringify({ packageCode });
         const logRecord = await this.saveLogInput(
             '/pkg/detail',
             params,
-            'random',
-            'test'
+            null,
+            null
         );
         const output = await this.client
             .post(this.formatApiUrl('/pkg/detail', params), params)
@@ -418,14 +408,13 @@ export class BuckyClient {
     async getShippingCostEstimate(
         item: IBuckyShippingCostRequest
     ): Promise<any> {
-        console.log(`DOES THIS RUN`);
 
         const params = JSON.stringify({ size: 10, item });
         const logRecord = await this.saveLogInput(
             '/logistics/channel-carriage-list',
             params,
-            'random',
-            'test'
+            null,
+            null
         );
         const output = await this.client
             .post(
