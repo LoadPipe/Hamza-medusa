@@ -151,6 +151,7 @@ export class BuckyClient {
         return await this.post('', params);
     }
 
+    /*
     async listProductCategories(): Promise<any> {
 
         const params = ''; // Assuming no body is required
@@ -182,8 +183,8 @@ export class BuckyClient {
         }
         return output;
     }
+    */
 
-    //TODO: create type IBuckyOrderOutput
     async createOrder(
         createOrderParams: ICreateBuckyOrderParams
     ): Promise<any> {
