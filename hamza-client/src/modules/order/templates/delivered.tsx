@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { getSingleBucket } from '@lib/data';
-import { Box, Button } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 
 import DeliveredCard from '@modules/account/components/delivered-card';
-import LocalizedClientLink from '@modules/common/components/localized-client-link';
+import EmptyState from '@modules/order/components/empty-state';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 
-const Delivered = ({ orders }: { orders: any[] }) => {
+const Delivered = ({
+    orders,
+    isEmpty,
+}: {
+    orders: any[];
+    isEmpty?: boolean;
+}) => {
     const [customerOrder, setCustomerOrder] = useState<any[] | null>(null);
     const [customerId, setCustomerId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -51,6 +57,10 @@ const Delivered = ({ orders }: { orders: any[] }) => {
         }
         setIsLoading(false);
     };
+
+    if (isEmpty && orders?.length == 0) {
+        return <EmptyState />;
+    }
 
     return (
         <div>

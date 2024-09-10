@@ -27,11 +27,17 @@ import {
 } from '@chakra-ui/react';
 import { BsCircleFill } from 'react-icons/bs';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import EmptyState from '@modules/order/components/empty-state';
 
 import ProcessingOrderCard from '@modules/account/components/processing-order-card';
-import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
-const Processing = ({ orders }: { orders: any[] }) => {
+const Processing = ({
+    orders,
+    isEmpty,
+}: {
+    orders: any[];
+    isEmpty?: boolean;
+}) => {
     const [customerId, setCustomerId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
@@ -169,6 +175,10 @@ const Processing = ({ orders }: { orders: any[] }) => {
 
         fetchStatuses();
     }, [customerOrder]);
+
+    if (isEmpty && orders?.length == 0) {
+        return <EmptyState />;
+    }
 
     return (
         <div>

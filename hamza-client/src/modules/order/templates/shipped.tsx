@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { getSingleBucket } from '@lib/data';
 import {
     Box,
-    Button,
     Collapse,
     HStack,
     Icon,
@@ -16,9 +15,9 @@ import {
 } from '@chakra-ui/react';
 import { BsCircleFill } from 'react-icons/bs';
 import ShippedCard from '@modules/account/components/shipped-card';
-import LocalizedClientLink from '@modules/common/components/localized-client-link';
+import EmptyState from '@modules/order/components/empty-state';
 
-const Shipped = ({ orders }: { orders: any[] }) => {
+const Shipped = ({ orders, isEmpty }: { orders: any[]; isEmpty?: boolean }) => {
     const [customerOrder, setCustomerOrder] = useState<any[] | null>(null);
     const [customerId, setCustomerId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -57,6 +56,9 @@ const Shipped = ({ orders }: { orders: any[] }) => {
         setIsLoading(false);
     };
 
+    if (isEmpty && orders?.length == 0) {
+        return <EmptyState />;
+    }
     return (
         <div>
             {/* Processing-specific content */}

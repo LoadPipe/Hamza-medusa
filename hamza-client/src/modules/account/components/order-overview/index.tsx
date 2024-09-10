@@ -48,15 +48,15 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
     const renderTabContent = () => {
         switch (orderActiveTab) {
             case TABS.PROCESSING:
-                return <Processing orders={orders} />;
+                return <Processing orders={orders} isEmpty={true} />;
             case TABS.SHIPPED:
-                return <Shipped orders={orders} />;
+                return <Shipped orders={orders} isEmpty={true} />;
             case TABS.DELIVERED:
-                return <Delivered orders={orders} />;
+                return <Delivered orders={orders} isEmpty={true} />;
             case TABS.CANCELLED:
-                return <Cancelled orders={orders} />;
+                return <Cancelled orders={orders} isEmpty={true} />;
             case TABS.REFUND:
-                return <Refund orders={orders} />;
+                return <Refund orders={orders} isEmpty={true} />;
             default:
                 return <All orders={orders} />;
         }

@@ -2,9 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { getSingleBucket } from '@lib/data';
 import { Box, Button } from '@chakra-ui/react';
 import CancelCard from '@modules/account/components/cancel-card';
-import LocalizedClientLink from '@modules/common/components/localized-client-link';
+import EmptyState from '@modules/order/components/empty-state';
 
-const Cancelled = ({ orders }: { orders: any[] }) => {
+const Cancelled = ({
+    orders,
+    isEmpty,
+}: {
+    orders: any[];
+    isEmpty?: boolean;
+}) => {
     const [customerOrder, setCustomerOrder] = useState<any[] | null>(null);
     const [customerId, setCustomerId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -37,6 +43,10 @@ const Cancelled = ({ orders }: { orders: any[] }) => {
         }
         setIsLoading(false);
     };
+
+    if (isEmpty && orders?.length == 0) {
+        return <EmptyState />;
+    }
 
     return (
         <div>
