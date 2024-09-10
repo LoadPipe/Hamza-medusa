@@ -7,13 +7,10 @@ import { generateEntityId } from '@medusajs/medusa/dist/utils';
 // - output: jsonb → the response that came back
 // - context: jsonb → optional, leave blank for now. This I expect we will use to indicate from where, for what customer, etc.
 
-@Entity()
+@Entity('bucky_logs')
 export class BuckyLog extends SoftDeletableEntity {
     @PrimaryColumn()
     id: string;
-
-    @Column({ type: 'bigint', name: 'date' })
-    timestamp: number;
 
     @Column({ name: 'endpoint' })
     endpoint: string;
