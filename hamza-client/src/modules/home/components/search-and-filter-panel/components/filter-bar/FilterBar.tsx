@@ -114,7 +114,7 @@ const FilterBar = () => {
                 <CategoryButtons
                     categoryType={'All'}
                     categoryName={'All'}
-                    url={''}
+                    url={'https://images.hamza.biz/category-icons/all.svg'}
                 />
                 <Flex
                     maxW={'1100px'}
