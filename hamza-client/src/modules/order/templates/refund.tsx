@@ -7,7 +7,7 @@ import EmptyState from '@modules/order/components/empty-state';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 
 const Refund = ({ orders, isEmpty }: { orders: any[]; isEmpty?: boolean }) => {
-    const [customerOrder, setCustomerOrder] = useState<any[] | null>(null);
+    const [customerOrder, setCustomerOrder] = useState<any[]>([]);
     const [customerId, setCustomerId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [courierInfo, setCourierInfo] = useState(false);

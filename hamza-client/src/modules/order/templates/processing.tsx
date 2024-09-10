@@ -48,7 +48,7 @@ const Processing = ({
     const [orderStatuses, setOrderStatuses] = useState<{
         [key: string]: string;
     }>({});
-    const [customerOrder, setCustomerOrder] = useState<any[] | null>(null);
+    const [customerOrder, setCustomerOrder] = useState<any[]>([]);
 
     // console.log(`ORDER FOR PROCESSING ${JSON.stringify(orders)}`);
     const openModal = (orderId: string) => {
