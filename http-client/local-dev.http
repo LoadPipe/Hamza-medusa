@@ -292,7 +292,7 @@ Content-Type: application/json
 }
 
 ### Get Order Template Information
-GET http://localhost:9000/custom/order/order-summary?cart_id=cart_01J6FTDTCVP1DNQ38FHM9NZ914
+GET http://localhost:9000/custom/order/order-summary?cart_id=cart_01J7DJB51S6VM1B36SCQ0VY5Q5
 Content-Type: application/json
 
 
