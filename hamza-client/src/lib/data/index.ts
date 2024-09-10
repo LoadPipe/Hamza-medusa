@@ -269,7 +269,7 @@ export async function verifyToken(token: string) {
 
 //TODO: rename? cause it's not really clear what this does
 export async function getOrderSummary(cart_id: string) {
-    return await get('/custom/order/complete-template', { cart_id });
+    return await get('/custom/order/order-summary', { cart_id });
 }
 
 export async function getNotReviewed(customer_id: string) {
