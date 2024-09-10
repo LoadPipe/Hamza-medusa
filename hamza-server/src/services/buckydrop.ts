@@ -38,6 +38,8 @@ const SHIPPING_COST_MAX: number = parseInt(
     process.env.BUCKY_MAX_SHIPPING_COST_US_CENT ?? '4000'
 );
 
+// TODO: I think this code needs comments its difficult to understand.
+
 export default class BuckydropService extends TransactionBaseService {
     protected readonly logger: ILogger;
     protected readonly productService_: ProductService;

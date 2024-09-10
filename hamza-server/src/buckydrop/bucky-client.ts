@@ -86,6 +86,7 @@ export class BuckyClient {
 
     // Method to get product details
     async getProductDetails(productLink: string): Promise<any> {
+        console.log(`DOES THIS RUN`);
         const params = JSON.stringify({
             goodsLink: productLink,
         });
@@ -121,6 +122,8 @@ export class BuckyClient {
         currentPage: number = 1,
         pageSize: number = 10
     ): Promise<any[]> {
+        console.log(`DOES THIS RUN`);
+
         const params = JSON.stringify({
             curent: currentPage, // Note the typo "curent" should be "current" if API docs are correct
             size: pageSize,
@@ -158,6 +161,8 @@ export class BuckyClient {
         currentPage = 1,
         pageSize = 10
     ): Promise<any> {
+        console.log(`DOES THIS RUN`);
+
         const params = JSON.stringify({
             curent: currentPage,
             size: pageSize,
@@ -193,6 +198,8 @@ export class BuckyClient {
     }
 
     async listProductCategories(): Promise<any> {
+        console.log(`DOES THIS RUN`);
+
         const params = ''; // Assuming no body is required
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
@@ -227,6 +234,8 @@ export class BuckyClient {
     async createOrder(
         createOrderParams: ICreateBuckyOrderParams
     ): Promise<any> {
+        console.log(`DOES THIS RUN`);
+
         const params = JSON.stringify(createOrderParams);
 
         const logRecord = await this.saveLogInput(
@@ -257,6 +266,8 @@ export class BuckyClient {
         shopOrderNo: string,
         partnerOrderNo?: string
     ): Promise<any> {
+        console.log(`DOES THIS RUN`);
+
         const params = JSON.stringify({
             shopOrderNo,
             partnerOrderNo,
@@ -291,6 +302,8 @@ export class BuckyClient {
     }
 
     async cancelPurchaseOrder(orderCode: string): Promise<any> {
+        console.log(`DOES THIS RUN`);
+
         const params = JSON.stringify({
             orderCode,
         });
@@ -323,6 +336,8 @@ export class BuckyClient {
         shopOrderNo: string,
         partnerOrderNo?: string
     ): Promise<any> {
+        console.log(`DOES THIS RUN`);
+
         const params = JSON.stringify({
             shopOrderNo,
             partnerOrderNo,
@@ -354,6 +369,8 @@ export class BuckyClient {
     }
 
     async getLogisticsInfo(packageCode: string): Promise<any> {
+        console.log(`DOES THIS RUN`);
+
         const params = JSON.stringify({ packageCode });
         const logRecord = await this.saveLogInput(
             '/logistics/query-info',
@@ -375,6 +392,8 @@ export class BuckyClient {
     }
 
     async getParcelDetails(packageCode: string): Promise<any> {
+        console.log(`DOES THIS RUN`);
+
         const params = JSON.stringify({ packageCode });
         const logRecord = await this.saveLogInput(
             '/pkg/detail',
@@ -399,6 +418,8 @@ export class BuckyClient {
     async getShippingCostEstimate(
         item: IBuckyShippingCostRequest
     ): Promise<any> {
+        console.log(`DOES THIS RUN`);
+
         const params = JSON.stringify({ size: 10, item });
         const logRecord = await this.saveLogInput(
             '/logistics/channel-carriage-list',
