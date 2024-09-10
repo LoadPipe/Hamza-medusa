@@ -5,9 +5,8 @@ export class BuckyLogs1725491792885 implements MigrationInterface {
         await queryRunner.query(
             `CREATE TABLE "bucky_logs"(
                 "id" character varying NOT NULL,
-                "timestamp" int,
                 "endpoint" character varying NOT NULL,
-                "input" jsonb NOT NULL,
+                "input" jsonb,
                 "output" jsonb,
                 "context" jsonb, 
                 "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
