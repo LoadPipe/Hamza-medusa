@@ -59,6 +59,12 @@ const All = ({ orders }: { orders: any[] }) => {
             const response = await getOrderBucket(customerId);
             console.log(`ALL BUCKETS`, response);
 
+            if (response === undefined || response === null) {
+                console.error('Bucket is undefined or null');
+                setCustomerOrder(null); // Set empty state
+                return;
+            }
+
             console.log(`ToPay BUCKET ${response.ToPay}`);
             // Check if the response is valid and has the expected structure
             if (response && typeof response === 'object') {

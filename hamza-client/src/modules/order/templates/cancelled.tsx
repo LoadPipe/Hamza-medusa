@@ -31,6 +31,12 @@ const Cancelled = ({
         setIsLoading(true);
         try {
             const bucket = await getSingleBucket(customerId, 4);
+            if (bucket === undefined || bucket === null) {
+                console.error('Bucket is undefined or null');
+                setCustomerOrder([]); // Set empty state
+                setIsLoading(false);
+                return;
+            }
             if (Array.isArray(bucket)) {
                 setCustomerOrder(bucket);
             } else {

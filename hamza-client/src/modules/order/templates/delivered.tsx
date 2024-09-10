@@ -45,6 +45,14 @@ const Delivered = ({
         setIsLoading(true);
         try {
             const bucket = await getSingleBucket(customerId, 3);
+
+            if (bucket === undefined || bucket === null) {
+                console.error('Bucket is undefined or null');
+                setCustomerOrder([]); // Set empty state
+                setIsLoading(false);
+                return;
+            }
+
             if (Array.isArray(bucket)) {
                 setCustomerOrder(bucket);
             } else {
