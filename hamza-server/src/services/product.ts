@@ -393,7 +393,7 @@ class ProductService extends MedusaProductService {
             // Fetch categories along with related products, variants, prices, and reviews
             const productCategories =
                 await this.productCategoryRepository_.find({
-                    select: ['id', 'name'],
+                    select: ['id', 'name', 'metadata'],
                     relations: [
                         'products',
                         'products.variants.prices',
@@ -404,7 +404,9 @@ class ProductService extends MedusaProductService {
             //remove products that aren't published
             for (let cat of productCategories) {
                 if (cat.products)
-                    cat.products = cat.products.filter(p => p.status == ProductStatus.PUBLISHED && p.store_id);
+                    cat.products = cat.products.filter(
+                        (p) => p.status == ProductStatus.PUBLISHED && p.store_id
+                    );
             }
 
             // Filter out categories that have no associated products that are published
@@ -413,7 +415,11 @@ class ProductService extends MedusaProductService {
             );
 
             //convert price currencies as needed
-            await Promise.all(filteredCategories.map(cat => this.convertPrices(cat.products)));
+            await Promise.all(
+                filteredCategories.map((cat) =>
+                    this.convertPrices(cat.products)
+                )
+            );
 
             return filteredCategories; // Return the filtered categories
         } catch (error) {
