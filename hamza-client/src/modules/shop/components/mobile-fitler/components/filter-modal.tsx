@@ -38,8 +38,10 @@ interface FilterModalProps {
 interface Category {
     id: string;
     name: string;
+    metadata: {
+        icon_url: string;
+    };
 }
-
 const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
     const {
         setCurrencySelect,
@@ -81,7 +83,11 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
 
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
-        ? data.map((category) => ({ name: category.name, id: category.id }))
+        ? data.map((category) => ({
+              name: category.name,
+              id: category.id,
+              metadata: category.metadata,
+          }))
         : [];
 
     return (
@@ -114,6 +120,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                                     key={index}
                                     categoryType={category.name}
                                     categoryName={category.name}
+                                    url={category.metadata.icon_url}
                                 />
                             )
                         )}
