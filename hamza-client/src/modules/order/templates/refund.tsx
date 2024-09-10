@@ -57,7 +57,7 @@ const Refund = ({ orders, isEmpty }: { orders: any[]; isEmpty?: boolean }) => {
         setIsLoading(false);
     };
 
-    if (isEmpty && orders?.length == 0) {
+    if (isEmpty && customerOrder && customerOrder?.length == 0) {
         return <EmptyState />;
     }
 

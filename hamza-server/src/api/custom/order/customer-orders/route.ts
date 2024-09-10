@@ -41,11 +41,11 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 if (handler.inputParams.buckets) {
                     const orders =
                         await orderService.getCustomerOrderBuckets(customerId);
-                    handler.returnStatus(200, orders);
+                    handler.returnStatus(200, { orders: orders });
                 } else {
                     const orders =
                         await orderService.getCustomerOrders(customerId);
-                    handler.returnStatus(200, orders);
+                    handler.returnStatus(200, { orders: orders });
                 }
             }
         }
