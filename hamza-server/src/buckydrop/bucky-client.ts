@@ -71,9 +71,8 @@ export interface IBuckyShippingCostRequest {
 export class BuckyClient {
     private client: AxiosInstance;
     protected readonly buckyLogRepository: typeof BuckyLogRepository;
-    private readonly logger: Logger;
 
-    constructor(buckyLogRepository: typeof BuckyLogRepository, logger: Logger) {
+    constructor(buckyLogRepository: typeof BuckyLogRepository) {
         this.client = axios.create({
             baseURL: BUCKY_URL,
             headers: {
@@ -83,7 +82,6 @@ export class BuckyClient {
             timeout: 13000,
         });
         this.buckyLogRepository = buckyLogRepository;
-        this.logger = logger;
     }
 
     // Method to get product details
@@ -148,6 +146,7 @@ export class BuckyClient {
                 throw error;
             });
         if (logRecord) {
+            console.log(`does this run?`);
             logRecord.output = output;
             this.saveLogOutput(logRecord);
         }
@@ -468,10 +467,8 @@ export class BuckyClient {
     //TODO: need logger also
     private async saveLogOutput(record: BuckyLog): Promise<void> {
         try {
-            this.logger.log(`Saving Buckylog record ${record}`);
             await this.buckyLogRepository?.save(record);
         } catch (e) {
-            this.logger.error(`Failed to save buckylog record ${e}`);
             console.error(e);
         }
 
