@@ -1,19 +1,6 @@
 import React, { useState } from 'react';
 import { cancelOrder } from '@lib/data';
-import {
-    Box,
-    Button,
-    FormControl,
-    FormErrorMessage,
-    Modal,
-    ModalBody,
-    ModalCloseButton,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    ModalOverlay,
-    Text,
-} from '@chakra-ui/react';
+import { Box, Button, Text } from '@chakra-ui/react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import CancelOrderModal from '../components/cancel-order-modal';
 import Processing from '@modules/order/templates/processing';
@@ -78,10 +65,15 @@ const All = ({ orders }: { orders: any[] }) => {
             closeCancelModal();
         }
     };
+    const areAllOrdersEmpty = customerOrder
+        ? Object.values(customerOrder).every(
+              (orderArray) => orderArray.length === 0
+          )
+        : true; // if customerOrder is null or undefined, consider all orders empty
 
     return (
         <Box>
-            {customerOrder ? (
+            {!areAllOrdersEmpty ? (
                 <Box>
                     <Box mt={4} mb={2}>
                         <Processing orders={orders} />
