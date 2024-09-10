@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getSingleBucket } from '@lib/data';
 import { Box, Button } from '@chakra-ui/react';
-import Link from 'next/link';
 
 import DeliveredCard from '@modules/account/components/delivered-card';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
@@ -56,47 +55,42 @@ const Delivered = ({ orders }: { orders: any[] }) => {
     return (
         <div>
             {/* Processing-specific content */}
-            <h1>Delivered Orders</h1>
             {customerOrder && customerOrder.length > 0 ? (
-                customerOrder.map((order) => (
-                    <div
-                        key={order.id} // Changed from cart_id to id since it's more reliable and unique
-                        className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
-                    >
-                        {order.items?.map(
-                            (
-                                item: any // Adjusting the map to the correct path
-                            ) => (
-                                <Box
-                                    key={item.id}
-                                    bg="rgba(39, 39, 39, 0.3)"
-                                    p={4}
-                                    m={2}
-                                    rounded="lg"
-                                >
-                                    {/*item: {item.id} <br />*/}
-                                    <DeliveredCard
+                <>
+                    <h1>Delivered Orders</h1>
+
+                    {customerOrder.map((order) => (
+                        <div
+                            key={order.id} // Changed from cart_id to id since it's more reliable and unique
+                            className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
+                        >
+                            {order.items?.map(
+                                (
+                                    item: any // Adjusting the map to the correct path
+                                ) => (
+                                    <Box
                                         key={item.id}
-                                        order={item}
-                                        handle={
-                                            item.variant?.product?.handle ||
-                                            'N/A'
-                                        }
-                                    />
-                                </Box>
-                            )
-                        )}
-                    </div>
-                ))
-            ) : (
-                <div className="flex flex-col items-center w-full bg-black text-white p-8">
-                    <h2>Nothing to see here</h2>
-                    <p>You don't have any orders yet, let us change that :)</p>
-                    <LocalizedClientLink href="/" passHref>
-                        <Button>Continue shopping</Button>
-                    </LocalizedClientLink>
-                </div>
-            )}
+                                        bg="rgba(39, 39, 39, 0.3)"
+                                        p={4}
+                                        m={2}
+                                        rounded="lg"
+                                    >
+                                        {/*item: {item.id} <br />*/}
+                                        <DeliveredCard
+                                            key={item.id}
+                                            order={item}
+                                            handle={
+                                                item.variant?.product?.handle ||
+                                                'N/A'
+                                            }
+                                        />
+                                    </Box>
+                                )
+                            )}
+                        </div>
+                    ))}
+                </>
+            ) : null}
         </div>
     );
 };
