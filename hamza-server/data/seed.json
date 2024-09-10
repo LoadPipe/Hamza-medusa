@@ -4115,7 +4115,7 @@
             "category_children": [],
             "handle": "board_games",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/board-games"
+                "icon_url": "https://images.hamza.biz/category-icons/board-games.svg"
             }
         },
         {
@@ -4125,7 +4125,7 @@
             "category_children": [],
             "handle": "gaming",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/gaming"
+                "icon_url": "https://images.hamza.biz/category-icons/gaming.svg"
             }
         },
         {
@@ -4135,7 +4135,7 @@
             "category_children": [],
             "handle": "fitness",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/fitness"
+                "icon_url": "https://images.hamza.biz/category-icons/fitness.svg"
             }
         },
         {
@@ -4145,7 +4145,7 @@
             "category_children": [],
             "handle": "gadgets",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/gadgets"
+                "icon_url": "https://images.hamza.biz/category-icons/gadgets.svg"
             }
         },
         {
@@ -4155,7 +4155,7 @@
             "category_children": [],
             "handle": "hobbies",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/hobbies"
+                "icon_url": "https://images.hamza.biz/category-icons/hobbies.svg"
             }
         },
         {
@@ -4165,7 +4165,7 @@
             "category_children": [],
             "handle": "electronics",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/electronics"
+                "icon_url": "https://images.hamza.biz/category-icons/electronics.svg"
             }
         },
         {
@@ -4175,7 +4175,7 @@
             "category_children": [],
             "handle": "home",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/home"
+                "icon_url": "https://images.hamza.biz/category-icons/home.svg"
             }
         },
         {
@@ -4185,7 +4185,7 @@
             "category_children": [],
             "handle": "featured",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/featured"
+                "icon_url": "https://images.hamza.biz/category-icons/featured.svg"
             }
         },
         {
@@ -4195,7 +4195,7 @@
             "category_children": [],
             "handle": "fashion",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/fashion"
+                "icon_url": "https://images.hamza.biz/category-icons/fashion.svg"
             }
         },
         {
@@ -4205,7 +4205,7 @@
             "category_children": [],
             "handle": "toys",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/toys"
+                "icon_url": "https://images.hamza.biz/category-icons/toys.svg"
             }
         },
         {
@@ -4215,7 +4215,7 @@
             "category_children": [],
             "handle": "beauty",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/beauty"
+                "icon_url": "https://images.hamza.biz/category-icons/beauty.svg"
             }
         },
         {
@@ -4225,7 +4225,7 @@
             "category_children": [],
             "handle": "sports_outdoors",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/sports-outdoors"
+                "icon_url": "https://images.hamza.biz/category-icons/sports-outdoors.svg"
             }
         },
         {
@@ -4235,7 +4235,7 @@
             "category_children": [],
             "handle": "health",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/health"
+                "icon_url": "https://images.hamza.biz/category-icons/health.svg"
             }
         },
         {
@@ -4245,7 +4245,7 @@
             "category_children": [],
             "handle": "automotive",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/automotive"
+                "icon_url": "https://images.hamza.biz/category-icons/automotive.svg"
             }
         },
         {
@@ -4255,7 +4255,7 @@
             "category_children": [],
             "handle": "books",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/books"
+                "icon_url": "https://images.hamza.biz/category-icons/books.svg"
             }
         },
         {
@@ -4265,7 +4265,7 @@
             "category_children": [],
             "handle": "office",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/office"
+                "icon_url": "https://images.hamza.biz/category-icons/office.svg"
             }
         },
         {
@@ -4275,7 +4275,7 @@
             "category_children": [],
             "handle": "pets",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/pets"
+                "icon_url": "https://images.hamza.biz/category-icons/pets.svg"
             }
         }
     ],
