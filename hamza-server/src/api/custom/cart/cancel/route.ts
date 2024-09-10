@@ -21,7 +21,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
         const cart = await cartService.retrieve(cartId);
         if (!cart)
-            return res.status(404).json({ message: `Cart ${cartId} not found` });
+            return handler.returnStatusWithMessage(404, `Cart ${cartId}  not found`);
 
         //enforce security
         if (!handler.enforceCustomerId(cart.customer_id))
@@ -30,6 +30,6 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         await orderService.cancelOrderFromCart(cartId);
 
         handler.logger.debug(`cancelled ${cartId}`);
-        return res.send({ status: true });
+        return handler.returnStatus(200, { status: true });
     });
 };

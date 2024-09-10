@@ -113,7 +113,7 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
                                 </Text>
                             </Flex>
                             <Link
-                                href={'/store'}
+                                href={'/shop'}
                                 textAlign={'center'}
                                 width={'100%'}
                             >

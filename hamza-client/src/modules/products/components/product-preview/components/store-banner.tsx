@@ -4,18 +4,17 @@ import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
 import { FaCheckCircle } from 'react-icons/fa';
 
-type VendorProps = {
-    vendor: string;
+type StoreProps = {
+    store: string;
     icon: string;
 };
 
-const VendorBanner = (props: VendorProps) => {
+const StoreBanner = (props: StoreProps) => {
     const router = useRouter();
     const { countryCode } = useParams();
 
-    // console.log(`vendor name is ${props.vendor}`);
     const navigateToVendor = () => {
-        router.push(`/${countryCode}/vendor/${props.vendor}`);
+        router.push(`/${countryCode}/store/${props.store}`);
     };
 
     return (
@@ -50,7 +49,7 @@ const VendorBanner = (props: VendorProps) => {
                             fontWeight="bold"
                             noOfLines={1}
                         >
-                            {props.vendor}
+                            {props.store}
                         </Text>
                         <Flex
                             display={{ base: 'none', md: 'flex' }}
@@ -124,4 +123,4 @@ const VendorBanner = (props: VendorProps) => {
     );
 };
 
-export default VendorBanner;
+export default StoreBanner;

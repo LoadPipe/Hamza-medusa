@@ -15,28 +15,34 @@ checklist:
 */
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
-    let confirmationTokenService: ConfirmationTokenService =
-        req.scope.resolve('confirmationTokenService');
+    let confirmationTokenService: ConfirmationTokenService = req.scope.resolve(
+        'confirmationTokenService'
+    );
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'POST', '/custom/confirmation-token/generate', ['email', 'customer_id']
+        req,
+        res,
+        'POST',
+        '/custom/confirmation-token/generate',
+        ['email', 'customer_id']
     );
 
     await handler.handle(async () => {
-        //validate 
-        if (!handler.requireParams(['email', 'customer_id']))
-            return;
+        //validate
+        if (!handler.requireParams(['email', 'customer_id'])) return;
 
-        //security check 
-        if (!handler.enforceCustomerId(handler.inputParams.customer_id))
-            return;
+        //security check
+        if (!handler.enforceCustomerId(handler.inputParams.customer_id)) return;
 
-        //do the thing 
+        //do the thing
         await confirmationTokenService.createConfirmationToken({
             customer_id: handler.inputParams.customer_id,
             email: handler.inputParams.email,
         });
 
-        return res.send({ status: true });
+        return handler.returnStatusWithMessage(
+            200,
+            'successfully generated nonce token'
+        );
     });
 };

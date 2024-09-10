@@ -83,9 +83,9 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         getNonce: async () => {
             console.log('FETCHING NONCE.....');
             const response = await fetch(GET_NONCE);
-            const data = await response.text();
-            console.log('NONCE DATA: ', data);
-            return data;
+            const data = await response.json();
+            console.log('NONCE DATA: ', data.nonce);
+            return data?.nonce ?? '';
         },
 
         createMessage: ({ nonce, address, chainId }) => {

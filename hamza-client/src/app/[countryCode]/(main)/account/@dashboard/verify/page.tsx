@@ -29,6 +29,7 @@ export default async function Verify() {
             borderRadius={'12px'}
             py={'5rem'}
             gap={'10px'}
+            width={'100%'}
         >
             <VerifyEmail />
         </Flex>

@@ -15,7 +15,7 @@ import PreviewCheckout from '../components/product-preview/components/preview-ch
 import ProductReview from '../components/product-preview/components/product-review';
 import ProductReviewMobile from '../components/product-preview/components/product-review-mobile';
 import useProductPreview from '@store/product-preview/product-preview';
-import VendorBanner from '../components/product-preview/components/vendor-banner';
+import StoreBanner from '../components/product-preview/components/store-banner';
 import SearchBar from '../components/product-preview/components/mobile-search';
 import Tweet from '@/components/tweet';
 import { MdChevronLeft } from 'react-icons/md';
@@ -40,9 +40,9 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
         setQuantity,
     } = useProductPreview();
 
-    const [vendor, setVendor] = useState('');
+    const [store, setStore] = useState('');
     const [icon, setIcon] = useState('');
-    console.log('Get product data', product);
+
     // Only update product data when `product` changes
     useEffect(() => {
         if (product && product.id) {
@@ -78,7 +78,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
             try {
                 const data = await getStore(product.id as string);
                 // console.log(`Vendor: ${data}`);
-                setVendor(data.name);
+                setStore(data.name);
                 setIcon(data.icon);
             } catch (error) {
                 console.error('Error fetching vendor: ', error);
@@ -103,7 +103,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                 width="100%"
                 flexDirection={'row'}
             >
-                <LocalizedClientLink href="/store">
+                <LocalizedClientLink href="/shop">
                     <Flex
                         ml="-0.5rem"
                         height={'52px'}
@@ -168,7 +168,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                     <PreviewCheckout productId={product.id as string} />
                 </Flex>
             </Flex>
-            <VendorBanner vendor={vendor} icon={icon} />
+            <StoreBanner store={store} icon={icon} />
             <Divider
                 color="#555555"
                 display={{ base: 'block', md: 'none' }}

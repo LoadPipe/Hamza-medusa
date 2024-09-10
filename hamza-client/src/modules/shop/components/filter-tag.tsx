@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Text, Flex } from '@chakra-ui/react';
+import categoryIcons from '@modules/shop/data/category-icons';
 
 const FilterTag = (props: any) => {
     return (
@@ -16,7 +17,10 @@ const FilterTag = (props: any) => {
                 height={'63px'}
                 style={{ padding: '10px 24px' }}
             >
-                <Image src={props.img} alt={props.name} />
+                <Image
+                    src={categoryIcons[props.name.toLowerCase()]}
+                    alt={props.name}
+                />
                 <Text ml="10px" fontSize="18px" color="white">
                     {props.name}
                 </Text>

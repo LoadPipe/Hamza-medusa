@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
-import categoryIcons from '@modules/store/data/category-icons';
+import categoryIcons from '@modules/shop/data/category-icons';
 import Image from 'next/image';
 
 interface CategoryButtonProps {
@@ -31,6 +31,7 @@ const CategoryButtons: React.FC<CategoryButtonProps> = ({
             }
             display={'flex'}
             flexDirection={'row'}
+            justifyContent={'center'}
             alignItems={'center'}
             borderWidth={'1px'}
             borderRadius={'49px'}
@@ -48,7 +49,10 @@ const CategoryButtons: React.FC<CategoryButtonProps> = ({
                 background: 'white',
             }}
         >
-            <Image src={categoryIcons[categoryType]} alt={categoryName} />
+            <Image
+                src={categoryIcons[categoryName.toLowerCase()]}
+                alt={categoryName}
+            />
             <Text ml="10px" fontSize={{ base: '14px', md: '18px' }}>
                 {categoryName}
             </Text>

@@ -4,17 +4,7 @@ import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import useWishlistStore, {
     WishlistProduct,
 } from '@store/wishlist/wishlist-store';
-import JSCookie from 'js-cookie';
-
-export function getCookie(name: string) {
-    if (typeof window === 'undefined') {
-        // Read a cookie server-side
-        return require('next/headers').cookies().get(name)?.value;
-    }
-
-    // Read a cookie client-side
-    return JSCookie.get(name);
-}
+import { getClientCookie } from '@lib/util/get-client-cookies';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -46,7 +36,7 @@ export function useWishlistMutations() {
             },
                 {
                     headers: {
-                        authorization: getCookie('_medusa_jwt'),
+                        authorization: getClientCookie('_medusa_jwt'),
                     }
                 });
         },
@@ -73,7 +63,7 @@ export function useWishlistMutations() {
                     product_id: product.id,
                 },
                 headers: {
-                    authorization: getCookie('_medusa_jwt'),
+                    authorization: getClientCookie('_medusa_jwt'),
                 }
             });
         },

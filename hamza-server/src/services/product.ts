@@ -344,7 +344,10 @@ class ProductService extends MedusaProductService {
 
             // Query to get all products for the given store ID
             const products = await this.productRepository_.find({
-                where: { store_id: store.id },
+                where: {
+                    status: ProductStatus.PUBLISHED,
+                    store_id: Not(IsNull()),
+                },
                 relations: [
                     'product_category_product',
                     'product_category',
@@ -367,7 +370,7 @@ class ProductService extends MedusaProductService {
         console.log(storeId);
         const productCategory = await this.productCategoryRepository_.findOne({
             where: {
-                handle: handle
+                handle: handle,
             },
             relations: ['products.variants.prices'],
         });
@@ -377,13 +380,50 @@ class ProductService extends MedusaProductService {
         }
 
         const products = productCategory.products.filter(
-            (product) => product.store_id === storeId &&
+            (product) =>
+                product.store_id === storeId &&
                 product.status === ProductStatus.PUBLISHED &&
                 product.store_id
         );
         return productCategory.products;
     }
 
+    async getAllProductCategories() {
+        try {
+            // Fetch categories along with related products, variants, prices, and reviews
+            const productCategories =
+                await this.productCategoryRepository_.find({
+                    select: ['id', 'name'],
+                    relations: [
+                        'products',
+                        'products.variants.prices',
+                        'products.reviews',
+                    ],
+                });
+
+            //remove products that aren't published
+            for (let cat of productCategories) {
+                if (cat.products)
+                    cat.products = cat.products.filter(p => p.status == ProductStatus.PUBLISHED && p.store_id);
+            }
+
+            // Filter out categories that have no associated products that are published
+            const filteredCategories = productCategories.filter(
+                (category) => category.products && category.products.length > 0
+            );
+
+            //convert price currencies as needed
+            await Promise.all(filteredCategories.map(cat => this.convertPrices(cat.products)));
+
+            return filteredCategories; // Return the filtered categories
+        } catch (error) {
+            this.logger.error(
+                'Error fetching product categories with prices:',
+                error
+            );
+            throw new Error('Failed to fetch product categories with prices.');
+        }
+    }
     async getProductsFromStoreName(storeName: string) {
         try {
             const store = await this.storeRepository_.findOne({

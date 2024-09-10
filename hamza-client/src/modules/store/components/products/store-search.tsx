@@ -10,10 +10,10 @@ import { getStoreIdByName } from '@lib/data';
 import useVendor from '@store/store-page/vendor';
 
 type Props = {
-    vendorName: string;
+    storeName: string;
 };
 
-const VendorSearch = ({ vendorName }: Props) => {
+const StoreSearch = ({ storeName }: Props) => {
     // Category button hooks
     const [handle, setHandle] = useState('all');
     const [selectedButton, setSelectedButton] = useState('All Products'); // Track selected button
@@ -29,9 +29,9 @@ const VendorSearch = ({ vendorName }: Props) => {
 
     // Get categories and update buttons
     const { data, error, isLoading } = useQuery(
-        ['categories', vendorName],
+        ['categories', storeName],
         () => {
-            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/categories?store_name=${vendorName}`;
+            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/categories?store_name=${storeName}`;
             return axios.get(url);
         }
     );
@@ -94,7 +94,7 @@ const VendorSearch = ({ vendorName }: Props) => {
             </Flex>
 
             <ProductCardGroup
-                vendorName={vendorName}
+                vendorName={storeName}
                 allProducts={true}
                 handle={handle}
             />
@@ -102,4 +102,4 @@ const VendorSearch = ({ vendorName }: Props) => {
     );
 };
 
-export default VendorSearch;
+export default StoreSearch;

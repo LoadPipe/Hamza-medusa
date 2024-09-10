@@ -6,7 +6,8 @@ import BuckydropService from 'src/services/buckydrop';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
-    const buckyService: BuckydropService = req.scope.resolve('buckydropService');
+    const buckyService: BuckydropService =
+        req.scope.resolve('buckydropService');
 
     const handler: RouteHandler = new RouteHandler(
         req,
@@ -21,8 +22,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         const output = await buckyService.reconcileOrderStatus(orderId);
 
-        return res
-            .status(201)
-            .json({ status: true, output });
+        return handler.returnStatus(201, { output });
     });
 };

@@ -10,21 +10,22 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
     ]);
 
     await handler.handle(async () => {
-        if (!handler.requireParam('cart_id'))
-            return;
+        if (!handler.requireParam('cart_id')) return;
 
         //check for cart existence
         const cartId = handler.inputParams.cart_id;
         const cart = await cartService.retrieve(cartId);
         if (!cart) {
-            return res.status(404).json({ message: `Cart ${cartId} not found` })
+            return handler.returnStatusWithMessage(
+                404,
+                `Cart ${cartId} not found`
+            );
         }
 
         //enforce security
-        if (!handler.enforceCustomerId(cart.customer_id))
-            return;
+        if (!handler.enforceCustomerId(cart.customer_id)) return;
 
         await cartService.addDefaultShippingMethod(cartId);
-        return res.send({ status: true });
+        return handler.returnStatusWithMessage(200, 'Successfully added shipping method');
     });
 };

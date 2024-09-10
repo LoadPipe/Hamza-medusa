@@ -2,13 +2,17 @@ import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import ProductRepository from '@medusajs/medusa/dist/repositories/product';
 import { RouteHandler } from '../../../route-handler';
 
-//TODO: probably delete this 
+//TODO: probably delete this
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
-    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/product/get-store');
+    const handler: RouteHandler = new RouteHandler(
+        req,
+        res,
+        'GET',
+        '/custom/product/get-store'
+    );
 
     await handler.handle(async () => {
-        if (!handler.requireParam('product_id'))
-            return;
+        if (!handler.requireParam('product_id')) return;
 
         const productId = handler.inputParams.productId;
 
@@ -17,6 +21,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             select: { store_id: true },
         });
 
-        return res.send({ status: true, data: productData.store_id });
+        return handler.returnStatus(200, { dta: productData.store_id });
     });
 };

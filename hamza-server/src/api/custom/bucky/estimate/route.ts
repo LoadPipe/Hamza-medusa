@@ -17,7 +17,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         res,
         'GET',
         '/admin/custom/bucky/estimate',
-        ['count', 'page', 'link', 'store']
+        ['count', 'page', 'link', 'store',]
     );
 
     await handler.handle(async () => {
@@ -29,16 +29,14 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             province: 'Chiang Mai',
             detailAddress: '228/32 Soi Mu Ban Lanna Thara Village',
             postCode: '50230',
-            productList: [
-                {
-                    length: 0,
-                    width: 0,
-                    height: 0,
-                    weight: 0,
-                    categoryCode: '50009032',
-                },
-            ],
-        });
+            productList: [{
+                length: 1,
+                width: 1,
+                height: 1,
+                weight: 1,
+                categoryCode: '50009032',
+            }],
+        })
 
         return handler.returnStatus(200, { response });
     });

@@ -21,7 +21,7 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
     await handler.handle(async () => {
         //validate
         if (!handler.inputParams.order_id) {
-            res.status(400).json({ message: 'order_id is required' });
+            return handler.returnStatusWithMessage(400, 'order_id is required');
         }
 
         //normal cancellation
@@ -29,17 +29,17 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
             handler.inputParams.order_id
         );
 
-        //check customer id 
-        if (!handler.enforceCustomerId(order.customer_id))
-            return;
+        //check customer id
+        if (!handler.enforceCustomerId(order.customer_id)) return;
 
         if (!order) {
             handler.logger.error(
                 `Order not found or could not be canceled for order_id: ${handler.inputParams.order_id}`
             );
-            return res
-                .status(404)
-                .json({ message: 'Order not found or could not be canceled' });
+            return handler.returnStatusWithMessage(
+                404,
+                'Order not found or could not be canceled'
+            );
         }
 
         //buckydrop cancellation
@@ -51,6 +51,6 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
         handler.logger.debug(
             `Order ${handler.inputParams.order_id} cancelled.`
         );
-        res.status(200).json({ order });
+        handler.returnStatus(200, order);
     });
 };

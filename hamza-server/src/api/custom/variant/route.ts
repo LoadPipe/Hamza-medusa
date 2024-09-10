@@ -7,13 +7,18 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         'productVariantService'
     );
 
-    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/variant', [
-        'variant_id',
-        'reduction_quantity',
-    ]);
+    const handler: RouteHandler = new RouteHandler(
+        req,
+        res,
+        'GET',
+        '/custom/variant',
+        ['variant_id', 'reduction_quantity']
+    );
 
     await handler.handle(async () => {
-        handler.logger.debug(`Variant Quantity is ${handler.inputParams.reduction_quantity}`);
+        handler.logger.debug(
+            `Variant Quantity is ${handler.inputParams.reduction_quantity}`
+        );
         const quantityToDeduct = handler.inputParams.reduction_quantity
             ? parseInt(handler.inputParams.reduction_quantity, 10)
             : 1;
@@ -23,6 +28,6 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             handler.inputParams.variant_id,
             quantityToDeduct
         );
-        return res.json({ updatedVariant });
+        return handler.returnStatus(200, updatedVariant);
     });
 };

@@ -11,13 +11,16 @@ type MyConfigModule = ConfigModule & {
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'GET', '/custom/nonce'
+        req,
+        res,
+        'GET',
+        '/custom/nonce'
     );
 
     await handler.handle(async () => {
         const nonce = generateNonce();
         req.session.nonce = nonce;
         await req.session.save();
-        res.send(req.session.nonce);
+        handler.returnStatus(200, { nonce: req.session.nonce });
     });
 };

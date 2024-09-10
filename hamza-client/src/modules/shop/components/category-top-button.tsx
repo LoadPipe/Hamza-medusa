@@ -48,7 +48,10 @@ const CategoryTopButton: React.FC<CategoryButtonProps> = ({
                 background: 'white',
             }}
         >
-            <Image src={categoryIcons[categoryType]} alt={categoryName} />
+            <Image
+                src={categoryIcons[categoryName.toLowerCase()]}
+                alt={categoryName}
+            />
             <Text ml="10px" fontSize={'18px'}>
                 {categoryName}
             </Text>

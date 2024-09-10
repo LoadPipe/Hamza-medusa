@@ -24,6 +24,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             handler.inputParams.customer_id,
             handler.inputParams.variant_id
         );
-        res.json(verify);
+        handler.returnStatus(200, verify);
     });
 };

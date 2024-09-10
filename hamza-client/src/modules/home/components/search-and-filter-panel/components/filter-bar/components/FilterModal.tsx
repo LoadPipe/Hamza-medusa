@@ -24,14 +24,19 @@ import useSideFilter from '@store/store-page/side-filter';
 import useModalFilter from '@store/store-page/filter-modal';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
-import RangeSliderModal from '@modules/store/components/mobile-fitler/components/range-slider-modal';
+import RangeSliderModal from '@modules/shop/components/mobile-fitler/components/range-slider-modal';
 import useVendors from '../../../data/data';
 interface FilterModalProps {
     isOpen: boolean;
     onClose: () => void;
+    categories: Array<{ name: string; id: string }>; // Add categories prop with array of category objects
 }
 
-const FilterModalHome: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
+const FilterModalHome: React.FC<FilterModalProps> = ({
+    isOpen,
+    onClose,
+    categories,
+}) => {
     const {
         setCurrencySelect,
         setReviewStarsSelect,
@@ -77,9 +82,9 @@ const FilterModalHome: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                     Filters
                 </ModalHeader>
                 <ModalCloseButton color={'white'} />
-                <ModalBody maxW={'771px'} padding={'1rem'} mx="auto">
+                <ModalBody maxW={'771px'} width="100%" mx="auto">
                     <Text fontWeight={'600'} fontSize={'16px'} color="white">
-                        Vendors
+                        Category
                     </Text>
                     <Flex
                         mt="1.5rem"
@@ -87,15 +92,13 @@ const FilterModalHome: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         wrap={'wrap'}
                         gap="16px"
                     >
-                        <Box>
-                            {vendors.map((vendor: any, index: number) => (
-                                <CategoryModalButton
-                                    key={index}
-                                    categoryType={vendor.vendorType}
-                                    categoryName={vendor.vendorName}
-                                />
-                            ))}
-                        </Box>
+                        {categories.map((category: any, index: number) => (
+                            <CategoryModalButton
+                                key={index}
+                                categoryType={category.id}
+                                categoryName={category.name}
+                            />
+                        ))}
                     </Flex>
                     <Text
                         mt="1.5rem"
@@ -137,15 +140,18 @@ const FilterModalHome: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         <ReviewModalButton title={'2 Stars'} value={'2'} />
                         <ReviewModalButton title={'1 Star'} value={'1'} />
                     </Flex> */}
-                    <Divider mt="2rem" opacity={'0.5'} />
+                    <Divider
+                        mt="2rem"
+                        opacity={'0.5'}
+                        borderColor={'#3E3E3E'}
+                    />
                 </ModalBody>
 
                 <ModalFooter
                     maxW={'771px'}
                     width={'100%'}
-                    mx="auto"
-                    px={'1rem'}
                     pb="2.5rem"
+                    mx="auto"
                 >
                     <Button
                         fontSize={'16px'}
@@ -184,6 +190,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                             setHomeModalCategoryTypeFilterSelect(null);
                             onClose();
                         }}
+                        ml="auto"
                         fontSize={'16px'}
                         fontWeight={'400'}
                         leftIcon={
