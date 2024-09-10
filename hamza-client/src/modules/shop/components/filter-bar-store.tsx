@@ -106,6 +106,7 @@ const FilterBarStore = () => {
                     <CategoryTopButton
                         categoryType={'All'}
                         categoryName={'All'}
+                        url={'https://images.hamza.biz/category-icons/all.svg'}
                     />
                     {isLoading
                         ? skeletons // Show skeletons while loading
