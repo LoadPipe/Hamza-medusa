@@ -1,14 +1,11 @@
 import {
     TransactionBaseService,
-    Logger,
     ProductStatus,
     CartService,
     Cart,
-    LineItem,
     OrderStatus,
     FulfillmentStatus,
-    CustomerService,
-    ProductVariant,
+    CustomerService
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
 import OrderService from '../services/order';
@@ -60,6 +57,7 @@ export default class BuckydropService extends TransactionBaseService {
         this.customerService_ = container.customerService;
         this.logger = createLogger(container, 'BuckydropService');
         this.priceConverter = new PriceConverter(this.logger);
+        this.buckyLogRepository = container.buckyLogRepository;
         this.buckyClient = new BuckyClient(this.buckyLogRepository);
     }
 
@@ -73,10 +71,7 @@ export default class BuckydropService extends TransactionBaseService {
         goodsId: string = null
     ): Promise<Product[]> {
         //retrieve products from bucky and convert them
-        const buckyClient: BuckyClient = new BuckyClient(
-            this.buckyLogRepository
-        );
-        const searchResults = await buckyClient.searchProducts(
+        const searchResults = await this.buckyClient.searchProducts(
             keyword,
             page,
             count
@@ -91,7 +86,7 @@ export default class BuckydropService extends TransactionBaseService {
         for (let p of productData) {
             productInputs.push(
                 await this.mapBuckyDataToProductInput(
-                    buckyClient,
+                    this.buckyClient,
                     p,
                     ProductStatus.PUBLISHED,
                     storeId,
@@ -109,9 +104,9 @@ export default class BuckydropService extends TransactionBaseService {
         //import the products
         const output = productInputs?.length
             ? await this.productService_.bulkImportProducts(
-                  storeId,
-                  productInputs
-              )
+                storeId,
+                productInputs
+            )
             : [];
 
         //TODO: best to return some type of report; what succeeded, what failed
@@ -125,12 +120,8 @@ export default class BuckydropService extends TransactionBaseService {
         salesChannelId: string
     ): Promise<Product[]> {
         //retrieve products from bucky and convert them
-        const buckyClient: BuckyClient = new BuckyClient(
-            this.buckyLogRepository
-        );
-
         const input: CreateProductInput = await this.mapBuckyDataToProductInput(
-            buckyClient,
+            this.buckyClient,
             { goodsLink },
             ProductStatus.PUBLISHED,
             storeId,
