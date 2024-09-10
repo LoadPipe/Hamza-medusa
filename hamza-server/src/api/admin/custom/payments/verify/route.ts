@@ -1,6 +1,9 @@
-import type { MedusaRequest, MedusaResponse, Logger, Payment } from '@medusajs/medusa';
+import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import { RouteHandler } from '../../../../route-handler';
+import { Order } from '../../../../../models/order';
+import { Payment } from '../../../../../models/payment';
 import PaymentVerificationService from '../../../../../services/payment-verification';
+import BuckydropService from 'src/services/buckydrop';
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const paymentVerificationService: PaymentVerificationService = req.scope.resolve('paymentVerificationService');
@@ -10,22 +13,35 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        let payments: Payment[];
+        let orderPayments: { order: Order, payment: Payment }[] = [];
+        const buckydropService: BuckydropService = req.scope.resolve('buckydropService')
+
+        //me minana banana
         if (handler.hasParam('order_id'))
-            payments = await paymentVerificationService.verifyPayments(handler.inputParams.order_id);
+            orderPayments = await paymentVerificationService.verifyPayments(handler.inputParams.order_id);
         else
-            payments = await paymentVerificationService.verifyPayments();
+            orderPayments = await paymentVerificationService.verifyPayments();
+
+        //if orders are bucky orders, we gotta do something
+        for (let item of orderPayments) {
+            if (item.order.bucky_metadata) {
+                item.order = await buckydropService.processPendingOrder(item.order.id);
+            }
+        }
 
         return handler.returnStatus(200, {
-            verified: payments.map(p => {
+            verified: orderPayments.map(item => {
                 return {
-                    id: p.id,
                     order_id:
-                        p.order_id,
+                        item.order.id,
+                    payment_id:
+                        item.payment.id,
                     amount:
-                        p.amount,
+                        item.payment.amount,
                     currency:
-                        p.currency_code
+                        item.payment.currency_code,
+                    bucky_metadata:
+                        item.order.bucky_metadata
                 }
             })
         });

@@ -8,6 +8,7 @@ type ProductSelector = {
     store_id?: string;
 } & MedusaProductSelector;
 
+//TODO: this route doesn't do anything with categories; its name is wrong (if still used)
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const storeService: StoreService = req.scope.resolve('storeService');
     const productService: ProductService = req.scope.resolve('productService');

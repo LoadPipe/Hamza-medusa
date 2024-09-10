@@ -23,8 +23,8 @@ export default class PaymentVerificationService extends TransactionBaseService {
         this.logger = createLogger(container, 'PaymentVerificationService');
     }
 
-    async verifyPayments(order_id: string = null): Promise<Payment[]> {
-        let output: Payment[] = [];
+    async verifyPayments(order_id: string = null): Promise<{ order: Order, payment: Payment }[]> {
+        let output: { order: Order, payment: Payment }[] = [];
         let orders = await this.orderService_.getOrdersWithUnverifiedPayments();
 
         if (order_id)
@@ -38,8 +38,8 @@ export default class PaymentVerificationService extends TransactionBaseService {
         return output;
     }
 
-    private async verifyPayment(order: Order): Promise<Payment[]> {
-        let output: Payment[] = [];
+    private async verifyPayment(order: Order): Promise<{ order: Order, payment: Payment }[]> {
+        let output: { order: Order, payment: Payment }[] = [];
         let allPaid: boolean = true;
         const payments: Payment[] = order.payments;
 
@@ -58,7 +58,10 @@ export default class PaymentVerificationService extends TransactionBaseService {
             this.logger.info(`updating order ${order.id}, setting to captured`);
             order.payment_status = PaymentStatus.CAPTURED;
             await this.orderRepository_.save(order);
-            output = output.concat(order.payments);
+
+            for (let p of order.payments) {
+                output.push({ order: order, payment: p });
+            }
         }
 
         return output;
