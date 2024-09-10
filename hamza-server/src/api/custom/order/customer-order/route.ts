@@ -37,7 +37,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 });
             } else {
                 //enforce security
-                if (!handler.enforceCustomerId(customerId)) return;
+                // if (!handler.enforceCustomerId(customerId)) return;
 
                 if (handler.inputParams.bucket) {
                     const bucketValue = parseInt(handler.inputParams.bucket);
@@ -45,11 +45,11 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                         customerId,
                         bucketValue
                     );
-                    handler.returnStatus(200, orders);
+                    handler.returnStatus(200, { orders: orders });
                 } else {
                     const orders =
                         await orderService.getCustomerOrders(customerId);
-                    handler.returnStatus(200, orders);
+                    handler.returnStatus(200, { orders: orders });
                 }
             }
         }
