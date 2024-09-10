@@ -109,6 +109,8 @@ export class BuckyClient {
             logRecord.output = output;
             this.saveLogOutput(logRecord);
         }
+
+        return output;
     }
 
     // Method to get product details
@@ -124,11 +126,11 @@ export class BuckyClient {
         pageSize: number = 10
     ): Promise<any[]> {
 
-        return await this.post('product/search', {
+        return (await this.post('product/search', {
             curent: currentPage, // Note the typo "curent" should be "current" if API docs are correct
             size: pageSize,
             item: { keyword: keyword },
-        });
+        }))?.data?.records;
     }
 
     async searchProductByImage(
