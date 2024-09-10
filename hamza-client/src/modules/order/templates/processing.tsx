@@ -27,11 +27,17 @@ import {
 } from '@chakra-ui/react';
 import { BsCircleFill } from 'react-icons/bs';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import EmptyState from '@modules/order/components/empty-state';
 
 import ProcessingOrderCard from '@modules/account/components/processing-order-card';
-import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
-const Processing = ({ orders }: { orders: any[] }) => {
+const Processing = ({
+    orders,
+    isEmpty,
+}: {
+    orders: any[];
+    isEmpty?: boolean;
+}) => {
     const [customerId, setCustomerId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
@@ -42,7 +48,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
     const [orderStatuses, setOrderStatuses] = useState<{
         [key: string]: string;
     }>({});
-    const [customerOrder, setCustomerOrder] = useState<any[] | null>(null);
+    const [customerOrder, setCustomerOrder] = useState<any[]>([]);
 
     // console.log(`ORDER FOR PROCESSING ${JSON.stringify(orders)}`);
     const openModal = (orderId: string) => {
@@ -103,6 +109,14 @@ const Processing = ({ orders }: { orders: any[] }) => {
         setIsLoading(true);
         try {
             const bucket = await getSingleBucket(customerId, 1);
+
+            if (bucket === undefined || bucket === null) {
+                console.error('Bucket is undefined or null');
+                setCustomerOrder([]); // Set empty state
+                setIsLoading(false);
+                return;
+            }
+
             if (Array.isArray(bucket)) {
                 setCustomerOrder(bucket);
                 console.log(`BUCKETS ${JSON.stringify(bucket)}`);
@@ -170,12 +184,17 @@ const Processing = ({ orders }: { orders: any[] }) => {
         fetchStatuses();
     }, [customerOrder]);
 
+    if (isEmpty && customerOrder && customerOrder?.length == 0) {
+        return <EmptyState />;
+    }
+
     return (
         <div>
             {/* Processing-specific content */}
-            <h1>Processing Orders</h1>
             {customerOrder && customerOrder.length > 0 ? (
                 <>
+                    <h1>Processing Orders</h1>
+
                     {customerOrder.map((order) => (
                         <>
                             <div
@@ -699,8 +718,8 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     )
                                                                                         ? ''
                                                                                         : order
-                                                                                            .customer
-                                                                                            .email}
+                                                                                              .customer
+                                                                                              .email}
                                                                                 </Text>
                                                                             </Box>
                                                                         </VStack>
@@ -815,15 +834,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
                         </ModalContent>
                     </Modal>
                 </>
-            ) : (
-                <div className="flex flex-col items-center w-full bg-black text-white p-8">
-                    <h2>Nothing to see here</h2>
-                    <p>You don't have any orders yet, let us change that :)</p>
-                    <LocalizedClientLink href="/" passHref>
-                        <Button>Continue shopping</Button>
-                    </LocalizedClientLink>
-                </div>
-            )}
+            ) : null}
         </div>
     );
 };
