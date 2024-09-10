@@ -7,11 +7,13 @@ import Image from 'next/image';
 interface CategoryButtonProps {
     categoryName: string;
     categoryType: string;
+    url: string;
 }
 
 const CategoryButtons: React.FC<CategoryButtonProps> = ({
     categoryName,
     categoryType,
+    url,
 }) => {
     const { categorySelect, setCategorySelect, setCategoryTypeSelect } =
         useHomeProductsPage();
@@ -50,9 +52,12 @@ const CategoryButtons: React.FC<CategoryButtonProps> = ({
             }}
         >
             <Image
-                src={categoryIcons[categoryName.toLowerCase()]}
-                alt={categoryName}
+                src={'/images/categories/board-games.svg'}
+                alt={url}
+                width={20} // Set appropriate width
+                height={20} // Set appropriate height
             />
+
             <Text ml="10px" fontSize={{ base: '14px', md: '18px' }}>
                 {categoryName}
             </Text>

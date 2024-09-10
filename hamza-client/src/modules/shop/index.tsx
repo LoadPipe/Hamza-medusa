@@ -54,11 +54,7 @@ const ShopTemplate = () => {
                     <SideMenu />
                     <Flex maxW={'941px'} w="100%" flexDirection={'column'}>
                         <StoreFilterDisplay />
-                        <ProductCardGroup
-                            filterByRating={reviewFilterSelect}
-                            vendorName={vendorName}
-                            category=""
-                        />
+                        <ProductCardGroup />
                     </Flex>
                 </Flex>
             </Flex>
