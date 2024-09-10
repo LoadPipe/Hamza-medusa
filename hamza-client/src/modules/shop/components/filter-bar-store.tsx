@@ -9,8 +9,10 @@ import axios from 'axios';
 interface Category {
     id: string;
     name: string;
+    metadata: {
+        icon_url: string;
+    };
 }
-
 const FilterBarStore = () => {
     const [startIdx, setStartIdx] = useState(0); // State to keep track of the starting index of visible categories
     const [showLeftChevron, setShowLeftChevron] = useState(false); // Track if left chevron should be shown
@@ -27,7 +29,11 @@ const FilterBarStore = () => {
 
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
-        ? data.map((category) => ({ name: category.name, id: category.id }))
+        ? data.map((category) => ({
+              name: category.name,
+              id: category.id,
+              metadata: category.metadata,
+          }))
         : [];
 
     // Show more logic for categories (next or previous)
@@ -108,6 +114,7 @@ const FilterBarStore = () => {
                                   key={index}
                                   categoryType={category.id}
                                   categoryName={category.name}
+                                  url={category.metadata.icon_url}
                               />
                           ))}
                 </Flex>

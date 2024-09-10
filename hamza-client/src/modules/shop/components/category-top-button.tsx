@@ -7,11 +7,13 @@ import Image from 'next/image';
 interface CategoryButtonProps {
     categoryName: string;
     categoryType: string;
+    url: string;
 }
 
 const CategoryTopButton: React.FC<CategoryButtonProps> = ({
     categoryName,
     categoryType,
+    url,
 }) => {
     const { categorySelect, setCategorySelect, setCategoryTypeSelect } =
         useStorePage();
@@ -48,10 +50,7 @@ const CategoryTopButton: React.FC<CategoryButtonProps> = ({
                 background: 'white',
             }}
         >
-            <Image
-                src={categoryIcons[categoryName.toLowerCase()]}
-                alt={categoryName}
-            />
+            <Image src={url} alt={categoryName} width={20} height={20} />
             <Text ml="10px" fontSize={'18px'}>
                 {categoryName}
             </Text>
