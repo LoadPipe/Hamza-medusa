@@ -111,7 +111,11 @@ const FilterBar = () => {
             >
                 <FilterButton onClick={onOpen} />
 
-                <CategoryButtons categoryType={'All'} categoryName={'All'} />
+                <CategoryButtons
+                    categoryType={'All'}
+                    categoryName={'All'}
+                    url={''}
+                />
                 <Flex
                     maxW={'1100px'}
                     width={'100%'}
@@ -144,13 +148,12 @@ const FilterBar = () => {
                     {isLoading
                         ? skeletons // Show skeletons while loading
                         : visibleCategories.map((category, index) => {
-                              const url = category.metadata.icon_url; // Define the URL outside of the JSX return
                               return (
                                   <CategoryButtons
                                       key={index}
                                       categoryType={category.id}
                                       categoryName={category.name}
-                                      url={'/images/categories/board-games.svg'}
+                                      url={category.metadata.icon_url}
                                   />
                               );
                           })}
