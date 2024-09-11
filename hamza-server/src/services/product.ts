@@ -367,7 +367,9 @@ class ProductService extends MedusaProductService {
                 return {
                     ...cat,
                     products: cat.products.filter(
-                        (product) => product.store_id === storeId
+                        (product) =>
+                            product.store_id === storeId &&
+                            product.status === 'published'
                     ),
                 };
             });
