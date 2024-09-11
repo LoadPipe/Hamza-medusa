@@ -33,13 +33,15 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 handler.inputParams.customer_id
             );
 
-            res.json(reviews);
+            return handler.returnStatus(200, reviews);
+
         } else if (hasProductId && !hasCustomerId) {
             //reviews by product
             reviews = await productReviewService.getReviews(
                 handler.inputParams.product_id
             );
-            handler.returnStatus(200, reviews);
+            return handler.returnStatus(200, reviews);
+
         } else if (hasCustomerId && hasProductId) {
             //reviews by product and customer
             reviews = await productReviewService.getCustomerReviews(
@@ -47,11 +49,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 handler.inputParams.customer_id
             );
         } else {
-            handler.returnStatusWithMessage(
+            return handler.returnStatusWithMessage(
                 400,
                 `Either customer_id or product_id is required`
             );
-            return;
         }
 
         handler.returnStatus(200, reviews);
@@ -59,43 +60,39 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 };
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
-    try {
-        const productReviewService: ProductReviewService = req.scope.resolve(
-            'productReviewService'
+    const productReviewService: ProductReviewService = req.scope.resolve(
+        'productReviewService'
+    );
+
+    const handler: RouteHandler = new RouteHandler(
+        req,
+        res,
+        'POST',
+        '/custom/review',
+        [
+            'product_id',
+            'title',
+            'customer_id',
+            'content',
+            'rating',
+            'order_id',
+        ]
+    );
+
+    await handler.handle(async () => {
+        const review = await productReviewService.addProductReview(
+            handler.inputParams.product_id,
+            {
+                title: handler.inputParams.title,
+                customer_id: handler.inputParams.customer_id,
+                content: handler.inputParams.content,
+                rating: handler.inputParams.rating,
+                order_id: handler.inputParams.order_id,
+            }
         );
 
-        const handler: RouteHandler = new RouteHandler(
-            req,
-            res,
-            'POST',
-            '/custom/review',
-            [
-                'product_id',
-                'title',
-                'customer_id',
-                'content',
-                'rating',
-                'order_id',
-            ]
-        );
-
-        await handler.handle(async () => {
-            const review = await productReviewService.addProductReview(
-                handler.inputParams.product_id,
-                {
-                    title: handler.inputParams.title,
-                    customer_id: handler.inputParams.customer_id,
-                    content: handler.inputParams.content,
-                    rating: handler.inputParams.rating,
-                    order_id: handler.inputParams.order_id,
-                }
-            );
-            res.json(review);
-        });
-    } catch (error) {
-        console.error('Error processing POST /custom/review:', error);
-        res.status(500).json({ error: 'Failed to process review' });
-    }
+        return handler.returnStatus(201, review);
+    });
 };
 
 export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
@@ -132,6 +129,7 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
             handler.inputParams.customer_id,
             handler.inputParams.order_id
         );
-        handler.returnStatus(200, updatedReview);
+
+        return handler.returnStatus(200, updatedReview);
     });
 };
