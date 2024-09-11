@@ -39,7 +39,7 @@ type OrderCardProps = {
 };
 
 const ShippedCard = ({ order, handle }: OrderCardProps) => {
-    const [vendor, setVendor] = useState('');
+    const [store, setStore] = useState('');
     const orderString = typeof order.currency_code;
     // console.log(
     //     `Order Card details ${JSON.stringify(order.variant.product_id)}`
@@ -60,9 +60,9 @@ const ShippedCard = ({ order, handle }: OrderCardProps) => {
             try {
                 const data = await getStore(order.variant.product_id as string);
                 // console.log(`Vendor: ${data}`);
-                setVendor(data.name);
+                setStore(data.name);
             } catch (error) {
-                console.error('Error fetching vendor: ', error);
+                console.error('Error fetching store: ', error);
             }
         };
 
@@ -89,7 +89,7 @@ const ShippedCard = ({ order, handle }: OrderCardProps) => {
                     fontWeight="bold"
                     noOfLines={1}
                 >
-                    {vendor}
+                    {store}
                 </Text>
                 <Flex
                     display={{ base: 'none', md: 'flex' }}

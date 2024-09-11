@@ -258,9 +258,8 @@ export async function checkCustomerReviewExistence(
     });
 }
 
-export async function getStoreCategories(vendorName: string) {
-    return await get('/custom/store/categories', { vendorName });
-    //TODO: change vendorName to store_name
+export async function getStoreCategories(store_name: string) {
+    return await get('/custom/store/categories', { store_name });
 }
 
 export async function verifyToken(token: string) {

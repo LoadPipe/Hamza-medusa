@@ -12,14 +12,14 @@ import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { getProductsByStoreName } from '@lib/data';
 
 type Props = {
-    vendorName: string;
+    storeName: string;
 };
 
-const ProductCollections = ({ vendorName }: Props) => {
+const ProductCollections = ({ storeName }: Props) => {
     const { data, error, isLoading } = useQuery(
-        ['products', { vendor: vendorName }],
+        ['products', { vendor: storeName }],
         () =>
-            getProductsByStoreName(vendorName).catch((err) => {
+            getProductsByStoreName(storeName).catch((err) => {
                 console.log(err);
                 return null;
             })

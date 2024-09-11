@@ -17,21 +17,21 @@ import useVendor from '@store/store-page/vendor';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 
 type Props = {
-    vendorName: string;
+    storeName: string;
     handle: string | null;
     filterByRating?: string | null;
     allProducts: boolean;
 };
 
-const ProductCardGroup = ({ vendorName, handle }: Props) => {
+const ProductCardGroup = ({ storeName, handle }: Props) => {
     // get preferred currency
     const { preferred_currency_code } = useCustomerAuthStore();
     const { storeId } = useVendor();
 
     const url =
         handle === 'all'
-            ? `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products?store_name=${vendorName}`
-            : `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/products?store_name=${vendorName}&handle=${handle}`;
+            ? `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products?store_name=${storeName}`
+            : `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/products?store_name=${storeName}&handle=${handle}`;
 
     // Fetch data using the useQuery hook
     const { data, error, isLoading } = useQuery(
@@ -51,7 +51,7 @@ const ProductCardGroup = ({ vendorName, handle }: Props) => {
     const err: any = error ? error : null;
     if (err) return <div>Error: {err?.message}</div>;
 
-    console.log('these are the products for vendor', products);
+    console.log('these are the products for store', products);
 
     if (isLoading) {
         return (

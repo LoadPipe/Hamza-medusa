@@ -1,14 +1,14 @@
 import React from 'react';
 import { Flex, Text } from '@chakra-ui/react';
 
-type VendorCatButtonProps = {
+type StoreCatButtonProps = {
     catName: string;
     selected: string;
     setHandle: (handle: string) => void;
     setSelected: (selected: string) => void;
 };
 
-const VendorCatButton: React.FC<VendorCatButtonProps> = ({
+const StoreCatButton: React.FC<StoreCatButtonProps> = ({
     catName,
     selected,
     setHandle,
@@ -18,8 +18,8 @@ const VendorCatButton: React.FC<VendorCatButtonProps> = ({
         catName === 'All Products'
             ? catName
             : catName
-                  .replace(/_/g, ' ')
-                  .replace(/\b\w/g, (char) => char.toUpperCase());
+                .replace(/_/g, ' ')
+                .replace(/\b\w/g, (char) => char.toUpperCase());
     return (
         <Flex
             width={{ base: '94px', md: '167px' }}
@@ -43,4 +43,4 @@ const VendorCatButton: React.FC<VendorCatButtonProps> = ({
     );
 };
 
-export default VendorCatButton;
+export default StoreCatButton;
