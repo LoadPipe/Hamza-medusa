@@ -15,6 +15,7 @@ import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import ProductCardHome from '../product-group-home/component/home-product-card';
 import useVendor from '@store/store-page/vendor';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import { isArray } from 'lodash';
 
 type Props = {
     storeName: string;
@@ -28,10 +29,7 @@ const ProductCardGroup = ({ storeName, handle }: Props) => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const { storeId } = useVendor();
 
-    const url =
-        handle === 'all'
-            ? `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products?store_name=${storeName}`
-            : `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/products?store_name=${storeName}&handle=${handle}`;
+    const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products/handle?store_name=${storeName}&category=${handle}`;
 
     // Fetch data using the useQuery hook
     const { data, error, isLoading } = useQuery(
@@ -44,14 +42,13 @@ const ProductCardGroup = ({ storeName, handle }: Props) => {
         }
     );
 
-    // Make sure data is an array before mapping
-    const products = Array.isArray(data) ? data : [];
+    // Check if the fetched data is in the correct format
 
-    // Return error if api fails
-    const err: any = error ? error : null;
-    if (err) return <div>Error: {err?.message}</div>;
+    const productsAll = data
+        ? data.flatMap((category: any) => category.products) // Extract all products from all categories
+        : [];
 
-    console.log('these are the products for store', products);
+    console.log('product data', productsAll);
 
     if (isLoading) {
         return (
@@ -119,7 +116,7 @@ const ProductCardGroup = ({ storeName, handle }: Props) => {
                 }}
                 gap={{ base: '4', md: '25.5px' }}
             >
-                {products.map((product: any, index: number) => {
+                {productsAll.map((product: any, index: number) => {
                     const variant = product.variants[0];
                     const productPricing =
                         variant?.prices?.find(
@@ -142,7 +139,7 @@ const ProductCardGroup = ({ storeName, handle }: Props) => {
                         >
                             <ProductCardHome
                                 key={index}
-                                productHandle={products[index].handle}
+                                productHandle={product.handle}
                                 reviewCount={0}
                                 totalRating={0}
                                 variantID={'0'}

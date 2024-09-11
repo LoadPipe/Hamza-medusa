@@ -331,31 +331,32 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    async getProductByCategoryHandle(storeId: string) {
+    async getStoreProductsByCategory(storeId: string, category: string) {
         try {
-            // Ensure the store exists
-            const store = await this.storeRepository_.findOne({
-                where: { id: storeId },
-            });
-
-            if (!store) {
-                return null;
-            }
-
             // Query to get all products for the given store ID
-            const products = await this.productRepository_.find({
-                where: {
-                    status: ProductStatus.PUBLISHED,
-                    store_id: Not(IsNull()),
-                },
+            const categories = await this.productCategoryRepository_.find({
+                select: ['id', 'name', 'metadata'],
                 relations: [
-                    'product_category_product',
-                    'product_category',
-                    'product_variant',
+                    'products',
+                    'products.variants.prices',
+                    'products.reviews',
                 ],
             });
 
-            return products; // Return all product data
+            const filteredCategories = categories.filter(
+                (cat) => cat.name.toLowerCase() === category
+            );
+
+            const filteredProducts = filteredCategories.map((cat) => {
+                return {
+                    ...cat,
+                    products: cat.products.filter(
+                        (product) => product.store_id === storeId
+                    ),
+                };
+            });
+
+            return filteredProducts; // Return all product data
         } catch (error) {
             // Handle the error here
             this.logger.error(
