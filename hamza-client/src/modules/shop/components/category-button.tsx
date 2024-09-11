@@ -8,11 +8,13 @@ import categoryIcons from '../data/category-icons';
 interface CategoryButtonProps {
     categoryName: string;
     categoryType: string;
+    url: string;
 }
 
 const CategoryButton: React.FC<CategoryButtonProps> = ({
     categoryName,
     categoryType,
+    url,
 }) => {
     const {
         categoryFilterSelect,
@@ -50,10 +52,7 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
                         setCategoryTypeFilterSelect(categoryName);
                 }}
             >
-                <Image
-                    src={categoryIcons[categoryName.toLowerCase()]}
-                    alt={categoryName}
-                />
+                <Image src={url} alt={categoryName} width={20} height={20} />
                 <Text ml="10px" fontSize={{ base: '14px', md: '16px' }}>
                     {categoryName}
                 </Text>

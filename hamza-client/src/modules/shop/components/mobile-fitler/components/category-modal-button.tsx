@@ -7,11 +7,13 @@ import categoryIcons from '@modules/shop/data/category-icons';
 interface CategoryButtonProps {
     categoryName: string;
     categoryType: string;
+    url: string;
 }
 
 const CategoryModalButton: React.FC<CategoryButtonProps> = ({
     categoryName,
     categoryType,
+    url,
 }) => {
     const {
         modalCategoryFilterSelect,
@@ -51,10 +53,7 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                         setModalCategoryTypeFilterSelect(categoryName);
                 }}
             >
-                <Image
-                    src={categoryIcons[categoryName.toLowerCase()]}
-                    alt={categoryName}
-                />
+                <Image src={url} alt={categoryName} width={18} height={18} />
                 <Text ml="10px" fontSize={{ base: '14px', md: '16px' }}>
                     {categoryName}
                 </Text>

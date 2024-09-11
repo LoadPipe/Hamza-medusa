@@ -14,6 +14,9 @@ import axios from 'axios';
 interface Category {
     id: string;
     name: string;
+    metadata: {
+        icon_url: string;
+    };
 }
 
 const SideMenu = () => {
@@ -29,7 +32,11 @@ const SideMenu = () => {
 
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
-        ? data.map((category) => ({ name: category.name, id: category.id }))
+        ? data.map((category) => ({
+              name: category.name,
+              id: category.id,
+              metadata: category.metadata,
+          }))
         : [];
 
     // Skeletons for loading state
@@ -81,6 +88,7 @@ const SideMenu = () => {
                                   key={index}
                                   categoryType={category.id}
                                   categoryName={category.name}
+                                  url={category.metadata.icon_url}
                               />
                           ))}
                 </Flex>
