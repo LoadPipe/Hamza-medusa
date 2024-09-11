@@ -356,6 +356,10 @@ class ProductService extends MedusaProductService {
                 };
             });
 
+            await Promise.all(
+                filteredProducts.map((cat) => this.convertPrices(cat.products))
+            );
+
             return filteredProducts; // Return all product data
         } catch (error) {
             // Handle the error here
