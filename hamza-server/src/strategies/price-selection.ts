@@ -192,31 +192,51 @@ export class PriceConverter {
     }
 
     async getPrice(price: IPrice): Promise<number> {
+        // Step 1: Try to get the rate from the cache
         let rate: number = this.getFromCache(price);
-        //this.logger?.debug(`cached rate for ${price.baseCurrency}-${price.toCurrency}: ${rate}`);
 
         if (!rate) {
-            // First, try to fetch the rate from the API
+            // Step 2: Try to get the rate from the API
             rate = await this.getFromApi(price);
 
-            // If the API succeeds, save the rate to the database
             if (rate) {
-                await this.saveToDatabase(price, rate);
-            } else {
-                // If the API fails, check the database for a cached rate
-                rate = await this.getFromDatabase(price);
-            }
+                // Step 3: Write to cache
+                this.writeToCache(price, rate);
 
-            this.writeToCache(price, rate);
+                // Step 4: Check if we need to save to the database (every 5 minutes max)
+                const existingRate = await this.getFromDatabase(price);
+                const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+
+                if (
+                    !existingRate ||
+                    existingRate?.date_cached <= fiveMinutesAgo
+                ) {
+                    await this.saveToDatabase(price, rate);
+                }
+            } else {
+                // Step 5: If API fails, fallback to database
+                const dbResult = await this.getFromDatabase(price);
+                if (dbResult) {
+                    rate = dbResult.rate;
+                } else {
+                    // If the rate is not found in the database, throw an error
+                    this.logger?.error(
+                        `Unable to retrieve exchange rate for ${price.baseCurrency} to ${price.toCurrency}`
+                    );
+                    throw new Error(
+                        `Unable to retrieve exchange rate for ${price.baseCurrency} to ${price.toCurrency}`
+                    );
+                }
+            }
         }
 
-        //now we need currency precisions
+        // Now handle currency precisions
         const basePrecision = getCurrencyPrecision(price.baseCurrency) ?? {
             db: 2,
         };
         const toPrecision = getCurrencyPrecision(price.toCurrency) ?? { db: 2 };
 
-        //convert the amount
+        // Convert the amount
         const baseFactor: number = Math.pow(10, basePrecision.db);
 
         if (EXTENDED_LOGGING) {
@@ -229,7 +249,9 @@ export class PriceConverter {
 
         const displayAmount = price.baseAmount / baseFactor;
 
-        if (EXTENDED_LOGGING) console.log('displayAmount:', displayAmount);
+        if (EXTENDED_LOGGING) {
+            console.log('displayAmount:', displayAmount);
+        }
 
         return Math.floor(displayAmount * rate * Math.pow(10, toPrecision.db));
     }
@@ -245,7 +267,9 @@ export class PriceConverter {
         return await this.restClient.getExchangeRate(baseAddr, toAddr);
     }
 
-    private async getFromDatabase(price: IPrice): Promise<number> {
+    private async getFromDatabase(
+        price: IPrice
+    ): Promise<{ rate: number; date_cached: Date } | null> {
         try {
             const key =
                 `${price.baseCurrency}-${price.toCurrency}`.toLowerCase();
@@ -257,7 +281,10 @@ export class PriceConverter {
                 this.logger?.info(
                     `Using DB-cached rate for ${price.baseCurrency} to ${price.toCurrency}: ${cachedRate.rate}`
                 );
-                return cachedRate.rate;
+                return {
+                    rate: cachedRate.rate,
+                    date_cached: cachedRate.date_cached, // Include date_cached for the 5-minute check
+                };
             }
         } catch (error) {
             this.logger?.error(
@@ -274,7 +301,42 @@ export class PriceConverter {
             const key =
                 `${price.baseCurrency}-${price.toCurrency}`.toLowerCase();
 
-            // Check if the record already exists
+            let rate: number;
+
+            // Step 1: Fetch exchange rate from external API
+            try {
+                rate = await this.restClient.getExchangeRate(
+                    price.baseCurrency,
+                    price.toCurrency
+                );
+            } catch (e) {
+                this.logger?.warn(
+                    `Failed to fetch rate from API for ${price.baseCurrency} to ${price.toCurrency}, falling back to cache ${e}`
+                );
+
+                // Step 2: Fetch the rate from the cache if API call fails
+                const existingRate =
+                    await this.cachedExchangeRateRepository.findOne({
+                        where: { currency_code: price.toCurrency },
+                    });
+
+                if (existingRate) {
+                    rate = existingRate.rate;
+                    this.logger?.info(
+                        `Using cached rate ${rate} for ${price.baseCurrency} to ${price.toCurrency}`
+                    );
+                } else {
+                    // If neither API nor cache has the rate, handle the error
+                    this.logger?.error(
+                        `No cached rate found for ${price.baseCurrency} to ${price.toCurrency} and API request failed.`
+                    );
+                    throw new Error(
+                        `Unable to retrieve exchange rate for ${price.baseCurrency} to ${price.toCurrency}`
+                    );
+                }
+            }
+
+            // Step 3: Save or update the exchange rate in the database
             let existingRate = await this.cachedExchangeRateRepository.findOne({
                 where: { currency_code: price.toCurrency },
             });
