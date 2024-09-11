@@ -25,17 +25,6 @@ const useVendors = () => {
                 vendorType: 'all',
             });
 
-            // Check for the environment variable and adjust vendors
-            if (process.env.NEXT_PUBLIC_ALT_SEED === '1') {
-                storeList = [
-                    {
-                        id: 1,
-                        vendorName: 'All',
-                        vendorType: 'all',
-                    },
-                ];
-            }
-
             setStores(storeList);
         };
 
