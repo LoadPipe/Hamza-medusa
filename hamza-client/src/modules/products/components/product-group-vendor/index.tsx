@@ -13,23 +13,22 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import ProductCardHome from '../product-group-home/component/home-product-card';
-import useVendor from '@store/store-page/vendor';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { isArray } from 'lodash';
 
 type Props = {
     storeName: string;
     handle: string | null;
     filterByRating?: string | null;
-    allProducts: boolean;
 };
 
 const ProductCardGroup = ({ storeName, handle }: Props) => {
     // get preferred currency
     const { preferred_currency_code } = useCustomerAuthStore();
-    const { storeId } = useVendor();
 
-    const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products/handle?store_name=${storeName}&category=${handle}`;
+    const url =
+        handle === 'all'
+            ? `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products?store_name=${storeName}`
+            : `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products/handle?store_name=${storeName}&category=${handle}`;
 
     // Fetch data using the useQuery hook
     const { data, error, isLoading } = useQuery(
@@ -42,13 +41,15 @@ const ProductCardGroup = ({ storeName, handle }: Props) => {
         }
     );
 
-    // Check if the fetched data is in the correct format
-
-    const productsAll = data
-        ? data.flatMap((category: any) => category.products) // Extract all products from all categories
-        : [];
-
-    console.log('product data', productsAll);
+    // Handle products based on 'handle'
+    const productsAll =
+        handle === 'all'
+            ? Array.isArray(data)
+                ? data
+                : [] // When handle is 'all', use the entire data array
+            : data
+              ? data.flatMap((category: any) => category.products) // Extract products from the categories
+              : [];
 
     if (isLoading) {
         return (

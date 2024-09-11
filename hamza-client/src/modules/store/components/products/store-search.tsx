@@ -84,11 +84,7 @@ const StoreSearch = ({ storeName }: Props) => {
                 ))}
             </Flex>
 
-            <ProductCardGroup
-                storeName={storeName}
-                allProducts={true}
-                handle={handle}
-            />
+            <ProductCardGroup storeName={storeName} handle={handle} />
         </Flex>
     );
 };
