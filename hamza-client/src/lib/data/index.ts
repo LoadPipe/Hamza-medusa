@@ -442,7 +442,8 @@ export async function finalizeCheckout(
     cart_id: string,
     transaction_id: string,
     payer_address: string,
-    escrow_contract_address: string
+    escrow_contract_address: string,
+    chain_id: number
     //cart_products: any
 ) {
     return await postSecure('/custom/checkout', {
@@ -451,6 +452,7 @@ export async function finalizeCheckout(
         transaction_id,
         payer_address,
         escrow_contract_address,
+        chain_id
     });
 }
 

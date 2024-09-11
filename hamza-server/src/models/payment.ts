@@ -14,4 +14,7 @@ export class Payment extends MedusaPayment {
 
     @Column()
     escrow_contract_address?: string;
+
+    @Column()
+    chain_id?: number;
 }

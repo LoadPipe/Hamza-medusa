@@ -19,6 +19,7 @@ export type WalletPaymentResponse = {
     payer_address: string;
     escrow_contract_address: string;
     message?: string;
+    chain_id: number;
     success: boolean;
 };
 
@@ -116,6 +117,7 @@ export class MassmarketWalletPaymentHandler implements IWalletPaymentHandler {
             transaction_id,
             payer_address,
             escrow_contract_address,
+            chain_id: chainId,
             success:
                 transaction_id && transaction_id.length ? true : false,
         };
@@ -197,6 +199,7 @@ export class FakeWalletPaymentHandler implements IWalletPaymentHandler {
             escrow_contract_address: '0x0',
             transaction_id,
             payer_address,
+            chain_id: chainId,
             success:
                 transaction_id && transaction_id.length ? true : false,
         }
@@ -237,6 +240,7 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
             escrow_contract_address: contractAddress,
             payer_address,
             transaction_id,
+            chain_id: chainId,
             success:
                 transaction_id && transaction_id.length ? true : false,
         };
@@ -293,7 +297,8 @@ export class SwitchWalletPaymentHandler implements IWalletPaymentHandler {
             escrow_contract_address: '',
             payer_address: '',
             transaction_id: '',
-            success: false
+            success: false,
+            chain_id: chainId,
         };
     }
 }
@@ -334,6 +339,7 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
                         transaction_id,
                         payer_address,
                         success: false,
+                        chain_id: chainId,
                         message: 'Insufficient balance'
                     }
                 }
@@ -377,6 +383,7 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
             escrow_contract_address: '0x0',
             transaction_id,
             payer_address,
+            chain_id: chainId,
             success:
                 transaction_id && transaction_id.length ? true : false,
         }

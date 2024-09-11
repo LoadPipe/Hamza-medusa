@@ -77,7 +77,7 @@ export class RouteHandler {
             );
             const response: any = await fn(this);
         } catch (err: any) {
-            const errorInfo = `ERROR ${JSON.stringify(err)}`;
+            const errorInfo = `ERROR ${JSON.stringify(err)} ${err}`;
             this.returnStatusWithMessage(500, errorInfo);
             if (this.onError) this.onError(err);
         }
