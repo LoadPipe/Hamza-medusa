@@ -7,6 +7,7 @@ import {
     Logger,
     Store,
 } from '@medusajs/medusa';
+import { CachedExchangeRateRepository } from '../repositories/cached-exchange-rate';
 import ProductVariantRepository from '@medusajs/medusa/dist/repositories/product-variant';
 import { CurrencyConversionClient } from '../currency-conversion/rest-client';
 import { In } from 'typeorm';
@@ -23,17 +24,21 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
     protected readonly customerService_: CustomerService;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly logger: ILogger;
+    protected readonly cachedExchangeRateRepository: typeof CachedExchangeRateRepository;
 
     constructor({
         customerService,
         productVariantRepository,
         logger,
-    }: InjectedDependencies) {
+        cachedExchangeRateRepository,
+    }: InjectedDependencies & {
+        cachedExchangeRateRepository: typeof CachedExchangeRateRepository;
+    }) {
         super(arguments[0]);
-
         this.customerService_ = customerService;
         this.productVariantRepository_ = productVariantRepository;
         this.logger = logger;
+        this.cachedExchangeRateRepository = cachedExchangeRateRepository;
     }
 
     async calculateVariantPrice(
@@ -91,7 +96,11 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
             string,
             PriceSelectionResult
         >();
-        const priceConverter: PriceConverter = new PriceConverter(this.logger);
+
+        const priceConverter = new PriceConverter(
+            this.logger,
+            this.cachedExchangeRateRepository
+        );
 
         //get the variant objects
         const variants: ProductVariant[] =
@@ -163,9 +172,14 @@ export class PriceConverter {
     } = {};
     private readonly expirationSeconds: number = 60;
     private readonly logger: ILogger;
+    private readonly cachedExchangeRateRepository: typeof CachedExchangeRateRepository;
 
-    constructor(logger?: ILogger) {
+    constructor(
+        logger?: ILogger,
+        cachedExchangeRateRepository?: typeof CachedExchangeRateRepository
+    ) {
         this.logger = logger;
+        this.cachedExchangeRateRepository = cachedExchangeRateRepository;
     }
 
     async convertPrice(
@@ -181,7 +195,17 @@ export class PriceConverter {
         //this.logger?.debug(`cached rate for ${price.baseCurrency}-${price.toCurrency}: ${rate}`);
 
         if (!rate) {
+            // First, try to fetch the rate from the API
             rate = await this.getFromApi(price);
+
+            // If the API succeeds, save the rate to the database
+            if (rate) {
+                await this.saveToDatabase(price, rate);
+            } else {
+                // If the API fails, check the database for a cached rate
+                rate = await this.getFromDatabase(price);
+            }
+
             this.writeToCache(price, rate);
         }
 
@@ -192,10 +216,7 @@ export class PriceConverter {
         const toPrecision = getCurrencyPrecision(price.toCurrency) ?? { db: 2 };
 
         //convert the amount
-        const baseFactor: number = Math.pow(
-            10,
-            basePrecision.db
-        );
+        const baseFactor: number = Math.pow(10, basePrecision.db);
 
         if (EXTENDED_LOGGING) {
             console.log('price:', price);
@@ -223,12 +244,56 @@ export class PriceConverter {
         return await this.restClient.getExchangeRate(baseAddr, toAddr);
     }
 
+    private async getFromDatabase(price: IPrice): Promise<number> {
+        try {
+            const key =
+                `${price.baseCurrency}-${price.toCurrency}`.toLowerCase();
+            const cachedRate = await this.cachedExchangeRateRepository.findOne({
+                where: { currency_code: key },
+            });
+
+            if (cachedRate) {
+                this.logger?.info(
+                    `Using DB-cached rate for ${price.baseCurrency} to ${price.toCurrency}: ${cachedRate.rate}`
+                );
+                return cachedRate.rate;
+            }
+        } catch (error) {
+            this.logger?.error(
+                `Failed to fetch exchange rate from DB for ${price.baseCurrency} to ${price.toCurrency}`,
+                error
+            );
+        }
+
+        return null;
+    }
+
+    private async saveToDatabase(price: IPrice, rate: number): Promise<void> {
+        try {
+            const key =
+                `${price.baseCurrency}-${price.toCurrency}`.toLowerCase();
+            await this.cachedExchangeRateRepository.save({
+                currency_code: key,
+                rate: rate,
+                date_cached: new Date(),
+            });
+            this.logger?.info(
+                `Saved rate ${rate} for ${price.baseCurrency} to ${price.toCurrency} in DB`
+            );
+        } catch (error) {
+            this.logger?.error(
+                `Failed to save exchange rate to DB for ${price.baseCurrency} to ${price.toCurrency}`,
+                error
+            );
+        }
+    }
+
     private getFromCache(price: IPrice): number {
         const key: string = this.getKey(price.baseCurrency, price.toCurrency);
         if (
             this.cache[key] &&
             this.getTimestamp() - this.cache[key].timestamp >=
-            this.expirationSeconds
+                this.expirationSeconds
         ) {
             this.cache[key] = null;
         }
