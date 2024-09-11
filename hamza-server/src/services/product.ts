@@ -13,6 +13,7 @@ import {
 } from '@medusajs/medusa/dist/types/product';
 import { Product } from '../models/product';
 import { StoreRepository } from '../repositories/store';
+import { CachedExchangeRateRepository } from '../repositories/cached-exchange-rate';
 import PriceSelectionStrategy, {
     PriceConverter,
 } from '../strategies/price-selection';
@@ -59,6 +60,7 @@ class ProductService extends MedusaProductService {
     protected readonly logger: ILogger;
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
+    protected readonly cacheExchangeRateRepository: typeof CachedExchangeRateRepository;
     protected readonly customerService_: CustomerService;
 
     constructor(container) {
@@ -66,6 +68,8 @@ class ProductService extends MedusaProductService {
         this.logger = createLogger(container, 'ProductService');
         this.storeRepository_ = container.storeRepository;
         this.productVariantRepository_ = container.productVariantRepository;
+        this.cacheExchangeRateRepository =
+            container.cachedExchangeRateRepository;
         this.customerService_ = container.customerService;
     }
 
@@ -506,6 +510,8 @@ class ProductService extends MedusaProductService {
                         productVariantRepository:
                             this.productVariantRepository_,
                         logger: this.logger,
+                        cachedExchangeRateRepository:
+                            this.cacheExchangeRateRepository,
                     });
                 const results = await strategy.calculateVariantPrice(
                     [{ variantId: variant.id, quantity: 1 }],
