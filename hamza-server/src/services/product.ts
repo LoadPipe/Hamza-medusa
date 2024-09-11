@@ -430,6 +430,7 @@ class ProductService extends MedusaProductService {
             throw new Error('Failed to fetch product categories with prices.');
         }
     }
+
     async getProductsFromStoreName(storeName: string) {
         try {
             const store = await this.storeRepository_.findOne({

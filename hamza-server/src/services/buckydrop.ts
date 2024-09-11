@@ -671,6 +671,7 @@ export default class BuckydropService extends TransactionBaseService {
             if (!spuCode?.length) throw new Error('SPU code not found');
 
             const optionNames = this.getUniqueProductOptionNames(productDetails);
+            const tagName = productDetails.data.goodsCatName;
 
             const output = {
                 title: item?.goodsName ?? productDetails?.data?.goodsName,
@@ -690,6 +691,9 @@ export default class BuckydropService extends TransactionBaseService {
                 sales_channels: salesChannels.map((sc) => {
                     return { id: sc };
                 }),
+                tags: tagName?.length ?
+                    [{ id: tagName, value: tagName }] :
+                    [],
                 bucky_metadata: metadata,
                 options: optionNames.map(o => { return { title: o } }),
                 variants: await this.mapVariants(productDetails, optionNames),
