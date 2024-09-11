@@ -2,24 +2,24 @@ import { useEffect, useState } from 'react';
 import { getAllStoreNames } from '@lib/data';
 
 const useVendors = () => {
-    const [vendors, setVendors] = useState([]);
+    const [stores, setStores] = useState([]);
 
     useEffect(() => {
         const fetchVendors = async () => {
-            let vendorList = [];
+            let storeList = [];
 
             // Fetch the vendor names from the backend
-            const vendorNames = await getAllStoreNames();
+            const storeNames = await getAllStoreNames();
 
             // Format the vendors
-            vendorList = vendorNames.map((vendor: string, index: number) => ({
+            storeList = storeNames.map((vendor: string, index: number) => ({
                 id: index + 1,
                 vendorName: vendor,
                 vendorType: vendor.toLowerCase().replace(/\s+/g, '_'),
             }));
 
             // Add the 'All' option at the beginning
-            vendorList.unshift({
+            storeList.unshift({
                 id: 0,
                 vendorName: 'All',
                 vendorType: 'all',
@@ -27,7 +27,7 @@ const useVendors = () => {
 
             // Check for the environment variable and adjust vendors
             if (process.env.NEXT_PUBLIC_ALT_SEED === '1') {
-                vendorList = [
+                storeList = [
                     {
                         id: 1,
                         vendorName: 'All',
@@ -36,13 +36,13 @@ const useVendors = () => {
                 ];
             }
 
-            setVendors(vendorList);
+            setStores(storeList);
         };
 
         fetchVendors();
     }, []);
 
-    return vendors;
+    return stores;
 };
 
 export default useVendors;

@@ -14,7 +14,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                 {displaySlug} {/* Display the capitalized slug */}
             </h1>
             <div>
-                <ProductCollections vendorName={displaySlug} />{' '}
+                <ProductCollections storeName={displaySlug} />{' '}
                 {/* Pass the capitalized slug */}
             </div>
         </div>

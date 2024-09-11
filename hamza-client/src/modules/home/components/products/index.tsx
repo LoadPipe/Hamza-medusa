@@ -15,7 +15,7 @@ import { InjectedConnector } from 'wagmi/connectors/injected';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 
 const RecommendedItems = () => {
-    const [vendorName, setVendorName] = useState('Legendary Light Design');
+    const [storeName, setStoreName] = useState('Legendary Light Design');
     const { openConnectModal } = useConnectModal();
     const { connector: activeConnector, isConnected } = useAccount();
     const { connect } = useConnect({
@@ -32,7 +32,7 @@ const RecommendedItems = () => {
 
     // Dynamic button color change
     //TODO: get these from database
-    const VENDOR_NAMES = {
+    const STORE_NAMES = {
         lighting: 'Legendary Light Design',
         quality: 'Echo Rift',
         medusa: 'Medusa Merch',
@@ -184,12 +184,12 @@ const RecommendedItems = () => {
                         fontWeight="italic"
                         name="Legendary Light & Design"
                         bg={
-                            VENDOR_NAMES.lighting === vendorName
+                            STORE_NAMES.lighting === storeName
                                 ? 'white'
                                 : 'black'
                         }
                         color={
-                            VENDOR_NAMES.lighting === vendorName
+                            STORE_NAMES.lighting === storeName
                                 ? 'black'
                                 : 'white'
                         }
@@ -197,7 +197,7 @@ const RecommendedItems = () => {
                         width="250px"
                         borderRadius="full"
                         onClick={() => {
-                            setVendorName('Legendary Light Design');
+                            setStoreName('Legendary Light Design');
                         }}
                     >
                         <Image
@@ -211,12 +211,12 @@ const RecommendedItems = () => {
                     <Button
                         fontWeight="italic"
                         bg={
-                            VENDOR_NAMES.medusa === vendorName
+                            STORE_NAMES.medusa === storeName
                                 ? 'white'
                                 : 'black'
                         }
                         color={
-                            VENDOR_NAMES.medusa === vendorName
+                            STORE_NAMES.medusa === storeName
                                 ? 'black'
                                 : 'white'
                         }
@@ -225,7 +225,7 @@ const RecommendedItems = () => {
                         width="250px"
                         borderRadius="full"
                         onClick={() => {
-                            setVendorName('Medusa Merch');
+                            setStoreName('Medusa Merch');
                         }}
                     >
                         <Image
@@ -241,12 +241,12 @@ const RecommendedItems = () => {
                     <Button
                         fontWeight="italic"
                         bg={
-                            VENDOR_NAMES.quality === vendorName
+                            STORE_NAMES.quality === storeName
                                 ? 'white'
                                 : 'black'
                         }
                         color={
-                            VENDOR_NAMES.quality === vendorName
+                            STORE_NAMES.quality === storeName
                                 ? 'black'
                                 : 'white'
                         }
@@ -255,7 +255,7 @@ const RecommendedItems = () => {
                         width="250px"
                         borderRadius="full"
                         onClick={() => {
-                            setVendorName('Echo Rift');
+                            setStoreName('Echo Rift');
                         }}
                     >
                         <Image
@@ -271,12 +271,12 @@ const RecommendedItems = () => {
                         fontWeight="italic"
                         name="Dauntless"
                         bg={
-                            VENDOR_NAMES.headphones === vendorName
+                            STORE_NAMES.headphones === storeName
                                 ? 'white'
                                 : 'black'
                         }
                         color={
-                            VENDOR_NAMES.headphones === vendorName
+                            STORE_NAMES.headphones === storeName
                                 ? 'black'
                                 : 'white'
                         }
@@ -284,7 +284,7 @@ const RecommendedItems = () => {
                         width="250px"
                         borderRadius="full"
                         onClick={() => {
-                            setVendorName('Dauntless');
+                            setStoreName('Dauntless');
                         }}
                     >
                         <Image
@@ -330,7 +330,7 @@ const RecommendedItems = () => {
                     {/*    Collectible*/}
                     {/*</Button>*/}
                 </SimpleGrid>
-                <ProductCollections vendorName={vendorName} />
+                <ProductCollections storeName={storeName} />
             </Box>
         </Flex>
     );

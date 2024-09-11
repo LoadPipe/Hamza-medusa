@@ -2,11 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { Flex } from '@chakra-ui/react';
-import VendorCatButton from './vendor-cat-button';
+import StoreCatButton from './store-cat-button';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import ProductCardGroup from '@modules/products/components/product-group-vendor';
-import { getStoreIdByName } from '@lib/data';
 import useVendor from '@store/store-page/vendor';
 
 type Props = {
@@ -18,14 +17,6 @@ const StoreSearch = ({ storeName }: Props) => {
     const [handle, setHandle] = useState('all');
     const [selectedButton, setSelectedButton] = useState('All Products'); // Track selected button
     const { setStoreId } = useVendor();
-    // Get store id
-    // useEffect(() => {
-    //     async function fetchStoreId() {
-    //         const id = await getStoreIdByName(vendorName);
-    //         setStoreId(id);
-    //     }
-    //     fetchStoreId();
-    // }, [vendorName]);
 
     // Get categories and update buttons
     const { data, error, isLoading } = useQuery(
@@ -75,7 +66,7 @@ const StoreSearch = ({ storeName }: Props) => {
                 my={{ base: '1rem', md: '3rem' }}
                 gap={'1rem'}
             >
-                <VendorCatButton
+                <StoreCatButton
                     catName={'All Products'}
                     setHandle={setHandle}
                     setSelected={setSelectedButton}
@@ -83,7 +74,7 @@ const StoreSearch = ({ storeName }: Props) => {
                 />
 
                 {uniqueHandlesArray.map((handle, index) => (
-                    <VendorCatButton
+                    <StoreCatButton
                         key={index}
                         catName={handle}
                         setHandle={setHandle}
@@ -94,7 +85,7 @@ const StoreSearch = ({ storeName }: Props) => {
             </Flex>
 
             <ProductCardGroup
-                vendorName={storeName}
+                storeName={storeName}
                 allProducts={true}
                 handle={handle}
             />
