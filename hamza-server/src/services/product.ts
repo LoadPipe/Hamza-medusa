@@ -343,10 +343,12 @@ class ProductService extends MedusaProductService {
                 ],
             });
 
+            // Filter for single category
             const filteredCategories = categories.filter(
                 (cat) => cat.name.toLowerCase() === category
             );
 
+            // Filter products for category by storeId
             const filteredProducts = filteredCategories.map((cat) => {
                 return {
                     ...cat,
@@ -356,6 +358,7 @@ class ProductService extends MedusaProductService {
                 };
             });
 
+            // Update product pricing
             await Promise.all(
                 filteredProducts.map((cat) => this.convertPrices(cat.products))
             );
