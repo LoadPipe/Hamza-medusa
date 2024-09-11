@@ -6,6 +6,7 @@ import {
     ProductVariant,
     Logger,
     Store,
+    generateEntityId,
 } from '@medusajs/medusa';
 import { CachedExchangeRateRepository } from '../repositories/cached-exchange-rate';
 import ProductVariantRepository from '@medusajs/medusa/dist/repositories/product-variant';
@@ -272,11 +273,27 @@ export class PriceConverter {
         try {
             const key =
                 `${price.baseCurrency}-${price.toCurrency}`.toLowerCase();
-            await this.cachedExchangeRateRepository.save({
-                currency_code: key,
-                rate: rate,
-                date_cached: new Date(),
+
+            // Check if the record already exists
+            let existingRate = await this.cachedExchangeRateRepository.findOne({
+                where: { currency_code: price.toCurrency },
             });
+
+            if (existingRate) {
+                // Update existing entry
+                existingRate.rate = rate;
+                existingRate.date_cached = new Date();
+                await this.cachedExchangeRateRepository.save(existingRate);
+            } else {
+                // Insert a new entry
+                await this.cachedExchangeRateRepository.save({
+                    currency_code: price.toCurrency,
+                    rate: rate,
+                    date_cached: new Date(),
+                    id: generateEntityId(),
+                });
+            }
+
             this.logger?.info(
                 `Saved rate ${rate} for ${price.baseCurrency} to ${price.toCurrency} in DB`
             );

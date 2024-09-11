@@ -5,6 +5,7 @@ import {
     PrimaryGeneratedColumn,
     ManyToOne,
     JoinColumn,
+    PrimaryColumn,
 } from 'typeorm';
 import { BaseEntity, Currency } from '@medusajs/medusa';
 import { generateEntityId } from '@medusajs/medusa/dist/utils';
@@ -17,6 +18,9 @@ import { generateEntityId } from '@medusajs/medusa/dist/utils';
 
 @Entity()
 export class CachedExchangeRate extends BaseEntity {
+    @PrimaryColumn()
+    id: string;
+
     @ManyToOne(() => Currency) // Setting up the relation to the Currency entity
     @JoinColumn({ name: 'currency_code' }) // Defines the foreign key column
     @Column({ unique: true })
