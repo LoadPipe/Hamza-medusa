@@ -5,9 +5,7 @@ import {
     Cart,
     OrderStatus,
     FulfillmentStatus,
-    CustomerService,
-    ProductOption,
-    ProductOptionValue
+    CustomerService
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
 import OrderService from '../services/order';
@@ -24,7 +22,6 @@ import { CreateProductProductVariantInput, CreateProductInput as MedusaCreatePro
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import { IsNull, Not, FindManyOptions } from 'typeorm';
-import { error } from 'console';
 
 type CreateProductInput = MedusaCreateProductInput & {
     store_id: string;
@@ -81,7 +78,6 @@ export default class BuckydropService extends TransactionBaseService {
             page,
             count
         );
-
 
         this.logger.debug(`search returned ${searchResults.length} results`);
         let productData = searchResults;
