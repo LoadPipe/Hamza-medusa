@@ -8,9 +8,9 @@ CREATE TABLE "bucky_logs"(
                 "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "deleted_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-                CONSTRAINT "PK_okumu5lnikxobwv1rhv1dgs912" PRIMARY KEY ("id"))
+                CONSTRAINT "PK_okumu5lnikxobwv1rhv1dgs912" PRIMARY KEY ("id"));
                 
-ALTER TABLE "payment" ADD "chain_id" bigint
+ALTER TABLE "payment" ADD "chain_id" bigint;
 
 UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/board-games.svg"}' where handle = 'board_games';
 UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/gaming.svg"}' where handle = 'gaming';
