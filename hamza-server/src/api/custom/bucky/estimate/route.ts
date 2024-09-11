@@ -1,16 +1,16 @@
-import {
-    MedusaRequest,
-    MedusaResponse,
-} from '@medusajs/medusa';
+import { MedusaRequest, MedusaResponse } from '@medusajs/medusa';
 import { RouteHandler } from '../../../route-handler';
 import StoreService from '../../../../services/store';
 import BuckydropService from '../../../../services/buckydrop';
+import { BuckyLogRepository } from '../../../../repositories/bucky-log';
 import { BuckyClient } from '../../../../buckydrop/bucky-client';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const storeService: StoreService = req.scope.resolve('storeService');
     let buckyService: BuckydropService = req.scope.resolve('buckydropService');
-    let buckyClient: BuckyClient = new BuckyClient();
+    let buckyLogRepository: typeof BuckyLogRepository =
+        req.scope.resolve('buckyLogRepository');
+    let buckyClient: BuckyClient = new BuckyClient(buckyLogRepository);
 
     const handler: RouteHandler = new RouteHandler(
         req,

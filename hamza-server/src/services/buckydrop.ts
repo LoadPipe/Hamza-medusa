@@ -1,17 +1,15 @@
 import {
     TransactionBaseService,
-    Logger,
     ProductStatus,
     CartService,
     Cart,
-    LineItem,
     OrderStatus,
     FulfillmentStatus,
-    CustomerService,
-    ProductVariant,
+    CustomerService
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
 import OrderService from '../services/order';
+import { BuckyLogRepository } from '../repositories/bucky-log';
 import { Product } from '../models/product';
 import { Order } from '../models/order';
 import { PriceConverter } from '../strategies/price-selection';
@@ -37,6 +35,8 @@ const SHIPPING_COST_MAX: number = parseInt(
     process.env.BUCKY_MAX_SHIPPING_COST_US_CENT ?? '4000'
 );
 
+// TODO: I think this code needs comments its difficult to understand.
+
 export default class BuckydropService extends TransactionBaseService {
     protected readonly logger: ILogger;
     protected readonly productService_: ProductService;
@@ -46,6 +46,7 @@ export default class BuckydropService extends TransactionBaseService {
     protected readonly orderRepository_: typeof OrderRepository;
     protected readonly priceConverter: PriceConverter;
     protected readonly buckyClient: BuckyClient;
+    protected readonly buckyLogRepository: typeof BuckyLogRepository;
 
     constructor(container) {
         super(container);
@@ -56,7 +57,8 @@ export default class BuckydropService extends TransactionBaseService {
         this.customerService_ = container.customerService;
         this.logger = createLogger(container, 'BuckydropService');
         this.priceConverter = new PriceConverter(this.logger);
-        this.buckyClient = new BuckyClient();
+        this.buckyLogRepository = container.buckyLogRepository;
+        this.buckyClient = new BuckyClient(this.buckyLogRepository);
     }
 
     async importProductsByKeyword(
@@ -69,8 +71,7 @@ export default class BuckydropService extends TransactionBaseService {
         goodsId: string = null
     ): Promise<Product[]> {
         //retrieve products from bucky and convert them
-        const buckyClient: BuckyClient = new BuckyClient();
-        const searchResults = await buckyClient.searchProducts(
+        const searchResults = await this.buckyClient.searchProducts(
             keyword,
             page,
             count
@@ -85,7 +86,7 @@ export default class BuckydropService extends TransactionBaseService {
         for (let p of productData) {
             productInputs.push(
                 await this.mapBuckyDataToProductInput(
-                    buckyClient,
+                    this.buckyClient,
                     p,
                     ProductStatus.PUBLISHED,
                     storeId,
@@ -103,9 +104,9 @@ export default class BuckydropService extends TransactionBaseService {
         //import the products
         const output = productInputs?.length
             ? await this.productService_.bulkImportProducts(
-                  storeId,
-                  productInputs
-              )
+                storeId,
+                productInputs
+            )
             : [];
 
         //TODO: best to return some type of report; what succeeded, what failed
@@ -119,10 +120,8 @@ export default class BuckydropService extends TransactionBaseService {
         salesChannelId: string
     ): Promise<Product[]> {
         //retrieve products from bucky and convert them
-        const buckyClient: BuckyClient = new BuckyClient();
-
         const input: CreateProductInput = await this.mapBuckyDataToProductInput(
-            buckyClient,
+            this.buckyClient,
             { goodsLink },
             ProductStatus.PUBLISHED,
             storeId,
