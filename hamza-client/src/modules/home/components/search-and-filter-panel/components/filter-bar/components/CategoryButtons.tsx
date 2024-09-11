@@ -1,17 +1,19 @@
 import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
-import categoryIcons from '@modules/store/data/category-icons';
+import categoryIcons from '@modules/shop/data/category-icons';
 import Image from 'next/image';
 
 interface CategoryButtonProps {
     categoryName: string;
     categoryType: string;
+    url: string;
 }
 
 const CategoryButtons: React.FC<CategoryButtonProps> = ({
     categoryName,
     categoryType,
+    url,
 }) => {
     const { categorySelect, setCategorySelect, setCategoryTypeSelect } =
         useHomeProductsPage();
@@ -31,6 +33,7 @@ const CategoryButtons: React.FC<CategoryButtonProps> = ({
             }
             display={'flex'}
             flexDirection={'row'}
+            justifyContent={'center'}
             alignItems={'center'}
             borderWidth={'1px'}
             borderRadius={'49px'}
@@ -48,7 +51,13 @@ const CategoryButtons: React.FC<CategoryButtonProps> = ({
                 background: 'white',
             }}
         >
-            <Image src={categoryIcons[categoryType]} alt={categoryName} />
+            <Image
+                src={url}
+                alt={categoryName}
+                width={20} // Set appropriate width
+                height={20} // Set appropriate height
+            />
+
             <Text ml="10px" fontSize={{ base: '14px', md: '18px' }}>
                 {categoryName}
             </Text>

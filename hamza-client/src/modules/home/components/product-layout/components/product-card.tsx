@@ -70,26 +70,6 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
     //Routing
     const router = useRouter();
 
-    //Toggle wish list
-    const toggleWishlist = async () => {
-        // console.log('toggle wishlist-dropdown item', product);
-        wishlist.products.find((a) => a.id == productId)
-            ? removeWishlistItemMutation.mutate({
-                  id: productId!,
-                  description: '',
-                  handle: productHandle,
-                  thumbnail: imageSrc,
-                  title: productName,
-              })
-            : addWishlistItemMutation.mutate({
-                  id: productId!,
-                  description: '',
-                  handle: productHandle,
-                  thumbnail: imageSrc,
-                  title: productName,
-              });
-    };
-
     // Add to cart
     const handleAddToCart = async () => {
         setLoadingAddToCard(true);
@@ -175,7 +155,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
                         >
                             {productName}
                         </Text>
-                        {authData.status == 'authenticated' && (
+                        {/* {authData.status == 'authenticated' && (
                             <Box
                                 ml="auto"
                                 display="flex"
@@ -202,7 +182,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
                                     )}
                                 </Box>
                             </Box>
-                        )}
+                        )} */}
                     </Flex>
 
                     <Box mt="auto">
@@ -248,6 +228,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
                                     color="#2775CA"
                                 />
                             </Box>
+
                             <Text
                                 color={'white'}
                                 ml="2"

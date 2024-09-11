@@ -241,7 +241,7 @@ leaveTo="opacity-0 translate-y-1"
                 </div>
                 <span>Your shopping bag is empty.</span>
                 <div>
-                    <LocalizedClientLink href="/store">
+                    <LocalizedClientLink href="/shop">
                         <>
                             <span className="sr-only">
                                 Go to all products page

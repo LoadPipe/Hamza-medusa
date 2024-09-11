@@ -15,6 +15,6 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             cart_id: handler.inputParams.cart_id,
         });
 
-        res.status(200).json({ order });
+        handler.returnStatus(200, order);
     });
 };

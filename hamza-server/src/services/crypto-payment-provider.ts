@@ -8,6 +8,7 @@ import {
     PaymentSessionStatus,
     Logger,
 } from '@medusajs/medusa'; //TODO: need?
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 /**
  * @description This is being used as a test right now for payment processing using
@@ -17,13 +18,13 @@ import {
 class CryptoPaymentService extends AbstractPaymentProcessor {
     static identifier = 'crypto';
     cartService: CartService;
-    logger: Logger;
+    logger: ILogger;
 
     constructor(container, config) {
         //this.logger.debug(config);
         super(container, config);
         this.cartService = container.cartService;
-        this.logger = container.logger;
+        this.logger = createLogger(container, 'CryptoPaymentService');
         this.logger.debug('CryptoPaymentService::config');
     }
 
@@ -45,9 +46,9 @@ class CryptoPaymentService extends AbstractPaymentProcessor {
     ): Promise<
         | PaymentProcessorError
         | {
-              status: PaymentSessionStatus;
-              data: PaymentProcessorSessionResponse['session_data'];
-          }
+            status: PaymentSessionStatus;
+            data: PaymentProcessorSessionResponse['session_data'];
+        }
     > {
         this.logger.debug('CryptoPaymentService: authorizePayment');
         //this.logger.debug(paymentSessionData);

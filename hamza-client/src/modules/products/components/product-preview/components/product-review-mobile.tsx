@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ReviewCardMobile from './review-card-mobile';
 import { Text, Flex, Box } from '@chakra-ui/react';
 import axios from 'axios';
-import { reviewResponse } from '@lib/data';
+import { getAllProductReviews } from '@lib/data';
 
 const fakeReviews = [
     {
@@ -30,7 +30,7 @@ const fakeReviews = [
 const ProductReviewMobile = ({ productId }: { productId: string }) => {
     const [reviews, setReviews] = useState<any>([]);
     const reviewDataFetcher = async () => {
-        let res = await reviewResponse(productId);
+        let res = await getAllProductReviews(productId);
 
         if (res) {
             setReviews([

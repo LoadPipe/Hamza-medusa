@@ -1,4 +1,9 @@
 'use client';
+import { CgProfile } from 'react-icons/cg';
+import { LiaBoxOpenSolid } from 'react-icons/lia';
+import { FaRegHeart, FaRegBell } from 'react-icons/fa';
+import { PiNotePencilLight } from 'react-icons/pi';
+import { CiLogout } from 'react-icons/ci';
 
 import { Customer } from '@medusajs/medusa';
 import {
@@ -7,16 +12,7 @@ import {
     useRouter,
     useSearchParams,
 } from 'next/navigation';
-import {
-    Flex,
-    Box,
-    Button,
-    Text,
-    Menu,
-    IconButton,
-    Collapse,
-    Link,
-} from '@chakra-ui/react';
+import { Flex, Box, Text, IconButton, Collapse } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import NextLink from 'next/link';
 import { useOrderTabStore } from '@store/order-tab-state';
@@ -102,9 +98,19 @@ const AccountNav = ({
                     onClick={toggleCollapse}
                     cursor="pointer"
                 >
-                    <Text my="auto" fontSize={'18px'} fontWeight={600}>
-                        Manage My Account
-                    </Text>
+                    <Flex justifyContent={'center'} alignContent={'center'}>
+                        <CgProfile color="white" size={'28px'} />
+
+                        <Text
+                            ml={2}
+                            my="auto"
+                            fontSize={'18px'}
+                            fontWeight={600}
+                        >
+                            Manage My Account
+                        </Text>
+                    </Flex>
+
                     <IconButton
                         aria-label="Toggle Collapse"
                         icon={isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
@@ -137,47 +143,56 @@ const AccountNav = ({
                     />
                 )}
 
-                <Flex
-                    borderRadius="8px"
-                    width="245px"
-                    height="56px"
-                    padding="12px 16px"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    color="white"
-                    bg="gray.800"
-                    mt="4"
-                    cursor="pointer"
-                    onClick={toggleOrdersCollapse} // Toggle collapse when the whole Flex container is clicked
-                >
+                {authData.is_verified && (
                     <Flex
-                        as={NextLink}
-                        href="/account/orders"
+                        borderRadius="8px"
+                        width="245px"
+                        height="56px"
+                        padding="12px 16px"
                         alignItems="center"
                         justifyContent="space-between"
-                        width="100%"
-                        textDecoration="none"
-                        _hover={{ textDecoration: 'none' }} // Remove underline on hover
+                        color="white"
+                        backgroundColor={'transparent'}
+                        mt="4"
+                        cursor="pointer"
+                        onClick={toggleOrdersCollapse} // Toggle collapse when the whole Flex container is clicked
                     >
-                        <Text fontWeight={600} color="white">
-                            Orders
-                        </Text>
-                        <IconButton
-                            aria-label="Toggle Collapse"
-                            icon={
-                                isOrdersOpen ? (
-                                    <ChevronUpIcon />
-                                ) : (
-                                    <ChevronDownIcon />
-                                )
-                            }
-                            variant="ghost"
-                            color="white"
-                            size="sm" // Adjust icon button size for better alignment
-                            onClick={toggleOrdersCollapse} // Toggle collapse when the Chevron icon is clicked
-                        />
+                        <LiaBoxOpenSolid color="white" size={'28px'} />
+                        <Flex
+                            as={NextLink}
+                            href="/account/orders"
+                            alignItems="center"
+                            justifyContent="space-between"
+                            width="100%"
+                            backgroundColor={'transparent'}
+                            textDecoration="none"
+                            _hover={{ textDecoration: 'none' }} // Remove underline on hover
+                        >
+                            <Text
+                                ml={2}
+                                fontSize={'18px'}
+                                fontWeight={600}
+                                color="white"
+                            >
+                                Orders
+                            </Text>
+                            <IconButton
+                                aria-label="Toggle Collapse"
+                                icon={
+                                    isOrdersOpen ? (
+                                        <ChevronUpIcon />
+                                    ) : (
+                                        <ChevronDownIcon />
+                                    )
+                                }
+                                variant="ghost"
+                                color="white"
+                                size="sm" // Adjust icon button size for better alignment
+                                onClick={toggleOrdersCollapse} // Toggle collapse when the Chevron icon is clicked
+                            />
+                        </Flex>
                     </Flex>
-                </Flex>
+                )}
 
                 {/* Collapsible Panel for Orders */}
                 <Collapse in={isOrdersOpen} animateOpacity>
@@ -262,20 +277,37 @@ const AccountNav = ({
                     </Box>
                 </Collapse>
 
+                {/* Wishlist */}
+
+                {authData.is_verified && (
+                    <Box>
+                        <NavLink
+                            href="/account/wishlist"
+                            route={route!}
+                            title="Wishlist"
+                            icon={<FaRegHeart color="white" size="22px" />}
+                        />
+                    </Box>
+                )}
+
                 {authData.is_verified && (
                     <NavLink
                         href="/account/notifications"
                         route={route!}
-                        title={'Notifications'}
+                        title="Notifications"
+                        icon={<FaRegBell color="white" size="22px" />}
                     />
                 )}
+
                 {authData.is_verified && (
                     <NavLink
                         href="/account/reviews"
                         route={route!}
                         title={'Reviews'}
+                        icon={<PiNotePencilLight color="white" size={'22px'} />}
                     />
                 )}
+
                 <Box
                     as="button"
                     textAlign={'left'}
@@ -294,9 +326,17 @@ const AccountNav = ({
                     }}
                     onClick={handleLogout}
                 >
-                    <Text my="auto" fontSize={'18px'} fontWeight={600}>
-                        Logout
-                    </Text>
+                    <Flex>
+                        <CiLogout color="white" size={'22px'} />
+                        <Text
+                            ml={2}
+                            my="auto"
+                            fontSize={'18px'}
+                            fontWeight={600}
+                        >
+                            Logout
+                        </Text>
+                    </Flex>
                 </Box>
             </Flex>
         </Flex>

@@ -18,9 +18,8 @@ import PriceSelectionStrategy, {
 } from '../strategies/price-selection';
 import CustomerService from '../services/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
-import { BuckyClient } from '../buckydrop/bucky-client';
-import { getCurrencyAddress } from '../currency.config';
 import { In, IsNull, Not } from 'typeorm';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 export type BulkImportProductInput = CreateProductInput;
 
@@ -57,14 +56,14 @@ type UpdateProductInput = Omit<Partial<CreateProductInput>, 'variants'> & {
 
 class ProductService extends MedusaProductService {
     static LIFE_TIME = Lifetime.SCOPED;
-    protected readonly logger: Logger;
+    protected readonly logger: ILogger;
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly customerService_: CustomerService;
 
     constructor(container) {
         super(container);
-        this.logger = container.logger;
+        this.logger = createLogger(container, 'ProductService');
         this.storeRepository_ = container.storeRepository;
         this.productVariantRepository_ = container.productVariantRepository;
         this.customerService_ = container.customerService;
@@ -215,10 +214,15 @@ class ProductService extends MedusaProductService {
 
     async getProductsFromStoreWithPrices(storeId: string): Promise<Product[]> {
         return await this.convertPrices(
-            (await this.productRepository_.find({
-                where: { store_id: storeId, status: ProductStatus.PUBLISHED },
-                relations: ['variants.prices', 'reviews'],
-            })).filter(p => p.variants?.length)
+            (
+                await this.productRepository_.find({
+                    where: {
+                        store_id: storeId,
+                        status: ProductStatus.PUBLISHED,
+                    },
+                    relations: ['variants.prices', 'reviews'],
+                })
+            ).filter((p) => p.variants?.length)
         );
     }
 
@@ -226,30 +230,37 @@ class ProductService extends MedusaProductService {
         const products = await this.convertPrices(
             await this.productRepository_.find({
                 relations: ['variants.prices', 'reviews'],
-                where: { status: ProductStatus.PUBLISHED, store_id: Not(IsNull()) }
+                where: {
+                    status: ProductStatus.PUBLISHED,
+                    store_id: Not(IsNull()),
+                },
             })
         );
 
         // Sort products so those with weight 69 come first
-        const sortedProducts = products.sort((a, b) => {
-            if (a.weight === 69 && b.weight !== 69) {
-                return -1;
-            }
-            if (a.weight !== 69 && b.weight === 69) {
-                return 1;
-            }
-            return 0;
-        }).filter(p => p.variants?.length);
+        const sortedProducts = products
+            .sort((a, b) => {
+                if (a.weight === 69 && b.weight !== 69) {
+                    return -1;
+                }
+                if (a.weight !== 69 && b.weight === 69) {
+                    return 1;
+                }
+                return 0;
+            })
+            .filter((p) => p.variants?.length);
 
         return sortedProducts;
     }
 
     async getProductsFromStore(storeId: string): Promise<Product[]> {
         // this.logger.log('store_id: ' + storeId); // Potential source of the error
-        return (await this.productRepository_.find({
-            where: { store_id: storeId, status: ProductStatus.PUBLISHED },
-            // relations: ['store'],
-        })).filter(p => p.variants?.length);
+        return (
+            await this.productRepository_.find({
+                where: { store_id: storeId, status: ProductStatus.PUBLISHED },
+                // relations: ['store'],
+            })
+        ).filter((p) => p.variants?.length);
     }
 
     async getCategoriesByStoreId(storeId: string): Promise<Product[]> {
@@ -274,14 +285,14 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    async getStoreFromProduct(productId: string): Promise<string> {
+    async getStoreFromProduct(productId: string): Promise<Object> {
         try {
             const product = await this.productRepository_.findOne({
                 where: { id: productId },
                 relations: ['store'],
             });
 
-            return product.store.name;
+            return product.store;
         } catch (error) {
             this.logger.error('Error fetching store from product:', error);
             throw new Error('Failed to fetch store from product');
@@ -320,6 +331,105 @@ class ProductService extends MedusaProductService {
         }
     }
 
+    async getProductByCategoryHandle(storeId: string) {
+        try {
+            // Ensure the store exists
+            const store = await this.storeRepository_.findOne({
+                where: { id: storeId },
+            });
+
+            if (!store) {
+                return null;
+            }
+
+            // Query to get all products for the given store ID
+            const products = await this.productRepository_.find({
+                where: {
+                    status: ProductStatus.PUBLISHED,
+                    store_id: Not(IsNull()),
+                },
+                relations: [
+                    'product_category_product',
+                    'product_category',
+                    'product_variant',
+                ],
+            });
+
+            return products; // Return all product data
+        } catch (error) {
+            // Handle the error here
+            this.logger.error(
+                'Error occurred while fetching products by handle:',
+                error
+            );
+            throw new Error('Failed to fetch products by handle.');
+        }
+    }
+
+    async getAllProductsByCategoryHandle(storeId: string, handle: string) {
+        console.log(storeId);
+        const productCategory = await this.productCategoryRepository_.findOne({
+            where: {
+                handle: handle,
+            },
+            relations: ['products.variants.prices'],
+        });
+
+        if (!productCategory) {
+            throw new Error('Product category not found');
+        }
+
+        const products = productCategory.products.filter(
+            (product) =>
+                product.store_id === storeId &&
+                product.status === ProductStatus.PUBLISHED &&
+                product.store_id
+        );
+        return productCategory.products;
+    }
+
+    async getAllProductCategories() {
+        try {
+            // Fetch categories along with related products, variants, prices, and reviews
+            const productCategories =
+                await this.productCategoryRepository_.find({
+                    select: ['id', 'name', 'metadata'],
+                    relations: [
+                        'products',
+                        'products.variants.prices',
+                        'products.reviews',
+                    ],
+                });
+
+            //remove products that aren't published
+            for (let cat of productCategories) {
+                if (cat.products)
+                    cat.products = cat.products.filter(
+                        (p) => p.status == ProductStatus.PUBLISHED && p.store_id
+                    );
+            }
+
+            // Filter out categories that have no associated products that are published
+            const filteredCategories = productCategories.filter(
+                (category) => category.products && category.products.length > 0
+            );
+
+            //convert price currencies as needed
+            await Promise.all(
+                filteredCategories.map((cat) =>
+                    this.convertPrices(cat.products)
+                )
+            );
+
+            return filteredCategories; // Return the filtered categories
+        } catch (error) {
+            this.logger.error(
+                'Error fetching product categories with prices:',
+                error
+            );
+            throw new Error('Failed to fetch product categories with prices.');
+        }
+    }
     async getProductsFromStoreName(storeName: string) {
         try {
             const store = await this.storeRepository_.findOne({
@@ -334,7 +444,10 @@ class ProductService extends MedusaProductService {
             let totalRating = 0;
 
             const products = await this.productRepository_.find({
-                where: { store_id: store.id },
+                where: {
+                    store_id: store.id,
+                    status: ProductStatus.PUBLISHED,
+                },
                 relations: ['reviews'],
             });
 
@@ -365,7 +478,8 @@ class ProductService extends MedusaProductService {
                 avgRating,
                 productCount,
                 createdAt,
-                numberOfFollowers: store.numberOfFollowers,
+                numberOfFollowers: store.store_followers,
+                description: store.store_description,
                 thumbnail,
             };
 
@@ -377,54 +491,6 @@ class ProductService extends MedusaProductService {
                 error
             );
             throw new Error('Failed to fetch products from review.');
-        }
-    }
-
-    async findByBuckyMetadata(buckyMetadata: string): Promise<Product | null> {
-        try {
-            const product = await this.productRepository_.findOne({
-                where: { bucky_metadata: buckyMetadata },
-            });
-
-            if (!product) {
-                this.logger.info(
-                    `Product with bucky_metadata ${buckyMetadata} not found.`
-                );
-                return null;
-            }
-
-            return product;
-        } catch (error) {
-            this.logger.error(
-                'Error fetching product by bucky_metadata:',
-                error
-            );
-            throw new Error('Failed to fetch product by bucky_metadata');
-        }
-    }
-
-    async findByGoodsId(goodsId: string): Promise<Product | null> {
-        try {
-            const product = await this.productRepository_
-                .createQueryBuilder('product')
-                .where('product.bucky_metadata LIKE :goodsId', {
-                    goodsId: `%${goodsId}%`,
-                })
-                .getOne();
-
-            if (!product) {
-                this.logger.info(
-                    `Product with goodsId ${goodsId} not found in bucky_metadata.`
-                );
-                return null;
-            }
-
-            return product;
-        } catch (error) {
-            this.logger.error('Error fetching product by goodsId:', error);
-            throw new Error(
-                'Failed to fetch product by goodsId in bucky_metadata'
-            );
         }
     }
 

@@ -8,6 +8,7 @@ type ProductSelector = {
     store_id?: string;
 } & MedusaProductSelector;
 
+//TODO: this route doesn't do anything with categories; its name is wrong (if still used)
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const storeService: StoreService = req.scope.resolve('storeService');
     const productService: ProductService = req.scope.resolve('productService');
@@ -21,23 +22,20 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     // Return error if no products in store
     await handler.handle(async () => {
+        const { store_name } = req.query;
 
-        //validate 
-        if (!handler.requireParams(['store_name']))
-            return;
+        // Validate the request
+        if (!handler.requireParam('store_name')) return;
 
-        const storeName = handler.inputParams.storeName;
-
+        // Fetch the categories by store ID
         const storeData = await storeService.getStoreByName(
-            storeName
+            store_name.toString()
         );
-        console.log('Retrieved store data:', storeData);
         const products = await productService.getCategoriesByStoreId(
             storeData.id.toString()
         );
-        console.log('Retrieved products:', products);
 
         // Return the products with categories
-        return res.json(products);
+        return handler.returnStatus(200, products);
     });
 };

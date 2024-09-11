@@ -1,6 +1,6 @@
 {
     "name": "hamza-server",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "A starter for Medusa projects.",
     "author": "Garo Nazarian, Beau Troxclair, Jonny Bajada, Karan Chugh, John R. Kosinski",
     "license": "MIT",
@@ -26,12 +26,13 @@
         "setup-0": "sudo chmod +x ./scripts/setup-0.sh && ./scripts/setup-0.sh",
         "setup-1": "sudo chmod +x ./scripts/setup-1.sh && ./scripts/setup-1.sh",
         "migrate": "sudo chmod +x ./scripts/create-migration.sh && ./scripts/create-migration.sh",
+        "migration": "npx medusa migrations run",
         "seed": "cross-env medusa seed -f data/seed.json",
         "start": "cross-env npm run build && medusa start",
         "nuke-old": "sudo docker-compose down --volumes --rmi all",
         "nuke": "sudo docker compose down --volumes --rmi all",
         "up-old": "docker-compose up -d",
-        "up": "sudo docker compose up -d",
+        "up": "docker compose up -d",
         "start:custom": "cross-env npm run build && node --preserve-symlinks --trace-warnings index.js",
         "dev": "cross-env npm run build:server && medusa develop",
         "ageddon": "sudo chmod +x ./scripts/armageddon.sh && ./scripts/armageddon.sh"

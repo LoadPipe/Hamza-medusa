@@ -19,6 +19,12 @@ export class Store extends MedusaStore {
     massmarket_store_id?: string;
 
     @Column()
+    store_description?: string;
+
+    @Column()
+    store_followers?: number;
+
+    @Column()
     massmarket_keycard?: string;
 
     @Column()

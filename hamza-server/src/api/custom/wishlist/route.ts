@@ -7,19 +7,21 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const wishlistService: WishlistService =
         req.scope.resolve('wishlistService'); // Correctly retrieving from query parameters
 
-    const handler = new RouteHandler(req, res, 'GET', '/custom/wishlist');
+    const handler = new RouteHandler(req, res, 'GET', '/custom/wishlist', [
+        'customer_id',
+    ]);
 
     await handler.handle(async () => {
-        const customer_id = req.query.customer_id;
+        if (!handler.requireParam('customer_id')) return;
 
-        if (!customer_id) {
-            // Respond with an error if no customer_id is provided
-            return res.status(400).json({ error: 'customer_id is required' });
-        }
+        const customerId = handler.inputParams.customer_id;
 
-        const wishlist = await wishlistService.create(customer_id);
+        //security
+        if (!handler.enforceCustomerId(customerId)) return;
+
+        const wishlist = await wishlistService.create(customerId);
         handler.logger.debug(JSON.stringify(wishlist));
-        res.json(wishlist);
+        handler.returnStatus(200, wishlist);
     });
 };
 
@@ -34,14 +36,19 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     ]);
 
     await handler.handle(async () => {
-        const wishlist = await wishlistService.create(
-            handler.inputParams.customer_id
-        );
+        if (!handler.requireParam('customer_id')) return;
+
+        const customerId = handler.inputParams.customer_id;
+
+        //security
+        if (!handler.enforceCustomerId(customerId)) return;
+
+        const wishlist = await wishlistService.create(customerId);
         if (wishlist) res.status(201).json(wishlist);
         else
-            res.status(424).json({
-                message:
-                    'Failed to create wishlist; customer id might be invalid',
-            });
+            handler.returnStatusWithMessage(
+                424,
+                'Failed to create wishlist; customer id might be invalid'
+            );
     });
 };

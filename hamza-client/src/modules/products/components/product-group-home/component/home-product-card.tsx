@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     Text,
     Box,
@@ -7,21 +7,10 @@ import {
     Image as ChakraImage,
 } from '@chakra-ui/react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import useWishlistStore from '@store/wishlist/wishlist-store';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
 import { IoStar } from 'react-icons/io5';
-import { FaRegHeart, FaHeart } from 'react-icons/fa6';
-import { AiOutlineDollar } from 'react-icons/ai';
-import { addToCart } from '@modules/cart/actions';
-import Link from 'next/link';
-import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { MdShoppingCart } from 'react-icons/md';
-import USDC from '../../../../../../public/images/currencies/usdc-icon.svg';
 import Image from 'next/image';
-import toast from 'react-hot-toast';
-import { useRouter } from 'next/router';
 import { getObjectFit } from '@modules/get-object-fit';
+import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
 
 interface ProductCardProps {
     variantID: string;
@@ -39,6 +28,8 @@ interface ProductCardProps {
     inventory: number;
     storeId: string;
 }
+
+import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
 const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
     variantID,
@@ -58,74 +49,7 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
     storeId,
 }) => {
     const [imageLoaded, setImageLoaded] = useState(false);
-
-    // new
-    //Product states
-    const [loadingBuy, setLoadingBuy] = useState(false);
-    const [loadingAddToCart, setLoadingAddToCard] = useState(false);
-
-    //Auth states
-    const { authData, whitelist_config, setWhitelistConfig } =
-        useCustomerAuthStore();
-    const { addWishlistItemMutation, removeWishlistItemMutation } =
-        useWishlistMutations();
-
-    //Wishlist store
-    const { wishlist } = useWishlistStore();
-    const [isWhitelisted, setIsWhitelisted] = useState(false);
-
-    //Routing
-    // const router = useRouter();
-    //Toggle wish list
-
-    const toggleWishlist = async () => {
-        // console.log('toggle wishlist-dropdown item', product);
-        wishlist.products.find((a) => a.id == productId)
-            ? removeWishlistItemMutation.mutate({
-                  id: productId!,
-                  description: '',
-                  handle: productHandle,
-                  thumbnail: imageSrc,
-                  title: productName,
-              })
-            : addWishlistItemMutation.mutate({
-                  id: productId!,
-                  description: '',
-                  handle: productHandle,
-                  thumbnail: imageSrc,
-                  title: productName,
-              });
-    };
-
-    // Add to cart
-    const handleAddToCart = async () => {
-        setLoadingAddToCard(true);
-        await addToCart({
-            variantId: variantID ?? '',
-            quantity: 1,
-            countryCode: countryCode ?? '',
-            currencyCode: 'eth',
-        });
-        setLoadingAddToCard(false);
-    };
-
-    //White listed
-    const whitelistedProductHandler = async () => {
-        const whitelistedProduct =
-            whitelist_config.is_whitelisted &&
-            whitelist_config.whitelisted_stores.includes(storeId)
-                ? true
-                : false;
-
-        setIsWhitelisted(whitelistedProduct);
-        return;
-    };
-
-    useEffect(() => {
-        if (authData.status == 'authenticated' && allow_backorder == true) {
-            whitelistedProductHandler();
-        }
-    }, [authData.status]);
+    const { preferred_currency_code } = useCustomerAuthStore();
 
     const objectFit = getObjectFit(productHandle);
 
@@ -226,15 +150,15 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                         </Flex>
 
                         <Flex alignItems="center">
-                            <Flex
-                                wrap={'nowrap'}
-                                width={{ base: '14px', md: '16px' }}
-                                height={{ base: '14px', md: '16px' }}
-                            >
+                            <Flex mb="1px">
                                 <Image
-                                    src={require('../../../../../../public/images/currencies/usdc-icon.svg')}
-                                    alt="usdc"
-                                    style={{ width: '100%', height: '100%' }}
+                                    className="h-[18px] w-[18px] md:h-[20px] md:w-[20px]"
+                                    src={
+                                        currencyIcons[
+                                            preferred_currency_code || 'usdc'
+                                        ]
+                                    }
+                                    alt={preferred_currency_code || 'usdc'}
                                 />
                             </Flex>
 
@@ -247,8 +171,9 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                                 fontWeight="700"
                                 fontSize={{ base: '14px', md: '18px' }}
                             >
-                                {`${productPrice} ${currencyCode.toUpperCase()} `}
+                                {`${productPrice}`}
                                 <Text
+                                    ml="5px"
                                     as="span"
                                     display={{
                                         base: 'none',

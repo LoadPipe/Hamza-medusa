@@ -19,6 +19,7 @@ export type WalletPaymentResponse = {
     payer_address: string;
     escrow_contract_address: string;
     message?: string;
+    chain_id: number;
     success: boolean;
 };
 
@@ -116,6 +117,7 @@ export class MassmarketWalletPaymentHandler implements IWalletPaymentHandler {
             transaction_id,
             payer_address,
             escrow_contract_address,
+            chain_id: chainId,
             success:
                 transaction_id && transaction_id.length ? true : false,
         };
@@ -197,6 +199,7 @@ export class FakeWalletPaymentHandler implements IWalletPaymentHandler {
             escrow_contract_address: '0x0',
             transaction_id,
             payer_address,
+            chain_id: chainId,
             success:
                 transaction_id && transaction_id.length ? true : false,
         }
@@ -229,7 +232,7 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
             const inputs = this.createPaymentInput(data, payer_address, chainId);
             console.log('sending payments: ', inputs);
 
-            const tx = await client.placeMultiplePayments(inputs, false);
+            const tx = await client.placeMultiplePayments(inputs, true);
             transaction_id = tx.transaction_id;
         }
 
@@ -237,6 +240,7 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
             escrow_contract_address: contractAddress,
             payer_address,
             transaction_id,
+            chain_id: chainId,
             success:
                 transaction_id && transaction_id.length ? true : false,
         };
@@ -252,10 +256,10 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
             data.orders.forEach((o: any) => {
                 const input: ISwitchMultiPaymentInput = {
                     currency: o.currency_code,
-                    receiver: o.wallet_address,
                     payments: [
                         {
                             id: 1, //o.order_id,
+                            orderId: o.order_id,
                             payer: payer,
                             receiver: o.wallet_address,
                             amount: this.convertToNativeAmount(o.currency_code, o.amount, chainId),
@@ -293,7 +297,8 @@ export class SwitchWalletPaymentHandler implements IWalletPaymentHandler {
             escrow_contract_address: '',
             payer_address: '',
             transaction_id: '',
-            success: false
+            success: false,
+            chain_id: chainId,
         };
     }
 }
@@ -334,6 +339,7 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
                         transaction_id,
                         payer_address,
                         success: false,
+                        chain_id: chainId,
                         message: 'Insufficient balance'
                     }
                 }
@@ -377,6 +383,7 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
             escrow_contract_address: '0x0',
             transaction_id,
             payer_address,
+            chain_id: chainId,
             success:
                 transaction_id && transaction_id.length ? true : false,
         }

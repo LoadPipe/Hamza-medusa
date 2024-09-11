@@ -9,19 +9,21 @@ import moment from 'moment';
 import { ethers } from 'ethers';
 import SmtpMailService from './smtp-mail';
 import dotenv from 'dotenv';
+import { createLogger, ILogger } from '../utils/logging/logger';
+import { ConfirmationToken } from 'src/models/confirmation-token';
 dotenv.config();
 
 export default class ConfirmationTokenService extends TransactionBaseService {
     protected readonly confirmationTokenRepository_: typeof ConfirmationTokenRepository;
     protected readonly customerRepository_: typeof CustomerRepository;
-    protected readonly logger: Logger;
+    protected readonly logger: ILogger;
     protected readonly eventBus_: EventBusService;
 
     constructor(container) {
         super(container);
         this.confirmationTokenRepository_ = ConfirmationTokenRepository;
         this.customerRepository_ = CustomerRepository;
-        this.logger = container.logger;
+        this.logger = createLogger(container, 'ConfirmationTokenService');
         this.eventBus_ = container.eventBusService;
     }
 
@@ -60,6 +62,12 @@ export default class ConfirmationTokenService extends TransactionBaseService {
         });
 
         return;
+    }
+
+    async getConfirmationToken(token: string): Promise<ConfirmationToken> {
+        return await this.confirmationTokenRepository_.findOne({
+            where: { token: token },
+        });
     }
 
     async verifyConfirmationToken(token: string) {
@@ -111,6 +119,5 @@ export default class ConfirmationTokenService extends TransactionBaseService {
                 eventName: 'customer.verified',
             },
         ]);
-        return;
     }
 }

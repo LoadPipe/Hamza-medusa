@@ -10,6 +10,8 @@ import axios from 'axios';
 import { UpdateStoreInput as MedusaUpdateStoreInput } from '@medusajs/medusa/dist/types/store';
 import { UpdateProductInput as MedusaUpdateProductInput } from '@medusajs/medusa/dist/types/product';
 import ProductRepository from '@medusajs/medusa/dist/repositories/product';
+import { createLogger, ILogger } from '../utils/logging/logger';
+import { IsNull, Not } from 'typeorm';
 
 type UpdateStoreInput = MedusaUpdateStoreInput & {
     massmarket_keycard?: string;
@@ -24,20 +26,22 @@ class StoreService extends MedusaStoreService {
     static LIFE_TIME = Lifetime.SCOPED;
     protected readonly productRepository_: typeof ProductRepository;
     protected readonly storeRepository_: typeof StoreRepository;
-    protected readonly logger: Logger;
+    protected readonly logger: ILogger;
 
     constructor(container) {
         super(container);
         this.storeRepository_ = container.storeRepository;
         this.productRepository_ = container.productRepository;
-        this.logger = container.logger;
+        this.logger = createLogger(container, 'StoreService');
     }
 
     async createStore(
         user: User,
         store_name: string,
         collection: string,
-        icon: string
+        icon: string,
+        store_followers: number,
+        store_description: string
     ): Promise<Store> {
         let owner_id = user.id;
         this.logger.debug('owner_id: ' + owner_id);
@@ -47,6 +51,8 @@ class StoreService extends MedusaStoreService {
         newStore.name = store_name; // Set the store name
         newStore.owner_id = owner_id; // Set the owner_id
         newStore.icon = icon;
+        newStore.store_followers = store_followers;
+        newStore.store_description = store_description;
         newStore.default_currency_code = 'eth';
         newStore = await storeRepo.save(newStore);
         this.logger.debug('New Store Saved:' + newStore);
@@ -55,7 +61,15 @@ class StoreService extends MedusaStoreService {
     }
 
     async getStores() {
-        return await this.storeRepository_.find();
+        return await this.storeRepository_.find({ where: { owner_id: Not(IsNull()) } });
+    }
+
+    async getStoreNames() {
+        const stores = await this.storeRepository_.find({
+            select: ['name'],
+            where: { owner_id: Not(IsNull()) }
+        });
+        return stores.map((store) => store.name);
     }
 
     async update(data: UpdateStoreInput) {

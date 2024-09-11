@@ -42,7 +42,7 @@ const ShippingAddress = ({
     // check if customer has saved addresses that are in the current region
     const addressesInRegion = useMemo(
         () =>
-            customer?.shipping_addresses.filter(
+            customer?.shipping_addresses?.filter(
                 (a) =>
                     a.country_code &&
                     countriesInRegion?.includes(a.country_code)
@@ -176,8 +176,13 @@ const ShippingAddress = ({
                     type="email"
                     title="Enter a valid email address."
                     autoComplete="email"
-                    value={formData.email.includes('@evm.blockchain') ? '' : formData.email}
+                    value={
+                        formData.email.includes('@evm.blockchain')
+                            ? ''
+                            : formData.email
+                    }
                     onChange={handleChange}
+                    required
                 />
                 <Input
                     label="Phone"

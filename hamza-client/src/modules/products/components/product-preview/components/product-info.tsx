@@ -8,21 +8,66 @@ import {
     Skeleton,
     SkeletonText,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import useProductPreview from '@store/product-preview/product-preview';
 import { BiHeart, BiSolidHeart } from 'react-icons/bi';
 import useWishlistStore from '@store/wishlist/wishlist-store';
 import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { Variant } from 'types/medusa';
 
 const ProductInfo = () => {
-    const { productData } = useProductPreview();
+    // Zustand
+    const { productData, variantId, quantity, setVariantId } =
+        useProductPreview();
     const { wishlist } = useWishlistStore();
     const { addWishlistItemMutation, removeWishlistItemMutation } =
         useWishlistMutations();
     const { authData } = useCustomerAuthStore();
+    const { preferred_currency_code } = useCustomerAuthStore();
+    console.log('user preferred currency code: ', preferred_currency_code);
+
+    const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
+    const [selectedVariant, setSelectedVariant] = useState<null | Variant>(
+        null
+    );
+
+    useEffect(() => {
+        if (productData && productData.variants) {
+            if (!variantId) {
+                console.log(`variantId in PreviewCheckout comp is not set yet`);
+                setVariantId(productData.variants[0].id);
+            }
+            let selectedProductVariant = productData.variants.find(
+                (a: any) => a.id == productData.variants[0]?.id
+                // (a: any) => a.id == variantId
+            );
+            console.log(`variantID in PreviewCheckout comp is: ${variantId}`);
+            if (!variantId) {
+                setVariantId(selectedProductVariant.id);
+            }
+            console.log(`variantID in PreviewCheckout comp is: ${variantId}`);
+
+            setSelectedVariant(selectedProductVariant);
+            const price =
+                selectedProductVariant &&
+                (selectedProductVariant.prices.find(
+                    (p: any) =>
+                        p.currency_code === (preferred_currency_code ?? 'usdc')
+                ) ??
+                    selectedProductVariant.prices[0]);
+            console.log(
+                'priceData object in PreviewCheckout comp',
+                productData
+            );
+            setSelectedPrice(price?.amount ?? 0);
+            // console.log(productData);
+        }
+    }, [productData, variantId]);
 
     const isLoading = !productData || Object.keys(productData).length === 0;
+
+    console.log('this is product data', productData);
 
     if (isLoading) {
         return (
@@ -40,6 +85,8 @@ const ProductInfo = () => {
             </Flex>
         );
     }
+
+    console.log('this is selected price', selectedPrice);
 
     return (
         <Flex
@@ -84,6 +131,8 @@ const ProductInfo = () => {
                                         handle: productData.handle,
                                         thumbnail: productData.thumbnail,
                                         title: productData.title,
+                                        price: selectedPrice || '',
+                                        productVariantId: variantId || null,
                                     });
                                 }}
                                 className="text-white text-6xl cursor-pointer"
@@ -97,6 +146,8 @@ const ProductInfo = () => {
                                         handle: productData.handle,
                                         thumbnail: productData.thumbnail,
                                         title: productData.title,
+                                        price: selectedPrice || '',
+                                        productVariantId: variantId || null,
                                     });
                                 }}
                                 className="text-white text-6xl cursor-pointer"

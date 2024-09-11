@@ -120,7 +120,7 @@ const WishlistDropdown: React.FC<WishlistPopoverItemProps> = () => {
                                                         key={product.id}
                                                     >
                                                         <Popover.Button>
-                                                            {({}) =>
+                                                            {({ }) =>
                                                                 product ? ( // Check if the product exists
                                                                     <LocalizedClientLink
                                                                         href={`/products/${product.handle}`}
@@ -182,7 +182,7 @@ const WishlistDropdown: React.FC<WishlistPopoverItemProps> = () => {
                                             </div>
                                             <span>Your Wishlist is empty.</span>
                                             <div>
-                                                <LocalizedClientLink href="/store">
+                                                <LocalizedClientLink href="/shop">
                                                     <>
                                                         <span className="sr-only">
                                                             Go to all products

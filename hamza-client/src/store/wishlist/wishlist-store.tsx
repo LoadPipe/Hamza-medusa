@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import axios from 'axios';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import wishlist from '@/components/wishlist-dropdown/icon/wishlist-icon';
+import { getWishlist } from '@lib/data/index';
 
 export type WishlistProduct = {
     id: string;
@@ -10,6 +11,8 @@ export type WishlistProduct = {
     title: string;
     handle: string;
     description: string;
+    price: string;
+    productVariantId: string | null;
 };
 
 type Wishlist = {
@@ -17,12 +20,11 @@ type Wishlist = {
     products: WishlistProduct[];
 };
 
-// TODO: clean up this any cast after mutations work
 type WishlistType = {
     wishlist: Wishlist;
     loadWishlist: (customer_id: string) => Promise<void>;
     addWishlistProduct: (product: WishlistProduct) => Promise<void>;
-    removeWishlistProduct: (product_id: string) => Promise<void>; // Change here
+    removeWishlistProduct: (product_id: string) => Promise<void>;
     updateAuthentication: (status: boolean) => void;
     isCustomerAuthenticated: boolean;
 };
@@ -59,10 +61,9 @@ const useWishlistStore = create<WishlistType>()(
                     product_id
                 );
                 const { wishlist } = get();
-                // console.log('Current items:', wishlist);
                 set((state) => {
                     const filteredItems = wishlist.products.filter(
-                        (p) => p.id !== product_id // Corrected to filter by product_id
+                        (p) => p.id !== product_id
                     );
                     console.log('Filtered items:', filteredItems);
                     return {
@@ -74,24 +75,26 @@ const useWishlistStore = create<WishlistType>()(
                 });
             },
             loadWishlist: async (customer_id) => {
-                // console.log('Loading wishlist-dropdown');
                 try {
-                    //TODO: MOVE TO INDEX.TS
-                    const response = await axios.get(
-                        `${BACKEND_URL}/custom/wishlist?customer_id=${customer_id}`
-                    );
-                    const items = response.data.items;
-                    const products = items.map((item: any) => item.product);
-                    // console.log('Wishlist products:', products);
+                    const response = await getWishlist(customer_id);
+                    const items = response.items;
+                    const products = items.map((item: any) => ({
+                        id: item.product.id,
+                        thumbnail: item.product.thumbnail,
+                        title: item.product.title,
+                        handle: item.product.handle,
+                        description: item.product.description,
+                        price: item.product.price, // Added price mapping
+                    }));
                     if (Array.isArray(items)) {
                         set({ wishlist: { products } });
                     } else {
                         console.error(
-                            'Failed to load wishlist-dropdown: Invalid data format'
+                            'Failed to load wishlist: Invalid data format'
                         );
                     }
                 } catch (error) {
-                    console.error('Failed to load wishlist-dropdown:', error);
+                    console.error('Failed to load wishlist:', error);
                 }
             },
         }),

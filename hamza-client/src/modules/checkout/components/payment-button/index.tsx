@@ -4,7 +4,6 @@ import {
     IWalletPaymentHandler,
     FakeWalletPaymentHandler,
     MassmarketWalletPaymentHandler,
-    SwitchWalletPaymentHandler,
     LiteSwitchWalletPaymentHandler,
     DirectWalletPaymentHandler,
 } from './payment-handlers';
@@ -18,12 +17,10 @@ import { ethers, BigNumberish } from 'ethers';
 import { useCompleteCart, useUpdateCart } from 'medusa-react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { clearCart } from '@lib/data';
-import {
-    getMassmarketPaymentAddress,
-    getMasterSwitchAddress,
-} from 'contracts.config';
+import { clearCart, finalizeCheckout, getCheckoutData } from '@lib/data';
 import toast from 'react-hot-toast';
+import { getServerConfig } from '@lib/data/index';
+import { getClientCookie } from '@lib/util/get-client-cookies';
 
 //TODO: we need a global common function to replace this
 const MEDUSA_SERVER_URL =
@@ -121,16 +118,15 @@ const CryptoPaymentButton = ({
 
     // Get the prescribed checkout mode from the server
     const getCheckoutMode = async () => {
-        //TODO: MOVE TO INDEX.TS
-        const response = await axios.get(`${MEDUSA_SERVER_URL}/custom/config`);
-        return response.data?.checkout_mode?.trim()?.toUpperCase();
+        const response: any = await getServerConfig();
+        return response.checkout_mode?.trim()?.toUpperCase();
     };
 
     //displays error to user
     const displayError = (errMsg: string) => {
         setErrorMessage(errMsg);
         toast.error(errMsg);
-    }
+    };
 
     /**
      * Sends the given payment data to the Switch by way of the user's connnected
@@ -178,31 +174,19 @@ const CryptoPaymentButton = ({
             }
 
             //get the handler to return value
-            return await handler.doWalletPayment(
+            const output = await handler.doWalletPayment(
                 provider,
                 signer,
                 chainId,
                 data
             );
+
+            return output;
         } catch (e) {
             console.error('error has occured during transaction', e);
             displayError('Checkout was not completed.');
             setSubmitting(false);
         }
-    };
-
-    /**
-     * Retrieves data from server that will be needed for checkout, including currencies,
-     * amounts, wallet addresses, etc.
-     * @param cartId
-     * @returns
-     */
-    const retrieveCheckoutData = async (cartId: string) => {
-        //TODO: MOVE TO INDEX.TS
-        const response = await axios.get(
-            `${MEDUSA_SERVER_URL}/custom/checkout?cart_id=${cartId}`
-        );
-        return response.status == 200 && response.data ? response.data : {};
     };
 
     /**
@@ -217,7 +201,9 @@ const CryptoPaymentButton = ({
     ) => {
         //finally, if all good, redirect to order confirmation page
         if (orderId?.length) {
-            router.push(`/${countryCode}/order/confirmed/${orderId}?cart=${cartId}`);
+            router.push(
+                `/${countryCode}/order/confirmed/${orderId}?cart=${cartId}`
+            );
         }
     };
 
@@ -232,7 +218,7 @@ const CryptoPaymentButton = ({
      */
     const completeCheckout = async (cartId: string) => {
         //retrieve data (cart id, currencies, amounts etc.) that will be needed for wallet checkout
-        const data: CheckoutData = await retrieveCheckoutData(cartId);
+        const data: CheckoutData = await getCheckoutData(cartId);
 
         if (data) {
             //this sends the payment to the wallet for on-chain processing
@@ -241,15 +227,13 @@ const CryptoPaymentButton = ({
             //finalize the checkout, if wallet payment was successful
             if (output?.success) {
                 //TODO: MOVE TO INDEX.TS
-                const response = await axios.post(
-                    `${MEDUSA_SERVER_URL}/custom/checkout`,
-                    {
-                        cartProducts: JSON.stringify(cartRef.current),
-                        cart_id: cartId,
-                        transaction_id: output.transaction_id,
-                        payer_address: output.payer_address,
-                        escrow_contract_address: output.escrow_contract_address,
-                    }
+                await finalizeCheckout(
+                    cartId,
+                    output.transaction_id,
+                    output.payer_address,
+                    output.escrow_contract_address,
+                    output.chain_id
+                    //cartRef.current
                 );
 
                 //TODO: examine response
@@ -285,12 +269,18 @@ const CryptoPaymentButton = ({
 
     const cancelOrderFromCart = async () => {
         try {
-            //TODO: MOVE TO INDEX.TS
-            let response = await axios.post(
+            const response = await axios.post(
                 `${MEDUSA_SERVER_URL}/custom/cart/cancel`,
-                { cart_id: cart.id }
+                {
+                    cart_id: cart.id,
+                },
+                {
+                    headers: {
+                        authorization: getClientCookie('_medusa_jwt')('_medusa_jwt'),
+                    },
+                }
             );
-            return;
+            return response;
         } catch (e) {
             console.log('error in cancelling order ', e);
             return;
@@ -302,60 +292,63 @@ const CryptoPaymentButton = ({
      * @returns
      */
     const handlePayment = async () => {
-        try {
-            setSubmitting(true);
+        if (!isConnected) {
+            if (openConnectModal) openConnectModal();
+        } else {
+            try {
+                setSubmitting(true);
 
-            //here connect wallet and sign in, if not connected
-            // causes bug when connected with mobile
-
-            connect();
-
-            updateCart.mutate(
-                { context: {} },
-                {
-                    onSuccess: ({ }) => {
-                        //this calls the CartCompletion routine
-                        completeCart.mutate(void 0, {
-                            onSuccess: async ({ data, type }) => {
-                                //TODO: data is undefined
-                                try {
-                                    //this does wallet payment, and everything after
-                                    completeCheckout(cart.id);
-                                } catch (e) {
-                                    console.error(e);
+                updateCart.mutate(
+                    { context: {} },
+                    {
+                        onSuccess: ({ }) => {
+                            //this calls the CartCompletion routine
+                            completeCart.mutate(void 0, {
+                                onSuccess: async ({ data, type }) => {
+                                    //TODO: data is undefined
+                                    try {
+                                        //this does wallet payment, and everything after
+                                        completeCheckout(cart.id);
+                                    } catch (e) {
+                                        console.error(e);
+                                        setSubmitting(false);
+                                        displayError(
+                                            'Checkout was not completed'
+                                        );
+                                        await cancelOrderFromCart();
+                                    }
+                                },
+                                onError: async (e) => {
                                     setSubmitting(false);
-                                    displayError(
-                                        'Checkout was not completed'
-                                    );
+                                    console.error(e);
+                                    if (
+                                        e.message?.indexOf('status code 401') >=
+                                        0
+                                    ) {
+                                        displayError(
+                                            'Customer not whitelisted'
+                                        );
+                                    } else {
+                                        displayError(
+                                            'Checkout was not completed'
+                                        );
+                                    }
+
+                                    //TODO: this is a really bad way to do this
                                     await cancelOrderFromCart();
-                                }
-                            },
-                            onError: async (e) => {
-                                setSubmitting(false);
-                                if (
-                                    e.message?.indexOf('status code 401') >= 0
-                                ) {
-                                    displayError('Customer not whitelisted');
-                                } else {
-                                    displayError(
-                                        'Checkout was not completed'
-                                    );
-                                }
+                                },
+                            });
+                        },
+                    }
+                );
 
-                                //TODO: this is a really bad way to do this
-                                await cancelOrderFromCart();
-                            },
-                        });
-                    },
-                }
-            );
-
-            return;
-        } catch (e) {
-            console.error(e);
-            setSubmitting(false);
-            displayError('Checkout was not completed');
-            await cancelOrderFromCart();
+                return;
+            } catch (e) {
+                console.error(e);
+                setSubmitting(false);
+                displayError('Checkout was not completed');
+                await cancelOrderFromCart();
+            }
         }
     };
 

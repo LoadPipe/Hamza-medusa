@@ -22,8 +22,8 @@ import {
     TiStarOutline,
 } from 'react-icons/ti';
 import CartPopup from '../../cart-popup';
-import { averageRatings, getStore, reviewCounter } from '@lib/data';
-
+import { getAverageRatings, getStore, getReviewCount } from '@lib/data';
+import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
 const MEDUSA_SERVER_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
 interface PreviewCheckoutProps {
@@ -32,11 +32,8 @@ interface PreviewCheckoutProps {
 
 // TODO: REFACTOR THIS COMPONENT, POST DEMO - GN
 const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
-    const currencies: { [key: string]: 'ETH' | 'USDC' | 'USDT' } = {
-        ETH: 'ETH',
-        USDT: 'USDT',
-        USDC: 'USDC',
-    };
+    const currencies = ['eth', 'usdc', 'usdt'];
+
     const [options, setOptions] = useState<Record<string, string>>({});
     const [cartModalOpen, setCartModalOpen] = useState(false);
     const updateOptions = (update: Record<string, string>) => {
@@ -70,8 +67,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
 
     useEffect(() => {
         const fetchProductReview = async () => {
-            const averageRatingResponse = await averageRatings(productId);
-            const reviewCountResponse = await reviewCounter(productId);
+            const averageRatingResponse = await getAverageRatings(productId);
+            const reviewCountResponse = await getReviewCount(productId);
 
             setAverageRating(averageRatingResponse);
             setReviewCount(reviewCountResponse);
@@ -82,6 +79,23 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
         //     `ReviewCount ${reviewCount} AverageRating ${averageRating}`
         // );
     }, [productId]);
+
+    const showAvailableCurrencies = () => {
+        return (
+            <>
+                {currencies
+                    .filter((currency) => currency !== preferred_currency_code)
+                    .map((currency) => (
+                        <Image
+                            key={currency}
+                            className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
+                            src={currencyIcons[currency]}
+                            alt={currency}
+                        />
+                    ))}
+            </>
+        );
+    };
 
     const variantRecord = useMemo(() => {
         const map: Record<string, Record<string, string>> = {};
@@ -124,18 +138,18 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
     useEffect(() => {
         if (productData && productData.variants) {
             if (!variantId) {
-                console.log(`variantId is not set yet`);
+                console.log(`variantId in PreviewCheckout comp is not set yet`);
                 setVariantId(productData.variants[0].id);
             }
             let selectedProductVariant = productData.variants.find(
                 (a: any) => a.id == productData.variants[0]?.id
                 // (a: any) => a.id == variantId
             );
-            console.log(`variantID is: ${variantId}`);
+            console.log(`variantID in PreviewCheckout comp is: ${variantId}`);
             if (!variantId) {
                 setVariantId(selectedProductVariant.id);
             }
-            console.log(`variantID is: ${variantId}`);
+            console.log(`variantID in PreviewCheckout comp is: ${variantId}`);
 
             setSelectedVariant(selectedProductVariant);
             const price =
@@ -145,7 +159,10 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                         p.currency_code === (preferred_currency_code ?? 'usdc')
                 ) ??
                     selectedProductVariant.prices[0]);
-            // console.log(`price is being set to ${price}`);
+            console.log(
+                'priceData object in PreviewCheckout comp',
+                productData
+            );
             setSelectedPrice(price?.amount ?? 0);
             // console.log(productData);
         }
@@ -267,17 +284,17 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                 >
                     Listing Price
                 </Heading>
-                <Flex gap="10px" mb="-0.5rem">
-                    <CurrencyButtonPreview
-                        width="24px"
-                        height="24px"
-                        currencyName={currencies['USDC']}
+                <Flex gap={{ base: '5px', md: '10px' }} mb="-0.5rem">
+                    <Image
+                        className="h-[14px] w-[14px] md:h-[24px!important] md:w-[24px!important] self-center"
+                        src={currencyIcons[preferred_currency_code ?? 'USDC']}
+                        alt={preferred_currency_code?.toUpperCase() ?? 'USDC'}
                     />
                     <Heading
                         fontSize={{ base: '18px', md: '32px' }}
                         color="white"
                     >
-                        {`${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} ${preferred_currency_code?.toUpperCase() ?? 'USDC'}`}
+                        {`${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} `}
                     </Heading>
                     {/*<Text*/}
                     {/*    style={{ textDecoration: 'line-through' }}*/}
@@ -363,16 +380,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                     Also available in other currencies
                 </Heading>
                 <Flex display={{ base: 'none', md: 'flex' }} gap="10px">
-                    {Object.keys(currencies)
-                        .filter((key: string) => currencies[key] !== 'USDC')
-                        .map((key) => (
-                            <CurrencyButtonPreview
-                                width="20px"
-                                height="20px"
-                                key={key}
-                                currencyName={currencies[key]}
-                            />
-                        ))}
+                    {showAvailableCurrencies()}
                 </Flex>
             </Flex>
             <Divider

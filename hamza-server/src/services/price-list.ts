@@ -9,6 +9,7 @@ import {
     CreatePriceListInput as MedusaCreatePriceListInput,
 } from '@medusajs/medusa/dist/types/price-list';
 import PriceListRepository from '@medusajs/medusa/dist/repositories/price-list';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 type UpdatePriceListInput = MedusaUpdatePriceListInput & {
     store_id?: string;
@@ -21,12 +22,12 @@ type CreatePriceListInput = MedusaCreatePriceListInput & {
 export default class PriceListService extends MedusaPriceListService {
     static LIFE_TIME = Lifetime.SCOPED;
     protected readonly priceListRepository_: typeof PriceListRepository;
-    protected readonly logger: Logger;
+    protected readonly logger: ILogger;
 
     constructor(container) {
         super(container);
         this.priceListRepository_ = container.priceListRepository;
-        this.logger = container.logger;
+        this.logger = createLogger(container, 'PriceListService');
     }
 
     //TODO: any needed functions go here

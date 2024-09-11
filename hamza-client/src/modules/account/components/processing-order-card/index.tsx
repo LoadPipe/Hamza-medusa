@@ -1,14 +1,12 @@
-import { formatAmount } from '@lib/util/prices';
-import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
+import { Box, Flex, Text, Image } from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
-import React, { useEffect, useState } from 'react';
-import { getStore } from '@lib/data';
+import React from 'react';
 type OrderDetails = {
     thumbnail: string;
     title: string;
     description: string;
 };
+import Link from 'next/link';
 
 type Order = {
     id: string;
@@ -34,44 +32,21 @@ type Order = {
 type OrderCardProps = {
     order: Order;
     handle: any;
+    vendorName: string;
+    address: any;
 };
 
-const ProcessingOrderCard = ({ order, handle }: OrderCardProps) => {
-    const [vendor, setVendor] = useState('');
-    const orderString = typeof order.currency_code;
-    // console.log(
-    //     `Order Card details ${JSON.stringify(order.variant.product_id)}`
-    // );
-    // console.log(`Product details ${JSON.stringify(handle)} `);
-
-    const getAmount = (amount?: number | null) => {
-        if (amount === null || amount === undefined) {
-            return;
-        }
-
-        return formatCryptoPrice(amount, order.currency_code || 'USDC');
-    };
-
-    useEffect(() => {
-        // Fetch Vendor Name from product.id
-        const fetchVendor = async () => {
-            try {
-                const data = await getStore(
-                    order.variant.product_id as string
-                );
-                // console.log(`Vendor: ${data}`);
-                setVendor(data);
-            } catch (error) {
-                console.error('Error fetching vendor: ', error);
-            }
-        };
-
-        fetchVendor();
-    }, [order]);
-
+const ProcessingOrderCard = ({
+    order,
+    handle,
+    vendorName,
+    address,
+}: OrderCardProps) => {
     if (!order) {
         return <div>Loading...</div>; // Display loading message if order is undefined
     }
+
+    console.log(`HANDLE ${handle}`);
     return (
         <Box
             // bg={'#272727'}
@@ -89,7 +64,7 @@ const ProcessingOrderCard = ({ order, handle }: OrderCardProps) => {
                     fontWeight="bold"
                     noOfLines={1}
                 >
-                    {vendor}
+                    {vendorName}
                 </Text>
                 <Flex
                     display={{ base: 'none', md: 'flex' }}
@@ -107,13 +82,15 @@ const ProcessingOrderCard = ({ order, handle }: OrderCardProps) => {
                     justifyContent="space-between"
                     flex="1"
                 >
-                    <Image
-                        borderRadius="lg"
-                        width={{ base: '60px', md: '120px' }}
-                        src={order.thumbnail}
-                        alt={`Thumbnail of ${order.title}`}
-                        mr={4}
-                    />
+                    <Link href={`/us/products/${handle}`}>
+                        <Image
+                            borderRadius="lg"
+                            width={{ base: '60px', md: '120px' }}
+                            src={order.thumbnail}
+                            alt={`Thumbnail of ${order.title}`}
+                            mr={4}
+                        />
+                    </Link>
 
                     <Box flex="1">
                         <Flex justifyContent="space-between" direction="row">
@@ -179,8 +156,8 @@ const ProcessingOrderCard = ({ order, handle }: OrderCardProps) => {
                             Address
                         </Text>
                         <Text color={'white'} fontSize="16px">
-                            Rock Rocks Pa Daet Sub-district, 50100, Chiang Mai
-                            CA
+                            {address.address_1} {address.city}{' '}
+                            {address.province} {address.postal_code}
                         </Text>
                     </Box>
                 </Flex>

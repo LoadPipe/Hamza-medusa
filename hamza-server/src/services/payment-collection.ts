@@ -7,6 +7,7 @@ import { CreatePaymentCollectionInput as MedusaCreatePaymentCollectionInput } fr
 import PaymentCollectionRepository from '../repositories/payment-collection';
 import { PaymentCollection } from '../models/payment-collection';
 import { DeepPartial } from 'typeorm';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 type CreatePaymentCollectionInput = MedusaCreatePaymentCollectionInput & {
     store_id?: string;
@@ -15,13 +16,13 @@ type CreatePaymentCollectionInput = MedusaCreatePaymentCollectionInput & {
 export default class PaymentCollectionService extends MedusaPaymentCollectionService {
     static LIFE_TIME = Lifetime.SCOPED;
     protected readonly paymentCollectionRepository_: typeof PaymentCollectionRepository;
-    protected readonly logger: Logger;
+    protected readonly logger: ILogger;
 
     constructor(container) {
         super(container);
         this.paymentCollectionRepository_ =
             container.paymentCollectionRepository;
-        this.logger = container.logger;
+        this.logger = createLogger(container, 'PaymentCollectionService');
     }
 
     async create(

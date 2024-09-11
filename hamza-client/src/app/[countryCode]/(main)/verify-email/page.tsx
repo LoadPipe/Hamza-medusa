@@ -12,6 +12,7 @@ import toast from 'react-hot-toast';
 import { FcGoogle } from 'react-icons/fc';
 import { FaTwitter, FaDiscord } from 'react-icons/fa';
 import { Flex, Text, Heading } from '@chakra-ui/react';
+import { verifyEmail } from '@lib/data';
 
 const VerifyEmail = () => {
     const { authData, setCustomerAuthData } = useCustomerAuthStore();
@@ -26,19 +27,17 @@ const VerifyEmail = () => {
     }
 
     const emailVerificationHandler = async () => {
-        //TODO: MOVE TO INDEX.TS
-        let res = await axios.post(
-            `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/confirmation-token/generate`,
-            { customer_id: authData.customer_id, email: email },
-            {}
-        );
+        if (email === '') {
+            toast.error('Email address cannot be empty!');
+            return;
+        }
 
-        let data = res.data;
-        if (data.status == true) {
+        let res: any = await verifyEmail(authData.customer_id, email);
+        if (res == true) {
             toast.success('Email sent successfully!!');
             router.replace('/');
         } else {
-            toast.error(data.message);
+            toast.error(res.message);
             return;
         }
     };

@@ -17,9 +17,7 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 const queryClient = new QueryClient();
 import { SiweMessage } from 'siwe';
 import { getCustomer, getToken } from '@lib/data';
-import { revalidateTag } from 'next/cache';
 import { signOut } from '@modules/account/actions';
-import { cookies } from 'next/headers';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -60,6 +58,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         if (authData.status === 'authenticated' && customer_id) {
             loadWishlist(customer_id);
+            router.refresh();
         }
     }, [authData.status, customer_id]); // Dependency array includes any state variables that trigger a reload
 
@@ -84,9 +83,9 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         getNonce: async () => {
             console.log('FETCHING NONCE.....');
             const response = await fetch(GET_NONCE);
-            const data = await response.text();
-            console.log('NONCE DATA: ', data);
-            return data;
+            const data = await response.json();
+            console.log('NONCE DATA: ', data.nonce);
+            return data?.nonce ?? '';
         },
 
         createMessage: ({ nonce, address, chainId }) => {
@@ -141,6 +140,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     setCustomerId(data.data.customer_id);
                     console.log('token response is ', tokenResponse);
                     Cookies.set('_medusa_jwt', tokenResponse);
+                    //localStorage.setItem('_medusa_jwt', tokenResponse);
 
                     setCustomerAuthData({
                         token: tokenResponse,

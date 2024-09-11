@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { PencilSquare as Edit, Trash } from '@medusajs/icons';
-import { Button, Heading, clx } from '@medusajs/ui';
+import { Heading, clx } from '@medusajs/ui';
 import { Address, Region } from '@medusajs/medusa';
 
 import useToggleState from '@lib/hooks/use-toggle-state';
@@ -17,7 +17,7 @@ import Spinner from '@modules/common/icons/spinner';
 import { useFormState } from 'react-dom';
 import { SubmitButton } from '@modules/checkout/components/submit-button';
 import toast from 'react-hot-toast';
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex, Text, Button } from '@chakra-ui/react';
 
 type EditAddressProps = {
     region: Region;
@@ -109,20 +109,31 @@ const EditAddress: React.FC<EditAddressProps> = ({
                     </Text>
                 </div>
                 <div className="flex items-center gap-x-4">
-                    <button
-                        className="text-small-regular text-ui-fg-base flex items-center gap-x-2"
+                    <Button
                         onClick={open}
+                        variant="outline"
+                        colorScheme="white"
+                        size="sm"
+                        display="flex"
+                        alignItems="center"
+                        gap={2}
                     >
                         <Edit />
-                        Edit
-                    </button>
-                    <button
-                        className="text-small-regular text-ui-fg-base flex items-center gap-x-2"
+                        <Text>Edit</Text>
+                    </Button>
+
+                    <Button
                         onClick={removeAddress}
+                        variant="outline"
+                        colorScheme="white"
+                        size="sm"
+                        display="flex"
+                        alignItems="center"
+                        gap={2}
                     >
-                        {removing ? <Spinner /> : <Trash />}
-                        Remove
-                    </button>
+                        {removing ? <Spinner size="xs" /> : <Trash />}
+                        <Text>Remove</Text>
+                    </Button>
                 </div>
             </div>
 

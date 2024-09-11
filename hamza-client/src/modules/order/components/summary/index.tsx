@@ -1,22 +1,20 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import {
-    Box,
-    Flex,
-    Heading,
-    Text,
-    Button,
-    Stack,
-    Divider,
-} from '@chakra-ui/react';
+import { Flex, Text, Divider } from '@chakra-ui/react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import Thumbnail from '@modules/products/components/thumbnail';
 import Tweet from '@/components/tweet';
-import { useRouter, useParams } from 'next/navigation';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import Image from 'next/image';
+import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
+import { getOrderSummary } from '@lib/data/index';
+import { Cart, Order } from '@medusajs/medusa';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
+type SummaryProps = {
+    cart_id: string;
+    cart: Cart;
+    order: Order;
+};
 
 interface Product {
     store_id: string;
@@ -51,23 +49,15 @@ interface Product {
     metadata: Record<string, any> | null;
 }
 
-const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
+const Summary: React.FC<SummaryProps> = ({ cart_id, cart, order }) => {
     const [products, setProducts] = useState<Product[]>([]);
-    const router = useRouter();
-    const { countryCode } = useParams();
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                //TODO: MOVE TO INDEX.TS
-                const response = await axios.post(
-                    `${BACKEND_URL}/custom/order/complete-template`,
-                    {
-                        cart_id: cart_id,
-                    }
-                );
+                const response = await getOrderSummary(cart_id);
                 // Assuming the response contains the products array in `response.data.products`
-                const fetchedProducts: Product[] = response.data.cart || [];
+                const fetchedProducts: Product[] = response.items || [];
                 console.log(`Fetched products: ${JSON.stringify(response)}`);
                 setProducts(fetchedProducts);
             } catch (error) {
@@ -79,96 +69,113 @@ const Summary: React.FC<{ cart_id: string }> = ({ cart_id }) => {
         fetchProducts();
     }, [cart_id]);
 
+    console.log(products);
+    console.log('this is cart', cart.items);
+    console.log('this is order', order);
+
     return (
         <Flex direction="column" width={'100%'}>
             <Text fontWeight={600}>Your Order</Text>
-            {products.map((product) => (
-                <Box key={product.id} mt="1rem">
-                    <Flex flexDir={'row'}>
-                        <LocalizedClientLink
-                            href={`/products/${product.handle}`}
+            {products.map((product, index) => (
+                <Flex key={product.id} width={'100%'} flexDir={'column'}>
+                    <Divider
+                        mt="1rem"
+                        mb="0.5rem"
+                        display={index !== 0 ? 'flex' : 'none'}
+                        borderColor={'#555555'}
+                    />
+                    <Flex mt="1rem" height={'70px'} width={'100%'}>
+                        <Flex flexDir={'column'}>
+                            <LocalizedClientLink
+                                href={`/products/${product.handle}`}
+                            >
+                                <Flex width={'55px'} height={'55px'}>
+                                    <Thumbnail
+                                        thumbnail={product.thumbnail}
+                                        images={[]}
+                                        size="small"
+                                    />
+                                </Flex>
+                            </LocalizedClientLink>
+                        </Flex>
+                        <Text
+                            ml="1rem"
+                            maxW={{ base: '200px', md: '336px' }}
+                            height={'46px'}
+                            width={'100%'}
+                            fontSize={{ base: '14px', md: '16px' }}
+                            noOfLines={2}
                         >
-                            <Flex width={'55px'} height={'55px'}>
-                                <Thumbnail
-                                    thumbnail={product.thumbnail}
-                                    images={[]}
-                                    size="small"
-                                />
-                            </Flex>
-                        </LocalizedClientLink>
-                        <Text ml="1rem" noOfLines={1}>
                             {product.title}
                         </Text>
+
                         <Flex ml="auto">
+                            <Flex
+                                height={'22px'}
+                                alignItems={'center'}
+                                mb="auto"
+                            >
+                                <Image
+                                    className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                                    src={currencyIcons[product.currency_code]}
+                                    alt={product.currency_code}
+                                />
+                            </Flex>
+                            <Flex
+                                height={'22px'}
+                                alignItems={'center'}
+                                mb="auto"
+                            >
+                                <Text
+                                    ml="0.4rem"
+                                    alignSelf={'center'}
+                                    fontSize={{ base: '14px', md: '16px' }}
+                                >
+                                    {formatCryptoPrice(
+                                        cart.items[index].quantity *
+                                            product.unit_price,
+                                        product.currency_code
+                                    )}
+                                </Text>
+                            </Flex>
+                        </Flex>
+                    </Flex>
+                    {/* Twitter and Quantity */}
+                    <Flex alignItems={'center'} height={'50px'} width={'100%'}>
+                        <Flex alignSelf={'center'}>
                             <Tweet
                                 productHandle={product.handle}
                                 isPurchased={true}
                             />
                         </Flex>
-                    </Flex>
-
-                    <Flex mt="2rem">
-                        <Text>Subtotal</Text>
-                        <Text ml="auto">
-                            {formatCryptoPrice(
-                                product.unit_price,
-                                product.currency_code
-                            )}{' '}
-                            {product.currency_code.toUpperCase()}
+                        <Text ml="1rem" fontSize={{ base: '14px', md: '16px' }}>
+                            Quantity: {cart.items[index].quantity}
                         </Text>
                     </Flex>
-                </Box>
+                </Flex>
             ))}
+            {/* {subtotals[currencyCode] && (
+                <Flex justifyContent={'space-between'}>
+                    <Text
+                        alignSelf={'center'}
+                        fontSize={{ base: '14px', md: '16px' }}
+                    >
+                        Subtotal
+                    </Text>
+
+                    <Text
+                        fontSize={{ base: '14px', md: '16px' }}
+                        alignSelf="center"
+                    >
+                        {formatCryptoPrice(
+                            subtotals[currencyCode],
+                            currencyCode
+                        )}
+                    </Text>
+                </Flex>
+            )} */}
         </Flex>
     );
 };
 
 export default Summary;
-
-{
-    /* <Tweet productHandle={product.handle} isPurchased={true} />
-<Box mb={4}>
-    <Heading size="md">{product.title}</Heading>
-    <div
-        className="mt-2"
-        dangerouslySetInnerHTML={{
-            __html: product.description,
-        }}
-    ></div>
-</Box>
-<Stack spacing={2}>
-    <Text>
-        {new Date(product.created_at).toDateString()}
-    </Text>
-    <Text>Product SKU: {product.id}</Text>
-    <Text>Order ID: {product.order_id}</Text>
-    <Text>
-        {formatCryptoPrice(
-            product.unit_price,
-            product.currency_code
-        )}{' '}
-        {product.currency_code.toUpperCase()}
-    </Text>
-    <Text>Store Name: {product.store_name}</Text>
-</Stack>
-
-<LocalizedClientLink href={`/products/${product.handle}`}>
-    <Thumbnail
-        thumbnail={product.thumbnail}
-        images={[]}
-        size="small"
-    />
-</LocalizedClientLink>
-<Button
-    my={4}
-    backgroundColor={'black'}
-    color="white"
-    onClick={() =>
-        router.push(
-            `/${countryCode}/vendor/${product.store_name}`
-        )
-    }
->
-    Vendor Store
-</Button> */
-}

@@ -2,9 +2,11 @@
 
 import { cookies } from 'next/headers';
 import {
+    addDefaultShippingMethod,
     addShippingMethod,
     completeCart,
     deleteDiscount,
+    getCart,
     setPaymentSession,
     updateCart,
 } from '@lib/data';
@@ -12,6 +14,7 @@ import { GiftCard, StorePostCartsCartReq } from '@medusajs/medusa';
 import { revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { medusaClient } from '@lib/config';
+import axios from 'axios';
 
 export async function cartUpdate(data: StorePostCartsCartReq) {
     const cartId = cookies().get('_medusa_cart_id')?.value;
@@ -132,8 +135,6 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
         data.email = email;
     }
 
-    console.log('Data sent', data);
-
     data.billing_address = data.shipping_address;
 
     try {
@@ -143,8 +144,22 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
         return error.toString();
     }
 
+    try {
+        //const cart = await getCart(cartId);
+        //await setShippingMethod(cart?.shipping_methods[0]?.shipping_option_id);
+        await addDefaultShippingMethod(cartId);
+    } catch (error: any) {
+        return error.toString();
+    }
+
+    try {
+        await setPaymentMethod('crypto');
+    } catch (error: any) {
+        return error.toString();
+    }
+
     redirect(
-        `/${process.env.NEXT_PUBLIC_FORCE_US_COUNTRY ? 'us' : formData.get('shipping_address.country_code')}/checkout?step=delivery&cart=${cartId}`
+        `/${process.env.NEXT_PUBLIC_FORCE_US_COUNTRY ? 'us' : formData.get('shipping_address.country_code')}/checkout?step=review&cart=${cartId}`
     );
 }
 
@@ -154,6 +169,7 @@ export async function setShippingMethod(shippingMethodId: string) {
     if (!cartId) throw new Error('No cartId cookie found');
 
     try {
+        console.log('set shipping method to ', shippingMethodId);
         await addShippingMethod({ cartId, shippingMethodId });
         revalidateTag('cart');
     } catch (error: any) {

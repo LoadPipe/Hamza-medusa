@@ -1,56 +1,69 @@
-import { MedusaRequest, MedusaResponse, Logger, CartService, PaymentSession, Cart, PaymentSessionResponse } from '@medusajs/medusa';
+import {
+    MedusaRequest,
+    MedusaResponse,
+    Logger,
+    CartService,
+    PaymentSession,
+    Cart,
+    PaymentSessionResponse,
+} from '@medusajs/medusa';
 import PaymentSessionRepository from '@medusajs/medusa/dist/repositories/payment-session';
 import { RouteHandler } from '../../route-handler';
 
 /*
- * This route does one thing: it updates the cart_id property of an existing payment session. 
- * This exists to fix a bug in which the frontend creates a payment_session, but leaves the 
- * cart_id null. 
+ * This route does one thing: it updates the cart_id property of an existing payment session.
+ * This exists to fix a bug in which the frontend creates a payment_session, but leaves the
+ * cart_id null.
  */
 export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
     const cartService: CartService = req.scope.resolve('cartService');
-    const paymentSessionRepository: typeof PaymentSessionRepository = req.scope.resolve('paymentSessionRepository');
+    const paymentSessionRepository: typeof PaymentSessionRepository =
+        req.scope.resolve('paymentSessionRepository');
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'PUT', '/custom/payment-session',
+        req,
+        res,
+        'PUT',
+        '/custom/payment-session',
         ['cart_id', 'payment_session_id']
     );
 
     await handler.handle(async () => {
-        //validate required parameters 
-        if (!handler.requireParams(['cart_id', 'payment_session_id']))
-            return;
+        //validate required parameters
+        if (!handler.requireParams(['cart_id', 'payment_session_id'])) return;
 
         const cartId = handler.inputParams.cart_id;
-        const paymentSessionId = handler.inputParams.cart_id;
+        const paymentSessionId = handler.inputParams.payment_session_id;
 
         //check for existence of cart
         const cart: Cart = await cartService.retrieve(cartId);
         if (!cart) {
-            res.status(404).json({ message: `Cart ${cartId} not found.` });
-        }
-        if (!cart) {
-            res.status(404).json({ message: `Cart ${cartId} not found.` });
+            handler.returnStatusWithMessage(404, `Cart ${cartId} not found.`);
         }
 
         //check for existence of payment session
-        const paymentSession: PaymentSession = await paymentSessionRepository.findOne(
-            { where: { id: paymentSessionId } }
-        );
+        const paymentSession: PaymentSession =
+            await paymentSessionRepository.findOne({
+                where: { id: paymentSessionId },
+            });
         if (!paymentSession) {
-            res.status(404).json({ message: `PaymentSession ${paymentSessionId} not found.` });
+            handler.returnStatusWithMessage(
+                404,
+                `PaymentSession ${paymentSessionId} not found.`
+            );
         }
 
-        //secure 
-        if (!handler.enforceCustomerId(cart.customer_id))
-            return;
+        //secure
+        if (!handler.enforceCustomerId(cart.customer_id)) return;
 
         //save the payment session
-        let session = await paymentSessionRepository.save([{
-            id: paymentSessionId,
-            cart_id: handler.inputParams.cart_id
-        }]);
+        let session = await paymentSessionRepository.save([
+            {
+                id: paymentSessionId,
+                cart_id: handler.inputParams.cart_id,
+            },
+        ]);
 
-        return res.status(200).send(session);
+        return handler.returnStatus(200, session);
     });
 };

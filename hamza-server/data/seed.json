@@ -1,12 +1,6 @@
 {
     "store": {
-        "currencies": [
-            "eur",
-            "usd",
-            "eth",
-            "usdc",
-            "usdt"
-        ],
+        "currencies": ["eur", "usd", "eth", "usdc", "usdt"],
         "default_currency_code": "eth"
     },
     "users": [
@@ -23,37 +17,18 @@
             "name": "EU",
             "currency_code": "eth",
             "tax_rate": 0,
-            "payment_providers": [
-                "crypto"
-            ],
-            "fulfillment_providers": [
-                "manual"
-            ],
-            "countries": [
-                "gb",
-                "de",
-                "dk",
-                "se",
-                "fr",
-                "es",
-                "it"
-            ]
+            "payment_providers": ["crypto"],
+            "fulfillment_providers": ["manual"],
+            "countries": ["gb", "de", "dk", "se", "fr", "es", "it"]
         },
         {
             "id": "test-region-na",
             "name": "NA",
             "currency_code": "eth",
             "tax_rate": 0,
-            "payment_providers": [
-                "crypto"
-            ],
-            "fulfillment_providers": [
-                "manual"
-            ],
-            "countries": [
-                "us",
-                "ca"
-            ]
+            "payment_providers": ["crypto"],
+            "fulfillment_providers": ["manual"],
+            "countries": ["us", "ca"]
         }
     ],
     "shipping_options": [
@@ -197,7 +172,7 @@
             "title": "INDOOR/OUTDOOR WALL LAMP M - W100 X D4",
             "categories": [
                 {
-                    "id": "pcat_lighting"
+                    "id": "pcat_home"
                 }
             ],
             "collection_id": "pcol_lighting",
@@ -216,9 +191,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -252,7 +225,7 @@
             "title": "Tripod RGB Spine",
             "categories": [
                 {
-                    "id": "pcat_lighting"
+                    "id": "pcat_home"
                 }
             ],
             "collection_id": "pcol_lighting",
@@ -271,9 +244,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -307,7 +278,7 @@
             "title": "RGB LED Strips",
             "categories": [
                 {
-                    "id": "pcat_lighting"
+                    "id": "pcat_home"
                 }
             ],
             "collection_id": "pcol_lighting",
@@ -326,9 +297,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -362,7 +331,7 @@
             "title": "LED RGB Wall Art",
             "categories": [
                 {
-                    "id": "pcat_lighting"
+                    "id": "pcat_home"
                 }
             ],
             "collection_id": "pcol_lighting",
@@ -381,9 +350,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -417,7 +384,7 @@
             "title": "3D Infinity Mirror",
             "categories": [
                 {
-                    "id": "pcat_lighting"
+                    "id": "pcat_home"
                 }
             ],
             "collection_id": "pcol_lighting",
@@ -436,9 +403,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -472,7 +437,7 @@
             "title": "12 Pack Black Recessed Lights 6 Inch, Dimmable",
             "categories": [
                 {
-                    "id": "pcat_lighting"
+                    "id": "pcat_electronics"
                 }
             ],
             "collection_id": "pcol_lighting",
@@ -491,9 +456,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -527,7 +490,7 @@
             "title": "Sony WH-1000XM4",
             "categories": [
                 {
-                    "id": "headphones"
+                    "id": "pcat_electronics"
                 }
             ],
             "collection_id": "pcol_01HSGAM4918EX0DETKY6E662WT",
@@ -536,16 +499,11 @@
             "handle": "headphones",
             "is_giftcard": false,
             "weight": 69,
-            "images": [
-                "https://images.hamza.biz/headphones.webp"
-            ],
+            "images": ["https://images.hamza.biz/headphones.webp"],
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black",
-                        "Silver"
-                    ]
+                    "values": ["Black", "Silver"]
                 }
             ],
             "variants": [
@@ -579,7 +537,7 @@
             "title": "The Futurist Visor",
             "categories": [
                 {
-                    "id": "vr_headphones"
+                    "id": "pcat_gaming"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW631SN2",
@@ -588,16 +546,11 @@
             "handle": "headset_future",
             "is_giftcard": false,
             "weight": 300,
-            "images": [
-                "https://images.hamza.biz/dalle_black_vr.webp"
-            ],
+            "images": ["https://images.hamza.biz/dalle_black_vr.webp"],
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Sleek Black",
-                        "Space Gray"
-                    ]
+                    "values": ["Sleek Black", "Space Gray"]
                 }
             ],
             "variants": [
@@ -631,7 +584,7 @@
             "title": "The Cybernetic Headset",
             "categories": [
                 {
-                    "id": "vr_headphones"
+                    "id": "pcat_gaming"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW631SN2",
@@ -640,16 +593,11 @@
             "handle": "headset_audio",
             "is_giftcard": false,
             "weight": 260,
-            "images": [
-                "https://images.hamza.biz/dalle_vr.webp"
-            ],
+            "images": ["https://images.hamza.biz/dalle_vr.webp"],
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Robot White",
-                        "Electronic Blue"
-                    ]
+                    "values": ["Robot White", "Electronic Blue"]
                 }
             ],
             "variants": [
@@ -683,7 +631,7 @@
             "title": "The Streamline Rift",
             "categories": [
                 {
-                    "id": "vr_headphones"
+                    "id": "pcat_gaming"
                 }
             ],
             "collection_id": "pcol_01HSGAM4918EX0DETKY6E662WT",
@@ -692,16 +640,11 @@
             "handle": "headset_sleek",
             "is_giftcard": false,
             "weight": 290,
-            "images": [
-                "https://images.hamza.biz/dalle_vr_2.webp"
-            ],
+            "images": ["https://images.hamza.biz/dalle_vr_2.webp"],
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Racing Red",
-                        "Midnight Black"
-                    ]
+                    "values": ["Racing Red", "Midnight Black"]
                 }
             ],
             "variants": [
@@ -735,7 +678,7 @@
             "title": "The Orbit Headset",
             "categories": [
                 {
-                    "id": "vr_headphones"
+                    "id": "pcat_gaming"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW631SN2",
@@ -744,16 +687,11 @@
             "handle": "headset_aural",
             "is_giftcard": false,
             "weight": 275,
-            "images": [
-                "https://images.hamza.biz/dalle_vr_headset.webp"
-            ],
+            "images": ["https://images.hamza.biz/dalle_vr_headset.webp"],
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Galactic Black",
-                        "Stellar White"
-                    ]
+                    "values": ["Galactic Black", "Stellar White"]
                 }
             ],
             "variants": [
@@ -787,7 +725,7 @@
             "title": "The Visionary",
             "categories": [
                 {
-                    "id": "vr_headphones"
+                    "id": "pcat_gaming"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW631SN2",
@@ -796,16 +734,11 @@
             "handle": "headset_vision",
             "is_giftcard": false,
             "weight": 310,
-            "images": [
-                "https://images.hamza.biz/dalle_vr_headset3.webp"
-            ],
+            "images": ["https://images.hamza.biz/dalle_vr_headset3.webp"],
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Visionary Black",
-                        "Innovator Ivory"
-                    ]
+                    "values": ["Visionary Black", "Innovator Ivory"]
                 }
             ],
             "variants": [
@@ -839,7 +772,7 @@
             "title": "The Echo Shade",
             "categories": [
                 {
-                    "id": "vr_headphones"
+                    "id": "pcat_gaming"
                 }
             ],
             "collection_id": "pcol_01HSGAM4918EX0DETKY6E662WT",
@@ -848,16 +781,11 @@
             "handle": "headset_echo",
             "is_giftcard": false,
             "weight": 69,
-            "images": [
-                "https://images.hamza.biz/vr_3.webp"
-            ],
+            "images": ["https://images.hamza.biz/vr_3.webp"],
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Eclipse Black",
-                        "Solar White"
-                    ]
+                    "values": ["Eclipse Black", "Solar White"]
                 }
             ],
             "variants": [
@@ -891,7 +819,7 @@
             "title": "The Nova Gear",
             "categories": [
                 {
-                    "id": "vr_headphones"
+                    "id": "pcat_gaming"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW631SN2",
@@ -900,16 +828,11 @@
             "handle": "headset_nova",
             "is_giftcard": false,
             "weight": 285,
-            "images": [
-                "https://images.hamza.biz/sony_wh1000xm4.jpeg"
-            ],
+            "images": ["https://images.hamza.biz/sony_wh1000xm4.jpeg"],
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Nebula Navy",
-                        "Cosmic Chrome"
-                    ]
+                    "values": ["Nebula Navy", "Cosmic Chrome"]
                 }
             ],
             "variants": [
@@ -943,7 +866,7 @@
             "title": "Medusa T-Shirt",
             "categories": [
                 {
-                    "id": "pcat_shirts"
+                    "id": "pcat_fashion"
                 }
             ],
             "subtitle": null,
@@ -961,19 +884,11 @@
             "options": [
                 {
                     "title": "Size",
-                    "values": [
-                        "S",
-                        "M",
-                        "L",
-                        "XL"
-                    ]
+                    "values": ["S", "M", "L", "XL"]
                 },
                 {
                     "title": "Color",
-                    "values": [
-                        "Black",
-                        "White"
-                    ]
+                    "values": ["Black", "White"]
                 }
             ],
             "variants": [
@@ -1199,7 +1114,7 @@
             "title": "Medusa Sweatshirt",
             "categories": [
                 {
-                    "id": "pcat_shirts"
+                    "id": "pcat_fashion"
                 }
             ],
             "collection_id": "pcol_01HRVF8HCVY8B00RF5S54THTPC",
@@ -1215,12 +1130,7 @@
             "options": [
                 {
                     "title": "Size",
-                    "values": [
-                        "S",
-                        "M",
-                        "L",
-                        "XL"
-                    ]
+                    "values": ["S", "M", "L", "XL"]
                 }
             ],
             "variants": [
@@ -1326,7 +1236,7 @@
             "title": "Medusa Sweatpants",
             "categories": [
                 {
-                    "id": "pcat_pants"
+                    "id": "pcat_fashion"
                 }
             ],
             "collection_id": "pcol_01HRVF8HCVY8B00RF5S54THTPC",
@@ -1342,12 +1252,7 @@
             "options": [
                 {
                     "title": "Size",
-                    "values": [
-                        "S",
-                        "M",
-                        "L",
-                        "XL"
-                    ]
+                    "values": ["S", "M", "L", "XL"]
                 }
             ],
             "variants": [
@@ -1453,7 +1358,7 @@
             "title": "Medusa Shorts",
             "categories": [
                 {
-                    "id": "pcat_merch"
+                    "id": "pcat_fashion"
                 }
             ],
             "collection_id": "pcol_01HRVF8HCVY8B00RF5S54THTPC",
@@ -1469,12 +1374,7 @@
             "options": [
                 {
                     "title": "Size",
-                    "values": [
-                        "S",
-                        "M",
-                        "L",
-                        "XL"
-                    ]
+                    "values": ["S", "M", "L", "XL"]
                 }
             ],
             "variants": [
@@ -1580,10 +1480,10 @@
             "title": "Medusa Hoodie",
             "categories": [
                 {
-                    "id": "pcat_merch"
+                    "id": "pcat_fashion"
                 },
                 {
-                    "id": "pcat_hidden_featured"
+                    "id": "pcat_featured"
                 }
             ],
             "collection_id": "pcol_01HRVF8HCVY8B00RF5S54THTPC",
@@ -1599,12 +1499,7 @@
             "options": [
                 {
                     "title": "Size",
-                    "values": [
-                        "S",
-                        "M",
-                        "L",
-                        "XL"
-                    ]
+                    "values": ["S", "M", "L", "XL"]
                 }
             ],
             "variants": [
@@ -1710,10 +1605,10 @@
             "title": "Medusa Longsleeve",
             "categories": [
                 {
-                    "id": "pcat_shirts"
+                    "id": "pcat_fashion"
                 },
                 {
-                    "id": "pcat_hidden_featured"
+                    "id": "pcat_featured"
                 }
             ],
             "collection_id": "pcol_01HRVF8HCVY8B00RF5S54THTPC",
@@ -1729,12 +1624,7 @@
             "options": [
                 {
                     "title": "Size",
-                    "values": [
-                        "S",
-                        "M",
-                        "L",
-                        "XL"
-                    ]
+                    "values": ["S", "M", "L", "XL"]
                 }
             ],
             "variants": [
@@ -1840,10 +1730,10 @@
             "title": "Medusa Coffee Mug",
             "categories": [
                 {
-                    "id": "pcat_merch"
+                    "id": "pcat_home"
                 },
                 {
-                    "id": "pcat_hidden_featured"
+                    "id": "pcat_featured"
                 }
             ],
             "collection_id": "pcol_01HRVF8HCVY8B00RF5S54THTPC",
@@ -1858,9 +1748,7 @@
             "options": [
                 {
                     "title": "Size",
-                    "values": [
-                        "One Size"
-                    ]
+                    "values": ["One Size"]
                 }
             ],
             "variants": [
@@ -1894,7 +1782,7 @@
             "title": "DJI Mini 4 Pro",
             "categories": [
                 {
-                    "id": "pcat_drone"
+                    "id": "pcat_electronics"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW631DR0",
@@ -1913,9 +1801,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Silver"
-                    ]
+                    "values": ["Silver"]
                 }
             ],
             "variants": [
@@ -1949,7 +1835,7 @@
             "title": "DJI Avata Explorer",
             "categories": [
                 {
-                    "id": "pcat_drone"
+                    "id": "pcat_electronics"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW631DR0",
@@ -1968,9 +1854,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Silver"
-                    ]
+                    "values": ["Silver"]
                 }
             ],
             "variants": [
@@ -2004,7 +1888,7 @@
             "title": "DJI Mini 3 Pro",
             "categories": [
                 {
-                    "id": "pcat_drone"
+                    "id": "pcat_electronics"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW631DR0",
@@ -2023,9 +1907,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "White"
-                    ]
+                    "values": ["White"]
                 }
             ],
             "variants": [
@@ -2059,7 +1941,7 @@
             "title": "DJI Mini 3 Pro with Flagship Triple-Camera",
             "categories": [
                 {
-                    "id": "pcat_drone"
+                    "id": "pcat_electronics"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW631DR0",
@@ -2078,9 +1960,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Silver"
-                    ]
+                    "values": ["Silver"]
                 }
             ],
             "variants": [
@@ -2114,7 +1994,7 @@
             "title": "FIFISH V-EVO 4K60FPS Underwater Drone",
             "categories": [
                 {
-                    "id": "pcat_drone"
+                    "id": "pcat_electronics"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW631DR0",
@@ -2133,9 +2013,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "White"
-                    ]
+                    "values": ["White"]
                 }
             ],
             "variants": [
@@ -2169,7 +2047,7 @@
             "title": "QYSEA Underwater Drone",
             "categories": [
                 {
-                    "id": "pcat_drone"
+                    "id": "pcat_electronics"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW631DR0",
@@ -2188,9 +2066,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -2224,7 +2100,7 @@
             "title": "ThorRobotics Underwater Drone",
             "categories": [
                 {
-                    "id": "pcat_drone"
+                    "id": "pcat_electronics"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW631DR0",
@@ -2243,9 +2119,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Silver"
-                    ]
+                    "values": ["Silver"]
                 }
             ],
             "variants": [
@@ -2279,7 +2153,7 @@
             "title": "LEGO Star Wars Luke Skywalker Helmet",
             "categories": [
                 {
-                    "id": "pcat_lego"
+                    "id": "pcat_hobbies"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW63LEG0",
@@ -2298,9 +2172,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "White"
-                    ]
+                    "values": ["White"]
                 }
             ],
             "variants": [
@@ -2334,7 +2206,7 @@
             "title": "LEGO Star Wars R2-D2",
             "categories": [
                 {
-                    "id": "pcat_lego"
+                    "id": "pcat_hobbies"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW63LEG0",
@@ -2353,9 +2225,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "White"
-                    ]
+                    "values": ["White"]
                 }
             ],
             "variants": [
@@ -2389,7 +2259,7 @@
             "title": "LEGO Star Wars Luke Skywalker's Landspeeder",
             "categories": [
                 {
-                    "id": "pcat_lego"
+                    "id": "pcat_hobbies"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW63LEG0",
@@ -2408,9 +2278,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Red"
-                    ]
+                    "values": ["Red"]
                 }
             ],
             "variants": [
@@ -2444,7 +2312,7 @@
             "title": "LEGO: Lord of the Rings: Gandalf Arrives",
             "categories": [
                 {
-                    "id": "pcat_lego"
+                    "id": "pcat_hobbies"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW63LEG0",
@@ -2462,9 +2330,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Brown"
-                    ]
+                    "values": ["Brown"]
                 }
             ],
             "variants": [
@@ -2498,7 +2364,7 @@
             "title": "LEGO Icons The LORD of The RINGS: RIVENDELL",
             "categories": [
                 {
-                    "id": "pcat_lego"
+                    "id": "pcat_hobbies"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW63LEG0",
@@ -2517,9 +2383,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Green"
-                    ]
+                    "values": ["Green"]
                 }
             ],
             "variants": [
@@ -2553,7 +2417,7 @@
             "title": "LEGO Speed Champions 007 Aston Martin DB5",
             "categories": [
                 {
-                    "id": "pcat_lego"
+                    "id": "pcat_hobbies"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW63LEG0",
@@ -2572,9 +2436,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Silver"
-                    ]
+                    "values": ["Silver"]
                 }
             ],
             "variants": [
@@ -2608,7 +2470,7 @@
             "title": "LEGO Icons Corvette Classic Car",
             "categories": [
                 {
-                    "id": "pcat_lego"
+                    "id": "pcat_hobbies"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW63LEG0",
@@ -2627,9 +2489,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Red"
-                    ]
+                    "values": ["Red"]
                 }
             ],
             "variants": [
@@ -2663,7 +2523,7 @@
             "title": "LEGO Icons Chevrolet Camaro Z28",
             "categories": [
                 {
-                    "id": "pcat_lego"
+                    "id": "pcat_hobbies"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW63LEG0",
@@ -2682,9 +2542,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Red"
-                    ]
+                    "values": ["Red"]
                 }
             ],
             "variants": [
@@ -2718,7 +2576,7 @@
             "title": "LEGO Technic PEUGEOT 9X8 24H Le Mans Hybrid Hypercar",
             "categories": [
                 {
-                    "id": "pcat_lego"
+                    "id": "pcat_hobbies"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW63LEG0",
@@ -2737,9 +2595,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Silver"
-                    ]
+                    "values": ["Silver"]
                 }
             ],
             "variants": [
@@ -2773,7 +2629,7 @@
             "title": "LEGO Icons Porsche 911",
             "categories": [
                 {
-                    "id": "pcat_lego"
+                    "id": "pcat_hobbies"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW63LEG0",
@@ -2792,9 +2648,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "White"
-                    ]
+                    "values": ["White"]
                 }
             ],
             "variants": [
@@ -2828,7 +2682,7 @@
             "title": "PASYOU Adjustable Weight Bench Full Body Workout",
             "categories": [
                 {
-                    "id": "pcat_workout"
+                    "id": "pcat_fitness"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW63W0GE",
@@ -2847,9 +2701,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -2883,7 +2735,7 @@
             "title": "Sportsroyals Power Tower Pull Up Dip Station",
             "categories": [
                 {
-                    "id": "pcat_workout"
+                    "id": "pcat_fitness"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW63W0GE",
@@ -2902,9 +2754,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -2938,7 +2788,7 @@
             "title": "Speed and Agility Workout Ladder",
             "categories": [
                 {
-                    "id": "pcat_workout"
+                    "id": "pcat_fitness"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW63W0GE",
@@ -2957,9 +2807,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -2993,7 +2841,7 @@
             "title": "OYGSieg 4 Pack Compression Shirts ",
             "categories": [
                 {
-                    "id": "pcat_workout"
+                    "id": "pcat_fitness"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW63W0GE",
@@ -3012,9 +2860,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3048,7 +2894,7 @@
             "title": "IMFit 5lb-52.5lb Adjustable Dumbbells",
             "categories": [
                 {
-                    "id": "pcat_workout"
+                    "id": "pcat_fitness"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW63W0GE",
@@ -3067,9 +2913,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3103,7 +2947,7 @@
             "title": "SUNPOW Pull Up Assistance Bands",
             "categories": [
                 {
-                    "id": "pcat_workout"
+                    "id": "pcat_fitness"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW63W0GE",
@@ -3121,9 +2965,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3157,7 +2999,7 @@
             "title": "ihuan Ventilated Weight Lifting Gym Workout Gloves",
             "categories": [
                 {
-                    "id": "pcat_workout"
+                    "id": "pcat_fitness"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW63W0GE",
@@ -3175,9 +3017,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3211,7 +3051,7 @@
             "title": "ihuan Lifting Straps for Weightlifting",
             "categories": [
                 {
-                    "id": "pcat_workout"
+                    "id": "pcat_fitness"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW63W0GE",
@@ -3230,9 +3070,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3266,7 +3104,7 @@
             "title": "Resistance Bands",
             "categories": [
                 {
-                    "id": "pcat_workout"
+                    "id": "pcat_fitness"
                 }
             ],
             "collection_id": "pcol_01HSGAMXDJD725MR3VSW63W0GE",
@@ -3285,9 +3123,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Grey"
-                    ]
+                    "values": ["Grey"]
                 }
             ],
             "variants": [
@@ -3340,9 +3176,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3395,9 +3229,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3450,9 +3282,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3505,9 +3335,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3560,9 +3388,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3614,9 +3440,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3669,9 +3493,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3724,9 +3546,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3779,9 +3599,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3834,9 +3652,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3889,9 +3705,7 @@
             "options": [
                 {
                     "title": "HyperX Pulsefire",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3944,9 +3758,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -3999,9 +3811,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -4054,9 +3864,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -4109,9 +3917,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -4164,9 +3970,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -4219,9 +4023,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -4274,9 +4076,7 @@
             "options": [
                 {
                     "title": "Color",
-                    "values": [
-                        "Black"
-                    ]
+                    "values": ["Black"]
                 }
             ],
             "variants": [
@@ -4309,130 +4109,174 @@
     ],
     "categories": [
         {
-            "id": "pcat_pants",
-            "name": "Pants",
-            "rank": 0,
-            "category_children": [],
-            "handle": "pants"
-        },
-        {
-            "id": "pcat_shirts",
-            "name": "Shirts",
-            "rank": 0,
-            "category_children": [],
-            "handle": "shirts"
-        },
-        {
-            "id": "pcat_merch",
-            "name": "Merch",
-            "rank": 0,
-            "category_children": [],
-            "handle": "merch"
-        },
-        {
-            "id": "pcat_hidden_carousel",
-            "name": "Hidden homepage carousel",
-            "rank": 0,
-            "category_children": [],
-            "handle": "hidden-homepage-carousel"
-        },
-        {
-            "id": "pcat_hidden_featured",
-            "name": "Hidden homepage featured",
-            "rank": 0,
-            "category_children": [],
-            "handle": "hidden-homepage-featured-items"
-        },
-        {
-            "id": "headphones",
-            "name": "Headphones",
-            "rank": 1,
-            "category_children": [],
-            "handle": "headphones"
-        },
-        {
-            "id": "vr_headphones",
-            "name": "VR Headphones",
-            "rank": 2,
-            "category_children": [],
-            "handle": "vr_headphones"
-        },
-        {
-            "id": "pcat_lighting",
-            "name": "Home Lighting",
-            "rank": 2,
-            "category_children": [],
-            "handle": "home_light"
-        },
-        {
-            "id": "pcat_drone",
-            "name": "Drones",
-            "rank": 2,
-            "category_children": [],
-            "handle": "drone"
-        },
-        {
-            "id": "pcat_lego",
-            "name": "Lego",
-            "rank": 2,
-            "category_children": [],
-            "handle": "lego"
-        },
-        {
-            "id": "pcat_workout",
-            "name": "Workout",
-            "rank": 2,
-            "category_children": [],
-            "handle": "workout"
-        },
-        {
             "id": "pcat_board_games",
             "name": "Board Games",
             "rank": 2,
             "category_children": [],
-            "handle": "board_games"
+            "handle": "board_games",
+            "metadata": {
+                "icon_url": "https://images.hamza.biz/category-icons/board-games.svg"
+            }
         },
         {
             "id": "pcat_gaming",
             "name": "Gaming",
             "rank": 2,
             "category_children": [],
-            "handle": "gaming"
+            "handle": "gaming",
+            "metadata": {
+                "icon_url": "https://images.hamza.biz/category-icons/gaming.svg"
+            }
         },
         {
-            "id": "pcat_razor",
-            "name": "Razors",
+            "id": "pcat_fitness",
+            "name": "Fitness",
             "rank": 2,
             "category_children": [],
-            "handle": "razor"
+            "handle": "fitness",
+            "metadata": {
+                "icon_url": "https://images.hamza.biz/category-icons/fitness.svg"
+            }
         },
         {
-            "id": "pcat_sound",
-            "name": "Sound",
+            "id": "pcat_gadgets",
+            "name": "Gadgets",
             "rank": 2,
             "category_children": [],
-            "handle": "sound"
+            "handle": "gadgets",
+            "metadata": {
+                "icon_url": "https://images.hamza.biz/category-icons/gadgets.svg"
+            }
         },
         {
-            "id": "pcat_lofi",
-            "name": "Lofi",
+            "id": "pcat_hobbies",
+            "name": "Hobbies",
             "rank": 2,
             "category_children": [],
-            "handle": "lofi"
+            "handle": "hobbies",
+            "metadata": {
+                "icon_url": "https://images.hamza.biz/category-icons/hobbies.svg"
+            }
         },
         {
-            "id": "pcat_shake",
-            "name": "Shake",
+            "id": "pcat_electronics",
+            "name": "Electronics",
             "rank": 2,
             "category_children": [],
-            "handle": "shake"
+            "handle": "electronics",
+            "metadata": {
+                "icon_url": "https://images.hamza.biz/category-icons/electronics.svg"
+            }
         },
         {
-            "id": "pcat_blocks",
-            "name": "Blocks",
+            "id": "pcat_home",
+            "name": "Home",
             "rank": 2,
             "category_children": [],
-            "handle": "blocks"
+            "handle": "home",
+            "metadata": {
+                "icon_url": "https://images.hamza.biz/category-icons/home.svg"
+            }
+        },
+        {
+            "id": "pcat_featured",
+            "name": "Featured",
+            "rank": 2,
+            "category_children": [],
+            "handle": "featured",
+            "metadata": {
+                "icon_url": "https://images.hamza.biz/category-icons/featured.svg"
+            }
+        },
+        {
+            "id": "pcat_fashion",
+            "name": "Fashion",
+            "rank": 2,
+            "category_children": [],
+            "handle": "fashion",
+            "metadata": {
+                "icon_url": "https://images.hamza.biz/category-icons/fashion.svg"
+            }
+        },
+        {
+            "id": "pcat_toys",
+            "name": "Toys",
+            "rank": 2,
+            "category_children": [],
+            "handle": "toys",
+            "metadata": {
+                "icon_url": "https://images.hamza.biz/category-icons/toys.svg"
+            }
+        },
+        {
+            "id": "pcat_beauty",
+            "name": "Beauty",
+            "rank": 2,
+            "category_children": [],
+            "handle": "beauty",
+            "metadata": {
+                "icon_url": "https://images.hamza.biz/category-icons/beauty.svg"
+            }
+        },
+        {
+            "id": "pcat_sports_outdoors",
+            "name": "Sports & Outdoors",
+            "rank": 2,
+            "category_children": [],
+            "handle": "sports_outdoors",
+            "metadata": {
+                "icon_url": "https://images.hamza.biz/category-icons/sports-outdoors.svg"
+            }
+        },
+        {
+            "id": "pcat_health",
+            "name": "Health",
+            "rank": 2,
+            "category_children": [],
+            "handle": "health",
+            "metadata": {
+                "icon_url": "https://images.hamza.biz/category-icons/health.svg"
+            }
+        },
+        {
+            "id": "pcat_automotive",
+            "name": "Automotive",
+            "rank": 2,
+            "category_children": [],
+            "handle": "automotive",
+            "metadata": {
+                "icon_url": "https://images.hamza.biz/category-icons/automotive.svg"
+            }
+        },
+        {
+            "id": "pcat_books",
+            "name": "Books",
+            "rank": 2,
+            "category_children": [],
+            "handle": "books",
+            "metadata": {
+                "icon_url": "https://images.hamza.biz/category-icons/books.svg"
+            }
+        },
+        {
+            "id": "pcat_office",
+            "name": "Office",
+            "rank": 2,
+            "category_children": [],
+            "handle": "office",
+            "metadata": {
+                "icon_url": "https://images.hamza.biz/category-icons/office.svg"
+            }
+        },
+        {
+            "id": "pcat_pets",
+            "name": "Pets",
+            "rank": 2,
+            "category_children": [],
+            "handle": "pets",
+            "metadata": {
+                "icon_url": "https://images.hamza.biz/category-icons/pets.svg"
+            }
         }
     ],
     "publishable_api_keys": [

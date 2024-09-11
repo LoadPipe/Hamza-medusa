@@ -4,6 +4,8 @@ import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
 import React, { useEffect, useState } from 'react';
 import { getStore } from '@lib/data';
+import Link from 'next/link';
+
 type OrderDetails = {
     thumbnail: string;
     title: string;
@@ -37,7 +39,7 @@ type OrderCardProps = {
 };
 
 const ShippedCard = ({ order, handle }: OrderCardProps) => {
-    const [vendor, setVendor] = useState('');
+    const [store, setStore] = useState('');
     const orderString = typeof order.currency_code;
     // console.log(
     //     `Order Card details ${JSON.stringify(order.variant.product_id)}`
@@ -56,13 +58,11 @@ const ShippedCard = ({ order, handle }: OrderCardProps) => {
         // Fetch Vendor Name from product.id
         const fetchVendor = async () => {
             try {
-                const data = await getStore(
-                    order.variant.product_id as string
-                );
+                const data = await getStore(order.variant.product_id as string);
                 // console.log(`Vendor: ${data}`);
-                setVendor(data);
+                setStore(data.name);
             } catch (error) {
-                console.error('Error fetching vendor: ', error);
+                console.error('Error fetching store: ', error);
             }
         };
 
@@ -89,7 +89,7 @@ const ShippedCard = ({ order, handle }: OrderCardProps) => {
                     fontWeight="bold"
                     noOfLines={1}
                 >
-                    {vendor}
+                    {store}
                 </Text>
                 <Flex
                     display={{ base: 'none', md: 'flex' }}
@@ -107,13 +107,15 @@ const ShippedCard = ({ order, handle }: OrderCardProps) => {
                     justifyContent="space-between"
                     flex="1"
                 >
-                    <Image
-                        borderRadius="lg"
-                        width={{ base: '60px', md: '120px' }}
-                        src={order.thumbnail}
-                        alt={`Thumbnail of ${order.title}`}
-                        mr={4}
-                    />
+                    <Link href={`/us/products/${handle}`}>
+                        <Image
+                            borderRadius="lg"
+                            width={{ base: '60px', md: '120px' }}
+                            src={order.thumbnail}
+                            alt={`Thumbnail of ${order.title}`}
+                            mr={4}
+                        />
+                    </Link>
 
                     <Box flex="1">
                         <Flex justifyContent="space-between" direction="row">

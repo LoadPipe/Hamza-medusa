@@ -1,5 +1,6 @@
 import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import OrderService from '../../../services/order';
+import CartService from '../../../services/cart';
 import { RouteHandler } from '../../route-handler';
 
 interface ICheckoutData {
@@ -16,13 +17,32 @@ interface ICheckoutData {
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
+    const cartService: CartService = req.scope.resolve('cartService');
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'GET', '/custom/checkout'
+        req,
+        res,
+        'GET',
+        '/custom/checkout'
     );
 
     await handler.handle(async () => {
-        const orders = await orderService.getOrdersForCart(req.query.cart_id.toString());
+        //validate
+        if (!handler.requireParam('cart_id')) return;
+
+        const cartId = handler.inputParams.cart_id;
+
+        const cart = await cartService.retrieve(cartId);
+        if (!cart)
+            return handler.returnStatusWithMessage(
+                404,
+                `Cart ${cartId} not found.`
+            );
+
+        //enforce security
+        if (!handler.enforceCustomerId(cart.customer_id)) return;
+
+        const orders = await orderService.getOrdersForCart(cartId);
         const output: ICheckoutData[] = [];
         orders.forEach((o) => {
             output.push({
@@ -37,30 +57,64 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 orders,
             });
         });
+
+        console.log(output);
         handler.logger.debug(`returning checkout data: ${output}`);
-        res.send({ orders: output });
+        handler.returnStatus(200, { orders: output });
     });
 };
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
+    const cartService: CartService = req.scope.resolve('cartService');
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'POST', '/custom/checkout', ['cartProducts',
-        'cart_id',
-        'transaction_id',
-        'payer_address',
-        'escrow_contract_address'
-    ]);
+        req,
+        res,
+        'POST',
+        '/custom/checkout',
+        [
+            //'cart_products',
+            'cart_id',
+            'transaction_id',
+            'payer_address',
+            'escrow_contract_address',
+            'chain_id',
+        ]
+    );
 
-    await handler.handle(async () => {
-        await orderService.finalizeCheckout(
-            handler.inputParams.cartProducts,
-            handler.inputParams.cart_id,
-            handler.inputParams.transaction_id,
-            handler.inputParams.payer_address,
-            handler.inputParams.escrow_contract_address
-        );
-        res.send(true);
-    });
+    try {
+        await handler.handle(async () => {
+            //validate
+            if (!handler.requireParam('cart_id')) return;
+
+            const cartId = handler.inputParams.cart_id;
+
+            const cart = await cartService.retrieve(cartId);
+            if (!cart)
+                return handler.returnStatusWithMessage(
+                    404,
+                    `Cart ${cartId} not found`
+                );
+
+            //enforce security
+            if (!handler.enforceCustomerId(cart.customer_id)) return;
+
+            await orderService.finalizeCheckout(
+                //handler.inputParams.cart_products,
+                handler.inputParams.cart_id,
+                handler.inputParams.transaction_id,
+                handler.inputParams.payer_address,
+                handler.inputParams.escrow_contract_address,
+                handler.inputParams.chain_id
+            );
+            handler.returnStatusWithMessage(
+                200,
+                'successfully finalized checkout'
+            );
+        });
+    } catch (e: any) {
+        handler.logger.error(e);
+        handler.returnStatusWithMessage(500, 'Failed to finalize checkout');
+    }
 };

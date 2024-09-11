@@ -36,7 +36,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 client_secret: process.env.DISCORD_ACCESS_SECRET,
                 grant_type: 'authorization_code',
                 redirect_uri: process.env.DISCORD_REDIRECT_URL,
-                code: req.query.code.toString(),
+                code: handler.inputParams.code,
             }),
             {
                 headers: {

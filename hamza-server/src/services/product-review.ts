@@ -8,35 +8,21 @@ import { Customer } from '../models/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import { Product } from '../models/product';
 import { In, Not } from 'typeorm';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 class ProductReviewService extends TransactionBaseService {
     static LIFE_TIME = Lifetime.SCOPED;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly productReviewRepository_: typeof ProductReviewRepository;
     protected readonly orderRepository_: typeof OrderRepository;
-    protected readonly logger: Logger;
+    protected readonly logger: ILogger;
 
     constructor(container) {
         super(container);
         this.productVariantRepository_ = container.productVariantRepository;
         this.productReviewRepository_ = container.productReviewRepository;
         this.orderRepository_ = container.orderRepository;
-        this.logger = container.logger;
-    }
-
-    async customerIsVerified(customer_id) {
-        const customerRepository = this.activeManager_.getRepository(Customer);
-        this.logger.debug(`Customer ID is: ${customer_id}`);
-        const customer = await customerRepository.findOne({
-            where: { id: customer_id },
-        });
-        if (!customer) {
-            throw new Error('Customer not found');
-        }
-        this.logger.debug(`Customer Email is: ${customer.email}`);
-
-        // Returns true if the email does NOT include '@evm.blockchain'
-        return customer.email.includes('@evm.blockchain');
+        this.logger = createLogger(container, 'ProductReviewService');
     }
 
     async customerHasBoughtProduct(customer_id, product_id) {
@@ -103,14 +89,20 @@ class ProductReviewService extends TransactionBaseService {
             this.activeManager_.getRepository(ProductReview);
 
         // Fetch all non-archived orders for the customer
+        // TODO: This should be swapped to shipped in production
+        //            .andWhere('order.status != :status', { fulfillment_status: 'shipped?' })
         const orders = await orderRepository
             .createQueryBuilder('order')
             .select(['order.id', 'order.status'])
             .where('order.customer_id = :customer_id', { customer_id })
-            .andWhere('order.status != :status', { status: 'archived' })
+            .andWhere('order.status != :archivedStatus', {
+                archivedStatus: 'archived',
+            })
+            .andWhere('order.status != :cancelledStatus', {
+                cancelledStatus: 'canceled',
+            })
             .getMany();
 
-        console.log(`orders are ${JSON.stringify(orders)}`);
         // If no orders are found, throw an error
         if (!orders || orders.length === 0) {
             return [];
@@ -142,7 +134,7 @@ class ProductReviewService extends TransactionBaseService {
                 customer_id: customer_id,
                 status: Not(OrderStatus.ARCHIVED),
             },
-            relations: ['cart.items', 'cart', 'cart.items.variant.product'],
+            relations: ['items', 'items.variant.product'],
         });
 
         return unreviewedOrders;
@@ -259,7 +251,7 @@ class ProductReviewService extends TransactionBaseService {
         return averageRating;
     }
 
-    async updateProductReview(product_id, reviewUpdates, customer_id) {
+    async updateProductReview(product_id, review_updates, customer_id) {
         const productReviewRepository =
             this.activeManager_.getRepository(ProductReview);
 
@@ -273,15 +265,15 @@ class ProductReviewService extends TransactionBaseService {
             throw new Error('Review not found'); // Proper error handling if the review doesn't exist
         }
 
-        existingReview.content = reviewUpdates;
+        existingReview.content = review_updates;
 
         return await productReviewRepository.save(existingReview);
     }
 
     // async updateProduct(
     //     product_id,
-    //     reviewUpdates,
-    //     ratingUpdates,
+    //     review_updates,
+    //     rating_updates,
     //     customer_id,
     //     order_id
     // ) {
@@ -322,8 +314,8 @@ class ProductReviewService extends TransactionBaseService {
     //         throw new Error('Review not found'); // Proper error handling if the review doesn't exist
     //     }
     //
-    //     existingReview.content = reviewUpdates;
-    //     existingReview.rating = ratingUpdates;
+    //     existingReview.content = review_updates;
+    //     existingReview.rating = rating_updates;
     //
     //     return await productReviewRepository.save(existingReview);
     // }

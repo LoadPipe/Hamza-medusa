@@ -4,6 +4,7 @@ import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import useWishlistStore, {
     WishlistProduct,
 } from '@store/wishlist/wishlist-store';
+import { getClientCookie } from '@lib/util/get-client-cookies';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -32,7 +33,12 @@ export function useWishlistMutations() {
             return axios.post(`${BACKEND_URL}/custom/wishlist/item`, {
                 customer_id: customer_id, // Ensure customer_id is handled when null
                 product_id: product.id,
-            });
+            },
+                {
+                    headers: {
+                        authorization: getClientCookie('_medusa_jwt'),
+                    }
+                });
         },
         {
             onSuccess: (data, product) => {
@@ -56,6 +62,9 @@ export function useWishlistMutations() {
                     customer_id: customer_id, // Ensure customer_id is handled when null
                     product_id: product.id,
                 },
+                headers: {
+                    authorization: getClientCookie('_medusa_jwt'),
+                }
             });
         },
         {

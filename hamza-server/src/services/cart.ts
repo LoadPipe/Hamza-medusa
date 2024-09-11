@@ -3,29 +3,34 @@ import {
     FindConfig,
     CartService as MedusaCartService,
     MoneyAmount,
-    Logger
+    Logger,
+    ShippingMethod
 } from '@medusajs/medusa';
 import CustomerRepository from '@medusajs/medusa/dist/repositories/customer';
-import ProductVariantRepository from '@medusajs/medusa/dist/repositories/product-variant';
 import { LineItem } from '../models/line-item';
 import { Lifetime } from 'awilix';
 import { PriceConverter } from '../strategies/price-selection';
 import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
+import { createLogger, ILogger } from '../utils/logging/logger';
+import ShippingMethodRepository from '@medusajs/medusa/dist/repositories/shipping-method';
+import ShippingOptionRepository from '@medusajs/medusa/dist/repositories/shipping-option';
 
 export default class CartService extends MedusaCartService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
 
     protected readonly customerRepository_: typeof CustomerRepository;
     protected readonly lineItemRepository_: typeof LineItemRepository;
-    protected readonly priceConverter: PriceConverter = new PriceConverter();
-    protected readonly logger: Logger;
-    //protected productVariantRepository_: typeof ProductVariantRepository;
+    protected readonly shippingOptionRepository_: typeof ShippingOptionRepository;
+    protected readonly priceConverter: PriceConverter;
+    protected readonly logger: ILogger;
 
     constructor(container) {
         super(container);
         this.customerRepository_ = container.customerRepository;
         this.lineItemRepository_ = container.lineItemRepository;
-        this.logger = container.logger;
+        this.shippingOptionRepository_ = container.shippingOptionRepository;
+        this.logger = createLogger(container, 'CartService');
+        this.priceConverter = new PriceConverter(this.logger);
     }
 
     async retrieve(cartId: string, options?: FindConfig<Cart>, totalsConfig?: { force_taxes?: boolean; }): Promise<Cart> {
@@ -44,15 +49,18 @@ export default class CartService extends MedusaCartService {
             const itemsToSave: LineItem[] = [];
             for (let item of cart.items) {
                 if (item.currency_code != currencyCode) {
-                    this.logger.debug(`cart item with currency ${item.currency_code} amount ${item.unit_price} changing to ${currencyCode}`)
-                    item.currency_code = currencyCode;
-                    item.unit_price = await this.priceConverter.getPrice(
+                    this.logger.info(`cart item with currency ${item.currency_code} amount ${item.unit_price} changing to ${currencyCode}`)
+
+                    const newPrice = await this.priceConverter.getPrice(
                         { baseAmount: item.unit_price, baseCurrency: item.currency_code, toCurrency: currencyCode }
                     );
+                    item.unit_price = newPrice;
+                    item.currency_code = currencyCode;
+
+                    this.logger.info(`cart item with currency ${item.currency_code} amount ${item.unit_price} changed to ${currencyCode} with new price ${item.unit_price}`)
                     itemsToSave.push(item);
                 }
             }
-
 
             if (itemsToSave.length) {
                 Promise.all(
@@ -62,6 +70,16 @@ export default class CartService extends MedusaCartService {
         }
 
         return cart;
+    }
+
+    async addDefaultShippingMethod(cartId: string): Promise<void> {
+        const cart = await super.retrieve(cartId, { relations: ['shipping_methods'] });
+
+        if (cart && cart.shipping_methods.length === 0) {
+            this.logger.debug(`Auto-adding shipping method for cart ${cart.id}`);
+            const option = await this.shippingOptionRepository_.findOne({ where: { provider_id: 'bucky-fulfillment' } });
+            await this.addShippingMethod(cart.id, option.id);
+        }
     }
 
     async addOrUpdateLineItems(

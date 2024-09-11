@@ -3,18 +3,19 @@ import CustomerRepository from '../repositories/customer';
 import { WhiteListRepository } from '../repositories/whitelist';
 import { WhiteList } from '../models/whitelist';
 import { In } from 'typeorm';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 
 export default class WhiteListService extends TransactionBaseService {
     protected readonly customerRepository_: typeof CustomerRepository;
-    protected readonly logger: Logger;
+    protected readonly logger: ILogger;
     protected readonly whitelistRepository_: typeof WhiteListRepository;
 
     constructor(container) {
         super(container);
         this.customerRepository_ = CustomerRepository;
         this.whitelistRepository_ = WhiteListRepository;
-        this.logger = container.logger;
+        this.logger = createLogger(container, 'WhiteListService');
     }
 
     async create(storeId: string, walletAddress: string) {

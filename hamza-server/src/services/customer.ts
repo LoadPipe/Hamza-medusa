@@ -6,6 +6,7 @@ import { CreateCustomerInput } from '@medusajs/medusa/dist/types/customers';
 import { Lifetime } from 'awilix';
 import { CustomerRepository } from '../repositories/customer';
 import CustomerWalletAddressRepository from '../repositories/customer-wallet-address';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 interface CustomCustomerInput extends CreateCustomerInput {
     wallet_address: string;
@@ -15,12 +16,12 @@ export default class CustomerService extends MedusaCustomerService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
 
     protected customerRepository_: typeof CustomerRepository;
-    protected logger: Logger;
+    protected logger: ILogger;
 
     constructor(container) {
         super(container);
         this.customerRepository_ = container.customerRepository;
-        this.logger = container.logger;
+        this.logger = createLogger(container, 'CustomerService');
     }
 
     async create(input: CustomCustomerInput): Promise<any> {
@@ -135,5 +136,18 @@ export default class CustomerService extends MedusaCustomerService {
             this.logger.error(`Error retrieving customer currency: ${e}`);
             throw e; // Rethrow the error for further handling by the caller.
         }
+    }
+
+    async isVerified(customer_id) {
+        const customer = await this.customerRepository_.findOne({
+            where: { id: customer_id },
+        });
+        if (!customer) {
+            throw new Error('Customer not found');
+        }
+        this.logger.debug(`Customer Email is: ${customer.email}`);
+
+        // Returns true if the email does NOT include '@evm.blockchain'
+        return customer.email.includes('@evm.blockchain');
     }
 }

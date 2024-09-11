@@ -1,4 +1,4 @@
-import { getCustomer, listRegions, updateCustomer } from '@lib/data';
+import { getHamzaCustomer, listRegions, updateCustomer } from '@lib/data';
 import { notFound } from 'next/navigation';
 import { Flex, Button, Text, Box } from '@chakra-ui/react';
 import { Metadata } from 'next';
@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Verify() {
-    const customer = await getCustomer();
+    const customer = await getHamzaCustomer();
     const regions = await listRegions();
 
     if (!customer || !regions) {
@@ -29,6 +29,7 @@ export default async function Verify() {
             borderRadius={'12px'}
             py={'5rem'}
             gap={'10px'}
+            width={'100%'}
         >
             <VerifyEmail />
         </Flex>

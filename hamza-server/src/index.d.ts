@@ -38,6 +38,8 @@ export declare module '@medusajs/medusa/dist/models/store' {
     declare interface Store {
         owner?: User;
         owner_id?: string;
+        store_description?: string;
+        store_followers?: number;
         roles: Role[];
         numberOfFollowers: number;
         icon: string;
@@ -49,13 +51,13 @@ export declare module '@medusajs/medusa/dist/models/product' {
         store?: Store;
         store_id: string;
         reviews: ProductReview[];
-        bucky_metadata?: string;
+        bucky_metadata?: Record<string, unknown>;
     }
 }
 
 export declare module '@medusajs/medusa/dist/models/product-variant' {
     declare interface ProductVariant {
-        bucky_metadata?: string;
+        bucky_metadata?: Record<string, unknown>;
     }
 }
 
@@ -66,7 +68,6 @@ export declare module '@medusajs/medusa/dist/model/order' {
         massmarket_order_id?: string;
         massmarket_ttl?: number;
         massmarket_amount?: string;
-        bucky_order_no?: string;
-        bucky_partner_order_no?: string;
+        bucky_metadata?: Record<string, unknown>;
     }
 }

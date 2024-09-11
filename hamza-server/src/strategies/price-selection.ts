@@ -11,17 +11,18 @@ import ProductVariantRepository from '@medusajs/medusa/dist/repositories/product
 import { CurrencyConversionClient } from '../currency-conversion/rest-client';
 import { In } from 'typeorm';
 import { getCurrencyAddress, getCurrencyPrecision } from '../currency.config';
+import { createLogger, ILogger } from '../utils/logging/logger';
 
 type InjectedDependencies = {
     customerService: CustomerService;
     productVariantRepository: typeof ProductVariantRepository;
-    logger: Logger;
+    logger: ILogger;
 };
 
 export default class PriceSelectionStrategy extends AbstractPriceSelectionStrategy {
     protected readonly customerService_: CustomerService;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
-    protected readonly logger: Logger;
+    protected readonly logger: ILogger;
 
     constructor({
         customerService,
@@ -90,7 +91,7 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
             string,
             PriceSelectionResult
         >();
-        const priceConverter: PriceConverter = new PriceConverter();
+        const priceConverter: PriceConverter = new PriceConverter(this.logger);
 
         //get the variant objects
         const variants: ProductVariant[] =
@@ -99,7 +100,7 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
                 relations: ['product', 'prices', 'product.store'],
             });
 
-        //get the store 
+        //get the store
         const store: Store = variants[0].product.store;
 
         //if no preferred currency, just return all prices
@@ -108,13 +109,15 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
 
             //convert all currency prices according to base price
             const baseCurrency = store?.default_currency_code;
-            const baseAmount = prices.find((p) => p.currency_code === baseCurrency)?.amount;
+            const baseAmount = prices.find(
+                (p) => p.currency_code === baseCurrency
+            )?.amount;
             if (baseAmount && baseCurrency) {
                 for (let n = 0; n < prices.length; n++) {
                     prices[n].amount = await priceConverter.getPrice({
                         baseAmount,
                         baseCurrency,
-                        toCurrency: prices[n].currency_code
+                        toCurrency: prices[n].currency_code,
                     });
                 }
             }
@@ -153,29 +156,46 @@ const EXTENDED_LOGGING = false;
 
 //TODO: maybe find a better place for this class
 export class PriceConverter {
-    restClient: CurrencyConversionClient = new CurrencyConversionClient();
-    cache: { [key: string]: { value: number, timestamp: number } } = {};
-    expirationSeconds: 60;
+    private readonly restClient: CurrencyConversionClient =
+        new CurrencyConversionClient();
+    private readonly cache: {
+        [key: string]: { value: number; timestamp: number };
+    } = {};
+    private readonly expirationSeconds: number = 60;
+    private readonly logger: ILogger;
 
-    async convertPrice(baseAmount: number, baseCurrency: string, toCurrency: string): Promise<number> {
-        return await this.getPrice({ baseAmount, baseCurrency, toCurrency })
+    constructor(logger?: ILogger) {
+        this.logger = logger;
+    }
+
+    async convertPrice(
+        baseAmount: number,
+        baseCurrency: string,
+        toCurrency: string
+    ): Promise<number> {
+        return await this.getPrice({ baseAmount, baseCurrency, toCurrency });
     }
 
     async getPrice(price: IPrice): Promise<number> {
         let rate: number = this.getFromCache(price);
+        //this.logger?.debug(`cached rate for ${price.baseCurrency}-${price.toCurrency}: ${rate}`);
 
         if (!rate) {
             rate = await this.getFromApi(price);
             this.writeToCache(price, rate);
         }
 
-        //now we need currency precisions 
-        const basePrecision = getCurrencyPrecision(price.baseCurrency) ?? { db: 2 };
+        //now we need currency precisions
+        const basePrecision = getCurrencyPrecision(price.baseCurrency) ?? {
+            db: 2,
+        };
         const toPrecision = getCurrencyPrecision(price.toCurrency) ?? { db: 2 };
 
-        //convert the amount 
-        const baseFactor: number = Math.pow(10, basePrecision.db);
-
+        //convert the amount
+        const baseFactor: number = Math.pow(
+            10,
+            basePrecision.db
+        );
 
         if (EXTENDED_LOGGING) {
             console.log('price:', price);
@@ -187,30 +207,29 @@ export class PriceConverter {
 
         const displayAmount = price.baseAmount / baseFactor;
 
-        if (EXTENDED_LOGGING)
-            console.log('displayAmount:', displayAmount);
+        if (EXTENDED_LOGGING) console.log('displayAmount:', displayAmount);
 
-        const output = Math.floor(displayAmount * rate * Math.pow(10, toPrecision.db));
-        return output;
+        return Math.floor(displayAmount * rate * Math.pow(10, toPrecision.db));
     }
 
     private async getFromApi(price: IPrice): Promise<number> {
-        //convert to addresses 
+        //convert to addresses
         let baseAddr = getCurrencyAddress(price.baseCurrency, 1);
         let toAddr = getCurrencyAddress(price.toCurrency, 1);
 
         if (baseAddr.length === 0) baseAddr = price.baseCurrency;
         if (toAddr.length === 0) toAddr = price.toCurrency;
 
-        return await this.restClient.getExchangeRate(
-            baseAddr,
-            toAddr
-        );
+        return await this.restClient.getExchangeRate(baseAddr, toAddr);
     }
 
     private getFromCache(price: IPrice): number {
         const key: string = this.getKey(price.baseCurrency, price.toCurrency);
-        if (this.cache[key] && (this.getTimestamp() - this.cache[key].timestamp >= this.expirationSeconds)) {
+        if (
+            this.cache[key] &&
+            this.getTimestamp() - this.cache[key].timestamp >=
+            this.expirationSeconds
+        ) {
             this.cache[key] = null;
         }
 
@@ -223,7 +242,7 @@ export class PriceConverter {
     }
 
     private hasCached(price: IPrice): boolean {
-        return (this.getFromCache(price) ? true : false);
+        return this.getFromCache(price) ? true : false;
     }
 
     private getKey(base: string, to: string): string {

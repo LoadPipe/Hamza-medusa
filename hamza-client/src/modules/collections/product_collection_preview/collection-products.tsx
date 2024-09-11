@@ -1,17 +1,17 @@
-import { getProductsListWithSort } from '@lib/data'
-import ProductPreview from '@modules/products/components/product-preview'
-import { Pagination } from '@modules/store/components/pagination'
-import { SortOptions } from '@modules/store/components/refinement-list/sort-products'
-import { getRegion } from 'app/actions'
+import { getProductsListWithSort } from '@lib/data';
+import ProductPreview from '@modules/products/components/product-preview';
+import { Pagination } from '@modules/shop/components/pagination';
+import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
+import { getRegion } from 'app/actions';
 
-const PRODUCT_LIMIT = 8
+const PRODUCT_LIMIT = 8;
 
 type PaginatedProductsParams = {
-    limit: number
-    collection_id?: string[]
-    category_id?: string[]
-    id?: string[]
-}
+    limit: number;
+    collection_id?: string[];
+    category_id?: string[];
+    id?: string[];
+};
 
 export default async function PaginatedProducts({
     // sortBy,
@@ -22,32 +22,32 @@ export default async function PaginatedProducts({
     countryCode,
 }: {
     // sortBy?: SortOptions
-    page: number
-    collectionId?: string
-    categoryId?: string
-    productsIds?: string[]
-    countryCode: string
+    page: number;
+    collectionId?: string;
+    categoryId?: string;
+    productsIds?: string[];
+    countryCode: string;
 }) {
-    const region = await getRegion(countryCode)
+    const region = await getRegion(countryCode);
 
     if (!region) {
-        return null
+        return null;
     }
 
     const queryParams: PaginatedProductsParams = {
         limit: PRODUCT_LIMIT,
-    }
+    };
 
     if (collectionId) {
-        queryParams['collection_id'] = [collectionId]
+        queryParams['collection_id'] = [collectionId];
     }
 
     if (categoryId) {
-        queryParams['category_id'] = [categoryId]
+        queryParams['category_id'] = [categoryId];
     }
 
     if (productsIds) {
-        queryParams['id'] = productsIds
+        queryParams['id'] = productsIds;
     }
 
     const {
@@ -57,9 +57,9 @@ export default async function PaginatedProducts({
         queryParams,
         // sortBy,
         countryCode,
-    })
+    });
 
-    const totalPages = Math.ceil(count / PRODUCT_LIMIT)
+    const totalPages = Math.ceil(count / PRODUCT_LIMIT);
 
     return (
         <>
@@ -72,10 +72,10 @@ export default async function PaginatedProducts({
                                 region={region}
                             />
                         </li>
-                    )
+                    );
                 })}
             </ul>
             {/*{totalPages > 1 && <Pagination page={page} totalPages={totalPages} />}*/}
         </>
-    )
+    );
 }

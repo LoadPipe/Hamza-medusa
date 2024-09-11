@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-    cancelOrder,
-    orderBucket,
-    orderDetails,
-    orderStatus,
-    singleBucket,
-} from '@lib/data';
+import { cancelOrder, getOrderStatus, getSingleBucket } from '@lib/data';
 import {
     Box,
     Button,
@@ -32,11 +26,18 @@ import {
     Modal,
 } from '@chakra-ui/react';
 import { BsCircleFill } from 'react-icons/bs';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
+import EmptyState from '@modules/order/components/empty-state';
 
 import ProcessingOrderCard from '@modules/account/components/processing-order-card';
-import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
-const Processing = ({ orders }: { orders: any[] }) => {
+const Processing = ({
+    orders,
+    isEmpty,
+}: {
+    orders: any[];
+    isEmpty?: boolean;
+}) => {
     const [customerId, setCustomerId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
@@ -47,9 +48,9 @@ const Processing = ({ orders }: { orders: any[] }) => {
     const [orderStatuses, setOrderStatuses] = useState<{
         [key: string]: string;
     }>({});
-    const [customerOrder, setCustomerOrder] = useState<any[] | null>(null);
+    const [customerOrder, setCustomerOrder] = useState<any[]>([]);
 
-    console.log(`ORDER FOR PROCESSING ${JSON.stringify(orders)}`);
+    // console.log(`ORDER FOR PROCESSING ${JSON.stringify(orders)}`);
     const openModal = (orderId: string) => {
         setSelectedOrderId(orderId);
         setIsModalOpen(true);
@@ -84,6 +85,14 @@ const Processing = ({ orders }: { orders: any[] }) => {
         }
     };
 
+    const getAmount = (amount?: number | null, currency_code?: string) => {
+        if (amount === null || amount === undefined) {
+            return;
+        }
+
+        return formatCryptoPrice(amount, currency_code || 'USDC');
+    };
+
     useEffect(() => {
         console.log('Orders received in Processing:', orders);
         if (orders && orders.length > 0) {
@@ -99,9 +108,18 @@ const Processing = ({ orders }: { orders: any[] }) => {
     const fetchAllOrders = async (customerId: string) => {
         setIsLoading(true);
         try {
-            const bucket = await singleBucket(customerId, 1);
+            const bucket = await getSingleBucket(customerId, 1);
+
+            if (bucket === undefined || bucket === null) {
+                console.error('Bucket is undefined or null');
+                setCustomerOrder([]); // Set empty state
+                setIsLoading(false);
+                return;
+            }
+
             if (Array.isArray(bucket)) {
                 setCustomerOrder(bucket);
+                console.log(`BUCKETS ${JSON.stringify(bucket)}`);
             } else {
                 console.error('Expected an array but got:', bucket);
                 setCustomerOrder([]);
@@ -117,10 +135,12 @@ const Processing = ({ orders }: { orders: any[] }) => {
         const fetchStatuses = async () => {
             if (!customerOrder || customerOrder.length === 0) return;
 
+            console.log(`Customer Order ${JSON.stringify(customerOrder)}`);
+
             const statuses = await Promise.allSettled(
                 customerOrder.map(async (order) => {
                     try {
-                        const statusRes = await orderStatus(order.id);
+                        const statusRes = await getOrderStatus(order.id);
                         console.log(
                             `Fetching status for order ${order.id} StatusResponse ${statusRes.order}`
                         );
@@ -164,18 +184,23 @@ const Processing = ({ orders }: { orders: any[] }) => {
         fetchStatuses();
     }, [customerOrder]);
 
+    if (isEmpty && customerOrder && customerOrder?.length == 0) {
+        return <EmptyState />;
+    }
+
     return (
         <div>
             {/* Processing-specific content */}
-            <h1>Processing Orders</h1>
             {customerOrder && customerOrder.length > 0 ? (
                 <>
+                    <h1>Processing Orders</h1>
+
                     {customerOrder.map((order) => (
                         <>
                             <div
                                 key={order.id} // Changed from cart_id to id since it's more reliable and unique
                             >
-                                {order.cart?.items?.map(
+                                {order.items?.map(
                                     (
                                         item: any // Adjusting the map to the correct path
                                     ) => (
@@ -190,6 +215,8 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                             <ProcessingOrderCard
                                                 key={item.id}
                                                 order={item}
+                                                vendorName={order.store.name}
+                                                address={order.shipping_address}
                                                 handle={
                                                     item.variant?.product
                                                         ?.handle || 'N/A'
@@ -270,7 +297,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                         {/* Example timeline event */}
                                                                         {[
                                                                             {
-                                                                                status: 'Product Shipped',
+                                                                                status: `Shipment Status: \t ${item.has_shipping ? 'Item has shipped' : 'Item has not shipped yet'}`,
                                                                                 date: '18/07/2024 | 6:12 pm',
                                                                                 trackingNumber:
                                                                                     '5896-0991-7811',
@@ -290,26 +317,59 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     'DHL Express',
                                                                             },
                                                                             {
-                                                                                status: 'Order Confirmed',
-                                                                                date: '18/07/2024 | 3:49 pm',
+                                                                                status: `Order Confirmation: \t ${order.status}`,
+                                                                                date: `${new Date(
+                                                                                    order.created_at
+                                                                                ).toLocaleDateString(
+                                                                                    undefined,
+                                                                                    {
+                                                                                        year: 'numeric',
+                                                                                        month: '2-digit',
+                                                                                        day: '2-digit',
+                                                                                        hour: '2-digit',
+                                                                                        minute: '2-digit',
+                                                                                        second: '2-digit',
+                                                                                        hour12: true,
+                                                                                    }
+                                                                                )}`,
                                                                             },
                                                                             {
-                                                                                status: 'Payment Complete',
-                                                                                date: '18/07/2024 | 3:43 pm',
-                                                                                paymentDetails:
-                                                                                    'Paid with USDC via Binance Smart Chain. Total payment: 1499.99 USDC.',
+                                                                                status: `Payment Status: \t${order.payment_status}`,
+                                                                                date: `${new Date(
+                                                                                    order.created_at
+                                                                                ).toLocaleDateString(
+                                                                                    undefined,
+                                                                                    {
+                                                                                        year: 'numeric',
+                                                                                        month: '2-digit',
+                                                                                        day: '2-digit',
+                                                                                        hour: '2-digit',
+                                                                                        minute: '2-digit',
+                                                                                        second: '2-digit',
+                                                                                        hour12: true,
+                                                                                    }
+                                                                                )}`,
+                                                                                paymentDetails: `Paid with ${item.currency_code.toUpperCase()}. Total payment: ${getAmount(item.unit_price, item.currency_code)} ${item.currency_code.toUpperCase()}`,
                                                                                 receiptLink:
                                                                                     'View receipt',
                                                                             },
-                                                                            {
-                                                                                status: 'Payment On Process',
-                                                                                date: '18/07/2024 | 3:43 pm',
-                                                                                paymentDetails:
-                                                                                    'Paid with USDC via Binance Smart Chain. Total payment: 1499.99 USDC.',
-                                                                            },
+
                                                                             {
                                                                                 status: 'Order Placed',
-                                                                                date: '18/07/2024 | 3:43 pm',
+                                                                                date: `${new Date(
+                                                                                    item.created_at
+                                                                                ).toLocaleDateString(
+                                                                                    undefined,
+                                                                                    {
+                                                                                        year: 'numeric',
+                                                                                        month: '2-digit',
+                                                                                        day: '2-digit',
+                                                                                        hour: '2-digit',
+                                                                                        minute: '2-digit',
+                                                                                        second: '2-digit',
+                                                                                        hour12: true,
+                                                                                    }
+                                                                                )}`,
                                                                             },
                                                                         ].map(
                                                                             (
@@ -465,7 +525,9 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     Number:
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    11
+                                                                                    {
+                                                                                        order.display_id
+                                                                                    }
                                                                                 </Text>
                                                                             </Box>
                                                                             <Box>
@@ -477,7 +539,9 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     ID:
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    item_11ijnovwd124
+                                                                                    {
+                                                                                        item.id
+                                                                                    }
                                                                                 </Text>
                                                                             </Box>
                                                                             <Box>
@@ -502,9 +566,9 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     Status:
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    Payment
-                                                                                    On
-                                                                                    Process
+                                                                                    {
+                                                                                        order.status
+                                                                                    }
                                                                                 </Text>
                                                                             </Box>
                                                                             <Box>
@@ -516,8 +580,9 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     Status:
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    On
-                                                                                    Process
+                                                                                    {
+                                                                                        order.payment_status
+                                                                                    }
                                                                                 </Text>
                                                                             </Box>
                                                                             <Box>
@@ -528,9 +593,11 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     Vendor:
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    Apple
-                                                                                    Official
-                                                                                    Store
+                                                                                    {
+                                                                                        order
+                                                                                            .store
+                                                                                            .name
+                                                                                    }
                                                                                 </Text>
                                                                             </Box>
                                                                         </VStack>
@@ -591,15 +658,31 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     Information:
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    Rock
-                                                                                    Rocks
-                                                                                    Pa
-                                                                                    Daet
-                                                                                    Sub-district,
-                                                                                    50100,
-                                                                                    Chiang
-                                                                                    Mai
-                                                                                    CA
+                                                                                    {
+                                                                                        order
+                                                                                            .shipping_address
+                                                                                            .address_1
+                                                                                    }{' '}
+                                                                                    {
+                                                                                        order
+                                                                                            .shipping_address
+                                                                                            .city
+                                                                                    }{' '}
+                                                                                    {
+                                                                                        order
+                                                                                            .shipping_address
+                                                                                            .province
+                                                                                    }{' '}
+                                                                                    {
+                                                                                        order
+                                                                                            .shipping_address
+                                                                                            .postal_code
+                                                                                    }{' '}
+                                                                                    {
+                                                                                        order
+                                                                                            .shipping_address
+                                                                                            .country_code
+                                                                                    }
                                                                                 </Text>
                                                                             </Box>
                                                                             <Box>
@@ -611,15 +694,32 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                                                                     Information:
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    Alfred
-                                                                                    Neuman
+                                                                                    {
+                                                                                        order
+                                                                                            .shipping_address
+                                                                                            .first_name
+                                                                                    }
+                                                                                    {
+                                                                                        order
+                                                                                            .shipping_address
+                                                                                            .last_name
+                                                                                    }
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    +01
-                                                                                    1234567890
+                                                                                    {
+                                                                                        order
+                                                                                            .shipping_address
+                                                                                            .phone
+                                                                                    }
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    alfredneuman@gmail.com
+                                                                                    {order.customer.email.endsWith(
+                                                                                        '@evm.blockchain'
+                                                                                    )
+                                                                                        ? ''
+                                                                                        : order
+                                                                                              .customer
+                                                                                              .email}
                                                                                 </Text>
                                                                             </Box>
                                                                         </VStack>
@@ -634,33 +734,44 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                     )
                                 )}
                             </div>
-                            <Flex
-                                justifyContent="flex-end"
-                                my={8}
-                                gap={'4'}
-                                borderBottom="1px solid"
-                                borderColor="gray.200"
-                                pb={6}
-                                _last={{
-                                    pb: 0,
-                                    borderBottom: 'none',
-                                }}
-                            >
-                                {orderStatuses[order.id] === 'canceled' ? (
-                                    <Button colorScheme="red" ml={4} isDisabled>
-                                        Cancellation Requested
-                                    </Button>
-                                ) : (
-                                    <Button
-                                        variant="solid"
-                                        colorScheme="blue"
-                                        ml={4}
-                                        onClick={() => openModal(order.id)}
+                            <>
+                                {order.items && order.items.length > 0 && (
+                                    <Flex
+                                        justifyContent="flex-end"
+                                        my={8}
+                                        gap={'4'}
+                                        borderBottom="1px solid"
+                                        borderColor="gray.200"
+                                        pb={6}
+                                        _last={{
+                                            pb: 0,
+                                            borderBottom: 'none',
+                                        }}
                                     >
-                                        Request Cancellation
-                                    </Button>
+                                        {orderStatuses[order.id] ===
+                                        'canceled' ? (
+                                            <Button
+                                                colorScheme="red"
+                                                ml={4}
+                                                isDisabled
+                                            >
+                                                Cancellation Requested
+                                            </Button>
+                                        ) : (
+                                            <Button
+                                                variant="solid"
+                                                colorScheme="blue"
+                                                ml={4}
+                                                onClick={() =>
+                                                    openModal(order.id)
+                                                }
+                                            >
+                                                Request Cancellation
+                                            </Button>
+                                        )}
+                                    </Flex>
                                 )}
-                            </Flex>
+                            </>
                         </>
                     ))}
                     <Modal isOpen={isModalOpen} onClose={closeModal}>
@@ -670,9 +781,7 @@ const Processing = ({ orders }: { orders: any[] }) => {
                             <ModalCloseButton />
                             <ModalBody>
                                 <FormControl
-                                    isInvalid={
-                                        !cancelReason && isAttemptedSubmit
-                                    }
+                                    isInvalid={cancelReason.trim().length < 50}
                                 >
                                     <Textarea
                                         placeholder="Reason for cancellation"
@@ -681,6 +790,15 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                             setCancelReason(e.target.value)
                                         }
                                     />
+                                    {/* Show error message if the input is under 50 characters */}
+                                    {cancelReason.trim().length > 0 &&
+                                        cancelReason.trim().length < 50 && (
+                                            <FormErrorMessage>
+                                                Cancellation reason must be at
+                                                least 50 characters long.
+                                            </FormErrorMessage>
+                                        )}
+                                    {/* Show error message if no reason is provided when attempting to submit */}
                                     {!cancelReason && isAttemptedSubmit && (
                                         <FormErrorMessage>
                                             Cancellation reason is required.
@@ -692,26 +810,31 @@ const Processing = ({ orders }: { orders: any[] }) => {
                                 <Button variant="ghost" onClick={closeModal}>
                                     Cancel
                                 </Button>
-                                <Button
-                                    colorScheme="blue"
-                                    ml={3}
+                                <Box
+                                    as="button"
+                                    mt={4}
+                                    borderRadius={'37px'}
+                                    backgroundColor={
+                                        cancelReason.trim().length < 50
+                                            ? 'gray.400'
+                                            : 'primary.indigo.900'
+                                    }
+                                    color={'white'}
+                                    fontSize={'18px'}
+                                    fontWeight={600}
+                                    height={'47px'}
+                                    width={'180px'}
+                                    ml={'20px'}
                                     onClick={handleCancel}
+                                    disabled={cancelReason.trim().length < 50}
                                 >
                                     Submit
-                                </Button>
+                                </Box>
                             </ModalFooter>
                         </ModalContent>
                     </Modal>
                 </>
-            ) : (
-                <div className="flex flex-col items-center w-full bg-black text-white p-8">
-                    <h2>Nothing to see here</h2>
-                    <p>You don't have any orders yet, let us change that :)</p>
-                    <LocalizedClientLink href="/" passHref>
-                        <Button>Continue shopping</Button>
-                    </LocalizedClientLink>
-                </div>
-            )}
+            ) : null}
         </div>
     );
 };

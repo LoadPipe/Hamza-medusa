@@ -1,5 +1,8 @@
 import axios, { AxiosInstance } from 'axios';
 import { createHash } from 'crypto';
+import { BuckyLogRepository } from 'src/repositories/bucky-log';
+import { generateEntityId, Logger } from '@medusajs/medusa';
+import { BuckyLog } from 'src/models/bucky-log';
 
 const BUCKY_URL = process.env.BUCKY_URL || 'https://dev.buckydrop.com';
 const APP_CODE = process.env.BUCKY_APP_CODE || '0077651952683977';
@@ -62,33 +65,38 @@ export interface IBuckyShippingCostRequest {
     }[];
 }
 
-//TODO: comment the methods 
-//TODO: proper return types 
+//TODO: comment the methods
+//TODO: proper return types
 
 export class BuckyClient {
     private client: AxiosInstance;
+    protected readonly buckyLogRepository: typeof BuckyLogRepository;
 
-    constructor() {
+    constructor(buckyLogRepository: typeof BuckyLogRepository) {
         this.client = axios.create({
             baseURL: BUCKY_URL,
             headers: {
                 'User-Agent': 'Apifox/1.0.0 (https://apifox.com)',
                 'Content-Type': 'application/json',
             },
-            timeout: 13000, // Optional: sets a timeout limit for requests
+            timeout: 13000,
         });
+        this.buckyLogRepository = buckyLogRepository;
     }
 
-    // Method to get product details
-    async getProductDetails(productLink: string): Promise<any> {
-        const params = JSON.stringify({
-            goodsLink: productLink,
-        });
+    private async post(url: string, params: any): Promise<any> {
+        url = this.formatApiUrl(url, JSON.stringify(params));
 
-        return this.client
+        const logRecord = await this.saveLogInput(
+            url,
+            params,
+            null,
+            null
+        );
+
+        const output = await this.client
             .post(
-                //`/api/rest/v2/adapt/openapi/product/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                this.formatApiUrl('product/query', params), //`/api/rest/v2/adapt/adaptation/product/query?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
+                url,
                 params,
                 { timeout: 600000 }
             )
@@ -96,6 +104,20 @@ export class BuckyClient {
             .catch((error) => {
                 throw error;
             });
+
+        if (logRecord) {
+            logRecord.output = output;
+            this.saveLogOutput(logRecord);
+        }
+
+        return output;
+    }
+
+    // Method to get product details
+    async getProductDetails(productLink: string): Promise<any> {
+        return await this.post('product/query', {
+            goodsLink: productLink,
+        });
     }
 
     async searchProducts(
@@ -103,26 +125,20 @@ export class BuckyClient {
         currentPage: number = 1,
         pageSize: number = 10
     ): Promise<any[]> {
-        const params = JSON.stringify({
+
+        return (await this.post('product/search', {
             curent: currentPage, // Note the typo "curent" should be "current" if API docs are correct
             size: pageSize,
             item: { keyword: keyword },
-        });
-
-        return this.client
-            .post(
-                //`/api/rest/v2/adapt/openapi/product/search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                this.formatApiUrl('/product/search', params), //?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                params,
-                { timeout: 600000 }
-            )
-            .then((response) => response.data?.data?.records)
-            .catch((error) => {
-                throw error;
-            });
+        }))?.data?.records;
     }
 
-    async searchProductByImage(base64Image, currentPage = 1, pageSize = 10): Promise<any> {
+    async searchProductByImage(
+        base64Image,
+        currentPage = 1,
+        pageSize = 10
+    ): Promise<any> {
+
         const params = JSON.stringify({
             curent: currentPage,
             size: pageSize,
@@ -131,33 +147,29 @@ export class BuckyClient {
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
 
-        return (
-            this.client
-                //TODO: get correct url for this
-                .post(
-                    //TODO: use adapt/adaptation url here   
-                    ``,
-                    //`/api/rest/v2/adapt/openapi/product/image-search?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                    params,
-                    { timeout: 600000 }
-                )
-                .then((response) => response.data)
-                .catch((error) => {
-                    throw error;
-                })
-        );
+        //TODO: get correct url for this
+        return await this.post('', params);
     }
 
+    /*
     async listProductCategories(): Promise<any> {
+
         const params = ''; // Assuming no body is required
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
 
+        const logRecord = await this.saveLogInput(
+            `product/category/list-tree`,
+            params,
+            null,
+            null
+        );
+
         //TODO: add more detailed parameters
-        return this.client
+        const output = await this.client
             .get(
-                //TODO: use adapt/adaptation url here   
-                ``,
+                //TODO: use adapt/adaptation url here
+                ``
                 //`/api/rest/v2/adapt/openapi/product/category/list-tree?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}?lang=en`
                 //`/api/rest/v2/adapt/openapi/product/category/list-tree?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`
             )
@@ -165,125 +177,62 @@ export class BuckyClient {
             .catch((error) => {
                 throw error;
             });
+        if (logRecord) {
+            logRecord.output = output;
+            this.saveLogOutput(logRecord);
+        }
+        return output;
     }
+    */
 
-    //TODO: create type IBuckyOrderOutput
     async createOrder(
         createOrderParams: ICreateBuckyOrderParams
     ): Promise<any> {
-        const params = JSON.stringify(createOrderParams);
-
-        return this.client
-            .post(
-                this.formatApiUrl('/order/shop-order/create', params), //?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                //`/api/rest/v2/adapt/openapi/order/create?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                params
-            )
-            .then((response) => response.data)
-            .catch((error) => {
-                throw error;
-            });
+        return await this.post('/order/shop-order/create', createOrderParams);
     }
 
-    async cancelShopOrder(shopOrderNo: string, partnerOrderNo?: string): Promise<any> {
-        const params = JSON.stringify({
+    async cancelShopOrder(
+        shopOrderNo: string,
+        partnerOrderNo?: string
+    ): Promise<any> {
+        return await this.post('/order/shop-order/cancel', {
             shopOrderNo,
             partnerOrderNo,
         });
-
-
-        return this.client
-            .post(
-                this.formatApiUrl('/order/shop-order/cancel', params), //?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                //`/api/rest/v2/adapt/openapi/order/cancel?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                params,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }
-            )
-            .then((response) => response.data)
-            .catch((error) => {
-                throw error;
-            });
     }
 
     async cancelPurchaseOrder(orderCode: string): Promise<any> {
-        const params = JSON.stringify({
-            orderCode
-        });
-
-
-        return this.client
-            .post(
-                this.formatApiUrl('/order/po-cancel', params),
-                params,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }
-            )
-            .then((response) => response.data)
-            .catch((error) => {
-                throw error;
-            });
+        return await this.post('/order/po-cancel', { orderCode });
     }
 
-    async getOrderDetails(shopOrderNo: string, partnerOrderNo?: string): Promise<any> {
-        const params = JSON.stringify({
+    async getOrderDetails(
+        shopOrderNo: string,
+        partnerOrderNo?: string
+    ): Promise<any> {
+        return await this.post('/order/detail', {
             shopOrderNo,
             partnerOrderNo,
         });
-
-        return this.client
-            .post(
-                this.formatApiUrl('/order/detail', params), //?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                //`/api/rest/v2/adapt/openapi/order/detail?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`,
-                params
-            )
-            .then((response) => response.data)
-            .catch((error) => {
-                console.error(error);
-                throw error;
-            });
     }
 
     async getLogisticsInfo(packageCode: string): Promise<any> {
-        const params = JSON.stringify({ packageCode });
-        return this.client
-            .post(this.formatApiUrl('/logistics/query-info', params), params) //query-info?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`, params)
-            .then((response) => response.data)
-            .catch((error) => {
-                throw error;
-            });
+        return await this.post('/logistics/query-info', { packageCode });
     }
 
     async getParcelDetails(packageCode: string): Promise<any> {
-        const params = JSON.stringify({ packageCode });
-        return this.client
-            .post(this.formatApiUrl('/pkg/detail', params), params)
-            .then((response) => response.data)
-            .catch((error) => {
-                throw error;
-            });
+        return await this.post('/pkg/detail', { packageCode });
     }
 
-    async getShippingCostEstimate(size: number, current: number, item: IBuckyShippingCostRequest): Promise<any> {
-        const params = JSON.stringify({ size, current, item });
-        return this.client
-            .post(this.formatApiUrl('/logistics/channel-carriage-list', params), params)
-            .then((response) => response.data)
-            .catch((error) => {
-                throw error;
-            });
+    async getShippingCostEstimate(
+        item: IBuckyShippingCostRequest
+    ): Promise<any> {
+        return await this.post('/logistics/channel-carriage-list', { size: 10, item });
     }
+
 
     private formatApiUrl(route: string, params: any = {}): string {
         route = route.trim();
-        if (!route.startsWith('/'))
-            route = '/' + route;
+        if (!route.startsWith('/')) route = '/' + route;
         const timestamp = Date.now();
         const sign = this.generateSignature(params, timestamp);
         const url = `/api/rest/v2/adapt/adaptation${route}?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`;
@@ -296,5 +245,41 @@ export class BuckyClient {
         const hash = createHash('md5');
         const data = `${APP_CODE}${params}${timestamp}${APP_SECRET}`;
         return hash.update(data).digest('hex');
+    }
+
+    //TODO: need logger also
+    private async saveLogInput(
+        endpoint: string,
+        input: any,
+        output: any,
+        context: any
+    ): Promise<BuckyLog> {
+        try {
+            const entry = {
+                endpoint,
+                input,
+                output,
+                context,
+                timestamp: Date.now(), // ISO formatted timestamp
+                id: generateEntityId(),
+            };
+            const record = await this.buckyLogRepository?.save(entry);
+            return record;
+        } catch (e) {
+            console.error(e);
+        }
+
+        return null;
+    }
+
+    //TODO: need logger also
+    private async saveLogOutput(record: BuckyLog): Promise<void> {
+        try {
+            await this.buckyLogRepository?.save(record);
+        } catch (e) {
+            console.error(e);
+        }
+
+        return null;
     }
 }

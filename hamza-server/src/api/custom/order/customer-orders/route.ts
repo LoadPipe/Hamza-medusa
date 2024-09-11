@@ -15,7 +15,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         req,
         res,
         'GET',
-        '/custom/order/customer-orders'
+        '/custom/order/customer-orders',
+        ['customer_id', 'buckets']
     );
 
     await handler.handle(async () => {
@@ -24,33 +25,27 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             req.scope.resolve('customerService');
 
         //validate
-        if (handler.requireParams(['customer_id'])) {
+        if (handler.requireParam('customer_id')) {
             const customerId = handler.inputParams.customer_id;
 
             //enforce security
-            if (!handler.enforceCustomerId(customerId))
-                return;
+            if (!handler.enforceCustomerId(customerId)) return;
 
             //check for existence of customer
-            if (
-                !(await customerService.retrieve(
-                    customerId
-                ))
-            ) {
-                res.status(404).json({
-                    message: `Customer id ${customerId} not found`,
-                });
+            if (!(await customerService.retrieve(customerId))) {
+                handler.returnStatusWithMessage(
+                    404,
+                    `Customer id ${customerId} not found`
+                );
             } else {
-                if (req.query.buckets) {
-                    const orders = await orderService.getCustomerOrderBuckets(
-                        customerId
-                    );
-                    res.status(200).json({ orders });
+                if (handler.inputParams.buckets) {
+                    const orders =
+                        await orderService.getCustomerOrderBuckets(customerId);
+                    handler.returnStatus(200, { orders: orders });
                 } else {
-                    const orders = await orderService.getCustomerOrders(
-                        customerId
-                    );
-                    res.status(200).json({ orders });
+                    const orders =
+                        await orderService.getCustomerOrders(customerId);
+                    handler.returnStatus(200, { orders: orders });
                 }
             }
         }

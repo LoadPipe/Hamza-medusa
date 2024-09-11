@@ -1,28 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import {
-    orderBucket,
-    orderDetails,
-    singleBucket,
-    cancelOrder,
-} from '@lib/data';
-import {
-    Box,
-    Button,
-    FormControl,
-    FormErrorMessage,
-    Modal,
-    ModalBody,
-    ModalCloseButton,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    ModalOverlay,
-    Text,
-} from '@chakra-ui/react';
-import OrderCard from '@modules/account/components/order-card';
+import { cancelOrder, getOrderBucket } from '@lib/data';
+import { Box, Button, Text } from '@chakra-ui/react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import CancelOrderModal from '../components/cancel-order-modal';
-import { Textarea } from '@medusajs/ui';
 import Processing from '@modules/order/templates/processing';
 import Shipped from '@modules/order/templates/shipped';
 import Delivered from '@modules/order/templates/delivered';
@@ -52,6 +32,7 @@ const All = ({ orders }: { orders: any[] }) => {
     const [cancelReason, setCancelReason] = useState('');
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
     const [isCanceling, setIsCanceling] = useState(false);
+    const [customerId, setCustomerId] = useState<string | null>(null);
 
     const [customerOrder, setCustomerOrder] = useState<OrderState | null>({
         Processing: [],
@@ -61,13 +42,70 @@ const All = ({ orders }: { orders: any[] }) => {
         Refunded: [],
     });
 
+    useEffect(() => {
+        // console.log('Orders received in Cancelled:', orders);
+        if (orders && orders.length > 0) {
+            const customer_id = orders[0]?.customer_id;
+            // console.log(
+            //     `Running fetchAllOrders with customerID ${customer_id}`
+            // );
+            fetchAllOrders(customer_id);
+            setCustomerId(customer_id);
+        }
+    }, [orders]);
+
+    const fetchAllOrders = async (customerId: string) => {
+        try {
+            const response = await getOrderBucket(customerId);
+            console.log(`ALL BUCKETS`, response);
+
+            if (response === undefined || response === null) {
+                console.error('Bucket is undefined or null');
+                setCustomerOrder(null); // Set empty state
+                return;
+            }
+
+            console.log(`ToPay BUCKET ${response.ToPay}`);
+            // Check if the response is valid and has the expected structure
+            if (response && typeof response === 'object') {
+                setCustomerOrder({
+                    Processing: response.Processing || [],
+                    Shipped: response.Shipped || [],
+                    Delivered: response.Delivered || [],
+                    Cancelled: response.Cancelled || [],
+                    Refunded: response.Refunded || [],
+                });
+            } else {
+                console.error(
+                    'Expected an object with order arrays but got:',
+                    response
+                );
+                // Maintain the structure of customerOrder even in error cases
+                setCustomerOrder({
+                    Processing: [],
+                    Shipped: [],
+                    Delivered: [],
+                    Cancelled: [],
+                    Refunded: [],
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching order buckets:', error);
+            setCustomerOrder({
+                Processing: [],
+                Shipped: [],
+                Delivered: [],
+                Cancelled: [],
+                Refunded: [],
+            });
+        }
+    };
     const closeCancelModal = () => {
         setIsModalOpen(false);
         setCancelReason('');
         setIsAttemptedSubmit(false);
     };
 
-    //TODO: this is duplicated code (3x); should be DRYed (likewise with the modal itself)
     const handleCancel = async () => {
         if ((cancelReason?.length ?? 0) < MIN_CANCEL_REASON_LENGTH) {
             setIsAttemptedSubmit(true);
@@ -86,10 +124,16 @@ const All = ({ orders }: { orders: any[] }) => {
             closeCancelModal();
         }
     };
+    const areAllOrdersEmpty = customerOrder
+        ? Object.values(customerOrder).every(
+              (orderArray) => orderArray.length === 0
+          )
+        : true; // if customerOrder is null or undefined, consider all orders empty
+    console.log(`Are all orders empty ${areAllOrdersEmpty}`);
 
     return (
         <Box>
-            {customerOrder ? (
+            {!areAllOrdersEmpty ? (
                 <Box>
                     <Box mt={4} mb={2}>
                         <Processing orders={orders} />

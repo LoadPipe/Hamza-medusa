@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Flex, Button, Text } from '@chakra-ui/react';
 import ProfileInput from './components/profile-input';
 import { updateCustomer } from '@lib/data';
-import { getCustomer } from '@lib/data';
+import { getHamzaCustomer } from '@lib/data';
 import ProfileImage from './components/profile-image';
 import toast from 'react-hot-toast';
 import ProfileCurrency from '@modules/account/components/profile-currency';
@@ -29,7 +29,7 @@ const ProfileForm = () => {
     useEffect(() => {
         const fetchCustomer = async () => {
             try {
-                const customer = await getCustomer();
+                const customer = await getHamzaCustomer();
                 if (customer === null) {
                     return;
                 } else {

@@ -1,5 +1,4 @@
 import axios, { AxiosInstance } from 'axios';
-
 //TODO: re-create this as a service
 export type HexString = `0x${string}`;
 
@@ -62,14 +61,18 @@ export class CurrencyConversionClient {
                 case '0x0000000000000000000000000000000000000000':
                     return 2517.26;
                 case 'cny':
-                    if (toCurrency !== '0x0000000000000000000000000000000000000000')
+                    if (
+                        toCurrency !==
+                        '0x0000000000000000000000000000000000000000'
+                    )
                         return 0.14;
-                    else
-                        return 0.000051;
+                    else return 0.000051;
                 default:
-                    if (toCurrency !== '0x0000000000000000000000000000000000000000') {
-                        if (toCurrency === 'cny')
-                            return 7.14
+                    if (
+                        toCurrency !==
+                        '0x0000000000000000000000000000000000000000'
+                    ) {
+                        if (toCurrency === 'cny') return 7.14;
                         return 1;
                     }
                     return 0.00041;
