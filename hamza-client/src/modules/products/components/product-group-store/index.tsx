@@ -27,36 +27,27 @@ const ProductCardGroup = () => {
     //TODO: MOVE TO INDEX.TS
     // Get products from vendor
     const { data, error, isLoading } = useQuery(
-        ['categories'], // Use a unique key here to identify the query
+        ['categories', categorySelect], // Use a unique key here to identify the query
         async () => {
-            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
-
+            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/category/products?category_name=${categorySelect}`;
             const response = await axios.get(url);
             return response.data; // Return the data from the response
         }
     );
 
-    // productsAll will contain all products from all categories
     const productsAll = data
-        ? data.flatMap((category: any) => category.products) // Extract all products from all categories
+        ? categorySelect === 'All'
+            ? data // If category is 'all', data is a flat list of products
+            : data.flatMap((category: any) => category.products) // Otherwise, extract products from categories
         : [];
-
-    // products will contain filtered products based on category selection
-    const products =
-        categorySelect === 'All'
-            ? productsAll
-            : data
-                ?.filter((category: any) => category.name === categorySelect) // Match the category name
-                .flatMap((category: any) => category.products) || []; // Extract products for the selected category
 
     const handleViewMore = () => {
         // Increase the visible products count by 16 (4 rows of 4 products)
         setVisibleProductsCount((prevCount) => prevCount + 15);
     };
 
-    const visibleProducts = products.slice(0, visibleProductsCount);
+    const visibleProducts = productsAll.slice(0, visibleProductsCount);
 
-    console.log('Filtered products:', products);
     if (isLoading) {
         return (
             <Flex
@@ -170,7 +161,7 @@ const ProductCardGroup = () => {
 
             {/* Show the "View More" button only if there are more products to display */}
             <Flex>
-                {visibleProductsCount < products.length && (
+                {visibleProductsCount < productsAll.length && (
                     <Button
                         mt="2rem"
                         mx="auto"
