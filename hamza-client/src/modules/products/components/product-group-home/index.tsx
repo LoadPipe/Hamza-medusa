@@ -28,7 +28,7 @@ const ProductCardGroup = () => {
     const { data, error, isLoading } = useQuery(
         ['categories'], // Use a unique key here to identify the query
         async () => {
-            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
+            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/category/products?category_name='${categorySelect}'`;
 
             const response = await axios.get(url);
             return response.data; // Return the data from the response
