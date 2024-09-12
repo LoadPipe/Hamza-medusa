@@ -18,7 +18,6 @@ const VerifyEmail = () => {
     useEffect(() => {
         const confirmationTokenHandler = async () => {
             let res: any = verifyToken(token as string);
-            console.log(`WTF tf does this even return`);
             if (res.status) {
                 setDisplayMessage('Email verified successfully!!!');
                 setCustomerAuthData({ ...authData, is_verified: true });
