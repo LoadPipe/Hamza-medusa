@@ -361,5 +361,6 @@ Content-Type: application/json
 GET http://localhost:9000/custom/bucky/import?keyword=bowl&count=5&page=1&store=store_01J7DT2M77XAKB6KQ1KK9Z35NW
 Content-Type: application/json
 
-
-
+### GET products by category name
+GET http://localhost:9000/custom/product/category/products?category_name=fitness
+Content-Type: application/json

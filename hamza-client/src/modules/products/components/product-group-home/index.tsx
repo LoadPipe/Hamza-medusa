@@ -60,7 +60,6 @@ const ProductCardGroup = () => {
 
     const visibleProducts = productsAll.slice(0, visibleProductsCount);
 
-    console.log('Filtered products:', products);
     if (isLoading) {
         return (
             <Flex
