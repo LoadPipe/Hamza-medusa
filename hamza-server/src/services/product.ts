@@ -335,13 +335,13 @@ class ProductService extends MedusaProductService {
      * Fetches all products for a specific store and category.
      *
      * 1. Retrieves product categories with their associated products, variants, prices, and reviews.
-     * 2. Filters the categories based on the given category name.
-     * 3. Filters products within the selected category by the provided store ID.
+     * 2. If the categoryName is not "all", filters the categories based on the given category name.
+     * 3. Filters products within the selected category (or all categories if "all") by the provided store ID.
      * 4. Updates the product pricing for the filtered products.
      * 5. Returns the filtered list of products.
      *
      * @param {string} storeId - The ID of the store to fetch products from.
-     * @param {string} category - The category to filter products by.
+     * @param {string} categoryName - The category to filter products by, or "all" to fetch all categories.
      * @returns {Array} - A list of products for the specified store and category.
      * @throws {Error} - If there is an issue fetching the products or updating prices.
      */
