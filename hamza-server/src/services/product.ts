@@ -14,9 +14,7 @@ import {
 import { Product } from '../models/product';
 import { StoreRepository } from '../repositories/store';
 import { CachedExchangeRateRepository } from '../repositories/cached-exchange-rate';
-import PriceSelectionStrategy, {
-    PriceConverter,
-} from '../strategies/price-selection';
+import PriceSelectionStrategy from '../strategies/price-selection';
 import CustomerService from '../services/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import { In, IsNull, Not } from 'typeorm';
