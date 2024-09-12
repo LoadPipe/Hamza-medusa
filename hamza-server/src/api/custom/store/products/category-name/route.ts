@@ -32,7 +32,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         );
         console.log('Retrieved store data:', storeData);
 
-        const fashion = 'fashion';
         // Fetch the products by store ID
         const products = await productService.getStoreProductsByCategory(
             storeData.id.toString(),
