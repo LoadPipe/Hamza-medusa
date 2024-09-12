@@ -1,5 +1,4 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
-import { ProductSelector as MedusaProductSelector } from '@medusajs/medusa/dist/types/product';
 import StoreService from '../../../../../services/store';
 import ProductService from '../../../../../services/product';
 import { RouteHandler } from '../../../../route-handler';
