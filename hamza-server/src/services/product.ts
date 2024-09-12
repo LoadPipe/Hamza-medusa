@@ -347,6 +347,9 @@ class ProductService extends MedusaProductService {
      */
     async getStoreProductsByCategory(storeId: string, categoryName: string) {
         try {
+            if (categoryName.toLowerCase() === 'all') {
+                return await this.getProductsFromStoreWithPrices(storeId);
+            }
             // Query to get all products for the given store ID
             const categories = await this.productCategoryRepository_.find({
                 select: ['id', 'name', 'metadata'],
@@ -359,12 +362,10 @@ class ProductService extends MedusaProductService {
 
             let filteredCategories = categories;
 
-            // If categoryName is not 'all', filter for the specific category
-            if (categoryName.toLowerCase() !== 'all') {
-                filteredCategories = categories.filter(
-                    (cat) => cat.name.toLowerCase() === categoryName
-                );
-            }
+            //Filter for the specific category
+            filteredCategories = categories.filter(
+                (cat) => cat.name.toLowerCase() === categoryName
+            );
 
             // Filter products for the category (or all categories) by storeId and status 'published'
             const filteredProducts = filteredCategories.map((cat) => {
