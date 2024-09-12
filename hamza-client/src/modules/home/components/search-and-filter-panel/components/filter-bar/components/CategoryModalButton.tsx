@@ -5,8 +5,8 @@ import useModalFilter from '@store/store-page/filter-modal';
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
 import categoryIcons from '@modules/shop/data/category-icons';
 interface CategoryButtonProps {
-    categoryName: string;
-    categoryType: string;
+    categoryName: string[];
+    categoryType: string[];
 }
 
 const CategoryModalButton: React.FC<CategoryButtonProps> = ({
@@ -19,12 +19,28 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
         setHomeModalCategoryTypeFilterSelect,
     } = useHomeModalFilter();
 
+    const toggleCategorySelection = (category: string) => {
+        if (homeModalCategoryFilterSelect?.includes(category)) {
+            // If the category is already selected, remove it
+            const updatedSelection = homeModalCategoryFilterSelect.filter(
+                (selected) => selected !== category
+            );
+            setHomeModalCategoryFilterSelect(updatedSelection);
+        } else {
+            // If the category is not selected, add it
+            setHomeModalCategoryFilterSelect([
+                ...(homeModalCategoryFilterSelect || []),
+                category,
+            ]);
+        }
+    };
+
     return (
         <Flex>
             <Flex
                 borderColor={'secondary.davy.900'}
                 backgroundColor={
-                    homeModalCategoryFilterSelect === categoryName
+                    homeModalCategoryFilterSelect?.includes(categoryName)
                         ? 'white'
                         : 'transparent'
                 }
@@ -46,15 +62,13 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                     background: 'white',
                     color: 'black',
                 }}
-                onClick={() => {
-                    setHomeModalCategoryFilterSelect(categoryName),
-                        setHomeModalCategoryTypeFilterSelect(categoryType);
-                }}
+                onClick={() => toggleCategorySelection(categoryName)}
             >
                 <Image
-                    src={categoryIcons[categoryName.toLowerCase()]}
-                    alt={categoryName}
+                    src={categoryIcons[categoryName[0]?.toLowerCase()]}
+                    alt={categoryName[0]}
                 />
+
                 <Text ml="10px" fontSize={{ base: '14px', md: '16px' }}>
                     {categoryName}
                 </Text>

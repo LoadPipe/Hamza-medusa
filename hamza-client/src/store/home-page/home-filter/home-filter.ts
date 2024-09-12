@@ -3,12 +3,12 @@ import { create } from 'zustand';
 // Define the state and associated actions in an interface
 interface ModalFilterState {
     homeModalFilterSelected: boolean;
-    homeModalCategoryFilterSelect: string | null;
-    homeModalCategoryTypeFilterSelect: string | null;
+    homeModalCategoryFilterSelect: string[] | null;
+    homeModalCategoryTypeFilterSelect: string[] | null;
     homeModalCurrencyFilterSelect: string | null;
     homeModalReviewFilterSelect: string | null;
-    setHomeModalCategoryFilterSelect: (item: string | null) => void;
-    setHomeModalCategoryTypeFilterSelect: (item: string | null) => void;
+    setHomeModalCategoryFilterSelect: (item: string[] | null) => void;
+    setHomeModalCategoryTypeFilterSelect: (item: string[] | null) => void;
     setHomeModalCurrencyFilterSelect: (item: string | null) => void;
     setHomeModalReviewFilterSelect: (stars: string | null) => void;
     setHomeModalFilterSelected: (selected: boolean) => void;
@@ -21,9 +21,9 @@ const useHomeModalFilter = create<ModalFilterState>((set) => ({
     homeModalCategoryTypeFilterSelect: null,
     homeModalCurrencyFilterSelect: null,
     homeModalReviewFilterSelect: null,
-    setHomeModalCategoryFilterSelect: (item: string | null) =>
+    setHomeModalCategoryFilterSelect: (item: string[] | null) =>
         set({ homeModalCategoryFilterSelect: item }),
-    setHomeModalCategoryTypeFilterSelect: (item: string | null) =>
+    setHomeModalCategoryTypeFilterSelect: (item: string[] | null) =>
         set({ homeModalCategoryTypeFilterSelect: item }),
     setHomeModalCurrencyFilterSelect: (item: string | null) =>
         set({ homeModalCurrencyFilterSelect: item }),
