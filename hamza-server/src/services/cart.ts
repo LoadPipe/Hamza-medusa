@@ -9,7 +9,7 @@ import {
 import CustomerRepository from '@medusajs/medusa/dist/repositories/customer';
 import { LineItem } from '../models/line-item';
 import { Lifetime } from 'awilix';
-import { PriceConverter } from '../strategies/price-selection';
+import { PriceConverter } from '../utils/price-conversion';
 import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import ShippingMethodRepository from '@medusajs/medusa/dist/repositories/shipping-method';

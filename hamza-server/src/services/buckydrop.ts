@@ -12,7 +12,7 @@ import OrderService from '../services/order';
 import { BuckyLogRepository } from '../repositories/bucky-log';
 import { Product } from '../models/product';
 import { Order } from '../models/order';
-import { PriceConverter } from '../strategies/price-selection';
+import { PriceConverter } from '../utils/price-conversion';
 import {
     BuckyClient,
     IBuckyShippingCostRequest,
