@@ -205,12 +205,16 @@ export class PriceConverter {
 
                 // Step 4: Check if we need to save to the database (every 5 minutes max)
                 const existingRate = await this.getFromDatabase(price);
+
+                //TODO Make setting
                 const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
 
                 if (
                     !existingRate ||
-                    existingRate?.created_at <= fiveMinutesAgo
+                    existingRate?.updated_at <= fiveMinutesAgo
                 ) {
+                    console.log(existingRate?.updated_at);
+                    console.log(fiveMinutesAgo);
                     await this.saveToDatabase(price, rate);
                 }
             } else {
@@ -269,7 +273,7 @@ export class PriceConverter {
 
     private async getFromDatabase(
         price: IPrice
-    ): Promise<{ rate: number; created_at: Date } | null> {
+    ): Promise<{ rate: number; updated_at: Date } | null> {
         try {
             const id =
                 `${price.baseCurrency}-${price.toCurrency}`.toLowerCase();
@@ -282,9 +286,10 @@ export class PriceConverter {
                 this.logger?.info(
                     `Using DB-cached rate for ${price.baseCurrency} to ${price.toCurrency}: ${cachedRate.rate}`
                 );
+                console.log(cachedRate);
                 return {
                     rate: cachedRate.rate,
-                    created_at: cachedRate.created_at,
+                    updated_at: cachedRate.updated_at,
                 };
             }
         } catch (error) {
@@ -302,59 +307,13 @@ export class PriceConverter {
             const id =
                 `${price.baseCurrency}-${price.toCurrency}`.toLowerCase();
 
-            let rate: number;
-
-            // Step 1: Fetch exchange rate from external API
-            try {
-                rate = await this.restClient.getExchangeRate(
-                    price.baseCurrency,
-                    price.toCurrency
-                );
-            } catch (e) {
-                this.logger?.warn(
-                    `Failed to fetch rate from API for ${price.baseCurrency} to ${price.toCurrency}, falling back to cache ${e}`
-                );
-
-                // Step 2: Fetch the rate from the cache if API call fails
-                const existingRate =
-                    await this.cachedExchangeRateRepository.findOne({
-                        where: { id },
-                    });
-
-                if (existingRate) {
-                    rate = existingRate.rate;
-                    this.logger?.info(
-                        `Using cached rate ${rate} for ${price.baseCurrency} to ${price.toCurrency}`
-                    );
-                } else {
-                    // If neither API nor cache has the rate, handle the error
-                    this.logger?.error(
-                        `No cached rate found for ${price.baseCurrency} to ${price.toCurrency} and API request failed.`
-                    );
-                    throw new Error(
-                        `Unable to retrieve exchange rate for ${price.baseCurrency} to ${price.toCurrency}`
-                    );
-                }
-            }
-
-            // Step 3: Save or update the exchange rate in the database
-            let existingRate = await this.cachedExchangeRateRepository.findOne({
-                where: { id },
+            // Insert a new entry
+            await this.cachedExchangeRateRepository.save({
+                id: id,
+                to_currency_code: price.toCurrency,
+                from_currency_code: price.baseCurrency,
+                rate: rate,
             });
-
-            if (existingRate) {
-                // Update existing entry
-                existingRate.rate = rate;
-                await this.cachedExchangeRateRepository.save(existingRate);
-            } else {
-                // Insert a new entry
-                await this.cachedExchangeRateRepository.save({
-                    to_currency_code: price.toCurrency,
-                    from_currency_code: price.baseCurrency,
-                    rate: rate,
-                    id: id,
-                });
-            }
 
             this.logger?.info(
                 `Saved rate ${rate} for ${price.baseCurrency} to ${price.toCurrency} in DB`
