@@ -7,6 +7,7 @@ import {
     Store,
     ProductStatus,
 } from '@medusajs/medusa';
+import { ParsedQs } from 'qs';
 import {
     CreateProductInput,
     CreateProductProductVariantPriceInput,
@@ -18,6 +19,7 @@ import PriceSelectionStrategy, {
 } from '../strategies/price-selection';
 import CustomerService from '../services/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
+
 import { In, IsNull, Not } from 'typeorm';
 import { createLogger, ILogger } from '../utils/logging/logger';
 
@@ -545,6 +547,71 @@ class ProductService extends MedusaProductService {
                 error
             );
             throw new Error('Failed to fetch products by handle.');
+        }
+    }
+
+    // Filter to get products that belong to all passed categories
+
+    async getAllProductsByMultipleCategories(categoryNames: string[]) {
+        try {
+            // Step 1: Normalize the category names for case-insensitive comparison
+            const normalizedCategoryNames = categoryNames.map((name) =>
+                name.toLowerCase()
+            );
+
+            // Step 2: Fetch the category IDs that match the given category names
+            const categoryIds = await this.productCategoryRepository_
+                .createQueryBuilder('product_category')
+                .select('product_category.id')
+                .where('LOWER(product_category.name) IN (:...categoryNames)', {
+                    categoryNames: normalizedCategoryNames,
+                })
+                .getRawMany();
+
+            const categoryIdList = categoryIds.map((c) => c.id);
+
+            if (categoryIdList.length === 0) {
+                return []; // No categories found, return empty
+            }
+
+            // Step 3: Query the product_category_product join table directly to find products that exist in all categories
+            const productIds = await this.productRepository_
+                .createQueryBuilder('product')
+                .innerJoin(
+                    'product_category_product',
+                    'pcp',
+                    'pcp.product_id = product.id'
+                )
+                .where('pcp.product_category_id IN (:...categoryIds)', {
+                    categoryIds: categoryIdList,
+                })
+                .groupBy('pcp.product_id')
+                .having(
+                    'COUNT(DISTINCT pcp.product_category_id) = :numCategories',
+                    { numCategories: categoryIdList.length }
+                )
+                .select('pcp.product_id') // Select only the product IDs
+                .getRawMany();
+
+            const productIdList = productIds.map((p) => p.product_id);
+
+            if (productIdList.length === 0) {
+                return []; // No products found that belong to all categories
+            }
+
+            // Step 4: Fetch the product details for the filtered product IDs
+            const products = await this.productRepository_.find({
+                where: { id: In(productIdList) },
+                relations: ['variants.prices', 'reviews'], // Adjust relations as needed
+            });
+
+            return products; // Return the filtered products
+        } catch (error) {
+            this.logger.error(
+                'Error occurred while fetching products by multiple categories:',
+                error
+            );
+            throw new Error('Failed to fetch products by multiple categories.');
         }
     }
 

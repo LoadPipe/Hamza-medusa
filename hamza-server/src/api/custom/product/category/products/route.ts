@@ -18,14 +18,25 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     await handler.handle(async () => {
         const { category_name } = req.query;
 
-        console.log('hello baby');
-        // Validate the request
+        // Validate the request: category_name must be provided
         if (!handler.requireParam('category_name')) return;
 
-        // Fetch the products by store ID
-        const products = await productService.getAllProductByCategory(
-            category_name.toString()
-        );
+        let products;
+
+        // If `category_name` is an array of strings, handle it as multiple categories.
+        if (Array.isArray(category_name)) {
+            // If multiple categories are passed
+            const categoryArray = category_name as string[]; // Cast to string[] directly
+            products =
+                await productService.getAllProductsByMultipleCategories(
+                    categoryArray
+                );
+        } else {
+            // If a single category is passed
+            products = await productService.getAllProductByCategory(
+                category_name.toString() // Convert single category to string
+            );
+        }
 
         // Return the filtered products
         return handler.returnStatus(200, products);
