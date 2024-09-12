@@ -362,8 +362,7 @@ class ProductService extends MedusaProductService {
 
             let filteredCategories = categories;
 
-            // If categoryName is not 'all', filter for the specific category
-
+            //Filter for the specific category
             filteredCategories = categories.filter(
                 (cat) => cat.name.toLowerCase() === categoryName
             );
