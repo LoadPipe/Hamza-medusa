@@ -4,10 +4,6 @@ import StoreService from '../../../../../services/store';
 import ProductService from '../../../../../services/product';
 import { RouteHandler } from '../../../../route-handler';
 
-type ProductSelector = {
-    store_id?: string;
-} & MedusaProductSelector;
-
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const storeService: StoreService = req.scope.resolve('storeService');
     const productService: ProductService = req.scope.resolve('productService');
