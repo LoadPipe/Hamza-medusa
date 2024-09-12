@@ -25,9 +25,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         ['count', 'page', 'link', 'store',]
     );
 
-    const getImportData = async (storeName: string) => {
+    const getImportData = async (storeName: string, categoryId: string) => {
         const output = {
             storeId: '',
+            categoryId,
             collectionId: '',
             salesChannelId: '',
         };
@@ -49,7 +50,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     await handler.handle(async () => {
         const importData = await getImportData(
-            handler.inputParams.store ?? 'Medusa Merch'
+            handler.inputParams.store ?? 'Medusa Merch',
+            handler.inputParams.category_id
         );
 
         const goodsId = handler.inputParams.goodsId?.toString();
@@ -60,6 +62,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             output = await buckyService.importProductsByLink(
                 link,
                 importData.storeId,
+                importData.categoryId,
                 importData.collectionId,
                 importData.salesChannelId
             );
@@ -68,6 +71,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             output = await buckyService.importProductsByKeyword(
                 handler.inputParams.keyword.toString(),
                 importData.storeId,
+                importData.categoryId,
                 importData.collectionId,
                 importData.salesChannelId,
                 parseInt(handler.inputParams.count?.toString() ?? '10'),
