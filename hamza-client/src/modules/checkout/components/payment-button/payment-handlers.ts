@@ -228,6 +228,8 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
                 contractAddress
             );
 
+            //TODO: check sender balance
+
             payer_address = await signer.getAddress();
             const inputs = this.createPaymentInput(data, payer_address, chainId);
             console.log('sending payments: ', inputs);
@@ -262,7 +264,8 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
                             orderId: o.order_id,
                             payer: payer,
                             receiver: o.wallet_address,
-                            amount: this.convertToNativeAmount(o.currency_code, o.amount, chainId),
+                            amount: process.env.NEXT_PUBLIC_ONE_SATOSHI_DISCOUNT ? 1 :
+                                this.convertToNativeAmount(o.currency_code, o.amount, chainId)
                         },
                     ],
                 };
@@ -325,12 +328,14 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
         if (signer && provider) {
             for (const currency in paymentGroups) {
                 let tx: ethers.TransactionResponse | null = null;
-                const amount = this.convertToNativeAmount(
+                let amount = this.convertToNativeAmount(
                     currency,
                     paymentGroups[currency],
                     chainId
                 );
                 console.log('amount is', amount);
+
+                amount = process.env.NEXT_PUBLIC_ONE_SATOSHI_DISCOUNT ? BigInt(1) : amount;
 
                 //check balance first 
                 if (!(await checkSenderBalance(provider, signer, chainId, currency, amount))) {
