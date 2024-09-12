@@ -18,6 +18,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     await handler.handle(async () => {
         const { category_name } = req.query;
 
+        console.log('hello baby');
         // Validate the request
         if (!handler.requireParam('category_name')) return;
 

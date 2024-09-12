@@ -514,7 +514,7 @@ class ProductService extends MedusaProductService {
 
             //Filter for the specific category
             filteredCategories = categories.filter(
-                (cat) => cat.name.toLowerCase() === categoryName
+                (cat) => cat.name.toLowerCase() === categoryName.toLowerCase()
             );
 
             // Filter products for the category (or all categories) by storeId and status 'published'
