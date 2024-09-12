@@ -16,7 +16,6 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import ProductCardStore from '@modules/shop/components/product-card';
 import SkeletonProductGrid from '@modules/skeletons/components/skeleton-product-grid';
-import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import useStorePage from '@store/store-page/store-page';
 
 const ProductCardGroup = () => {
@@ -46,8 +45,8 @@ const ProductCardGroup = () => {
         categorySelect === 'All'
             ? productsAll
             : data
-                ?.filter((category: any) => category.name === categorySelect) // Match the category name
-                .flatMap((category: any) => category.products) || []; // Extract products for the selected category
+                  ?.filter((category: any) => category.name === categorySelect) // Match the category name
+                  .flatMap((category: any) => category.products) || []; // Extract products for the selected category
 
     const handleViewMore = () => {
         // Increase the visible products count by 16 (4 rows of 4 products)

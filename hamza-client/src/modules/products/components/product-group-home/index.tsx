@@ -42,11 +42,15 @@ const ProductCardGroup = () => {
 
     // products will contain filtered products based on category selection
     const products =
-        categorySelect === 'All'
+        categorySelect && categorySelect.includes('All') // Check if 'All' is in the array
             ? productsAll
             : data
-                  ?.filter((category: any) => category.name === categorySelect) // Match the category name
-                  .flatMap((category: any) => category.products) || []; // Extract products for the selected category
+                  ?.filter((category: any) =>
+                      categorySelect?.some(
+                          (selected) => selected === category.name
+                      )
+                  ) // Check if the category is in the selected categories
+                  .flatMap((category: any) => category.products) || []; // Extract products for the selected categories
 
     const handleViewMore = () => {
         // Increase the visible products count by 16 (4 rows of 4 products)
