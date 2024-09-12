@@ -173,7 +173,8 @@ const cache: {
 export class PriceConverter {
     private readonly restClient: CurrencyConversionClient =
         new CurrencyConversionClient();
-    private readonly expirationSeconds: number = 60;
+    private readonly MEMORY_CACHE_EXPIRATION_SECONDS: number = 60;
+    private readonly DB_WRITE_LIMIT_COOLDOWN_SECONDS: number = 300;
     private readonly logger: ILogger;
     private readonly cachedExchangeRateRepository: typeof CachedExchangeRateRepository;
 
@@ -202,21 +203,9 @@ export class PriceConverter {
             rate = await this.getFromApi(price);
 
             if (rate) {
-                // Step 3: Write to cache
+                // Step 3: Write to cache & save to DB
                 this.writeToCache(price, rate);
-
-                // Step 4: Check if we need to save to the database (every 5 minutes max)
-                const existingRate = await this.getFromDatabase(price);
-
-                //TODO Make setting
-                const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-
-                if (
-                    !existingRate ||
-                    existingRate?.updated_at <= fiveMinutesAgo
-                ) {
-                    await this.saveToDatabase(price, rate);
-                }
+                this.saveToDatabase(price, rate);
             } else {
                 // Step 5: If API fails, fallback to database
                 const dbResult = await this.getFromDatabase(price);
@@ -300,20 +289,26 @@ export class PriceConverter {
 
     private async saveToDatabase(price: IPrice, rate: number): Promise<void> {
         try {
-            const id =
-                `${price.baseCurrency}-${price.toCurrency}`.toLowerCase();
+            // check if we need to save to the database (every 5 minutes max)
+            const existingRate = await this.getFromDatabase(price);
 
-            // Insert a new entry
-            await this.cachedExchangeRateRepository.save({
-                id: id,
-                to_currency_code: price.toCurrency,
-                from_currency_code: price.baseCurrency,
-                rate: rate,
-            });
+            if (existingRate?.updated_at < new Date(Date.now() - this.DB_WRITE_LIMIT_COOLDOWN_SECONDS * 1000)) {
+                const id =
+                    `${price.baseCurrency}-${price.toCurrency}`.toLowerCase();
 
-            this.logger?.info(
-                `Saved rate ${rate} for ${price.baseCurrency} to ${price.toCurrency} in DB`
-            );
+                // Insert a new entry
+                await this.cachedExchangeRateRepository.save({
+                    id: id,
+                    to_currency_code: price.toCurrency,
+                    from_currency_code: price.baseCurrency,
+                    rate: rate,
+                });
+
+                this.logger?.info(
+                    `Saved rate ${rate} for ${price.baseCurrency} to ${price.toCurrency} in DB`
+                );
+            }
+
         } catch (error) {
             this.logger?.error(
                 `Failed to save exchange rate to DB for ${price.baseCurrency} to ${price.toCurrency}`,
@@ -327,7 +322,7 @@ export class PriceConverter {
         if (
             cache[key] &&
             this.getTimestamp() - cache[key].timestamp >=
-            this.expirationSeconds
+            this.MEMORY_CACHE_EXPIRATION_SECONDS
         ) {
             cache[key] = null;
         }
