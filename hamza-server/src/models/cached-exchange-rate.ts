@@ -21,16 +21,16 @@ export class CachedExchangeRate extends BaseEntity {
     @PrimaryColumn()
     id: string;
 
-    @ManyToOne(() => Currency) // Setting up the relation to the Currency entity
-    @JoinColumn({ name: 'currency_code' }) // Defines the foreign key column
-    @Column({ unique: true })
-    currency_code: string; // Foreign key to currency table
+    @ManyToOne(() => Currency)
+    @JoinColumn({ name: 'from_currency_code' })
+    from_currency_code: string;
+
+    @ManyToOne(() => Currency)
+    @JoinColumn({ name: 'to_currency_code' })
+    to_currency_code: string;
 
     @Column({ name: 'rate', type: 'float' })
     rate: number; // Floating point number for exchange rate
-
-    @Column({ name: 'date_cached', type: 'timestamp' })
-    date_cached: Date; // Timestamp for when the rate was cached
 
     @BeforeInsert()
     private beforeInsert(): void {

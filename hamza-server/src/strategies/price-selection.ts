@@ -209,7 +209,7 @@ export class PriceConverter {
 
                 if (
                     !existingRate ||
-                    existingRate?.date_cached <= fiveMinutesAgo
+                    existingRate?.created_at <= fiveMinutesAgo
                 ) {
                     await this.saveToDatabase(price, rate);
                 }
@@ -269,12 +269,13 @@ export class PriceConverter {
 
     private async getFromDatabase(
         price: IPrice
-    ): Promise<{ rate: number; date_cached: Date } | null> {
+    ): Promise<{ rate: number; created_at: Date } | null> {
         try {
-            const key =
+            const id =
                 `${price.baseCurrency}-${price.toCurrency}`.toLowerCase();
+
             const cachedRate = await this.cachedExchangeRateRepository.findOne({
-                where: { currency_code: key },
+                where: { id },
             });
 
             if (cachedRate) {
@@ -283,7 +284,7 @@ export class PriceConverter {
                 );
                 return {
                     rate: cachedRate.rate,
-                    date_cached: cachedRate.date_cached, // Include date_cached for the 5-minute check
+                    created_at: cachedRate.created_at,
                 };
             }
         } catch (error) {
@@ -298,7 +299,7 @@ export class PriceConverter {
 
     private async saveToDatabase(price: IPrice, rate: number): Promise<void> {
         try {
-            const key =
+            const id =
                 `${price.baseCurrency}-${price.toCurrency}`.toLowerCase();
 
             let rate: number;
@@ -317,7 +318,7 @@ export class PriceConverter {
                 // Step 2: Fetch the rate from the cache if API call fails
                 const existingRate =
                     await this.cachedExchangeRateRepository.findOne({
-                        where: { currency_code: price.toCurrency },
+                        where: { id },
                     });
 
                 if (existingRate) {
@@ -338,21 +339,20 @@ export class PriceConverter {
 
             // Step 3: Save or update the exchange rate in the database
             let existingRate = await this.cachedExchangeRateRepository.findOne({
-                where: { currency_code: price.toCurrency },
+                where: { id },
             });
 
             if (existingRate) {
                 // Update existing entry
                 existingRate.rate = rate;
-                existingRate.date_cached = new Date();
                 await this.cachedExchangeRateRepository.save(existingRate);
             } else {
                 // Insert a new entry
                 await this.cachedExchangeRateRepository.save({
-                    currency_code: price.toCurrency,
+                    to_currency_code: price.toCurrency,
+                    from_currency_code: price.baseCurrency,
                     rate: rate,
-                    date_cached: new Date(),
-                    id: generateEntityId(),
+                    id: id,
                 });
             }
 
@@ -372,7 +372,7 @@ export class PriceConverter {
         if (
             this.cache[key] &&
             this.getTimestamp() - this.cache[key].timestamp >=
-                this.expirationSeconds
+            this.expirationSeconds
         ) {
             this.cache[key] = null;
         }
