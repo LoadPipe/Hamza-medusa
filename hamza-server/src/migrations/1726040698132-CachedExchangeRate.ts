@@ -5,9 +5,11 @@ export class CachedExchangeRate1726040698132 implements MigrationInterface {
         await queryRunner.query(`
             CREATE TABLE "cached_exchange_rate" (
                 "id" character varying NOT NULL,
-                "currency_code" character varying NOT NULL,
+                "to_currency_code" character varying NOT NULL,
+                "from_currency_code" character varying NOT NULL,
                 "rate" float NOT NULL,
                 "created_at" TIMESTAMP NOT NULL DEFAULT now(),
+                "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
                 CONSTRAINT "UQ_currency_code" UNIQUE ("currency_code"),
                 CONSTRAINT "PK_cached_exchange_rate" PRIMARY KEY ("id"),
                 CONSTRAINT "FK_currency_code" FOREIGN KEY ("currency_code") REFERENCES "currency"("code") ON DELETE CASCADE
