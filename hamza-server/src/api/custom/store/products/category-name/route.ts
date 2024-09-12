@@ -16,12 +16,12 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         req,
         res,
         'GET',
-        '/custom/store/products/handle'
+        '/custom/store/products/category-name'
     );
 
     // Return error if no products in store
     await handler.handle(async () => {
-        const { store_name, category } = req.query;
+        const { store_name, category_name } = req.query;
 
         // Validate the request
         if (!handler.requireParam('store_name')) return;
@@ -36,7 +36,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         // Fetch the products by store ID
         const products = await productService.getStoreProductsByCategory(
             storeData.id.toString(),
-            category.toString()
+            category_name.toString()
         );
 
         // Filter products by product handle if provided

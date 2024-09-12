@@ -17,22 +17,19 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 
 type Props = {
     storeName: string;
-    handle: string | null;
+    categoryName: string | null;
     filterByRating?: string | null;
 };
 
-const ProductCardGroup = ({ storeName, handle }: Props) => {
+const ProductCardGroup = ({ storeName, categoryName }: Props) => {
     // get preferred currency
     const { preferred_currency_code } = useCustomerAuthStore();
 
-    const url =
-        handle === 'all'
-            ? `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products?store_name=${storeName}`
-            : `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products/handle?store_name=${storeName}&category=${handle}`;
+    const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products/category-name?store_name=${storeName}&category_name=${categoryName}`;
 
     // Fetch data using the useQuery hook
     const { data, error, isLoading } = useQuery(
-        ['products', handle],
+        ['products', categoryName],
         async () => {
             console.log('Fetching data from URL:', url);
             const response = await axios.get(url);
@@ -42,14 +39,9 @@ const ProductCardGroup = ({ storeName, handle }: Props) => {
     );
 
     // Handle products based on 'handle'
-    const productsAll =
-        handle === 'all'
-            ? Array.isArray(data)
-                ? data
-                : [] // When handle is 'all', use the entire data array
-            : data
-              ? data.flatMap((category: any) => category.products) // Extract products from the categories
-              : [];
+    const productsAll = data
+        ? data.flatMap((category: any) => category.products) // Extract products from the categories
+        : [];
 
     if (isLoading) {
         return (

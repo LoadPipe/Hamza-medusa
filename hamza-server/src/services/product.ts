@@ -345,7 +345,7 @@ class ProductService extends MedusaProductService {
      * @returns {Array} - A list of products for the specified store and category.
      * @throws {Error} - If there is an issue fetching the products or updating prices.
      */
-    async getStoreProductsByCategory(storeId: string, category: string) {
+    async getStoreProductsByCategory(storeId: string, categoryName: string) {
         try {
             // Query to get all products for the given store ID
             const categories = await this.productCategoryRepository_.find({
@@ -357,12 +357,16 @@ class ProductService extends MedusaProductService {
                 ],
             });
 
-            // Filter for single category
-            const filteredCategories = categories.filter(
-                (cat) => cat.name.toLowerCase() === category
-            );
+            let filteredCategories = categories;
 
-            // Filter products for category by storeId
+            // If categoryName is not 'all', filter for the specific category
+            if (categoryName.toLowerCase() !== 'all') {
+                filteredCategories = categories.filter(
+                    (cat) => cat.name.toLowerCase() === categoryName
+                );
+            }
+
+            // Filter products for the category (or all categories) by storeId and status 'published'
             const filteredProducts = filteredCategories.map((cat) => {
                 return {
                     ...cat,
