@@ -161,11 +161,14 @@ class ProductService extends MedusaProductService {
                             //delete existing product
                             if (existingProduct) {
                                 if (deleteExisting) {
-                                    this.logger.info(`Deleting existing product ${existingProduct.id} with handle ${existingProduct.handle}`);
+                                    this.logger.info(
+                                        `Deleting existing product ${existingProduct.id} with handle ${existingProduct.handle}`
+                                    );
                                     await this.delete(existingProduct.id);
-                                }
-                                else {
-                                    this.logger.warn(`Could not import, existing product ${existingProduct.id} with handle ${existingProduct.handle} found`)
+                                } else {
+                                    this.logger.warn(
+                                        `Could not import, existing product ${existingProduct.id} with handle ${existingProduct.handle} found`
+                                    );
                                     resolve(null);
                                 }
                             }
@@ -472,7 +475,6 @@ class ProductService extends MedusaProductService {
         }
     }
 
-<<<<<<< HEAD
     /**
      * Fetches all products for a specific category by category name.
      *
@@ -546,8 +548,6 @@ class ProductService extends MedusaProductService {
         }
     }
 
-=======
->>>>>>> staging
     async getProductsFromStoreName(storeName: string) {
         try {
             const store = await this.storeRepository_.findOne({
