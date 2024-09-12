@@ -10,7 +10,6 @@ import {
     Flex,
     Divider,
     Text,
-    Box,
 } from '@chakra-ui/react';
 import React from 'react';
 import FilterIcon from '../../../../../../../../public/images/categories/mobile-filter.svg';
@@ -180,7 +179,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                             if (homeModalCategoryFilterSelect) {
                                 setCategorySelect(
                                     homeModalCategoryFilterSelect
-                                );
+                                ); // Array of categories
                                 setCategoryTypeSelect(
                                     homeModalCategoryTypeFilterSelect
                                 );

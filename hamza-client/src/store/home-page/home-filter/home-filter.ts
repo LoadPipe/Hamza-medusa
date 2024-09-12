@@ -17,14 +17,14 @@ interface ModalFilterState {
 // Create the Zustand store
 const useHomeModalFilter = create<ModalFilterState>((set) => ({
     homeModalFilterSelected: false,
-    homeModalCategoryFilterSelect: null,
+    homeModalCategoryFilterSelect: ['All'],
     homeModalCategoryTypeFilterSelect: null,
     homeModalCurrencyFilterSelect: null,
     homeModalReviewFilterSelect: null,
-    setHomeModalCategoryFilterSelect: (item: string[] | null) =>
-        set({ homeModalCategoryFilterSelect: item }),
-    setHomeModalCategoryTypeFilterSelect: (item: string[] | null) =>
-        set({ homeModalCategoryTypeFilterSelect: item }),
+    setHomeModalCategoryFilterSelect: (items: string[] | null) =>
+        set({ homeModalCategoryFilterSelect: items }),
+    setHomeModalCategoryTypeFilterSelect: (items: string[] | null) =>
+        set({ homeModalCategoryTypeFilterSelect: items }),
     setHomeModalCurrencyFilterSelect: (item: string | null) =>
         set({ homeModalCurrencyFilterSelect: item }),
     setHomeModalReviewFilterSelect: (stars: string | null) =>
