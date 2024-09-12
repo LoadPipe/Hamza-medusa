@@ -38,9 +38,11 @@ const ProductCardGroup = ({ storeName, categoryName }: Props) => {
         }
     );
 
-    // Handle products based on 'handle'
+    // Handle products based on category
     const productsAll = data
-        ? data.flatMap((category: any) => category.products) // Extract products from the categories
+        ? categoryName === 'all'
+            ? data // If category is 'all', data is a flat list of products
+            : data.flatMap((category: any) => category.products) // Otherwise, extract products from categories
         : [];
 
     if (isLoading) {
