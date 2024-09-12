@@ -126,7 +126,8 @@ class ProductService extends MedusaProductService {
 
     async bulkImportProducts(
         storeId: string,
-        productData: (CreateProductInput | UpdateProductInput)[]
+        productData: (CreateProductInput | UpdateProductInput)[],
+        deleteExisting: boolean = true
     ): Promise<Product[]> {
         try {
             //get the store
@@ -157,28 +158,27 @@ class ProductService extends MedusaProductService {
                                 (p) => p.handle === product.handle
                             );
 
+                            //delete existing product
                             if (existingProduct) {
-                                // If the product exists, update it
-                                this.logger.info(
-                                    `Updating existing product with handle: ${productHandle}`
-                                );
-                                resolve(
-                                    await this.updateProduct(
-                                        existingProduct.id,
-                                        product as UpdateProductInput
-                                    )
-                                );
-                            } else {
-                                // If the product does not exist, create a new one
-                                this.logger.info(
-                                    `Creating new product with handle: ${productHandle}`
-                                );
-                                resolve(
-                                    await super.create(
-                                        product as CreateProductInput
-                                    )
-                                );
+                                if (deleteExisting) {
+                                    this.logger.info(`Deleting existing product ${existingProduct.id} with handle ${existingProduct.handle}`);
+                                    await this.delete(existingProduct.id);
+                                }
+                                else {
+                                    this.logger.warn(`Could not import, existing product ${existingProduct.id} with handle ${existingProduct.handle} found`)
+                                    resolve(null);
+                                }
                             }
+
+                            // If the product does not exist, create a new one
+                            this.logger.info(
+                                `Creating new product with handle: ${productHandle}`
+                            );
+                            resolve(
+                                await super.create(
+                                    product as CreateProductInput
+                                )
+                            );
                         } catch (error) {
                             this.logger.error(
                                 `Error processing product with handle: ${productHandle}`,
@@ -458,6 +458,7 @@ class ProductService extends MedusaProductService {
             throw new Error('Failed to fetch product categories with prices.');
         }
     }
+
     async getProductsFromStoreName(storeName: string) {
         try {
             const store = await this.storeRepository_.findOne({
