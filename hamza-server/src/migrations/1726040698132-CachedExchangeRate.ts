@@ -12,7 +12,8 @@ export class CachedExchangeRate1726040698132 implements MigrationInterface {
                 "updated_at" TIMESTAMP NOT NULL DEFAULT now(),
                 CONSTRAINT "UQ_currency_code" UNIQUE ("currency_code"),
                 CONSTRAINT "PK_cached_exchange_rate" PRIMARY KEY ("id"),
-                CONSTRAINT "FK_currency_code" FOREIGN KEY ("currency_code") REFERENCES "currency"("code") ON DELETE CASCADE
+                CONSTRAINT "FK_currency_code" FOREIGN KEY ("to_currency_code") REFERENCES "currency"("code") ON DELETE CASCADE
+                CONSTRAINT "FK_currency_code" FOREIGN KEY ("from_currency_code") REFERENCES "currency"("code") ON DELETE CASCADE
             )
     `);
     }
