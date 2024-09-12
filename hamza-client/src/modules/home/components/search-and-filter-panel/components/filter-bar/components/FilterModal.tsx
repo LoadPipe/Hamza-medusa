@@ -177,6 +177,9 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                                 setReviewStarsSelect(reviewFilterSelect);
                             }
                             if (homeModalCategoryFilterSelect) {
+                                console.log(
+                                    `WTF ${homeModalCategoryFilterSelect} ${homeModalCategoryTypeFilterSelect}`
+                                );
                                 setCategorySelect(
                                     homeModalCategoryFilterSelect
                                 ); // Array of categories

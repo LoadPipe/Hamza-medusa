@@ -15,27 +15,50 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
 }) => {
     const {
         homeModalCategoryFilterSelect,
+        homeModalCategoryTypeFilterSelect,
         setHomeModalCategoryFilterSelect,
         setHomeModalCategoryTypeFilterSelect,
     } = useHomeModalFilter();
 
-    const toggleCategorySelection = (category: string) => {
-        const currentSelection = homeModalCategoryFilterSelect || [];
+    const toggleCategorySelection = (category: string, type: string) => {
+        const currentCategorySelection = homeModalCategoryFilterSelect || [];
+        const currentTypeSelection = homeModalCategoryTypeFilterSelect || [];
 
-        if (currentSelection.includes(category)) {
-            const updatedSelection = currentSelection.filter(
-                (selected) => selected !== category
+        // If the category is already selected, we remove it along with its type
+        if (currentCategorySelection.includes(category)) {
+            const updatedCategorySelection = currentCategorySelection.filter(
+                (selectedCategory) => selectedCategory !== category
+            );
+            const updatedTypeSelection = currentTypeSelection.filter(
+                (selectedType) => selectedType !== type
             );
             setHomeModalCategoryFilterSelect(
-                updatedSelection.length ? updatedSelection : ['All']
+                updatedCategorySelection.length
+                    ? updatedCategorySelection
+                    : ['All']
+            );
+            setHomeModalCategoryTypeFilterSelect(
+                updatedTypeSelection.length ? updatedTypeSelection : ['All']
             );
         } else {
-            const updatedSelection = currentSelection.filter(
+            // If the category is not selected, we add both the category and type
+            const updatedCategorySelection = currentCategorySelection.filter(
                 (cat) => cat !== 'All'
             );
-            setHomeModalCategoryFilterSelect([...updatedSelection, category]);
+            const updatedTypeSelection = currentTypeSelection.filter(
+                (catType) => catType !== 'All'
+            );
+            setHomeModalCategoryFilterSelect([
+                ...updatedCategorySelection,
+                category,
+            ]);
+            setHomeModalCategoryTypeFilterSelect([
+                ...updatedTypeSelection,
+                type,
+            ]);
         }
     };
+
     return (
         <Flex>
             <Flex
@@ -63,7 +86,9 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                     background: 'white',
                     color: 'black',
                 }}
-                onClick={() => toggleCategorySelection(categoryName)}
+                onClick={() =>
+                    toggleCategorySelection(categoryName, categoryType)
+                }
             >
                 <Image src={categoryIcons[categoryName]} alt={categoryName} />
 
