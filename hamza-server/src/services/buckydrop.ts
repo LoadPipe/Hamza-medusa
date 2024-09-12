@@ -18,7 +18,7 @@ import {
     IBuckyShippingCostRequest,
     ICreateBuckyOrderProduct,
 } from '../buckydrop/bucky-client';
-import { CreateProductInput as MedusaCreateProductInput } from '@medusajs/medusa/dist/types/product';
+import { CreateProductProductVariantInput, CreateProductInput as MedusaCreateProductInput, ProductOptionInput } from '@medusajs/medusa/dist/types/product';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import { IsNull, Not, FindManyOptions } from 'typeorm';
@@ -64,18 +64,21 @@ export default class BuckydropService extends TransactionBaseService {
     async importProductsByKeyword(
         keyword: string,
         storeId: string,
+        categoryId: string,
         collectionId: string,
         salesChannelId: string,
         count: number = 10,
         page: number = 1,
         goodsId: string = null
     ): Promise<Product[]> {
+
         //retrieve products from bucky and convert them
         const searchResults = await this.buckyClient.searchProducts(
             keyword,
             page,
             count
         );
+
         this.logger.debug(`search returned ${searchResults.length} results`);
         let productData = searchResults;
 
@@ -90,6 +93,7 @@ export default class BuckydropService extends TransactionBaseService {
                     p,
                     ProductStatus.PUBLISHED,
                     storeId,
+                    categoryId,
                     collectionId,
                     [salesChannelId]
                 )
@@ -116,6 +120,7 @@ export default class BuckydropService extends TransactionBaseService {
     async importProductsByLink(
         goodsLink: string,
         storeId: string,
+        categoryId: string,
         collectionId: string,
         salesChannelId: string
     ): Promise<Product[]> {
@@ -125,6 +130,7 @@ export default class BuckydropService extends TransactionBaseService {
             { goodsLink },
             ProductStatus.PUBLISHED,
             storeId,
+            categoryId,
             collectionId,
             [salesChannelId]
         );
@@ -527,48 +533,188 @@ export default class BuckydropService extends TransactionBaseService {
         );
     }
 
-    private async mapVariants(productDetails: any) {
-        /*
-        0: {
-            "props": [{
-                "propId": 3216,
-                "valueId": 2351853,
-                "propName": "Color",
-                "valueName": "1 orange"
-            }, {
-                "propId": 3151,
-                "valueId": 891417773,
-                "propName": "model",
-                "valueName": "Candy color lacquer open ring ring diameter * wire diameter 8*1.2mm"
-            }],
-            "skuCode": "5141273114409",
-            "price": {
-                "priceCent": 2,
-                "price": 0.02
-            },
-            "proPrice": {
-                "priceCent": 2,
-                "price": 0.02
-            },
-            "quantity": 92099,
-            "imgUrl": "https://cbu01.alicdn.com/img/ibank/O1CN01PcdXOw1guZ5g0nIj9_!!2208216064202-0-cib.jpg"
-        }
+    private async mapBuckyDataToProductInput(
+        buckyClient: BuckyClient,
+        item: any,
+        status: ProductStatus,
+        storeId: string,
+        categoryId: string,
+        collectionId: string,
+        salesChannels: string[]
+    ): Promise<CreateProductInput> {
+        try {
 
-        1: {
-        "props":[{
-            "propId":3216,"valueId":47921170,
-            "propName":"Color","valueName":"2 Sapphire Blue"
-        },
-        {
-            "propId":3151,"valueId":891417773,
-            "propName":"model","valueName":"Candy color lacquer open ring ring diameter * wire diameter 8*1.2mm"
-        }],
-        "skuCode":"5141273114410",
-        "price":{"priceCent":2,"price":0.02},
-        "proPrice":{"priceCent":2,"price":0.02},
-        "quantity":98499,
-        "imgUrl":"https://cbu01.alicdn.com/img/ibank/O1CN010yQbq61guZ5ZOyzKw_!!2208216064202-0-cib.jpg"}
-        */
+            const productDetails = await buckyClient.getProductDetails(
+                item.goodsLink
+            );
+
+            /*
+            const productDetails = {
+                success: true,
+                data: {
+                    goodsId: '727750291125',
+                    spuCode: '727750291125',
+                    goodsName: 'Student dormitory toothbrushing cup, mouthwash cup, residential school toiletries set, electric toothbrush, tooth utensil, tooth cylinder shelf',
+                    goodsLink: 'https://item.taobao.com/item.htm?id=727750291125',
+                    shop: { shopId: '117163621', shopName: 'Royal Combine Family Store' },
+                    price: { priceCent: 4180, price: 41.8 },
+                    proPrice: { priceCent: 2090, price: 20.9 },
+                    freight: { priceCent: 0, price: 0 },
+                    picUrl: 'https://img.alicdn.com/bao/uploaded/i2/2455411701/O1CN01yHeQkI1OR6gOJtPAu_!!0-item_pic.jpg',
+                    platform: 'TB',
+                    categoryCode: '121404022',
+                    goodsCatName: 'Washing cup',
+                    mainItemImgs: [
+                        'https://img.alicdn.com/bao/uploaded/i2/2455411701/O1CN01yHeQkI1OR6gOJtPAu_!!0-item_pic.jpg',
+                        'https://img.alicdn.com/bao/uploaded/i1/2455411701/O1CN01OqhGTC1OR6gdwdpTJ_!!2455411701.jpg',
+                        'https://img.alicdn.com/bao/uploaded/i3/2455411701/O1CN01ej8a8F1OR6gPK6Qi5_!!2455411701.jpg',
+                        'https://img.alicdn.com/bao/uploaded/i1/2455411701/O1CN01Ql8rsp1OR6giTpjeG_!!2455411701.jpg',
+                        'https://img.alicdn.com/bao/uploaded/i1/2455411701/O1CN01nyX5Vj1OR6ggHEF6w_!!2455411701.jpg'
+                    ],
+                    productProps: [
+                        {
+                            propId: 1627207,
+                            valueId: 25792702667,
+                            propName: 'Color',
+                            valueName: 'Round ❤ Upgrade with Handle - Ocean Blue [Loadable Electric Toothbrush]'
+                        },
+                        {
+                            propId: 1627207,
+                            valueId: 25792702668,
+                            propName: 'Color',
+                            valueName: 'Round ❤ Upgrade with Handle - Simple White [Can Put Electric Toothbrush]'
+                        },
+                        {
+                            propId: 1627207,
+                            valueId: 25792702669,
+                            propName: 'Color',
+                            valueName: 'Round ❤ Upgrade with Handle - Cute Pink [Can Put Electric Toothbrush]'
+                        },
+                        {
+                            propId: 1627207,
+                            valueId: 26499149914,
+                            propName: 'Color',
+                            valueName: 'Round ❤ upgrade with handle - blue water blue [can put electric toothbrush]'
+                        },
+                        {
+                            propId: 1627207,
+                            valueId: 26499149915,
+                            propName: 'Color',
+                            valueName: 'Entering 2 - round with handle [blue water + ocean blue]'
+                        },
+                        {
+                            propId: 1627207,
+                            valueId: 26499149916,
+                            propName: 'Color',
+                            valueName: 'Entering two - round with handle [blue water + cherry tree pink]'
+                        },
+                        {
+                            propId: 1627207,
+                            valueId: 26499149917,
+                            propName: 'Color',
+                            valueName: 'Entering 3 - round with handle [blue water blue + ocean blue + cherry tree pink]'
+                        }
+                    ],
+                    skuList: [
+                        {
+                            props: [
+                                {
+                                    propId: 1627207,
+                                    valueId: 25792702667,
+                                    propName: 'Color',
+                                    valueName: 'Round ❤ Upgrade with Handle - Ocean Blue [Loadable Electric Toothbrush]'
+                                }
+                            ],
+                            skuCode: '5220066635288',
+                            price: { priceCent: 2190, price: 21.9 },
+                            quantity: 200,
+                            imgUrl: 'https://img.alicdn.com/bao/uploaded/i1/2455411701/O1CN01QRZ7qo1OR6Ywp7vVt_!!2455411701.jpg'
+                        }, {
+                            props: [
+                                {
+                                    propId: 1627207,
+                                    valueId: 25792702668,
+                                    propName: 'Color',
+                                    valueName: 'Round ❤ Upgrade with Handle - Simple White [Can Put Electric Toothbrush]'
+                                }
+                            ],
+                            skuCode: '5220066635289',
+                            price: { priceCent: 2190, price: 21.9 },
+                            quantity: 200,
+                            imgUrl: 'https://img.alicdn.com/bao/uploaded/i3/2455411701/O1CN010QTYC51OR6Z6xNjEc_!!2455411701.jpg'
+                        }
+
+                    ],
+                    repositoryInfo: { quantity: '6800', quantityText: '库存6800件' },
+                    beginCount: 0,
+                    guaranteeFlag: 0,
+                    goodsDetailHtml: '<p><img src="https://img.alicdn.com/imgextra/i4/2455411701/O1CN01PTqAZx1OR6YyPE1Vk_!!2455411701.jpg"><img src="https://img.alicdn.com/imgextra/i2/2455411701/O1CN01FF2vdK1OR6YyqmTLG_!!2455411701.jpg"><img src="https://img.alicdn.com/imgextra/i1/2455411701/O1CN01OqhGTC1OR6gdwdpTJ_!!2455411701.jpg"><img src="https://img.alicdn.com/imgextra/i3/2455411701/O1CN01puks6H1OR6ZaS2N54_!!2455411701.jpg"><img src="https://img.alicdn.com/imgextra/i1/2455411701/O1CN01nyX5Vj1OR6ggHEF6w_!!2455411701.jpg"><img src="https://img.alicdn.com/imgextra/i1/2455411701/O1CN01Ql8rsp1OR6giTpjeG_!!2455411701.jpg"><img src="https://img.alicdn.com/imgextra/i1/2455411701/O1CN01YMgJcK1OR6Yz4jAjM_!!2455411701.jpg"><img src="https://img.alicdn.com/imgextra/i2/2455411701/O1CN01ReNlS71OR6Z0NTaXg_!!2455411701.jpg"><img src="https://img.alicdn.com/imgextra/i4/2455411701/O1CN01bR43Qw1OR6Z06we8X_!!2455411701.jpg"><img src="https://img.alicdn.com/imgextra/i4/2455411701/O1CN01EEe66i1OR6Z3gyR1Q_!!2455411701.jpg"><img src="https://img.alicdn.com/imgextra/i3/2455411701/O1CN01jw1nQd1OR6Ywom6jZ_!!2455411701.jpg"><img src="https://img.alicdn.com/imgextra/i1/2455411701/O1CN01couYQR1OR6Yz4jhzj_!!2455411701.jpg"><img src="https://img.alicdn.com/imgextra/i1/2455411701/O1CN01ctjZc41OR6Z1TfRzp_!!2455411701.jpg"><img src="https://img.alicdn.com/imgextra/i4/2455411701/O1CN01wilFHc1OR6Z8eU4G5_!!2455411701.jpg"></p>',
+                    soldOutTag: 1,
+                    isSupplier: 0,
+                    popularity: 4
+                },
+                errKey: '',
+                code: 0,
+                info: 'Success',
+                currentTime: 1726058167982
+            };*/
+
+            if (!productDetails)
+                throw new Error(
+                    `No product details were retrieved for product ${item.spuCode}`
+                );
+
+            const metadata = item;
+            metadata.detail = productDetails.data;
+            const spuCode = item?.spuCode ?? productDetails?.data?.spuCode;
+
+            if (!spuCode?.length) throw new Error('SPU code not found');
+
+            const optionNames = this.getUniqueProductOptionNames(productDetails);
+            const tagName = productDetails.data.goodsCatName;
+
+            const output = {
+                title: item?.goodsName ?? productDetails?.data?.goodsName,
+                subtitle: item?.goodsName ?? productDetails?.data?.goodsName, //TODO: find a better value
+                handle: spuCode,
+                description: productDetails?.data?.goodsDetailHtml ?? '',
+                is_giftcard: false,
+                status: status as ProductStatus,
+                thumbnail:
+                    item?.picUrl ?? productDetails?.data?.mainItemImgs[0],
+                images: productDetails?.data?.mainItemImgs,
+                collection_id: collectionId,
+                weight: Math.round(item?.weight ?? 100),
+                discountable: true,
+                store_id: storeId,
+                categories: categoryId?.length ? [{ id: categoryId }] : [],
+                sales_channels: salesChannels.map((sc) => {
+                    return { id: sc };
+                }),
+                tags: tagName?.length ?
+                    [{ id: tagName, value: tagName }] :
+                    [],
+                bucky_metadata: metadata,
+                options: optionNames.map(o => { return { title: o } }),
+                variants: await this.mapVariants(productDetails, optionNames),
+            };
+
+            if (!output.variants?.length)
+                throw new Error(
+                    `No variants were detected for product ${spuCode}`
+                );
+
+            return output;
+        } catch (error) {
+            this.logger.error(
+                'Error mapping Bucky data to product input',
+                error
+            );
+            return null;
+        }
+    }
+
+    private async mapVariants(productDetails: any, optionNames: string[]): Promise<CreateProductProductVariantInput[]> {
         const variants = [];
 
         const getVariantDescriptionText = (data: any) => {
@@ -585,10 +731,11 @@ export default class BuckydropService extends TransactionBaseService {
         };
 
         if (!productDetails.data.skuList?.length) {
-            console.log('EMPTY SKU LIST');
+            this.logger.warn('EMPTY SKU LIST');
         }
 
         for (const variant of productDetails.data.skuList) {
+            //get price 
             const baseAmount = variant.proPrice
                 ? variant.proPrice.priceCent
                 : variant.price.priceCent;
@@ -607,6 +754,14 @@ export default class BuckydropService extends TransactionBaseService {
                 });
             }
 
+            //get option names/values
+            const options = [];
+            if (variant.props) {
+                for (const opt of optionNames) {
+                    options.push({ value: variant.props.find(o => o.propName === opt)?.valueName ?? '' })
+                }
+            }
+
             variants.push({
                 title: getVariantDescriptionText(variant),
                 inventory_quantity: variant.quantity,
@@ -614,69 +769,24 @@ export default class BuckydropService extends TransactionBaseService {
                 manage_inventory: true,
                 bucky_metadata: JSON.stringify({ skuCode: variant.skuCode }),
                 prices,
+                options: options
             });
         }
 
         return variants;
     }
 
-    private async mapBuckyDataToProductInput(
-        buckyClient: BuckyClient,
-        item: any,
-        status: ProductStatus,
-        storeId: string,
-        collectionId: string,
-        salesChannels: string[]
-    ): Promise<CreateProductInput> {
-        try {
-            const productDetails = await buckyClient.getProductDetails(
-                item.goodsLink
-            );
+    private getUniqueProductOptionNames(productDetails: any): string[] {
+        const output: string[] = [];
 
-            if (!productDetails)
-                throw new Error(
-                    `No product details were retrieved for product ${item.spuCode}`
-                );
-
-            const metadata = item;
-            metadata.detail = productDetails.data;
-            const spuCode = item?.spuCode ?? productDetails?.data?.spuCode;
-
-            if (!spuCode?.length) throw new Error('SPU code not found');
-
-            const output = {
-                title: item?.goodsName ?? productDetails?.data?.goodsName,
-                subtitle: item?.goodsName ?? productDetails?.data?.goodsName, //TODO: find a better value
-                handle: spuCode,
-                description: productDetails?.data?.goodsDetailHtml ?? '',
-                is_giftcard: false,
-                status: status as ProductStatus,
-                thumbnail:
-                    item?.picUrl ?? productDetails?.data?.mainItemImgs[0],
-                images: productDetails?.data?.mainItemImgs,
-                collection_id: collectionId,
-                weight: Math.round(item?.weight ?? 100),
-                discountable: true,
-                store_id: storeId,
-                sales_channels: salesChannels.map((sc) => {
-                    return { id: sc };
-                }),
-                bucky_metadata: metadata,
-                variants: await this.mapVariants(productDetails),
-            };
-
-            if (!output.variants?.length)
-                throw new Error(
-                    `No variants were detected for product ${spuCode}`
-                );
-
-            return output;
-        } catch (error) {
-            this.logger.error(
-                'Error mapping Bucky data to product input',
-                error
-            );
-            return null;
+        for (const variant of productDetails.data.skuList) {
+            for (const prop of variant.props) {
+                if (!output.find(p => p === prop.propName)) {
+                    output.push(prop.propName);
+                }
+            }
         }
+
+        return output;
     }
 }

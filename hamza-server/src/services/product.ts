@@ -335,31 +335,59 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    async getProductByCategoryHandle(storeId: string) {
+    /**
+     * Fetches all products for a specific store and category.
+     *
+     * 1. Retrieves product categories with their associated products, variants, prices, and reviews.
+     * 2. If the categoryName is not "all", filters the categories based on the given category name.
+     * 3. Filters products within the selected category (or all categories if "all") by the provided store ID.
+     * 4. Updates the product pricing for the filtered products.
+     * 5. Returns the filtered list of products.
+     *
+     * @param {string} storeId - The ID of the store to fetch products from.
+     * @param {string} categoryName - The category to filter products by, or "all" to fetch all categories.
+     * @returns {Array} - A list of products for the specified store and category.
+     * @throws {Error} - If there is an issue fetching the products or updating prices.
+     */
+    async getStoreProductsByCategory(storeId: string, categoryName: string) {
         try {
-            // Ensure the store exists
-            const store = await this.storeRepository_.findOne({
-                where: { id: storeId },
-            });
-
-            if (!store) {
-                return null;
-            }
-
             // Query to get all products for the given store ID
-            const products = await this.productRepository_.find({
-                where: {
-                    status: ProductStatus.PUBLISHED,
-                    store_id: Not(IsNull()),
-                },
+            const categories = await this.productCategoryRepository_.find({
+                select: ['id', 'name', 'metadata'],
                 relations: [
-                    'product_category_product',
-                    'product_category',
-                    'product_variant',
+                    'products',
+                    'products.variants.prices',
+                    'products.reviews',
                 ],
             });
 
-            return products; // Return all product data
+            let filteredCategories = categories;
+
+            // If categoryName is not 'all', filter for the specific category
+            if (categoryName.toLowerCase() !== 'all') {
+                filteredCategories = categories.filter(
+                    (cat) => cat.name.toLowerCase() === categoryName
+                );
+            }
+
+            // Filter products for the category (or all categories) by storeId and status 'published'
+            const filteredProducts = filteredCategories.map((cat) => {
+                return {
+                    ...cat,
+                    products: cat.products.filter(
+                        (product) =>
+                            product.store_id === storeId &&
+                            product.status === 'published'
+                    ),
+                };
+            });
+
+            // Update product pricing
+            await Promise.all(
+                filteredProducts.map((cat) => this.convertPrices(cat.products))
+            );
+
+            return filteredProducts; // Return all product data
         } catch (error) {
             // Handle the error here
             this.logger.error(
@@ -434,6 +462,7 @@ class ProductService extends MedusaProductService {
             throw new Error('Failed to fetch product categories with prices.');
         }
     }
+
     async getProductsFromStoreName(storeName: string) {
         try {
             const store = await this.storeRepository_.findOne({
