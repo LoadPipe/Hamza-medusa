@@ -14,6 +14,7 @@ import { CurrencyConversionClient } from '../currency-conversion/rest-client';
 import { In } from 'typeorm';
 import { getCurrencyAddress, getCurrencyPrecision } from '../currency.config';
 import { createLogger, ILogger } from '../utils/logging/logger';
+import { CachedExchangeRate } from 'src/models/cached-exchange-rate';
 
 type InjectedDependencies = {
     customerService: CustomerService;
@@ -164,13 +165,14 @@ interface IPrice {
 
 const EXTENDED_LOGGING = false;
 
+const cache: {
+    [key: string]: { value: number; timestamp: number };
+} = {};
+
 //TODO: maybe find a better place for this class
 export class PriceConverter {
     private readonly restClient: CurrencyConversionClient =
         new CurrencyConversionClient();
-    private readonly cache: {
-        [key: string]: { value: number; timestamp: number };
-    } = {};
     private readonly expirationSeconds: number = 60;
     private readonly logger: ILogger;
     private readonly cachedExchangeRateRepository: typeof CachedExchangeRateRepository;
@@ -213,8 +215,6 @@ export class PriceConverter {
                     !existingRate ||
                     existingRate?.updated_at <= fiveMinutesAgo
                 ) {
-                    console.log(existingRate?.updated_at);
-                    console.log(fiveMinutesAgo);
                     await this.saveToDatabase(price, rate);
                 }
             } else {
@@ -273,7 +273,7 @@ export class PriceConverter {
 
     private async getFromDatabase(
         price: IPrice
-    ): Promise<{ rate: number; updated_at: Date } | null> {
+    ): Promise<CachedExchangeRate | null> {
         try {
             const id =
                 `${price.baseCurrency}-${price.toCurrency}`.toLowerCase();
@@ -286,11 +286,7 @@ export class PriceConverter {
                 this.logger?.info(
                     `Using DB-cached rate for ${price.baseCurrency} to ${price.toCurrency}: ${cachedRate.rate}`
                 );
-                console.log(cachedRate);
-                return {
-                    rate: cachedRate.rate,
-                    updated_at: cachedRate.updated_at,
-                };
+                return cachedRate;
             }
         } catch (error) {
             this.logger?.error(
@@ -329,19 +325,19 @@ export class PriceConverter {
     private getFromCache(price: IPrice): number {
         const key: string = this.getKey(price.baseCurrency, price.toCurrency);
         if (
-            this.cache[key] &&
-            this.getTimestamp() - this.cache[key].timestamp >=
+            cache[key] &&
+            this.getTimestamp() - cache[key].timestamp >=
             this.expirationSeconds
         ) {
-            this.cache[key] = null;
+            cache[key] = null;
         }
 
-        return this.cache[key]?.value;
+        return cache[key]?.value;
     }
 
     private writeToCache(price: IPrice, rate: number) {
         const key: string = this.getKey(price.baseCurrency, price.toCurrency);
-        this.cache[key] = { value: rate, timestamp: this.getTimestamp() };
+        cache[key] = { value: rate, timestamp: this.getTimestamp() };
     }
 
     private hasCached(price: IPrice): boolean {
