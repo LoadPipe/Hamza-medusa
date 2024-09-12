@@ -13,29 +13,23 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import ProductCardHome from '../product-group-home/component/home-product-card';
-import useVendor from '@store/store-page/vendor';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 
 type Props = {
     storeName: string;
-    handle: string | null;
+    categoryName: string | null;
     filterByRating?: string | null;
-    allProducts: boolean;
 };
 
-const ProductCardGroup = ({ storeName, handle }: Props) => {
+const ProductCardGroup = ({ storeName, categoryName }: Props) => {
     // get preferred currency
     const { preferred_currency_code } = useCustomerAuthStore();
-    const { storeId } = useVendor();
 
-    const url =
-        handle === 'all'
-            ? `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products?store_name=${storeName}`
-            : `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/products?store_name=${storeName}&handle=${handle}`;
+    const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products/category-name?store_name=${storeName}&category_name=${categoryName}`;
 
     // Fetch data using the useQuery hook
     const { data, error, isLoading } = useQuery(
-        ['products', handle],
+        ['products', categoryName],
         async () => {
             console.log('Fetching data from URL:', url);
             const response = await axios.get(url);
@@ -44,14 +38,10 @@ const ProductCardGroup = ({ storeName, handle }: Props) => {
         }
     );
 
-    // Make sure data is an array before mapping
-    const products = Array.isArray(data) ? data : [];
-
-    // Return error if api fails
-    const err: any = error ? error : null;
-    if (err) return <div>Error: {err?.message}</div>;
-
-    console.log('these are the products for store', products);
+    // Handle products based on 'handle'
+    const productsAll = data
+        ? data.flatMap((category: any) => category.products) // Extract products from the categories
+        : [];
 
     if (isLoading) {
         return (
@@ -119,7 +109,7 @@ const ProductCardGroup = ({ storeName, handle }: Props) => {
                 }}
                 gap={{ base: '4', md: '25.5px' }}
             >
-                {products.map((product: any, index: number) => {
+                {productsAll.map((product: any, index: number) => {
                     const variant = product.variants[0];
                     const productPricing =
                         variant?.prices?.find(
@@ -142,7 +132,7 @@ const ProductCardGroup = ({ storeName, handle }: Props) => {
                         >
                             <ProductCardHome
                                 key={index}
-                                productHandle={products[index].handle}
+                                productHandle={product.handle}
                                 reviewCount={0}
                                 totalRating={0}
                                 variantID={'0'}
