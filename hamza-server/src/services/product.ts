@@ -578,51 +578,35 @@ class ProductService extends MedusaProductService {
 
             console.log('Fetched Category IDs:', JSON.stringify(categoryIds));
 
-            console.log(`CAT IDS ${categoryIds}`);
-            const categoryIdList = categoryIds.map((c) => c.id);
+            // Map the categoryIds to create a list of only the id values
+            const categoryIdList = categoryIds.map(
+                (c) => c.product_category_id
+            );
 
-            // Log category IDs to ensure they are fetched correctly
-            // console.log('Category IDs:', categoryIdList);
+            console.log('Mapped Category ID List:', categoryIdList);
 
-            if (categoryIdList.length === 0) {
-                return []; // No categories found, return empty
-            }
+            const productIds = await this.productRepository_
+                .createQueryBuilder('product')
+                .select('product.id')
+                .innerJoin(
+                    'product_category_product', // Join the product_category_product table
+                    'pcp',
+                    'pcp.product_id = product.id' // Join condition on product_id
+                )
+                .where('pcp.product_category_id IN (:...categoryIds)', {
+                    categoryIds: categoryIdList, // Use the mapped list of category IDs
+                })
+                .groupBy('product.id') // Group by the product id
+                .having(
+                    'COUNT(DISTINCT pcp.product_category_id) = :categoryCount',
+                    {
+                        categoryCount: categoryIdList.length, // Ensure the product belongs to all categories
+                    }
+                )
+                .getRawMany();
 
-            // Step 3: Query the product_category_product join table directly to find products that exist in all categories
-            // const productIds = await this.productRepository_
-            //     .createQueryBuilder('product')
-            //     .innerJoin(
-            //         'product_category_product',
-            //         'pcp',
-            //         'pcp.product_id = product.id'
-            //     )
-            //     .where('pcp.product_category_id IN (:...categoryIds)', {
-            //         categoryIds: categoryIdList,
-            //     })
-            //     .groupBy('pcp.product_id')
-            //     .having(
-            //         'COUNT(DISTINCT pcp.product_category_id) = :numCategories',
-            //         { numCategories: categoryIdList.length }
-            //     )
-            //     .select('pcp.product_id') // Select only the product IDs
-            //     .getRawMany();
-            //
-            // // Log the product IDs to ensure the correct products are being returned
-            // console.log('Product IDs:', productIds);
-            //
-            // const productIdList = productIds.map((p) => p.product_id);
-            //
-            // if (productIdList.length === 0) {
-            //     return []; // No products found that belong to all categories
-            // }
-            //
-            // // Step 4: Fetch the product details for the filtered product IDs
-            // const products = await this.productRepository_.find({
-            //     where: { id: In(productIdList) },
-            //     relations: ['variants.prices', 'reviews'], // Adjust relations as needed
-            // });
-            //
-            // return products; // Return the filtered products
+            console.log('Fetched Product IDs:', productIds);
+            return productIds;
         } catch (error) {
             this.logger.error(
                 'Error occurred while fetching products by multiple categories:',
