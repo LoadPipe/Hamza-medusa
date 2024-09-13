@@ -9,17 +9,32 @@ import {
     RangeSliderFilledTrack,
     RangeSliderThumb,
 } from '@chakra-ui/react';
+import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
 
 // Define a type for the range state
 type RangeType = [number, number];
+interface RangeSliderModalProps {
+    range: RangeType;
+    setRange: React.Dispatch<React.SetStateAction<RangeType>>;
+}
+const RangeSliderModal: React.FC<RangeSliderModalProps> = ({
+    range,
+    setRange,
+}) => {
+    const {
+        homeModalLowerPriceFilterSelect,
+        homeModalUpperPriceFilterSelect,
+        setHomeModalLowerPriceFilterSelect,
+        setHomeModalUpperPriceFilterSelect,
+    } = useHomeModalFilter();
 
-const RangeSliderModal = () => {
-    // Using the RangeType for the state
-    const [range, setRange] = useState<RangeType>([10, 2000]);
-
-    // Define the type for the values parameter
     const handleRangeChange = (values: number[]) => {
         setRange(values as RangeType);
+    };
+
+    // Function to handle the final change when sliding is done
+    const handleChangeEnd = (val: number[]) => {
+        console.log('Final selected price range:', val);
     };
 
     return (
@@ -28,14 +43,18 @@ const RangeSliderModal = () => {
                 <RangeSlider
                     // eslint-disable-next-line jsx-a11y/aria-proptypes
                     aria-label={['min', 'max']}
-                    defaultValue={[10, 2000]}
+                    defaultValue={[
+                        homeModalLowerPriceFilterSelect,
+                        homeModalUpperPriceFilterSelect,
+                    ]}
                     min={0}
-                    max={2000}
+                    max={11000}
                     onChange={handleRangeChange}
+                    onChangeEnd={handleChangeEnd} // Update Zustand values when range changes
                     colorScheme="blue"
                 >
-                    <RangeSliderTrack bg="primary.indigo.900">
-                        <RangeSliderFilledTrack bg="secondary.charcoal.900" />
+                    <RangeSliderTrack bg="secondary.charcoal.900">
+                        <RangeSliderFilledTrack bg="primary.indigo.900" />
                     </RangeSliderTrack>
                     <RangeSliderThumb
                         index={0}

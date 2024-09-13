@@ -550,6 +550,200 @@ class ProductService extends MedusaProductService {
         }
     }
 
+    /**
+     * Fetches all products that belong to multiple categories by category names.
+     *
+     * 1. Retrieves product IDs for products that belong to all the provided categories.
+     * 2. Fetches detailed product data for those products, including variants, prices, and reviews.
+     * 3. Filters products by status 'published' and ensures each product has a valid store ID.
+     * 4. Updates the product pricing for the filtered products.
+     * 5. Returns the filtered list of products.
+     *
+     * @param {string[]} categoryNames - The list of categories to filter products by.
+     * @returns {Array} - A list of products that belong to all the specified categories with updated prices.
+     * @throws {Error} - If there is an issue fetching the products or updating prices.
+     */
+
+    async getAllProductsByMultipleCategories(categoryNames: string[]) {
+        try {
+            const normalizedCategoryNames = categoryNames;
+            // Step 1: Fetch the category IDs that match the given category names
+            const categoryIds = await this.productCategoryRepository_
+                .createQueryBuilder('product_category')
+                .select('product_category.id')
+                .where(
+                    'product_category.name ILIKE ANY(ARRAY[:...categoryNames])',
+                    {
+                        categoryNames: normalizedCategoryNames,
+                    }
+                )
+                .getRawMany();
+
+            // Step 2: Map the categoryIds to a list of values
+            const categoryIdList = categoryIds.map(
+                (c) => c.product_category_id
+            );
+
+            // Step 3: Fetch product IDs that belong to all specified categories
+            const productIds = await this.productRepository_
+                .createQueryBuilder('product')
+                .select('product.id')
+                .innerJoin(
+                    'product_category_product', // Join the product_category_product table
+                    'pcp',
+                    'pcp.product_id = product.id' // Join condition on product_id
+                )
+                .where('pcp.product_category_id IN (:...categoryIds)', {
+                    categoryIds: categoryIdList, // Use the mapped list of category IDs
+                })
+                .groupBy('product.id') // Group by the product id
+                .having(
+                    'COUNT(DISTINCT pcp.product_category_id) = :categoryCount',
+                    {
+                        categoryCount: categoryIdList.length, // Ensure the product belongs to all categories
+                    }
+                )
+                .getRawMany();
+
+            console.log('Fetched Product IDs:', productIds);
+            const productIdList = productIds.map((p) => p.product_id);
+
+            // Step 4: Fetch detailed product data for the retrieved product IDs
+            const products = await this.productRepository_.find({
+                where: {
+                    id: In(productIdList), // Fetch products by the list of product IDs
+                },
+                relations: ['variants.prices', 'reviews'], // Include variants, prices, and reviews
+            });
+
+            // Step 5: Filter products by status 'published' and valid store_id
+            const filteredProducts = products.filter(
+                (product) =>
+                    product.status === ProductStatus.PUBLISHED &&
+                    product.store_id
+            );
+
+            // Step 6: Update product pricing for filtered products
+            await this.convertPrices(filteredProducts);
+
+            // Return the filtered products with updated pricing
+            return filteredProducts;
+        } catch (error) {
+            this.logger.error(
+                'Error occurred while fetching products by multiple categories:',
+                error
+            );
+            throw new Error('Failed to fetch products by multiple categories.');
+        }
+    }
+
+    /**
+     * Filters products based on selected categories, upper price limit, and lower price limit.
+     *
+     * @param {string[]} categories - An array of category names to filter products by.
+     * @param {number} upperPrice - The upper price limit for filtering products.
+     * @param {number} lowerPrice - The lower price limit for filtering products.
+     * @returns {Array} - A list of products filtered by the provided criteria.
+     */
+    async getFilteredProductsByCategory(
+        categories: string[], // Array of strings representing category names
+        upperPrice: number, // Number representing the upper price limit
+        lowerPrice: number // Number representing the lower price limit
+    ) {
+        try {
+            let normalizedCategoryNames = categories.map((name) =>
+                name.toLowerCase()
+            );
+
+            if (normalizedCategoryNames[0] === 'all') {
+                const productCategories =
+                    await this.productCategoryRepository_.find({
+                        select: ['id', 'name', 'metadata'],
+                        relations: [
+                            'products',
+                            'products.variants.prices',
+                            'products.reviews',
+                        ],
+                    });
+
+                let allProducts = productCategories.flatMap((cat) =>
+                    cat.products.filter(
+                        (p) =>
+                            p.status === ProductStatus.PUBLISHED && p.store_id
+                    )
+                );
+                //remove products that aren't published
+
+                if (upperPrice !== 0 && lowerPrice !== 0) {
+                    // Filter products by price using upper and lower price limits
+                    allProducts = allProducts.filter((product) => {
+                        const price = product.variants[0].prices[0].amount;
+                        return price >= lowerPrice && price <= upperPrice;
+                    });
+
+                    console.log('filtered prod with cat', allProducts);
+                    // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
+                    allProducts = allProducts.sort((a, b) => {
+                        const priceA = a.variants[0].prices[0].amount;
+                        const priceB = b.variants[0].prices[0].amount;
+                        return priceA - priceB; // Ascending order
+                    });
+                }
+
+                // Return the filtered and sorted products
+                return allProducts;
+            }
+
+            const productCategories =
+                await this.productCategoryRepository_.find({
+                    select: ['id', 'name', 'metadata'],
+                    relations: [
+                        'products',
+                        'products.variants.prices',
+                        'products.reviews',
+                    ],
+                });
+
+            // Filter the categories based on the provided category names
+            const filteredCategories = productCategories.filter((cat) =>
+                normalizedCategoryNames.includes(cat.name.toLowerCase())
+            );
+
+            // Gather all the products into a single list
+            let allProducts = filteredCategories.flatMap((cat) => cat.products);
+
+            console.log('all products in a single list', allProducts);
+
+            if (upperPrice !== 0 && lowerPrice !== 0) {
+                // Filter products by price using upper and lower price limits
+                allProducts = allProducts.filter((product) => {
+                    const price = product.variants[0].prices[0].amount;
+                    return price >= lowerPrice && price <= upperPrice;
+                });
+
+                console.log('filtered prod with cat', allProducts);
+                // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
+                allProducts = allProducts.sort((a, b) => {
+                    const priceA = a.variants[0].prices[0].amount;
+                    const priceB = b.variants[0].prices[0].amount;
+                    return priceA - priceB; // Ascending order
+                });
+            }
+
+            // Update product pricing
+            await this.convertPrices(allProducts);
+
+            return allProducts; // Return filtered products
+        } catch (error) {
+            // Handle the error here
+            this.logger.error(
+                'Error occurred while fetching products by handle:',
+                error
+            );
+            throw new Error('Failed to fetch products by handle.');
+        }
+    }
+
     async getProductsFromStoreName(storeName: string) {
         try {
             const store = await this.storeRepository_.findOne({

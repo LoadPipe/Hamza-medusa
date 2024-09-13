@@ -8,44 +8,75 @@ import {
     Grid,
     GridItem,
     Flex,
-    Button,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import ProductCardHome from './component/home-product-card';
-import SkeletonProductGrid from '@modules/skeletons/components/skeleton-product-grid';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
+import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
 
 const ProductCardGroup = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const { categorySelect } = useHomeProductsPage();
+    const { homeModalLowerPriceFilterSelect, homeModalUpperPriceFilterSelect } =
+        useHomeModalFilter();
     const [visibleProductsCount, setVisibleProductsCount] = useState(16); // State to manage visible products count (4 rows, 16 items)
+
+    // State for filters
+    const [isFilterActive, setIsFilterActive] = useState(true); // To check if the filter is applied
+    const [upperPrice, setUpperPrice] = useState(10000); // Upper price filter
+    const [lowerPrice, setLowerPrice] = useState(0); // Lower price filter
+    const [category, setCategory] = useState(['']); // Filter by category
+
+    // URL for default product fetching by category
+    const defaultUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/category/products?category_name=${['Home', 'Fashion'].join(',').toLowerCase()}`;
+
+    // URL for filtered product fetching
+    const filterUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?categories=${category}&price_lo=${lowerPrice}&price_hi=${upperPrice}`;
+
+    // URL for multi category
+    const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${5000000}&price_lo=${homeModalLowerPriceFilterSelect}`;
+    // Yo can we assume we can make the category state an array?
+
+    // Determine which URL to use based on whether the filter is active
+    const fetchUrl = isFilterActive ? filterUrl : defaultUrl;
 
     //TODO: MOVE TO INDEX.TS
     // Get products from vendor
     const { data, error, isLoading } = useQuery(
-        ['categories', categorySelect], // Use a unique key here to identify the query
+        [
+            'categories',
+            categorySelect,
+            isFilterActive,
+            lowerPrice,
+            upperPrice,
+            homeModalLowerPriceFilterSelect,
+            homeModalUpperPriceFilterSelect,
+        ], // Use a unique key here to identify the query
         async () => {
-            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/category/products?category_name=${categorySelect}`;
-            const response = await axios.get(url);
+            const response = await axios.get(multiUrl);
             return response.data; // Return the data from the response
         }
     );
 
-    const productsAll = data
-        ? categorySelect === 'All'
-            ? data // If category is 'all', data is a flat list of products
-            : data.flatMap((category: any) => category.products) // Otherwise, extract products from categories
-        : [];
+    console.log('uppper', homeModalUpperPriceFilterSelect);
+    console.log('lower', homeModalLowerPriceFilterSelect);
 
-    const handleViewMore = () => {
-        // Increase the visible products count by 16 (4 rows of 4 products)
-        setVisibleProductsCount((prevCount) => prevCount + 16);
-    };
+    console.log(`CAT SELECT ${categorySelect} type ${typeof categorySelect}`);
 
-    const visibleProducts = productsAll.slice(0, visibleProductsCount);
+    const productsAll = data?.products || [];
+
+    // // products will contain filtered products based on category selection
+    const products = data;
+
+    // const handleViewMore = () => {
+    //     // Increase the visible products count by 16 (4 rows of 4 products)
+    //     setVisibleProductsCount((prevCount) => prevCount + 16);
+    // };
+
+    // const visibleProducts = productsAll.slice(0, visibleProductsCount);
 
     if (isLoading) {
         return (
@@ -120,7 +151,7 @@ const ProductCardGroup = () => {
                 }}
                 gap={{ base: '4', md: '25.5px' }}
             >
-                {visibleProducts.map((product: any, index: number) => {
+                {productsAll.map((product: any, index: number) => {
                     // Extract product details
                     const variant = product.variants[0];
                     const productPricing =
@@ -166,7 +197,7 @@ const ProductCardGroup = () => {
             </Grid>
 
             {/* Show the "View More" button only if there are more products to display */}
-            {visibleProductsCount < productsAll.length && (
+            {/* {visibleProductsCount < productsAll.length && (
                 <Button
                     mt="2rem"
                     onClick={handleViewMore}
@@ -177,7 +208,7 @@ const ProductCardGroup = () => {
                 >
                     Show More
                 </Button>
-            )}
+            )} */}
         </Flex>
     );
 };

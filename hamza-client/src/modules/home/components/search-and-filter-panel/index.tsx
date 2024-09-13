@@ -8,15 +8,6 @@ import useHomeProductsPage from '@store/home-page/product-layout/product-layout'
 import FilterBar from './components/filter-bar/FilterBar';
 
 const SearchAndFilterPanel = () => {
-    const { categorySelect } = useHomeProductsPage();
-    const [vendorName, setVendorName] = useState('All');
-
-    useEffect(() => {
-        if (categorySelect) {
-            setVendorName(categorySelect);
-        }
-    }, [categorySelect]);
-
     return (
         <Flex
             mx={'auto'}
