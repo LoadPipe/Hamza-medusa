@@ -548,6 +548,69 @@ class ProductService extends MedusaProductService {
         }
     }
 
+    /**
+     * Filters products based on selected categories, upper price limit, and lower price limit.
+     *
+     * @param {string[]} categories - An array of category names to filter products by.
+     * @param {number} upperPrice - The upper price limit for filtering products.
+     * @param {number} lowerPrice - The lower price limit for filtering products.
+     * @returns {Array} - A list of products filtered by the provided criteria.
+     */
+    async getFilteredProductsByCategory(
+        categories: string[], // Array of strings representing category names
+        upperPrice: number, // Number representing the upper price limit
+        lowerPrice: number // Number representing the lower price limit
+    ) {
+        try {
+            console.log('Categories: ', categories);
+            console.log(
+                'Upper Price: ',
+                upperPrice,
+                'Lower Price: ',
+                lowerPrice
+            );
+
+            const productCategories =
+                await this.productCategoryRepository_.find({
+                    select: ['id', 'name', 'metadata'],
+                    relations: [
+                        'products',
+                        'products.variants.prices',
+                        'products.reviews',
+                    ],
+                });
+
+            console.log('Fetched Categories: ', productCategories);
+
+            // Filter the categories based on the provided category names
+            const filteredCategories = productCategories.filter((cat) =>
+                categories.includes(cat.name.toLowerCase())
+            );
+
+            // Gather all the products into a single list
+            let allProducts = filteredCategories.flatMap((cat) => cat.products);
+
+            // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
+            allProducts = allProducts.sort((a, b) => {
+                const priceA = a.variants[0].prices[0].amount;
+                const priceB = b.variants[0].prices[0].amount;
+                return priceA - priceB; // Ascending order
+            });
+
+            // Update product pricing
+            await this.convertPrices(allProducts);
+
+            return allProducts; // Return filtered products
+        } catch (error) {
+            // Handle the error here
+            this.logger.error(
+                'Error occurred while fetching products by handle:',
+                error
+            );
+            throw new Error('Failed to fetch products by handle.');
+        }
+    }
+
     async getProductsFromStoreName(storeName: string) {
         try {
             const store = await this.storeRepository_.findOne({
