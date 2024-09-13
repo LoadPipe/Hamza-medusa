@@ -549,20 +549,24 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    // Filter to get products that belong to all passed categories
+    /**
+     * Fetches all products that belong to multiple categories by category names.
+     *
+     * 1. Retrieves product IDs for products that belong to all the provided categories.
+     * 2. Fetches detailed product data for those products, including variants, prices, and reviews.
+     * 3. Filters products by status 'published' and ensures each product has a valid store ID.
+     * 4. Updates the product pricing for the filtered products.
+     * 5. Returns the filtered list of products.
+     *
+     * @param {string[]} categoryNames - The list of categories to filter products by.
+     * @returns {Array} - A list of products that belong to all the specified categories with updated prices.
+     * @throws {Error} - If there is an issue fetching the products or updating prices.
+     */
 
     async getAllProductsByMultipleCategories(categoryNames: string[]) {
         try {
             const normalizedCategoryNames = categoryNames;
-
-            // Step 2: Fetch the category IDs that match the given category names (case-insensitive with ILIKE)
-            /*
-             * Step 1: Initialize a querybuilder object for the product_category table
-             * Step 2: Select the category IDs where the category name matches any of the normalized category names
-             * Step 3: where() adds a condition to the query to filter results
-             *   - The condition ILIKE ANY (:...categoryNames) we want to match the name column of the product_category table
-             *   against the values in categoryNames
-             * */
+            // Step 1: Fetch the category IDs that match the given category names
             const categoryIds = await this.productCategoryRepository_
                 .createQueryBuilder('product_category')
                 .select('product_category.id')
@@ -574,11 +578,12 @@ class ProductService extends MedusaProductService {
                 )
                 .getRawMany();
 
-            // Map the categoryIds to create a list of only the id values
+            // Step 2: Map the categoryIds to a list of values
             const categoryIdList = categoryIds.map(
                 (c) => c.product_category_id
             );
 
+            // Step 3: Fetch product IDs that belong to all specified categories
             const productIds = await this.productRepository_
                 .createQueryBuilder('product')
                 .select('product.id')
@@ -600,7 +605,28 @@ class ProductService extends MedusaProductService {
                 .getRawMany();
 
             console.log('Fetched Product IDs:', productIds);
-            return productIds;
+            const productIdList = productIds.map((p) => p.product_id);
+
+            // Step 4: Fetch detailed product data for the retrieved product IDs
+            const products = await this.productRepository_.find({
+                where: {
+                    id: In(productIdList), // Fetch products by the list of product IDs
+                },
+                relations: ['variants.prices', 'reviews'], // Include variants, prices, and reviews
+            });
+
+            // Step 5: Filter products by status 'published' and valid store_id
+            const filteredProducts = products.filter(
+                (product) =>
+                    product.status === ProductStatus.PUBLISHED &&
+                    product.store_id
+            );
+
+            // Step 6: Update product pricing for filtered products
+            await this.convertPrices(filteredProducts);
+
+            // Return the filtered products with updated pricing
+            return filteredProducts;
         } catch (error) {
             this.logger.error(
                 'Error occurred while fetching products by multiple categories:',
