@@ -562,14 +562,6 @@ class ProductService extends MedusaProductService {
         lowerPrice: number // Number representing the lower price limit
     ) {
         try {
-            console.log('Categories: ', categories);
-            console.log(
-                'Upper Price: ',
-                upperPrice,
-                'Lower Price: ',
-                lowerPrice
-            );
-
             const productCategories =
                 await this.productCategoryRepository_.find({
                     select: ['id', 'name', 'metadata'],
@@ -580,8 +572,6 @@ class ProductService extends MedusaProductService {
                     ],
                 });
 
-            console.log('Fetched Categories: ', productCategories);
-
             // Filter the categories based on the provided category names
             const filteredCategories = productCategories.filter((cat) =>
                 categories.includes(cat.name.toLowerCase())
@@ -589,6 +579,12 @@ class ProductService extends MedusaProductService {
 
             // Gather all the products into a single list
             let allProducts = filteredCategories.flatMap((cat) => cat.products);
+
+            // Filter products by price using upper and lower price limits
+            allProducts = allProducts.filter((product) => {
+                const price = product.variants[0].prices[0].amount;
+                return price >= lowerPrice && price <= upperPrice;
+            });
 
             // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
             allProducts = allProducts.sort((a, b) => {

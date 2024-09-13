@@ -48,7 +48,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         //call productService.getFilteredProducts to get the products, then return them
         const products = await productService.getFilteredProductsByCategory(
-            categories,
+            ['home', 'fashion'],
             upperPrice,
             lowerPrice
         );
@@ -56,3 +56,5 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         return handler.returnStatus(200, { products });
     });
 };
+
+//1000000
