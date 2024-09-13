@@ -24,7 +24,6 @@ import useModalFilter from '@store/store-page/filter-modal';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
 import RangeSliderModal from '@modules/shop/components/mobile-filter/components/range-slider-modal';
-import useVendors from '../../../data/data';
 interface FilterModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -58,8 +57,6 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
         setHomeModalCurrencyFilterSelect,
         setHomeModalCategoryFilterSelect,
     } = useHomeModalFilter();
-
-    const vendors = useVendors();
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
