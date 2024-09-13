@@ -8,14 +8,12 @@ import {
     Grid,
     GridItem,
     Flex,
-    Button,
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import ProductCardHome from './component/home-product-card';
-import SkeletonProductGrid from '@modules/skeletons/components/skeleton-product-grid';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 
 const ProductCardGroup = () => {
@@ -27,13 +25,17 @@ const ProductCardGroup = () => {
     const [isFilterActive, setIsFilterActive] = useState(true); // To check if the filter is applied
     const [upperPrice, setUpperPrice] = useState(10000); // Upper price filter
     const [lowerPrice, setLowerPrice] = useState(0); // Lower price filter
-    const [category, setCategory] = useState(''); // Filter by category
+    const [category, setCategory] = useState(['']); // Filter by category
 
     // URL for default product fetching by category
     const defaultUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/category/products?category_name=${['Home', 'Fashion'].join(',').toLowerCase()}`;
 
     // URL for filtered product fetching
     const filterUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?categories=${category}&price_lo=${lowerPrice}&price_hi=${upperPrice}`;
+
+    // URL for multi category
+    const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=0&price_lo=0`;
+    // Yo can we assume we can make the category state an array?
 
     // Determine which URL to use based on whether the filter is active
     const fetchUrl = isFilterActive ? filterUrl : defaultUrl;
@@ -43,27 +45,22 @@ const ProductCardGroup = () => {
     const { data, error, isLoading } = useQuery(
         ['categories', categorySelect, isFilterActive, lowerPrice, upperPrice], // Use a unique key here to identify the query
         async () => {
-            const response = await axios.get(fetchUrl);
+            const response = await axios.get(multiUrl);
             return response.data; // Return the data from the response
         }
     );
+
+    console.log(`CAT SELECT ${categorySelect} type ${typeof categorySelect}`);
+
+    const productsAll = data?.products || [];
+    console.log(typeof productsAll);
+    console.log(productsAll);
+
     // // products will contain filtered products based on category selection
-    // const products =
-    //     Array.isArray(categorySelect) && categorySelect.includes('All') // Check if 'All' is in the array
-    //         ? productsAll
-    //         : data
-    //         ?.filter(
-    //             (category: any) =>
-    //                 Array.isArray(categorySelect) &&
-    //                 categorySelect.some(
-    //                     (selected) => selected === category.name
-    //                 )
-    //         ) // Ensure categorySelect is an array and check if the category is in the selected categories
-    //         .flatMap((category: any) => category.products) || []; // Extract products for the selected categories
+    const products = data;
 
     console.log('response data from home', data);
 
-    const productsAll = data?.products || [];
     console.log('response data from home', productsAll);
 
     // const handleViewMore = () => {

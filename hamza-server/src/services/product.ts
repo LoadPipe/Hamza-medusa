@@ -667,18 +667,20 @@ class ProductService extends MedusaProductService {
             // Gather all the products into a single list
             let allProducts = filteredCategories.flatMap((cat) => cat.products);
 
-            // Filter products by price using upper and lower price limits
-            allProducts = allProducts.filter((product) => {
-                const price = product.variants[0].prices[0].amount;
-                return price >= lowerPrice && price <= upperPrice;
-            });
+            if (upperPrice === 0 && lowerPrice === 0) {
+                // Filter products by price using upper and lower price limits
+                allProducts = allProducts.filter((product) => {
+                    const price = product.variants[0].prices[0].amount;
+                    return price >= lowerPrice && price <= upperPrice;
+                });
 
-            // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
-            allProducts = allProducts.sort((a, b) => {
-                const priceA = a.variants[0].prices[0].amount;
-                const priceB = b.variants[0].prices[0].amount;
-                return priceA - priceB; // Ascending order
-            });
+                // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
+                allProducts = allProducts.sort((a, b) => {
+                    const priceA = a.variants[0].prices[0].amount;
+                    const priceB = b.variants[0].prices[0].amount;
+                    return priceA - priceB; // Ascending order
+                });
+            }
 
             // Update product pricing
             await this.convertPrices(allProducts);
