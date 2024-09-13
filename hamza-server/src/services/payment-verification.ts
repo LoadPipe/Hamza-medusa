@@ -8,7 +8,7 @@ import OrderService from './order';
 import { Payment } from '../models/payment';
 import { Order } from '../models/order';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
-import { verifyPaymentForOrder } from '../web3';
+import { getAmountPaidForOrder, verifyPaymentForOrder } from '../web3';
 
 export default class PaymentVerificationService extends TransactionBaseService {
     static LIFE_TIME = Lifetime.SCOPED;
@@ -44,24 +44,26 @@ export default class PaymentVerificationService extends TransactionBaseService {
         const payments: Payment[] = order.payments;
 
         //verify each payment of order
+        let paidAmount: bigint = BigInt(0);
+        let totalExpected: bigint = BigInt(0);
         for (let payment of payments) {
             this.logger.info(`verifying payment ${payment.id} for order ${order.id}`);
 
-            if (!await verifyPaymentForOrder(payment.chain_id, order.id, payment.amount)) {
-                //if any unverifiable, then the whole order is unverifiable
-                allPaid = false;
-                break;
-            }
+            paidAmount += await getAmountPaidForOrder(payment.chain_id, order.id, payment.amount);
+            totalExpected += BigInt(payment.amount);
         }
 
-        if (allPaid) {
-            this.logger.info(`updating order ${order.id}, setting to captured`);
-            order.payment_status = PaymentStatus.CAPTURED;
-            await this.orderRepository_.save(order);
+        //update payment_status of order based on paid or not
+        allPaid = paidAmount >= totalExpected;
+        const paymentStatus: PaymentStatus = allPaid ? PaymentStatus.CAPTURED : PaymentStatus.NOT_PAID;
 
-            for (let p of order.payments) {
-                output.push({ order: order, payment: p });
-            }
+        //save the order
+        this.logger.info(`updating order ${order.id}, setting to ${paymentStatus}`);
+        order.payment_status = paymentStatus;
+        await this.orderRepository_.save(order);
+
+        for (let p of order.payments) {
+            output.push({ order: order, payment: p });
         }
 
         return output;
