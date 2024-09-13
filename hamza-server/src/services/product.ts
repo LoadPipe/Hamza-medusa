@@ -685,7 +685,7 @@ class ProductService extends MedusaProductService {
             // Gather all the products into a single list
             let allProducts = filteredCategories.flatMap((cat) => cat.products);
 
-            if (upperPrice === 0 && lowerPrice === 0) {
+            if (upperPrice !== 0 && lowerPrice !== 0) {
                 // Filter products by price using upper and lower price limits
                 allProducts = allProducts.filter((product) => {
                     const price = product.variants[0].prices[0].amount;

@@ -37,7 +37,7 @@ const ProductCardGroup = () => {
     const filterUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?categories=${category}&price_lo=${lowerPrice}&price_hi=${upperPrice}`;
 
     // URL for multi category
-    const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${Number(homeModalUpperPriceFilterSelect)}&price_lo=${Number(homeModalLowerPriceFilterSelect)}`;
+    const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${homeModalUpperPriceFilterSelect}&price_lo=${homeModalLowerPriceFilterSelect}`;
     // Yo can we assume we can make the category state an array?
 
     // Determine which URL to use based on whether the filter is active
