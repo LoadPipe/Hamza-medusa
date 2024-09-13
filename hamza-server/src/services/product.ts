@@ -653,19 +653,7 @@ class ProductService extends MedusaProductService {
                 name.toLowerCase()
             );
 
-            let allProducts = [];
-
             if (normalizedCategoryNames[0] === 'all') {
-                allProducts = await this.convertPrices(
-                    await this.productRepository_.find({
-                        relations: ['variants.prices', 'reviews'],
-                        where: {
-                            status: ProductStatus.PUBLISHED,
-                            store_id: Not(IsNull()),
-                        },
-                    })
-                );
-            } else {
                 const productCategories =
                     await this.productCategoryRepository_.find({
                         select: ['id', 'name', 'metadata'],
@@ -676,14 +664,49 @@ class ProductService extends MedusaProductService {
                         ],
                     });
 
-                // Filter the categories based on the provided category names
-                const filteredCategories = productCategories.filter((cat) =>
-                    normalizedCategoryNames.includes(cat.name.toLowerCase())
+                let allProducts = productCategories.flatMap(
+                    (cat) => cat.products
                 );
 
-                // Gather all the products into a single list
-                allProducts = filteredCategories.flatMap((cat) => cat.products);
+                if (upperPrice !== 0 && lowerPrice !== 0) {
+                    // Filter products by price using upper and lower price limits
+                    allProducts = allProducts.filter((product) => {
+                        const price = product.variants[0].prices[0].amount;
+                        return price >= lowerPrice && price <= upperPrice;
+                    });
+
+                    console.log('filtered prod with cat', allProducts);
+                    // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
+                    allProducts = allProducts.sort((a, b) => {
+                        const priceA = a.variants[0].prices[0].amount;
+                        const priceB = b.variants[0].prices[0].amount;
+                        return priceA - priceB; // Ascending order
+                    });
+                }
+
+                // Return the filtered and sorted products
+                return allProducts;
             }
+
+            const productCategories =
+                await this.productCategoryRepository_.find({
+                    select: ['id', 'name', 'metadata'],
+                    relations: [
+                        'products',
+                        'products.variants.prices',
+                        'products.reviews',
+                    ],
+                });
+
+            // Filter the categories based on the provided category names
+            const filteredCategories = productCategories.filter((cat) =>
+                normalizedCategoryNames.includes(cat.name.toLowerCase())
+            );
+
+            // Gather all the products into a single list
+            let allProducts = filteredCategories.flatMap((cat) => cat.products);
+
+            console.log('all products in a single list', allProducts);
 
             if (upperPrice !== 0 && lowerPrice !== 0) {
                 // Filter products by price using upper and lower price limits
@@ -692,6 +715,7 @@ class ProductService extends MedusaProductService {
                     return price >= lowerPrice && price <= upperPrice;
                 });
 
+                console.log('filtered prod with cat', allProducts);
                 // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
                 allProducts = allProducts.sort((a, b) => {
                     const priceA = a.variants[0].prices[0].amount;
