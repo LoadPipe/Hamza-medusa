@@ -653,6 +653,20 @@ class ProductService extends MedusaProductService {
                 name.toLowerCase()
             );
 
+            if (normalizedCategoryNames[0] === 'all') {
+                const products = await this.convertPrices(
+                    await this.productRepository_.find({
+                        relations: ['variants.prices', 'reviews'],
+                        where: {
+                            status: ProductStatus.PUBLISHED,
+                            store_id: Not(IsNull()),
+                        },
+                    })
+                );
+
+                return products;
+            }
+
             const productCategories =
                 await this.productCategoryRepository_.find({
                     select: ['id', 'name', 'metadata'],

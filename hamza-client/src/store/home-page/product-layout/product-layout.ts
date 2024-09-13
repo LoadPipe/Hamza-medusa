@@ -20,7 +20,7 @@ interface StoreState {
 
 // Create the Zustand store
 const useHomeProductsPage = create<StoreState>((set) => ({
-    categorySelect: ['fashion'], // Allow for multi-category selection
+    categorySelect: ['all'], // Allow for multi-category selection
     categoryTypeSelect: null,
     currencySelect: null,
     reviewStarsSelect: null,
