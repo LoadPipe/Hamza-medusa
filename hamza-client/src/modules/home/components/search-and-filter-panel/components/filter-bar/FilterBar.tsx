@@ -6,7 +6,6 @@ import { CgChevronRight, CgChevronLeft } from 'react-icons/cg'; // Import both c
 import FilterModalHome from './components/FilterModal';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
-import categoryIcon from '@images/categories/board-games.svg';
 
 // Define the category structure
 interface Category {

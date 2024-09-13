@@ -53,15 +53,9 @@ const ProductCardGroup = () => {
     console.log(`CAT SELECT ${categorySelect} type ${typeof categorySelect}`);
 
     const productsAll = data?.products || [];
-    console.log(typeof productsAll);
-    console.log(productsAll);
 
     // // products will contain filtered products based on category selection
     const products = data;
-
-    console.log('response data from home', data);
-
-    console.log('response data from home', productsAll);
 
     // const handleViewMore = () => {
     //     // Increase the visible products count by 16 (4 rows of 4 products)

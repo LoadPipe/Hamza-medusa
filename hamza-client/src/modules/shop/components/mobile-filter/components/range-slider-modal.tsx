@@ -9,17 +9,32 @@ import {
     RangeSliderFilledTrack,
     RangeSliderThumb,
 } from '@chakra-ui/react';
+import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
 
 // Define a type for the range state
 type RangeType = [number, number];
+interface RangeSliderModalProps {
+    range: RangeType;
+    setRange: React.Dispatch<React.SetStateAction<RangeType>>;
+}
+const RangeSliderModal: React.FC<RangeSliderModalProps> = ({
+    range,
+    setRange,
+}) => {
+    const {
+        homeModalLowerPriceFilterSelect,
+        homeModalUpperPriceFilterSelect,
+        setHomeModalLowerPriceFilterSelect,
+        setHomeModalUpperPriceFilterSelect,
+    } = useHomeModalFilter();
 
-const RangeSliderModal = () => {
-    // Using the RangeType for the state
-    const [range, setRange] = useState<RangeType>([10, 2000]);
-
-    // Define the type for the values parameter
     const handleRangeChange = (values: number[]) => {
         setRange(values as RangeType);
+    };
+
+    const handleRangeChangeEnd = (values: number[]) => {
+        setHomeModalLowerPriceFilterSelect(values[0]);
+        setHomeModalUpperPriceFilterSelect(values[1]);
     };
 
     return (
@@ -32,10 +47,11 @@ const RangeSliderModal = () => {
                     min={0}
                     max={2000}
                     onChange={handleRangeChange}
+                    onChangeEnd={handleRangeChangeEnd} // Update Zustand values when range changes
                     colorScheme="blue"
                 >
-                    <RangeSliderTrack bg="primary.indigo.900">
-                        <RangeSliderFilledTrack bg="secondary.charcoal.900" />
+                    <RangeSliderTrack bg="secondary.charcoal.900">
+                        <RangeSliderFilledTrack bg="primary.indigo.900" />
                     </RangeSliderTrack>
                     <RangeSliderThumb
                         index={0}

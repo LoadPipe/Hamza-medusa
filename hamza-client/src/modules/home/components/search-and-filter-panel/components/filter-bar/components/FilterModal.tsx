@@ -11,7 +11,7 @@ import {
     Divider,
     Text,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useState } from 'react';
 import FilterIcon from '../../../../../../../../public/images/categories/mobile-filter.svg';
 import Image from 'next/image';
 import currencies from '../data/currency-icons';
@@ -40,6 +40,8 @@ interface Category {
     };
 }
 
+type RangeType = [number, number];
+
 const FilterModalHome: React.FC<FilterModalProps> = ({
     isOpen,
     onClose,
@@ -63,9 +65,13 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
         homeModalCurrencyFilterSelect,
         homeModalCategoryFilterSelect,
         homeModalCategoryTypeFilterSelect,
+        homeModalLowerPriceFilterSelect,
+        homeModalUpperPriceFilterSelect,
         setHomeModalCategoryTypeFilterSelect,
         setHomeModalCurrencyFilterSelect,
         setHomeModalCategoryFilterSelect,
+        setHomeModalLowerPriceFilterSelect,
+        setHomeModalUpperPriceFilterSelect,
     } = useHomeModalFilter();
 
     // Fetching categories data
@@ -77,6 +83,11 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
             return response.data;
         }
     );
+
+    const [range, setRange] = useState<RangeType>([
+        homeModalLowerPriceFilterSelect || 0,
+        homeModalUpperPriceFilterSelect || 2000,
+    ]);
 
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
@@ -145,7 +156,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                         Prices before fees and taxes
                     </Text>
 
-                    <RangeSliderModal />
+                    <RangeSliderModal range={range} setRange={setRange} />
                     {/* 
                     <Text
                         my="1.5rem"
@@ -216,6 +227,8 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                             setHomeModalCurrencyFilterSelect(null);
                             setHomeModalCategoryFilterSelect(null);
                             setHomeModalCategoryTypeFilterSelect(null);
+                            setHomeModalLowerPriceFilterSelect(range[0]);
+                            setHomeModalUpperPriceFilterSelect(range[1]);
                             onClose();
                         }}
                         ml="auto"
