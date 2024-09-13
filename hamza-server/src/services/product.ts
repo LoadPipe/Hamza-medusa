@@ -18,7 +18,6 @@ import PriceSelectionStrategy, {
 } from '../strategies/price-selection';
 import CustomerService from '../services/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
-
 import { In, IsNull, Not } from 'typeorm';
 import { createLogger, ILogger } from '../utils/logging/logger';
 
@@ -633,6 +632,65 @@ class ProductService extends MedusaProductService {
                 error
             );
             throw new Error('Failed to fetch products by multiple categories.');
+        }
+    }
+
+    /**
+     * Filters products based on selected categories, upper price limit, and lower price limit.
+     *
+     * @param {string[]} categories - An array of category names to filter products by.
+     * @param {number} upperPrice - The upper price limit for filtering products.
+     * @param {number} lowerPrice - The lower price limit for filtering products.
+     * @returns {Array} - A list of products filtered by the provided criteria.
+     */
+    async getFilteredProductsByCategory(
+        categories: string[], // Array of strings representing category names
+        upperPrice: number, // Number representing the upper price limit
+        lowerPrice: number // Number representing the lower price limit
+    ) {
+        try {
+            const productCategories =
+                await this.productCategoryRepository_.find({
+                    select: ['id', 'name', 'metadata'],
+                    relations: [
+                        'products',
+                        'products.variants.prices',
+                        'products.reviews',
+                    ],
+                });
+
+            // Filter the categories based on the provided category names
+            const filteredCategories = productCategories.filter((cat) =>
+                categories.includes(cat.name.toLowerCase())
+            );
+
+            // Gather all the products into a single list
+            let allProducts = filteredCategories.flatMap((cat) => cat.products);
+
+            // Filter products by price using upper and lower price limits
+            allProducts = allProducts.filter((product) => {
+                const price = product.variants[0].prices[0].amount;
+                return price >= lowerPrice && price <= upperPrice;
+            });
+
+            // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
+            allProducts = allProducts.sort((a, b) => {
+                const priceA = a.variants[0].prices[0].amount;
+                const priceB = b.variants[0].prices[0].amount;
+                return priceA - priceB; // Ascending order
+            });
+
+            // Update product pricing
+            await this.convertPrices(allProducts);
+
+            return allProducts; // Return filtered products
+        } catch (error) {
+            // Handle the error here
+            this.logger.error(
+                'Error occurred while fetching products by handle:',
+                error
+            );
+            throw new Error('Failed to fetch products by handle.');
         }
     }
 

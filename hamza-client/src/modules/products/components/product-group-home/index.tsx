@@ -23,13 +23,27 @@ const ProductCardGroup = () => {
     const { categorySelect } = useHomeProductsPage();
     const [visibleProductsCount, setVisibleProductsCount] = useState(16); // State to manage visible products count (4 rows, 16 items)
 
+    // State for filters
+    const [isFilterActive, setIsFilterActive] = useState(true); // To check if the filter is applied
+    const [upperPrice, setUpperPrice] = useState(10000); // Upper price filter
+    const [lowerPrice, setLowerPrice] = useState(0); // Lower price filter
+    const [category, setCategory] = useState(''); // Filter by category
+
+    // URL for default product fetching by category
+    const defaultUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/category/products?category_name=${['Home', 'Fashion'].join(',').toLowerCase()}`;
+
+    // URL for filtered product fetching
+    const filterUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?categories=${category}&price_lo=${lowerPrice}&price_hi=${upperPrice}`;
+
+    // Determine which URL to use based on whether the filter is active
+    const fetchUrl = isFilterActive ? filterUrl : defaultUrl;
+
     //TODO: MOVE TO INDEX.TS
     // Get products from vendor
     const { data, error, isLoading } = useQuery(
-        ['categories', categorySelect], // Use a unique key here to identify the query
+        ['categories', categorySelect, isFilterActive, lowerPrice, upperPrice], // Use a unique key here to identify the query
         async () => {
-            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/category/products?category_name=${categorySelect}`;
-            const response = await axios.get(url);
+            const response = await axios.get(fetchUrl);
             return response.data; // Return the data from the response
         }
     );
@@ -47,18 +61,17 @@ const ProductCardGroup = () => {
     //         ) // Ensure categorySelect is an array and check if the category is in the selected categories
     //         .flatMap((category: any) => category.products) || []; // Extract products for the selected categories
 
-    const productsAll = data
-        ? categorySelect === 'All'
-            ? data // If category is 'all', data is a flat list of products
-            : data.flatMap((category: any) => category.products) // Otherwise, extract products from categories
-        : [];
+    console.log('response data from home', data);
 
-    const handleViewMore = () => {
-        // Increase the visible products count by 16 (4 rows of 4 products)
-        setVisibleProductsCount((prevCount) => prevCount + 16);
-    };
+    const productsAll = data?.products || [];
+    console.log('response data from home', productsAll);
 
-    const visibleProducts = productsAll.slice(0, visibleProductsCount);
+    // const handleViewMore = () => {
+    //     // Increase the visible products count by 16 (4 rows of 4 products)
+    //     setVisibleProductsCount((prevCount) => prevCount + 16);
+    // };
+
+    // const visibleProducts = productsAll.slice(0, visibleProductsCount);
 
     if (isLoading) {
         return (
@@ -133,7 +146,7 @@ const ProductCardGroup = () => {
                 }}
                 gap={{ base: '4', md: '25.5px' }}
             >
-                {visibleProducts.map((product: any, index: number) => {
+                {productsAll.map((product: any, index: number) => {
                     // Extract product details
                     const variant = product.variants[0];
                     const productPricing =
@@ -179,7 +192,7 @@ const ProductCardGroup = () => {
             </Grid>
 
             {/* Show the "View More" button only if there are more products to display */}
-            {visibleProductsCount < productsAll.length && (
+            {/* {visibleProductsCount < productsAll.length && (
                 <Button
                     mt="2rem"
                     onClick={handleViewMore}
@@ -190,7 +203,7 @@ const ProductCardGroup = () => {
                 >
                     Show More
                 </Button>
-            )}
+            )} */}
         </Flex>
     );
 };
