@@ -19,13 +19,14 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         )
             ? handler.inputParams.category_name
             : handler.inputParams.category_name?.split(',') || [];
+
         //make sure these are cast as numbers
         const upperPrice = handler.inputParams.price_hi ?? 0;
         const lowerPrice = handler.inputParams.price_lo ?? 0;
 
         //call productService.getFilteredProducts to get the products, then return them
         const products = await productService.getFilteredProductsByCategory(
-            ['fashion', 'gaming'],
+            categories,
             upperPrice,
             lowerPrice
         );
