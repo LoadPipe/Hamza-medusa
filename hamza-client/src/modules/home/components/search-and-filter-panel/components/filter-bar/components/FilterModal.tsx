@@ -221,9 +221,9 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                                 setCategorySelect(
                                     homeModalCategoryFilterSelect
                                 ); // Array of categories
-                                setCategoryTypeSelect(
-                                    homeModalCategoryTypeFilterSelect
-                                );
+                                // setCategoryTypeSelect(
+                                //     homeModalCategoryTypeFilterSelect
+                                // );
                             }
                             setHomeModalCurrencyFilterSelect(null);
                             setHomeModalCategoryFilterSelect(null);

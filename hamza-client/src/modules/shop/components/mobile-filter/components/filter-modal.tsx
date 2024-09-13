@@ -71,6 +71,8 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
         setModalCategoryFilterSelect,
     } = useModalFilter();
 
+    const [range, setRange] = useState<RangeType>([0, 10000]);
+
     // Fetching categories data
     const { data, isLoading } = useQuery<Category[]>(
         ['categories'],
