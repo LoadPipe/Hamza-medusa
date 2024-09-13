@@ -4,14 +4,13 @@ import {
     PriceSelectionContext,
     PriceSelectionResult,
     ProductVariant,
-    Logger,
     Store,
 } from '@medusajs/medusa';
+import { CachedExchangeRateRepository } from '../repositories/cached-exchange-rate';
 import ProductVariantRepository from '@medusajs/medusa/dist/repositories/product-variant';
-import { CurrencyConversionClient } from '../currency-conversion/rest-client';
 import { In } from 'typeorm';
-import { getCurrencyAddress, getCurrencyPrecision } from '../currency.config';
-import { createLogger, ILogger } from '../utils/logging/logger';
+import { ILogger } from '../utils/logging/logger';
+import { PriceConverter } from '../utils/price-conversion';
 
 type InjectedDependencies = {
     customerService: CustomerService;
@@ -23,17 +22,21 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
     protected readonly customerService_: CustomerService;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly logger: ILogger;
+    protected readonly cachedExchangeRateRepository: typeof CachedExchangeRateRepository;
 
     constructor({
         customerService,
         productVariantRepository,
         logger,
-    }: InjectedDependencies) {
+        cachedExchangeRateRepository,
+    }: InjectedDependencies & {
+        cachedExchangeRateRepository: typeof CachedExchangeRateRepository;
+    }) {
         super(arguments[0]);
-
         this.customerService_ = customerService;
         this.productVariantRepository_ = productVariantRepository;
         this.logger = logger;
+        this.cachedExchangeRateRepository = cachedExchangeRateRepository;
     }
 
     async calculateVariantPrice(
@@ -91,7 +94,11 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
             string,
             PriceSelectionResult
         >();
-        const priceConverter: PriceConverter = new PriceConverter(this.logger);
+
+        const priceConverter = new PriceConverter(
+            this.logger,
+            this.cachedExchangeRateRepository
+        );
 
         //get the variant objects
         const variants: ProductVariant[] =
@@ -145,111 +152,5 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
     }
 }
 
-//TODO: change the name of this type
-interface IPrice {
-    baseCurrency: string;
-    toCurrency: string;
-    baseAmount: number;
-}
 
-const EXTENDED_LOGGING = false;
 
-//TODO: maybe find a better place for this class
-export class PriceConverter {
-    private readonly restClient: CurrencyConversionClient =
-        new CurrencyConversionClient();
-    private readonly cache: {
-        [key: string]: { value: number; timestamp: number };
-    } = {};
-    private readonly expirationSeconds: number = 60;
-    private readonly logger: ILogger;
-
-    constructor(logger?: ILogger) {
-        this.logger = logger;
-    }
-
-    async convertPrice(
-        baseAmount: number,
-        baseCurrency: string,
-        toCurrency: string
-    ): Promise<number> {
-        return await this.getPrice({ baseAmount, baseCurrency, toCurrency });
-    }
-
-    async getPrice(price: IPrice): Promise<number> {
-        let rate: number = this.getFromCache(price);
-        //this.logger?.debug(`cached rate for ${price.baseCurrency}-${price.toCurrency}: ${rate}`);
-
-        if (!rate) {
-            rate = await this.getFromApi(price);
-            this.writeToCache(price, rate);
-        }
-
-        //now we need currency precisions
-        const basePrecision = getCurrencyPrecision(price.baseCurrency) ?? {
-            db: 2,
-        };
-        const toPrecision = getCurrencyPrecision(price.toCurrency) ?? { db: 2 };
-
-        //convert the amount
-        const baseFactor: number = Math.pow(
-            10,
-            basePrecision.db
-        );
-
-        if (EXTENDED_LOGGING) {
-            console.log('price:', price);
-            console.log('baseFactor:', baseFactor);
-            console.log('basePrecision:', basePrecision);
-            console.log('toPrecision:', toPrecision);
-            console.log('rate:', rate);
-        }
-
-        const displayAmount = price.baseAmount / baseFactor;
-
-        if (EXTENDED_LOGGING) console.log('displayAmount:', displayAmount);
-
-        return Math.floor(displayAmount * rate * Math.pow(10, toPrecision.db));
-    }
-
-    private async getFromApi(price: IPrice): Promise<number> {
-        //convert to addresses
-        let baseAddr = getCurrencyAddress(price.baseCurrency, 1);
-        let toAddr = getCurrencyAddress(price.toCurrency, 1);
-
-        if (baseAddr.length === 0) baseAddr = price.baseCurrency;
-        if (toAddr.length === 0) toAddr = price.toCurrency;
-
-        return await this.restClient.getExchangeRate(baseAddr, toAddr);
-    }
-
-    private getFromCache(price: IPrice): number {
-        const key: string = this.getKey(price.baseCurrency, price.toCurrency);
-        if (
-            this.cache[key] &&
-            this.getTimestamp() - this.cache[key].timestamp >=
-            this.expirationSeconds
-        ) {
-            this.cache[key] = null;
-        }
-
-        return this.cache[key]?.value;
-    }
-
-    private writeToCache(price: IPrice, rate: number) {
-        const key: string = this.getKey(price.baseCurrency, price.toCurrency);
-        this.cache[key] = { value: rate, timestamp: this.getTimestamp() };
-    }
-
-    private hasCached(price: IPrice): boolean {
-        return this.getFromCache(price) ? true : false;
-    }
-
-    private getKey(base: string, to: string): string {
-        return `${base.trim().toLowerCase()}-${to.trim().toLowerCase()}`;
-    }
-
-    private getTimestamp(): number {
-        return Date.now() / 1000;
-    }
-}

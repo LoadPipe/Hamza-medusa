@@ -53,7 +53,7 @@ export class CurrencyConversionClient {
 
             if (process.env.CURRENCY_CONVERSION_REST_URL) {
                 const response = await this.client.get(url);
-                return response.status === 200 ? response.data : 1;
+                return response.status === 200 ? response.data : 0;
             }
 
             //default: hard-coded rates
@@ -79,7 +79,7 @@ export class CurrencyConversionClient {
             }
         } catch (error) {
             console.error('Error getting exchange rate:', error.message);
-            return 1;
+            return 0;
         }
     }
 }
