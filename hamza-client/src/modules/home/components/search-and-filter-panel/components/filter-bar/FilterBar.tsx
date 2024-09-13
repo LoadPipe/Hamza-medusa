@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Flex, useDisclosure, Skeleton } from '@chakra-ui/react';
 import CategoryButtons from './components/CategoryButtons';
-import useVendors from '../../data/data';
 import FilterButton from './components/FilterButton';
 import { CgChevronRight, CgChevronLeft } from 'react-icons/cg'; // Import both chevrons
 import FilterModalHome from './components/FilterModal';
@@ -36,10 +35,10 @@ const FilterBar = () => {
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-            name: category.name,
-            id: category.id,
-            metadata: category.metadata,
-        }))
+              name: category.name,
+              id: category.id,
+              metadata: category.metadata,
+          }))
         : [];
 
     console.log('data from filter bar', uniqueCategories);
@@ -148,15 +147,15 @@ const FilterBar = () => {
                     {isLoading
                         ? skeletons // Show skeletons while loading
                         : visibleCategories.map((category, index) => {
-                            return (
-                                <CategoryButtons
-                                    key={index}
-                                    categoryType={category.id}
-                                    categoryName={category.name}
-                                    url={category.metadata?.icon_url}
-                                />
-                            );
-                        })}
+                              return (
+                                  <CategoryButtons
+                                      key={index}
+                                      categoryType={category.id}
+                                      categoryName={category.name}
+                                      url={category.metadata?.icon_url}
+                                  />
+                              );
+                          })}
                 </Flex>
 
                 {/* Conditional rendering of Chevron */}
