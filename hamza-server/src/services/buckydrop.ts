@@ -767,7 +767,7 @@ export default class BuckydropService extends TransactionBaseService {
                 inventory_quantity: variant.quantity,
                 allow_backorder: false,
                 manage_inventory: true,
-                bucky_metadata: JSON.stringify({ skuCode: variant.skuCode }),
+                bucky_metadata: { skuCode: variant.skuCode },
                 prices,
                 options: options
             });
