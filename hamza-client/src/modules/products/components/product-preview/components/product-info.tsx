@@ -106,7 +106,7 @@ const ProductInfo = () => {
                     alignItems="center"
                     justifyContent="center"
                 >
-                    <Text color="white">Electronics</Text>
+                    <Text color="white">{productData.collection.title}</Text>
                 </Box>
             </Flex>
             <Flex className="flex justify-between items-center pr-5">
