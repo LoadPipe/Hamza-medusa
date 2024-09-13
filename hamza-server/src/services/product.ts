@@ -649,6 +649,10 @@ class ProductService extends MedusaProductService {
         lowerPrice: number // Number representing the lower price limit
     ) {
         try {
+            let normalizedCategoryNames = categories.map((name) =>
+                name.toLowerCase()
+            );
+
             const productCategories =
                 await this.productCategoryRepository_.find({
                     select: ['id', 'name', 'metadata'],
@@ -661,7 +665,7 @@ class ProductService extends MedusaProductService {
 
             // Filter the categories based on the provided category names
             const filteredCategories = productCategories.filter((cat) =>
-                categories.includes(cat.name.toLowerCase())
+                normalizedCategoryNames.includes(cat.name.toLowerCase())
             );
 
             // Gather all the products into a single list

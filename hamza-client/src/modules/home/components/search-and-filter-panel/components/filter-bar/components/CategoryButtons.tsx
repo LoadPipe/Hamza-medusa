@@ -22,7 +22,7 @@ const CategoryButtons: React.FC<CategoryButtonProps> = ({
         <Flex
             flexShrink={0}
             onClick={() => {
-                setCategorySelect([categoryName.toLowerCase()]), // Wrap categoryName in an array
+                setCategorySelect([categoryName]), // Wrap categoryName in an array
                     setCategoryTypeSelect([categoryType]); // Wrap categoryType in an array
             }}
             borderColor={'#3E3E3E'}
