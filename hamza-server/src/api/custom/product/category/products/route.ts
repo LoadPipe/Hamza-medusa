@@ -3,6 +3,17 @@ import StoreService from '../../../../../services/store';
 import ProductService from '../../../../../services/product';
 import { RouteHandler } from '../../../../route-handler';
 
+/**
+ * @route   GET /custom/product/category/products
+ * @desc    Fetches all products that belong to one or more specified product categories.
+ *          The categories can be passed as a comma-separated string in the query parameter `category_name`.
+ *          If multiple categories are provided, the handler will return products that belong to all of the categories but not just one.
+ * @query   category_name - A string of category names (e.g., "fashion,featured") to filter products by.
+ * @returns {Object} 200 - An array of products filtered by the provided category/categories.
+ *          If no category is specified or none matches, it returns an empty array.
+ * @throws  400 - If the category_name parameter is missing or invalid.
+ */
+
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const storeService: StoreService = req.scope.resolve('storeService');
     const productService: ProductService = req.scope.resolve('productService');
