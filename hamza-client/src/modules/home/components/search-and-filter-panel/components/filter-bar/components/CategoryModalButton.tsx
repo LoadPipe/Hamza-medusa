@@ -7,11 +7,13 @@ import categoryIcons from '@modules/shop/data/category-icons';
 interface CategoryButtonProps {
     categoryName: string; // Single category name per button
     categoryType: string; // Single category type per button
+    url: string;
 }
 
 const CategoryModalButton: React.FC<CategoryButtonProps> = ({
     categoryName,
     categoryType,
+    url,
 }) => {
     const {
         homeModalCategoryFilterSelect,
@@ -90,7 +92,7 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                     toggleCategorySelection(categoryName, categoryType)
                 }
             >
-                <Image src={categoryIcons[categoryName]} alt={categoryName} />
+                <Image src={url} alt={categoryName} width={18} height={18} />
 
                 <Text ml="10px" fontSize={{ base: '14px', md: '16px' }}>
                     {categoryName}

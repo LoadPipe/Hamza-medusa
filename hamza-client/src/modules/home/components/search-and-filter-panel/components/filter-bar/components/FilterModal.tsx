@@ -24,10 +24,20 @@ import useModalFilter from '@store/store-page/filter-modal';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
 import RangeSliderModal from '@modules/shop/components/mobile-filter/components/range-slider-modal';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 interface FilterModalProps {
     isOpen: boolean;
     onClose: () => void;
     categories: Array<{ name: string; id: string }>; // Add categories prop with array of category objects
+}
+
+interface Category {
+    id: string;
+    name: string;
+    metadata: {
+        icon_url: string;
+    };
 }
 
 const FilterModalHome: React.FC<FilterModalProps> = ({
@@ -57,6 +67,25 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
         setHomeModalCurrencyFilterSelect,
         setHomeModalCategoryFilterSelect,
     } = useHomeModalFilter();
+
+    // Fetching categories data
+    const { data, isLoading } = useQuery<Category[]>(
+        ['categories'],
+        async () => {
+            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
+            const response = await axios.get(url);
+            return response.data;
+        }
+    );
+
+    // Extract unique category names with id
+    const uniqueCategories: Category[] = data
+        ? data.map((category) => ({
+              name: category.name,
+              id: category.id,
+              metadata: category.metadata,
+          }))
+        : [];
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -88,13 +117,16 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                         wrap={'wrap'}
                         gap="16px"
                     >
-                        {categories.map((category: any, index: number) => (
-                            <CategoryModalButton
-                                key={index}
-                                categoryType={category.id}
-                                categoryName={category.name}
-                            />
-                        ))}
+                        {uniqueCategories.map(
+                            (category: any, index: number) => (
+                                <CategoryModalButton
+                                    key={index}
+                                    categoryType={category.id}
+                                    categoryName={category.name}
+                                    url={category.metadata.icon_url}
+                                />
+                            )
+                        )}
                     </Flex>
                     <Text
                         mt="1.5rem"
