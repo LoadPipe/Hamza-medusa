@@ -35,7 +35,7 @@ const FilterTags = () => {
             );
         }
         if (currencySelect) {
-            const currencyIcon = currencyIcons[currencySelect];
+            const currencyIcon = currencyIcons[currencySelect ?? 'usdc'];
             tags.push(
                 <FilterTag
                     img={currencyIcon}

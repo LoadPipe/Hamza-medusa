@@ -155,7 +155,7 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                                     className="h-[18px] w-[18px] md:h-[20px] md:w-[20px]"
                                     src={
                                         currencyIcons[
-                                            preferred_currency_code || 'usdc'
+                                        preferred_currency_code || 'usdc'
                                         ]
                                     }
                                     alt={preferred_currency_code || 'usdc'}

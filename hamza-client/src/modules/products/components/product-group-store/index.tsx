@@ -119,14 +119,14 @@ const ProductCardGroup = () => {
                     const productPricing =
                         variant?.prices?.find(
                             (price: any) =>
-                                price.currency_code === preferred_currency_code
+                                price.currency_code === (preferred_currency_code ?? 'usdc')
                         )?.amount ||
                         variant?.prices?.[0]?.amount ||
                         0; // Get the price for the preferred currency or fallback to the first price
 
                     const formattedPrice = formatCryptoPrice(
                         productPricing ?? 0,
-                        preferred_currency_code as string
+                        (preferred_currency_code ?? 'usdc') as string
                     );
 
                     return (

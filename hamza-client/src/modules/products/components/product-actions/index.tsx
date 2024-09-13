@@ -160,6 +160,7 @@ export default function ProductActions({
         setIsAdding(false);
     };
 
+    //TODO: is this used, and why is eth hard-coded?
     //Add to card and buy now
     //FYI: If user clicks buy now and then navigates back to the product preview and clicks again it will increase quanitity again
     const handleBuyNow = async () => {
@@ -202,7 +203,7 @@ export default function ProductActions({
         if (data.status == true) {
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                whitelist_config.whitelisted_stores.includes(data.data)
+                    whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -271,10 +272,10 @@ export default function ProductActions({
                     {!variant
                         ? 'Select variant'
                         : !inStock && isWhitelisted
-                          ? 'Add to Cart'
-                          : inStock
                             ? 'Add to Cart'
-                            : 'Out of Stock'}
+                            : inStock
+                                ? 'Add to Cart'
+                                : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs">
