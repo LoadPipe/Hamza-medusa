@@ -39,19 +39,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         let products;
 
-        // Check if there are multiple categories or just one
-        if (categories.length > 1) {
-            // If multiple categories are passed
-            products =
-                await productService.getAllProductsByMultipleCategories(
-                    categories
-                );
-        } else {
-            // If a single category is passed
-            products = await productService.getAllProductByCategory(
-                categories[0]
-            );
-        }
+        products =
+            await productService.getAllProductsByMultipleCategories(categories);
 
         // Return the filtered products
         return handler.returnStatus(200, products);
