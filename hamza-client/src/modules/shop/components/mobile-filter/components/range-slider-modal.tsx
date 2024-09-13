@@ -43,9 +43,12 @@ const RangeSliderModal: React.FC<RangeSliderModalProps> = ({
                 <RangeSlider
                     // eslint-disable-next-line jsx-a11y/aria-proptypes
                     aria-label={['min', 'max']}
-                    defaultValue={[10, 2000]}
+                    defaultValue={[
+                        homeModalLowerPriceFilterSelect,
+                        homeModalUpperPriceFilterSelect,
+                    ]}
                     min={0}
-                    max={2000}
+                    max={11000}
                     onChange={handleRangeChange}
                     onChangeEnd={handleRangeChangeEnd} // Update Zustand values when range changes
                     colorScheme="blue"

@@ -7,15 +7,15 @@ interface ModalFilterState {
     homeModalCategoryTypeFilterSelect: string[] | null;
     homeModalCurrencyFilterSelect: string | null;
     homeModalReviewFilterSelect: string | null;
-    homeModalLowerPriceFilterSelect: number | null;
-    homeModalUpperPriceFilterSelect: number | null;
+    homeModalLowerPriceFilterSelect: number;
+    homeModalUpperPriceFilterSelect: number;
     setHomeModalCategoryFilterSelect: (item: string[] | null) => void;
     setHomeModalCategoryTypeFilterSelect: (item: string[] | null) => void;
     setHomeModalCurrencyFilterSelect: (item: string | null) => void;
     setHomeModalReviewFilterSelect: (stars: string | null) => void;
     setHomeModalFilterSelected: (selected: boolean) => void;
-    setHomeModalLowerPriceFilterSelect: (price: number | null) => void;
-    setHomeModalUpperPriceFilterSelect: (price: number | null) => void;
+    setHomeModalLowerPriceFilterSelect: (price: number) => void;
+    setHomeModalUpperPriceFilterSelect: (price: number) => void;
 }
 
 // Create the Zustand store
@@ -26,7 +26,7 @@ const useHomeModalFilter = create<ModalFilterState>((set) => ({
     homeModalCurrencyFilterSelect: null,
     homeModalReviewFilterSelect: null,
     homeModalLowerPriceFilterSelect: 0,
-    homeModalUpperPriceFilterSelect: 0,
+    homeModalUpperPriceFilterSelect: 10000,
     setHomeModalCategoryFilterSelect: (items: string[] | null) =>
         set({ homeModalCategoryFilterSelect: items }),
     setHomeModalCategoryTypeFilterSelect: (items: string[] | null) =>
@@ -37,10 +37,10 @@ const useHomeModalFilter = create<ModalFilterState>((set) => ({
         set({ homeModalReviewFilterSelect: stars }),
     setHomeModalFilterSelected: (selected: boolean) =>
         set({ homeModalFilterSelected: selected }),
-    setHomeModalLowerPriceFilterSelect: (price: number | null) =>
-        set({ homeModalLowerPriceFilterSelect: price }),
-    setHomeModalUpperPriceFilterSelect: (price: number | null) =>
-        set({ homeModalUpperPriceFilterSelect: price }),
+    setHomeModalLowerPriceFilterSelect: (price: number) =>
+        set({ homeModalLowerPriceFilterSelect: price ?? 0 }),
+    setHomeModalUpperPriceFilterSelect: (price: number) =>
+        set({ homeModalUpperPriceFilterSelect: price ?? 2000 }),
 }));
 
 export default useHomeModalFilter;

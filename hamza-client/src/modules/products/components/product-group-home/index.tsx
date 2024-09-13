@@ -15,10 +15,13 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import ProductCardHome from './component/home-product-card';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
+import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
 
 const ProductCardGroup = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const { categorySelect } = useHomeProductsPage();
+    const { homeModalLowerPriceFilterSelect, homeModalUpperPriceFilterSelect } =
+        useHomeModalFilter();
     const [visibleProductsCount, setVisibleProductsCount] = useState(16); // State to manage visible products count (4 rows, 16 items)
 
     // State for filters
@@ -34,7 +37,7 @@ const ProductCardGroup = () => {
     const filterUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?categories=${category}&price_lo=${lowerPrice}&price_hi=${upperPrice}`;
 
     // URL for multi category
-    const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=0&price_lo=0`;
+    const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${homeModalUpperPriceFilterSelect}&price_lo=${homeModalLowerPriceFilterSelect}`;
     // Yo can we assume we can make the category state an array?
 
     // Determine which URL to use based on whether the filter is active
@@ -43,7 +46,15 @@ const ProductCardGroup = () => {
     //TODO: MOVE TO INDEX.TS
     // Get products from vendor
     const { data, error, isLoading } = useQuery(
-        ['categories', categorySelect, isFilterActive, lowerPrice, upperPrice], // Use a unique key here to identify the query
+        [
+            'categories',
+            categorySelect,
+            isFilterActive,
+            lowerPrice,
+            upperPrice,
+            homeModalLowerPriceFilterSelect,
+            homeModalUpperPriceFilterSelect,
+        ], // Use a unique key here to identify the query
         async () => {
             const response = await axios.get(multiUrl);
             return response.data; // Return the data from the response
