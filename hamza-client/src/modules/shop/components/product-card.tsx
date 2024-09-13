@@ -150,8 +150,8 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
                             <Flex mb="1px">
                                 <Image
                                     className="h-[18px] w-[18px] md:h-[20px] md:w-[20px]"
-                                    src={currencyIcons[currencyCode]}
-                                    alt={currencyCode}
+                                    src={currencyIcons[currencyCode ?? 'usdc']}
+                                    alt={currencyCode ?? 'usdc'}
                                 />
                             </Flex>
 

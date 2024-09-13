@@ -43,7 +43,7 @@ const CurrencyModalButton: React.FC<CurrencyButtonProps> = ({
                 }}
                 onClick={() => setHomeModalCurrencyFilterSelect(currencyName)}
             >
-                <Image src={currencyIcons[currencyName]} alt={currencyName} />
+                <Image src={currencyIcons[currencyName] ?? 'usdc'} alt={currencyName} />
                 <Text
                     fontSize={{ base: '14px', md: '16px' }}
                     ml={{ base: '0.5rem', md: '0.75rem' }}

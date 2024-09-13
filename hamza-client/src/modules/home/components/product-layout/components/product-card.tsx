@@ -82,6 +82,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
         setLoadingAddToCard(false);
     };
 
+    //TODO: is this used, and why is eth hard-coded?
     // Buy now
     const handleBuyNow = async () => {
         setLoadingBuy(true);
@@ -98,7 +99,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
     const whitelistedProductHandler = async () => {
         const whitelistedProduct =
             whitelist_config.is_whitelisted &&
-            whitelist_config.whitelisted_stores.includes(storeId)
+                whitelist_config.whitelisted_stores.includes(storeId)
                 ? true
                 : false;
 

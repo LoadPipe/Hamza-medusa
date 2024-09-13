@@ -89,8 +89,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                         <Image
                             key={currency}
                             className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
-                            src={currencyIcons[currency]}
-                            alt={currency}
+                            src={currencyIcons[currency ?? 'usdc']}
+                            alt={currency ?? 'usdc'}
                         />
                     ))}
             </>
@@ -175,6 +175,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
         }
 
         try {
+            //TODO: is this used, and why is eth hard-coded?
             await addToCart({
                 variantId: selectedVariant.id!,
                 quantity: quantity,
@@ -287,7 +288,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                 <Flex gap={{ base: '5px', md: '10px' }} mb="-0.5rem">
                     <Image
                         className="h-[14px] w-[14px] md:h-[24px!important] md:w-[24px!important] self-center"
-                        src={currencyIcons[preferred_currency_code ?? 'USDC']}
+                        src={currencyIcons[preferred_currency_code ?? 'usdc']}
                         alt={preferred_currency_code?.toUpperCase() ?? 'USDC'}
                     />
                     <Heading

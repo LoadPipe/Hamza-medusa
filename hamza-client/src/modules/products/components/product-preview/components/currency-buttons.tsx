@@ -28,8 +28,8 @@ const CurrencyButtonPreview: React.FC<CurrencyButtonPreviewProps> = ({
             >
                 <Image
                     style={{ width: width, height: height }}
-                    src={currencyIcons[currencyName]}
-                    alt={currencyName}
+                    src={currencyIcons[currencyName ?? 'usdc']}
+                    alt={currencyName ?? 'usdc'}
                 />
             </Flex>
         </Flex>

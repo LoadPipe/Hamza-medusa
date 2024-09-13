@@ -76,16 +76,16 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                             <Flex>
                                 <Image
                                     className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                                    src={currencyIcons[currencyCode]}
-                                    alt={currencyCode}
+                                    src={currencyIcons[currencyCode ?? 'usdc']}
+                                    alt={currencyCode ?? 'usdc'}
                                 />
                                 <Text
                                     ml="0.4rem"
                                     fontSize={{ base: '14px', md: '16px' }}
                                 >
                                     {formatCryptoPrice(
-                                        subtotals[currencyCode],
-                                        currencyCode
+                                        subtotals[currencyCode ?? 'usdc'],
+                                        currencyCode ?? 'usdc'
                                     )}
                                 </Text>
                             </Flex>
@@ -113,8 +113,8 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                     <Flex>
                         <Image
                             className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                            src={currencyIcons[currencyCode]}
-                            alt={currencyCode}
+                            src={currencyIcons[currencyCode ?? 'usdc']}
+                            alt={currencyCode ?? 'usdc'}
                         />
                         <Text
                             ml="0.4rem"
@@ -135,8 +135,8 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                     <Flex>
                         <Image
                             className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                            src={currencyIcons[currencyCode]}
-                            alt={currencyCode}
+                            src={currencyIcons[currencyCode ?? 'usdc']}
+                            alt={currencyCode ?? 'usdc'}
                         />
                         <Text
                             ml="0.4rem"
@@ -160,8 +160,8 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                 <Flex>
                     <Image
                         className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                        src={currencyIcons[currencyCode]}
-                        alt={currencyCode}
+                        src={currencyIcons[currencyCode ?? 'usdc']}
+                        alt={currencyCode ?? 'usdc'}
                     />
                     <Text ml="0.4rem">
                         {formatCryptoPrice(grandTotal, currencyCode)}
