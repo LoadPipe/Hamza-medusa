@@ -112,7 +112,7 @@ const AccountMenu = () => {
                                 <MdOutlinePersonOutline size={30} />
                             </Flex>
                             <Text fontWeight={'600'} ml="0.5rem">
-                                Profile
+                                Manage My Account
                             </Text>
                         </MenuItem>
                     </Link>
@@ -138,27 +138,6 @@ const AccountMenu = () => {
                             </MenuItem>
                         </Link>
                     )}
-                    <Link href={`/account`}>
-                        <MenuItem
-                            fontWeight={'600'}
-                            mb="1rem"
-                            pl="1rem"
-                            color={'white'}
-                            backgroundColor={'black'}
-                            _hover={{ color: 'primary.green.900' }}
-                        >
-                            <Flex
-                                w={'30px'}
-                                alignContent={'center'}
-                                justifyContent={'center'}
-                            >
-                                <AiFillSetting size={26} />
-                            </Flex>
-                            <Text fontWeight={'600'} ml="0.5rem">
-                                Settings
-                            </Text>
-                        </MenuItem>
-                    </Link>
 
                     <AuthorizedAccount />
                 </MenuList>
