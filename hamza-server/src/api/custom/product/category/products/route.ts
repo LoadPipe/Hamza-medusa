@@ -1,4 +1,4 @@
-import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
+import type { MedusaRequest, MedusaResponse } from '@medusajs/medusa';
 import StoreService from '../../../../../services/store';
 import ProductService from '../../../../../services/product';
 import { RouteHandler } from '../../../../route-handler';
@@ -16,25 +16,29 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     // Return error if no products in store
     await handler.handle(async () => {
-        const { category_name } = req.query;
+        const { category_name } = handler.inputParams; // Use handler.inputParams instead of req.query
 
         // Validate the request: category_name must be provided
         if (!handler.requireParam('category_name')) return;
 
+        // Split the category_name into an array, handling both single and multiple categories
+        const categories: string[] = Array.isArray(category_name)
+            ? category_name // Already an array, no need to split
+            : category_name.split(','); // Split comma-separated string
+
         let products;
 
-        // If `category_name` is an array of strings, handle it as multiple categories.
-        if (Array.isArray(category_name)) {
+        // Check if there are multiple categories or just one
+        if (categories.length > 1) {
             // If multiple categories are passed
-            const categoryArray = category_name as string[]; // Cast to string[] directly
             products =
                 await productService.getAllProductsByMultipleCategories(
-                    categoryArray
+                    categories
                 );
         } else {
             // If a single category is passed
             products = await productService.getAllProductByCategory(
-                category_name.toString() // Convert single category to string
+                categories[0]
             );
         }
 

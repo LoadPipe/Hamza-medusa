@@ -366,5 +366,5 @@ GET http://localhost:9000/custom/product/category/products?category_name=fashion
 Content-Type: application/json
 
 ### GET products by multi-category name
-GET http://localhost:9000/custom/product/category/products?category_name=fashion&category_name=featured
+GET http://localhost:9000/custom/product/category/products?category_name=fashion,featured
 Content-Type: application/json

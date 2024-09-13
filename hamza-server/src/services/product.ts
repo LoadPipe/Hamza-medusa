@@ -7,7 +7,6 @@ import {
     Store,
     ProductStatus,
 } from '@medusajs/medusa';
-import { ParsedQs } from 'qs';
 import {
     CreateProductInput,
     CreateProductProductVariantPriceInput,
@@ -556,7 +555,6 @@ class ProductService extends MedusaProductService {
         try {
             const normalizedCategoryNames = categoryNames;
 
-            console.log(` ${normalizedCategoryNames}`);
             // Step 2: Fetch the category IDs that match the given category names (case-insensitive with ILIKE)
             /*
              * Step 1: Initialize a querybuilder object for the product_category table
@@ -576,14 +574,10 @@ class ProductService extends MedusaProductService {
                 )
                 .getRawMany();
 
-            console.log('Fetched Category IDs:', JSON.stringify(categoryIds));
-
             // Map the categoryIds to create a list of only the id values
             const categoryIdList = categoryIds.map(
                 (c) => c.product_category_id
             );
-
-            console.log('Mapped Category ID List:', categoryIdList);
 
             const productIds = await this.productRepository_
                 .createQueryBuilder('product')
