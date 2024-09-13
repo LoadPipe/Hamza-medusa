@@ -664,9 +664,13 @@ class ProductService extends MedusaProductService {
                         ],
                     });
 
-                let allProducts = productCategories.flatMap(
-                    (cat) => cat.products
+                let allProducts = productCategories.flatMap((cat) =>
+                    cat.products.filter(
+                        (p) =>
+                            p.status === ProductStatus.PUBLISHED && p.store_id
+                    )
                 );
+                //remove products that aren't published
 
                 if (upperPrice !== 0 && lowerPrice !== 0) {
                     // Filter products by price using upper and lower price limits
