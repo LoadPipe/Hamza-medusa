@@ -653,10 +653,8 @@ class ProductService extends MedusaProductService {
                 name.toLowerCase()
             );
 
-            let allProducts = [];
-
             if (normalizedCategoryNames[0] === 'all') {
-                allProducts = await this.convertPrices(
+                const products = await this.convertPrices(
                     await this.productRepository_.find({
                         relations: ['variants.prices', 'reviews'],
                         where: {
@@ -665,25 +663,27 @@ class ProductService extends MedusaProductService {
                         },
                     })
                 );
-            } else {
-                const productCategories =
-                    await this.productCategoryRepository_.find({
-                        select: ['id', 'name', 'metadata'],
-                        relations: [
-                            'products',
-                            'products.variants.prices',
-                            'products.reviews',
-                        ],
-                    });
 
-                // Filter the categories based on the provided category names
-                const filteredCategories = productCategories.filter((cat) =>
-                    normalizedCategoryNames.includes(cat.name.toLowerCase())
-                );
-
-                // Gather all the products into a single list
-                allProducts = filteredCategories.flatMap((cat) => cat.products);
+                return products;
             }
+
+            const productCategories =
+                await this.productCategoryRepository_.find({
+                    select: ['id', 'name', 'metadata'],
+                    relations: [
+                        'products',
+                        'products.variants.prices',
+                        'products.reviews',
+                    ],
+                });
+
+            // Filter the categories based on the provided category names
+            const filteredCategories = productCategories.filter((cat) =>
+                normalizedCategoryNames.includes(cat.name.toLowerCase())
+            );
+
+            // Gather all the products into a single list
+            let allProducts = filteredCategories.flatMap((cat) => cat.products);
 
             if (upperPrice !== 0 && lowerPrice !== 0) {
                 // Filter products by price using upper and lower price limits
