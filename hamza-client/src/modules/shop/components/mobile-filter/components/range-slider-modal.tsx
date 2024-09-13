@@ -32,9 +32,9 @@ const RangeSliderModal: React.FC<RangeSliderModalProps> = ({
         setRange(values as RangeType);
     };
 
-    const handleRangeChangeEnd = (values: number[]) => {
-        setHomeModalLowerPriceFilterSelect(values[0]);
-        setHomeModalUpperPriceFilterSelect(values[1]);
+    // Function to handle the final change when sliding is done
+    const handleChangeEnd = (val: number[]) => {
+        console.log('Final selected price range:', val);
     };
 
     return (
@@ -50,7 +50,7 @@ const RangeSliderModal: React.FC<RangeSliderModalProps> = ({
                     min={0}
                     max={11000}
                     onChange={handleRangeChange}
-                    onChangeEnd={handleRangeChangeEnd} // Update Zustand values when range changes
+                    onChangeEnd={handleChangeEnd} // Update Zustand values when range changes
                     colorScheme="blue"
                 >
                     <RangeSliderTrack bg="secondary.charcoal.900">
