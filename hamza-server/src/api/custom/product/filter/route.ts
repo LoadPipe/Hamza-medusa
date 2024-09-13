@@ -2,6 +2,28 @@ import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import ProductService from 'src/services/product';
 import { RouteHandler } from '../../../route-handler';
 
+/**
+ * GET /custom/product/filter
+ *
+ * This endpoint filters products based on categories and price ranges provided
+ * via query parameters. The filtering applies to published products that have
+ * an associated store. If no query parameters are provided, it will return all
+ * products that meet the base conditions.
+ *
+ * Query Parameters:
+ * - `category_name` (string | array): A comma-separated list or an array of category names
+ *   used to filter products. Example: `gaming,fashion` or `["gaming", "fashion"]`.
+ * - `price_hi` (number): The upper price limit for filtering products. Default: 0.
+ * - `price_lo` (number): The lower price limit for filtering products. Default: 0.
+ *
+ * Response:
+ * - Returns a 200 status with a list of products that match the filtering criteria.
+ *
+ * @param {MedusaRequest} req - The request object containing query parameters for filtering.
+ * @param {MedusaResponse} res - The response object for sending filtered products data.
+ *
+ * @returns {Promise<void>} - A promise that resolves when the request is completed.
+ */
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const productService: ProductService = req.scope.resolve('productService');
 
