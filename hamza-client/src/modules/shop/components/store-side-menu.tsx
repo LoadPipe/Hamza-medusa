@@ -19,6 +19,8 @@ interface Category {
     };
 }
 
+const USE_PRICE_FILTER: boolean = false;
+
 const SideMenu = () => {
     // Fetching categories data
     const { data, isLoading } = useQuery<Category[]>(
@@ -61,18 +63,21 @@ const SideMenu = () => {
             width={'348.74px'}
             backgroundColor={'secondary.onyx.900'}
         >
-            <Heading as="h2" size="h2">
-                Price Range
-            </Heading>
-            <Text mt="5px" color="secondary.davy.900">
-                Prices before fees and taxes
-            </Text>
+            {USE_PRICE_FILTER && <>
+                <Heading as="h2" size="h2">
+                    Price Range
+                </Heading>
 
-            {/* Slider  */}
-            <RangeSlider />
-            {/* Slider end */}
+                <Text mt="5px" color="secondary.davy.900">
+                    Prices before fees and taxes
+                </Text>
 
-            {/* Crypto Currencies */}
+                {/* Slider  */}
+                <RangeSlider />
+                {/* Slider end */}
+
+                {/* Crypto Currencies */}
+            </>}
 
             {/* Categories */}
             <Box mt="2rem">
