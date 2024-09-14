@@ -5,7 +5,8 @@ import {
     Cart,
     OrderStatus,
     FulfillmentStatus,
-    CustomerService
+    CustomerService,
+    PaymentStatus
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
 import OrderService from '../services/order';
@@ -332,7 +333,10 @@ export default class BuckydropService extends TransactionBaseService {
 
             //save the output
             order.bucky_metadata = output;
+
+            order.status = (output?.success) ? OrderStatus.PENDING : OrderStatus.REQUIRES_ACTION;
             await this.orderRepository_.save(order);
+
             this.logger.info(`Saved order ${orderId}`);
         } else {
             this.logger.warn(
@@ -349,7 +353,7 @@ export default class BuckydropService extends TransactionBaseService {
             const order: Order = await this.orderService_.retrieve(orderId);
             const buckyData: any = order.bucky_metadata;
 
-            if (order && buckyData) {
+            if (order && (buckyData?.data?.shopOrderNo || buckyData?.shopOrderNo)) {
                 //get order details from buckydrop
                 const orderDetail = await this.buckyClient.getOrderDetails(
                     buckyData.data.shopOrderNo ?? buckyData.shopOrderNo
@@ -767,7 +771,7 @@ export default class BuckydropService extends TransactionBaseService {
                 inventory_quantity: variant.quantity,
                 allow_backorder: false,
                 manage_inventory: true,
-                bucky_metadata: JSON.stringify({ skuCode: variant.skuCode }),
+                bucky_metadata: { skuCode: variant.skuCode },
                 prices,
                 options: options
             });
