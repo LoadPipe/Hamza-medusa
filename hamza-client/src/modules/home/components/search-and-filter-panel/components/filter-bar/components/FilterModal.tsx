@@ -14,13 +14,8 @@ import {
 import React, { useState } from 'react';
 import FilterIcon from '../../../../../../../../public/images/categories/mobile-filter.svg';
 import Image from 'next/image';
-import currencies from '../data/currency-icons';
-import ReviewModalButton from './ReviewModalButton';
 import CategoryModalButton from './CategoryModalButton';
-import CurrencyModalButton from './CurrencyModalButton';
-import useStorePage from '@store/store-page/store-page';
 import useSideFilter from '@store/store-page/side-filter';
-import useModalFilter from '@store/store-page/filter-modal';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
 import RangeSliderModal from '@modules/shop/components/mobile-filter/components/range-slider-modal';
@@ -39,6 +34,8 @@ interface Category {
         icon_url: string;
     };
 }
+
+const USE_PRICE_FILTER: boolean = false;
 
 type RangeType = [number, number];
 
@@ -93,10 +90,10 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-              name: category.name,
-              id: category.id,
-              metadata: category.metadata,
-          }))
+            name: category.name,
+            id: category.id,
+            metadata: category.metadata,
+        }))
         : [];
 
     return (
@@ -140,24 +137,26 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                             )
                         )}
                     </Flex>
-                    <Text
-                        mt="1.5rem"
-                        fontWeight={'600'}
-                        fontSize={'16px'}
-                        color="white"
-                    >
-                        Price Range
-                    </Text>
+                    {USE_PRICE_FILTER && <>
+                        <Text
+                            mt="1.5rem"
+                            fontWeight={'600'}
+                            fontSize={'16px'}
+                            color="white"
+                        >
+                            Price Range
+                        </Text>
 
-                    <Text
-                        mt="0.25rem"
-                        fontSize={'14px'}
-                        color="secondary.davy.900"
-                    >
-                        Prices before fees and taxes
-                    </Text>
+                        <Text
+                            mt="0.25rem"
+                            fontSize={'14px'}
+                            color="secondary.davy.900"
+                        >
+                            Prices before fees and taxes
+                        </Text>
 
-                    <RangeSliderModal range={range} setRange={setRange} />
+                        <RangeSliderModal range={range} setRange={setRange} />
+                    </>}
                     {/* 
                     <Text
                         my="1.5rem"
