@@ -53,7 +53,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             lowerPrice
         );
 
-        return handler.returnStatus(200, { products });
+        return handler.returnStatus(200, { products }, 200);
     });
 };
 
