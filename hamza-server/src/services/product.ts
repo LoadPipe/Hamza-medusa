@@ -231,7 +231,7 @@ class ProductService extends MedusaProductService {
         );
     }
 
-    async getAllProductsFromStoreWithPrices(): Promise<Product[]> {
+    async getAllProductsWithPrices(): Promise<Product[]> {
         const products = await this.convertPrices(
             await this.productRepository_.find({
                 relations: ['variants.prices', 'reviews'],
@@ -242,15 +242,9 @@ class ProductService extends MedusaProductService {
             })
         );
 
-        // Sort products so those with weight 69 come first
+        //TODO: sort alphabetically by title
         const sortedProducts = products
             .sort((a, b) => {
-                if (a.weight === 69 && b.weight !== 69) {
-                    return -1;
-                }
-                if (a.weight !== 69 && b.weight === 69) {
-                    return 1;
-                }
                 return 0;
             })
             .filter((p) => p.variants?.length);
@@ -401,7 +395,6 @@ class ProductService extends MedusaProductService {
     }
 
     async getAllProductsByCategoryHandle(storeId: string, handle: string) {
-        console.log(storeId);
         const productCategory = await this.productCategoryRepository_.findOne({
             where: {
                 handle: handle,
@@ -490,7 +483,7 @@ class ProductService extends MedusaProductService {
      * @returns {Array} - A list of products for the specified category with updated prices.
      * @throws {Error} - If there is an issue fetching the products or updating prices.
      */
-    async getAllProductByCategory(categoryName: string) {
+    async getAllProductsByCategory(categoryName: string) {
         try {
             if (categoryName.toLowerCase() === 'all') {
                 const products = await this.convertPrices(
@@ -563,7 +556,6 @@ class ProductService extends MedusaProductService {
      * @returns {Array} - A list of products that belong to all the specified categories with updated prices.
      * @throws {Error} - If there is an issue fetching the products or updating prices.
      */
-
     async getAllProductsByMultipleCategories(categoryNames: string[]) {
         try {
             const normalizedCategoryNames = categoryNames;
@@ -572,7 +564,7 @@ class ProductService extends MedusaProductService {
                 .createQueryBuilder('product_category')
                 .select('product_category.id')
                 .where(
-                    'product_category.name ILIKE ANY(ARRAY[:...categoryNames])',
+                    'product_category.name LIKE ANY(ARRAY[:...categoryNames])',
                     {
                         categoryNames: normalizedCategoryNames,
                     }
@@ -605,7 +597,6 @@ class ProductService extends MedusaProductService {
                 )
                 .getRawMany();
 
-            console.log('Fetched Product IDs:', productIds);
             const productIdList = productIds.map((p) => p.product_id);
 
             // Step 4: Fetch detailed product data for the retrieved product IDs
@@ -681,7 +672,6 @@ class ProductService extends MedusaProductService {
                         return price >= lowerPrice && price <= upperPrice;
                     });
 
-                    console.log('filtered prod with cat', allProducts);
                     // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
                     allProducts = allProducts.sort((a, b) => {
                         const priceA = a.variants[0].prices[0].amount;
@@ -712,8 +702,6 @@ class ProductService extends MedusaProductService {
             // Gather all the products into a single list
             let allProducts = filteredCategories.flatMap((cat) => cat.products);
 
-            console.log('all products in a single list', allProducts);
-
             if (upperPrice !== 0 && lowerPrice !== 0) {
                 // Filter products by price using upper and lower price limits
                 allProducts = allProducts.filter((product) => {
@@ -721,7 +709,6 @@ class ProductService extends MedusaProductService {
                     return price >= lowerPrice && price <= upperPrice;
                 });
 
-                console.log('filtered prod with cat', allProducts);
                 // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
                 allProducts = allProducts.sort((a, b) => {
                     const priceA = a.variants[0].prices[0].amount;
