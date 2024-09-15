@@ -446,13 +446,20 @@ export async function finalizeCheckout(
     //cart_products: any
 ) {
     return await postSecure('/custom/checkout', {
-        //cart_products: JSON.stringify(cart_products ?? {}),
         cart_id,
         transaction_id,
         payer_address,
         escrow_contract_address,
         chain_id
     });
+}
+
+export async function getCartEmail(cart_id: string) {
+    return await getSecure('/custom/cart/email', { cart_id });
+}
+
+export async function setCartEmail(cart_id: string, email_address: string) {
+    return await putSecure('/custom/cart/email', { cart_id, email_address });
 }
 
 // Cart actions
