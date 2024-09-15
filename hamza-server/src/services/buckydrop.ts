@@ -679,6 +679,14 @@ export default class BuckydropService extends TransactionBaseService {
 
             const optionNames = this.getUniqueProductOptionNames(productDetails);
             const tagName = productDetails.data.goodsCatName;
+            const variants = await this.mapVariants(productDetails, optionNames);
+
+            //add variant images to the main product images
+            const images = productDetails?.data?.mainItemImgs ?? [];
+            for (const v of variants) {
+                if (v.metadata?.imgUrl && !images.find(i => i === v.metadata.imgUrl))
+                    images.push(v.metadata.imgUrl);
+            }
 
             const output = {
                 title: item?.goodsName ?? productDetails?.data?.goodsName,
@@ -689,7 +697,7 @@ export default class BuckydropService extends TransactionBaseService {
                 status: status as ProductStatus,
                 thumbnail:
                     item?.picUrl ?? productDetails?.data?.mainItemImgs[0],
-                images: productDetails?.data?.mainItemImgs,
+                images,
                 collection_id: collectionId,
                 weight: Math.round(item?.weight ?? 100),
                 discountable: true,
@@ -703,7 +711,7 @@ export default class BuckydropService extends TransactionBaseService {
                     [],
                 bucky_metadata: metadata,
                 options: optionNames.map(o => { return { title: o } }),
-                variants: await this.mapVariants(productDetails, optionNames),
+                variants,
             };
 
             if (!output.variants?.length)
@@ -774,7 +782,8 @@ export default class BuckydropService extends TransactionBaseService {
                 inventory_quantity: variant.quantity,
                 allow_backorder: false,
                 manage_inventory: true,
-                bucky_metadata: { skuCode: variant.skuCode },
+                bucky_metadata: variant,
+                metadata: { imgUrl: variant.imgUrl },
                 prices,
                 options: options
             });
