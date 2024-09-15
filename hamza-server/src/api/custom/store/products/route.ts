@@ -43,13 +43,13 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                     );
             } else {
                 list_products =
-                    await productService.getAllProductsFromStoreWithPrices();
+                    await productService.getAllProductsWithPrices();
             }
 
             return res.json(list_products);
         } else {
             const products =
-                await productService.getAllProductsFromStoreWithPrices();
+                await productService.getAllProductsWithPrices();
             return handler.returnStatus(200, products);
         }
     });
