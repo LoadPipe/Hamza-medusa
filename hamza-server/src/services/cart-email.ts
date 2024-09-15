@@ -20,4 +20,9 @@ export default class CartEmailService extends TransactionBaseService {
     async setCartEmail(cart_id: string, email_address: string): Promise<void> {
         await this.cartEmailRepository.save({ cart_id, email_address })
     }
+
+    async getCartEmail(cart_id: string): Promise<string> {
+        const record = await this.cartEmailRepository.findOne({ where: { cart_id } });
+        return record?.email_address;
+    }
 }
