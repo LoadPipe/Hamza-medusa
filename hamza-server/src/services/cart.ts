@@ -30,7 +30,10 @@ export default class CartService extends MedusaCartService {
         this.lineItemRepository_ = container.lineItemRepository;
         this.shippingOptionRepository_ = container.shippingOptionRepository;
         this.logger = createLogger(container, 'CartService');
-        this.priceConverter = new PriceConverter(this.logger);
+        this.priceConverter = new PriceConverter(
+            this.logger,
+            container.cachedExchangeRateRepository
+        );
     }
 
     async retrieve(cartId: string, options?: FindConfig<Cart>, totalsConfig?: { force_taxes?: boolean; }): Promise<Cart> {
