@@ -7,6 +7,7 @@ import {
     completeCart,
     deleteDiscount,
     getCart,
+    setCartEmail,
     setPaymentSession,
     updateCart,
 } from '@lib/data';
@@ -139,6 +140,8 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
 
     try {
         await updateCart(cartId, data);
+        if (data.email)
+            await setCartEmail(cartId, data.email);
         revalidateTag('cart');
     } catch (error: any) {
         return error.toString();
