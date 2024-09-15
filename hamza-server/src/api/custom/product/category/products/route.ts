@@ -39,8 +39,14 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         let products;
 
-        products =
-            await productService.getAllProductsByMultipleCategories(categories);
+        if (category_name === 'All') {
+            products =
+                await productService.getAllProductsWithPrices();
+        }
+        else {
+            products =
+                await productService.getAllProductsByMultipleCategories(categories);
+        }
 
         // Return the filtered products
         return handler.returnStatus(200, products);

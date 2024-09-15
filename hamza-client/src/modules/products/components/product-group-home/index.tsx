@@ -64,8 +64,6 @@ const ProductCardGroup = () => {
     console.log('uppper', homeModalUpperPriceFilterSelect);
     console.log('lower', homeModalLowerPriceFilterSelect);
 
-    console.log(`CAT SELECT ${categorySelect} type ${typeof categorySelect}`);
-
     const productsAll = data?.products || [];
 
     // // products will contain filtered products based on category selection
