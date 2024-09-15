@@ -608,11 +608,14 @@ class ProductService extends MedusaProductService {
             });
 
             // Step 5: Filter products by status 'published' and valid store_id
-            const filteredProducts = products.filter(
+            let filteredProducts = products.filter(
                 (product) =>
                     product.status === ProductStatus.PUBLISHED &&
                     product.store_id
             );
+
+            // Step 6: filter out duplicates
+            filteredProducts = this.filterDuplicatesById(filteredProducts);
 
             // Step 6: Update product pricing for filtered products
             await this.convertPrices(filteredProducts);
@@ -646,6 +649,8 @@ class ProductService extends MedusaProductService {
                 name.toLowerCase()
             );
 
+            let products: Product[] = [];
+
             if (normalizedCategoryNames[0] === 'all') {
                 const productCategories =
                     await this.productCategoryRepository_.find({
@@ -657,70 +662,72 @@ class ProductService extends MedusaProductService {
                         ],
                     });
 
-                let allProducts = productCategories.flatMap((cat) =>
+                products = productCategories.flatMap((cat) =>
                     cat.products.filter(
                         (p) =>
                             p.status === ProductStatus.PUBLISHED && p.store_id
                     )
                 );
-                //remove products that aren't published
 
+                //remove products that aren't published
                 if (upperPrice !== 0 && lowerPrice !== 0) {
                     // Filter products by price using upper and lower price limits
-                    allProducts = allProducts.filter((product) => {
+                    products = products.filter((product) => {
                         const price = product.variants[0].prices[0].amount;
                         return price >= lowerPrice && price <= upperPrice;
                     });
 
                     // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
-                    allProducts = allProducts.sort((a, b) => {
+                    products = products.sort((a, b) => {
                         const priceA = a.variants[0].prices[0].amount;
                         const priceB = b.variants[0].prices[0].amount;
                         return priceA - priceB; // Ascending order
                     });
                 }
+            }
+            else {
 
-                // Return the filtered and sorted products
-                return allProducts;
+                const productCategories =
+                    await this.productCategoryRepository_.find({
+                        select: ['id', 'name', 'metadata'],
+                        relations: [
+                            'products',
+                            'products.variants.prices',
+                            'products.reviews',
+                        ],
+                    });
+
+                // Filter the categories based on the provided category names
+                const filteredCategories = productCategories.filter((cat) =>
+                    normalizedCategoryNames.includes(cat.name.toLowerCase())
+                );
+
+                // Gather all the products into a single list
+                products = filteredCategories.flatMap((cat) => cat.products);
+
+                if (upperPrice !== 0 && lowerPrice !== 0) {
+                    // Filter products by price using upper and lower price limits
+                    products = products.filter((product) => {
+                        const price = product.variants[0].prices[0].amount;
+                        return price >= lowerPrice && price <= upperPrice;
+                    });
+
+                    // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
+                    products = products.sort((a, b) => {
+                        const priceA = a.variants[0].prices[0].amount;
+                        const priceB = b.variants[0].prices[0].amount;
+                        return priceA - priceB; // Ascending order
+                    });
+                }
             }
 
-            const productCategories =
-                await this.productCategoryRepository_.find({
-                    select: ['id', 'name', 'metadata'],
-                    relations: [
-                        'products',
-                        'products.variants.prices',
-                        'products.reviews',
-                    ],
-                });
-
-            // Filter the categories based on the provided category names
-            const filteredCategories = productCategories.filter((cat) =>
-                normalizedCategoryNames.includes(cat.name.toLowerCase())
-            );
-
-            // Gather all the products into a single list
-            let allProducts = filteredCategories.flatMap((cat) => cat.products);
-
-            if (upperPrice !== 0 && lowerPrice !== 0) {
-                // Filter products by price using upper and lower price limits
-                allProducts = allProducts.filter((product) => {
-                    const price = product.variants[0].prices[0].amount;
-                    return price >= lowerPrice && price <= upperPrice;
-                });
-
-                // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
-                allProducts = allProducts.sort((a, b) => {
-                    const priceA = a.variants[0].prices[0].amount;
-                    const priceB = b.variants[0].prices[0].amount;
-                    return priceA - priceB; // Ascending order
-                });
-            }
+            //remove duplicates
+            products = this.filterDuplicatesById(products);
 
             // Update product pricing
-            await this.convertPrices(allProducts);
+            await this.convertPrices(products);
 
-            return allProducts; // Return filtered products
+            return products; // Return filtered products
         } catch (error) {
             // Handle the error here
             this.logger.error(
@@ -820,6 +827,12 @@ class ProductService extends MedusaProductService {
         }
 
         return products;
+    }
+
+    private filterDuplicatesById<T extends { id: string }>(items: T[]): T[] {
+        return items.filter((i, index, array) =>
+            index === array.findIndex((ii) => ii.id === i.id)
+        );
     }
 }
 
