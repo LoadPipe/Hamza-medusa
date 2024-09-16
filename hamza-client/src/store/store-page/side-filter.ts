@@ -20,7 +20,7 @@ interface StoreFilterState {
 
 // Create the Zustand store
 const useSideFilter = create<StoreFilterState>((set) => ({
-    selectCategoryStoreFilter: ['all'], // Allow for multi-category selection
+    selectCategoryStoreFilter: ['All'], // Allow for multi-category selection
     selectTypeStoreFilter: null,
     currencySelect: null,
     reviewStarsSelect: null,

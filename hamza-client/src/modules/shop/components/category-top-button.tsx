@@ -6,52 +6,35 @@ import Image from 'next/image';
 
 interface CategoryButtonProps {
     categoryName: string;
-    categoryType: string;
     url: string;
 }
 
 const CategoryTopButton: React.FC<CategoryButtonProps> = ({
     categoryName,
-    categoryType,
     url,
 }) => {
-    const {
-        categorySelect,
-        categoryTypeSelect,
-        setCategorySelect,
-        setCategoryTypeSelect,
-    } = useStorePage();
+    const { categorySelect, setCategorySelect } = useStorePage();
 
-    const toggleCategorySelection = (category: string, type: string) => {
+    const toggleCategorySelection = (category: string) => {
         const currentCategorySelection = categorySelect || [];
-        const currentTypeSelection = categoryTypeSelect || [];
 
         // If the category is already selected, we remove it along with its type
         if (currentCategorySelection.includes(category)) {
             const updatedCategorySelection = currentCategorySelection.filter(
                 (selectedCategory) => selectedCategory !== category
             );
-            const updatedTypeSelection = currentTypeSelection.filter(
-                (selectedType) => selectedType !== type
-            );
+
             setCategorySelect(
-                updatedCategorySelection.length
+                updatedCategorySelection.length > 0
                     ? updatedCategorySelection
                     : ['All']
             );
-            setCategoryTypeSelect(
-                updatedTypeSelection.length ? updatedTypeSelection : ['All']
-            );
         } else {
-            // If the category is not selected, we add both the category and type
+            // If the category is not selected we add it to the array
             const updatedCategorySelection = currentCategorySelection.filter(
                 (cat) => cat !== 'All'
             );
-            const updatedTypeSelection = currentTypeSelection.filter(
-                (catType) => catType !== 'All'
-            );
             setCategorySelect([...updatedCategorySelection, category]);
-            setCategoryTypeSelect([...updatedTypeSelection, type]);
         }
     };
 
@@ -59,7 +42,7 @@ const CategoryTopButton: React.FC<CategoryButtonProps> = ({
         <Flex
             flexShrink={0}
             onClick={() => {
-                toggleCategorySelection(categoryName, categoryType);
+                toggleCategorySelection(categoryName);
             }}
             borderColor={'#3E3E3E'}
             backgroundColor={

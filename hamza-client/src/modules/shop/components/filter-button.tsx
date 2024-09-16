@@ -6,13 +6,8 @@ import useStorePage from '@store/store-page/store-page';
 import useSideFilter from '@store/store-page/side-filter';
 
 // Define the props interface
-interface FilterButtonProps {
-    currency?: string;
-    review?: string;
-    category?: string;
-}
 
-const FilterButton: React.FC<FilterButtonProps> = ({ category }) => {
+const FilterButton = () => {
     // Use Zustand shop to handle filter object
     const { setReviewStarsSelect, setCategorySelect } = useStorePage();
 

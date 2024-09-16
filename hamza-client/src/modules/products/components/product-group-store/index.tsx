@@ -22,6 +22,7 @@ const ProductCardGroup = () => {
     const { categorySelect } = useStorePage();
     const [visibleProductsCount, setVisibleProductsCount] = useState(15); // State to manage visible products count (4 rows, 16 items)
 
+    console.log('This is the categorySelect from Store Page', categorySelect);
     //TODO: MOVE TO INDEX.TS
     // Get products from vendor
     const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${5000000}&price_lo=${0}`;
