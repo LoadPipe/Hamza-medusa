@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import RefinementList from '@modules/shop/components/refinement-list';
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
-import PaginatedProducts from '@modules/shop/templates/paginated-products';
+import PaginatedProducts from '@modules/shop/components/pagination/paginated-products';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
 type SearchResultsTemplateProps = {

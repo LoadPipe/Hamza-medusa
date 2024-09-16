@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { Text, Flex } from '@chakra-ui/react';
-import ReviewStar from '../../../../../../public/images/products/review-star.svg';
+import { Text, Flex, Box } from '@chakra-ui/react';
+import ReviewStar from '../../../../public/images/products/review-star.svg';
+import useStorePage from '@store/store-page/store-page';
 import useSideFilter from '@store/store-page/side-filter';
 
 // Define the props type with TypeScript
@@ -10,16 +11,12 @@ interface ReviewButtonProps {
     value: string;
 }
 
-const ReviewModalButton: React.FC<ReviewButtonProps> = ({ title, value }) => {
-    const { reviewFilterSelect, setReviewFilterSelect } = useSideFilter();
-
+const ReviewButton: React.FC<ReviewButtonProps> = ({ title, value }) => {
     return (
         <Flex>
             <Flex
-                onClick={() => setReviewFilterSelect(value)}
-                backgroundColor={
-                    reviewFilterSelect === title ? 'white' : 'transparent'
-                }
+                // onClick={() => setReviewFilterSelect(value)}
+                // backgroundColor={ reviewFilterSelect === title ? 'white' : 'transparent'}
                 borderColor={'secondary.davy.900'}
                 display={'flex'}
                 flexDirection={'row'}
@@ -27,10 +24,10 @@ const ReviewModalButton: React.FC<ReviewButtonProps> = ({ title, value }) => {
                 alignItems={'center'}
                 borderWidth={'1px'}
                 borderRadius={'49px'}
-                height={'42px'}
+                height={'60px'}
                 width={{ base: '125px', md: '154px' }}
                 style={{ padding: '10px 24px', cursor: 'pointer' }}
-                color={reviewFilterSelect === title ? 'black' : 'white'}
+                //color={reviewFilterSelect === title ? 'black' : 'white'}
                 transition="background 0.1s ease-in-out, color 0.1s ease-in-out"
                 _hover={{
                     background: 'white',
@@ -48,4 +45,4 @@ const ReviewModalButton: React.FC<ReviewButtonProps> = ({ title, value }) => {
     );
 };
 
-export default ReviewModalButton;
+export default ReviewButton;

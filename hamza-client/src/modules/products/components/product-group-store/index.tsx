@@ -22,20 +22,22 @@ const ProductCardGroup = () => {
     const { categorySelect } = useStorePage();
     const [visibleProductsCount, setVisibleProductsCount] = useState(15); // State to manage visible products count (4 rows, 16 items)
 
+    console.log('This is the categorySelect from Store Page', categorySelect);
+    //TODO: MOVE TO INDEX.TS
+    // Get products from vendor
+    const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${5000000}&price_lo=${0}`;
+
     //TODO: MOVE TO INDEX.TS
     // Get products from vendor
     const { data, error, isLoading } = useQuery(
         ['categories', categorySelect], // Use a unique key here to identify the query
         async () => {
-            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/category/products?category_name=${categorySelect}`;
-            const response = await axios.get(url);
+            const response = await axios.get(multiUrl);
             return response.data; // Return the data from the response
         }
     );
 
-    const productsAll = data
-        ? data
-        : [];
+    const productsAll = data?.products || [];
 
     const handleViewMore = () => {
         // Increase the visible products count by 16 (4 rows of 4 products)
@@ -85,11 +87,6 @@ const ProductCardGroup = () => {
                                     noOfLines={2}
                                     spacing={{ base: '3', md: '4' }}
                                 />
-                                {/* <SkeletonText
-                                    mt="10"
-                                    noOfLines={2}
-                                    spacing="4"
-                                /> */}
                             </Box>
                         </GridItem>
                     ))}
@@ -109,50 +106,54 @@ const ProductCardGroup = () => {
                 }}
                 gap={{ base: 4, md: 7 }}
             >
-                {visibleProducts?.length && visibleProducts.map((product: any, index: number) => {
-                    // Extract product details
-                    const variant = product?.variants[0]; // Assuming you want the first variant
-                    const productPricing =
-                        variant?.prices?.find(
-                            (price: any) =>
-                                price.currency_code === (preferred_currency_code ?? 'usdc')
-                        )?.amount ||
-                        variant?.prices?.[0]?.amount ||
-                        0; // Get the price for the preferred currency or fallback to the first price
+                {productsAll?.length &&
+                    visibleProducts.map((product: any, index: number) => {
+                        // Extract product details
+                        const variant = product?.variants[0]; // Assuming you want the first variant
+                        const productPricing =
+                            variant?.prices?.find(
+                                (price: any) =>
+                                    price.currency_code ===
+                                    (preferred_currency_code ?? 'usdc')
+                            )?.amount ||
+                            variant?.prices?.[0]?.amount ||
+                            0; // Get the price for the preferred currency or fallback to the first price
 
-                    const formattedPrice = formatCryptoPrice(
-                        productPricing ?? 0,
-                        (preferred_currency_code ?? 'usdc') as string
-                    );
+                        const formattedPrice = formatCryptoPrice(
+                            productPricing ?? 0,
+                            (preferred_currency_code ?? 'usdc') as string
+                        );
 
-                    return (
-                        <GridItem
-                            key={index}
-                            minHeight={'243.73px'}
-                            height={{ base: '100%', md: '399px' }}
-                            width="100%"
-                        >
-                            <ProductCardStore
+                        return (
+                            <GridItem
                                 key={index}
-                                productHandle={product?.handle ?? ''}
-                                reviewCount={product?.review}
-                                totalRating={10}
-                                variantID={variant?.id ?? ''}
-                                countryCode={product?.origin_country ?? ''}
-                                productName={product?.title ?? ''}
-                                productPrice={formattedPrice ?? ''}
-                                currencyCode={preferred_currency_code || 'usdc'}
-                                imageSrc={product?.thumbnail ?? ''}
-                                hasDiscount={product?.is_giftcard ?? false}
-                                discountValue={product?.discountValue ?? ''}
-                                productId={product?.id ?? ''}
-                                inventory={variant?.inventory_quantity ?? 0}
-                                allow_backorder={variant?.allow_backorder}
-                                storeId={product?.store_id ?? ''}
-                            />
-                        </GridItem>
-                    );
-                })}
+                                minHeight={'243.73px'}
+                                height={{ base: '100%', md: '399px' }}
+                                width="100%"
+                            >
+                                <ProductCardStore
+                                    key={index}
+                                    productHandle={product?.handle ?? ''}
+                                    reviewCount={product?.review}
+                                    totalRating={10}
+                                    variantID={variant?.id ?? ''}
+                                    countryCode={product?.origin_country ?? ''}
+                                    productName={product?.title ?? ''}
+                                    productPrice={formattedPrice ?? ''}
+                                    currencyCode={
+                                        preferred_currency_code || 'usdc'
+                                    }
+                                    imageSrc={product?.thumbnail ?? ''}
+                                    hasDiscount={product?.is_giftcard ?? false}
+                                    discountValue={product?.discountValue ?? ''}
+                                    productId={product?.id ?? ''}
+                                    inventory={variant?.inventory_quantity ?? 0}
+                                    allow_backorder={variant?.allow_backorder}
+                                    storeId={product?.store_id ?? ''}
+                                />
+                            </GridItem>
+                        );
+                    })}
             </Grid>
 
             {/* Show the "View More" button only if there are more products to display */}

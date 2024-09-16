@@ -30,10 +30,10 @@ const FilterBarStore = () => {
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-            name: category.name,
-            id: category.id,
-            metadata: category.metadata,
-        }))
+              name: category.name,
+              id: category.id,
+              metadata: category.metadata,
+          }))
         : [];
 
     // Show more logic for categories (next or previous)
@@ -104,20 +104,18 @@ const FilterBarStore = () => {
                     gap={{ base: '12px', md: '20px' }}
                 >
                     <CategoryTopButton
-                        categoryType={'All'}
                         categoryName={'All'}
                         url={'https://images.hamza.biz/category-icons/all.svg'}
                     />
                     {isLoading
                         ? skeletons // Show skeletons while loading
-                        : visibleCategories.map((category, index) => (
-                            <CategoryTopButton
-                                key={index}
-                                categoryType={category.id}
-                                categoryName={category.name}
-                                url={category.metadata?.icon_url}
-                            />
-                        ))}
+                        : uniqueCategories.map((category, index) => (
+                              <CategoryTopButton
+                                  key={index}
+                                  categoryName={category.name}
+                                  url={category.metadata?.icon_url}
+                              />
+                          ))}
                 </Flex>
                 <Flex
                     w="123px"

@@ -41,27 +41,12 @@ interface Category {
 type RangeType = [number, number];
 
 const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
+    // Zustand States
+    const { setCategorySelect, setCategoryItem } = useStorePage();
     const {
-        setCurrencySelect,
-        setReviewStarsSelect,
-        setCategorySelect,
-        setCategoryTypeSelect,
-    } = useStorePage();
-    const {
-        reviewFilterSelect,
-        setReviewFilterSelect,
-        setCurrencyFilterSelect,
-        setCategoryFilterSelect,
-        setCategoryTypeFilterSelect,
-    } = useSideFilter();
-
-    const {
-        modalCurrencyFilterSelect,
-        modalCategoryFilterSelect,
-        modalCategoryTypeFilterSelect,
-        setModalCategoryTypeFilterSelect,
-        setModalCurrencyFilterSelect,
-        setModalCategoryFilterSelect,
+        setSelectCategoryModalFilter,
+        selectCategoryStoreModalFilter,
+        categoryItemStoreModalFilter,
     } = useModalFilter();
 
     const [range, setRange] = useState<RangeType>([0, 10000]);
@@ -79,10 +64,10 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-            name: category.name,
-            id: category.id,
-            metadata: category.metadata,
-        }))
+              name: category.name,
+              id: category.id,
+              metadata: category.metadata,
+          }))
         : [];
 
     return (
@@ -113,7 +98,6 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                             (category: any, index: number) => (
                                 <CategoryModalButton
                                     key={index}
-                                    categoryType={category.name}
                                     categoryName={category.name}
                                     url={category.metadata?.icon_url}
                                 />
@@ -121,7 +105,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         )}
                     </Flex>
 
-                    {USE_PRICE_FILTER &&
+                    {USE_PRICE_FILTER && (
                         <>
                             <Text
                                 mt="1.5rem"
@@ -140,9 +124,12 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                                 Prices before fees and taxes
                             </Text>
 
-                            <RangeSliderModal range={range} setRange={setRange} />
+                            <RangeSliderModal
+                                range={range}
+                                setRange={setRange}
+                            />
                         </>
-                    }
+                    )}
 
                     {/* <Text
                         my="1.5rem"
@@ -176,10 +163,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         color={'white'}
                         backgroundColor={'transparent'}
                         onClick={() => {
-                            setReviewFilterSelect(null);
-                            setCurrencyFilterSelect(null);
-                            setCategoryFilterSelect(null);
-                            setCategoryTypeFilterSelect(null);
+                            setSelectCategoryModalFilter([]);
                             onClose();
                         }}
                         mr="auto"
@@ -188,21 +172,21 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                     </Button>
                     <Button
                         onClick={() => {
-                            if (modalCurrencyFilterSelect) {
-                                setCurrencySelect(modalCurrencyFilterSelect);
-                            }
-                            if (reviewFilterSelect) {
-                                setReviewStarsSelect(reviewFilterSelect);
-                            }
-                            if (modalCategoryFilterSelect) {
-                                setCategorySelect(modalCategoryFilterSelect);
-                                setCategoryTypeSelect(
-                                    modalCategoryTypeFilterSelect
+                            // Delete current settings
+                            setCategorySelect([]);
+
+                            // Update settings
+                            if (
+                                selectCategoryStoreModalFilter &&
+                                categoryItemStoreModalFilter
+                            ) {
+                                setCategorySelect(
+                                    selectCategoryStoreModalFilter
                                 );
+                                setCategoryItem(categoryItemStoreModalFilter);
+                                // Reset side menu states
                             }
-                            setModalCurrencyFilterSelect(null);
-                            setModalCategoryFilterSelect(null);
-                            setModalCategoryTypeFilterSelect(null);
+
                             onClose();
                         }}
                         fontSize={'16px'}

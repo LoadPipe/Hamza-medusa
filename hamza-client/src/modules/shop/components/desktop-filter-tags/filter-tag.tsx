@@ -1,9 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { Text, Flex } from '@chakra-ui/react';
-import categoryIcons from '@modules/shop/data/category-icons';
 
-const FilterTag = (props: any) => {
+// Define the props type
+interface FilterTagProps {
+    categoryIconUrl: string; // The URL for the image
+    categoryName: string; // The name for the category or tag
+}
+
+const FilterTag: React.FC<FilterTagProps> = ({
+    categoryIconUrl,
+    categoryName,
+}) => {
     return (
         <Flex>
             <Flex
@@ -17,16 +25,16 @@ const FilterTag = (props: any) => {
                 height={'63px'}
                 style={{ padding: '10px 24px' }}
             >
-                {categoryIcons[props.name.toLowerCase()] &&
-                    <>
-                        <Image
-                            src={categoryIcons[props.name.toLowerCase()]}
-                            alt={props.name}
-                        />
-                    </>
-                }
+                {categoryIconUrl?.length && (
+                    <Image
+                        src={categoryIconUrl}
+                        alt={categoryName}
+                        width={20}
+                        height={20}
+                    />
+                )}
                 <Text ml="10px" fontSize="18px" color="white">
-                    {props.name}
+                    {categoryName}
                 </Text>
             </Flex>
         </Flex>

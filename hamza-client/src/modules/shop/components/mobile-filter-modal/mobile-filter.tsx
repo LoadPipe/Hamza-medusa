@@ -4,7 +4,6 @@ import {
     Flex,
     Box,
     Input,
-    Text,
     InputGroup,
     InputRightElement,
     useDisclosure,
@@ -13,17 +12,12 @@ import Image from 'next/image';
 import { MdChevronLeft } from 'react-icons/md';
 import { FaSearch } from 'react-icons/fa';
 import FilterModal from './components/filter-modal';
-import useModalFilter from '@store/store-page/filter-modal';
 import { usePathname } from 'next/navigation';
 import SearchModal from '@modules/search/templates/search-modal';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 
 const MobileFilter = () => {
-    const { setModalFilterSelected } = useModalFilter();
-
-    const [showFilterModal, setShowFilterModal] = useState(true);
     const { isOpen, onOpen, onClose } = useDisclosure();
-
     const [searchOpened, setSearchOpened] = useState(false);
     const pathname = usePathname();
 
@@ -99,7 +93,6 @@ const MobileFilter = () => {
                 <Flex
                     onClick={() => {
                         onOpen();
-                        setModalFilterSelected(true);
                     }}
                     wrap={'nowrap'}
                     ml="auto"

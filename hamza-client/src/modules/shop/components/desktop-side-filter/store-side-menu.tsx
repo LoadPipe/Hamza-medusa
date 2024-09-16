@@ -2,9 +2,7 @@
 
 import React from 'react';
 import { Box, Text, Heading, Flex, Skeleton } from '@chakra-ui/react';
-import CurrencyButton from './currency-button';
 import CategoryButton from './category-button';
-import currencies from '../data/currency-category';
 import ReviewButton from './review-button';
 import FilterButton from './filter-button';
 import RangeSlider from './range-slider';
@@ -35,10 +33,10 @@ const SideMenu = () => {
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-            name: category.name,
-            id: category.id,
-            metadata: category.metadata,
-        }))
+              name: category.name,
+              id: category.id,
+              metadata: category.metadata,
+          }))
         : [];
 
     // Skeletons for loading state
@@ -63,21 +61,23 @@ const SideMenu = () => {
             width={'348.74px'}
             backgroundColor={'secondary.onyx.900'}
         >
-            {USE_PRICE_FILTER && <>
-                <Heading as="h2" size="h2">
-                    Price Range
-                </Heading>
+            {USE_PRICE_FILTER && (
+                <>
+                    <Heading as="h2" size="h2">
+                        Price Range
+                    </Heading>
 
-                <Text mt="5px" color="secondary.davy.900">
-                    Prices before fees and taxes
-                </Text>
+                    <Text mt="5px" color="secondary.davy.900">
+                        Prices before fees and taxes
+                    </Text>
 
-                {/* Slider  */}
-                <RangeSlider />
-                {/* Slider end */}
+                    {/* Slider  */}
+                    <RangeSlider />
+                    {/* Slider end */}
 
-                {/* Crypto Currencies */}
-            </>}
+                    {/* Crypto Currencies */}
+                </>
+            )}
 
             {/* Categories */}
             <Box mt="2rem">
@@ -89,13 +89,12 @@ const SideMenu = () => {
                     {isLoading
                         ? skeletonButtons // Show skeletons while loading
                         : uniqueCategories.map((category, index) => (
-                            <CategoryButton
-                                key={index}
-                                categoryType={category.id}
-                                categoryName={category.name}
-                                url={category.metadata?.icon_url}
-                            />
-                        ))}
+                              <CategoryButton
+                                  key={index}
+                                  categoryName={category.name}
+                                  url={category.metadata?.icon_url}
+                              />
+                          ))}
                 </Flex>
             </Box>
 

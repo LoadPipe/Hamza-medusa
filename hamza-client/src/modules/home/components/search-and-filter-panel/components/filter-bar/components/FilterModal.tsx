@@ -18,7 +18,7 @@ import CategoryModalButton from './CategoryModalButton';
 import useSideFilter from '@store/store-page/side-filter';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
-import RangeSliderModal from '@modules/shop/components/mobile-filter/components/range-slider-modal';
+import RangeSliderModal from '@modules/shop/components/mobile-filter-modal/components/range-slider-modal';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 interface FilterModalProps {
@@ -50,13 +50,6 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
         setCategorySelect,
         setCategoryTypeSelect,
     } = useHomeProductsPage();
-    const {
-        reviewFilterSelect,
-        setReviewFilterSelect,
-        setCurrencyFilterSelect,
-        setCategoryFilterSelect,
-        setCategoryTypeFilterSelect,
-    } = useSideFilter();
 
     const {
         homeModalCurrencyFilterSelect,
@@ -90,10 +83,10 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-            name: category.name,
-            id: category.id,
-            metadata: category.metadata,
-        }))
+              name: category.name,
+              id: category.id,
+              metadata: category.metadata,
+          }))
         : [];
 
     return (
@@ -137,26 +130,31 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                             )
                         )}
                     </Flex>
-                    {USE_PRICE_FILTER && <>
-                        <Text
-                            mt="1.5rem"
-                            fontWeight={'600'}
-                            fontSize={'16px'}
-                            color="white"
-                        >
-                            Price Range
-                        </Text>
+                    {USE_PRICE_FILTER && (
+                        <>
+                            <Text
+                                mt="1.5rem"
+                                fontWeight={'600'}
+                                fontSize={'16px'}
+                                color="white"
+                            >
+                                Price Range
+                            </Text>
 
-                        <Text
-                            mt="0.25rem"
-                            fontSize={'14px'}
-                            color="secondary.davy.900"
-                        >
-                            Prices before fees and taxes
-                        </Text>
+                            <Text
+                                mt="0.25rem"
+                                fontSize={'14px'}
+                                color="secondary.davy.900"
+                            >
+                                Prices before fees and taxes
+                            </Text>
 
-                        <RangeSliderModal range={range} setRange={setRange} />
-                    </>}
+                            <RangeSliderModal
+                                range={range}
+                                setRange={setRange}
+                            />
+                        </>
+                    )}
                     {/* 
                     <Text
                         my="1.5rem"
@@ -213,9 +211,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                                     homeModalCurrencyFilterSelect
                                 );
                             }
-                            if (reviewFilterSelect) {
-                                setReviewStarsSelect(reviewFilterSelect);
-                            }
+
                             if (homeModalCategoryFilterSelect) {
                                 setCategorySelect(
                                     homeModalCategoryFilterSelect

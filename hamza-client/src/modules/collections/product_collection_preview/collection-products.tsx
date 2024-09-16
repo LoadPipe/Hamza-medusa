@@ -1,6 +1,6 @@
 import { getProductsListWithSort } from '@lib/data';
 import ProductPreview from '@modules/products/components/product-preview';
-import { Pagination } from '@modules/shop/components/pagination';
+import { Pagination } from '@modules/shop/components/pagination/pagination';
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
 import { getRegion } from 'app/actions';
 
