@@ -13,7 +13,8 @@ const CategoryTopButton: React.FC<CategoryButtonProps> = ({
     categoryName,
     url,
 }) => {
-    const { categorySelect, setCategorySelect } = useStorePage();
+    const { categorySelect, setCategorySelect, setCategoryItem } =
+        useStorePage();
 
     const toggleCategorySelection = (category: string) => {
         const currentCategorySelection = categorySelect || [];
@@ -29,12 +30,24 @@ const CategoryTopButton: React.FC<CategoryButtonProps> = ({
                     ? updatedCategorySelection
                     : ['All']
             );
+
+            // Update categoryItem as well (removes it)
+            setCategoryItem(
+                (prev) =>
+                    prev?.filter((item) => item.categoryName !== category) ||
+                    null
+            );
         } else {
             // If the category is not selected we add it to the array
             const updatedCategorySelection = currentCategorySelection.filter(
                 (cat) => cat !== 'All'
             );
             setCategorySelect([...updatedCategorySelection, category]);
+
+            setCategoryItem((prev) => [
+                ...(prev || []),
+                { categoryName: category, urlLink: url },
+            ]);
         }
     };
 

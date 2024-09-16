@@ -17,14 +17,12 @@ const FilterTag = (props: any) => {
                 height={'63px'}
                 style={{ padding: '10px 24px' }}
             >
-                {categoryIcons[props.name.toLowerCase()] && (
-                    <>
-                        <Image
-                            src={categoryIcons[props.name.toLowerCase()]}
-                            alt={props.name}
-                        />
-                    </>
-                )}
+                <Image
+                    src={props.url}
+                    alt={props.name}
+                    width={20}
+                    height={20}
+                />
                 <Text ml="10px" fontSize="18px" color="white">
                     {props.name}
                 </Text>
