@@ -50,12 +50,14 @@ const CategoryButtons: React.FC<CategoryButtonProps> = ({
                 background: 'white',
             }}
         >
-            <Image
-                src={url}
-                alt={categoryName}
-                width={20} // Set appropriate width
-                height={20} // Set appropriate height
-            />
+            {url?.length &&
+                <Image
+                    src={url}
+                    alt={categoryName}
+                    width={20} // Set appropriate width
+                    height={20} // Set appropriate height
+                />
+            }
 
             <Text ml="10px" fontSize={{ base: '14px', md: '18px' }}>
                 {categoryName}
