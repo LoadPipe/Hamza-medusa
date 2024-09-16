@@ -32,23 +32,15 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
     } = data;
 
     const { preferred_currency_code } = useCustomerAuthStore();
-    console.log('user preferred currency code: ', preferred_currency_code);
 
     //TODO: this can be replaced later by extending the cart, if necessary
     const getCartSubtotals = (cart: any) => {
         const subtotals: { [key: string]: number } = {};
 
-        console.log('Starting to calculate cart subtotals');
-        console.log('Cart items:', cart.items);
-        console.log('Preferred currency:', preferred_currency_code);
-
         for (let n = 0; n < cart.items.length; n++) {
             const item: ExtendedLineItem = cart.items[n];
             const currency =
                 preferred_currency_code ?? item.currency_code ?? 'usdc';
-
-            console.log(`Processing item ${n + 1}:`, item);
-            console.log('Currency used:', currency);
 
             if (currency?.length) {
                 if (!subtotals[currency]) {
@@ -57,12 +49,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                 const itemTotal =
                     item.unit_price * item.quantity -
                     (item.discount_total ?? 0);
-                console.log(`Item total for ${currency}:`, itemTotal);
                 subtotals[currency] += itemTotal;
-                console.log(
-                    `Updated subtotal for ${currency}:`,
-                    subtotals[currency]
-                );
             } else {
                 console.log('Currency is missing or invalid for item:', item);
             }
