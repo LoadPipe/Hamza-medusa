@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { Flex, useDisclosure, Skeleton } from '@chakra-ui/react';
 import CategoryButtons from './components/CategoryButtons';
-import useVendors from '../../data/data';
 import FilterButton from './components/FilterButton';
 import { CgChevronRight, CgChevronLeft } from 'react-icons/cg'; // Import both chevrons
 import FilterModalHome from './components/FilterModal';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
-import categoryIcon from '@images/categories/board-games.svg';
 
 // Define the category structure
 interface Category {
@@ -153,7 +151,7 @@ const FilterBar = () => {
                                       key={index}
                                       categoryType={category.id}
                                       categoryName={category.name}
-                                      url={category.metadata.icon_url}
+                                      url={category.metadata?.icon_url}
                                   />
                               );
                           })}

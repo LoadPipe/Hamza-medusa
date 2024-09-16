@@ -260,7 +260,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                             >
                                 <Image
                                     className="h-[14px] w-[14px] md:h-[20px] md:w-[20px] self-center"
-                                    src={currencyIcons[currencyCode]}
+                                    src={currencyIcons[currencyCode ?? 'usdc']}
                                     alt={currencyCode}
                                 />
                             </Flex>

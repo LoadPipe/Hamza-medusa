@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Flex } from '@chakra-ui/react';
 import StoreCatButton from './store-cat-button';
 import { useQuery } from '@tanstack/react-query';
@@ -14,9 +14,8 @@ type Props = {
 
 const StoreSearch = ({ storeName }: Props) => {
     // Category button hooks
-    const [handle, setHandle] = useState('all');
+    const [categoryName, setCategoryName] = useState('all');
     const [selectedButton, setSelectedButton] = useState('All Products'); // Track selected button
-    const { setStoreId } = useVendor();
 
     // Get categories and update buttons
     const { data, error, isLoading } = useQuery(
@@ -68,7 +67,7 @@ const StoreSearch = ({ storeName }: Props) => {
             >
                 <StoreCatButton
                     catName={'All Products'}
-                    setHandle={setHandle}
+                    setCategoryName={setCategoryName}
                     setSelected={setSelectedButton}
                     selected={selectedButton}
                 />
@@ -77,7 +76,7 @@ const StoreSearch = ({ storeName }: Props) => {
                     <StoreCatButton
                         key={index}
                         catName={handle}
-                        setHandle={setHandle}
+                        setCategoryName={setCategoryName}
                         setSelected={setSelectedButton}
                         selected={selectedButton}
                     />
@@ -86,8 +85,7 @@ const StoreSearch = ({ storeName }: Props) => {
 
             <ProductCardGroup
                 storeName={storeName}
-                allProducts={true}
-                handle={handle}
+                categoryName={categoryName}
             />
         </Flex>
     );

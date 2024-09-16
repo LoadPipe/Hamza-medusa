@@ -45,8 +45,6 @@ type InjectDependencies = {
 
 type OrderBucketList = { [key: string]: Order[] };
 
-const BUCKY_ORDER_CREATION_MODE: 'old' | 'new' = 'new';
-
 export default class OrderService extends MedusaOrderService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
 
@@ -582,18 +580,6 @@ export default class OrderService extends MedusaOrderService {
                 'customer',
                 'items.variant.product',
             ],
-        });
-    }
-
-    private getPostCheckoutUpdateInventoryPromises(
-        cartProductsJson: string
-    ): Promise<ProductVariant>[] {
-        const cartObject = JSON.parse(cartProductsJson);
-        return cartObject.map((item) => {
-            return this.updateInventory(
-                item.variant_id,
-                item.reduction_quantity
-            );
         });
     }
 

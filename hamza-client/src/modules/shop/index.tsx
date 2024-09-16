@@ -6,7 +6,7 @@ import { Flex, Container, Box } from '@chakra-ui/react';
 import SideMenu from '@modules/shop/components/store-side-menu';
 import useStorePage from '@store/store-page/store-page';
 import useSideFilter from '@store/store-page/side-filter';
-import MobileFilter from '@modules/shop/components/mobile-fitler/mobile-filter';
+import MobileFilter from '@modules/shop/components/mobile-filter/mobile-filter';
 import ProductCardGroup from '@modules/products/components/product-group-store';
 import StoreFilterDisplay from '@modules/shop/components/store-filter-display';
 import RangeSliderComponent from '@modules/shop/components/range-slider';

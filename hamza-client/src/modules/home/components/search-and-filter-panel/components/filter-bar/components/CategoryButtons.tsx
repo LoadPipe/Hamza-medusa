@@ -1,7 +1,6 @@
 import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
-import categoryIcons from '@modules/shop/data/category-icons';
 import Image from 'next/image';
 
 interface CategoryButtonProps {
@@ -22,12 +21,12 @@ const CategoryButtons: React.FC<CategoryButtonProps> = ({
         <Flex
             flexShrink={0}
             onClick={() => {
-                setCategorySelect(categoryName),
-                    setCategoryTypeSelect(categoryType);
+                setCategorySelect([categoryName]), // Wrap categoryName in an array
+                    setCategoryTypeSelect([categoryType]); // Wrap categoryType in an array
             }}
             borderColor={'#3E3E3E'}
             backgroundColor={
-                categorySelect !== null && categorySelect === categoryName
+                categorySelect !== null && categorySelect[0] === categoryName
                     ? 'white'
                     : 'black'
             }
@@ -41,7 +40,7 @@ const CategoryButtons: React.FC<CategoryButtonProps> = ({
             cursor="pointer"
             style={{ padding: '10px 24px' }}
             color={
-                categorySelect !== null && categorySelect === categoryName
+                categorySelect !== null && categorySelect[0] === categoryName
                     ? 'black'
                     : 'white'
             }

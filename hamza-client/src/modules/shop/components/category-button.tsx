@@ -52,7 +52,9 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
                         setCategoryTypeFilterSelect(categoryName);
                 }}
             >
-                <Image src={url} alt={categoryName} width={20} height={20} />
+                {url?.length &&
+                    <Image src={url} alt={categoryName} width={20} height={20} />
+                }
                 <Text ml="10px" fontSize={{ base: '14px', md: '16px' }}>
                     {categoryName}
                 </Text>

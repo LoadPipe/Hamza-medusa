@@ -1,6 +1,6 @@
 {
     "name": "hamza-server",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "description": "A starter for Medusa projects.",
     "author": "Garo Nazarian, Beau Troxclair, Jonny Bajada, Karan Chugh, John R. Kosinski",
     "license": "MIT",
@@ -39,6 +39,7 @@
     },
     "_comment": "addition to the script to remove images: //&& docker rmi $(docker images -q)",
     "dependencies": {
+        "@aws-sdk/client-secrets-manager": "^3.650.0",
         "@medusajs/admin": "7.1.14",
         "@medusajs/cache-inmemory": "^1.8.9",
         "@medusajs/cache-redis": "^1.8.9",
@@ -47,9 +48,11 @@
         "@medusajs/file-local": "^1.0.3",
         "@medusajs/medusa": "^1.20.2",
         "@tanstack/react-query": "4.22.0",
+        "@types/aws-sdk": "^2.7.0",
         "@types/ejs": "^3.1.5",
         "@types/jsonwebtoken": "^9.0.6",
         "@types/nodemailer": "^6.4.15",
+        "aws-sdk": "^2.1691.0",
         "body-parser": "^1.19.0",
         "cookies-next": "^4.1.1",
         "cors": "^2.8.5",

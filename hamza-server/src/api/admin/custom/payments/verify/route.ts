@@ -24,7 +24,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
         //if orders are bucky orders, we gotta do something
         for (let item of orderPayments) {
-            if (item.order.bucky_metadata) {
+            if (item.order.bucky_metadata && item.order.bucky_metadata.status === 'pending') {
                 item.order = await buckydropService.processPendingOrder(item.order.id);
             }
         }

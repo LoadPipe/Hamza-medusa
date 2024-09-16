@@ -10,27 +10,34 @@ import {
     Flex,
     Divider,
     Text,
-    Box,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useState } from 'react';
 import FilterIcon from '../../../../../../../../public/images/categories/mobile-filter.svg';
 import Image from 'next/image';
-import currencies from '../data/currency-icons';
-import ReviewModalButton from './ReviewModalButton';
 import CategoryModalButton from './CategoryModalButton';
-import CurrencyModalButton from './CurrencyModalButton';
-import useStorePage from '@store/store-page/store-page';
 import useSideFilter from '@store/store-page/side-filter';
-import useModalFilter from '@store/store-page/filter-modal';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
-import RangeSliderModal from '@modules/shop/components/mobile-fitler/components/range-slider-modal';
-import useVendors from '../../../data/data';
+import RangeSliderModal from '@modules/shop/components/mobile-filter/components/range-slider-modal';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 interface FilterModalProps {
     isOpen: boolean;
     onClose: () => void;
     categories: Array<{ name: string; id: string }>; // Add categories prop with array of category objects
 }
+
+interface Category {
+    id: string;
+    name: string;
+    metadata: {
+        icon_url: string;
+    };
+}
+
+const USE_PRICE_FILTER: boolean = false;
+
+type RangeType = [number, number];
 
 const FilterModalHome: React.FC<FilterModalProps> = ({
     isOpen,
@@ -55,12 +62,39 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
         homeModalCurrencyFilterSelect,
         homeModalCategoryFilterSelect,
         homeModalCategoryTypeFilterSelect,
+        homeModalLowerPriceFilterSelect,
+        homeModalUpperPriceFilterSelect,
         setHomeModalCategoryTypeFilterSelect,
         setHomeModalCurrencyFilterSelect,
         setHomeModalCategoryFilterSelect,
+        setHomeModalLowerPriceFilterSelect,
+        setHomeModalUpperPriceFilterSelect,
     } = useHomeModalFilter();
 
-    const vendors = useVendors();
+    // Fetching categories data
+    const { data, isLoading } = useQuery<Category[]>(
+        ['categories'],
+        async () => {
+            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
+            const response = await axios.get(url);
+            return response.data;
+        }
+    );
+
+    const [range, setRange] = useState<RangeType>([0, 10000]);
+
+    console.log(
+        `what value is ${homeModalLowerPriceFilterSelect} and ${homeModalUpperPriceFilterSelect}`
+    );
+
+    // Extract unique category names with id
+    const uniqueCategories: Category[] = data
+        ? data.map((category) => ({
+            name: category.name,
+            id: category.id,
+            metadata: category.metadata,
+        }))
+        : [];
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -92,32 +126,37 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                         wrap={'wrap'}
                         gap="16px"
                     >
-                        {categories.map((category: any, index: number) => (
-                            <CategoryModalButton
-                                key={index}
-                                categoryType={category.id}
-                                categoryName={category.name}
-                            />
-                        ))}
+                        {uniqueCategories.map(
+                            (category: any, index: number) => (
+                                <CategoryModalButton
+                                    key={index}
+                                    categoryType={category.id}
+                                    categoryName={category.name}
+                                    url={category.metadata.icon_url}
+                                />
+                            )
+                        )}
                     </Flex>
-                    <Text
-                        mt="1.5rem"
-                        fontWeight={'600'}
-                        fontSize={'16px'}
-                        color="white"
-                    >
-                        Price Range
-                    </Text>
+                    {USE_PRICE_FILTER && <>
+                        <Text
+                            mt="1.5rem"
+                            fontWeight={'600'}
+                            fontSize={'16px'}
+                            color="white"
+                        >
+                            Price Range
+                        </Text>
 
-                    <Text
-                        mt="0.25rem"
-                        fontSize={'14px'}
-                        color="secondary.davy.900"
-                    >
-                        Prices before fees and taxes
-                    </Text>
+                        <Text
+                            mt="0.25rem"
+                            fontSize={'14px'}
+                            color="secondary.davy.900"
+                        >
+                            Prices before fees and taxes
+                        </Text>
 
-                    <RangeSliderModal />
+                        <RangeSliderModal range={range} setRange={setRange} />
+                    </>}
                     {/* 
                     <Text
                         my="1.5rem"
@@ -180,14 +219,16 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                             if (homeModalCategoryFilterSelect) {
                                 setCategorySelect(
                                     homeModalCategoryFilterSelect
-                                );
-                                setCategoryTypeSelect(
-                                    homeModalCategoryTypeFilterSelect
-                                );
+                                ); // Array of categories
+                                // setCategoryTypeSelect(
+                                //     homeModalCategoryTypeFilterSelect
+                                // );
                             }
                             setHomeModalCurrencyFilterSelect(null);
                             setHomeModalCategoryFilterSelect(null);
                             setHomeModalCategoryTypeFilterSelect(null);
+                            setHomeModalLowerPriceFilterSelect(range[0]);
+                            setHomeModalUpperPriceFilterSelect(range[1]);
                             onClose();
                         }}
                         ml="auto"

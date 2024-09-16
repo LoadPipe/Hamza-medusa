@@ -12,24 +12,20 @@ import {
     Text,
     Box,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useState } from 'react';
 import FilterIcon from '../../../../../../public/images/categories/mobile-filter.svg';
 import Image from 'next/image';
-import CurrencyButton from '../../currency-button';
-import currencies from '../../../data/currency-category';
-import ReviewButton from '../../review-button';
-import ReviewModalButton from './review-modal-button';
-import RangeSliderComponent from '../../range-slider';
 import CategoryModalButton from './category-modal-button';
-import CurrencyModalButton from './currency-modal-button';
 import useStorePage from '@store/store-page/store-page';
 import useSideFilter from '@store/store-page/side-filter';
 import useModalFilter from '@store/store-page/filter-modal';
 import RangeSliderModal from './range-slider-modal';
-import useVendors from '../../../../home/components/search-and-filter-panel/data/data';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
+const USE_PRICE_FILTER: boolean = false;
+
+// THIS IS THE SHOP PAGE NOT THE HOME PAGE
 interface FilterModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -42,6 +38,8 @@ interface Category {
         icon_url: string;
     };
 }
+type RangeType = [number, number];
+
 const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
     const {
         setCurrencySelect,
@@ -50,10 +48,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
         setCategoryTypeSelect,
     } = useStorePage();
     const {
-        categoryFilterSelect,
-        categoryTypeFilterSelect,
         reviewFilterSelect,
-        currencyFilterSelect,
         setReviewFilterSelect,
         setCurrencyFilterSelect,
         setCategoryFilterSelect,
@@ -69,7 +64,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
         setModalCategoryFilterSelect,
     } = useModalFilter();
 
-    const vendors = useVendors();
+    const [range, setRange] = useState<RangeType>([0, 10000]);
 
     // Fetching categories data
     const { data, isLoading } = useQuery<Category[]>(
@@ -84,10 +79,10 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-              name: category.name,
-              id: category.id,
-              metadata: category.metadata,
-          }))
+            name: category.name,
+            id: category.id,
+            metadata: category.metadata,
+        }))
         : [];
 
     return (
@@ -120,29 +115,34 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                                     key={index}
                                     categoryType={category.name}
                                     categoryName={category.name}
-                                    url={category.metadata.icon_url}
+                                    url={category.metadata?.icon_url}
                                 />
                             )
                         )}
                     </Flex>
-                    <Text
-                        mt="1.5rem"
-                        fontWeight={'600'}
-                        fontSize={'16px'}
-                        color="white"
-                    >
-                        Price Range
-                    </Text>
 
-                    <Text
-                        mt="0.25rem"
-                        fontSize={'14px'}
-                        color="secondary.davy.900"
-                    >
-                        Prices before fees and taxes
-                    </Text>
+                    {USE_PRICE_FILTER &&
+                        <>
+                            <Text
+                                mt="1.5rem"
+                                fontWeight={'600'}
+                                fontSize={'16px'}
+                                color="white"
+                            >
+                                Price Range
+                            </Text>
 
-                    <RangeSliderModal />
+                            <Text
+                                mt="0.25rem"
+                                fontSize={'14px'}
+                                color="secondary.davy.900"
+                            >
+                                Prices before fees and taxes
+                            </Text>
+
+                            <RangeSliderModal range={range} setRange={setRange} />
+                        </>
+                    }
 
                     {/* <Text
                         my="1.5rem"

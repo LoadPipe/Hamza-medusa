@@ -185,8 +185,8 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                         <Flex alignItems={'center'}>
                             <Image
                                 className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
-                                src={currencyIcons[currencyCode]}
-                                alt={currencyCode}
+                                src={currencyIcons[currencyCode ?? 'usdc']}
+                                alt={currencyCode ?? 'usdc'}
                             />
                         </Flex>
                         <Text
