@@ -25,12 +25,14 @@ const FilterTag: React.FC<FilterTagProps> = ({
                 height={'63px'}
                 style={{ padding: '10px 24px' }}
             >
-                <Image
-                    src={categoryIconUrl}
-                    alt={categoryName}
-                    width={20}
-                    height={20}
-                />
+                {categoryIconUrl?.length && (
+                    <Image
+                        src={categoryIconUrl}
+                        alt={categoryName}
+                        width={20}
+                        height={20}
+                    />
+                )}
                 <Text ml="10px" fontSize="18px" color="white">
                     {categoryName}
                 </Text>
