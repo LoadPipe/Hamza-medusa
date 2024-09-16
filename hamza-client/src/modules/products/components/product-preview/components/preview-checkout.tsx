@@ -138,35 +138,37 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
     useEffect(() => {
         if (productData && productData.variants) {
             if (!variantId) {
-                console.log(`variantId in PreviewCheckout comp is not set yet`);
+                // Initially setting the variantId if it's not set
                 setVariantId(productData.variants[0].id);
-            }
-            let selectedProductVariant = productData.variants.find(
-                (a: any) => a.id == productData.variants[0]?.id
-                // (a: any) => a.id == variantId
-            );
-            console.log(`variantID in PreviewCheckout comp is: ${variantId}`);
-            if (!variantId) {
-                setVariantId(selectedProductVariant.id);
-            }
-            console.log(`variantID in PreviewCheckout comp is: ${variantId}`);
+            } else {
+                // Finding the variant that matches the current variantId
+                let selectedProductVariant = productData.variants.find(
+                    (v) => v.id === variantId
+                );
 
-            setSelectedVariant(selectedProductVariant);
-            const price =
-                selectedProductVariant &&
-                (selectedProductVariant.prices.find(
-                    (p: any) =>
-                        p.currency_code === (preferred_currency_code ?? 'usdc')
-                ) ??
-                    selectedProductVariant.prices[0]);
-            console.log(
-                'priceData object in PreviewCheckout comp',
-                productData
-            );
-            setSelectedPrice(price?.amount ?? 0);
-            // console.log(productData);
+                if (selectedProductVariant) {
+                    console.log(`Selected Variant:`, selectedProductVariant);
+
+                    // Update the selected variant in state
+                    setSelectedVariant(selectedProductVariant);
+
+                    // Find the price for the selected currency or default to the first price available
+                    const price =
+                        selectedProductVariant.prices.find(
+                            (p) =>
+                                p.currency_code ===
+                                (preferred_currency_code ?? 'usdc')
+                        ) || selectedProductVariant.prices[0];
+
+                    // Update the price state
+                    setSelectedPrice(price?.amount ?? 0);
+                    console.log(`Updated Price: ${price?.amount}`);
+                } else {
+                    console.error(`No variant found for ID: ${variantId}`);
+                }
+            }
         }
-    }, [productData, variantId]);
+    }, [productData, variantId, preferred_currency_code]); // Adding preferred_currency_code to dependencies if it can change
 
     const handleAddToCart = async (showPopup: boolean = true) => {
         if (!selectedVariant) {
