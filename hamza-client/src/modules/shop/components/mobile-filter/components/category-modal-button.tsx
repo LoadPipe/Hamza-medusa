@@ -22,43 +22,29 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
         setModalCategoryTypeFilterSelect,
     } = useModalFilter();
 
-    const {
-        categorySelect,
-        categoryTypeSelect,
-        setCategorySelect,
-        setCategoryTypeSelect,
-    } = useStorePage();
+    const { categorySelect, setCategorySelect } = useStorePage();
 
     const toggleCategorySelection = (category: string, type: string) => {
         const currentCategorySelection = categorySelect || [];
-        const currentTypeSelection = categoryTypeSelect || [];
 
         // If the category is already selected, we remove it along with its type
         if (currentCategorySelection.includes(category)) {
             const updatedCategorySelection = currentCategorySelection.filter(
                 (selectedCategory) => selectedCategory !== category
             );
-            const updatedTypeSelection = currentTypeSelection.filter(
-                (selectedType) => selectedType !== type
-            );
+
             setCategorySelect(
                 updatedCategorySelection.length
                     ? updatedCategorySelection
                     : ['All']
-            );
-            setCategoryTypeSelect(
-                updatedTypeSelection.length ? updatedTypeSelection : ['All']
             );
         } else {
             // If the category is not selected, we add both the category and type
             const updatedCategorySelection = currentCategorySelection.filter(
                 (cat) => cat !== 'All'
             );
-            const updatedTypeSelection = currentTypeSelection.filter(
-                (catType) => catType !== 'All'
-            );
+
             setCategorySelect([...updatedCategorySelection, category]);
-            setCategoryTypeSelect([...updatedTypeSelection, type]);
         }
     };
 

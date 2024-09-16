@@ -1,14 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Flex, Container, Box } from '@chakra-ui/react';
-// import ProductCardGroup from '@modules/products/components/product-card-group';
+import React from 'react';
+import { Flex } from '@chakra-ui/react';
 import SideMenu from './components/desktop-side-filter/store-side-menu';
-import useStorePage from '@store/store-page/store-page';
 import MobileFilter from '@modules/shop/components/mobile-filter/mobile-filter';
 import ProductCardGroup from '@modules/products/components/product-group-store';
 import StoreFilterDisplay from '@modules/shop/components/store-filter-display';
-import RangeSliderComponent from '@modules/shop/components/desktop-side-filter/range-slider';
 
 const ShopTemplate = () => {
     return (
