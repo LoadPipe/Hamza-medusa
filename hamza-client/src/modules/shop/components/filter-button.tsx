@@ -14,40 +14,25 @@ interface FilterButtonProps {
 
 const FilterButton: React.FC<FilterButtonProps> = ({ category }) => {
     // Use Zustand shop to handle filter object
-    const {
-        setCurrencySelect,
-        setReviewStarsSelect,
-        setCategorySelect,
-        setCategoryTypeSelect,
-    } = useStorePage();
-    const {
-        categoryFilterSelect,
-        categoryTypeFilterSelect,
-        reviewFilterSelect,
-        currencyFilterSelect,
-        setReviewFilterSelect,
-        setCurrencyFilterSelect,
-        setCategoryFilterSelect,
-        setCategoryTypeFilterSelect,
-    } = useSideFilter();
+    const { setReviewStarsSelect, setCategorySelect } = useStorePage();
+
+    const { selectCategoryStoreFilter } = useSideFilter();
 
     return (
         <Button
             onClick={() => {
-                if (currencyFilterSelect) {
-                    setCurrencySelect(currencyFilterSelect);
+                // if (reviewFilterSelect) {
+                //     setReviewStarsSelect(reviewFilterSelect);
+                // }
+
+                // Delete current settings
+                setCategorySelect([]);
+
+                // Update settings
+                if (selectCategoryStoreFilter) {
+                    setCategorySelect(selectCategoryStoreFilter);
                 }
-                if (reviewFilterSelect) {
-                    setReviewStarsSelect(reviewFilterSelect);
-                }
-                if (categoryFilterSelect) {
-                    setCategorySelect(categoryFilterSelect);
-                    setCategoryTypeSelect(categoryTypeFilterSelect);
-                }
-                setReviewFilterSelect(null);
-                setCurrencyFilterSelect(null);
-                setCategoryFilterSelect(null);
-                setCategoryTypeFilterSelect(null);
+
                 // Scroll to the top of the page
                 window.scrollTo({
                     top: 0,

@@ -7,27 +7,49 @@ import categoryIcons from '../data/category-icons';
 
 interface CategoryButtonProps {
     categoryName: string;
-    categoryType: string;
     url: string;
 }
 
 const CategoryButton: React.FC<CategoryButtonProps> = ({
     categoryName,
-    categoryType,
     url,
 }) => {
-    const {
-        categoryFilterSelect,
-        setCategoryFilterSelect,
-        setCategoryTypeFilterSelect,
-    } = useSideFilter();
+    const { selectCategoryStoreFilter, setSelectCategoryStoreFilter } =
+        useSideFilter();
+
+    const toggleCategorySelection = (category: string) => {
+        const currentCategorySelection = selectCategoryStoreFilter || [];
+
+        // If the category is already selected, we remove it along with its type
+        if (currentCategorySelection.includes(category)) {
+            const updatedCategorySelection = currentCategorySelection.filter(
+                (selectedCategory) => selectedCategory !== category
+            );
+
+            setSelectCategoryStoreFilter(
+                updatedCategorySelection.length
+                    ? updatedCategorySelection
+                    : ['All']
+            );
+        } else {
+            // If the category is not selected, we add both the category and type
+            const updatedCategorySelection = currentCategorySelection.filter(
+                (cat) => cat !== 'All'
+            );
+
+            setSelectCategoryStoreFilter([
+                ...updatedCategorySelection,
+                category,
+            ]);
+        }
+    };
 
     return (
         <Flex>
             <Flex
                 borderColor={'secondary.davy.900'}
                 backgroundColor={
-                    categoryFilterSelect === categoryName
+                    selectCategoryStoreFilter?.includes(categoryName)
                         ? 'white'
                         : 'transparent'
                 }
@@ -39,7 +61,9 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
                 height={'60px'}
                 cursor="pointer"
                 color={
-                    categoryFilterSelect === categoryName ? 'black' : 'white'
+                    selectCategoryStoreFilter?.includes(categoryName)
+                        ? 'black'
+                        : 'white'
                 }
                 padding="10px 24px"
                 transition="background 0.1s ease-in-out, color 0.1s ease-in-out"
@@ -48,13 +72,17 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
                     color: 'black',
                 }}
                 onClick={() => {
-                    setCategoryFilterSelect(categoryName),
-                        setCategoryTypeFilterSelect(categoryName);
+                    toggleCategorySelection(categoryName);
                 }}
             >
-                {url?.length &&
-                    <Image src={url} alt={categoryName} width={20} height={20} />
-                }
+                {url?.length && (
+                    <Image
+                        src={url}
+                        alt={categoryName}
+                        width={20}
+                        height={20}
+                    />
+                )}
                 <Text ml="10px" fontSize={{ base: '14px', md: '16px' }}>
                     {categoryName}
                 </Text>

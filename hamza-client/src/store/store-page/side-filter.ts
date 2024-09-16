@@ -1,17 +1,17 @@
 import { create } from 'zustand';
 
 // Define the state and associated actions in an interface
-interface StoreState {
-    categorySelect: string[] | null;
-    categoryTypeSelect: string[] | null;
+interface StoreFilterState {
+    selectCategoryStoreFilter: string[] | null;
+    selectTypeStoreFilter: string[] | null;
     currencySelect: string | null;
     reviewStarsSelect: string | null;
 
     // Update the setter types to accept a function or a direct value
-    setCategorySelect: (
+    setSelectCategoryStoreFilter: (
         items: string[] | ((prev: string[] | null) => string[] | null)
     ) => void;
-    setCategoryTypeSelect: (
+    setSelectTypeStoreFilter: (
         items: string[] | ((prev: string[] | null) => string[] | null)
     ) => void;
     setCurrencySelect: (item: string | null) => void;
@@ -19,32 +19,32 @@ interface StoreState {
 }
 
 // Create the Zustand store
-const useSideFilter = create<StoreState>((set) => ({
-    categorySelect: ['all'], // Allow for multi-category selection
-    categoryTypeSelect: null,
+const useSideFilter = create<StoreFilterState>((set) => ({
+    selectCategoryStoreFilter: ['all'], // Allow for multi-category selection
+    selectTypeStoreFilter: null,
     currencySelect: null,
     reviewStarsSelect: null,
     setCurrencySelect: (item: string | null) => set({ currencySelect: item }),
 
     // Allow functional updates for categorySelect
-    setCategorySelect: (
+    setSelectCategoryStoreFilter: (
         items: string[] | ((prev: string[] | null) => string[] | null)
     ) =>
         set((state) => ({
-            categorySelect:
+            selectCategoryStoreFilter:
                 typeof items === 'function'
-                    ? items(state.categorySelect)
+                    ? items(state.selectCategoryStoreFilter)
                     : items,
         })),
 
     // Allow functional updates for categoryTypeSelect
-    setCategoryTypeSelect: (
+    setSelectTypeStoreFilter: (
         items: string[] | ((prev: string[] | null) => string[] | null)
     ) =>
         set((state) => ({
-            categoryTypeSelect:
+            selectTypeStoreFilter:
                 typeof items === 'function'
-                    ? items(state.categoryTypeSelect)
+                    ? items(state.selectTypeStoreFilter)
                     : items,
         })),
 
