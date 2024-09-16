@@ -132,7 +132,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                                     key={index}
                                     categoryType={category.id}
                                     categoryName={category.name}
-                                    url={category.metadata.icon_url}
+                                    url={category.metadata?.icon_url}
                                 />
                             )
                         )}

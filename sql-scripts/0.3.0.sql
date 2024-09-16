@@ -29,3 +29,5 @@ UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/ca
 UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/books.svg"}' where handle = 'books';
 UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/office.svg"}' where handle = 'office';
 UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/pets.svg"}' where handle = 'pets';
+
+

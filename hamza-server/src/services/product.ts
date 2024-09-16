@@ -662,6 +662,7 @@ class ProductService extends MedusaProductService {
                         ],
                     });
 
+                //remove products that aren't published
                 products = productCategories.flatMap((cat) =>
                     cat.products.filter(
                         (p) =>
@@ -669,18 +670,17 @@ class ProductService extends MedusaProductService {
                     )
                 );
 
-                //remove products that aren't published
                 if (upperPrice !== 0 && lowerPrice !== 0) {
                     // Filter products by price using upper and lower price limits
                     products = products.filter((product) => {
-                        const price = product.variants[0].prices[0].amount;
+                        const price = product.variants[0]?.prices[0]?.amount ?? 0;
                         return price >= lowerPrice && price <= upperPrice;
                     });
 
                     // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
                     products = products.sort((a, b) => {
-                        const priceA = a.variants[0].prices[0].amount;
-                        const priceB = b.variants[0].prices[0].amount;
+                        const priceA = a.variants[0]?.prices[0]?.amount ?? 0;
+                        const priceB = b.variants[0]?.prices[0]?.amount ?? 0;
                         return priceA - priceB; // Ascending order
                     });
                 }
@@ -708,14 +708,14 @@ class ProductService extends MedusaProductService {
                 if (upperPrice !== 0 && lowerPrice !== 0) {
                     // Filter products by price using upper and lower price limits
                     products = products.filter((product) => {
-                        const price = product.variants[0].prices[0].amount;
+                        const price = product.variants[0]?.prices[0]?.amount ?? 0;
                         return price >= lowerPrice && price <= upperPrice;
                     });
 
                     // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
                     products = products.sort((a, b) => {
-                        const priceA = a.variants[0].prices[0].amount;
-                        const priceB = b.variants[0].prices[0].amount;
+                        const priceA = a.variants[0]?.prices[0]?.amount ?? 0;
+                        const priceB = b.variants[0]?.prices[0]?.amount ?? 0;
                         return priceA - priceB; // Ascending order
                     });
                 }
