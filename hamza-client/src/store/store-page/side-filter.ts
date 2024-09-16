@@ -1,31 +1,55 @@
 import { create } from 'zustand';
 
 // Define the state and associated actions in an interface
-interface FilterState {
-    categoryFilterSelect: string | null;
-    categoryTypeFilterSelect: string | null;
-    currencyFilterSelect: string | null;
-    reviewFilterSelect: string | null;
-    setCategoryFilterSelect: (item: string | null) => void;
-    setCategoryTypeFilterSelect: (item: string | null) => void;
-    setCurrencyFilterSelect: (item: string | null) => void;
-    setReviewFilterSelect: (stars: string | null) => void;
+interface StoreState {
+    categorySelect: string[] | null;
+    categoryTypeSelect: string[] | null;
+    currencySelect: string | null;
+    reviewStarsSelect: string | null;
+
+    // Update the setter types to accept a function or a direct value
+    setCategorySelect: (
+        items: string[] | ((prev: string[] | null) => string[] | null)
+    ) => void;
+    setCategoryTypeSelect: (
+        items: string[] | ((prev: string[] | null) => string[] | null)
+    ) => void;
+    setCurrencySelect: (item: string | null) => void;
+    setReviewStarsSelect: (stars: string | null) => void;
 }
 
 // Create the Zustand store
-const useSideFilter = create<FilterState>((set) => ({
-    categoryFilterSelect: null,
-    currencyFilterSelect: null,
-    reviewFilterSelect: null,
-    categoryTypeFilterSelect: null,
-    setCurrencyFilterSelect: (item: string | null) =>
-        set({ currencyFilterSelect: item }),
-    setCategoryFilterSelect: (item: string | null) =>
-        set({ categoryFilterSelect: item }),
-    setCategoryTypeFilterSelect: (item: string | null) =>
-        set({ categoryTypeFilterSelect: item }),
-    setReviewFilterSelect: (stars: string | null) =>
-        set({ reviewFilterSelect: stars }),
+const useSideFilter = create<StoreState>((set) => ({
+    categorySelect: ['all'], // Allow for multi-category selection
+    categoryTypeSelect: null,
+    currencySelect: null,
+    reviewStarsSelect: null,
+    setCurrencySelect: (item: string | null) => set({ currencySelect: item }),
+
+    // Allow functional updates for categorySelect
+    setCategorySelect: (
+        items: string[] | ((prev: string[] | null) => string[] | null)
+    ) =>
+        set((state) => ({
+            categorySelect:
+                typeof items === 'function'
+                    ? items(state.categorySelect)
+                    : items,
+        })),
+
+    // Allow functional updates for categoryTypeSelect
+    setCategoryTypeSelect: (
+        items: string[] | ((prev: string[] | null) => string[] | null)
+    ) =>
+        set((state) => ({
+            categoryTypeSelect:
+                typeof items === 'function'
+                    ? items(state.categoryTypeSelect)
+                    : items,
+        })),
+
+    setReviewStarsSelect: (stars: string | null) =>
+        set({ reviewStarsSelect: stars }),
 }));
 
 export default useSideFilter;
