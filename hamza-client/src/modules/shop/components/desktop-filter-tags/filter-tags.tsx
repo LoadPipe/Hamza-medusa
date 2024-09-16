@@ -3,31 +3,25 @@ import { Text, Flex } from '@chakra-ui/react';
 import useStorePage from '@store/store-page/store-page';
 import FilterTag from './filter-tag';
 import { IoCloseOutline } from 'react-icons/io5';
-import categoryIcons from '../../data/category-icons';
 
 const FilterTags = () => {
-    const { categoryItem, setCategorySelect, setReviewStarsSelect } =
-        useStorePage();
-
-    console.log('filter tags', categoryItem);
+    const {
+        categoryItem,
+        setCategorySelect,
+        setReviewStarsSelect,
+        setCategoryItem,
+    } = useStorePage();
 
     const filterTags = () => {
         if (categoryItem && Array.isArray(categoryItem)) {
             return categoryItem.map((item, index) => (
                 <FilterTag
-                    url={item.urlLink} // Use the icon based on the category name
-                    key={`category-${index}`} // Unique key for each category tag
-                    name={item.categoryName} // Display category name
+                    key={`category-${index}`}
+                    categoryName={item.categoryName}
+                    categoryIconUrl={item.urlLink}
                 />
             ));
         }
-
-        // If no category items exist, display "No filters applied"
-        return (
-            <Text alignSelf={'center'} color={'primary.green.900'}>
-                No filters applied.
-            </Text>
-        );
     };
 
     return (
@@ -39,6 +33,7 @@ const FilterTags = () => {
                 cursor={'pointer'}
                 onClick={() => {
                     setCategorySelect(['All']);
+                    setCategoryItem([]);
                     setReviewStarsSelect(null);
                 }}
                 color="white"

@@ -44,33 +44,3 @@ const ShopTemplate = () => {
 };
 
 export default ShopTemplate;
-
-// <Flex justifyContent={'center'}>
-//     <Flex
-//         maxW="1340px"
-//         w={'100%'}
-//         flexDirection={'column'}
-//         justifyContent={'center'}
-//         alignItems={'center'}
-//         mx={{ base: '0', md: '1rem' }}
-//         my="2rem"
-//     >
-//         <Flex
-//             mt={{ base: '-3rem', md: '0' }}
-//             mx="1rem"
-//             maxW="1307.74px"
-//             w="100%"
-//             justifyContent={'center'}
-//             alignContent={'center'}
-//             flexDirection={{ base: 'column', md: 'row' }}
-//         >
-//             <MobileFilter />
-//             <SideMenu />
-//             <ProductCardGroup
-//                 filterByRating={reviewFilterSelect}
-//                 vendorName={vendorName}
-//                 category=""
-//             />
-//         </Flex>
-//     </Flex>
-// </Flex>
