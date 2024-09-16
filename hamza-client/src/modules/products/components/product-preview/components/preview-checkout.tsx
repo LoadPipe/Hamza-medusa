@@ -3,7 +3,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Text, Button, Flex, Box, Heading, Divider } from '@chakra-ui/react';
 import useProductPreview from '@store/product-preview/product-preview';
-import CurrencyButtonPreview from './currency-buttons';
 import QuantityButton from './quantity-button';
 import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
@@ -15,7 +14,6 @@ import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import toast from 'react-hot-toast';
 import OptionSelect from '../../option-select';
 import { isEqual } from 'lodash';
-import axios from 'axios';
 import {
     TiStarFullOutline,
     TiStarHalfOutline,
@@ -28,10 +26,14 @@ const MEDUSA_SERVER_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
 interface PreviewCheckoutProps {
     productId: string;
+    setSelectedVariantImage: (imageUrl: string) => void;
 }
 
 // TODO: REFACTOR THIS COMPONENT, POST DEMO - GN
-const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
+const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
+    productId,
+    setSelectedVariantImage,
+}) => {
     const currencies = ['eth', 'usdc', 'usdt'];
 
     const [options, setOptions] = useState<Record<string, string>>({});
@@ -143,19 +145,27 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
             } else {
                 // Finding the variant that matches the current variantId
                 let selectedProductVariant = productData.variants.find(
-                    (v) => v.id === variantId
+                    (v: any) => v.id === variantId
                 );
 
                 if (selectedProductVariant) {
-                    console.log(`Selected Variant:`, selectedProductVariant);
+                    // console.log(`Selected Variant:`, selectedProductVariant);
 
+                    if (selectedProductVariant.metadata?.imgUrl) {
+                        // console.log(
+                        //     `META: ${selectedProductVariant.metadata?.imgUrl}`
+                        // );
+                        setSelectedVariantImage(
+                            selectedProductVariant.metadata?.imgUrl
+                        );
+                    }
                     // Update the selected variant in state
                     setSelectedVariant(selectedProductVariant);
 
                     // Find the price for the selected currency or default to the first price available
                     const price =
                         selectedProductVariant.prices.find(
-                            (p) =>
+                            (p: any) =>
                                 p.currency_code ===
                                 (preferred_currency_code ?? 'usdc')
                         ) || selectedProductVariant.prices[0];

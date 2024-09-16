@@ -12,19 +12,34 @@ import useProductPreview from '@store/product-preview/product-preview';
 import React, { useEffect, useState } from 'react';
 import ImageGalleryModal from './image-gallery/gallery-modal';
 
-const PreviewGallery = () => {
+interface PreviewGalleryProps {
+    selectedVariantImage: string;
+}
+
+const PreviewGallery: React.FC<PreviewGalleryProps> = ({
+    selectedVariantImage,
+}) => {
     const { productData } = useProductPreview();
     const [images, setImages] = useState<string[]>([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 
     useEffect(() => {
-        if (productData !== null) {
-            setImages(
-                productData?.images?.map((img: { url: any }) => img.url) || []
-            );
+        // Construct the initial images array from product data
+        let newImages = productData?.images?.map((img) => img.url) || [];
+
+        // Check if a selected variant image is provided and is different from the main image
+        if (selectedVariantImage && selectedVariantImage !== newImages[0]) {
+            // Place the selected variant image at the start of the array
+            newImages = [
+                selectedVariantImage,
+                ...newImages.filter((img, index) => index > 0),
+            ];
         }
-    }, [productData]);
+
+        // Update the images state
+        setImages(newImages);
+    }, [productData, selectedVariantImage]);
 
     const openGallery = (index: number) => {
         setSelectedImageIndex(index);
