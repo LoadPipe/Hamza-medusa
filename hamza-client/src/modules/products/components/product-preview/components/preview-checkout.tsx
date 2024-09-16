@@ -202,7 +202,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
             console.log('white list config ', whitelist_config);
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                    whitelist_config.whitelisted_stores.includes(data.data)
+                whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -259,6 +259,29 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
             </div>
         );
     };
+
+    // hook runs once when the component mounts and anytime productData changes
+    // it sets the initial options to the first value of each option
+    useEffect(() => {
+        if (productData?.options) {
+            const initialOptions = productData.options.reduce(
+                (acc: any, option: any) => {
+                    // Assuming each option has a 'values' array and each 'value' object has a 'value' property
+                    const firstValue = option.values?.[0]?.value;
+                    if (firstValue) {
+                        acc[option.id] = firstValue;
+                    }
+                    return acc;
+                },
+                {}
+            );
+
+            // Only update the state if it's different from the current state to avoid unnecessary re-renders
+            if (!isEqual(options, initialOptions)) {
+                setOptions(initialOptions);
+            }
+        }
+    }, [productData]);
 
     return (
         <Flex
@@ -482,8 +505,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({ productId }) => {
                     {!inStock && isWhitelisted
                         ? 'Add to cart'
                         : inStock
-                            ? 'Add to Cart'
-                            : 'Out of Stock'}
+                          ? 'Add to Cart'
+                          : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs text-white px-4 py-2">
