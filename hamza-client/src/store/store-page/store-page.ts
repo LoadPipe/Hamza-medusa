@@ -3,7 +3,6 @@ import { create } from 'zustand';
 // Define the state and associated actions in an interface
 interface StoreState {
     categorySelect: string[] | null;
-    categoryTypeSelect: string[] | null;
     currencySelect: string | null;
     reviewStarsSelect: string | null;
 
@@ -11,9 +10,7 @@ interface StoreState {
     setCategorySelect: (
         items: string[] | ((prev: string[] | null) => string[] | null)
     ) => void;
-    setCategoryTypeSelect: (
-        items: string[] | ((prev: string[] | null) => string[] | null)
-    ) => void;
+
     setCurrencySelect: (item: string | null) => void;
     setReviewStarsSelect: (stars: string | null) => void;
 }
@@ -21,7 +18,7 @@ interface StoreState {
 // Create the Zustand store
 const useStorePage = create<StoreState>((set) => ({
     categorySelect: ['All'], // Allow for multi-category selection
-    categoryTypeSelect: null,
+
     currencySelect: null,
     reviewStarsSelect: null,
     setCurrencySelect: (item: string | null) => set({ currencySelect: item }),
@@ -34,17 +31,6 @@ const useStorePage = create<StoreState>((set) => ({
             categorySelect:
                 typeof items === 'function'
                     ? items(state.categorySelect)
-                    : items,
-        })),
-
-    // Allow functional updates for categoryTypeSelect
-    setCategoryTypeSelect: (
-        items: string[] | ((prev: string[] | null) => string[] | null)
-    ) =>
-        set((state) => ({
-            categoryTypeSelect:
-                typeof items === 'function'
-                    ? items(state.categoryTypeSelect)
                     : items,
         })),
 
