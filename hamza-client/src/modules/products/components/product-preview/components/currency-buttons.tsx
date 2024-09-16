@@ -15,8 +15,6 @@ const CurrencyButtonPreview: React.FC<CurrencyButtonPreviewProps> = ({
     width,
     height,
 }) => {
-    const { currencyFilterSelect, setCurrencyFilterSelect } = useSideFilter();
-
     return (
         <Flex>
             <Flex

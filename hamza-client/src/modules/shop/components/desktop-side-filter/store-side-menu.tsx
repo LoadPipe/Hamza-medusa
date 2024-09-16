@@ -3,7 +3,7 @@
 import React from 'react';
 import { Box, Text, Heading, Flex, Skeleton } from '@chakra-ui/react';
 import CategoryButton from './category-button';
-import ReviewButton from '../review-button';
+import ReviewButton from './review-button';
 import FilterButton from './filter-button';
 import RangeSlider from './range-slider';
 import { useQuery } from '@tanstack/react-query';

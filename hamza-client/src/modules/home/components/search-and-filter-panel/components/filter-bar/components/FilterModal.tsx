@@ -50,13 +50,6 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
         setCategorySelect,
         setCategoryTypeSelect,
     } = useHomeProductsPage();
-    const {
-        reviewFilterSelect,
-        setReviewFilterSelect,
-        setCurrencyFilterSelect,
-        setCategoryFilterSelect,
-        setCategoryTypeFilterSelect,
-    } = useSideFilter();
 
     const {
         homeModalCurrencyFilterSelect,
@@ -218,9 +211,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                                     homeModalCurrencyFilterSelect
                                 );
                             }
-                            if (reviewFilterSelect) {
-                                setReviewStarsSelect(reviewFilterSelect);
-                            }
+
                             if (homeModalCategoryFilterSelect) {
                                 setCategorySelect(
                                     homeModalCategoryFilterSelect

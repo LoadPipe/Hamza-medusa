@@ -1,10 +1,9 @@
-import { getProductsListWithSort } from '@lib/data';
+import { getProductsListWithSort, getRegion } from '@lib/data';
 import ProductPreview from '@modules/products/components/product-preview';
-import { Pagination } from '@modules/shop/components/pagination/pagination';
+import { Pagination } from './pagination';
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
-import { getRegion } from 'app/actions';
 
-const PRODUCT_LIMIT = 8;
+const PRODUCT_LIMIT = 12;
 
 type PaginatedProductsParams = {
     limit: number;
@@ -14,14 +13,14 @@ type PaginatedProductsParams = {
 };
 
 export default async function PaginatedProducts({
-    // sortBy,
+    sortBy,
     page,
     collectionId,
     categoryId,
     productsIds,
     countryCode,
 }: {
-    // sortBy?: SortOptions
+    sortBy?: SortOptions;
     page: number;
     collectionId?: string;
     categoryId?: string;
@@ -55,15 +54,19 @@ export default async function PaginatedProducts({
     } = await getProductsListWithSort({
         page,
         queryParams,
-        // sortBy,
+        sortBy,
         countryCode,
     });
 
     const totalPages = Math.ceil(count / PRODUCT_LIMIT);
+    console.dir(products, { depth: null });
 
     return (
         <>
-            <ul className="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8">
+            <ul
+                className="grid grid-cols-2 w-full small:grid-cols-3 medium:grid-cols-4 gap-x-6 gap-y-8"
+                data-testid="products-list"
+            >
                 {products.map((p) => {
                     return (
                         <li key={p.id}>
@@ -75,7 +78,13 @@ export default async function PaginatedProducts({
                     );
                 })}
             </ul>
-            {/*{totalPages > 1 && <Pagination page={page} totalPages={totalPages} />}*/}
+            {totalPages > 1 && (
+                <Pagination
+                    data-testid="product-pagination"
+                    page={page}
+                    totalPages={totalPages}
+                />
+            )}
         </>
     );
 }

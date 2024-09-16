@@ -11,11 +11,11 @@ interface ReviewButtonProps {
 }
 
 const ReviewModalButton: React.FC<ReviewButtonProps> = ({ title, value }) => {
-    const { reviewFilterSelect, setReviewFilterSelect } = useSideFilter();
+    // const { reviewFilterSelect, setReviewFilterSelect } = useSideFilter();
 
     return (
         <Flex>
-            <Flex
+            {/* <Flex
                 onClick={() => setReviewFilterSelect(value)}
                 backgroundColor={
                     reviewFilterSelect === title ? 'white' : 'transparent'
@@ -43,7 +43,7 @@ const ReviewModalButton: React.FC<ReviewButtonProps> = ({ title, value }) => {
                         {title}
                     </Text>
                 </Flex>
-            </Flex>
+            </Flex> */}
         </Flex>
     );
 };
