@@ -27,8 +27,6 @@ const FilterBarStore = () => {
         }
     );
 
-    const [range, setRange] = useState<RangeType>([0, 10000]);
-
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
@@ -39,37 +37,37 @@ const FilterBarStore = () => {
         : [];
 
     // Show more logic for categories (next or previous)
-    // const toggleShowMore = (direction: 'next' | 'prev') => {
-    //     const isAtStart = startIdx === 0;
-    //     const isAtEnd = startIdx + 6 >= uniqueCategories.length;
+    const toggleShowMore = (direction: 'next' | 'prev') => {
+        const isAtStart = startIdx === 0;
+        const isAtEnd = startIdx + 6 >= uniqueCategories.length;
 
-    //     let nextIndex;
+        let nextIndex;
 
-    //     if (direction === 'next') {
-    //         nextIndex = isAtEnd ? 0 : startIdx + 1;
-    //         setShowLeftChevron(true); // Show left chevron when moving to next
-    //     } else {
-    //         nextIndex = isAtStart ? uniqueCategories.length - 1 : startIdx - 1;
-    //         if (nextIndex === 0) {
-    //             setShowLeftChevron(false); // Hide left chevron when back to the start
-    //         }
-    //     }
+        if (direction === 'next') {
+            nextIndex = isAtEnd ? 0 : startIdx + 1;
+            setShowLeftChevron(true); // Show left chevron when moving to next
+        } else {
+            nextIndex = isAtStart ? uniqueCategories.length - 1 : startIdx - 1;
+            if (nextIndex === 0) {
+                setShowLeftChevron(false); // Hide left chevron when back to the start
+            }
+        }
 
-    //     setStartIdx(nextIndex);
-    // };
+        setStartIdx(nextIndex);
+    };
 
     // Logic to display only 6 categories at a time
-    // let visibleCategories = uniqueCategories
-    //     .slice(startIdx, startIdx + 6)
-    //     .concat(
-    //         uniqueCategories.slice(
-    //             0,
-    //             Math.max(0, 6 - (uniqueCategories.length - startIdx))
-    //         )
-    //     );
+    let visibleCategories = uniqueCategories
+        .slice(startIdx, startIdx + 6)
+        .concat(
+            uniqueCategories.slice(
+                0,
+                Math.max(0, 6 - (uniqueCategories.length - startIdx))
+            )
+        );
 
-    // if (uniqueCategories.length === 1)
-    //     visibleCategories = [visibleCategories[0]];
+    if (uniqueCategories.length === 1)
+        visibleCategories = [visibleCategories[0]];
 
     // Determine if the user is at the end to toggle the chevron direction
     const isAtEnd = startIdx + 6 >= uniqueCategories.length;
@@ -121,7 +119,7 @@ const FilterBarStore = () => {
                               />
                           ))}
                 </Flex>
-                {/* <Flex
+                <Flex
                     w="123px"
                     height={{ base: '42px', md: '63px' }}
                     justifyContent={'center'}
@@ -145,7 +143,7 @@ const FilterBarStore = () => {
                     >
                         <CgChevronRight size="4rem" color="white" />
                     </Flex>
-                </Flex> */}
+                </Flex>
             </Flex>
         </Flex>
     );
