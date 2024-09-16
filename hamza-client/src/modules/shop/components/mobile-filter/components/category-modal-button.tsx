@@ -3,6 +3,7 @@ import { Text, Flex } from '@chakra-ui/react';
 import Image from 'next/image';
 import useModalFilter from '@store/store-page/filter-modal';
 import categoryIcons from '@modules/shop/data/category-icons';
+import useStorePage from '@store/store-page/store-page';
 
 interface CategoryButtonProps {
     categoryName: string;
@@ -21,12 +22,52 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
         setModalCategoryTypeFilterSelect,
     } = useModalFilter();
 
+    const {
+        categorySelect,
+        categoryTypeSelect,
+        setCategorySelect,
+        setCategoryTypeSelect,
+    } = useStorePage();
+
+    const toggleCategorySelection = (category: string, type: string) => {
+        const currentCategorySelection = categorySelect || [];
+        const currentTypeSelection = categoryTypeSelect || [];
+
+        // If the category is already selected, we remove it along with its type
+        if (currentCategorySelection.includes(category)) {
+            const updatedCategorySelection = currentCategorySelection.filter(
+                (selectedCategory) => selectedCategory !== category
+            );
+            const updatedTypeSelection = currentTypeSelection.filter(
+                (selectedType) => selectedType !== type
+            );
+            setCategorySelect(
+                updatedCategorySelection.length
+                    ? updatedCategorySelection
+                    : ['All']
+            );
+            setCategoryTypeSelect(
+                updatedTypeSelection.length ? updatedTypeSelection : ['All']
+            );
+        } else {
+            // If the category is not selected, we add both the category and type
+            const updatedCategorySelection = currentCategorySelection.filter(
+                (cat) => cat !== 'All'
+            );
+            const updatedTypeSelection = currentTypeSelection.filter(
+                (catType) => catType !== 'All'
+            );
+            setCategorySelect([...updatedCategorySelection, category]);
+            setCategoryTypeSelect([...updatedTypeSelection, type]);
+        }
+    };
+
     return (
         <Flex>
             <Flex
                 borderColor={'secondary.davy.900'}
                 backgroundColor={
-                    modalCategoryFilterSelect === categoryName
+                    categorySelect?.includes(categoryName)
                         ? 'white'
                         : 'transparent'
                 }
@@ -38,9 +79,7 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                 height={'42px'}
                 cursor="pointer"
                 color={
-                    modalCategoryFilterSelect === categoryName
-                        ? 'black'
-                        : 'white'
+                    categorySelect?.includes(categoryName) ? 'black' : 'white'
                 }
                 padding="10px 24px"
                 transition="background 0.1s ease-in-out, color 0.1s ease-in-out"
@@ -48,14 +87,18 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                     background: 'white',
                     color: 'black',
                 }}
-                onClick={() => {
-                    setModalCategoryFilterSelect(categoryName),
-                        setModalCategoryTypeFilterSelect(categoryName);
-                }}
-            >
-                {url?.length &&
-                    <Image src={url} alt={categoryName} width={18} height={18} />
+                onClick={() =>
+                    toggleCategorySelection(categoryName, categoryType)
                 }
+            >
+                {url?.length && (
+                    <Image
+                        src={url}
+                        alt={categoryName}
+                        width={18}
+                        height={18}
+                    />
+                )}
                 <Text ml="10px" fontSize={{ base: '14px', md: '16px' }}>
                     {categoryName}
                 </Text>

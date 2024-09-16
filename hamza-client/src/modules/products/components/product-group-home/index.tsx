@@ -63,9 +63,6 @@ const ProductCardGroup = () => {
 
     const productsAll = data?.products || [];
 
-    // // products will contain filtered products based on category selection
-    const products = data;
-
     if (isLoading) {
         return (
             <Flex
@@ -145,7 +142,8 @@ const ProductCardGroup = () => {
                     const productPricing =
                         variant?.prices?.find(
                             (price: any) =>
-                                price.currency_code === (preferred_currency_code ?? 'usdc')
+                                price.currency_code ===
+                                (preferred_currency_code ?? 'usdc')
                         )?.amount ||
                         variant?.prices?.[0]?.amount ||
                         0;
