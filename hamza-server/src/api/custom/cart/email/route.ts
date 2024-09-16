@@ -36,7 +36,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
 export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
     let cartService: CartService = req.scope.resolve('cartService');
-    let cartEmailService: CartEmailService = req.scope.resolve('cartService');
+    let cartEmailService: CartEmailService = req.scope.resolve('cartEmailService');
 
     const handler = new RouteHandler(req, res, 'PUT', '/custom/cart/email', [
         'cart_id',
