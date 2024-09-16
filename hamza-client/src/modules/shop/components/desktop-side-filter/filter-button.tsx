@@ -5,12 +5,9 @@ import FilterIcon from '../../assets/filter-button.svg';
 import useStorePage from '@store/store-page/store-page';
 import useSideFilter from '@store/store-page/side-filter';
 
-// Define the props interface
-
 const FilterButton = () => {
     // Use Zustand shop to handle filter object
-    const { setReviewStarsSelect, setCategorySelect, setCategoryItem } =
-        useStorePage();
+    const { setCategorySelect, setCategoryItem } = useStorePage();
 
     const {
         selectCategoryStoreFilter,
@@ -22,10 +19,6 @@ const FilterButton = () => {
     return (
         <Button
             onClick={() => {
-                // if (reviewFilterSelect) {
-                //     setReviewStarsSelect(reviewFilterSelect);
-                // }
-
                 // Delete current settings
                 setCategorySelect([]);
 
@@ -33,6 +26,7 @@ const FilterButton = () => {
                 if (selectCategoryStoreFilter && categoryItemSideFilter) {
                     setCategorySelect(selectCategoryStoreFilter);
                     setCategoryItem(categoryItemSideFilter);
+                    // Reset side menu states
                     setSelectCategoryStoreFilter([]);
                     setCategoryItemSideFilter([]);
                 }
