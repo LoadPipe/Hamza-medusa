@@ -15,6 +15,9 @@ import ImageGalleryModal from './image-gallery/gallery-modal';
 interface PreviewGalleryProps {
     selectedVariantImage: string;
 }
+interface ImageType {
+    url: string;
+}
 
 const PreviewGallery: React.FC<PreviewGalleryProps> = ({
     selectedVariantImage,
@@ -27,7 +30,7 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
     useEffect(() => {
         // Construct the initial images array from product data
         let newImages =
-            productData?.images?.map((img: string) => img?.url) || [];
+            productData?.images?.map((img: ImageType) => img.url) || [];
 
         // Check if a selected variant image is provided and is different from the main image
         if (selectedVariantImage && selectedVariantImage !== newImages[0]) {
