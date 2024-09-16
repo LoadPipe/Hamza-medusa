@@ -3,33 +3,14 @@
 import React, { useEffect, useState } from 'react';
 import { Flex, Container, Box } from '@chakra-ui/react';
 // import ProductCardGroup from '@modules/products/components/product-card-group';
-import SideMenu from '@modules/shop/components/store-side-menu';
+import SideMenu from './components/desktop-side-filter/store-side-menu';
 import useStorePage from '@store/store-page/store-page';
-import useSideFilter from '@store/store-page/side-filter';
 import MobileFilter from '@modules/shop/components/mobile-filter/mobile-filter';
 import ProductCardGroup from '@modules/products/components/product-group-store';
 import StoreFilterDisplay from '@modules/shop/components/store-filter-display';
 import RangeSliderComponent from '@modules/shop/components/range-slider';
 
 const ShopTemplate = () => {
-    //ipad pro 1024px
-    //ipad air 820px (hide left)
-
-    const { categorySelect } = useStorePage();
-    const { reviewFilterSelect } = useSideFilter();
-
-    //TODO: make zustand state for default store "all"
-    const [vendorName, setVendorName] = useState('All');
-    useEffect(() => {
-        if (categorySelect) {
-            setVendorName(categorySelect);
-        }
-    }, [categorySelect]);
-
-    useEffect(() => {
-        console.log(`${reviewFilterSelect}`);
-    }, [reviewFilterSelect]);
-
     return (
         <Flex justifyContent={'center'}>
             <Flex

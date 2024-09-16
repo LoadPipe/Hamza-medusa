@@ -2,12 +2,10 @@
 
 import React from 'react';
 import { Box, Text, Heading, Flex, Skeleton } from '@chakra-ui/react';
-import CurrencyButton from './currency-button';
 import CategoryButton from './category-button';
-import currencies from '../data/currency-category';
-import ReviewButton from './review-button';
+import ReviewButton from '../review-button';
 import FilterButton from './filter-button';
-import RangeSlider from './range-slider';
+import RangeSlider from '../range-slider';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 

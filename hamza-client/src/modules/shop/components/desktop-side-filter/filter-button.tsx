@@ -1,7 +1,7 @@
 import { Button, Flex, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 import React from 'react';
-import FilterIcon from '../assets/filter-button.svg';
+import FilterIcon from '../../assets/filter-button.svg';
 import useStorePage from '@store/store-page/store-page';
 import useSideFilter from '@store/store-page/side-filter';
 

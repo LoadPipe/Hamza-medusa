@@ -4,8 +4,8 @@ import useStorePage from '@store/store-page/store-page';
 import FilterTag from './filter-tag';
 import ReviewStar from '../../../../public/images/products/review-star.svg';
 import { IoCloseOutline } from 'react-icons/io5';
-import categoryIcons from '../data/category-icons';
-import currencyIcons from '../data/crypto-currencies';
+import categoryIcons from '../../data/category-icons';
+import currencyIcons from '../../data/crypto-currencies';
 
 const FilterTags = () => {
     const {
