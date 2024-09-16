@@ -14,8 +14,11 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
     categoryName,
     url,
 }) => {
-    const { selectCategoryStoreFilter, setSelectCategoryStoreFilter } =
-        useSideFilter();
+    const {
+        selectCategoryStoreFilter,
+        setSelectCategoryStoreFilter,
+        setCategoryItemSideFilter,
+    } = useSideFilter();
 
     const toggleCategorySelection = (category: string) => {
         const currentCategorySelection = selectCategoryStoreFilter || [];
@@ -31,6 +34,12 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
                     ? updatedCategorySelection
                     : ['All']
             );
+
+            setCategoryItemSideFilter(
+                (prev) =>
+                    prev?.filter((item) => item.categoryName !== category) ||
+                    null
+            );
         } else {
             // If the category is not selected, we add both the category and type
             const updatedCategorySelection = currentCategorySelection.filter(
@@ -40,6 +49,11 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
             setSelectCategoryStoreFilter([
                 ...updatedCategorySelection,
                 category,
+            ]);
+
+            setCategoryItemSideFilter((prev) => [
+                ...(prev || []),
+                { categoryName: category, urlLink: url },
             ]);
         }
     };

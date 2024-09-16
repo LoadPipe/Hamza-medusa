@@ -9,10 +9,15 @@ import useSideFilter from '@store/store-page/side-filter';
 
 const FilterButton = () => {
     // Use Zustand shop to handle filter object
-    const { setReviewStarsSelect, setCategorySelect } = useStorePage();
+    const { setReviewStarsSelect, setCategorySelect, setCategoryItem } =
+        useStorePage();
 
-    const { selectCategoryStoreFilter, setSelectCategoryStoreFilter } =
-        useSideFilter();
+    const {
+        selectCategoryStoreFilter,
+        setSelectCategoryStoreFilter,
+        setCategoryItemSideFilter,
+        categoryItemSideFilter,
+    } = useSideFilter();
 
     return (
         <Button
@@ -25,9 +30,11 @@ const FilterButton = () => {
                 setCategorySelect([]);
 
                 // Update settings
-                if (selectCategoryStoreFilter) {
+                if (selectCategoryStoreFilter && categoryItemSideFilter) {
                     setCategorySelect(selectCategoryStoreFilter);
+                    setCategoryItem(categoryItemSideFilter);
                     setSelectCategoryStoreFilter([]);
+                    setCategoryItemSideFilter([]);
                 }
 
                 // Scroll to the top of the page

@@ -10,7 +10,6 @@ interface StoreState {
     categorySelect: string[] | null;
     categoryItem: CategoryItem[] | null;
     reviewStarsSelect: string | null;
-    // Update the setter types to accept a function or a direct value
     setCategorySelect: (
         items: string[] | ((prev: string[] | null) => string[] | null)
     ) => void;
@@ -25,9 +24,8 @@ interface StoreState {
 // Create the Zustand store
 const useStorePage = create<StoreState>((set) => ({
     categorySelect: ['All'], // Allow for multi-category selection
-    reviewStarsSelect: null,
     categoryItem: null, // Initial state for category name and URL link
-    // Allow functional updates for categorySelect
+    reviewStarsSelect: null,
     setCategorySelect: (
         items: string[] | ((prev: string[] | null) => string[] | null)
     ) =>
@@ -37,7 +35,6 @@ const useStorePage = create<StoreState>((set) => ({
                     ? items(state.categorySelect)
                     : items,
         })),
-
     setCategoryItem: (
         items:
             | CategoryItem[]
@@ -47,10 +44,7 @@ const useStorePage = create<StoreState>((set) => ({
             categoryItem:
                 typeof items === 'function' ? items(state.categoryItem) : items,
         })),
-
     setReviewStarsSelect: (stars: string | null) =>
         set({ reviewStarsSelect: stars }),
-
-    // Setter for categoryItem to handle category name and URL link
 }));
 export default useStorePage;
