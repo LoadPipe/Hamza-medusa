@@ -7,25 +7,22 @@ import useStorePage from '@store/store-page/store-page';
 
 interface CategoryButtonProps {
     categoryName: string;
-    categoryType: string;
     url: string;
 }
 
 const CategoryModalButton: React.FC<CategoryButtonProps> = ({
     categoryName,
-    categoryType,
+
     url,
 }) => {
     const {
-        modalCategoryFilterSelect,
-        setModalCategoryFilterSelect,
-        setModalCategoryTypeFilterSelect,
+        selectCategoryStoreModalFilter,
+        setSelectCategoryModalFilter,
+        setCategoryItemStoreModalFilter,
     } = useModalFilter();
 
-    const { categorySelect, setCategorySelect } = useStorePage();
-
-    const toggleCategorySelection = (category: string, type: string) => {
-        const currentCategorySelection = categorySelect || [];
+    const toggleCategorySelection = (category: string) => {
+        const currentCategorySelection = selectCategoryStoreModalFilter || [];
 
         // If the category is already selected, we remove it along with its type
         if (currentCategorySelection.includes(category)) {
@@ -33,10 +30,16 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                 (selectedCategory) => selectedCategory !== category
             );
 
-            setCategorySelect(
+            setSelectCategoryModalFilter(
                 updatedCategorySelection.length
                     ? updatedCategorySelection
                     : ['All']
+            );
+
+            setCategoryItemStoreModalFilter(
+                (prev) =>
+                    prev?.filter((item) => item.categoryName !== category) ||
+                    null
             );
         } else {
             // If the category is not selected, we add both the category and type
@@ -44,7 +47,15 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                 (cat) => cat !== 'All'
             );
 
-            setCategorySelect([...updatedCategorySelection, category]);
+            setSelectCategoryModalFilter([
+                ...updatedCategorySelection,
+                category,
+            ]);
+
+            setCategoryItemStoreModalFilter((prev) => [
+                ...(prev || []),
+                { categoryName: category, urlLink: url },
+            ]);
         }
     };
 
@@ -53,7 +64,7 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
             <Flex
                 borderColor={'secondary.davy.900'}
                 backgroundColor={
-                    categorySelect?.includes(categoryName)
+                    selectCategoryStoreModalFilter?.includes(categoryName)
                         ? 'white'
                         : 'transparent'
                 }
@@ -65,7 +76,9 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                 height={'42px'}
                 cursor="pointer"
                 color={
-                    categorySelect?.includes(categoryName) ? 'black' : 'white'
+                    selectCategoryStoreModalFilter?.includes(categoryName)
+                        ? 'black'
+                        : 'white'
                 }
                 padding="10px 24px"
                 transition="background 0.1s ease-in-out, color 0.1s ease-in-out"
@@ -73,9 +86,7 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                     background: 'white',
                     color: 'black',
                 }}
-                onClick={() =>
-                    toggleCategorySelection(categoryName, categoryType)
-                }
+                onClick={() => toggleCategorySelection(categoryName)}
             >
                 {url?.length && (
                     <Image

@@ -3,7 +3,7 @@
 import React from 'react';
 import { Flex } from '@chakra-ui/react';
 import SideMenu from './components/desktop-side-filter/store-side-menu';
-import MobileFilter from '@modules/shop/components/mobile-filter/mobile-filter';
+import MobileFilter from '@modules/shop/components/mobile-filter-modal/mobile-filter';
 import ProductCardGroup from '@modules/products/components/product-group-store';
 import StoreFilterDisplay from '@modules/shop/components/store-filter-display';
 
