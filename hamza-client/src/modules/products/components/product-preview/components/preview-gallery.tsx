@@ -26,14 +26,15 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
 
     useEffect(() => {
         // Construct the initial images array from product data
-        let newImages = productData?.images?.map((img) => img.url) || [];
+        let newImages =
+            productData?.images?.map((img: string) => img?.url) || [];
 
         // Check if a selected variant image is provided and is different from the main image
         if (selectedVariantImage && selectedVariantImage !== newImages[0]) {
             // Place the selected variant image at the start of the array
             newImages = [
                 selectedVariantImage,
-                ...newImages.filter((img, index) => index > 0),
+                ...newImages.filter((img: string, index: number) => index > 0),
             ];
         }
 

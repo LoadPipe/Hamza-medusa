@@ -424,7 +424,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 display={{ base: 'block', md: 'none' }}
                 mt="1rem"
             />
-            {/* Varients */}
+            {/* Variants */}
             <Flex width={'100%'} flexDirection={'column'} mt="1rem">
                 <div>
                     {productData &&
