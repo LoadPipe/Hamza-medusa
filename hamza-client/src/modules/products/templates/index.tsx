@@ -42,6 +42,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
 
     const [store, setStore] = useState('');
     const [icon, setIcon] = useState('');
+    const [selectedVariantImage, setSelectedVariantImage] = useState('');
 
     // Only update product data when `product` changes
     useEffect(() => {
@@ -136,7 +137,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                 <SearchBar />
             </Flex>
             <Flex mt="2rem" mb={{ base: '-1rem', md: '0' }}>
-                <PreviewGallery />
+                <PreviewGallery selectedVariantImage={selectedVariantImage} />
             </Flex>
             <Flex
                 maxWidth="1280px"
@@ -165,7 +166,10 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                     order={{ base: 1, md: 2 }}
                     alignSelf="flex-start"
                 >
-                    <PreviewCheckout productId={product.id as string} />
+                    <PreviewCheckout
+                        setSelectedVariantImage={setSelectedVariantImage}
+                        productId={product.id as string}
+                    />
                 </Flex>
             </Flex>
             <StoreBanner store={store} icon={icon} />
