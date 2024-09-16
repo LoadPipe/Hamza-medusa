@@ -14,12 +14,14 @@ import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import ShippingMethodRepository from '@medusajs/medusa/dist/repositories/shipping-method';
 import ShippingOptionRepository from '@medusajs/medusa/dist/repositories/shipping-option';
+import { CartEmailRepository } from 'src/repositories/cart-email';
 
 export default class CartService extends MedusaCartService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
 
     protected readonly customerRepository_: typeof CustomerRepository;
     protected readonly lineItemRepository_: typeof LineItemRepository;
+    protected readonly cartEmailRepository_: typeof CartEmailRepository;
     protected readonly shippingOptionRepository_: typeof ShippingOptionRepository;
     protected readonly priceConverter: PriceConverter;
     protected readonly logger: ILogger;
@@ -29,6 +31,7 @@ export default class CartService extends MedusaCartService {
         this.customerRepository_ = container.customerRepository;
         this.lineItemRepository_ = container.lineItemRepository;
         this.shippingOptionRepository_ = container.shippingOptionRepository;
+        this.cartEmailRepository_ = container.cartEmailRepository;
         this.logger = createLogger(container, 'CartService');
         this.priceConverter = new PriceConverter(
             this.logger,
@@ -71,6 +74,10 @@ export default class CartService extends MedusaCartService {
                 );
             }
         }
+
+        const cartEmail = await this.cartEmailRepository_.findOne({ where: { id: cartId } });
+        if (cartEmail)
+            cart.email = cartEmail.email_address;
 
         return cart;
     }

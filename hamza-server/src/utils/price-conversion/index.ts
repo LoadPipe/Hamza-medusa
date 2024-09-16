@@ -166,7 +166,7 @@ export class PriceConverter {
                     rate: rate,
                 });
 
-                this.logger?.info(
+                this.logger?.debug(
                     `Saved rate ${rate} for ${price.baseCurrency} to ${price.toCurrency} in DB`
                 );
             }
