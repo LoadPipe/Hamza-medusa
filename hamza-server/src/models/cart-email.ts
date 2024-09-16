@@ -1,12 +1,10 @@
-import { BeforeInsert, Column, Entity, PrimaryColumn } from 'typeorm';
-import { SoftDeletableEntity } from '@medusajs/medusa';
-import { generateEntityId } from '@medusajs/medusa/dist/utils';
+import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
 
-@Entity()
-export class CartEmail extends SoftDeletableEntity {
+@Entity('cart_email')
+export class CartEmail extends BaseEntity {
 
     @PrimaryColumn()
-    cart_id: string;
+    id: string;
 
     @Column({ name: 'email_address' })
     email_address: string;

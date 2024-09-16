@@ -31,6 +31,7 @@ export default class CartService extends MedusaCartService {
         this.customerRepository_ = container.customerRepository;
         this.lineItemRepository_ = container.lineItemRepository;
         this.shippingOptionRepository_ = container.shippingOptionRepository;
+        this.cartEmailRepository_ = container.cartEmailRepository;
         this.logger = createLogger(container, 'CartService');
         this.priceConverter = new PriceConverter(
             this.logger,
@@ -74,7 +75,7 @@ export default class CartService extends MedusaCartService {
             }
         }
 
-        const cartEmail = await this.cartEmailRepository_.findOne({ where: {} });
+        const cartEmail = await this.cartEmailRepository_.findOne({ where: { id: cartId } });
         if (cartEmail)
             cart.email = cartEmail.email_address;
 
