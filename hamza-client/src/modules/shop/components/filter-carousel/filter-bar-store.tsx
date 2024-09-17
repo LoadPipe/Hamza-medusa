@@ -35,19 +35,22 @@ const FilterBarStore = () => {
               metadata: category.metadata,
           }))
         : [];
-    // Function to handle moving to the next category
+
     const toggleShowMore = () => {
+        // Calculate the maximum allowed index (3 more than the length of the array)
+        const maxIndex = uniqueCategories.length + 3;
+
         // Increment index by 1
         let nextIndex = startIdx + 1;
 
-        // Wrap around when we reach the end of the categories
-        if (nextIndex >= uniqueCategories.length) {
-            nextIndex = 0;
+        // Stop incrementing if the next index is equal to or greater than the max index
+        if (nextIndex >= maxIndex) {
+            return; // Do nothing
         }
 
+        // Otherwise, update the index
         setStartIdx(nextIndex);
     };
-
     // Logic to handle the scrolling. Visible categories will shift based on `startIdx`.
     const visibleCategories = uniqueCategories
         .slice(startIdx)
