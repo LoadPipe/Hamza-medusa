@@ -7,6 +7,7 @@ import {
     Store,
     ProductStatus,
 } from '@medusajs/medusa';
+import axios from 'axios';
 import {
     CreateProductInput,
     CreateProductProductVariantPriceInput,
@@ -121,6 +122,54 @@ class ProductService extends MedusaProductService {
             );
         } catch (e) {
             this.logger.error('Error updating variant prices:', e);
+        }
+    }
+
+    // get all products from product table
+    async reindexProducts() {
+        try {
+            // Fetch all products
+            const products = await this.productRepository_.find();
+
+            // Handle empty product list
+            if (products.length === 0) {
+                this.logger.info('No products found to index.');
+                return;
+            }
+
+            const cleanProducts = products
+                .filter((product) => product.status !== 'draft')
+                .map((product) => ({
+                    id: product.id,
+                    title: product.title,
+                    description: product.description.replace(/<[^>]*>/g, ''), // Strip HTML
+                    thumbnail: product.thumbnail,
+                    handle: product.handle,
+                    status: product.status, // Include status if not a draft
+                }));
+
+            // Prepare the HTTP request headers
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: 'Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj',
+                },
+            };
+
+            // URL of the Meilisearch API
+            const url = 'http://localhost:7700/indexes/products/documents';
+
+            console.log(
+                `Sending ${JSON.stringify(cleanProducts)} products to be indexed.`
+            );
+
+            // Send products to be indexed
+            await axios.post(url, JSON.stringify(cleanProducts), config);
+            this.logger.info(
+                `Reindexed ${cleanProducts.length} products successfully.`
+            );
+        } catch (e) {
+            this.logger.error('Error reindexing products:', e);
         }
     }
 

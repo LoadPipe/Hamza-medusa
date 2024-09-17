@@ -70,14 +70,64 @@ Content-Type: application/json
   "product_id": "prod_01HW241PKFDCDGP55DKH0A5A85"
 }
 
-### MeiliSearch Search
-GET http://localhost:7700/indexes?limit=3
+### MEILIESEARCH USEFUL API CALLS: https://www.meilisearch.com/docs/reference/api/indexes#create-an-index
+
+### MeiliSearch List All Indexes
+GET http://localhost:7700/indexes
+Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
+
+### MeiliSearch Get Product Index
+GET http://localhost:7700/indexes/products
 Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
 
 
 ### MeilieSearch Delete All by uid
-DELETE http://localhost:7700/indexes/products/documents
+DELETE http://localhost:7700/indexes/product
 Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
+
+### MeilieSearch Update the Documents
+POST http://localhost:7700/indexes/products/documents/fetch
+Content-Type: application/json
+Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
+
+{
+  "status": "draft"
+}
+
+### Update MeilieSearch Documents
+POST http://localhost:7700/indexes/products/documents
+Content-Type: application/json
+Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
+
+{
+
+}
+
+
+### Get All Products
+GET http://localhost:9000/custom/meilisearch
+Content-Type: application/json
+
+
+### MeilieSearch Create the index
+POST http://localhost:7700/indexes
+Content-Type: application/json
+Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
+
+{
+  "uid": "products",
+  "primaryKey": "id"
+}
+
+### MeilieSearch Update an Index
+PATCH http://localhost:7700/indexes/products
+Content-Type: application/json
+Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
+
+{
+  "uid": "products",
+  "primaryKey": "id"
+}
 
 
 ### Product Variant Response??
