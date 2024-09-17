@@ -49,12 +49,7 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
                     Product Details
                 </Text>
             </Flex>
-            <Box
-                mt="1rem"
-                maxHeight={{ base: '170px', md: '400px' }}
-                overflow={'hidden'}
-                overflowY={'scroll'}
-            >
+            <Box mt="1rem" minHeight={{ base: '170px', md: '400px' }}>
                 {items && items.length > 0 && region ? (
                     items
                         .sort((a, b) => {
