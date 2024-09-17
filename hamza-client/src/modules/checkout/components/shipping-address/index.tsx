@@ -126,7 +126,7 @@ const ShippingAddress = ({
                     <Input
                         label="Aparment, suite, etc"
                         name="shipping_address.address_2"
-                        autoComplete="address-line1"
+                        autoComplete="address-line2"
                         value={formData['shipping_address.address_2']}
                         onChange={handleChange}
                         required

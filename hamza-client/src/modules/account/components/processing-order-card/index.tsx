@@ -156,8 +156,9 @@ const ProcessingOrderCard = ({
                             Address
                         </Text>
                         <Text color={'white'} fontSize="16px">
-                            {address.address_1} {address.city}{' '}
-                            {address.province} {address.postal_code}
+                            {address.address_1} {address.address_2}{' '}
+                            {address.city} {address.province}{' '}
+                            {address.postal_code}
                         </Text>
                     </Box>
                 </Flex>
