@@ -2,9 +2,9 @@ import {
     SecretsManagerClient,
     GetSecretValueCommand,
 } from '@aws-sdk/client-secrets-manager';
+import { MedusaContainer } from '@medusajs/medusa';
 
-export default async function () {
-    console.log("HOWDY DOOOO")
+export default async (container: MedusaContainer): Promise<void> => {
     const secret_name = 'hamza-server-env-variables';
 
     const client = new SecretsManagerClient({
@@ -23,6 +23,7 @@ export default async function () {
     } catch (error) {
         // For a list of exceptions thrown, see
         // https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
+        console.log(error);
         throw error;
     }
 
@@ -32,4 +33,4 @@ export default async function () {
     for (let key of secretData) {
         process.env[key] = secretData[key];
     }
-}
+};
