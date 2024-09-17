@@ -9,6 +9,7 @@ import { Payment } from '../models/payment';
 import { Order } from '../models/order';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import { getAmountPaidForOrder, verifyPaymentForOrder } from '../web3';
+import { getCurrencyPrecision } from 'src/currency.config';
 
 export default class PaymentVerificationService extends TransactionBaseService {
     static LIFE_TIME = Lifetime.SCOPED;
@@ -49,8 +50,13 @@ export default class PaymentVerificationService extends TransactionBaseService {
         for (let payment of payments) {
             this.logger.info(`verifying payment ${payment.id} for order ${order.id}`);
 
+            //compare amount paid to amount expected 
             paidAmount += await getAmountPaidForOrder(payment.chain_id, order.id, payment.amount);
-            totalExpected += BigInt(payment.amount);
+            const currencyCode: string = payment.currency_code;
+
+            //convert to correct number of decimals
+            const precision = getCurrencyPrecision(currencyCode, payment.chain_id);
+            totalExpected += BigInt(payment.amount * Math.pow(10, precision.native - precision.db));
         }
 
         //update payment_status of order based on paid or not
