@@ -27,6 +27,7 @@ export default class PaymentVerificationService extends TransactionBaseService {
     async verifyPayments(order_id: string = null): Promise<{ order: Order, payment: Payment }[]> {
         let output: { order: Order, payment: Payment }[] = [];
         let orders = await this.orderService_.getOrdersWithUnverifiedPayments();
+        console.log(orders.map(o => o.id));
 
         if (order_id)
             orders = orders.filter(o => o.id == order_id);
@@ -45,13 +46,13 @@ export default class PaymentVerificationService extends TransactionBaseService {
         const payments: Payment[] = order.payments;
 
         //verify each payment of order
-        let paidAmount: bigint = BigInt(0);
+        let totalPaid: bigint = BigInt(0);
         let totalExpected: bigint = BigInt(0);
         for (let payment of payments) {
             this.logger.info(`verifying payment ${payment.id} for order ${order.id}`);
 
             //compare amount paid to amount expected 
-            paidAmount += await getAmountPaidForOrder(payment.chain_id, order.id, payment.amount);
+            totalPaid += await getAmountPaidForOrder(payment.chain_id, order.id, payment.amount);
             const currencyCode: string = payment.currency_code;
 
             //convert to correct number of decimals
@@ -59,8 +60,11 @@ export default class PaymentVerificationService extends TransactionBaseService {
             totalExpected += BigInt(payment.amount * Math.pow(10, precision.native - precision.db));
         }
 
+        this.logger.debug(`expected:, ${totalExpected}`);
+        this.logger.debug(`paid:', ${totalPaid}`);
+
         //update payment_status of order based on paid or not
-        allPaid = paidAmount >= totalExpected;
+        allPaid = totalPaid >= totalExpected;
         const paymentStatus: PaymentStatus = allPaid ? PaymentStatus.CAPTURED : PaymentStatus.NOT_PAID;
 
         //save the order

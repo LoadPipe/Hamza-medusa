@@ -14,7 +14,7 @@ export async function getAmountPaidForOrder(chainId: number, orderId: string, am
 
     let total: bigint = BigInt(0);
     if (events.length) {
-        events.map(e => total = total + BigInt(e.args.amount.toString()));
+        events.map(e => total = total + BigInt(e.amount.toString()));
     }
 
     return (BigInt(total));
