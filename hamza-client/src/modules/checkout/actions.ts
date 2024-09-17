@@ -122,7 +122,7 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
             first_name: formData.get('shipping_address.first_name'),
             last_name: formData.get('shipping_address.last_name'),
             address_1: formData.get('shipping_address.address_1'),
-            address_2: '',
+            address_2: formData.get('shipping_address.address_2'),
             company: formData.get('shipping_address.company'),
             postal_code: formData.get('shipping_address.postal_code'),
             city: formData.get('shipping_address.city'),
@@ -140,8 +140,7 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
 
     try {
         await updateCart(cartId, data);
-        if (data.email)
-            await setCartEmail(cartId, data.email);
+        if (data.email) await setCartEmail(cartId, data.email);
         revalidateTag('cart');
     } catch (error: any) {
         return error.toString();
@@ -216,7 +215,9 @@ export async function placeOrder() {
             ? 'us'
             : cart.data.shipping_address?.country_code?.toLowerCase();
         cookies().set('_medusa_cart_id', '', { maxAge: -1 });
-        redirect(`/${countryCode}/order/confirmed/${cart?.data.id}?cart=${cartId}`);
+        redirect(
+            `/${countryCode}/order/confirmed/${cart?.data.id}?cart=${cartId}`
+        );
     }
 
     return cart;
