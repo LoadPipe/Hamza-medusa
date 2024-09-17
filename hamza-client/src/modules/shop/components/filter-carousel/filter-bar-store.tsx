@@ -35,42 +35,23 @@ const FilterBarStore = () => {
               metadata: category.metadata,
           }))
         : [];
+    // Function to handle moving to the next category
+    const toggleShowMore = () => {
+        // Increment index by 1
+        let nextIndex = startIdx + 1;
 
-    // Show more logic for categories (next or previous)
-    const toggleShowMore = (direction: 'next' | 'prev') => {
-        const isAtStart = startIdx === 0;
-        const isAtEnd = startIdx + 6 >= uniqueCategories.length;
-
-        let nextIndex;
-
-        if (direction === 'next') {
-            nextIndex = isAtEnd ? 0 : startIdx + 1;
-            setShowLeftChevron(true); // Show left chevron when moving to next
-        } else {
-            nextIndex = isAtStart ? uniqueCategories.length - 1 : startIdx - 1;
-            if (nextIndex === 0) {
-                setShowLeftChevron(false); // Hide left chevron when back to the start
-            }
+        // Wrap around when we reach the end of the categories
+        if (nextIndex >= uniqueCategories.length) {
+            nextIndex = 0;
         }
 
         setStartIdx(nextIndex);
     };
 
-    // Logic to display only 6 categories at a time
-    let visibleCategories = uniqueCategories
-        .slice(startIdx, startIdx + 6)
-        .concat(
-            uniqueCategories.slice(
-                0,
-                Math.max(0, 6 - (uniqueCategories.length - startIdx))
-            )
-        );
-
-    if (uniqueCategories.length === 1)
-        visibleCategories = [visibleCategories[0]];
-
-    // Determine if the user is at the end to toggle the chevron direction
-    const isAtEnd = startIdx + 6 >= uniqueCategories.length;
+    // Logic to handle the scrolling. Visible categories will shift based on `startIdx`.
+    const visibleCategories = uniqueCategories
+        .slice(startIdx)
+        .concat(uniqueCategories.slice(0, startIdx));
 
     const skeletons = Array(7)
         .fill(null)
@@ -109,7 +90,7 @@ const FilterBarStore = () => {
                     />
                     {isLoading
                         ? skeletons // Show skeletons while loading
-                        : uniqueCategories.map((category, index) => (
+                        : visibleCategories.map((category, index) => (
                               <CategoryTopButton
                                   key={index}
                                   categoryName={category.name}
@@ -122,7 +103,7 @@ const FilterBarStore = () => {
                     height={{ base: '42px', md: '63px' }}
                     justifyContent={'center'}
                     alignItems={'center'}
-                    onClick={() => toggleShowMore('next')}
+                    onClick={toggleShowMore}
                     cursor="pointer"
                     position="absolute"
                     right="0"
