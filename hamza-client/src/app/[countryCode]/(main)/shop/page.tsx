@@ -26,7 +26,7 @@ export default async function ShopPage({ searchParams, params }: Params) {
         <Box
             style={{
                 background:
-                    'linear-gradient(to bottom, #020202 10vh, #2C272D 50vh)',
+                    'linear-gradient(to bottom, #020202 20vh, #2C272D 70vh)',
             }}
         >
             <ShopTemplate />{' '}

@@ -109,7 +109,7 @@ const FilterBarStore = () => {
                     position="absolute"
                     right="0"
                     top="0"
-                    bg="linear-gradient(90deg, rgba(5, 5, 5, 0) 0%, #050505 30%)"
+                    bg="linear-gradient(90deg, rgba(2, 2, 2, 0) 0%, #020202 30%)"
                     userSelect={'none'}
                 >
                     <Flex
