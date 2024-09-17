@@ -8,13 +8,14 @@ import {
     ModalContent,
     ModalBody,
     Text,
+    Skeleton,
 } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import AccountMenu from '@modules/layout/templates/nav-4/menu/account-menu';
 import { useSwitchNetwork } from 'wagmi';
 import {
     getAllowedChainsFromConfig,
-    getBlockchainNetworkName
+    getBlockchainNetworkName,
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 
 export const WalletConnectButton = () => {
@@ -51,7 +52,6 @@ export const WalletConnectButton = () => {
                         {...(!ready && {
                             'aria-hidden': true,
                             style: {
-                                opacity: 0,
                                 pointerEvents: 'none',
                                 userSelect: 'none',
                             },
@@ -74,13 +74,16 @@ export const WalletConnectButton = () => {
                             }
 
                             //if (chain && chain.unsupported) {
-                            if (chain && chain.id != getAllowedChainsFromConfig()[0]) {
+                            if (
+                                chain &&
+                                chain.id != getAllowedChainsFromConfig()[0]
+                            ) {
                                 console.log(chain);
                                 console.log('Network id is', switchNetworkId);
                                 return (
                                     <Modal
                                         isOpen={true}
-                                        onClose={() => { }}
+                                        onClose={() => {}}
                                         isCentered
                                     >
                                         <ModalOverlay />
