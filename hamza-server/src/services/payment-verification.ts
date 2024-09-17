@@ -9,7 +9,7 @@ import { Payment } from '../models/payment';
 import { Order } from '../models/order';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import { getAmountPaidForOrder, verifyPaymentForOrder } from '../web3';
-import { getCurrencyPrecision } from 'src/currency.config';
+import { getCurrencyPrecision } from '../currency.config';
 
 export default class PaymentVerificationService extends TransactionBaseService {
     static LIFE_TIME = Lifetime.SCOPED;
