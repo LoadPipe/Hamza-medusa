@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
 import ShopTemplate from 'modules/shop';
+import { Box } from '@chakra-ui/react';
 
 export const metadata: Metadata = {
     title: 'Store',
@@ -21,7 +22,16 @@ type Params = {
 export default async function ShopPage({ searchParams, params }: Params) {
     const { sortBy, page } = searchParams;
 
-    return <ShopTemplate />;
+    return (
+        <Box
+            style={{
+                background:
+                    'linear-gradient(to bottom, #020202 10vh, #2C272D 50vh)',
+            }}
+        >
+            <ShopTemplate />{' '}
+        </Box>
+    );
 }
 
 // import { Metadata } from 'next';

@@ -15,7 +15,6 @@ interface Category {
 }
 const FilterBarStore = () => {
     const [startIdx, setStartIdx] = useState(0); // State to keep track of the starting index of visible categories
-    const [showLeftChevron, setShowLeftChevron] = useState(false); // Track if left chevron should be shown
 
     // Fetching categories data
     const { data, isLoading } = useQuery<Category[]>(
@@ -37,20 +36,19 @@ const FilterBarStore = () => {
         : [];
 
     const toggleShowMore = () => {
-        // Calculate the maximum allowed index (3 more than the length of the array)
-        const maxIndex = uniqueCategories.length + 3;
+        // Calculate the remaining categories after the current start index
+        const remainingCategories = uniqueCategories.length - startIdx;
 
-        // Increment index by 1
-        let nextIndex = startIdx + 1;
+        // If fewer than 3 categories are left, increase by the remaining count, otherwise increase by 3
+        const increment = remainingCategories >= 3 ? 3 : remainingCategories;
 
-        // Stop incrementing if the next index is equal to or greater than the max index
-        if (nextIndex >= maxIndex) {
-            return; // Do nothing
-        }
+        // Calculate the new index
+        const nextIndex = startIdx + increment;
 
-        // Otherwise, update the index
-        setStartIdx(nextIndex);
+        // If the nextIndex exceeds the array length, loop back to the start
+        setStartIdx(nextIndex >= uniqueCategories.length ? 0 : nextIndex);
     };
+
     // Logic to handle the scrolling. Visible categories will shift based on `startIdx`.
     const visibleCategories = uniqueCategories
         .slice(startIdx)
@@ -111,13 +109,12 @@ const FilterBarStore = () => {
                     position="absolute"
                     right="0"
                     top="0"
-                    bg="linear-gradient(90deg, rgba(44, 39, 45, 0) 0%, #0a090b 75%)"
+                    bg="linear-gradient(90deg, rgba(5, 5, 5, 0) 0%, #050505 30%)"
                     userSelect={'none'}
                 >
                     <Flex
                         ml="auto"
                         w="35px"
-                        mr="0.75rem"
                         height={'100%'}
                         justifyContent={'center'}
                         alignItems={'center'}
