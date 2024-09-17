@@ -19,6 +19,14 @@ const CategoryTopButton: React.FC<CategoryButtonProps> = ({
     const toggleCategorySelection = (category: string) => {
         const currentCategorySelection = categorySelect || [];
 
+        // Check if the selected category is 'All'
+        if (category === 'All') {
+            // Reset category selection to only include 'All'
+            setCategorySelect(['All']);
+            // Reset category items to an empty array
+            setCategoryItem([]);
+            return; // Exit the function to prevent further logic
+        }
         // If the category is already selected, we remove it along with its type
         if (currentCategorySelection.includes(category)) {
             const updatedCategorySelection = currentCategorySelection.filter(
@@ -31,7 +39,6 @@ const CategoryTopButton: React.FC<CategoryButtonProps> = ({
                     : ['All']
             );
 
-            // Update categoryItem as well (removes it)
             setCategoryItem(
                 (prev) =>
                     prev?.filter((item) => item.categoryName !== category) ||

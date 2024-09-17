@@ -609,9 +609,7 @@ class ProductService extends MedusaProductService {
 
             // Step 5: Filter products by status 'published' and valid store_id
             let filteredProducts = products.filter(
-                (product) =>
-                    product.status === ProductStatus.PUBLISHED &&
-                    product.store_id
+                (product) => product.status === 'draft' && product.store_id
             );
 
             // Step 6: filter out duplicates
@@ -651,17 +649,17 @@ class ProductService extends MedusaProductService {
 
             let products: Product[] = [];
 
-            if (normalizedCategoryNames[0] === 'all') {
-                const productCategories =
-                    await this.productCategoryRepository_.find({
-                        select: ['id', 'name', 'metadata'],
-                        relations: [
-                            'products',
-                            'products.variants.prices',
-                            'products.reviews',
-                        ],
-                    });
+            const productCategories =
+                await this.productCategoryRepository_.find({
+                    select: ['id', 'name', 'metadata'],
+                    relations: [
+                        'products',
+                        'products.variants.prices',
+                        'products.reviews',
+                    ],
+                });
 
+            if (normalizedCategoryNames[0] === 'all') {
                 //remove products that aren't published
                 products = productCategories.flatMap((cat) =>
                     cat.products.filter(
@@ -673,7 +671,8 @@ class ProductService extends MedusaProductService {
                 if (upperPrice !== 0 && lowerPrice !== 0) {
                     // Filter products by price using upper and lower price limits
                     products = products.filter((product) => {
-                        const price = product.variants[0]?.prices[0]?.amount ?? 0;
+                        const price =
+                            product.variants[0]?.prices[0]?.amount ?? 0;
                         return price >= lowerPrice && price <= upperPrice;
                     });
 
@@ -684,31 +683,25 @@ class ProductService extends MedusaProductService {
                         return priceA - priceB; // Ascending order
                     });
                 }
-            }
-            else {
-
-                const productCategories =
-                    await this.productCategoryRepository_.find({
-                        select: ['id', 'name', 'metadata'],
-                        relations: [
-                            'products',
-                            'products.variants.prices',
-                            'products.reviews',
-                        ],
-                    });
-
+            } else {
                 // Filter the categories based on the provided category names
                 const filteredCategories = productCategories.filter((cat) =>
                     normalizedCategoryNames.includes(cat.name.toLowerCase())
                 );
 
                 // Gather all the products into a single list
-                products = filteredCategories.flatMap((cat) => cat.products);
+                products = filteredCategories.flatMap((cat) =>
+                    cat.products.filter(
+                        (p) =>
+                            p.status === ProductStatus.PUBLISHED && p.store_id
+                    )
+                );
 
                 if (upperPrice !== 0 && lowerPrice !== 0) {
                     // Filter products by price using upper and lower price limits
                     products = products.filter((product) => {
-                        const price = product.variants[0]?.prices[0]?.amount ?? 0;
+                        const price =
+                            product.variants[0]?.prices[0]?.amount ?? 0;
                         return price >= lowerPrice && price <= upperPrice;
                     });
 
@@ -830,8 +823,9 @@ class ProductService extends MedusaProductService {
     }
 
     private filterDuplicatesById<T extends { id: string }>(items: T[]): T[] {
-        return items.filter((i, index, array) =>
-            index === array.findIndex((ii) => ii.id === i.id)
+        return items.filter(
+            (i, index, array) =>
+                index === array.findIndex((ii) => ii.id === i.id)
         );
     }
 }
