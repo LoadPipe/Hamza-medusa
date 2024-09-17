@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Flex, Box, Skeleton } from '@chakra-ui/react';
+import { Flex, Box, Skeleton, Badge } from '@chakra-ui/react';
 import CategoryTopButton from './category-top-button';
 import { CgChevronRight } from 'react-icons/cg';
 import useVendors from '@modules/home/components/search-and-filter-panel/data/data';
@@ -111,16 +111,23 @@ const FilterBarStore = () => {
                     top="0"
                     bg="linear-gradient(90deg, rgba(2, 2, 2, 0) 0%, #020202 30%)"
                     userSelect={'none'}
+                    role="group"
                 >
                     <Flex
                         ml="auto"
-                        w="35px"
-                        height={'100%'}
+                        w="60px"
+                        h="60px" // Set height and width for the circle effect
                         justifyContent={'center'}
                         alignItems={'center'}
                         alignSelf={'center'}
+                        borderRadius="50%" // Make it a circle
+                        transition="background-color 0.3s, border 0.3s" // Smooth transition for background and border
+                        _hover={{
+                            backgroundColor: '#272727',
+                        }}
+                        role="group"
                     >
-                        <CgChevronRight size="4rem" color="white" />
+                        <CgChevronRight size="2.5rem" color="white" />
                     </Flex>
                 </Flex>
             </Flex>
