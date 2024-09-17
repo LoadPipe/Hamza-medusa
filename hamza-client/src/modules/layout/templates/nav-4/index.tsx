@@ -94,11 +94,9 @@ export default async function Nav() {
 
                     <NavSearchBar />
 
-                    <WalletConnectButton />
+                    <MainMenu />
 
-                    <Flex ml="1rem">
-                        <MainMenu />
-                    </Flex>
+                    <WalletConnectButton />
 
                     <Flex ml="1rem" flexDirection={'row'} alignItems={'center'}>
                         <Flex alignSelf={'center'}>
