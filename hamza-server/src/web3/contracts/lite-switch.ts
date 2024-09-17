@@ -18,7 +18,7 @@ export class LiteSwitchClient {
         chainId: number
     ) {
         this.contractAddress = getContractAddress('lite_switch', chainId);
-        this.provider = new ethers.JsonRpcProvider('https://eth-sepolia.g.alchemy.com/v2/demo'); //TODO don't hard-code
+        this.provider = new ethers.JsonRpcProvider(process.env.ETHERS_RPC_PROVIDER_URL);
 
         this.switchClient = new ethers.Contract(
             this.contractAddress,
@@ -31,11 +31,8 @@ export class LiteSwitchClient {
         const orderIdHash = ethers.keccak256(ethers.toUtf8Bytes(orderId));
         const eventFilter = this.switchClient.filters.PaymentReceived();
 
-        const startingBlock = 0x6529B4;//TODO don't hard-code
-
+        const startingBlock = process.env.TX_VERIFY_START_BLOCK;
         const events = await this.switchClient.queryFilter(eventFilter, startingBlock, "latest");
-
-        console.log(events[events.length - 1]);
 
         return events.map(e => {
             const event = e as any;
