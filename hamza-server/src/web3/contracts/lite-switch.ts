@@ -1,17 +1,13 @@
 import { BigNumberish, ethers } from 'ethers';
 import { liteSwitchAbi } from '../abi/lite-switch-abi';
-import { createPublicClient, http, PublicClient } from 'viem';
-import * as chains from 'viem/chains';
 import { getContractAddress } from '../../contracts.config';
 
-function getChainById(chainId: number) {
-    const allChains = Object.values(chains);
-    return allChains.find(chain => chain.id === chainId) || null;
-}
 
 export class LiteSwitchClient {
     contractAddress: `0x${string}`;
-    client: any;
+    switchClient: ethers.Contract;
+    provider: ethers.Provider;
+    signer: ethers.Signer;
     tokens: { [id: string]: ethers.Contract } = {};
 
     /**
@@ -22,27 +18,28 @@ export class LiteSwitchClient {
         chainId: number
     ) {
         this.contractAddress = getContractAddress('lite_switch', chainId);
-        console.log(this.contractAddress);
+        this.provider = new ethers.JsonRpcProvider(process.env.ETHERS_RPC_PROVIDER_URL);
 
-        this.client = createPublicClient({
-            chain: chains[getChainById(chainId).name],
-            transport: http(),
-        });
+        this.switchClient = new ethers.Contract(
+            this.contractAddress,
+            liteSwitchAbi,
+            this.provider
+        );
     }
 
-    async findPaymentEvents(orderId: string): Promise<any[]> {
-        return await this.findEvents('PaymentReceived', { orderId });
-    }
+    async findPaymentEvents(orderId): Promise<{ orderId: string, amount: BigNumberish }[]> {
+        const orderIdHash = ethers.keccak256(ethers.toUtf8Bytes(orderId));
+        const eventFilter = this.switchClient.filters.PaymentReceived();
 
-    async findEvents(eventName: string, args: any = null): Promise<any[]> {
-        const events = await this.client.getContractEvents({
-            address: this.contractAddress,
-            abi: liteSwitchAbi,
-            fromBlock: '0x6529B4', //TODO: get actual block starting block (contract creation block)
-            eventName: eventName,
-            args,
-        });
+        const startingBlock = process.env.TX_VERIFY_START_BLOCK;
+        const events = await this.switchClient.queryFilter(eventFilter, startingBlock, "latest");
 
-        return events;
+        return events.map(e => {
+            const event = e as any;
+            return {
+                orderId: event.args[0].hash,
+                amount: event.args[4]
+            }
+        }).filter(e => e.orderId === orderIdHash);
     }
 }

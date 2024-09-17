@@ -9,6 +9,7 @@ import { Payment } from '../models/payment';
 import { Order } from '../models/order';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import { getAmountPaidForOrder, verifyPaymentForOrder } from '../web3';
+import { getCurrencyPrecision } from '../currency.config';
 
 export default class PaymentVerificationService extends TransactionBaseService {
     static LIFE_TIME = Lifetime.SCOPED;
@@ -26,6 +27,7 @@ export default class PaymentVerificationService extends TransactionBaseService {
     async verifyPayments(order_id: string = null): Promise<{ order: Order, payment: Payment }[]> {
         let output: { order: Order, payment: Payment }[] = [];
         let orders = await this.orderService_.getOrdersWithUnverifiedPayments();
+        console.log(orders.map(o => o.id));
 
         if (order_id)
             orders = orders.filter(o => o.id == order_id);
@@ -44,17 +46,25 @@ export default class PaymentVerificationService extends TransactionBaseService {
         const payments: Payment[] = order.payments;
 
         //verify each payment of order
-        let paidAmount: bigint = BigInt(0);
+        let totalPaid: bigint = BigInt(0);
         let totalExpected: bigint = BigInt(0);
         for (let payment of payments) {
             this.logger.info(`verifying payment ${payment.id} for order ${order.id}`);
 
-            paidAmount += await getAmountPaidForOrder(payment.chain_id, order.id, payment.amount);
-            totalExpected += BigInt(payment.amount);
+            //compare amount paid to amount expected 
+            totalPaid += await getAmountPaidForOrder(payment.chain_id, order.id, payment.amount);
+            const currencyCode: string = payment.currency_code;
+
+            //convert to correct number of decimals
+            const precision = getCurrencyPrecision(currencyCode, payment.chain_id);
+            totalExpected += BigInt(payment.amount * Math.pow(10, precision.native - precision.db));
         }
 
+        this.logger.debug(`expected:, ${totalExpected}`);
+        this.logger.debug(`paid:', ${totalPaid}`);
+
         //update payment_status of order based on paid or not
-        allPaid = paidAmount >= totalExpected;
+        allPaid = totalPaid >= totalExpected;
         const paymentStatus: PaymentStatus = allPaid ? PaymentStatus.CAPTURED : PaymentStatus.NOT_PAID;
 
         //save the order
