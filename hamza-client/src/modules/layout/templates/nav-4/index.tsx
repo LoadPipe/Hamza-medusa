@@ -94,9 +94,7 @@ export default async function Nav() {
 
                     <NavSearchBar />
 
-                    <Flex ml="1rem">
-                        <MainMenu />
-                    </Flex>
+                    <MainMenu />
 
                     <WalletConnectButton />
 
