@@ -158,7 +158,7 @@ const FilterBar = () => {
                     height={{ base: '42px', md: '63px' }}
                     justifyContent={'center'}
                     alignItems={'center'}
-                    onClick={() => toggleShowMore()}
+                    onClick={toggleShowMore}
                     cursor="pointer"
                     position="absolute"
                     right="0"
