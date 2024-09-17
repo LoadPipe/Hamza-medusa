@@ -9,7 +9,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     await handler.handle(async () => {
         const product = await productService.reindexProducts();
-        if (!product)
+        if (product === null)
             return handler.returnStatusWithMessage(404, `Product not found`);
 
         return handler.returnStatus(200, product);

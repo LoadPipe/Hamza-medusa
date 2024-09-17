@@ -137,16 +137,14 @@ class ProductService extends MedusaProductService {
                 return;
             }
 
-            const cleanProducts = products
-                .filter((product) => product.status !== 'draft')
-                .map((product) => ({
-                    id: product.id,
-                    title: product.title,
-                    description: product.description.replace(/<[^>]*>/g, ''), // Strip HTML
-                    thumbnail: product.thumbnail,
-                    handle: product.handle,
-                    status: product.status, // Include status if not a draft
-                }));
+            const cleanProducts = products.map((product) => ({
+                id: product.id,
+                title: product.title,
+                description: product.description.replace(/<[^>]*>/g, ''), // Strip HTML
+                thumbnail: product.thumbnail,
+                handle: product.handle,
+                status: product.status, // Include status for all products, including drafts
+            }));
 
             // Prepare the HTTP request headers
             const config = {
@@ -160,14 +158,45 @@ class ProductService extends MedusaProductService {
             const url = 'http://localhost:7700/indexes/products/documents';
 
             console.log(
-                `Sending ${JSON.stringify(cleanProducts)} products to be indexed.`
+                `Sending ${cleanProducts.length} products to be indexed.`
             );
 
             // Send products to be indexed
-            await axios.post(url, JSON.stringify(cleanProducts), config);
-            this.logger.info(
-                `Reindexed ${cleanProducts.length} products successfully.`
+            const indexResponse = await axios.post(url, cleanProducts, config);
+
+            // Check if the indexing was successful
+            if (indexResponse.status === 200 || indexResponse.status === 202) {
+                this.logger.info(
+                    `Reindexed ${cleanProducts.length} products successfully.`
+                );
+            } else {
+                this.logger.error(
+                    'Failed to index products:',
+                    indexResponse.status
+                );
+                return;
+            }
+
+            // Delete drafts immediately after reindexing
+            const deleteResponse = await axios.post(
+                'http://localhost:7700/indexes/products/documents/delete',
+                { filter: 'status = draft' },
+                config
             );
+            // Check if the deletion was successful
+            if (
+                deleteResponse.status === 200 ||
+                deleteResponse.status === 202
+            ) {
+                this.logger.info(
+                    'Draft products have been removed from the index.'
+                );
+            } else {
+                this.logger.error(
+                    'Failed to delete draft products:',
+                    deleteResponse.status
+                );
+            }
         } catch (e) {
             this.logger.error('Error reindexing products:', e);
         }

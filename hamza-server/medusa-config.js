@@ -80,7 +80,12 @@ const plugins = [
                     },
                     primaryKey: 'id',
                     transformer: (product) => {
-                        // Only index products that are not drafts
+                        console.log(
+                            'Transforming product:',
+                            product.id,
+                            'Status:',
+                            product.status
+                        );
                         if (product.status !== 'draft') {
                             return {
                                 id: product.id,
@@ -89,11 +94,12 @@ const plugins = [
                                 variant_sku: product.variant_sku,
                                 thumbnail: product.thumbnail,
                                 handle: product.handle,
-                                status: product.status, // Optionally include status to search/filter by status in the frontend
+                                status: product.status,
                             };
+                        } else {
+                            console.log('Skipping draft product:', product.id);
+                            return null;
                         }
-                        // Return null for drafts so they are not indexed
-                        return null;
                     },
                 },
             },
