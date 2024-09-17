@@ -571,7 +571,7 @@ export default class OrderService extends MedusaOrderService {
             where.fulfillment_status = statusParams.fulfillmentStatus;
         }
 
-        return await this.orderRepository_.find({
+        let orders = await this.orderRepository_.find({
             where,
             relations: [
                 'items',
@@ -581,6 +581,11 @@ export default class OrderService extends MedusaOrderService {
                 'items.variant.product',
             ],
         });
+
+        if (orders)
+            orders = orders.filter(o => o.items?.length > 0);
+
+        return orders;
     }
 
     private getPostCheckoutUpdatePaymentPromises(
