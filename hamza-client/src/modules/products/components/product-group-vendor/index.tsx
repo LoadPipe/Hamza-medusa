@@ -40,12 +40,8 @@ const ProductCardGroup = ({ storeName, categories }: Props) => {
         }
     );
 
-    console.log('Data baby', data);
-
     // Handle products based on category
     const productsAll = data;
-
-    console.log('Products All baby', productsAll);
 
     if (isLoading) {
         return (

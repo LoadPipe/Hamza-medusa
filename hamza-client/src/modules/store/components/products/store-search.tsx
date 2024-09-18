@@ -15,7 +15,6 @@ type Props = {
 const StoreSearch = ({ storeName }: Props) => {
     // Category button hooks
     const [categories, setCategories] = useState(['all']);
-    const [selectedButton, setSelectedButton] = useState('All Products'); // Track selected button
 
     // Get categories and update buttons
     const { data, error, isLoading } = useQuery(
@@ -43,16 +42,6 @@ const StoreSearch = ({ storeName }: Props) => {
         console.log(uniqueHandlesArray);
     } else {
         console.log('No data available');
-    }
-
-    // API is loading
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
-
-    // Error reaching api
-    if (error) {
-        return <div>Error loading categories</div>;
     }
 
     return (
