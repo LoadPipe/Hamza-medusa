@@ -6,6 +6,7 @@ import {
     ProductVariantMoneyAmount,
     Store,
     ProductStatus,
+    ProductCategory,
 } from '@medusajs/medusa';
 import {
     CreateProductInput,
@@ -470,6 +471,7 @@ class ProductService extends MedusaProductService {
         }
     }
 
+    //TODO: is this needed? Could it not just be replaced by getFilteredProductsByCategory?
     /**
      * Fetches all products for a specific category by category name.
      *
@@ -543,6 +545,7 @@ class ProductService extends MedusaProductService {
         }
     }
 
+    //TODO: is this needed? Could it not just be replaced by getFilteredProductsByCategory?
     /**
      * Fetches all products that belong to multiple categories by category names.
      *
@@ -643,21 +646,17 @@ class ProductService extends MedusaProductService {
         lowerPrice: number // Number representing the lower price limit
     ) {
         try {
+            const key = categories.join(',');
+            if (productCache[key])
+                return productCache[key];
+
             let normalizedCategoryNames = categories.map((name) =>
                 name.toLowerCase()
             );
 
             let products: Product[] = [];
 
-            const productCategories =
-                await this.productCategoryRepository_.find({
-                    select: ['id', 'name', 'metadata'],
-                    relations: [
-                        'products',
-                        'products.variants.prices',
-                        'products.reviews',
-                    ],
-                });
+            const productCategories = await this.getProductCategoriesFromCache();
 
             if (normalizedCategoryNames[0] === 'all') {
                 //remove products that aren't published
@@ -720,6 +719,7 @@ class ProductService extends MedusaProductService {
             // Update product pricing
             await this.convertPrices(products);
 
+            productCache[key] = products;
             return products; // Return filtered products
         } catch (error) {
             // Handle the error here
@@ -828,6 +828,23 @@ class ProductService extends MedusaProductService {
                 index === array.findIndex((ii) => ii.id === i.id)
         );
     }
+
+    private async getProductCategoriesFromCache(): Promise<ProductCategory[]> {
+        if (!cachedCategories)
+            cachedCategories = await this.productCategoryRepository_.find({
+                select: ['id', 'name', 'metadata'],
+                relations: [
+                    'products',
+                    'products.variants.prices',
+                    'products.reviews',
+                ],
+            });
+
+        return cachedCategories;
+    }
 }
+
+let cachedCategories: ProductCategory[] = null;
+const productCache: { [key: string]: Product[] } = {};
 
 export default ProductService;
