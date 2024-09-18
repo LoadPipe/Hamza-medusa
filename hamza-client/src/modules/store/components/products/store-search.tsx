@@ -13,9 +13,6 @@ type Props = {
 };
 
 const StoreSearch = ({ storeName }: Props) => {
-    // Category button hooks
-    const [categories, setCategories] = useState(['all']);
-
     // Get categories and update buttons
     const { data, error, isLoading } = useQuery(
         ['categories', storeName],
@@ -61,7 +58,7 @@ const StoreSearch = ({ storeName }: Props) => {
                 ))}
             </Flex>
 
-            <ProductCardGroup storeName={storeName} categories={categories} />
+            <ProductCardGroup storeName={storeName} />
         </Flex>
     );
 };

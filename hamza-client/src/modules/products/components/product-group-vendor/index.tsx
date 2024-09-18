@@ -18,11 +18,10 @@ import useVendor from '@store/store-page/vendor';
 
 type Props = {
     storeName: string;
-    categories: string[];
     filterByRating?: string | null;
 };
 
-const ProductCardGroup = ({ storeName, categories }: Props) => {
+const ProductCardGroup = ({ storeName }: Props) => {
     // get preferred currency
     const { preferred_currency_code } = useCustomerAuthStore();
 
