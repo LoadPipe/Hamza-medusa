@@ -1,12 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Flex } from '@chakra-ui/react';
 import StoreCatButton from './store-cat-button';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import ProductCardGroup from '@modules/products/components/product-group-vendor';
-import useVendor from '@store/store-page/vendor';
 
 type Props = {
     storeName: string;
