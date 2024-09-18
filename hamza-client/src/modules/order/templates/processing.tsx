@@ -549,6 +549,20 @@ const Processing = ({
                                                                                     fontSize="sm"
                                                                                     color="gray.400"
                                                                                 >
+                                                                                    Order
+                                                                                    ID:
+                                                                                </Text>
+                                                                                <Text fontWeight="bold">
+                                                                                    {
+                                                                                        order.id
+                                                                                    }
+                                                                                </Text>
+                                                                            </Box>
+                                                                            <Box>
+                                                                                <Text
+                                                                                    fontSize="sm"
+                                                                                    color="gray.400"
+                                                                                >
                                                                                     Quantity:
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
