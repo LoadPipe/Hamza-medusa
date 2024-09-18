@@ -123,7 +123,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
         >
             <LocalizedClientLink href={`/products/${productHandle}`}>
                 <Box
-                    onClick={() => console.log('hello')}
+                    onClick={() => { }}
                     h="240px"
                     width="100%"
                     display="flex"
