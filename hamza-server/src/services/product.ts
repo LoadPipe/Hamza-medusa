@@ -22,6 +22,7 @@ import { In, IsNull, Not } from 'typeorm';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import ProductCategoryRepository from '@medusajs/medusa/dist/repositories/product-category';
 import { SeamlessCache } from '../utils/cache/seamless-cache';
+import { filterDuplicatesById } from '../utils/filter-duplicates';
 
 export type BulkImportProductInput = CreateProductInput;
 
@@ -618,7 +619,7 @@ class ProductService extends MedusaProductService {
             );
 
             // Step 6: filter out duplicates
-            filteredProducts = this.filterDuplicatesById(filteredProducts);
+            filteredProducts = filterDuplicatesById(filteredProducts);
 
             // Step 6: Update product pricing for filtered products
             await this.convertPrices(filteredProducts);
@@ -833,19 +834,12 @@ class ProductCache extends SeamlessCache {
         }
 
         //remove duplicates
-        products = this.filterDuplicatesById(products);
+        products = filterDuplicatesById(products);
 
         // Update product pricing
         await params.convertPrices(products);
 
         return products; // Return filtered products
-    }
-
-    private filterDuplicatesById<T extends { id: string }>(items: T[]): T[] {
-        return items.filter(
-            (i, index, array) =>
-                index === array.findIndex((ii) => ii.id === i.id)
-        );
     }
 }
 
