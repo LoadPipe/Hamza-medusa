@@ -16,14 +16,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     // Return error if no products in store
     await handler.handle(async () => {
-        const { store_name } = req.query;
-
-        // Validate the request
-        if (!handler.requireParam('store_name')) return;
-
         // Fetch the store data by name
         const storeData = await storeService.getStoreByName(
-            store_name.toString()
+            handler.inputParams.store_name.toString()
         );
 
         const categories: string[] = Array.isArray(
@@ -31,8 +26,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         )
             ? handler.inputParams.category_name
             : handler.inputParams.category_name?.split(',') || [];
-
-        console.log('Parsed categories:', categories);
 
         // Fetch the products by store ID
         const products = await productService.getAllStoreProductsByCategory(
