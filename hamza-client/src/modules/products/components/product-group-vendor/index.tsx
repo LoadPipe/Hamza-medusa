@@ -14,22 +14,24 @@ import { useQuery } from '@tanstack/react-query';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import ProductCardHome from '../product-group-home/component/home-product-card';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import useVendor from '@store/store-page/vendor';
 
 type Props = {
     storeName: string;
-    categoryName: string[];
+    categories: string[];
     filterByRating?: string | null;
 };
 
-const ProductCardGroup = ({ storeName, categoryName }: Props) => {
+const ProductCardGroup = ({ storeName, categories }: Props) => {
     // get preferred currency
     const { preferred_currency_code } = useCustomerAuthStore();
 
-    const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products/category-name?store_name=${storeName}&category_name=${categoryName}`;
+    const { categorySelect } = useVendor();
 
-    // Fetch data using the useQuery hookhttp://localhost:9000/custom/store/products/category-name?store_name=Medusa%20Merch&category_name=fashion
+    const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products/category-name?store_name=${storeName}&category_name=${categorySelect}`;
+
     const { data, error, isLoading } = useQuery(
-        ['products', categoryName],
+        ['products', categorySelect],
         async () => {
             console.log('Fetching data from URL:', url);
             const response = await axios.get(url);
