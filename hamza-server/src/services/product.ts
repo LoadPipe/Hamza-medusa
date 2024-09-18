@@ -544,6 +544,74 @@ class ProductService extends MedusaProductService {
     }
 
     /**
+     * Filters products based on selected categories, upper price limit, and lower price limit.
+     *
+     * @param {string[]} categories - An array of category names to filter products by.
+     * @returns {Array} - A list of products filtered by the provided criteria.
+     */
+    async getAllStoreProductsByCategory(
+        categories: string[], // Array of strings representing category names
+        storeId: string // Number representing the upper price limit
+    ) {
+        try {
+            let normalizedCategoryNames = categories.map((name) =>
+                name.toLowerCase()
+            );
+
+            console.log('categorues', categories);
+
+            console.log('normalized', normalizedCategoryNames);
+
+            let products: Product[] = [];
+
+            const productCategories =
+                await this.productCategoryRepository_.find({
+                    select: ['id', 'name', 'metadata'],
+                    relations: [
+                        'products',
+                        'products.variants.prices',
+                        'products.reviews',
+                    ],
+                });
+
+            console.log('store id', storeId);
+            if (normalizedCategoryNames[0] === 'all') {
+                //remove products that aren't published
+                products = productCategories.flatMap((cat) =>
+                    cat.products.filter((p) => p.store_id === storeId)
+                );
+            } else {
+                // Filter the categories based on the provided category names
+                const filteredCategories = productCategories.filter((cat) =>
+                    normalizedCategoryNames.includes(cat.name.toLowerCase())
+                );
+
+                console.log('filtered categ', filteredCategories);
+
+                // Gather all the products into a single list
+                products = filteredCategories.flatMap((cat) =>
+                    cat.products.filter((p) => p.store_id === storeId)
+                );
+            }
+
+            //remove duplicates
+            products = this.filterDuplicatesById(products);
+
+            // Update product pricing
+            await this.convertPrices(products);
+
+            return products; // Return filtered products
+        } catch (error) {
+            // Handle the error here
+            this.logger.error(
+                'Error occurred while fetching products by handle:',
+                error
+            );
+            throw new Error('Failed to fetch products by handle.');
+        }
+    }
+
+    /**
      * Fetches all products that belong to multiple categories by category names.
      *
      * 1. Retrieves product IDs for products that belong to all the provided categories.

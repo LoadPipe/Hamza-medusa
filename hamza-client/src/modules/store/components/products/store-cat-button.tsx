@@ -32,7 +32,7 @@ const StoreCatButton: React.FC<StoreCatButtonProps> = ({
             alignItems={'center'}
             cursor={'pointer'}
             onClick={() => {
-                setCategoryName(catName === 'All Products' ? 'all' : catName);
+                setCategoryName(catName);
                 setSelected(catName);
             }}
         >

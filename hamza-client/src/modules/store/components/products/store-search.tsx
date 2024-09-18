@@ -14,7 +14,7 @@ type Props = {
 
 const StoreSearch = ({ storeName }: Props) => {
     // Category button hooks
-    const [categoryName, setCategoryName] = useState('all');
+    const [categoryName, setCategoryName] = useState(['all']);
     const [selectedButton, setSelectedButton] = useState('All Products'); // Track selected button
 
     // Get categories and update buttons
@@ -55,6 +55,25 @@ const StoreSearch = ({ storeName }: Props) => {
         return <div>Error loading categories</div>;
     }
 
+    const updateCategoryName = (newCategory: string) => {
+        if (newCategory === 'All Products') {
+            // If 'All Products' is selected, reset the category array
+            setCategoryName(['all']);
+        } else {
+            setCategoryName((prevCategories) => {
+                // If the category is already in the array, remove it
+                if (prevCategories.includes(newCategory)) {
+                    return prevCategories.filter(
+                        (category) => category !== newCategory
+                    );
+                } else {
+                    // Otherwise, add the category
+                    return [...prevCategories, newCategory];
+                }
+            });
+        }
+    };
+
     return (
         <Flex flexDir={'column'} width={'100%'}>
             <Flex
@@ -67,7 +86,7 @@ const StoreSearch = ({ storeName }: Props) => {
             >
                 <StoreCatButton
                     catName={'All Products'}
-                    setCategoryName={setCategoryName}
+                    setCategoryName={updateCategoryName}
                     setSelected={setSelectedButton}
                     selected={selectedButton}
                 />
@@ -76,7 +95,7 @@ const StoreSearch = ({ storeName }: Props) => {
                     <StoreCatButton
                         key={index}
                         catName={handle}
-                        setCategoryName={setCategoryName}
+                        setCategoryName={updateCategoryName}
                         setSelected={setSelectedButton}
                         selected={selectedButton}
                     />

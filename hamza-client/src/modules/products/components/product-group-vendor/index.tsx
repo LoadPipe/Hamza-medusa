@@ -17,7 +17,7 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 
 type Props = {
     storeName: string;
-    categoryName: string | null;
+    categoryName: string[];
     filterByRating?: string | null;
 };
 
@@ -27,7 +27,7 @@ const ProductCardGroup = ({ storeName, categoryName }: Props) => {
 
     const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products/category-name?store_name=${storeName}&category_name=${categoryName}`;
 
-    // Fetch data using the useQuery hook
+    // Fetch data using the useQuery hookhttp://localhost:9000/custom/store/products/category-name?store_name=Medusa%20Merch&category_name=fashion
     const { data, error, isLoading } = useQuery(
         ['products', categoryName],
         async () => {
@@ -38,12 +38,12 @@ const ProductCardGroup = ({ storeName, categoryName }: Props) => {
         }
     );
 
+    console.log('Data baby', data);
+
     // Handle products based on category
-    const productsAll = data
-        ? categoryName === 'all'
-            ? data // If category is 'all', data is a flat list of products
-            : data.flatMap((category: any) => category.products) // Otherwise, extract products from categories
-        : [];
+    const productsAll = data;
+
+    console.log('Products All baby', productsAll);
 
     if (isLoading) {
         return (
