@@ -40,12 +40,10 @@ const StoreCatButton: React.FC<StoreCatButtonProps> = ({ categoryName }) => {
         }
     };
 
-    const formattedCatName =
-        categoryName === 'All Products'
-            ? categoryName
-            : categoryName
-                  .replace(/_/g, ' ')
-                  .replace(/\b\w/g, (char) => char.toUpperCase());
+    const formattedCatName = categoryName
+        .replace(/_/g, ' ')
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+
     return (
         <Flex
             width={{ base: '94px', md: '167px' }}

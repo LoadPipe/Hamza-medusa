@@ -65,7 +65,7 @@ const StoreSearch = ({ storeName }: Props) => {
                 my={{ base: '1rem', md: '3rem' }}
                 gap={'1rem'}
             >
-                <StoreCatButton categoryName={'All Products'} />
+                <StoreCatButton categoryName={'All'} />
 
                 {uniqueHandlesArray.map((handle, index) => (
                     <StoreCatButton key={index} categoryName={handle} />
