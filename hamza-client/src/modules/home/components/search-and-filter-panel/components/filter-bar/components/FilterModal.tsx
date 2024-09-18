@@ -76,17 +76,13 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
 
     const [range, setRange] = useState<RangeType>([0, 10000]);
 
-    console.log(
-        `what value is ${homeModalLowerPriceFilterSelect} and ${homeModalUpperPriceFilterSelect}`
-    );
-
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-              name: category.name,
-              id: category.id,
-              metadata: category.metadata,
-          }))
+            name: category.name,
+            id: category.id,
+            metadata: category.metadata,
+        }))
         : [];
 
     return (

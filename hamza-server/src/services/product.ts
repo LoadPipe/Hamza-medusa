@@ -646,13 +646,20 @@ class ProductService extends MedusaProductService {
         lowerPrice: number // Number representing the lower price limit
     ) {
         try {
-            const key = categories.join(',');
-            if (productCache[key])
-                return productCache[key];
 
             let normalizedCategoryNames = categories.map((name) =>
                 name.toLowerCase()
             );
+            if (normalizedCategoryNames.length > 1 && normalizedCategoryNames[0] === 'all')
+                normalizedCategoryNames = normalizedCategoryNames.slice(1);
+
+            const key = normalizedCategoryNames.join(',');
+            console.log('KEY IS', key);
+
+            if (productCache[key]) {
+                this.logger.debug('getFilteredProductsByCategory returning from cache')
+                return productCache[key];
+            }
 
             let products: Product[] = [];
 
