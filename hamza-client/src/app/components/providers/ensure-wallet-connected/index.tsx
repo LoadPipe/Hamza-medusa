@@ -11,6 +11,21 @@ import {
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { WalletConnectButton } from '@/components/providers/rainbowkit/connect-button/connect-button';
 
+/**
+ * The EnsureWalletConnected component is used to guarantee that the user's wallet is connected before allowing access to certain features within the application.
+ * It acts as a gatekeeper for any functionality that requires blockchain interactions, which are dependent on a wallet connection.
+ * This component is essential for operations that require a user to sign transactions or verify ownership of blockchain assets.
+ * @Author: Garo Nazarian
+ *
+ * Features:
+ * - Monitors the wallet connection status continuously.
+ * - Blocks interaction with child components if no wallet is connected.
+ * - Provides a callback mechanism for further actions when the wallet is disconnected.
+ * - Optionally renders a custom UI prompt or uses a default alert to inform the user to connect their wallet.
+ *
+ * Usage:
+ * Render <EnsureWalletConnected/> component after importing it
+ */
 export const EnsureWalletConnected = () => {
     const { isConnected } = useAccount();
     const { openConnectModal } = useConnectModal();
