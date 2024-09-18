@@ -91,7 +91,7 @@ export async function addToCart({
     console.log('currencyCode:', currencyCode);
 
     if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY) {
-        countryCode = 'us';
+        countryCode = 'xx';
         console.log('Country code forced to US:', countryCode);
     }
 

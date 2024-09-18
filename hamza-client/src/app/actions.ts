@@ -32,7 +32,7 @@ export async function getRegion(countryCode: string) {
 
         const region = countryCode
             ? regionMap.get(countryCode)
-            : regionMap.get('us');
+            : regionMap.get('xx');
 
         return region;
     } catch (e: any) {

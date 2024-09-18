@@ -35,7 +35,7 @@ const Addresses = ({
     const params = useParams();
 
     const countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY
-        ? 'us'
+        ? 'xx'
         : (params.countryCode as string);
 
     const isOpen =

@@ -52,10 +52,10 @@ declare global {
 const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
     const notReady =
         !cart ||
-            !cart.shipping_address ||
-            !cart.billing_address ||
-            !cart.email ||
-            cart.shipping_methods.length < 1
+        !cart.shipping_address ||
+        !cart.billing_address ||
+        !cart.email ||
+        cart.shipping_methods.length < 1
             ? true
             : false;
 
@@ -240,7 +240,7 @@ const CryptoPaymentButton = ({
 
                 //country code needed for redirect (get before killing cart)
                 const countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY
-                    ? 'us'
+                    ? 'xx'
                     : cart.shipping_address?.country_code?.toLowerCase();
 
                 //clear cart
@@ -276,7 +276,8 @@ const CryptoPaymentButton = ({
                 },
                 {
                     headers: {
-                        authorization: getClientCookie('_medusa_jwt')('_medusa_jwt'),
+                        authorization:
+                            getClientCookie('_medusa_jwt')('_medusa_jwt'),
                     },
                 }
             );
@@ -301,7 +302,7 @@ const CryptoPaymentButton = ({
                 updateCart.mutate(
                     { context: {} },
                     {
-                        onSuccess: ({ }) => {
+                        onSuccess: ({}) => {
                             //this calls the CartCompletion routine
                             completeCart.mutate(void 0, {
                                 onSuccess: async ({ data, type }) => {

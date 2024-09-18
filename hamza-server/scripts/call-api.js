@@ -1,14 +1,17 @@
 async function main() {
     const port = 9000;
     try {
-        const authResponse = await fetch(`http://localhost:${port}/admin/auth`, {
-            method: 'POST',
-            body: JSON.stringify({
-                email: 'admin@medusa-test.com',
-                password: 'supersecret',
-            }),
-            headers: { 'Content-type': 'application/json; charset=UTF-8' },
-        });
+        const authResponse = await fetch(
+            `http://localhost:${port}/admin/auth`,
+            {
+                method: 'POST',
+                body: JSON.stringify({
+                    email: 'admin@medusa-test.com',
+                    password: 'supersecret',
+                }),
+                headers: { 'Content-type': 'application/json; charset=UTF-8' },
+            }
+        );
         const authData = await authResponse.json();
         const authCookie = authResponse.headers.get('set-cookie');
 
@@ -49,11 +52,20 @@ async function main() {
             }
         );
 
-        await fetch(`http://localhost:${port}/admin/custom/whitelist?store=Hamza Official`, {
-            method: 'GET',
-            headers: {
-                Cookie: authCookie.substring(0, authCookie.indexOf(';')),
-            },
+        await fetch(
+            `http://localhost:${port}/admin/custom/whitelist?store=Hamza Official`,
+            {
+                method: 'GET',
+                headers: {
+                    Cookie: authCookie.substring(0, authCookie.indexOf(';')),
+                },
+            }
+        );
+
+        await fetch(`http://localhost:${port}/custom/country/addCountry`, {
+            method: 'POST',
+            body: JSON.stringify({}),
+            headers: { 'Content-type': 'application/json; charset=UTF-8' },
         });
     } catch (e) {
         console.error(e);

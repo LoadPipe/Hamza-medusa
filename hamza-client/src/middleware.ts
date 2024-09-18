@@ -2,7 +2,7 @@ import { Region } from '@medusajs/medusa';
 import { NextRequest, NextResponse } from 'next/server';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
-const DEFAULT_REGION = process.env.NEXT_PUBLIC_DEFAULT_REGION || 'us';
+const DEFAULT_REGION = process.env.NEXT_PUBLIC_DEFAULT_REGION || 'xx';
 
 /**
  * Fetches regions from Medusa and sets the region cookie.
@@ -34,7 +34,7 @@ async function getCountryCode(
             countryCode = regionMap.keys().next().value;
         }
 
-        return countryCode;
+        return 'xx';
     } catch (error) {
         if (process.env.NODE_ENV === 'development') {
             console.error(
@@ -84,7 +84,7 @@ export async function middleware(request: NextRequest) {
     const regionMap = await listCountries();
 
     const countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY
-        ? 'us'
+        ? 'xx'
         : regionMap && (await getCountryCode(request, regionMap));
 
     const urlHasCountryCode =

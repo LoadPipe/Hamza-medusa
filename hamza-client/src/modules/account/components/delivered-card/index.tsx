@@ -45,7 +45,7 @@ const DeliveredCard = ({ order, handle }: OrderCardProps) => {
     const orderString = typeof order.currency_code;
     const router = useRouter();
     let countryCode = useParams().countryCode as string;
-    if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY) countryCode = 'us';
+    if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY) countryCode = 'xx';
 
     // console.log(
     //     `Order Card details ${JSON.stringify(order.variant.product_id)}`

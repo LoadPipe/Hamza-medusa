@@ -450,7 +450,7 @@ export async function finalizeCheckout(
         transaction_id,
         payer_address,
         escrow_contract_address,
-        chain_id
+        chain_id,
     });
 }
 
@@ -877,7 +877,7 @@ export const getRegion = cache(async function (countryCode: string) {
 
         const region = countryCode
             ? regionMap.get(countryCode)
-            : regionMap.get('us');
+            : regionMap.get('xx');
 
         return region;
     } catch (e: any) {
