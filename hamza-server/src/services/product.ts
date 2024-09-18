@@ -20,6 +20,8 @@ import CustomerService from '../services/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import { In, IsNull, Not } from 'typeorm';
 import { createLogger, ILogger } from '../utils/logging/logger';
+import ProductCategoryRepository from '@medusajs/medusa/dist/repositories/product-category';
+import { SeamlessCache } from '../utils/cache/seamless-cache';
 
 export type BulkImportProductInput = CreateProductInput;
 
@@ -653,80 +655,14 @@ class ProductService extends MedusaProductService {
                 normalizedCategoryNames = normalizedCategoryNames.slice(1);
 
             const key = normalizedCategoryNames.sort().join(',');
-            console.log('KEY IS', key);
 
-            if (productCache[key]) {
-                this.logger.debug('getFilteredProductsByCategory returning from cache')
-                return productCache[key];
-            }
-
-            let products: Product[] = [];
-
-            const productCategories = await this.getProductCategoriesFromCache();
-
-            if (normalizedCategoryNames[0] === 'all') {
-                //remove products that aren't published
-                products = productCategories.flatMap((cat) =>
-                    cat.products.filter(
-                        (p) =>
-                            p.status === ProductStatus.PUBLISHED && p.store_id
-                    )
-                );
-
-                if (upperPrice !== 0 && lowerPrice !== 0) {
-                    // Filter products by price using upper and lower price limits
-                    products = products.filter((product) => {
-                        const price =
-                            product.variants[0]?.prices[0]?.amount ?? 0;
-                        return price >= lowerPrice && price <= upperPrice;
-                    });
-
-                    // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
-                    products = products.sort((a, b) => {
-                        const priceA = a.variants[0]?.prices[0]?.amount ?? 0;
-                        const priceB = b.variants[0]?.prices[0]?.amount ?? 0;
-                        return priceA - priceB; // Ascending order
-                    });
-                }
-            } else {
-                // Filter the categories based on the provided category names
-                const filteredCategories = productCategories.filter((cat) =>
-                    normalizedCategoryNames.includes(cat.name.toLowerCase())
-                );
-
-                // Gather all the products into a single list
-                products = filteredCategories.flatMap((cat) =>
-                    cat.products.filter(
-                        (p) =>
-                            p.status === ProductStatus.PUBLISHED && p.store_id
-                    )
-                );
-
-                if (upperPrice !== 0 && lowerPrice !== 0) {
-                    // Filter products by price using upper and lower price limits
-                    products = products.filter((product) => {
-                        const price =
-                            product.variants[0]?.prices[0]?.amount ?? 0;
-                        return price >= lowerPrice && price <= upperPrice;
-                    });
-
-                    // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
-                    products = products.sort((a, b) => {
-                        const priceA = a.variants[0]?.prices[0]?.amount ?? 0;
-                        const priceB = b.variants[0]?.prices[0]?.amount ?? 0;
-                        return priceA - priceB; // Ascending order
-                    });
-                }
-            }
-
-            //remove duplicates
-            products = this.filterDuplicatesById(products);
-
-            // Update product pricing
-            await this.convertPrices(products);
-
-            productCache[key] = products;
-            return products; // Return filtered products
+            return productCache.retrieveWithKey(key, {
+                categoryRepository: this.productCategoryRepository_,
+                categoryNames: normalizedCategoryNames,
+                upperPrice,
+                lowerPrice,
+                convertPrices: async (prods) => { return this.convertPrices(prods); }
+            });
         } catch (error) {
             // Handle the error here
             this.logger.error(
@@ -827,6 +763,83 @@ class ProductService extends MedusaProductService {
 
         return products;
     }
+}
+
+class CategoryCache extends SeamlessCache {
+    constructor() {
+        super(6000);
+    }
+
+    protected async getData(productCategoryRepository: any): Promise<any> {
+        return await productCategoryRepository.find({
+            select: ['id', 'name', 'metadata'],
+            relations: [
+                'products',
+                'products.variants.prices',
+                'products.reviews',
+            ],
+        });
+    }
+}
+
+class ProductCache extends SeamlessCache {
+    constructor() {
+        super(6000);
+    }
+
+    protected async getData(params: any): Promise<any> {
+        let products: Product[] = [];
+
+        //get categories from cache
+        const productCategories = await categoryCache.retrieve(params.categoryRepository);
+
+        if (params.categoryNames[0] === 'all') {
+            //remove products that aren't published
+            products = productCategories.flatMap((cat) =>
+                cat.products.filter(
+                    (p) =>
+                        p.status === ProductStatus.PUBLISHED && p.store_id
+                )
+            );
+        } else {
+            // Filter the categories based on the provided category names
+            const filteredCategories = productCategories.filter((cat) =>
+                params.categoryNames.includes(cat.name.toLowerCase())
+            );
+
+            // Gather all the products into a single list
+            products = filteredCategories.flatMap((cat) =>
+                cat.products.filter(
+                    (p) =>
+                        p.status === ProductStatus.PUBLISHED && p.store_id
+                )
+            );
+        }
+
+        if (params.upperPrice !== 0 && params.lowerPrice !== 0) {
+            // Filter products by price using upper and lower price limits
+            products = products.filter((product) => {
+                const price =
+                    product.variants[0]?.prices[0]?.amount ?? 0;
+                return price >= params.lowerPrice && price <= params.upperPrice;
+            });
+
+            // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
+            products = products.sort((a, b) => {
+                const priceA = a.variants[0]?.prices[0]?.amount ?? 0;
+                const priceB = b.variants[0]?.prices[0]?.amount ?? 0;
+                return priceA - priceB; // Ascending order
+            });
+        }
+
+        //remove duplicates
+        products = this.filterDuplicatesById(products);
+
+        // Update product pricing
+        await params.convertPrices(products);
+
+        return products; // Return filtered products
+    }
 
     private filterDuplicatesById<T extends { id: string }>(items: T[]): T[] {
         return items.filter(
@@ -834,23 +847,9 @@ class ProductService extends MedusaProductService {
                 index === array.findIndex((ii) => ii.id === i.id)
         );
     }
-
-    private async getProductCategoriesFromCache(): Promise<ProductCategory[]> {
-        if (!cachedCategories)
-            cachedCategories = await this.productCategoryRepository_.find({
-                select: ['id', 'name', 'metadata'],
-                relations: [
-                    'products',
-                    'products.variants.prices',
-                    'products.reviews',
-                ],
-            });
-
-        return cachedCategories;
-    }
 }
 
-let cachedCategories: ProductCategory[] = null;
-const productCache: { [key: string]: Product[] } = {};
+const categoryCache: CategoryCache = new CategoryCache();
+const productCache: ProductCache = new ProductCache();
 
 export default ProductService;
