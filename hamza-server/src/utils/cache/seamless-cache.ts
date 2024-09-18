@@ -16,9 +16,10 @@ type CacheItem = {
  * 
  * @author John R. Kosinski
  */
-export class SeamlessCache {
+export abstract class SeamlessCache {
     private cache: { [key: string]: CacheItem } = {};
     private expirationSeconds: number;
+    private refreshing: boolean;
 
     constructor(expirationSeconds: number) {
         this.expirationSeconds = expirationSeconds;
@@ -45,9 +46,17 @@ export class SeamlessCache {
      * @returns cached data of a specifically defined type
      */
     async retrieveWithKey(key?: string, params?: any): Promise<any> {
-        if (this.cache[key]?.data && this.isExpired(key)) {
-            this.refreshCache(key, params);
+        if (this.cache[key]?.data) {
+            if (this.isExpired(key)) {
+                //console.log('CACHE EXPIRED for key', key)
+                if (!this.refreshing) {
+                    //console.log('REFRESHING EXPIRED CACHE for key', key)
+                    this.refreshCache(key, params);
+                }
+            }
         } else {
+            //TODO: this part is NOT seamless; multiple threads can attempts this at once; can be fixed
+            //console.log('CACHE EMPTY for key', key);
             await this.refreshCache(key, params);
         }
 
@@ -55,11 +64,20 @@ export class SeamlessCache {
     }
 
     protected async refreshCache(key: string, params: any): Promise<void> {
-        const data: any = await this.getData(params);
-        this.cache[key] = {
-            timestamp: Math.floor(Date.now() / 1000),
-            data: data
-        };
+        this.refreshing = true;
+        try {
+            const data: any = await this.getData(params);
+            this.cache[key] = {
+                timestamp: Math.floor(Date.now() / 1000),
+                data: data
+            };
+        }
+        catch (e: any) {
+            //TODO: need a logger here
+            console.log('CACHE ERROR', e);
+        }
+        //console.log('REFRESHED CACHE for key', key)
+        this.refreshing = false;
     }
 
     protected isExpired(key: string): boolean {
@@ -72,7 +90,5 @@ export class SeamlessCache {
      * @param params 
      * @returns 
      */
-    protected async getData(params: any): Promise<any> {
-        return {};
-    }
+    protected abstract getData(params: any): Promise<any>;
 }

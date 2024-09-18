@@ -20,7 +20,6 @@ import CustomerService from '../services/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import { In, IsNull, Not } from 'typeorm';
 import { createLogger, ILogger } from '../utils/logging/logger';
-import ProductCategoryRepository from '@medusajs/medusa/dist/repositories/product-category';
 import { SeamlessCache } from '../utils/cache/seamless-cache';
 import { filterDuplicatesById } from '../utils/filter-duplicates';
 
@@ -774,7 +773,7 @@ class ProductService extends MedusaProductService {
  */
 class CategoryCache extends SeamlessCache {
     constructor() {
-        super(6000);
+        super(parseInt(process.env.CATEGORY_CACHE_EXPIRATION_SECONDS ?? '300'));
     }
 
     async retrieve(params?: any): Promise<ProductCategory[]> {
@@ -801,7 +800,7 @@ class CategoryCache extends SeamlessCache {
  */
 class ProductFilterCache extends SeamlessCache {
     constructor() {
-        super(6000);
+        super(parseInt(process.env.CATEGORY_CACHE_EXPIRATION_SECONDS ?? '300'));
     }
 
     async retrieveWithKey(key?: string, params?: any): Promise<Product[]> {
