@@ -643,7 +643,7 @@ class ProductService extends MedusaProductService {
      * @param {number} lowerPrice - The lower price limit for filtering products.
      * @returns {Array} - A list of products filtered by the provided criteria.
      */
-    async getFilteredProductsByCategory(
+    async getFilteredProducts(
         categories: string[], // Array of strings representing category names
         upperPrice: number, // Number representing the upper price limit
         lowerPrice: number // Number representing the lower price limit
@@ -657,7 +657,7 @@ class ProductService extends MedusaProductService {
 
             const key = normalizedCategoryNames.sort().join(',');
 
-            return productCache.retrieveWithKey(key, {
+            return productFilterCache.retrieveWithKey(key, {
                 categoryRepository: this.productCategoryRepository_,
                 categoryNames: normalizedCategoryNames,
                 upperPrice,
@@ -766,9 +766,19 @@ class ProductService extends MedusaProductService {
     }
 }
 
+/**
+ * See SeamlessCache
+ * 
+ * This implementation of SeamlessCache caches product categories together with products, 
+ * since it's a slow query.
+ */
 class CategoryCache extends SeamlessCache {
     constructor() {
         super(6000);
+    }
+
+    async retrieve(params?: any): Promise<ProductCategory[]> {
+        return super.retrieve(params);
     }
 
     protected async getData(productCategoryRepository: any): Promise<any> {
@@ -783,9 +793,19 @@ class CategoryCache extends SeamlessCache {
     }
 }
 
-class ProductCache extends SeamlessCache {
+/**
+ * See SeamlessCache
+ * 
+ * This implementation of SeamlessCache caches the entire output of getFilteredProducts, since it's a slow
+ * query that runs often. 
+ */
+class ProductFilterCache extends SeamlessCache {
     constructor() {
         super(6000);
+    }
+
+    async retrieveWithKey(key?: string, params?: any): Promise<Product[]> {
+        return super.retrieveWithKey(key, params);
     }
 
     protected async getData(params: any): Promise<any> {
@@ -843,7 +863,8 @@ class ProductCache extends SeamlessCache {
     }
 }
 
+// GLOBAL CACHES 
 const categoryCache: CategoryCache = new CategoryCache();
-const productCache: ProductCache = new ProductCache();
+const productFilterCache: ProductFilterCache = new ProductFilterCache();
 
 export default ProductService;
