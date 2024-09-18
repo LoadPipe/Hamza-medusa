@@ -610,7 +610,7 @@ class ProductService extends MedusaProductService {
             }
 
             //remove duplicates
-            products = this.filterDuplicatesById(products);
+            products = filterDuplicatesById(products);
 
             // Update product pricing
             await this.convertPrices(products);
