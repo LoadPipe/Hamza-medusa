@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import {
     Modal,
@@ -29,12 +29,20 @@ import { WalletConnectButton } from '@/components/providers/rainbowkit/connect-b
 export const EnsureWalletConnected = () => {
     const { isConnected } = useAccount();
     const { openConnectModal } = useConnectModal();
+    const [clientSide, setClientSide] = useState(false);
 
     useEffect(() => {
+        // Ensuring this runs only client-side
+        setClientSide(true);
         if (!isConnected && openConnectModal) {
-            openConnectModal(); // Optionally ensure the modal logic is handled if not already by WalletConnectButton
+            openConnectModal();
         }
     }, [isConnected, openConnectModal]);
+
+    if (!clientSide) {
+        // Don't render modal server-side
+        return null;
+    }
 
     return (
         <Modal
