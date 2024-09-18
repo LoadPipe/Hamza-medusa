@@ -544,10 +544,20 @@ class ProductService extends MedusaProductService {
     }
 
     /**
-     * Filters products based on selected categories, upper price limit, and lower price limit.
+     * Filters products based on selected categories and store ID.
+     *
+     * This function retrieves products from the store associated with the provided `storeId` and filters them
+     * based on the selected category names. If 'all' is passed as the category, it retrieves all products from
+     * the store. It also ensures that products are unique and updates their pricing before returning the final list.
      *
      * @param {string[]} categories - An array of category names to filter products by.
-     * @returns {Array} - A list of products filtered by the provided criteria.
+     *                                If 'all' is included, all products from the store will be returned.
+     * @param {string} storeId - The store ID to filter products by.
+     *                           This represents the store from which the products should be fetched.
+     *
+     * @returns {Product[]} - A list of products filtered by the provided categories and store ID.
+     *
+     * @throws {Error} - Throws an error if the product retrieval or filtering process fails.
      */
     async getAllStoreProductsByCategory(
         categories: string[], // Array of strings representing category names
