@@ -11,6 +11,9 @@ import {
     metaMaskWallet,
     walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
+import { WalletConnectButton } from '@/components/providers/rainbowkit/connect-button/connect-button';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+
 import {
     configureChains,
     createConfig,
@@ -31,15 +34,12 @@ import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import {
-    Box,
     Flex,
     Button,
     Modal,
     ModalOverlay,
     ModalContent,
-    ModalHeader,
     ModalBody,
-    useDisclosure,
     Text,
 } from '@chakra-ui/react';
 // import sepoliaImage from '../../../../../../public/images/sepolia/sepolia.webp';
@@ -101,8 +101,7 @@ export function getAllowedChainsFromConfig() {
     const split: any[] = chains.split(',');
     split.forEach((v, i) => (split[i] = parseInt(v.trim())));
     if (EXTRA_LOGGING) console.log('RB: allowed blockchains: ', split);
-    if (!split.length)
-        split.push(10);
+    if (!split.length) split.push(10);
     return split;
 }
 
@@ -156,13 +155,13 @@ type Props = {
     enabled: boolean;
 };
 
-
 export function getBlockchainNetworkName(chainId: number | string) {
     if (EXTRA_LOGGING) console.log('RB: getBlockchainNetworkName', chainId);
 
-    //ensure number 
-    try { chainId = chainId ? parseInt(chainId.toString()) : 10; }
-    catch { }
+    //ensure number
+    try {
+        chainId = chainId ? parseInt(chainId.toString()) : 10;
+    } catch {}
 
     switch (chainId) {
         case 10:
@@ -180,20 +179,33 @@ export function getBlockchainNetworkName(chainId: number | string) {
             //  Sepolia
             return 'Unknown';
     }
-};
+}
 
-// Add NEXT_PUBLIC_ALLOWED_BLOCKCHAINS = 11155111 to env
+/**
+ * The SwitchNetwork component is designed to ensure that the user's wallet is connected to the correct blockchain network.
+ * If the user's current network does not match the preferred network settings, the component prompts them to switch.
+ * This is crucial for interacting with contracts that are network-specific.
+ * As of September 18, 2024, this component is not in use
+ * @Author: Garo Nazarian
+ *
+ * Features:
+ * - Checks the current network ID against the allowed configurations.
+ * - Prompts the user to switch if they are on an unsupported network.
+ * - Utilizes a modal to enforce network compliance before allowing further interaction.
+ * - Retries fetching the network ID a configurable number of times in case of errors.
+ *
+ * Usage:
+ * Should be placed in parts of the application where network-specific interactions occur, ensuring compliance before any transaction.
+ */
 export const SwitchNetwork = ({ enabled }: Props) => {
     if (EXTRA_LOGGING) console.log('RB: SwitchNetwork');
     // Modal Hook
     const [openModal, setOpenModal] = useState(false);
     const [preferredChainName, setPreferredChainName] = useState('');
-    //sometimes not detecting environment correctly
     const [preferredChainID, setPreferredChainID] = useState(
         getAllowedChainsFromConfig()[0]
     );
 
-    // Wagmi Hooks
     const { data: walletClient, isError } = useWalletClient();
 
     const { chain } = useNetwork();
@@ -204,8 +216,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
 
     console.log('pendingChainID;', pendingChainId);
 
-    const voidFunction = () => { };
-
+    const voidFunction = () => {};
 
     const setSwitchNetwork = () => {
         if (EXTRA_LOGGING) console.log('RB: setSwitchNetwork');
@@ -227,9 +238,10 @@ export const SwitchNetwork = ({ enabled }: Props) => {
                     if (EXTRA_LOGGING) console.log('RB: calling getChainId');
                     const chainId =
                         chain?.id ?? (await getChainId(walletClient));
-                    if (EXTRA_LOGGING) console.log(
-                        `RB: connected chain id is ${chainId}, preferred chain is ${preferredChainID}`
-                    );
+                    if (EXTRA_LOGGING)
+                        console.log(
+                            `RB: connected chain id is ${chainId}, preferred chain is ${preferredChainID}`
+                        );
 
                     if (chainId === preferredChainID) {
                         setOpenModal(false);
@@ -245,7 +257,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     }, [walletClient]);
 
     return (
-        <Modal isOpen={enabled} onClose={() => { }} isCentered>
+        <Modal isOpen={enabled} onClose={() => {}} isCentered>
             <ModalOverlay />
             <ModalContent
                 justifyContent={'center'}
@@ -266,36 +278,35 @@ export const SwitchNetwork = ({ enabled }: Props) => {
                             color={'white'}
                             fontWeight={300}
                         >
-                            Unsupported Network
+                            Not Logged In
                         </Text>
                         <Text color={'white'}>
-                            Hamza currently only supports {preferredChainName}.
-                            Switch to {preferredChainName} to continue using
-                            Hamza
+                            Please connect your wallet to continue using Hamza.
                         </Text>
-                        <Button
-                            backgroundColor={'primary.indigo.900'}
-                            color={'white'}
-                            height={'38px'}
-                            borderRadius={'full'}
-                            width="100%"
-                            disabled={!switchNetwork || isLoading}
-                            _hover={{
-                                backgroundColor: 'primary.indigo.800',
-                                transition: 'background-color 0.3s ease-in-out',
-                            }}
-                            _focus={{
-                                boxShadow: 'none',
-                                outline: 'none',
-                            }}
-                            onClick={() =>
-                                switchNetwork
-                                    ? switchNetwork(preferredChainID)
-                                    : voidFunction()
-                            }
-                        >
-                            Switch to {preferredChainName}
-                        </Button>
+                        {/*<Button*/}
+                        {/*    backgroundColor={'primary.indigo.900'}*/}
+                        {/*    color={'white'}*/}
+                        {/*    height={'38px'}*/}
+                        {/*    borderRadius={'full'}*/}
+                        {/*    width="100%"*/}
+                        {/*    disabled={!switchNetwork || isLoading}*/}
+                        {/*    _hover={{*/}
+                        {/*        backgroundColor: 'primary.indigo.800',*/}
+                        {/*        transition: 'background-color 0.3s ease-in-out',*/}
+                        {/*    }}*/}
+                        {/*    _focus={{*/}
+                        {/*        boxShadow: 'none',*/}
+                        {/*        outline: 'none',*/}
+                        {/*    }}*/}
+                        {/*    onClick={() =>*/}
+                        {/*        switchNetwork*/}
+                        {/*            ? switchNetwork(preferredChainID)*/}
+                        {/*            : voidFunction()*/}
+                        {/*    }*/}
+                        {/*>*/}
+                        {/*    Switch to {preferredChainName}*/}
+                        {/*</Button>*/}
+                        <WalletConnectButton />
                     </Flex>
                     {/* {error && <p>Error: {error.message}</p>}
                     {isLoading && pendingChainId && (

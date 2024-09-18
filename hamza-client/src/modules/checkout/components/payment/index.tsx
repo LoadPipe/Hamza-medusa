@@ -11,13 +11,13 @@ import { Button } from '@chakra-ui/react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useAccount, useConnect } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
-
+import { SwitchNetwork } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import Divider from '@modules/common/components/divider';
 import Spinner from '@modules/common/icons/spinner';
 import PaymentContainer from '@modules/checkout/components/payment-container';
 import { setPaymentMethod } from '@modules/checkout/actions';
 import { paymentInfoMap } from '@lib/constants';
-
+import { EnsureWalletConnected } from '@/components/providers/ensure-wallet-connected';
 const Payment = ({
     cart,
 }: {
@@ -88,8 +88,8 @@ const Payment = ({
     };
 
     const handleSubmit = () => {
-        if (!isConnected) {
-            if (openConnectModal) openConnectModal();
+        if (!isConnected && openConnectModal) {
+            openConnectModal();
         } else {
             setIsLoading(true);
             router.push(pathname + '?' + createQueryString('step', 'review'), {
@@ -105,6 +105,7 @@ const Payment = ({
 
     return (
         <div className="bg-black">
+            <EnsureWalletConnected />
             <div className="flex flex-row items-center justify-between mb-6">
                 <Heading
                     level="h2"
@@ -214,7 +215,7 @@ const Payment = ({
                                     {/* </Container> */}
                                     <Text className="text-white">
                                         {cart.payment_session.provider_id ===
-                                            cardBrand
+                                        cardBrand
                                             ? cardBrand
                                             : 'Another step will appear'}
                                     </Text>
