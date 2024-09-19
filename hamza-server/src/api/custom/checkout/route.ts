@@ -42,7 +42,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         //enforce security
         if (!handler.enforceCustomerId(cart.customer_id)) return;
 
-        const orders = await orderService.getOrdersForCart(cartId);
+        const orders = await orderService.getOrdersForCheckout(cartId);
         const output: ICheckoutData[] = [];
         orders.forEach((o) => {
             output.push({
