@@ -6,6 +6,7 @@ import {
     Image,
     useDisclosure,
     useBreakpointValue,
+    AspectRatio,
 } from '@chakra-ui/react';
 import { getObjectFit } from '@modules/get-object-fit';
 import useProductPreview from '@store/product-preview/product-preview';
@@ -66,31 +67,28 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
             <Grid
                 templateColumns={gridTemplateColumns}
                 templateRows={gridTemplateRows}
-                gap={4}
+                gap={3}
             >
                 {/* Main Square Image on the top (mobile) or left (desktop) */}
                 <GridItem>
-                    <Box
-                        minWidth={'300px'}
+                    <AspectRatio
+                        ratio={1}
                         maxH={'600px'}
-                        maxW={'600px'}
                         width={'100%'}
-                        aspectRatio="1 / 1"
                         overflow="hidden"
                         onClick={() => openGallery(0)}
                         cursor="pointer"
+                        backgroundColor={'white'}
                         borderRadius={{ base: '16px', md: '16px 0 0 16px' }}
                     >
-                        {images.length > 0 && (
-                            <Image
-                                src={images[0]}
-                                alt="Main Image"
-                                width="100%"
-                                height="100%"
-                                objectFit={'fill'}
-                            />
-                        )}
-                    </Box>
+                        <Image
+                            src={images[0]}
+                            width={'100%'}
+                            height={'100%'}
+                            alt="Main Image"
+                            objectFit="cover"
+                        />
+                    </AspectRatio>
                 </GridItem>
 
                 {/* 4 Square Images below (mobile) or to the right (desktop) */}
@@ -104,12 +102,13 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                             base: 'repeat(1, 1fr)', // 1 row on mobile
                             md: 'repeat(2, 1fr)', // 2 rows on desktop
                         }}
-                        gap={4}
+                        gap={3}
                     >
                         {images.slice(1, 5).map((image, index) => (
                             <GridItem key={index}>
                                 <Box
                                     minWidth={'50px'}
+                                    maxH={'292px'}
                                     width={'100%'}
                                     aspectRatio="1 / 1"
                                     overflow="hidden"
@@ -132,7 +131,7 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                                         alt={`Thumbnail ${index + 1}`}
                                         width="100%"
                                         height="100%"
-                                        objectFit={'fill'}
+                                        objectFit={'cover'}
                                     />
                                 </Box>
                             </GridItem>
