@@ -79,6 +79,7 @@ const Processing = ({
                 ...prevStatuses,
                 [selectedOrderId]: 'canceled',
             }));
+            fetchAllOrders(customerId as string);
             setIsModalOpen(false);
         } catch (error) {
             console.error('Error cancelling order: ', error);
@@ -104,6 +105,7 @@ const Processing = ({
 
     const fetchAllOrders = async (customerId: string) => {
         setIsLoading(true);
+        setCustomerId(customerId);
         try {
             const bucket = await getSingleBucket(customerId, 1);
 
