@@ -858,7 +858,7 @@ class CategoryCache extends SeamlessCache {
         return super.retrieve(params);
     }
 
-    protected async getData(productCategoryRepository: any): Promise<any> {
+    protected async getData(productCategoryRepository: any): Promise<ProductCategory[]> {
         return await productCategoryRepository.find({
             select: ['id', 'name', 'metadata'],
             relations: [
