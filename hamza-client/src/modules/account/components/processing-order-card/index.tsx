@@ -46,7 +46,6 @@ const ProcessingOrderCard = ({
         return <div>Loading...</div>; // Display loading message if order is undefined
     }
 
-    console.log(`HANDLE ${handle}`);
     return (
         <Box
             // bg={'#272727'}
