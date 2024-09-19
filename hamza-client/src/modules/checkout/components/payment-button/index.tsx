@@ -52,10 +52,10 @@ declare global {
 const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
     const notReady =
         !cart ||
-            !cart.shipping_address ||
-            !cart.billing_address ||
-            !cart.email ||
-            cart.shipping_methods.length < 1
+        !cart.shipping_address ||
+        !cart.billing_address ||
+        !cart.email ||
+        cart.shipping_methods.length < 1
             ? true
             : false;
 
@@ -184,7 +184,6 @@ const CryptoPaymentButton = ({
             return output;
         } catch (e) {
             console.error('error has occured during transaction', e);
-            displayError('Checkout was not completed.');
             setSubmitting(false);
         }
     };
@@ -276,7 +275,8 @@ const CryptoPaymentButton = ({
                 },
                 {
                     headers: {
-                        authorization: getClientCookie('_medusa_jwt')('_medusa_jwt'),
+                        authorization:
+                            getClientCookie('_medusa_jwt')('_medusa_jwt'),
                     },
                 }
             );
@@ -292,16 +292,18 @@ const CryptoPaymentButton = ({
      * @returns
      */
     const handlePayment = async () => {
+        // If wallet not connected, connect wallet
         if (!isConnected) {
             if (openConnectModal) openConnectModal();
         } else {
             try {
                 setSubmitting(true);
 
+                // Update cart
                 updateCart.mutate(
                     { context: {} },
                     {
-                        onSuccess: ({ }) => {
+                        onSuccess: ({}) => {
                             //this calls the CartCompletion routine
                             completeCart.mutate(void 0, {
                                 onSuccess: async ({ data, type }) => {
@@ -309,9 +311,10 @@ const CryptoPaymentButton = ({
                                     try {
                                         //this does wallet payment, and everything after
                                         completeCheckout(cart.id);
+                                        setSubmitting(false);
                                     } catch (e) {
                                         console.error(e);
-                                        setSubmitting(false);
+
                                         displayError(
                                             'Checkout was not completed'
                                         );
