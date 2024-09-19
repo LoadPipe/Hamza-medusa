@@ -124,16 +124,13 @@ export default class OrderService extends MedusaOrderService {
     }
 
     async getOrdersForCheckout(cartId: string): Promise<Order[]> {
-        const orders = await this.orderRepository_.find({
+        return await this.orderRepository_.find({
             where: { cart_id: cartId, status: OrderStatus.REQUIRES_ACTION },
             relations: ['store.owner', 'payments'],
             skip: 0,
             take: 1,
             order: { created_at: "DESC" }
         });
-
-        console.log('GET ORDERS FOR CHECKOUT: ', orders.length)
-        return orders;
     }
 
     async getOrderWithStore(orderId: string): Promise<Order> {
@@ -303,7 +300,7 @@ export default class OrderService extends MedusaOrderService {
     }
 
     async getCustomerOrders(customerId: string): Promise<Order[]> {
-        const orders = await this.orderRepository_.find({
+        return await this.orderRepository_.find({
             where: {
                 customer_id: customerId,
                 status: Not(In([OrderStatus.ARCHIVED, OrderStatus.REQUIRES_ACTION])),
