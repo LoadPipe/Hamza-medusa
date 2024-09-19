@@ -17,7 +17,13 @@ import { BsCircleFill } from 'react-icons/bs';
 import ShippedCard from '@modules/account/components/shipped-card';
 import EmptyState from '@modules/order/components/empty-state';
 
-const Shipped = ({ orders, isEmpty }: { orders: any[]; isEmpty?: boolean }) => {
+const Shipped = ({
+    customer,
+    isEmpty,
+}: {
+    customer: string;
+    isEmpty?: boolean;
+}) => {
     const [customerOrder, setCustomerOrder] = useState<any[]>([]);
     const [customerId, setCustomerId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -25,15 +31,15 @@ const Shipped = ({ orders, isEmpty }: { orders: any[]; isEmpty?: boolean }) => {
 
     useEffect(() => {
         // console.log('Orders received in Cancelled:', orders);
-        if (orders && orders.length > 0) {
-            const customer_id = orders[0]?.customer_id;
+        if (customer && customer.length > 0) {
+            const customer_id = customer;
             // console.log(
             //     `Running fetchAllOrders with customerID ${customer_id}`
             // );
             fetchAllOrders(customer_id);
             setCustomerId(customer_id);
         }
-    }, [orders]);
+    }, [customer]);
 
     const toggleCourierInfo = (orderId: any) => {
         setCourierInfo(courierInfo === orderId ? null : orderId);

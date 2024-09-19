@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 import OrderOverview from '@modules/account/components/order-overview';
-import { listCustomerOrders } from '@lib/data';
+import { getHamzaCustomer, listCustomerOrders } from '@lib/data';
 import { notFound } from 'next/navigation';
 import { Box, Text } from '@chakra-ui/react';
 export const metadata: Metadata = {
@@ -11,6 +11,7 @@ export const metadata: Metadata = {
 
 export default async function Orders() {
     const orders = await listCustomerOrders();
+    const customer = await getHamzaCustomer();
 
     if (!orders) {
         notFound();
@@ -26,7 +27,7 @@ export default async function Orders() {
                 {/*    View your previous orders and their status. You can also*/}
                 {/*    create returns or exchanges for your orders if needed.*/}
                 {/*</p>*/}
-                <OrderOverview orders={orders} />
+                <OrderOverview customer={customer} />
             </Box>
         </Box>
     );

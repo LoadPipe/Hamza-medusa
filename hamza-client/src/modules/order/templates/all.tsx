@@ -26,7 +26,7 @@ interface OrderState {
 
 const MIN_CANCEL_REASON_LENGTH = 30;
 
-const All = ({ orders }: { orders: any[] }) => {
+const All = ({ customer }: { customer: string }) => {
     const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [cancelReason, setCancelReason] = useState('');
@@ -44,15 +44,15 @@ const All = ({ orders }: { orders: any[] }) => {
 
     useEffect(() => {
         // console.log('Orders received in Cancelled:', orders);
-        if (orders && orders.length > 0) {
-            const customer_id = orders[0]?.customer_id;
+        if (customer && customer.length > 0) {
+            const customer_id = customer;
             // console.log(
             //     `Running fetchAllOrders with customerID ${customer_id}`
             // );
             fetchAllOrders(customer_id);
             setCustomerId(customer_id);
         }
-    }, [orders]);
+    }, [customer]);
 
     const fetchAllOrders = async (customerId: string) => {
         try {
@@ -136,19 +136,19 @@ const All = ({ orders }: { orders: any[] }) => {
             {!areAllOrdersEmpty ? (
                 <Box>
                     <Box mt={4} mb={2}>
-                        <Processing orders={orders} />
+                        <Processing customer={customer} />
                     </Box>
                     <Box mt={4} mb={2}>
-                        <Shipped orders={orders} />
+                        <Shipped customer={customer} />
                     </Box>
                     <Box mt={4} mb={2}>
-                        <Delivered orders={orders} />
+                        <Delivered customer={customer} />
                     </Box>
                     <Box mt={4} mb={2}>
-                        <Cancelled orders={orders} />
+                        <Cancelled customer={customer} />
                     </Box>
                     <Box mt={4} mb={2}>
-                        <Refund orders={orders} />
+                        <Refund customer={customer} />
                     </Box>
                 </Box>
             ) : (
