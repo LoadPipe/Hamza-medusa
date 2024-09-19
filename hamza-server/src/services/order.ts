@@ -201,7 +201,12 @@ export default class OrderService extends MedusaOrderService {
     ): Promise<Order[]> {
         //get orders & order ids
         const orders: Order[] = await this.orderRepository_.find({
-            where: { cart_id: cartId, status: OrderStatus.PENDING },
+            where: {
+                cart_id: cartId,
+                status: OrderStatus.REQUIRES_ACTION
+            },
+            take: 1, skip: 0,
+            order: { created_at: "DESC" },
         });
         const orderIds = orders.map((order) => order.id);
 
@@ -622,6 +627,7 @@ export default class OrderService extends MedusaOrderService {
         return orders.map((o) => {
             return this.orderRepository_.save({
                 id: o.id,
+                status: OrderStatus.PENDING,
                 payment_status: PaymentStatus.AWAITING,
             });
         });
