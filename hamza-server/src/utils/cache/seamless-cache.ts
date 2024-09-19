@@ -4,6 +4,8 @@ type CacheItem = {
 }
 
 /**
+ * SeamlessCache (TM)
+ * 
  * A utility for: 
  * - keeping data in cache for a max number of seconds 
  * - serving the data in such a way that there isn't a sudden rush for querying 
