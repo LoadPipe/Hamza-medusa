@@ -5,10 +5,10 @@ import CancelCard from '@modules/account/components/cancel-card';
 import EmptyState from '@modules/order/components/empty-state';
 
 const Cancelled = ({
-    orders,
+    customer,
     isEmpty,
 }: {
-    orders: any[];
+    customer: string;
     isEmpty?: boolean;
 }) => {
     const [customerOrder, setCustomerOrder] = useState<any[]>([]);
@@ -16,16 +16,16 @@ const Cancelled = ({
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
-        console.log('Orders received in Cancelled:', orders);
-        if (orders && orders.length > 0) {
-            const customer_id = orders[0]?.customer_id;
+        console.log('customer received in Cancelled:', customer);
+        if (customer && customer.length > 0) {
+            const customer_id = customer;
             console.log(
                 `Running fetchAllOrders with customerID ${customer_id}`
             );
             fetchAllOrders(customer_id);
             setCustomerId(customer_id);
         }
-    }, [orders]);
+    }, [customer]);
 
     const fetchAllOrders = async (customerId: string) => {
         setIsLoading(true);

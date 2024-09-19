@@ -138,6 +138,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     }, [options]);
 
     useEffect(() => {
+        // clean setSelectedVariantImage
+        setSelectedVariantImage('');
         if (productData && productData.variants) {
             if (!variantId) {
                 // Initially setting the variantId if it's not set

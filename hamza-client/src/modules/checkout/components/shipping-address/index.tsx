@@ -129,7 +129,6 @@ const ShippingAddress = ({
                         autoComplete="address-line2"
                         value={formData['shipping_address.address_2']}
                         onChange={handleChange}
-                        required
                     />
                     <Input
                         label="Company"

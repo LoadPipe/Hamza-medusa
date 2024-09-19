@@ -560,9 +560,12 @@ class ProductService extends MedusaProductService {
 
             console.log('store id', storeId);
             if (normalizedCategoryNames[0] === 'all') {
-                //remove products that aren't published
                 products = productCategories.flatMap((cat) =>
-                    cat.products.filter((p) => p.store_id === storeId)
+                    cat.products.filter(
+                        (p) =>
+                            p.store_id === storeId &&
+                            p.status === ProductStatus.PUBLISHED
+                    )
                 );
             } else {
                 // Filter the categories based on the provided category names
@@ -572,9 +575,12 @@ class ProductService extends MedusaProductService {
 
                 console.log('filtered categ', filteredCategories);
 
-                // Gather all the products into a single list
                 products = filteredCategories.flatMap((cat) =>
-                    cat.products.filter((p) => p.store_id === storeId)
+                    cat.products.filter(
+                        (p) =>
+                            p.store_id === storeId &&
+                            p.status === ProductStatus.PUBLISHED
+                    )
                 );
             }
 
@@ -698,7 +704,10 @@ class ProductService extends MedusaProductService {
             let normalizedCategoryNames = categories.map((name) =>
                 name.toLowerCase()
             );
-            if (normalizedCategoryNames.length > 1 && normalizedCategoryNames[0] === 'all')
+            if (
+                normalizedCategoryNames.length > 1 &&
+                normalizedCategoryNames[0] === 'all'
+            )
                 normalizedCategoryNames = normalizedCategoryNames.slice(1);
 
             const key = normalizedCategoryNames.sort().join(',');
@@ -708,7 +717,9 @@ class ProductService extends MedusaProductService {
                 categoryNames: normalizedCategoryNames,
                 upperPrice,
                 lowerPrice,
-                convertPrices: async (prods) => { return this.convertPrices(prods); }
+                convertPrices: async (prods) => {
+                    return this.convertPrices(prods);
+                },
             });
         } catch (error) {
             // Handle the error here
@@ -814,8 +825,8 @@ class ProductService extends MedusaProductService {
 
 /**
  * See SeamlessCache
- * 
- * This implementation of SeamlessCache caches product categories together with products, 
+ *
+ * This implementation of SeamlessCache caches product categories together with products,
  * since it's a slow query.
  */
 class CategoryCache extends SeamlessCache {
@@ -856,9 +867,9 @@ class CategoryCache extends SeamlessCache {
 
 /**
  * See SeamlessCache
- * 
+ *
  * This implementation of SeamlessCache caches the entire output of getFilteredProducts, since it's a slow
- * query that runs often. 
+ * query that runs often.
  */
 class ProductFilterCache extends SeamlessCache {
     constructor() {
@@ -873,14 +884,15 @@ class ProductFilterCache extends SeamlessCache {
         let products: Product[] = [];
 
         //get categories from cache
-        const productCategories = await categoryCache.retrieve(params.categoryRepository);
+        const productCategories = await categoryCache.retrieve(
+            params.categoryRepository
+        );
 
         if (params.categoryNames[0] === 'all') {
             //remove products that aren't published
             products = productCategories.flatMap((cat) =>
                 cat.products.filter(
-                    (p) =>
-                        p.status === ProductStatus.PUBLISHED && p.store_id
+                    (p) => p.status === ProductStatus.PUBLISHED && p.store_id
                 )
             );
         } else {
@@ -892,8 +904,7 @@ class ProductFilterCache extends SeamlessCache {
             // Gather all the products into a single list
             products = filteredCategories.flatMap((cat) =>
                 cat.products.filter(
-                    (p) =>
-                        p.status === ProductStatus.PUBLISHED && p.store_id
+                    (p) => p.status === ProductStatus.PUBLISHED && p.store_id
                 )
             );
         }
@@ -901,8 +912,7 @@ class ProductFilterCache extends SeamlessCache {
         if (params.upperPrice !== 0 && params.lowerPrice !== 0) {
             // Filter products by price using upper and lower price limits
             products = products.filter((product) => {
-                const price =
-                    product.variants[0]?.prices[0]?.amount ?? 0;
+                const price = product.variants[0]?.prices[0]?.amount ?? 0;
                 return price >= params.lowerPrice && price <= params.upperPrice;
             });
 
@@ -924,7 +934,7 @@ class ProductFilterCache extends SeamlessCache {
     }
 }
 
-// GLOBAL CACHES 
+// GLOBAL CACHES
 const categoryCache: CategoryCache = new CategoryCache();
 const productFilterCache: ProductFilterCache = new ProductFilterCache();
 
