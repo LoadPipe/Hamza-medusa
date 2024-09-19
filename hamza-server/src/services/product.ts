@@ -594,7 +594,8 @@ class ProductService extends MedusaProductService {
                 products = productCategories.flatMap((cat) =>
                     cat.products.filter(
                         (p) =>
-                            p.store_id === storeId && p.status === 'published'
+                            p.store_id === storeId &&
+                            p.status === ProductStatus.PUBLISHED
                     )
                 );
             } else {
@@ -608,7 +609,8 @@ class ProductService extends MedusaProductService {
                 products = filteredCategories.flatMap((cat) =>
                     cat.products.filter(
                         (p) =>
-                            p.store_id === storeId && p.status === 'published'
+                            p.store_id === storeId &&
+                            p.status === ProductStatus.PUBLISHED
                     )
                 );
             }
