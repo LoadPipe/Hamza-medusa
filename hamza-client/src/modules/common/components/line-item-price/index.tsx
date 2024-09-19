@@ -35,7 +35,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                 const customer = await getHamzaCustomer().catch(() => null);
                 if (customer) {
                     const response = await axios.get(
-                        `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/customer/preferred-currency`,
+                        `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/customer/preferred-currency`,
                         {
                             params: {
                                 customer_id: customer.id,
