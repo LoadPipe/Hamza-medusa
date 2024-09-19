@@ -432,38 +432,7 @@ class ProductService extends MedusaProductService {
      */
     async getAllProductCategories() {
         try {
-            // Fetch categories along with related products, variants, prices, and reviews
-            const productCategories =
-                await this.productCategoryRepository_.find({
-                    select: ['id', 'name', 'metadata'],
-                    relations: [
-                        'products',
-                        'products.variants.prices',
-                        'products.reviews',
-                    ],
-                });
-
-            //remove products that aren't published
-            for (let cat of productCategories) {
-                if (cat.products)
-                    cat.products = cat.products.filter(
-                        (p) => p.status == ProductStatus.PUBLISHED && p.store_id
-                    );
-            }
-
-            // Filter out categories that have no associated products that are published
-            const filteredCategories = productCategories.filter(
-                (category) => category.products && category.products.length > 0
-            );
-
-            //convert price currencies as needed
-            await Promise.all(
-                filteredCategories.map((cat) =>
-                    this.convertPrices(cat.products)
-                )
-            );
-
-            return filteredCategories; // Return the filtered categories
+            return await categoryCache.retrieve();
         } catch (error) {
             this.logger.error(
                 'Error fetching product categories with prices:',
@@ -862,17 +831,15 @@ class ProductService extends MedusaProductService {
  */
 class CategoryCache extends SeamlessCache {
     constructor() {
-        super(parseInt(process.env.CATEGORY_CACHE_EXPIRATION_SECONDS ?? '300'));
+        super(parseInt(process.env.CATEGORY_CACHE_EXPIRATION_SECONDS ?? '30'));
     }
 
     async retrieve(params?: any): Promise<ProductCategory[]> {
         return super.retrieve(params);
     }
 
-    protected async getData(
-        productCategoryRepository: any
-    ): Promise<ProductCategory[]> {
-        return await productCategoryRepository.find({
+    protected async getData(productCategoryRepository: any): Promise<ProductCategory[]> {
+        const categories = await productCategoryRepository.find({
             select: ['id', 'name', 'metadata'],
             relations: [
                 'products',
@@ -880,6 +847,21 @@ class CategoryCache extends SeamlessCache {
                 'products.reviews',
             ],
         });
+
+        //remove products that aren't published
+        for (let cat of categories) {
+            if (cat.products)
+                cat.products = cat.products.filter(
+                    (p) => p.status == ProductStatus.PUBLISHED && p.store_id
+                );
+        }
+
+        // Filter out categories that have no associated products that are published
+        const filteredCategories = categories.filter(
+            (category) => category.products && category.products.length > 0
+        );
+
+        return filteredCategories;
     }
 }
 
@@ -891,7 +873,7 @@ class CategoryCache extends SeamlessCache {
  */
 class ProductFilterCache extends SeamlessCache {
     constructor() {
-        super(parseInt(process.env.CATEGORY_CACHE_EXPIRATION_SECONDS ?? '300'));
+        super(parseInt(process.env.PRODUCT_CACHE_EXPIRATION_SECONDS ?? '30'));
     }
 
     async retrieveWithKey(key?: string, params?: any): Promise<Product[]> {
