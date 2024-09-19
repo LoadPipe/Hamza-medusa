@@ -32,10 +32,10 @@ import EmptyState from '@modules/order/components/empty-state';
 import ProcessingOrderCard from '@modules/account/components/processing-order-card';
 
 const Processing = ({
-    orders,
+    customer,
     isEmpty,
 }: {
-    orders: any[];
+    customer: string;
     isEmpty?: boolean;
 }) => {
     const [customerId, setCustomerId] = useState<string | null>(null);
@@ -94,16 +94,13 @@ const Processing = ({
     };
 
     useEffect(() => {
-        console.log('Orders received in Processing:', orders);
-        if (orders && orders.length > 0) {
-            const customer_id = orders[0]?.customer_id;
-            console.log(
-                `Running fetchAllOrders with customerID ${customer_id}`
-            );
-            fetchAllOrders(customer_id);
-            setCustomerId(customer_id);
+        console.log('Orders received in Processing:', customer);
+        if (customer && customer.length > 0) {
+            console.log(`Running fetchAllOrders with customerID ${customer}`);
+            fetchAllOrders(customer);
+            setCustomerId(customer);
         }
-    }, [orders]);
+    }, [customer]);
 
     const fetchAllOrders = async (customerId: string) => {
         setIsLoading(true);

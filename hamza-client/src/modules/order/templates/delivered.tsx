@@ -7,10 +7,10 @@ import EmptyState from '@modules/order/components/empty-state';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 
 const Delivered = ({
-    orders,
+    customer,
     isEmpty,
 }: {
-    orders: any[];
+    customer: string;
     isEmpty?: boolean;
 }) => {
     const [customerOrder, setCustomerOrder] = useState<any[]>([]);
@@ -20,15 +20,15 @@ const Delivered = ({
     // console.log(`ORDERS ARE ${JSON.stringify(orders)}`);
     useEffect(() => {
         // console.log('Orders received in Cancelled:', orders);
-        if (orders && orders.length > 0) {
-            const customer_id = orders[0]?.customer_id;
+        if (customer && customer.length > 0) {
+            const customer_id = customer;
             // console.log(
             //     `Running fetchAllOrders with customerID ${customer_id}`
             // );
             fetchAllOrders(customer_id);
             setCustomerId(customer_id);
         }
-    }, [orders]);
+    }, [customer]);
 
     const getAmount = (
         amount?: number | null,
