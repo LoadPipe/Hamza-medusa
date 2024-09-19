@@ -450,7 +450,7 @@ export async function finalizeCheckout(
         transaction_id,
         payer_address,
         escrow_contract_address,
-        chain_id
+        chain_id,
     });
 }
 
@@ -732,17 +732,24 @@ export async function getSession() {
 // Customer actions
 export async function getHamzaCustomer(includeAddresses: boolean = true) {
     const headers = getMedusaHeaders(['customer']);
-    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? {
-        customer_id: '',
-    };
-    const customer_id: string = token?.customer_id ?? '';
 
-    const response = await getSecure('/custom/customer', {
-        customer_id,
-        include_addresses: includeAddresses ? 'true' : 'false',
-    });
+    return medusaClient.customers
+        .retrieve(headers)
+        .then(({ customer }) => customer)
+        .catch((err) => null);
 
-    return response ?? {};
+    // const headers = getMedusaHeaders(['customer']);
+    // const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? {
+    //     customer_id: '',
+    // };
+    // const customer_id: string = token?.customer_id ?? '';
+
+    // const response = await getSecure('/custom/customer', {
+    //     customer_id,
+    //     include_addresses: includeAddresses ? 'true' : 'false',
+    // });
+
+    // return response ?? {};
 }
 
 // Customer actions

@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
 import LoginTemplate from '@modules/account/templates/login-template';
+import { Text } from '@chakra-ui/react';
 
 export const metadata: Metadata = {
     title: 'Sign in',
@@ -8,5 +9,9 @@ export const metadata: Metadata = {
 };
 
 export default function Login() {
-    return <div>Connect your wallet to sign in.</div>;
+    return (
+        <div>
+            <Text color={'white'}>Connect your wallet to sign in.</Text>
+        </div>
+    );
 }
