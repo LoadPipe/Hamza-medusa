@@ -98,6 +98,7 @@ export default class OrderService extends MedusaOrderService {
             order.sales_channel_id = cart.sales_channel_id;
             order.total = payment.amount;
             order.updated_at = payment.updated_at;
+            order.status = OrderStatus.REQUIRES_ACTION;
 
             //save the order
             order = await this.orderRepository_.save(order);
@@ -122,10 +123,13 @@ export default class OrderService extends MedusaOrderService {
         return null;
     }
 
-    async getOrdersForCart(cartId: string): Promise<Order[]> {
+    async getOrdersForCheckout(cartId: string): Promise<Order[]> {
         return await this.orderRepository_.find({
-            where: { cart_id: cartId, status: OrderStatus.PENDING },
+            where: { cart_id: cartId, status: OrderStatus.REQUIRES_ACTION },
             relations: ['store.owner', 'payments'],
+            skip: 0,
+            take: 1,
+            order: { created_at: "DESC" }
         });
     }
 
@@ -253,7 +257,7 @@ export default class OrderService extends MedusaOrderService {
         });
 
         //set order status
-        if (order.status === OrderStatus.PENDING) {
+        if (order.status === OrderStatus.PENDING || order.status === OrderStatus.REQUIRES_ACTION) {
             order.status = OrderStatus.CANCELED;
 
             await this.orderRepository_.save(order);
@@ -273,7 +277,7 @@ export default class OrderService extends MedusaOrderService {
 
     async cancelOrderFromCart(cart_id: string) {
         await this.orderRepository_.update(
-            { status: OrderStatus.PENDING, cart: { id: cart_id } },
+            { status: OrderStatus.REQUIRES_ACTION, cart: { id: cart_id } },
             { status: OrderStatus.ARCHIVED }
         );
     }
@@ -299,7 +303,7 @@ export default class OrderService extends MedusaOrderService {
         return await this.orderRepository_.find({
             where: {
                 customer_id: customerId,
-                status: Not(OrderStatus.ARCHIVED),
+                status: Not(In([OrderStatus.ARCHIVED, OrderStatus.REQUIRES_ACTION])),
             },
             relations: ['cart.items', 'cart', 'cart.items.variant.product'],
         });
@@ -366,7 +370,7 @@ export default class OrderService extends MedusaOrderService {
         items: any[];
     }> {
         const orders = (await this.orderRepository_.find({
-            where: { cart_id: cartId, status: Not(OrderStatus.ARCHIVED) },
+            where: { cart_id: cartId, status: Not(In([OrderStatus.ARCHIVED, OrderStatus.REQUIRES_ACTION])) },
             relations: ['cart.items.variant.product', 'store.owner'],
         })) as Order[];
 
@@ -444,7 +448,7 @@ export default class OrderService extends MedusaOrderService {
         const orders = await this.orderRepository_.find({
             where: {
                 customer_id: customerId,
-                status: Not(OrderStatus.ARCHIVED),
+                status: Not(In([OrderStatus.ARCHIVED, OrderStatus.REQUIRES_ACTION])),
             },
             select: ['id', 'cart_id'], // Select id and cart_id
             // relations: ['cart.items', 'cart.items.variant'],
@@ -460,7 +464,7 @@ export default class OrderService extends MedusaOrderService {
 
     async getOrderDetails(cartId: string) {
         const orderHandle = await this.orderRepository_.findOne({
-            where: { cart_id: cartId, status: Not(OrderStatus.ARCHIVED) },
+            where: { cart_id: cartId, status: Not(In([OrderStatus.ARCHIVED, OrderStatus.REQUIRES_ACTION])) },
             relations: ['cart.items', 'cart.items.variant.product', 'cart'],
         });
         let product_handles = [];
@@ -556,7 +560,7 @@ export default class OrderService extends MedusaOrderService {
             fulfillment_status?: any;
         } = {
             customer_id: customerId,
-            status: Not(OrderStatus.ARCHIVED),
+            status: Not(In([OrderStatus.ARCHIVED, OrderStatus.REQUIRES_ACTION])),
         };
 
         if (statusParams.orderStatus) {
