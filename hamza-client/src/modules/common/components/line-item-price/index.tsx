@@ -28,6 +28,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
     const [currencyCode, setCurrencyCode] = useState<string | undefined>(
         undefined
     );
+    const port = 9000;
 
     useEffect(() => {
         const fetchCustomerPreferredCurrency = async () => {
@@ -35,7 +36,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                 const customer = await getHamzaCustomer().catch(() => null);
                 if (customer) {
                     const response = await axios.get(
-                        'http://localhost:9000/custom/customer/preferred-currency',
+                        'http://localhost:${port}/custom/customer/preferred-currency',
                         {
                             params: {
                                 customer_id: customer.id,
