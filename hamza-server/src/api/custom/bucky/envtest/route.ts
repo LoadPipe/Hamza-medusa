@@ -11,6 +11,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        return handler.returnStatus(200, { JWT_SECRET: process.env.JWT_SECRET, COOKIE_SECRET: process.env.COOKIE_SECRET } });
-});
+        return handler.returnStatus(200, { JWT_SECRET: process.env.JWT_SECRET, COOKIE_SECRET: process.env.COOKIE_SECRET });
+    });
 };
+
