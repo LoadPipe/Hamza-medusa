@@ -265,8 +265,13 @@ class ProductService extends MedusaProductService {
         ).filter((p) => p.variants?.length);
     }
 
-    async getCategoriesByStoreId(storeId: string): Promise<Product[]> {
+    async getCategoriesByStoreId(storeId: string): Promise<ProductCategory[]> {
         try {
+            const categories = await categoryCache.retrieve(this.productCategoryRepository_);
+            return categories.filter(c => (
+                c.products.find(p => p.store_id === storeId)
+            ));
+            /*
             const query = `
                 SELECT pc.*
                 FROM product p
@@ -279,6 +284,7 @@ class ProductService extends MedusaProductService {
                 storeId,
             ]);
             return categories;
+            */
         } catch (error) {
             this.logger.error('Error fetching categories by store ID:', error);
             throw new Error(
@@ -430,7 +436,7 @@ class ProductService extends MedusaProductService {
      * @returns {Array} - A list of product categories with associated products and their updated prices.
      * @throws {Error} - If there is an issue fetching the categories or updating prices.
      */
-    async getAllProductCategories() {
+    async getAllProductCategories(): Promise<ProductCategory[]> {
         try {
             return await categoryCache.retrieve();
         } catch (error) {
@@ -442,265 +448,23 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    //TODO: is this needed? Could it not just be replaced by getFilteredProductsByCategory?
-    /**
-     * Fetches all products for a specific category by category name.
-     *
-     * 1. Retrieves all product categories from the repository, including related products, product variants, prices, and reviews.
-     * 2. Filters the categories by the provided category name.
-     * 3. Filters products within the selected category by status 'published' and ensures each product has a valid store ID.
-     * 4. Updates the product pricing for the filtered products.
-     * 5. Returns the filtered list of products for the specified category.
-     *
-     * @param {string} categoryName - The category to filter products by.
-     * @returns {Array} - A list of products for the specified category with updated prices.
-     * @throws {Error} - If there is an issue fetching the products or updating prices.
-     */
-    async getAllProductsByCategory(categoryName: string) {
-        try {
-            if (categoryName.toLowerCase() === 'all') {
-                const products = await this.convertPrices(
-                    await this.productRepository_.find({
-                        relations: ['variants.prices', 'reviews'],
-                        where: {
-                            status: ProductStatus.PUBLISHED,
-                            store_id: Not(IsNull()),
-                        },
-                    })
-                );
-
-                return products;
-            }
-
-            const categories = await this.productCategoryRepository_.find({
-                select: ['id', 'name', 'metadata'],
-                relations: [
-                    'products',
-                    'products.variants.prices',
-                    'products.reviews',
-                ],
-            });
-
-            let filteredCategories = categories;
-
-            //Filter for the specific category
-            filteredCategories = categories.filter(
-                (cat) => cat.name.toLowerCase() === categoryName.toLowerCase()
-            );
-
-            // Filter products for the category (or all categories) by storeId and status 'published'
-            const filteredProducts = filteredCategories.map((cat) => {
-                return {
-                    ...cat,
-                    products: cat.products.filter(
-                        (product) =>
-                            product.status === ProductStatus.PUBLISHED &&
-                            product.store_id
-                    ),
-                };
-            });
-
-            // Update product pricing
-            await Promise.all(
-                filteredProducts.map((cat) => this.convertPrices(cat.products))
-            );
-
-            return filteredProducts; // Return all product data
-        } catch (error) {
-            // Handle the error here
-            this.logger.error(
-                'Error occurred while fetching products by handle:',
-                error
-            );
-            throw new Error('Failed to fetch products by handle.');
-        }
-    }
-
-    //TODO: is this needed? Could it not just be replaced by getFilteredProductsByCategory?
-    /**
-     * Filters products based on selected categories and store ID.
-     *
-     * This function retrieves products from the store associated with the provided `storeId` and filters them
-     * based on the selected category names. If 'all' is passed as the category, it retrieves all products from
-     * the store. It also ensures that products are unique and updates their pricing before returning the final list.
-     *
-     * @param {string[]} categories - An array of category names to filter products by.
-     *                                If 'all' is included, all products from the store will be returned.
-     * @param {string} storeId - The store ID to filter products by.
-     *                           This represents the store from which the products should be fetched.
-     *
-     * @returns {Product[]} - A list of products filtered by the provided categories and store ID.
-     *
-     * @throws {Error} - Throws an error if the product retrieval or filtering process fails.
-     */
-    async getAllStoreProductsByCategory(
-        categories: string[], // Array of strings representing category names
-        storeId: string // Number representing the upper price limit
-    ) {
-        try {
-            let normalizedCategoryNames = categories.map((name) =>
-                name.toLowerCase()
-            );
-
-            console.log('categorues', categories);
-
-            console.log('normalized', normalizedCategoryNames);
-
-            let products: Product[] = [];
-
-            const productCategories =
-                await this.productCategoryRepository_.find({
-                    select: ['id', 'name', 'metadata'],
-                    relations: [
-                        'products',
-                        'products.variants.prices',
-                        'products.reviews',
-                    ],
-                });
-
-            console.log('store id', storeId);
-            if (normalizedCategoryNames[0] === 'all') {
-                products = productCategories.flatMap((cat) =>
-                    cat.products.filter(
-                        (p) =>
-                            p.store_id === storeId &&
-                            p.status === ProductStatus.PUBLISHED
-                    )
-                );
-            } else {
-                // Filter the categories based on the provided category names
-                const filteredCategories = productCategories.filter((cat) =>
-                    normalizedCategoryNames.includes(cat.name.toLowerCase())
-                );
-
-                console.log('filtered categ', filteredCategories);
-
-                products = filteredCategories.flatMap((cat) =>
-                    cat.products.filter(
-                        (p) =>
-                            p.store_id === storeId &&
-                            p.status === ProductStatus.PUBLISHED
-                    )
-                );
-            }
-
-            //remove duplicates
-            products = filterDuplicatesById(products);
-
-            // Update product pricing
-            await this.convertPrices(products);
-
-            return products; // Return filtered products
-        } catch (error) {
-            // Handle the error here
-            this.logger.error(
-                'Error occurred while fetching products by handle:',
-                error
-            );
-            throw new Error('Failed to fetch products by handle.');
-        }
-    }
-
-    /**
-     * Fetches all products that belong to multiple categories by category names.
-     *
-     * 1. Retrieves product IDs for products that belong to all the provided categories.
-     * 2. Fetches detailed product data for those products, including variants, prices, and reviews.
-     * 3. Filters products by status 'published' and ensures each product has a valid store ID.
-     * 4. Updates the product pricing for the filtered products.
-     * 5. Returns the filtered list of products.
-     *
-     * @param {string[]} categoryNames - The list of categories to filter products by.
-     * @returns {Array} - A list of products that belong to all the specified categories with updated prices.
-     * @throws {Error} - If there is an issue fetching the products or updating prices.
-     */
-    async getAllProductsByMultipleCategories(categoryNames: string[]) {
-        try {
-            const normalizedCategoryNames = categoryNames;
-            // Step 1: Fetch the category IDs that match the given category names
-            const categoryIds = await this.productCategoryRepository_
-                .createQueryBuilder('product_category')
-                .select('product_category.id')
-                .where(
-                    'product_category.name LIKE ANY(ARRAY[:...categoryNames])',
-                    {
-                        categoryNames: normalizedCategoryNames,
-                    }
-                )
-                .getRawMany();
-
-            // Step 2: Map the categoryIds to a list of values
-            const categoryIdList = categoryIds.map(
-                (c) => c.product_category_id
-            );
-
-            // Step 3: Fetch product IDs that belong to all specified categories
-            const productIds = await this.productRepository_
-                .createQueryBuilder('product')
-                .select('product.id')
-                .innerJoin(
-                    'product_category_product', // Join the product_category_product table
-                    'pcp',
-                    'pcp.product_id = product.id' // Join condition on product_id
-                )
-                .where('pcp.product_category_id IN (:...categoryIds)', {
-                    categoryIds: categoryIdList, // Use the mapped list of category IDs
-                })
-                .groupBy('product.id') // Group by the product id
-                .having(
-                    'COUNT(DISTINCT pcp.product_category_id) = :categoryCount',
-                    {
-                        categoryCount: categoryIdList.length, // Ensure the product belongs to all categories
-                    }
-                )
-                .getRawMany();
-
-            const productIdList = productIds.map((p) => p.product_id);
-
-            // Step 4: Fetch detailed product data for the retrieved product IDs
-            const products = await this.productRepository_.find({
-                where: {
-                    id: In(productIdList), // Fetch products by the list of product IDs
-                },
-                relations: ['variants.prices', 'reviews'], // Include variants, prices, and reviews
-            });
-
-            // Step 5: Filter products by status 'published' and valid store_id
-            let filteredProducts = products.filter(
-                (product) => product.status === 'draft' && product.store_id
-            );
-
-            // Step 6: filter out duplicates
-            filteredProducts = filterDuplicatesById(filteredProducts);
-
-            // Step 6: Update product pricing for filtered products
-            await this.convertPrices(filteredProducts);
-
-            // Return the filtered products with updated pricing
-            return filteredProducts;
-        } catch (error) {
-            this.logger.error(
-                'Error occurred while fetching products by multiple categories:',
-                error
-            );
-            throw new Error('Failed to fetch products by multiple categories.');
-        }
-    }
-
     /**
      * Filters products based on selected categories, upper price limit, and lower price limit.
      *
      * @param {string[]} categories - An array of category names to filter products by.
      * @param {number} upperPrice - The upper price limit for filtering products.
      * @param {number} lowerPrice - The lower price limit for filtering products.
+     * @param {number} lowerPrice - Optional param to filter further by store.
      * @returns {Array} - A list of products filtered by the provided criteria.
      */
     async getFilteredProducts(
         categories: string[], // Array of strings representing category names
-        upperPrice: number, // Number representing the upper price limit
-        lowerPrice: number // Number representing the lower price limit
+        upperPrice: number = 0, // Number representing the upper price limit
+        lowerPrice: number = 0, // Number representing the lower price limit
+        storeId?: string
     ) {
         try {
+            //prepare category names for query
             let normalizedCategoryNames = categories.map((name) =>
                 name.toLowerCase()
             );
@@ -712,7 +476,8 @@ class ProductService extends MedusaProductService {
 
             const key = normalizedCategoryNames.sort().join(',');
 
-            return productFilterCache.retrieveWithKey(key, {
+            //retrieve products from cache 
+            let products = await productFilterCache.retrieveWithKey(key, {
                 categoryRepository: this.productCategoryRepository_,
                 categoryNames: normalizedCategoryNames,
                 upperPrice,
@@ -721,6 +486,14 @@ class ProductService extends MedusaProductService {
                     return this.convertPrices(prods);
                 },
             });
+
+            //filter by store id if provided
+            if (storeId) {
+                products = products.filter(p => p.store_id === storeId);
+            }
+
+            return products;
+
         } catch (error) {
             // Handle the error here
             this.logger.error(
@@ -840,7 +613,7 @@ class CategoryCache extends SeamlessCache {
 
     protected async getData(productCategoryRepository: any): Promise<ProductCategory[]> {
         const categories = await productCategoryRepository.find({
-            select: ['id', 'name', 'metadata'],
+            select: ['id', 'name', 'metadata', 'handle'],
             relations: [
                 'products',
                 'products.variants.prices',

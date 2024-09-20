@@ -31,11 +31,11 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         const storeData = await storeService.getStoreByName(
             store_name.toString()
         );
-        const products = await productService.getCategoriesByStoreId(
+        const categories = await productService.getCategoriesByStoreId(
             storeData.id.toString()
         );
 
         // Return the products with categories
-        return handler.returnStatus(200, products);
+        return handler.returnStatus(200, categories, 200);
     });
 };

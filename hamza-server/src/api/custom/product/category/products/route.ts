@@ -14,6 +14,8 @@ import { RouteHandler } from '../../../../route-handler';
  * @throws  400 - If the category_name parameter is missing or invalid.
  */
 
+//TODO: can be removed
+/*
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const storeService: StoreService = req.scope.resolve('storeService');
     const productService: ProductService = req.scope.resolve('productService');
@@ -52,3 +54,4 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         return handler.returnStatus(200, products);
     });
 };
+*/

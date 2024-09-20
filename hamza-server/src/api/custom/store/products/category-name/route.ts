@@ -28,12 +28,13 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             : handler.inputParams.category_name?.split(',') || [];
 
         // Fetch the products by store ID
-        const products = await productService.getAllStoreProductsByCategory(
+        const products = await productService.getFilteredProducts(
             categories,
+            0, 0,
             storeData.id.toString()
         );
 
         // Return the filtered products
-        return handler.returnStatus(200, products);
+        return handler.returnStatus(200, products, 200);
     });
 };

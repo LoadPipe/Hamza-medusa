@@ -29,6 +29,7 @@ const StoreSearch = ({ storeName }: Props) => {
 
         data.data.forEach((item: any) => {
             const handle = item?.handle;
+            console.log(item);
             if (handle) {
                 uniqueHandles.add(handle);
             }
