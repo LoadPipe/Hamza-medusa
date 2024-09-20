@@ -12,7 +12,7 @@ import { ProductVariant } from './product-variant';
 import { Wishlist } from './wishlist';
 
 @Entity()
-@Unique(['wishlist_id', 'product_id'])
+@Unique(['wishlist_id', 'variant_id'])
 export class WishlistItem extends BaseEntity {
     @Column()
     wishlist_id: string;

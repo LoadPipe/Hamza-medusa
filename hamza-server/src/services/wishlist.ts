@@ -118,7 +118,7 @@ class WishlistService extends TransactionBaseService {
                     `Wishlist not found for customer with ID ${customer_id}`
                 );
             }
-            // Find the wishlist-dropdown item based on the wishlist_id and product_id
+            // Find the wishlist-dropdown item based on the wishlist_id and variant_id
             const item = await wishlistItemRepository.findOne({
                 where: { wishlist_id: wishlist.id, variant_id },
             });
