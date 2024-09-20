@@ -13,6 +13,7 @@ import { getClientCookie } from '@lib/util/get-client-cookies';
 
 interface AccountLayoutProps {
     customer: Omit<Customer, 'password_hash'> | null;
+
     children: React.ReactNode;
 }
 
@@ -61,6 +62,8 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
         }
     }, [authData.status]); // Dependency array includes authData.status, so it runs whenever authData.status changes.
 
+    console.log('customer in account', JSON.stringify(customer));
+
     return (
         <Flex width={'100vw'} justifyContent={'center'}>
             <Flex
@@ -77,7 +80,9 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
                     justifyContent={'center'}
                     flexDirection={{ base: 'column', md: 'row' }}
                 >
-                    <div>{customer && <AccountNav customer={customer} />}</div>
+                    <div>
+                        {customer?.id && <AccountNav customer={customer} />}
+                    </div>
                     {/* <AccountNav customer={customer} /> */}
                     <Flex
                         ml={{ base: 0, md: 'auto' }}
