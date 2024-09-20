@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { cancelOrder, getOrderBucket } from '@lib/data';
+import { getOrderBucket } from '@lib/data';
 import { Box, Button, Text } from '@chakra-ui/react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import CancelOrderModal from '../components/cancel-order-modal';
@@ -24,14 +24,7 @@ interface OrderState {
     Refunded: OrderType[];
 }
 
-const MIN_CANCEL_REASON_LENGTH = 30;
-
 const All = ({ customer }: { customer: string }) => {
-    const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [cancelReason, setCancelReason] = useState('');
-    const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
-    const [isCanceling, setIsCanceling] = useState(false);
     const [customerId, setCustomerId] = useState<string | null>(null);
 
     const [customerOrder, setCustomerOrder] = useState<OrderState | null>({
@@ -100,30 +93,7 @@ const All = ({ customer }: { customer: string }) => {
             });
         }
     };
-    const closeCancelModal = () => {
-        setIsModalOpen(false);
-        setCancelReason('');
-        setIsAttemptedSubmit(false);
-    };
 
-    const handleCancel = async () => {
-        if ((cancelReason?.length ?? 0) < MIN_CANCEL_REASON_LENGTH) {
-            setIsAttemptedSubmit(true);
-            return;
-        }
-        if (!selectedOrderId) return;
-
-        setIsCanceling(true); //start loader for button in modal
-
-        try {
-            await cancelOrder(selectedOrderId);
-        } catch (error) {
-            console.error('Error cancelling order: ', error);
-        } finally {
-            setIsCanceling(false);
-            closeCancelModal();
-        }
-    };
     const areAllOrdersEmpty = customerOrder
         ? Object.values(customerOrder).every(
               (orderArray) => orderArray.length === 0
@@ -174,16 +144,6 @@ const All = ({ customer }: { customer: string }) => {
                     </LocalizedClientLink>
                 </Box>
             )}
-
-            <CancelOrderModal
-                isModalOpen={isModalOpen}
-                closeCancelModal={closeCancelModal}
-                handleCancel={handleCancel}
-                cancelReason={cancelReason}
-                setCancelReason={setCancelReason}
-                isAttemptedSubmit={isAttemptedSubmit}
-                isCanceling={isCanceling}
-            />
         </Box>
     );
 };
