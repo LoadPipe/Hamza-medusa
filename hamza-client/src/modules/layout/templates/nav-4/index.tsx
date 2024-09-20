@@ -70,7 +70,7 @@ export default async function Nav() {
                 >
                     <MobileMenu />
 
-                    <LocalizedClientLink href="/">
+                    <a href="/">
                         <Flex width={'190px'} marginLeft="auto" flexShrink={0}>
                             <Image
                                 className="w-[22.92px] h-[33px] md:w-[49px] md:h-[71px]"
@@ -90,7 +90,7 @@ export default async function Nav() {
                                 alt="Hamza"
                             />
                         </Flex>
-                    </LocalizedClientLink>
+                    </a>
 
                     <NavSearchBar />
 
