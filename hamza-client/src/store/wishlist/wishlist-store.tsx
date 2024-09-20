@@ -24,7 +24,7 @@ type WishlistType = {
     wishlist: Wishlist;
     loadWishlist: (customer_id: string) => Promise<void>;
     addWishlistProduct: (product: WishlistProduct) => Promise<void>;
-    removeWishlistProduct: (product_id: string) => Promise<void>;
+    removeWishlistProduct: (productVariantId: string) => Promise<void>;
     updateAuthentication: (status: boolean) => void;
     isCustomerAuthenticated: boolean;
 };
@@ -45,7 +45,7 @@ const useWishlistStore = create<WishlistType>()(
             addWishlistProduct: async (product) => {
                 const { wishlist } = get();
                 console.log('Wishlist product', wishlist);
-                if (wishlist.products.some((p) => p.id === product.id)) {
+                if (wishlist.products.some((p) => p.productVariantId === product.productVariantId)) {
                     return;
                 }
                 set((state) => ({
@@ -55,15 +55,15 @@ const useWishlistStore = create<WishlistType>()(
                     },
                 }));
             },
-            removeWishlistProduct: async (product_id) => {
+            removeWishlistProduct: async (productVariantId) => {
                 console.log(
-                    'Attempting to remove product with ID:',
-                    product_id
+                    'Attempting to remove product variant with ID:',
+                    productVariantId
                 );
                 const { wishlist } = get();
                 set((state) => {
                     const filteredItems = wishlist.products.filter(
-                        (p) => p.id !== product_id
+                        (p) => p.productVariantId !== productVariantId
                     );
                     console.log('Filtered items:', filteredItems);
                     return {
@@ -85,6 +85,7 @@ const useWishlistStore = create<WishlistType>()(
                         handle: item.product.handle,
                         description: item.product.description,
                         price: item.product.price, // Added price mapping
+                        productVariantId: item.product.productVariantId
                     }));
                     if (Array.isArray(items)) {
                         set({ wishlist: { products } });
