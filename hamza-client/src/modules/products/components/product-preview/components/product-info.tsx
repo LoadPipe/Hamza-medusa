@@ -96,19 +96,19 @@ const ProductInfo = () => {
             flexDirection="column"
             gap="26px"
         >
-            <Flex display={{ base: 'none', md: 'flex' }}>
-                <Box
-                    backgroundColor="#121212"
-                    px="15px"
-                    py="8px"
-                    borderRadius="9999px"
-                    display="inline-flex"
-                    alignItems="center"
-                    justifyContent="center"
-                >
-                    <Text color="white">{productData.collection.title}</Text>
-                </Box>
-            </Flex>
+            {/*<Flex display={{ base: 'none', md: 'flex' }}>*/}
+            {/*    <Box*/}
+            {/*        backgroundColor="#121212"*/}
+            {/*        px="15px"*/}
+            {/*        py="8px"*/}
+            {/*        borderRadius="9999px"*/}
+            {/*        display="inline-flex"*/}
+            {/*        alignItems="center"*/}
+            {/*        justifyContent="center"*/}
+            {/*    >*/}
+            {/*        <Text color="white">{productData.collection.title}</Text>*/}
+            {/*    </Box>*/}
+            {/*</Flex>*/}
             <Flex className="flex justify-between items-center pr-5">
                 <Heading
                     display={{ base: 'none', md: 'block' }}
