@@ -58,7 +58,7 @@ Content-Type: application/json
 
 {
   "customer_id": "cus_01HW298CJPT60818GCHWD8GAT7",
-  "product_id": "prod_01HW241PXAB61RVRDBJZT7Q706"
+  "variant_id": ""
 }
 
 ### Delete Wishlist item by Customer_id && Product_id
@@ -67,7 +67,7 @@ Content-Type: application/json
 
 {
   "customer_id": "cus_01HW298CJPT60818GCHWD8GAT7",
-  "product_id": "prod_01HW241PKFDCDGP55DKH0A5A85"
+  "variant_id": ""
 }
 
 ### MeiliSearch Search
