@@ -183,25 +183,25 @@ export default function Page({ params }: { params: { slug: string } }) {
                                     </Text>
                                 </Flex>
                             </Flex>
-                            <Flex
-                                display={{ base: 'flex', md: 'none' }}
-                                height={'33px'}
-                                width={'120px'}
-                                ml="auto"
-                                borderColor={'primary.indigo.900'}
-                                borderWidth={'1px'}
-                                borderRadius={'37px'}
-                                justifyContent={'center'}
-                                cursor={'pointer'}
-                                fontSize={{ base: '12px', md: '16px' }}
-                            >
-                                <Text
-                                    alignSelf={'center'}
-                                    color="primary.indigo.900"
-                                >
-                                    Follow Seller
-                                </Text>
-                            </Flex>
+                            {/*<Flex*/}
+                            {/*    display={{ base: 'flex', md: 'none' }}*/}
+                            {/*    height={'33px'}*/}
+                            {/*    width={'120px'}*/}
+                            {/*    ml="auto"*/}
+                            {/*    borderColor={'primary.indigo.900'}*/}
+                            {/*    borderWidth={'1px'}*/}
+                            {/*    borderRadius={'37px'}*/}
+                            {/*    justifyContent={'center'}*/}
+                            {/*    cursor={'pointer'}*/}
+                            {/*    fontSize={{ base: '12px', md: '16px' }}*/}
+                            {/*>*/}
+                            {/*    <Text*/}
+                            {/*        alignSelf={'center'}*/}
+                            {/*        color="primary.indigo.900"*/}
+                            {/*    >*/}
+                            {/*        Follow Seller*/}
+                            {/*    </Text>*/}
+                            {/*</Flex>*/}
                         </Flex>
 
                         {/* Stats */}
@@ -301,7 +301,12 @@ export default function Page({ params }: { params: { slug: string } }) {
                         {/*End of Stats*/}
 
                         {/* Chat / Report */}
-                        <Flex ml={'auto'} flexDir={'column'} gap="16px">
+                        <Flex
+                            ml={'auto'}
+                            flexDir={'column'}
+                            gap="16px"
+                            justifyContent={'center'}
+                        >
                             <Flex
                                 display={{ base: 'none', md: 'flex' }}
                                 height={{ base: '33px', md: '47px' }}
@@ -321,24 +326,24 @@ export default function Page({ params }: { params: { slug: string } }) {
                                 </Text>
                             </Flex>
 
-                            <Flex
-                                display={{ base: 'none', md: 'flex' }}
-                                height={{ base: '33px', md: '47px' }}
-                                width={{ base: '120px', md: '190px' }}
-                                borderColor={'primary.indigo.900'}
-                                borderWidth={'1px'}
-                                borderRadius={'37px'}
-                                justifyContent={'center'}
-                                cursor={'pointer'}
-                                fontSize={{ base: '12px', md: '16px' }}
-                            >
-                                <Text
-                                    alignSelf={'center'}
-                                    color="primary.indigo.900"
-                                >
-                                    Follow Seller
-                                </Text>
-                            </Flex>
+                            {/*<Flex*/}
+                            {/*    display={{ base: 'none', md: 'flex' }}*/}
+                            {/*    height={{ base: '33px', md: '47px' }}*/}
+                            {/*    width={{ base: '120px', md: '190px' }}*/}
+                            {/*    borderColor={'primary.indigo.900'}*/}
+                            {/*    borderWidth={'1px'}*/}
+                            {/*    borderRadius={'37px'}*/}
+                            {/*    justifyContent={'center'}*/}
+                            {/*    cursor={'pointer'}*/}
+                            {/*    fontSize={{ base: '12px', md: '16px' }}*/}
+                            {/*>*/}
+                            {/*    <Text*/}
+                            {/*        alignSelf={'center'}*/}
+                            {/*        color="primary.indigo.900"*/}
+                            {/*    >*/}
+                            {/*        Follow Seller*/}
+                            {/*    </Text>*/}
+                            {/*</Flex>*/}
                         </Flex>
                     </Flex>
                     <Divider
