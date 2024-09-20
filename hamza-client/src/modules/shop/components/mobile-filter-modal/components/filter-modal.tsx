@@ -45,6 +45,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
     const { setCategorySelect, setCategoryItem } = useStorePage();
     const {
         setSelectCategoryModalFilter,
+        setCategoryItemStoreModalFilter,
         selectCategoryStoreModalFilter,
         categoryItemStoreModalFilter,
     } = useModalFilter();
@@ -69,6 +70,8 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
               metadata: category.metadata,
           }))
         : [];
+
+    const isDisabled = selectCategoryStoreModalFilter?.length === 0;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -171,20 +174,23 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         Clear All
                     </Button>
                     <Button
+                        isDisabled={isDisabled}
                         onClick={() => {
                             // Delete current settings
                             setCategorySelect([]);
 
                             // Update settings
                             if (
-                                selectCategoryStoreModalFilter &&
-                                categoryItemStoreModalFilter
+                                selectCategoryStoreModalFilter?.length > 0 &&
+                                categoryItemStoreModalFilter?.length > 0
                             ) {
                                 setCategorySelect(
                                     selectCategoryStoreModalFilter
                                 );
                                 setCategoryItem(categoryItemStoreModalFilter);
-                                // Reset side menu states
+                                // Reset side modal states
+                                setSelectCategoryModalFilter([]);
+                                setCategoryItemStoreModalFilter([]);
                             }
 
                             onClose();
