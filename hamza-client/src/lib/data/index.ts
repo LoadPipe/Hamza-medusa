@@ -450,7 +450,7 @@ export async function finalizeCheckout(
         transaction_id,
         payer_address,
         escrow_contract_address,
-        chain_id
+        chain_id,
     });
 }
 
