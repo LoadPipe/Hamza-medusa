@@ -31,9 +31,7 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
             );
 
             setSelectCategoryModalFilter(
-                updatedCategorySelection.length
-                    ? updatedCategorySelection
-                    : ['All']
+                updatedCategorySelection.length ? updatedCategorySelection : []
             );
 
             setCategoryItemStoreModalFilter(
@@ -82,10 +80,6 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                 }
                 padding="10px 24px"
                 transition="background 0.1s ease-in-out, color 0.1s ease-in-out"
-                _hover={{
-                    background: 'white',
-                    color: 'black',
-                }}
                 onClick={() => toggleCategorySelection(categoryName)}
             >
                 {url?.length && (
