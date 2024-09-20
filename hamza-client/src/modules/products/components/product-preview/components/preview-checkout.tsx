@@ -22,7 +22,7 @@ import {
 import CartPopup from '../../cart-popup';
 import { getAverageRatings, getStore, getReviewCount } from '@lib/data';
 import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
-const MEDUSA_SERVER_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
+import Spinner from '@modules/common/icons/spinner';
 
 interface PreviewCheckoutProps {
     productId: string;
@@ -38,6 +38,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
     const [options, setOptions] = useState<Record<string, string>>({});
     const [cartModalOpen, setCartModalOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isNavigating, setIsNavigating] = useState(false); // To prevent further navigation after the first one
+
     const updateOptions = (update: Record<string, string>) => {
         // console.log('options are ', options);
         setOptions({ ...options, ...update });
@@ -455,31 +458,42 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 <QuantityButton />
 
                 <Button
-                    onClick={() => {
-                        if (!inStock && isWhitelisted) {
-                            handleAddToCart(false);
-                            router.push('/checkout?step=address');
+                    onClick={async () => {
+                        if (isLoading || isNavigating) return; // Prevent SPAMMING the button
 
-                            return;
-                        }
-                        if (inStock) {
-                            handleAddToCart(false);
-                            router.push('/checkout?step=address');
+                        setIsLoading(true);
 
-                            return;
-                        }
-                        if (!inStock && !isWhitelisted) {
-                            toast.error('Out of stock');
+                        try {
+                            if (!inStock && isWhitelisted) {
+                                await handleAddToCart(false);
+                                router.push('/checkout?step=address');
+                                setIsNavigating(true);
+                            }
+                            if (inStock) {
+                                await handleAddToCart(false);
+                                router.push('/checkout?step=address');
+                                setIsNavigating(true);
+                            }
+                            if (!inStock && !isWhitelisted) {
+                                toast.error('Out of stock');
+                            }
+                        } catch (error) {
+                            console.error('Error adding to cart:', error);
+                        } finally {
+                            setIsLoading(false);
                         }
                     }}
                     borderRadius={'56px'}
                     height={{ base: '40px', md: '75px' }}
                     width="100%"
                     backgroundColor={'primary.yellow.900'}
+                    disabled={isLoading} // Disable button while loading
                     fontSize={{ base: '12px', md: '18px' }}
                 >
-                    Buy Now
+                    {isLoading ? <Spinner /> : 'Buy Now'}{' '}
+                    {/* Show spinner when loading */}
                 </Button>
+
                 {!inStock && isWhitelisted && (
                     <span className="text-xs text-white px-4 py-2">
                         You can buy it as you are whitelisted customer
