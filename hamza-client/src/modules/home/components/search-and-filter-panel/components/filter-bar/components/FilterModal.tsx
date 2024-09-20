@@ -52,7 +52,6 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
     } = useHomeProductsPage();
 
     const {
-        homeModalCurrencyFilterSelect,
         homeModalCategoryFilterSelect,
         setHomeModalCategoryFilterSelect,
         setHomeModalLowerPriceFilterSelect,
@@ -176,12 +175,6 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                     <Button
                         isDisabled={isDisabled}
                         onClick={() => {
-                            if (homeModalCurrencyFilterSelect) {
-                                setCurrencySelect(
-                                    homeModalCurrencyFilterSelect
-                                );
-                            }
-
                             if (homeModalCategoryFilterSelect) {
                                 setCategorySelect(
                                     homeModalCategoryFilterSelect
