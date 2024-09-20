@@ -66,6 +66,25 @@ async function checkSenderBalance(
     return false;
 }
 
+async function checkSenderBalanceBigInt(
+    provider: ethers.Provider,
+    signer: ethers.Signer,
+    chainId: any,
+    currencyCode: string,
+    amount: bigint
+): Promise<boolean> {
+    const address = await signer.getAddress();
+    const currencyAddress = getCurrencyAddress(currencyCode, chainId);
+    if (currencyAddress == ethers.ZeroAddress) {
+        return amount <= BigInt(await provider.getBalance(address));
+    } else {
+        const token = getTokenContract(signer, currencyAddress);
+        const balance = await token.balanceOf(address);
+        return (balance >= amount);
+    }
+    return false;
+}
+
 /**
  * Wallet payment handler for use with the Massmarket checkout mode. It calls to the 
  * Massmarket smart contract to process a payment. 
@@ -236,14 +255,14 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
             const currencyPayments = this.groupPaymentsByCurrency(inputs);
             for (let cp of currencyPayments) {
                 const { currency, amount } = cp;
-                if (!(await checkSenderBalance(provider, signer, chainId, currency, amount))) {
+                if (!(await checkSenderBalanceBigInt(provider, signer, chainId, currency, amount as bigint))) {
                     return {
                         escrow_contract_address: '0x0',
                         transaction_id,
                         payer_address,
                         success: false,
                         chain_id: chainId,
-                        message: `Insufficient balance in ${currency}`
+                        message: `Wallet has an insufficient balance in ${currency.toUpperCase()} to pay for this transaction`
                     };
                 }
             }
@@ -298,18 +317,18 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
         return ethers.toBigInt(nativeAmount);
     };
 
-    private groupPaymentsByCurrency(inputs: ISwitchMultiPaymentInput[]): { currency: string, amount: BigNumberish }[] {
-        const output: { currency: string, amount: BigNumberish }[] = [];
+    private groupPaymentsByCurrency(inputs: ISwitchMultiPaymentInput[]): { currency: string, amount: BigInt }[] {
+        const output: { currency: string, amount: BigInt }[] = [];
         for (let input of inputs) {
             let existing = output.find(o => o.currency == input.currency);
             if (!existing) {
-                existing = { currency: input.currency, amount: 0 };
+                existing = { currency: input.currency, amount: BigInt(0) };
                 output.push(existing);
             }
 
             for (let payment of input.payments) {
                 let amt: any = existing.amount;
-                amt += payment.amount;
+                amt += BigInt(payment.amount);
                 existing.amount = amt;
             }
         }

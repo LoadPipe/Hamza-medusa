@@ -52,10 +52,10 @@ declare global {
 const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
     const notReady =
         !cart ||
-        !cart.shipping_address ||
-        !cart.billing_address ||
-        !cart.email ||
-        cart.shipping_methods.length < 1
+            !cart.shipping_address ||
+            !cart.billing_address ||
+            !cart.email ||
+            cart.shipping_methods.length < 1
             ? true
             : false;
 
@@ -303,11 +303,12 @@ const CryptoPaymentButton = ({
         } else {
             try {
                 setSubmitting(true);
+                setErrorMessage('');
 
                 updateCart.mutate(
                     { context: {} },
                     {
-                        onSuccess: ({}) => {
+                        onSuccess: ({ }) => {
                             //this calls the CartCompletion routine
                             completeCart.mutate(void 0, {
                                 onSuccess: async ({ data, type }) => {
@@ -373,7 +374,7 @@ const CryptoPaymentButton = ({
                     color: 'black',
                 }}
             >
-                Place Order: Crypto
+                Place Order
             </Button>
             <ErrorMessage error={errorMessage} />
         </>
