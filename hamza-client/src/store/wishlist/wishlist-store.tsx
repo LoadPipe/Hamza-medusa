@@ -78,14 +78,15 @@ const useWishlistStore = create<WishlistType>()(
                 try {
                     const response = await getWishlist(customer_id);
                     const items = response.items;
+                    console.log('WISHLIST ITEMS');
+                    console.log(items);
                     const products = items.map((item: any) => ({
-                        id: item.product.id,
-                        thumbnail: item.product.thumbnail,
-                        title: item.product.title,
-                        handle: item.product.handle,
-                        description: item.product.description,
-                        price: item.product.price, // Added price mapping
-                        productVariantId: item.product.productVariantId
+                        id: item.variant.id,
+                        thumbnail: item.variant.product.thumbnail,
+                        title: item.variant.product.title,
+                        handle: item.variant.product.handle,
+                        description: item.variant.product.description,
+                        price: item.variant.price, // Added price mapping
                     }));
                     if (Array.isArray(items)) {
                         set({ wishlist: { products } });

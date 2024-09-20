@@ -30,7 +30,7 @@ class WishlistService extends TransactionBaseService {
             // Check if a wishlist-dropdown already exists for the customer_id
             const [wishlist] = await wishlistRepository.find({
                 where: { customer_id },
-                relations: ['items', 'items.variant'],
+                relations: ['items', 'items.variant.product'],
             });
 
             if (wishlist) {
@@ -51,7 +51,7 @@ class WishlistService extends TransactionBaseService {
 
                 const [wishlist] = await wishlistRepository.find({
                     where: { id: savedWishList.id },
-                    relations: ['items', 'items.variant'],
+                    relations: ['items', 'items.variant.product'],
                 });
 
                 return wishlist;
@@ -95,7 +95,7 @@ class WishlistService extends TransactionBaseService {
             // Fetch the updated wishlist-dropdown with items
             const updatedWishlist = await wishlistRepository.findOne({
                 where: { id: wishlist.id },
-                relations: ['items', 'items.variant'],
+                relations: ['items', 'items.variant.product'],
             });
 
             return updatedWishlist;
@@ -136,7 +136,7 @@ class WishlistService extends TransactionBaseService {
             // Fetch the updated wishlist-dropdown with items
             const updatedWishlist = await wishlistRepository.findOne({
                 where: { id: wishlist.id },
-                relations: ['items', 'items.variant'],
+                relations: ['items', 'items.variant.product'],
             });
 
             return updatedWishlist;
