@@ -44,12 +44,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
     onClose,
     categories,
 }) => {
-    const {
-        setCurrencySelect,
-        setReviewStarsSelect,
-        setCategorySelect,
-        setCategoryTypeSelect,
-    } = useHomeProductsPage();
+    const { setCategorySelect } = useHomeProductsPage();
 
     const {
         homeModalCategoryFilterSelect,
