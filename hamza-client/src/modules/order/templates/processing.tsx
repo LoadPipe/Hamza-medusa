@@ -650,34 +650,34 @@ const Processing = ({
                                                                                     Express
                                                                                 </Text>
                                                                             </Box>
-                                                                            <Box>
-                                                                                <Text
-                                                                                    fontSize="sm"
-                                                                                    color="gray.400"
-                                                                                >
-                                                                                    Tracking
-                                                                                    Number:
-                                                                                </Text>
-                                                                                <Text fontWeight="bold">
-                                                                                    2856374190
-                                                                                </Text>
-                                                                            </Box>
-                                                                            <Box>
-                                                                                <Text
-                                                                                    fontSize="sm"
-                                                                                    color="gray.400"
-                                                                                >
-                                                                                    Estimated
-                                                                                    Time
-                                                                                    of
-                                                                                    Arrival:
-                                                                                </Text>
-                                                                                <Text fontWeight="bold">
-                                                                                    July
-                                                                                    27-31,
-                                                                                    2024
-                                                                                </Text>
-                                                                            </Box>
+                                                                            {/*<Box>*/}
+                                                                            {/*    <Text*/}
+                                                                            {/*        fontSize="sm"*/}
+                                                                            {/*        color="gray.400"*/}
+                                                                            {/*    >*/}
+                                                                            {/*        Tracking*/}
+                                                                            {/*        Number:*/}
+                                                                            {/*    </Text>*/}
+                                                                            {/*    <Text fontWeight="bold">*/}
+                                                                            {/*        2856374190*/}
+                                                                            {/*    </Text>*/}
+                                                                            {/*</Box>*/}
+                                                                            {/*<Box>*/}
+                                                                            {/*    <Text*/}
+                                                                            {/*        fontSize="sm"*/}
+                                                                            {/*        color="gray.400"*/}
+                                                                            {/*    >*/}
+                                                                            {/*        Estimated*/}
+                                                                            {/*        Time*/}
+                                                                            {/*        of*/}
+                                                                            {/*        Arrival:*/}
+                                                                            {/*    </Text>*/}
+                                                                            {/*    <Text fontWeight="bold">*/}
+                                                                            {/*        July*/}
+                                                                            {/*        27-31,*/}
+                                                                            {/*        2024*/}
+                                                                            {/*    </Text>*/}
+                                                                            {/*</Box>*/}
                                                                             <Box>
                                                                                 <Text
                                                                                     fontSize="sm"
@@ -727,7 +727,7 @@ const Processing = ({
                                                                                         order
                                                                                             .shipping_address
                                                                                             .first_name
-                                                                                    }
+                                                                                    }{' '}
                                                                                     {
                                                                                         order
                                                                                             .shipping_address
