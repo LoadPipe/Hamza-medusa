@@ -265,8 +265,13 @@ class ProductService extends MedusaProductService {
         ).filter((p) => p.variants?.length);
     }
 
-    async getCategoriesByStoreId(storeId: string): Promise<Product[]> {
+    async getCategoriesByStoreId(storeId: string): Promise<ProductCategory[]> {
         try {
+            const categories = await categoryCache.retrieve(this.productCategoryRepository_);
+            return categories.filter(c => (
+                c.products.find(p => p.store_id === storeId)
+            ));
+            /*
             const query = `
                 SELECT pc.*
                 FROM product p
@@ -279,6 +284,7 @@ class ProductService extends MedusaProductService {
                 storeId,
             ]);
             return categories;
+            */
         } catch (error) {
             this.logger.error('Error fetching categories by store ID:', error);
             throw new Error(
@@ -430,7 +436,7 @@ class ProductService extends MedusaProductService {
      * @returns {Array} - A list of product categories with associated products and their updated prices.
      * @throws {Error} - If there is an issue fetching the categories or updating prices.
      */
-    async getAllProductCategories() {
+    async getAllProductCategories(): Promise<ProductCategory[]> {
         try {
             return await categoryCache.retrieve();
         } catch (error) {
@@ -542,10 +548,6 @@ class ProductService extends MedusaProductService {
                 name.toLowerCase()
             );
 
-            console.log('categorues', categories);
-
-            console.log('normalized', normalizedCategoryNames);
-
             let products: Product[] = [];
 
             const productCategories =
@@ -558,7 +560,6 @@ class ProductService extends MedusaProductService {
                     ],
                 });
 
-            console.log('store id', storeId);
             if (normalizedCategoryNames[0] === 'all') {
                 products = productCategories.flatMap((cat) =>
                     cat.products.filter(
@@ -572,8 +573,6 @@ class ProductService extends MedusaProductService {
                 const filteredCategories = productCategories.filter((cat) =>
                     normalizedCategoryNames.includes(cat.name.toLowerCase())
                 );
-
-                console.log('filtered categ', filteredCategories);
 
                 products = filteredCategories.flatMap((cat) =>
                     cat.products.filter(
@@ -697,8 +696,8 @@ class ProductService extends MedusaProductService {
      */
     async getFilteredProducts(
         categories: string[], // Array of strings representing category names
-        upperPrice: number, // Number representing the upper price limit
-        lowerPrice: number // Number representing the lower price limit
+        upperPrice: number = 0, // Number representing the upper price limit
+        lowerPrice: number = 0 // Number representing the lower price limit
     ) {
         try {
             let normalizedCategoryNames = categories.map((name) =>
@@ -840,7 +839,7 @@ class CategoryCache extends SeamlessCache {
 
     protected async getData(productCategoryRepository: any): Promise<ProductCategory[]> {
         const categories = await productCategoryRepository.find({
-            select: ['id', 'name', 'metadata'],
+            select: ['id', 'name', 'metadata', 'handle'],
             relations: [
                 'products',
                 'products.variants.prices',
