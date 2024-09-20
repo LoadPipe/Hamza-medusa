@@ -84,8 +84,6 @@ const ShippingAddress = ({
         });
     };
 
-    console.log('email here', formData.email);
-
     return (
         <>
             {customer && (addressesInRegion?.length || 0) > 0 && (
