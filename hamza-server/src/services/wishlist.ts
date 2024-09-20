@@ -61,7 +61,7 @@ class WishlistService extends TransactionBaseService {
         });
     }
 
-    async addWishItem(customer_id, product_id) {
+    async addWishItem(customer_id: string, variant_id: string): Promise<Wishlist> {
         const wishlistItemRepository =
             this.activeManager_.getRepository(WishlistItem);
         const wishlistRepository = this.activeManager_.getRepository(Wishlist);
@@ -80,14 +80,14 @@ class WishlistService extends TransactionBaseService {
 
             // Check if the item already exists in the wishlist-dropdown
             const [item] = await wishlistItemRepository.find({
-                where: { wishlist_id: wishlist.id, product_id },
+                where: { wishlist_id: wishlist.id, variant_id },
             });
 
             if (!item) {
                 // Create a new wishlist-dropdown item if it doesn't already exist
                 const createdItem = wishlistItemRepository.create({
                     wishlist_id: wishlist.id,
-                    product_id,
+                    variant_id,
                 });
                 await wishlistItemRepository.save(createdItem);
             }
@@ -102,7 +102,7 @@ class WishlistService extends TransactionBaseService {
         });
     }
 
-    async removeWishItem(customer_id, product_id) {
+    async removeWishItem(customer_id: string, variant_id: string): Promise<Wishlist> {
         const wishlistItemRepository =
             this.activeManager_.getRepository(WishlistItem);
         const wishlistRepository = this.activeManager_.getRepository(Wishlist);
@@ -120,7 +120,7 @@ class WishlistService extends TransactionBaseService {
             }
             // Find the wishlist-dropdown item based on the wishlist_id and product_id
             const item = await wishlistItemRepository.findOne({
-                where: { wishlist_id: wishlist.id, product_id },
+                where: { wishlist_id: wishlist.id, variant_id },
             });
 
             if (!item) {

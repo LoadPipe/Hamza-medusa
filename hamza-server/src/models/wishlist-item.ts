@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { BaseEntity } from '@medusajs/medusa';
 import { generateEntityId } from '@medusajs/medusa/dist/utils';
-import { Product } from '@medusajs/medusa/dist/models/product';
+import { ProductVariant } from './product-variant';
 import { Wishlist } from './wishlist';
 
 @Entity()
@@ -22,11 +22,11 @@ export class WishlistItem extends BaseEntity {
     wishlist: Wishlist;
 
     @Column()
-    product_id: string;
+    variant_id: string;
 
-    @ManyToOne(() => Product)
-    @JoinColumn({ name: 'product_id' })
-    product: Product;
+    @ManyToOne(() => ProductVariant)
+    @JoinColumn({ name: 'variant_id' })
+    variant: ProductVariant;
 
     @BeforeInsert()
     private beforeInsert(): void {
