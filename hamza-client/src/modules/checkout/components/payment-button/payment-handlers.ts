@@ -228,11 +228,25 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
                 contractAddress
             );
 
-            //TODO: check sender balance
-
             payer_address = await signer.getAddress();
             const inputs = this.createPaymentInput(data, payer_address, chainId);
             console.log('sending payments: ', inputs);
+
+            //check balance first 
+            const currencyPayments = this.groupPaymentsByCurrency(inputs);
+            for (let cp of currencyPayments) {
+                const { currency, amount } = cp;
+                if (!(await checkSenderBalance(provider, signer, chainId, currency, amount))) {
+                    return {
+                        escrow_contract_address: '0x0',
+                        transaction_id,
+                        payer_address,
+                        success: false,
+                        chain_id: chainId,
+                        message: `Insufficient balance in ${currency}`
+                    };
+                }
+            }
 
             const tx = await client.placeMultiplePayments(inputs, true);
             transaction_id = tx.transaction_id;
@@ -283,6 +297,25 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
         const nativeAmount = BigInt(amount) * BigInt(adjustmentFactor);
         return ethers.toBigInt(nativeAmount);
     };
+
+    private groupPaymentsByCurrency(inputs: ISwitchMultiPaymentInput[]): { currency: string, amount: BigNumberish }[] {
+        const output: { currency: string, amount: BigNumberish }[] = [];
+        for (let input of inputs) {
+            let existing = output.find(o => o.currency == input.currency);
+            if (!existing) {
+                existing = { currency: input.currency, amount: 0 };
+                output.push(existing);
+            }
+
+            for (let payment of input.payments) {
+                let amt: any = existing.amount;
+                amt += payment.amount;
+                existing.amount = amt;
+            }
+        }
+
+        return output;
+    }
 }
 
 /**
