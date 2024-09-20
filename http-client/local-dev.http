@@ -91,17 +91,38 @@ Content-Type: application/json
 Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
 
 {
-  "status": "draft"
+  "uid": "products"
 }
 
-### Update MeilieSearch Documents
-POST http://localhost:7700/indexes/products/documents
+### MEILIE Get documents?
+GET http://localhost:7700/indexes/products/documents?limit=65&offset=0
+Content-Type: application/json
+Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
+
+
+### DELETE BY FILTER?
+POST http://localhost:7700/indexes/products/documents/delete
 Content-Type: application/json
 Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
 
 {
-
+  "filter": "status = draft"
 }
+
+### ADD FILTERABLE ATTRIBUTE
+PUT http://localhost:7700/indexes/products/settings/filterable-attributes
+Content-Type: application/json
+Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
+
+  ["status"]
+
+
+
+### CHECK MeilieSearch taskUid
+GET http://localhost:7700/tasks/313
+Content-Type: application/json
+Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
+
 
 
 ### Get All Products
