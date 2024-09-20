@@ -88,11 +88,14 @@ const Shipping: React.FC<ShippingProps> = ({
                 ? cart.shipping_methods[0]
                     ?.shipping_option_id : '');
         } else {
-            addDefaultShippingMethod(cart.id).then(() => {
-                router.push(pathname + '?step=review', {
-                    scroll: false,
+            if (isOpen) {
+                console.log('adding default shipping');
+                addDefaultShippingMethod(cart.id).then(() => {
+                    router.push(pathname + '?step=review', {
+                        scroll: false,
+                    });
                 });
-            })
+            }
         }
     }, [isOpen]);
 
