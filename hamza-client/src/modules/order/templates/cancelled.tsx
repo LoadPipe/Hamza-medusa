@@ -3,6 +3,7 @@ import { getSingleBucket } from '@lib/data';
 import { Box, Button } from '@chakra-ui/react';
 import CancelCard from '@modules/account/components/cancel-card';
 import EmptyState from '@modules/order/components/empty-state';
+import { useOrdersStore } from '@store/orders-refresh';
 
 const Cancelled = ({
     customer,
@@ -14,6 +15,7 @@ const Cancelled = ({
     const [customerOrder, setCustomerOrder] = useState<any[]>([]);
     const [customerId, setCustomerId] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
+    const ordersVersion = useOrdersStore((state) => state.ordersVersion);
 
     useEffect(() => {
         console.log('customer received in Cancelled:', customer);
@@ -25,7 +27,7 @@ const Cancelled = ({
             fetchAllOrders(customer_id);
             setCustomerId(customer_id);
         }
-    }, [customer]);
+    }, [customer, ordersVersion]);
 
     const fetchAllOrders = async (customerId: string) => {
         setIsLoading(true);
