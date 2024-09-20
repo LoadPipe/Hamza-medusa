@@ -302,7 +302,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
                         {/* Chat / Report */}
                         <Flex ml={'auto'} flexDir={'column'} gap="16px">
-                            <Flex
+                            {/* <Flex
                                 display={{ base: 'none', md: 'flex' }}
                                 height={{ base: '33px', md: '47px' }}
                                 width={{ base: '120px', md: '190px' }}
@@ -319,9 +319,10 @@ export default function Page({ params }: { params: { slug: string } }) {
                                 >
                                     Chat with them
                                 </Text>
-                            </Flex>
+                            </Flex> */}
 
                             <Flex
+                                mt="auto"
                                 display={{ base: 'none', md: 'flex' }}
                                 height={{ base: '33px', md: '47px' }}
                                 width={{ base: '120px', md: '190px' }}

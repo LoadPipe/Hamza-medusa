@@ -84,7 +84,7 @@ const StoreBanner = (props: StoreProps) => {
                 flexDirection={'column'}
                 gap={'16px'}
             >
-                <Flex
+                {/* <Flex
                     display={{ base: 'none', md: 'flex' }}
                     height={{ base: '33px', md: '47px' }}
                     width={{ base: '120px', md: '190px' }}
@@ -98,7 +98,7 @@ const StoreBanner = (props: StoreProps) => {
                     <Text alignSelf={'center'} color="primary.indigo.900">
                         Chat with them
                     </Text>
-                </Flex>
+                </Flex> */}
                 <Flex
                     height={{ base: '33px', md: '47px' }}
                     width={{ base: '120px', md: '190px' }}
