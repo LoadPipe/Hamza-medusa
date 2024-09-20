@@ -11,7 +11,7 @@ export default async function AccountPageLayout({
     const customer = await getHamzaCustomer().catch(() => null);
 
     return (
-        <AccountLayout customer={customer} login={login}>
+        <AccountLayout customer={customer}>
             {customer?.id ? dashboard : login}
         </AccountLayout>
     );

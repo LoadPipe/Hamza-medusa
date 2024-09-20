@@ -7,7 +7,7 @@ import AccountNav from '../components/account-nav';
 import { Customer } from '@medusajs/medusa';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
-import { Flex, Box } from '@chakra-ui/react';
+import { Flex, Box, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import { getClientCookie } from '@lib/util/get-client-cookies';
 
@@ -62,8 +62,6 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
         }
     }, [authData.status]); // Dependency array includes authData.status, so it runs whenever authData.status changes.
 
-    console.log('customer in account', JSON.stringify(customer));
-
     return (
         <Flex width={'100vw'} justifyContent={'center'}>
             <Flex
@@ -84,13 +82,20 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
                         {customer?.id && <AccountNav customer={customer} />}
                     </div>
                     {/* <AccountNav customer={customer} /> */}
-                    <Flex
-                        ml={{ base: 0, md: 'auto' }}
-                        maxWidth={'927px'}
-                        width={'100%'}
-                    >
-                        {children}
-                    </Flex>
+                    {customer?.id ? (
+                        <Flex
+                            ml={{ base: 0, md: 'auto' }}
+                            maxWidth={'927px'}
+                            width={'100%'}
+                        >
+                            {children}
+                        </Flex>
+                    ) : (
+                        // Shows Login Page
+                        <Flex mt="4rem" justifyContent="center" h={'50vh'}>
+                            {children}
+                        </Flex>
+                    )}
                 </Flex>
             </Flex>
         </Flex>
