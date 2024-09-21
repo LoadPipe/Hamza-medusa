@@ -104,14 +104,13 @@ const useWishlistStore = create<WishlistType>()(
                             );
 
                         // Return the product object
-
                         return {
-                            id: item.variant.id,
+                            id: item.variant.product.id, // what is this?
                             thumbnail: item.variant.product.thumbnail,
                             title: item.variant.product.title,
                             handle: item.variant.product.handle,
                             description: item.variant.product.description,
-                            productVariantId: item.variant.id,
+                            productVariantId: item.variant.id, //
                             price: priceDictionary, // Price dictionary with all currencies
                         };
                     });
