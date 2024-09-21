@@ -10,6 +10,13 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 interface AccountWishListProps {
     countryCode: string; // Accept region as a prop
 }
+
+type PriceDictionary = {
+    eth?: string;
+    usdc?: string;
+    usdt?: string;
+};
+
 const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
     const { wishlist } = useWishlistStore((state) => ({
         wishlist: state.wishlist,
@@ -34,10 +41,17 @@ const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
                             productPrice={
                                 typeof product.price === 'number' ||
                                 typeof product.price === 'string'
-                                    ? Number(product.price) // Pass the raw number if it's a string or number (client-side)
-                                    : product.price[
-                                          preferred_currency_code as keyof PriceDictionary
-                                      ] || product.price.eth // Extract the correct price from the PriceDictionary
+                                    ? String(product.price) // Client-side price (converted to string)
+                                    : product.price &&
+                                        typeof product.price === 'object' &&
+                                        preferred_currency_code && // Ensure it's not null
+                                        ['eth', 'usdc', 'usdt'].includes(
+                                            preferred_currency_code
+                                        ) // Ensure it's one of the valid keys
+                                      ? product.price[
+                                            preferred_currency_code as keyof PriceDictionary
+                                        ] || ''
+                                      : product.price?.eth || '' // Fallback to eth or an empty string
                             }
                             countryCode={countryCode}
                         />

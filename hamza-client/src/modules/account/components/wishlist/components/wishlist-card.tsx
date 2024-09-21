@@ -38,7 +38,7 @@ interface WishlistCardProps {
     productPrice: PriceDictionary | string;
     productImage: string;
     productId: string;
-    productVariantId: string;
+    productVariantId: string | null;
     countryCode: string;
 }
 
