@@ -47,26 +47,8 @@ function getTokenContract(signer: ethers.Signer, address: string): ethers.Contra
     return new ethers.Contract(address, erc20abi, signer);
 }
 
-async function checkSenderBalance(
-    provider: ethers.Provider,
-    signer: ethers.Signer,
-    chainId: any,
-    currencyCode: string,
-    amount: BigNumberish
-): Promise<boolean> {
-    const address = await signer.getAddress();
-    const currencyAddress = getCurrencyAddress(currencyCode, chainId);
-    if (currencyAddress == ethers.ZeroAddress) {
-        return ethers.toBigInt(amount) <= (await provider.getBalance(address));
-    } else {
-        const token = getTokenContract(signer, currencyAddress);
-        const balance = await token.balanceOf(address);
-        return (balance >= ethers.toBigInt(amount));
-    }
-    return false;
-}
 
-async function checkSenderBalanceBigInt(
+async function checkWalletBalance(
     provider: ethers.Provider,
     signer: ethers.Signer,
     chainId: any,
@@ -255,7 +237,7 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
             const currencyPayments = this.groupPaymentsByCurrency(inputs);
             for (let cp of currencyPayments) {
                 const { currency, amount } = cp;
-                if (!(await checkSenderBalanceBigInt(provider, signer, chainId, currency, amount as bigint))) {
+                if (!(await checkWalletBalance(provider, signer, chainId, currency, amount as bigint))) {
                     return {
                         escrow_contract_address: '0x0',
                         transaction_id,
@@ -390,7 +372,7 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
                 amount = process.env.NEXT_PUBLIC_ONE_SATOSHI_DISCOUNT ? BigInt(1) : amount;
 
                 //check balance first 
-                if (!(await checkSenderBalance(provider, signer, chainId, currency, amount))) {
+                if (!(await checkWalletBalance(provider, signer, chainId, currency, amount))) {
                     return {
                         escrow_contract_address: '0x0',
                         transaction_id,
