@@ -1,9 +1,7 @@
 import {
     MedusaRequest,
     MedusaResponse,
-    OrderService,
     ShippingOptionPriceType,
-    ShippingOptionService,
 } from '@medusajs/medusa';
 import { RouteHandler } from '../../../route-handler';
 import ShippingOptionRepository from '@medusajs/medusa/dist/repositories/shipping-option';

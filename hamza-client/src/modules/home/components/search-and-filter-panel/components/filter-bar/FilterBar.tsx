@@ -34,10 +34,10 @@ const FilterBar = () => {
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-              name: category.name,
-              id: category.id,
-              metadata: category.metadata,
-          }))
+            name: category.name,
+            id: category.id,
+            metadata: category.metadata,
+        }))
         : [];
 
     console.log('data from filter bar', uniqueCategories);
@@ -107,7 +107,7 @@ const FilterBar = () => {
                 <CategoryButtons
                     categoryType={'All'}
                     categoryName={'All'}
-                    url={'https://images.hamza.biz/category-icons/all.svg'}
+                    url={'https://images.hamza.market/category-icons/all.svg'}
                 />
                 <Flex
                     maxW={'1100px'}
@@ -141,15 +141,15 @@ const FilterBar = () => {
                     {isLoading
                         ? skeletons // Show skeletons while loading
                         : visibleCategories.map((category, index) => {
-                              return (
-                                  <CategoryButtons
-                                      key={index}
-                                      categoryType={category.id}
-                                      categoryName={category.name}
-                                      url={category.metadata?.icon_url}
-                                  />
-                              );
-                          })}
+                            return (
+                                <CategoryButtons
+                                    key={index}
+                                    categoryType={category.id}
+                                    categoryName={category.name}
+                                    url={category.metadata?.icon_url}
+                                />
+                            );
+                        })}
                 </Flex>
 
                 {/* Conditional rendering of Chevron */}
