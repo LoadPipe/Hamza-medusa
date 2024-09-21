@@ -34,13 +34,11 @@ const FilterBar = () => {
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-              name: category.name,
-              id: category.id,
-              metadata: category.metadata,
-          }))
+            name: category.name,
+            id: category.id,
+            metadata: category.metadata,
+        }))
         : [];
-
-    console.log('data from filter bar', uniqueCategories);
 
     // Show more logic for categories (next or previous)
     const toggleShowMore = () => {
@@ -141,15 +139,15 @@ const FilterBar = () => {
                     {isLoading
                         ? skeletons // Show skeletons while loading
                         : visibleCategories.map((category, index) => {
-                              return (
-                                  <CategoryButtons
-                                      key={index}
-                                      categoryType={category.id}
-                                      categoryName={category.name}
-                                      url={category.metadata?.icon_url}
-                                  />
-                              );
-                          })}
+                            return (
+                                <CategoryButtons
+                                    key={index}
+                                    categoryType={category.id}
+                                    categoryName={category.name}
+                                    url={category.metadata?.icon_url}
+                                />
+                            );
+                        })}
                 </Flex>
 
                 {/* Conditional rendering of Chevron */}
