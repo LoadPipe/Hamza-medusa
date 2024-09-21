@@ -27,12 +27,19 @@ export class LiteSwitchClient {
         );
     }
 
-    async findPaymentEvents(orderId): Promise<{ orderId: string, amount: BigNumberish }[]> {
+    async findPaymentEvents(orderId: string, transactionId: string):
+        Promise<{ orderId: string, amount: BigNumberish }[]> {
+
         const orderIdHash = ethers.keccak256(ethers.toUtf8Bytes(orderId));
         const eventFilter = this.switchClient.filters.PaymentReceived();
 
-        const startingBlock = process.env.TX_VERIFY_START_BLOCK;
-        const events = await this.switchClient.queryFilter(eventFilter, startingBlock, "latest");
+        const txReceipt = await this.provider.getTransactionReceipt(transactionId);
+
+        const events = await this.switchClient.queryFilter(
+            eventFilter,
+            txReceipt.blockNumber,
+            txReceipt.blockNumber + 1
+        );
 
         return events.map(e => {
             const event = e as any;
