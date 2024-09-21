@@ -108,7 +108,7 @@ const Addresses = ({
                     {cart && cart.shipping_address ? (
                         <Flex flexDir={'column'} color="primary.green.900">
                             <Text className="font-bold">Shipping To:</Text>
-                            <Text className="text-medium text-white mt-2 font-bold">
+                            <Text className="text-medium text-white  font-bold">
                                 {cart.shipping_address.first_name}{' '}
                                 {cart.shipping_address.last_name}
                             </Text>
