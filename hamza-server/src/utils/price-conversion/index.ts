@@ -2,7 +2,8 @@ import { CachedExchangeRateRepository } from '../../repositories/cached-exchange
 import { CurrencyConversionClient } from '../../currency-conversion/rest-client';
 import { getCurrencyAddress, getCurrencyPrecision } from '../../currency.config';
 import { ILogger } from '../logging/logger';
-import { CachedExchangeRate } from 'src/models/cached-exchange-rate';
+import { CachedExchangeRate } from '../../models/cached-exchange-rate';
+import { SeamlessCache } from '../cache/seamless-cache';
 
 //TODO: change the name of this type
 interface IPrice {
@@ -13,17 +14,15 @@ interface IPrice {
 
 const EXTENDED_LOGGING = false;
 
+//TODO: move to SeamlessCache
 const cache: {
     [key: string]: { value: number; timestamp: number };
 } = {};
-
-const writingToDbCache: { [key: string]: boolean } = {};
 
 export class PriceConverter {
     private readonly restClient: CurrencyConversionClient =
         new CurrencyConversionClient();
     private readonly MEMORY_CACHE_EXPIRATION_SECONDS: number = 120;
-    private readonly DB_WRITE_LIMIT_COOLDOWN_SECONDS: number = 300;
     private readonly logger: ILogger;
     private readonly cachedExchangeRateRepository: typeof CachedExchangeRateRepository;
 
@@ -79,10 +78,7 @@ export class PriceConverter {
             }
         }
 
-        if (rate && !usingRateFromDb) {
-            this.saveToDatabase(price, rate);
-            if (EXTENDED_LOGGING) console.log("SAVED TO DB")
-        }
+        this.refreshDbCache();
 
         // Now handle currency precisions
         const basePrecision = getCurrencyPrecision(price.baseCurrency) ?? {
@@ -145,42 +141,27 @@ export class PriceConverter {
         return null;
     }
 
-    private async saveToDatabase(price: IPrice, rate: number): Promise<void> {
-        const id =
-            `${price?.baseCurrency ?? ''}-${price?.toCurrency ?? ''}`.toLowerCase();
+    private async refreshDbCache() {
+        const args = [];
 
-        try {
-            //TODO: there are some problems with this; re-enable in the future (not using is now the lesser evil)
-            //if (!writingToDbCache[id]) {
-            //    writingToDbCache[id] = true;
-
-            // check if we need to save to the database (every 5 minutes max)
-            const existingRate = await this.getFromDatabase(price);
-
-            if ((existingRate?.updated_at ?? 0) < new Date(Date.now() - this.DB_WRITE_LIMIT_COOLDOWN_SECONDS * 1000)) {
-                // Insert a new entry
-                await this.cachedExchangeRateRepository.save({
-                    id: id,
-                    to_currency_code: price.toCurrency,
-                    from_currency_code: price.baseCurrency,
-                    rate: rate,
-                });
-
-                this.logger?.debug(
-                    `Saved rate ${rate} for ${price.baseCurrency} to ${price.toCurrency} in DB`
-                );
-            }
-            //}
-
-        } catch (error) {
-            this.logger?.error(
-                `Failed to save exchange rate to DB for ${price.baseCurrency} to ${price.toCurrency}`,
-                error
-            );
+        for (let key in cache) {
+            const parts = key.split('-');
+            const baseCurrency = parts[0];
+            const toCurrency = parts[1];
+            args.push({
+                key,
+                toCurrency,
+                baseCurrency,
+                rate: cache[key]?.value ?? 0
+            });
         }
-        finally {
-            writingToDbCache[id] = true;
-        }
+
+        dbCache.retrieve({
+            cachedExchangeRateRepository: this.cachedExchangeRateRepository,
+            logger: this.logger,
+            args
+        });
+        if (EXTENDED_LOGGING) console.log("SAVED TO DB")
     }
 
     private getFromCache(price: IPrice): number {
@@ -201,10 +182,6 @@ export class PriceConverter {
         cache[key] = { value: rate, timestamp: this.getTimestamp() };
     }
 
-    private hasCached(price: IPrice): boolean {
-        return this.getFromCache(price) ? true : false;
-    }
-
     private getKey(base: string, to: string): string {
         return `${base.trim().toLowerCase()}-${to.trim().toLowerCase()}`;
     }
@@ -213,3 +190,88 @@ export class PriceConverter {
         return Date.now() / 1000;
     }
 }
+
+
+class ExchangeRateDbCache extends SeamlessCache {
+    private sharedMem: SharedArrayBuffer = new SharedArrayBuffer(64);
+    private saving: BigInt64Array = new BigInt64Array(this.sharedMem);
+
+    constructor() {
+        super(60);
+    }
+
+    async retrieve(params: {
+        cachedExchangeRateRepository: typeof CachedExchangeRateRepository,
+        logger?: ILogger,
+        args: {
+            rate: number,
+            key: string,
+            toCurrency: string,
+            baseCurrency: string
+        }[]
+    }): Promise<any> {
+        return await super.retrieve(params);
+    }
+
+    protected async getData(params: any): Promise<any> {
+        const output = [];
+        const random = Math.random();
+        try {
+            const result = (Atomics.compareExchange(this.saving, 0, BigInt(0), BigInt(1)));
+            if (result === BigInt(0)) {
+                //console.log('INSIDE OF THE MUTEX', random);
+
+                try {
+                    for (let args of params.args) {
+
+                        if (args.rate) {
+                            // check if we need to save to the database (every 5 minutes max)
+                            let existingRate = await params.cachedExchangeRateRepository.findOne({
+                                where: { id: args.key },
+                            });
+
+                            if ((existingRate?.updated_at ?? 0) < new Date(Date.now() - 60 * 1000)) {
+                                // Insert a new entry
+
+                                //check once before before insert
+                                existingRate = await params.cachedExchangeRateRepository.findOne({
+                                    where: { id: args.key },
+                                });
+
+                                //console.log('SAVING ', args.key, random);
+                                output.push(await params.cachedExchangeRateRepository.save({
+                                    id: args.key,
+                                    to_currency_code: args.toCurrency,
+                                    from_currency_code: args.baseCurrency,
+                                    rate: args.rate,
+                                }));
+
+                                params.logger?.debug(
+                                    `Saved rate ${args.rate} for ${args.key} in DB`
+                                );
+                            }
+                        }
+                    }
+                }
+                catch (e) {
+                    params.logger?.error(
+                        `Failed to save exchange rate to DB`,
+                        e
+                    );
+                }
+
+                //console.log('RESETTNG FLAG', random);
+                this.saving[0] = BigInt(0);
+            }
+        } catch (error) {
+            params.logger?.error(
+                `Failed to save exchange rates to DB`,
+                error
+            );
+        }
+
+        return output;
+    }
+}
+
+const dbCache: ExchangeRateDbCache = new ExchangeRateDbCache();
