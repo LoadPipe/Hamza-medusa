@@ -102,13 +102,12 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             if (!handler.enforceCustomerId(cart.customer_id)) return;
 
             await orderService.finalizeCheckout(
-                //handler.inputParams.cart_products,
                 handler.inputParams.cart_id,
                 handler.inputParams.transaction_id,
                 handler.inputParams.payer_address,
                 handler.inputParams.escrow_address,
                 handler.inputParams.chain_id,
-                //handler.inputParams.block_number
+                handler.inputParams.block_number
             );
             handler.returnStatusWithMessage(
                 200,

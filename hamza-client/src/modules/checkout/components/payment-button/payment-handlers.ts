@@ -13,6 +13,7 @@ import { getContractAddress } from 'contracts.config';
 import { erc20abi } from '../../../../web3/abi/erc20-abi';
 import { LiteSwitchClient } from 'web3/contracts/lite-switch';
 import { ISwitchMultiPaymentInput } from 'web3';
+import { block } from 'sharp';
 
 export type WalletPaymentResponse = {
     transaction_id: string;
@@ -20,6 +21,7 @@ export type WalletPaymentResponse = {
     escrow_address: string;
     message?: string;
     chain_id: number;
+    block_number: string;
     success: boolean;
 };
 
@@ -99,6 +101,7 @@ export class MassmarketWalletPaymentHandler implements IWalletPaymentHandler {
         const escrow_address = getMasterSwitchAddress(chainId);
         let transaction_id = '';
         let payer_address = '';
+        let block_number = '';
 
         if (provider && signer) {
             const paymentContractAddr =
@@ -130,6 +133,7 @@ export class MassmarketWalletPaymentHandler implements IWalletPaymentHandler {
             console.log(output);
             transaction_id = output.transaction_id;
             payer_address = output.receipt.from;
+            block_number = output.receipt.block_number; //TODO: is this a real property?
         }
 
         return {
@@ -137,6 +141,7 @@ export class MassmarketWalletPaymentHandler implements IWalletPaymentHandler {
             payer_address,
             escrow_address,
             chain_id: chainId,
+            block_number,
             success:
                 transaction_id && transaction_id.length ? true : false,
         };
@@ -219,6 +224,7 @@ export class FakeWalletPaymentHandler implements IWalletPaymentHandler {
             transaction_id,
             payer_address,
             chain_id: chainId,
+            block_number: '1',
             success:
                 transaction_id && transaction_id.length ? true : false,
         }
@@ -238,6 +244,7 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
     ): Promise<WalletPaymentResponse> {
         const contractAddress = getContractAddress('lite_switch', chainId);
         let transaction_id = '';
+        let block_number = '';
         let payer_address = '';
 
         if (provider) {
@@ -262,6 +269,7 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
                         payer_address,
                         success: false,
                         chain_id: chainId,
+                        block_number: '',
                         message: `Wallet has an insufficient balance in ${currency.toUpperCase()} to pay for this transaction`
                     };
                 }
@@ -269,6 +277,7 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
 
             const tx = await client.placeMultiplePayments(inputs, true);
             transaction_id = tx.transaction_id;
+            block_number = tx.block_number;
         }
 
         return {
@@ -276,6 +285,7 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
             payer_address,
             transaction_id,
             chain_id: chainId,
+            block_number,
             success:
                 transaction_id && transaction_id.length ? true : false,
         };
@@ -376,6 +386,7 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
         const paymentGroups = this.createPaymentGroups(data, chainId);
         let transaction_id = '';
         let payer_address = '';
+        let block_number = '';
 
         if (signer && provider) {
             for (const currency in paymentGroups) {
@@ -441,6 +452,7 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
             transaction_id,
             payer_address,
             chain_id: chainId,
+            block_number,
             success:
                 transaction_id && transaction_id.length ? true : false,
         }

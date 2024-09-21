@@ -147,17 +147,6 @@ export default class OrderService extends MedusaOrderService {
         });
     }
 
-    async updatePaymentAfterTransaction(
-        paymentId: string,
-        update: Partial<Payment>
-    ): Promise<Payment> {
-        const result = await this.paymentRepository_.save({
-            id: paymentId,
-            ...update,
-        });
-        return result;
-    }
-
     async updateInventory(
         variantOrVariantId: string,
         quantityToDeduct: number
@@ -197,7 +186,8 @@ export default class OrderService extends MedusaOrderService {
         transactionId: string,
         payerAddress: string,
         escrowContractAddress: string,
-        chainId: number
+        chainId: number,
+        blockNumber: string
     ): Promise<Order[]> {
         //get orders & order ids
         const orders: Order[] = await this.orderRepository_.find({
@@ -229,7 +219,8 @@ export default class OrderService extends MedusaOrderService {
             transactionId,
             payerAddress,
             escrowContractAddress,
-            chainId
+            chainId,
+            blockNumber
         );
 
         //calls to update orders
@@ -530,6 +521,17 @@ export default class OrderService extends MedusaOrderService {
         });
     }
 
+    private async updatePaymentAfterTransaction(
+        paymentId: string,
+        update: Partial<Payment>
+    ): Promise<Payment> {
+        const result = await this.paymentRepository_.save({
+            id: paymentId,
+            ...update,
+        });
+        return result;
+    }
+
     private async processBuckydropOrders(
         cartId: string,
         orders: Order[]
@@ -602,7 +604,8 @@ export default class OrderService extends MedusaOrderService {
         transactionId: string,
         payerAddress: string,
         escrowContractAddress: string,
-        chainId: number
+        chainId: number,
+        blockNumber: string
     ): Promise<Order | Payment>[] {
         const promises: Promise<Order | Payment>[] = [];
 
@@ -614,7 +617,8 @@ export default class OrderService extends MedusaOrderService {
                         transaction_id: transactionId,
                         payer_address: payerAddress,
                         escrow_address: escrowContractAddress,
-                        chain_id: chainId
+                        chain_id: chainId,
+                        block_number: blockNumber
                     }
                 })
             );
