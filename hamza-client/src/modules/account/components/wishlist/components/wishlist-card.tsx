@@ -25,12 +25,17 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { LuBadgeCheck } from 'react-icons/lu';
-import PriceDictionary from '@store/wishlist/wishlist-store';
+
+type PriceDictionary = {
+    eth?: string;
+    usdc?: string;
+    usdt?: string;
+};
 
 interface WishlistCardProps {
     productData: WishlistProduct;
     productDescription: string;
-    productPrice: PriceDictionary;
+    productPrice: PriceDictionary | string;
     productImage: string;
     productId: string;
     productVariantId: string;

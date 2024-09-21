@@ -1,8 +1,5 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import axios from 'axios';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import wishlist from '@/components/wishlist-dropdown/icon/wishlist-icon';
 import { getWishlist } from '@lib/data/index';
 
 export type PriceDictionary = {
@@ -17,7 +14,7 @@ export type WishlistProduct = {
     title: string;
     handle: string;
     description: string;
-    price: PriceDictionary; // Dictionary type for price...
+    price: PriceDictionary | string; // Dictionary type for price...
     productVariantId: string;
 };
 

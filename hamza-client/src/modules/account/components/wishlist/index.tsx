@@ -17,6 +17,8 @@ const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
 
     const { preferred_currency_code } = useCustomerAuthStore();
 
+    console.log(`WISHLIST: ${JSON.stringify(wishlist.products)}`);
+
     return (
         <Box color={'white'}>
             {wishlist.products && wishlist.products.length > 0 ? (
@@ -29,16 +31,14 @@ const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
                             productVariantId={product.productVariantId}
                             productImage={product.thumbnail}
                             productDescription={product.title}
-                            productPrice={formatCryptoPrice(
-                                preferred_currency_code &&
-                                    product.price[
-                                        preferred_currency_code as keyof PriceDictionary
-                                    ]
-                                    ? product.price[
+                            productPrice={
+                                typeof product.price === 'number' ||
+                                typeof product.price === 'string'
+                                    ? Number(product.price) // Pass the raw number if it's a string or number (client-side)
+                                    : product.price[
                                           preferred_currency_code as keyof PriceDictionary
-                                      ]
-                                    : product.price.eth
-                            )}
+                                      ] || product.price.eth // Extract the correct price from the PriceDictionary
+                            }
                             countryCode={countryCode}
                         />
                     </Box>
