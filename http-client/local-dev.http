@@ -36,7 +36,7 @@ POST http://localhost:9000/custom/wishlist
 Content-Type: application/json
 
 {
-  "customer_id": "cus_01HW298CJPT60818GCHWD8GAT7"
+  "customer_id": "cus_01J89J7NEZ767EPPWK9Y0FSB17"
 }
 
 

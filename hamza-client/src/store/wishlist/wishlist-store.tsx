@@ -45,7 +45,11 @@ const useWishlistStore = create<WishlistType>()(
             addWishlistProduct: async (product) => {
                 const { wishlist } = get();
                 console.log('Wishlist product', wishlist);
-                if (wishlist.products.some((p) => p.productVariantId === product.productVariantId)) {
+                if (
+                    wishlist.products.some(
+                        (p) => p.productVariantId === product.productVariantId
+                    )
+                ) {
                     return;
                 }
                 set((state) => ({
@@ -86,7 +90,8 @@ const useWishlistStore = create<WishlistType>()(
                         title: item.variant.product.title,
                         handle: item.variant.product.handle,
                         description: item.variant.product.description,
-                        price: item.variant.price, // Added price mapping
+                        productVariantId: item.variant.id,
+                        price: item.variant.price,
                     }));
                     if (Array.isArray(items)) {
                         set({ wishlist: { products } });

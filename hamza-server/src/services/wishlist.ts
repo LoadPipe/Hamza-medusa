@@ -30,7 +30,11 @@ class WishlistService extends TransactionBaseService {
             // Check if a wishlist-dropdown already exists for the customer_id
             const [wishlist] = await wishlistRepository.find({
                 where: { customer_id },
-                relations: ['items', 'items.variant.product'],
+                relations: [
+                    'items',
+                    'items.variant.product',
+                    'items.variant.prices',
+                ],
             });
 
             if (wishlist) {
@@ -61,7 +65,10 @@ class WishlistService extends TransactionBaseService {
         });
     }
 
-    async addWishItem(customer_id: string, variant_id: string): Promise<Wishlist> {
+    async addWishItem(
+        customer_id: string,
+        variant_id: string
+    ): Promise<Wishlist> {
         const wishlistItemRepository =
             this.activeManager_.getRepository(WishlistItem);
         const wishlistRepository = this.activeManager_.getRepository(Wishlist);
@@ -102,7 +109,10 @@ class WishlistService extends TransactionBaseService {
         });
     }
 
-    async removeWishItem(customer_id: string, variant_id: string): Promise<Wishlist> {
+    async removeWishItem(
+        customer_id: string,
+        variant_id: string
+    ): Promise<Wishlist> {
         const wishlistItemRepository =
             this.activeManager_.getRepository(WishlistItem);
         const wishlistRepository = this.activeManager_.getRepository(Wishlist);
