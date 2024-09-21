@@ -46,7 +46,8 @@ const StoreCatButton: React.FC<StoreCatButtonProps> = ({ categoryName }) => {
 
     return (
         <Flex
-            width={{ base: '94px', md: '167px' }}
+            px={'1rem'}
+            minWidth={{ base: '94px', md: '167px' }}
             height={{ base: '42px', md: '66px' }}
             borderRadius={'49px'}
             borderWidth={'1px'}
