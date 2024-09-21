@@ -124,7 +124,7 @@ const ShippingAddress = ({
                         required
                     />
                     <Input
-                        label="Aparment, suite, etc"
+                        label="Apartment, suite, etc"
                         name="shipping_address.address_2"
                         autoComplete="address-line2"
                         value={formData['shipping_address.address_2']}

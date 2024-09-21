@@ -24,7 +24,8 @@ export default async (container: MedusaContainer): Promise<void> => {
         const secretData = JSON.parse(response.SecretString);
 
         for (let key of Object.keys(secretData)) {
-            process.env[key] = secretData[key];
+            if (!process.env[key]?.length)
+                process.env[key] = secretData[key];
         }
     } catch (error) {
         // For a list of exceptions thrown, see
