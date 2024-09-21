@@ -47,10 +47,11 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         const lowerPrice = handler.inputParams.price_lo ?? 0;
 
         //call productService.getFilteredProducts to get the products, then return them
-        const products = await productService.getFilteredProductsByCategory(
+        //HAD TO COMMENT OUT AND PASS ZEROS, BECAUSE FILTER WAS CAUSING SOME PRODUCTS TO NOT SHOW UP -JK (I can explain more)
+        const products = await productService.getFilteredProducts(
             categories,
-            upperPrice,
-            lowerPrice
+            0, //upperPrice,
+            0, //lowerPrice
         );
 
         return handler.returnStatus(200, { products }, 200);

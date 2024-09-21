@@ -132,7 +132,7 @@ class ProductReviewService extends TransactionBaseService {
             where: {
                 id: In(unreviewedOrderIds),
                 customer_id: customer_id,
-                status: Not(OrderStatus.ARCHIVED),
+                status: Not(In([OrderStatus.ARCHIVED, OrderStatus.REQUIRES_ACTION])),
             },
             relations: ['items', 'items.variant.product'],
         });

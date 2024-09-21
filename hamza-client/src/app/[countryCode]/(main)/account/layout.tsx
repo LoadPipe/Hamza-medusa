@@ -1,6 +1,6 @@
 import { getHamzaCustomer } from '@lib/data';
 import AccountLayout from '@modules/account/templates/account-layout';
-import { Flex, Text } from '@chakra-ui/react';
+
 export default async function AccountPageLayout({
     dashboard,
     login,
@@ -12,18 +12,7 @@ export default async function AccountPageLayout({
 
     return (
         <AccountLayout customer={customer}>
-            {customer ? (
-                dashboard
-            ) : (
-                <>
-                    <Flex>
-                        <Text color="white">
-                            Connect your wallet to sign in and verify your
-                            account.
-                        </Text>
-                    </Flex>
-                </>
-            )}
+            {customer?.id ? dashboard : login}
         </AccountLayout>
     );
 }

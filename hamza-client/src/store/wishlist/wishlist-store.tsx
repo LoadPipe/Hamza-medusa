@@ -1,9 +1,12 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import axios from 'axios';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import wishlist from '@/components/wishlist-dropdown/icon/wishlist-icon';
 import { getWishlist } from '@lib/data/index';
+
+export type PriceDictionary = {
+    eth?: string;
+    usdc?: string;
+    usdt?: string;
+};
 
 export type WishlistProduct = {
     id: string;
@@ -11,7 +14,7 @@ export type WishlistProduct = {
     title: string;
     handle: string;
     description: string;
-    price: string;
+    price?: PriceDictionary | string; // Dictionary type for price...
     productVariantId: string | null;
 };
 
@@ -24,7 +27,7 @@ type WishlistType = {
     wishlist: Wishlist;
     loadWishlist: (customer_id: string) => Promise<void>;
     addWishlistProduct: (product: WishlistProduct) => Promise<void>;
-    removeWishlistProduct: (product_id: string) => Promise<void>;
+    removeWishlistProduct: (productVariantId: string) => Promise<void>;
     updateAuthentication: (status: boolean) => void;
     isCustomerAuthenticated: boolean;
 };
@@ -45,7 +48,11 @@ const useWishlistStore = create<WishlistType>()(
             addWishlistProduct: async (product) => {
                 const { wishlist } = get();
                 console.log('Wishlist product', wishlist);
-                if (wishlist.products.some((p) => p.id === product.id)) {
+                if (
+                    wishlist.products.some(
+                        (p) => p.productVariantId === product.productVariantId
+                    )
+                ) {
                     return;
                 }
                 set((state) => ({
@@ -55,15 +62,15 @@ const useWishlistStore = create<WishlistType>()(
                     },
                 }));
             },
-            removeWishlistProduct: async (product_id) => {
+            removeWishlistProduct: async (productVariantId) => {
                 console.log(
-                    'Attempting to remove product with ID:',
-                    product_id
+                    'Attempting to remove product variant with ID:',
+                    productVariantId
                 );
                 const { wishlist } = get();
                 set((state) => {
                     const filteredItems = wishlist.products.filter(
-                        (p) => p.id !== product_id
+                        (p) => p.productVariantId !== productVariantId
                     );
                     console.log('Filtered items:', filteredItems);
                     return {
@@ -78,14 +85,33 @@ const useWishlistStore = create<WishlistType>()(
                 try {
                     const response = await getWishlist(customer_id);
                     const items = response.items;
-                    const products = items.map((item: any) => ({
-                        id: item.product.id,
-                        thumbnail: item.product.thumbnail,
-                        title: item.product.title,
-                        handle: item.product.handle,
-                        description: item.product.description,
-                        price: item.product.price, // Added price mapping
-                    }));
+                    console.log('WISHLIST ITEMS');
+                    console.log(items);
+                    const products = items.map((item: any) => {
+                        // Correctly declare priceDictionary without the extra =
+                        const priceDictionary: PriceDictionary =
+                            item.variant.prices.reduce(
+                                (acc: PriceDictionary, price: any) => {
+                                    acc[
+                                        price.currency_code as keyof PriceDictionary
+                                    ] = price.amount; // Use currency_code instead of currency
+                                    return acc;
+                                },
+                                {} // Init value for accumulator to an empty object
+                            );
+
+                        // Return the product object
+                        return {
+                            id: item.variant.product.id,
+                            thumbnail: item.variant.product.thumbnail,
+                            title: item.variant.product.title,
+                            handle: item.variant.product.handle,
+                            description: item.variant.product.description,
+                            productVariantId: item.variant.id,
+                            price: priceDictionary, // Price dictionary with all currencies
+                        };
+                    });
+
                     if (Array.isArray(items)) {
                         set({ wishlist: { products } });
                     } else {

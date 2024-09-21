@@ -184,7 +184,7 @@ const CryptoPaymentButton = ({
             return output;
         } catch (e) {
             console.error('error has occured during transaction', e);
-            displayError('Checkout was not completed.');
+            displayError('Error has occured during transaction');
             setSubmitting(false);
         }
     };
@@ -217,53 +217,58 @@ const CryptoPaymentButton = ({
      * @param cartId
      */
     const completeCheckout = async (cartId: string) => {
-        //retrieve data (cart id, currencies, amounts etc.) that will be needed for wallet checkout
-        const data: CheckoutData = await getCheckoutData(cartId);
+        try {
+            // Retrieve data (cart id, currencies, amounts, etc.) needed for wallet checkout
+            const data: CheckoutData = await getCheckoutData(cartId);
 
-        if (data) {
-            //this sends the payment to the wallet for on-chain processing
-            const output = await doWalletPayment(data);
+            if (data) {
+                // Send the payment to the wallet for on-chain processing
+                const output = await doWalletPayment(data);
 
-            //finalize the checkout, if wallet payment was successful
-            if (output?.success) {
-                //TODO: MOVE TO INDEX.TS
-                await finalizeCheckout(
-                    cartId,
-                    output.transaction_id,
-                    output.payer_address,
-                    output.escrow_contract_address,
-                    output.chain_id
-                    //cartRef.current
-                );
+                // Finalize the checkout, if wallet payment was successful
+                if (output?.success) {
+                    // TODO: MOVE TO INDEX.TS
+                    await finalizeCheckout(
+                        cartId,
+                        output.transaction_id,
+                        output.payer_address,
+                        output.escrow_contract_address,
+                        output.chain_id
+                    );
 
-                //TODO: examine response
+                    // TODO: examine response
 
-                //country code needed for redirect (get before killing cart)
-                const countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY
-                    ? 'us'
-                    : cart.shipping_address?.country_code?.toLowerCase();
+                    // Country code needed for redirect (get before clearing the cart)
+                    const countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY
+                        ? 'us'
+                        : cart.shipping_address?.country_code?.toLowerCase();
 
-                //clear cart
-                clearCart();
+                    // Clear cart
+                    clearCart();
 
-                //redirect to confirmation page
-                redirectToOrderConfirmation(
-                    data?.orders?.length ? data.orders[0].order_id : null,
-                    cart.id,
-                    countryCode
-                );
+                    // Redirect to confirmation page
+                    redirectToOrderConfirmation(
+                        data?.orders?.length ? data.orders[0].order_id : null,
+                        cart.id,
+                        countryCode
+                    );
+                } else {
+                    displayError(
+                        output?.message
+                            ? output.message
+                            : 'Checkout was not completed.'
+                    );
+                    await cancelOrderFromCart();
+                }
             } else {
-                setSubmitting(false);
-                displayError(
-                    output?.message
-                        ? output.message
-                        : 'Checkout was not completed.'
-                );
                 await cancelOrderFromCart();
+                throw new Error('Checkout failed to complete.');
             }
-        } else {
-            await cancelOrderFromCart();
-            throw new Error('Checkout failed to complete.');
+        } catch (error) {
+            console.error(error);
+            displayError('An error occurred during checkout.');
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -276,7 +281,8 @@ const CryptoPaymentButton = ({
                 },
                 {
                     headers: {
-                        authorization: getClientCookie('_medusa_jwt')('_medusa_jwt'),
+                        authorization:
+                            getClientCookie('_medusa_jwt')('_medusa_jwt'),
                     },
                 }
             );
@@ -297,6 +303,7 @@ const CryptoPaymentButton = ({
         } else {
             try {
                 setSubmitting(true);
+                setErrorMessage('');
 
                 updateCart.mutate(
                     { context: {} },
@@ -367,7 +374,7 @@ const CryptoPaymentButton = ({
                     color: 'black',
                 }}
             >
-                Place Order: Crypto
+                Place Order
             </Button>
             <ErrorMessage error={errorMessage} />
         </>

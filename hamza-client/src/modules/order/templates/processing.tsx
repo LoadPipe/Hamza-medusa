@@ -28,14 +28,15 @@ import {
 import { BsCircleFill } from 'react-icons/bs';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import EmptyState from '@modules/order/components/empty-state';
+import { useOrdersStore } from '@store/orders-refresh';
 
 import ProcessingOrderCard from '@modules/account/components/processing-order-card';
 
 const Processing = ({
-    orders,
+    customer,
     isEmpty,
 }: {
-    orders: any[];
+    customer: string;
     isEmpty?: boolean;
 }) => {
     const [customerId, setCustomerId] = useState<string | null>(null);
@@ -50,9 +51,14 @@ const Processing = ({
     }>({});
     const [customerOrder, setCustomerOrder] = useState<any[]>([]);
 
+    const incrementOrderVersion = useOrdersStore(
+        (state) => state.incrementOrdersVersion
+    );
+
     // console.log(`ORDER FOR PROCESSING ${JSON.stringify(orders)}`);
     const openModal = (orderId: string) => {
         setSelectedOrderId(orderId);
+        setCancelReason(''); // Ensure cancel reason is cleared here
         setIsModalOpen(true);
     };
     const closeModal = () => {
@@ -64,6 +70,15 @@ const Processing = ({
     const toggleViewOrder = (orderId: any) => {
         setExpandViewOrder(expandViewOrder === orderId ? null : orderId);
     };
+
+    useEffect(() => {
+        // This runs when `isModalOpen` changes
+        if (!isModalOpen) {
+            // Clean up the state when the modal is closed
+            setCancelReason('');
+            setIsAttemptedSubmit(false); // Reset submission attempts as well
+        }
+    }, [isModalOpen]);
 
     const handleCancel = async () => {
         if (!cancelReason) {
@@ -79,6 +94,8 @@ const Processing = ({
                 ...prevStatuses,
                 [selectedOrderId]: 'canceled',
             }));
+            fetchAllOrders(customerId as string);
+            incrementOrderVersion();
             setIsModalOpen(false);
         } catch (error) {
             console.error('Error cancelling order: ', error);
@@ -94,19 +111,17 @@ const Processing = ({
     };
 
     useEffect(() => {
-        console.log('Orders received in Processing:', orders);
-        if (orders && orders.length > 0) {
-            const customer_id = orders[0]?.customer_id;
-            console.log(
-                `Running fetchAllOrders with customerID ${customer_id}`
-            );
-            fetchAllOrders(customer_id);
-            setCustomerId(customer_id);
+        console.log('Customer received in Processing:', customer);
+        if (customer && customer.length > 0) {
+            console.log(`Running fetchAllOrders with customerID ${customer}`);
+            fetchAllOrders(customer);
+            setCustomerId(customer);
         }
-    }, [orders]);
+    }, [customer]);
 
     const fetchAllOrders = async (customerId: string) => {
         setIsLoading(true);
+        setCustomerId(customerId);
         try {
             const bucket = await getSingleBucket(customerId, 1);
 
@@ -549,6 +564,20 @@ const Processing = ({
                                                                                     fontSize="sm"
                                                                                     color="gray.400"
                                                                                 >
+                                                                                    Order
+                                                                                    ID:
+                                                                                </Text>
+                                                                                <Text fontWeight="bold">
+                                                                                    {
+                                                                                        order.id
+                                                                                    }
+                                                                                </Text>
+                                                                            </Box>
+                                                                            <Box>
+                                                                                <Text
+                                                                                    fontSize="sm"
+                                                                                    color="gray.400"
+                                                                                >
                                                                                     Quantity:
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
@@ -621,34 +650,34 @@ const Processing = ({
                                                                                     Express
                                                                                 </Text>
                                                                             </Box>
-                                                                            <Box>
-                                                                                <Text
-                                                                                    fontSize="sm"
-                                                                                    color="gray.400"
-                                                                                >
-                                                                                    Tracking
-                                                                                    Number:
-                                                                                </Text>
-                                                                                <Text fontWeight="bold">
-                                                                                    2856374190
-                                                                                </Text>
-                                                                            </Box>
-                                                                            <Box>
-                                                                                <Text
-                                                                                    fontSize="sm"
-                                                                                    color="gray.400"
-                                                                                >
-                                                                                    Estimated
-                                                                                    Time
-                                                                                    of
-                                                                                    Arrival:
-                                                                                </Text>
-                                                                                <Text fontWeight="bold">
-                                                                                    July
-                                                                                    27-31,
-                                                                                    2024
-                                                                                </Text>
-                                                                            </Box>
+                                                                            {/*<Box>*/}
+                                                                            {/*    <Text*/}
+                                                                            {/*        fontSize="sm"*/}
+                                                                            {/*        color="gray.400"*/}
+                                                                            {/*    >*/}
+                                                                            {/*        Tracking*/}
+                                                                            {/*        Number:*/}
+                                                                            {/*    </Text>*/}
+                                                                            {/*    <Text fontWeight="bold">*/}
+                                                                            {/*        2856374190*/}
+                                                                            {/*    </Text>*/}
+                                                                            {/*</Box>*/}
+                                                                            {/*<Box>*/}
+                                                                            {/*    <Text*/}
+                                                                            {/*        fontSize="sm"*/}
+                                                                            {/*        color="gray.400"*/}
+                                                                            {/*    >*/}
+                                                                            {/*        Estimated*/}
+                                                                            {/*        Time*/}
+                                                                            {/*        of*/}
+                                                                            {/*        Arrival:*/}
+                                                                            {/*    </Text>*/}
+                                                                            {/*    <Text fontWeight="bold">*/}
+                                                                            {/*        July*/}
+                                                                            {/*        27-31,*/}
+                                                                            {/*        2024*/}
+                                                                            {/*    </Text>*/}
+                                                                            {/*</Box>*/}
                                                                             <Box>
                                                                                 <Text
                                                                                     fontSize="sm"
@@ -698,7 +727,7 @@ const Processing = ({
                                                                                         order
                                                                                             .shipping_address
                                                                                             .first_name
-                                                                                    }
+                                                                                    }{' '}
                                                                                     {
                                                                                         order
                                                                                             .shipping_address

@@ -47,21 +47,22 @@ function getTokenContract(signer: ethers.Signer, address: string): ethers.Contra
     return new ethers.Contract(address, erc20abi, signer);
 }
 
-async function checkSenderBalance(
+
+async function checkWalletBalance(
     provider: ethers.Provider,
     signer: ethers.Signer,
     chainId: any,
     currencyCode: string,
-    amount: BigNumberish
+    amount: bigint
 ): Promise<boolean> {
     const address = await signer.getAddress();
     const currencyAddress = getCurrencyAddress(currencyCode, chainId);
     if (currencyAddress == ethers.ZeroAddress) {
-        return ethers.toBigInt(amount) <= (await provider.getBalance(address));
+        return amount <= BigInt(await provider.getBalance(address));
     } else {
         const token = getTokenContract(signer, currencyAddress);
         const balance = await token.balanceOf(address);
-        return (balance >= ethers.toBigInt(amount));
+        return (balance >= amount);
     }
     return false;
 }
@@ -228,11 +229,25 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
                 contractAddress
             );
 
-            //TODO: check sender balance
-
             payer_address = await signer.getAddress();
             const inputs = this.createPaymentInput(data, payer_address, chainId);
             console.log('sending payments: ', inputs);
+
+            //check balance first 
+            const currencyPayments = this.groupPaymentsByCurrency(inputs);
+            for (let cp of currencyPayments) {
+                const { currency, amount } = cp;
+                if (!(await checkWalletBalance(provider, signer, chainId, currency, amount as bigint))) {
+                    return {
+                        escrow_contract_address: '0x0',
+                        transaction_id,
+                        payer_address,
+                        success: false,
+                        chain_id: chainId,
+                        message: `Wallet has an insufficient balance in ${currency.toUpperCase()} to pay for this transaction`
+                    };
+                }
+            }
 
             const tx = await client.placeMultiplePayments(inputs, true);
             transaction_id = tx.transaction_id;
@@ -283,6 +298,25 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
         const nativeAmount = BigInt(amount) * BigInt(adjustmentFactor);
         return ethers.toBigInt(nativeAmount);
     };
+
+    private groupPaymentsByCurrency(inputs: ISwitchMultiPaymentInput[]): { currency: string, amount: BigInt }[] {
+        const output: { currency: string, amount: BigInt }[] = [];
+        for (let input of inputs) {
+            let existing = output.find(o => o.currency == input.currency);
+            if (!existing) {
+                existing = { currency: input.currency, amount: BigInt(0) };
+                output.push(existing);
+            }
+
+            for (let payment of input.payments) {
+                let amt: any = existing.amount;
+                amt += BigInt(payment.amount);
+                existing.amount = amt;
+            }
+        }
+
+        return output;
+    }
 }
 
 /**
@@ -338,7 +372,7 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
                 amount = process.env.NEXT_PUBLIC_ONE_SATOSHI_DISCOUNT ? BigInt(1) : amount;
 
                 //check balance first 
-                if (!(await checkSenderBalance(provider, signer, chainId, currency, amount))) {
+                if (!(await checkWalletBalance(provider, signer, chainId, currency, amount))) {
                     return {
                         escrow_contract_address: '0x0',
                         transaction_id,

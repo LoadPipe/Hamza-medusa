@@ -18,7 +18,7 @@ import CategoryModalButton from './CategoryModalButton';
 import useSideFilter from '@store/store-page/side-filter';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
-import RangeSliderModal from '@modules/shop/components/mobile-filter/components/range-slider-modal';
+import RangeSliderModal from '@modules/shop/components/mobile-filter-modal/components/range-slider-modal';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 interface FilterModalProps {
@@ -44,28 +44,10 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
     onClose,
     categories,
 }) => {
-    const {
-        setCurrencySelect,
-        setReviewStarsSelect,
-        setCategorySelect,
-        setCategoryTypeSelect,
-    } = useHomeProductsPage();
-    const {
-        reviewFilterSelect,
-        setReviewFilterSelect,
-        setCurrencyFilterSelect,
-        setCategoryFilterSelect,
-        setCategoryTypeFilterSelect,
-    } = useSideFilter();
+    const { setCategorySelect } = useHomeProductsPage();
 
     const {
-        homeModalCurrencyFilterSelect,
         homeModalCategoryFilterSelect,
-        homeModalCategoryTypeFilterSelect,
-        homeModalLowerPriceFilterSelect,
-        homeModalUpperPriceFilterSelect,
-        setHomeModalCategoryTypeFilterSelect,
-        setHomeModalCurrencyFilterSelect,
         setHomeModalCategoryFilterSelect,
         setHomeModalLowerPriceFilterSelect,
         setHomeModalUpperPriceFilterSelect,
@@ -83,18 +65,16 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
 
     const [range, setRange] = useState<RangeType>([0, 10000]);
 
-    console.log(
-        `what value is ${homeModalLowerPriceFilterSelect} and ${homeModalUpperPriceFilterSelect}`
-    );
-
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-            name: category.name,
-            id: category.id,
-            metadata: category.metadata,
-        }))
+              name: category.name,
+              id: category.id,
+              metadata: category.metadata,
+          }))
         : [];
+
+    const isDisabled = homeModalCategoryFilterSelect?.length === 0;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -130,55 +110,38 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                             (category: any, index: number) => (
                                 <CategoryModalButton
                                     key={index}
-                                    categoryType={category.id}
                                     categoryName={category.name}
-                                    url={category.metadata.icon_url}
+                                    url={category.metadata?.icon_url}
                                 />
                             )
                         )}
                     </Flex>
-                    {USE_PRICE_FILTER && <>
-                        <Text
-                            mt="1.5rem"
-                            fontWeight={'600'}
-                            fontSize={'16px'}
-                            color="white"
-                        >
-                            Price Range
-                        </Text>
+                    {USE_PRICE_FILTER && (
+                        <>
+                            <Text
+                                mt="1.5rem"
+                                fontWeight={'600'}
+                                fontSize={'16px'}
+                                color="white"
+                            >
+                                Price Range
+                            </Text>
 
-                        <Text
-                            mt="0.25rem"
-                            fontSize={'14px'}
-                            color="secondary.davy.900"
-                        >
-                            Prices before fees and taxes
-                        </Text>
+                            <Text
+                                mt="0.25rem"
+                                fontSize={'14px'}
+                                color="secondary.davy.900"
+                            >
+                                Prices before fees and taxes
+                            </Text>
 
-                        <RangeSliderModal range={range} setRange={setRange} />
-                    </>}
-                    {/* 
-                    <Text
-                        my="1.5rem"
-                        fontWeight={'600'}
-                        fontSize={'16px'}
-                        color="white"
-                    >
-                        Ratings
-                    </Text>
+                            <RangeSliderModal
+                                range={range}
+                                setRange={setRange}
+                            />
+                        </>
+                    )}
 
-                    <Flex
-                        mt="0.5rem"
-                        flexDirection={'row'}
-                        wrap={'wrap'}
-                        gap="12px"
-                    >
-                        <ReviewModalButton title={'All'} value={'All'} />
-                        <ReviewModalButton title={'4 Stars'} value={'4'} />
-                        <ReviewModalButton title={'3 Stars'} value={'3'} />
-                        <ReviewModalButton title={'2 Stars'} value={'2'} />
-                        <ReviewModalButton title={'1 Star'} value={'1'} />
-                    </Flex> */}
                     <Divider
                         mt="2rem"
                         opacity={'0.5'}
@@ -199,34 +162,21 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                         color={'white'}
                         backgroundColor={'transparent'}
                         onClick={() => {
-                            setHomeModalCategoryTypeFilterSelect(null),
-                                setHomeModalCurrencyFilterSelect(null),
-                                setHomeModalCategoryFilterSelect(null);
+                            setHomeModalCategoryFilterSelect([]);
                         }}
                     >
                         Clear All
                     </Button>
                     <Button
+                        isDisabled={isDisabled}
                         onClick={() => {
-                            if (homeModalCurrencyFilterSelect) {
-                                setCurrencySelect(
-                                    homeModalCurrencyFilterSelect
-                                );
-                            }
-                            if (reviewFilterSelect) {
-                                setReviewStarsSelect(reviewFilterSelect);
-                            }
                             if (homeModalCategoryFilterSelect) {
                                 setCategorySelect(
                                     homeModalCategoryFilterSelect
-                                ); // Array of categories
-                                // setCategoryTypeSelect(
-                                //     homeModalCategoryTypeFilterSelect
-                                // );
+                                );
                             }
-                            setHomeModalCurrencyFilterSelect(null);
-                            setHomeModalCategoryFilterSelect(null);
-                            setHomeModalCategoryTypeFilterSelect(null);
+
+                            setHomeModalCategoryFilterSelect([]);
                             setHomeModalLowerPriceFilterSelect(range[0]);
                             setHomeModalUpperPriceFilterSelect(range[1]);
                             onClose();

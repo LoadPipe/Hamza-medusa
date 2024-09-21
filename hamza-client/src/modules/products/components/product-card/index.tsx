@@ -67,7 +67,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         >
             <LocalizedClientLink href={`/products/${productHandle}`}>
                 <Box
-                    onClick={() => console.log('hello')}
+                    onClick={() => { }}
                     height={{ base: '134.73px', md: '238px' }}
                     width="100%"
                     display="flex"

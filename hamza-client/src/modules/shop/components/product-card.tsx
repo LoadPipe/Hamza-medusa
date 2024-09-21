@@ -67,7 +67,7 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
                     justifyContent="center"
                     backgroundColor={objectFit === 'cover' ? 'black' : 'white'}
                     alignItems="center"
-                    onClick={() => console.log('hello')}
+                    onClick={() => { }}
                     style={{ cursor: 'pointer' }}
                 >
                     {!imageLoaded && <Skeleton height="240px" width="100%" />}

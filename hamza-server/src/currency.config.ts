@@ -114,9 +114,10 @@ const getCurrencyAddress = (currencyId: string, chainId: number = 1) =>
         ? chainConfig[chainId][currencyId]?.contract_address ?? ''
         : '';
 
-const getCurrencyPrecision = (currencyId: string, chainId: number = 1) =>
-    chainConfig[chainId]
+function getCurrencyPrecision(currencyId: string, chainId: number = 1): { native: number, db: number, display: number } {
+    return chainConfig[chainId]
         ? chainConfig[chainId][currencyId]?.precision
         : undefined;
+}
 
 export { getCurrencyAddress, getCurrencyPrecision };

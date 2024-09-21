@@ -82,9 +82,21 @@ const Shipping: React.FC<ShippingProps> = ({
     useEffect(() => {
         setIsLoading(false);
         setError(null);
-        set(cart.shipping_methods?.length
-            ? cart.shipping_methods[0]
-                ?.shipping_option_id : '');
+
+        if (cart.shipping_methods?.length) {
+            set(cart.shipping_methods?.length
+                ? cart.shipping_methods[0]
+                    ?.shipping_option_id : '');
+        } else {
+            if (isOpen) {
+                console.log('adding default shipping');
+                addDefaultShippingMethod(cart.id).then(() => {
+                    router.push(pathname + '?step=review', {
+                        scroll: false,
+                    });
+                });
+            }
+        }
     }, [isOpen]);
 
     return (
