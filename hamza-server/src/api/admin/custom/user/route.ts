@@ -48,7 +48,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 user9,
                 'Hamza Official',
                 'pcol_01HRVF8HCVY8B00RF5S54THTPC',
-                'https://images.hamza.biz/Hamza/logo.png',
+                'https://images.hamza.market/Hamza/logo.png',
                 500,
                 'Hamza Official Store where we sell our Hamza Sniffers, its a nice store'
             );
@@ -199,7 +199,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 user1,
                 'Echo Rift',
                 'pcol_01HSGAM4918EX0DETKY6E662WT',
-                'https://images.hamza.biz/headphones.webp',
+                'https://images.hamza.market/headphones.webp',
                 200,
                 "We Sell VR Headsets here, the best quality VR headsets you wouldn't believe it"
             );
@@ -207,7 +207,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 user2,
                 'Dauntless',
                 'pcol_01HSGAMXDJD725MR3VSW631SN2',
-                'https://images.hamza.biz/dalle_vr.webp',
+                'https://images.hamza.market/dalle_vr.webp',
                 450,
                 'Dauntless Store - Where bold and resilient products meet exceptional quality. Perfect for those who seek adventure and durability in every purchase.'
             );
@@ -216,7 +216,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 user3,
                 'Drones',
                 'pcol_01HSGAMXDJD725MR3VSW631DR0',
-                'https://images.hamza.biz/Drones/dji_mini_4_pro/dji_mini_pro_1.jpg',
+                'https://images.hamza.market/Drones/dji_mini_4_pro/dji_mini_pro_1.jpg',
                 720,
                 'Drones Store - Your go-to destination for cutting-edge aerial technology. Explore our wide range of high-performance drones perfect for every enthusiast.'
             );
@@ -225,7 +225,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 user4,
                 'Legos',
                 'pcol_01HSGAMXDJD725MR3VSW63LEG0',
-                'https://images.hamza.biz/Lego/corvette/corvette_1.jpg',
+                'https://images.hamza.market/Lego/corvette/corvette_1.jpg',
                 315,
                 'Legos Store - Dive into the world of creativity and building blocks. Find the latest Lego sets and build your imagination with endless possibilities.'
             );
@@ -234,7 +234,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 user5,
                 'Board Games',
                 'pcol_01HSGAMXDJD725MR3VSW63B0RD',
-                'https://images.hamza.biz/Board_Games/dark_souls/souls_1.jpg',
+                'https://images.hamza.market/Board_Games/dark_souls/souls_1.jpg',
                 860,
                 'Board Games Store - A haven for tabletop enthusiasts. Discover a wide selection of board games, from strategy to family fun, and everything in between.'
             );
@@ -243,7 +243,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 user6,
                 'Workout Gear',
                 'pcol_01HSGAMXDJD725MR3VSW63W0GE',
-                'https://images.hamza.biz/Workout/dumbbell/dumb_2.jpg',
+                'https://images.hamza.market/Workout/dumbbell/dumb_2.jpg',
                 580,
                 'Workout Gear Store - Equip yourself with the best in fitness gear. From weights to apparel, we have everything you need to power your workouts.'
             );
@@ -252,7 +252,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 user7,
                 'Gaming Gear',
                 'pcol_01HSGAMXDJD725MR3VSW63W0GA',
-                'https://images.hamza.biz/gaming_store/6.1.png',
+                'https://images.hamza.market/gaming_store/6.1.png',
                 930,
                 'Gaming Gear Store - Elevate your gaming experience with top-tier gear. Find the latest peripherals, accessories, and more for the ultimate gaming setup.'
             );
@@ -261,7 +261,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 user8,
                 'Shake',
                 'pcol_shake',
-                'https://images.hamza.biz/headphones.webp',
+                'https://images.hamza.market/headphones.webp',
                 290,
                 'Shake Store - Blend your way to a healthier lifestyle. Our store offers a range of premium shakes and blenders for the health-conscious consumer.'
             );
@@ -270,7 +270,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 user9,
                 'Legendary Light Design',
                 'pcol_lighting',
-                'https://images.hamza.biz/Legendary/mood/LLD_mood1.webp',
+                'https://images.hamza.market/Legendary/mood/LLD_mood1.webp',
                 670,
                 'Legendary Light Design Store - Illuminate your space with style. Explore our collection of designer lighting solutions for a touch of elegance and functionality.'
             );
@@ -279,7 +279,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 user10,
                 'Block',
                 'pcol_blocks',
-                'https://images.hamza.biz/headphones.webp',
+                'https://images.hamza.market/headphones.webp',
                 410,
                 'Block Store - Specializing in building blocks and construction toys. Let your creativity soar with our range of products designed for endless fun.'
             );

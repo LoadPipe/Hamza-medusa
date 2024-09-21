@@ -5,13 +5,13 @@ import Image from 'next/image';
 
 interface CategoryButtonProps {
     categoryName: string;
-    categoryType: string;
+
     url: string;
 }
 
 const CategoryButtons: React.FC<CategoryButtonProps> = ({
     categoryName,
-    categoryType,
+
     url,
 }) => {
     const { categorySelect, setCategorySelect } = useHomeProductsPage();

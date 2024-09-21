@@ -29,6 +29,10 @@ export default class PaymentVerificationService extends TransactionBaseService {
         let orders = await this.orderService_.getOrdersWithUnverifiedPayments();
         console.log(orders.map(o => o.id));
 
+        if (!orders?.length) {
+            this.logger.info('No orders with unverified payments were found');
+        }
+
         if (order_id)
             orders = orders.filter(o => o.id == order_id);
 
@@ -45,35 +49,46 @@ export default class PaymentVerificationService extends TransactionBaseService {
         let allPaid: boolean = true;
         const payments: Payment[] = order.payments;
 
-        //verify each payment of order
-        let totalPaid: bigint = BigInt(0);
-        let totalExpected: bigint = BigInt(0);
-        for (let payment of payments) {
-            this.logger.info(`verifying payment ${payment.id} for order ${order.id}`);
+        try {
+            if (order.payment_status !== PaymentStatus.CAPTURED) {
+                this.logger.info(`Order ${order.id} payment status ${order.payment_status} is in the wrong state to be verified`);
+                return output;
+            }
 
-            //compare amount paid to amount expected 
-            totalPaid += await getAmountPaidForOrder(payment.chain_id, order.id, payment.amount);
-            const currencyCode: string = payment.currency_code;
+            //verify each payment of order
+            let totalPaid: bigint = BigInt(0);
+            let totalExpected: bigint = BigInt(0);
+            for (let payment of payments) {
+                this.logger.info(`verifying payment ${payment.id} for order ${order.id}`);
 
-            //convert to correct number of decimals
-            const precision = getCurrencyPrecision(currencyCode, payment.chain_id);
-            totalExpected += BigInt(payment.amount * Math.pow(10, precision.native - precision.db));
+                //compare amount paid to amount expected 
+                totalPaid += await getAmountPaidForOrder(payment.chain_id, payment.transaction_id, order.id, payment.amount);
+                const currencyCode: string = payment.currency_code;
+                this.logger.info(`Total paid for ${payment.id} of order ${order.id} is ${totalPaid}`);
+
+                //convert to correct number of decimals
+                const precision = getCurrencyPrecision(currencyCode, payment.chain_id);
+                totalExpected += BigInt(payment.amount * Math.pow(10, precision.native - precision.db));
+            }
+
+            this.logger.debug(`expected:, ${totalExpected}`);
+            this.logger.debug(`paid:', ${totalPaid}`);
+
+            //update payment_status of order based on paid or not
+            allPaid = totalPaid >= totalExpected;
+            const paymentStatus: PaymentStatus = allPaid ? PaymentStatus.CAPTURED : PaymentStatus.NOT_PAID;
+
+            //save the order
+            this.logger.info(`updating order ${order.id}, setting to ${paymentStatus}`);
+            order.payment_status = paymentStatus;
+            await this.orderRepository_.save(order);
+
+            for (let p of order.payments) {
+                output.push({ order: order, payment: p });
+            }
         }
-
-        this.logger.debug(`expected:, ${totalExpected}`);
-        this.logger.debug(`paid:', ${totalPaid}`);
-
-        //update payment_status of order based on paid or not
-        allPaid = totalPaid >= totalExpected;
-        const paymentStatus: PaymentStatus = allPaid ? PaymentStatus.CAPTURED : PaymentStatus.NOT_PAID;
-
-        //save the order
-        this.logger.info(`updating order ${order.id}, setting to ${paymentStatus}`);
-        order.payment_status = paymentStatus;
-        await this.orderRepository_.save(order);
-
-        for (let p of order.payments) {
-            output.push({ order: order, payment: p });
+        catch (e: any) {
+            this.logger.error(`Error verifying order ${order.id}`, e);
         }
 
         return output;
