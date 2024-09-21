@@ -346,8 +346,11 @@ export class BasicCheckoutProcessor {
             );
             payment.order_id = order.id;
             payment.cart_id = order.cart_id;
-            payment.receiver_address =
-                fullOrder.store?.owner?.wallet_address ?? 'NA';
+
+            if (payment.blockchain_data) {
+                payment.blockchain_data.receiver_address =
+                    fullOrder.store?.owner?.wallet_address ?? 'NA';
+            }
             return await this.paymentRepository.save(payment);
         };
 

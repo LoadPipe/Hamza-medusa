@@ -49,15 +49,17 @@ export default class PaymentVerificationService extends TransactionBaseService {
         let totalPaid: bigint = BigInt(0);
         let totalExpected: bigint = BigInt(0);
         for (let payment of payments) {
-            this.logger.info(`verifying payment ${payment.id} for order ${order.id}`);
+            if (payment.blockchain_data) {
+                this.logger.info(`verifying payment ${payment.id} for order ${order.id}`);
 
-            //compare amount paid to amount expected 
-            totalPaid += await getAmountPaidForOrder(payment.chain_id, order.id, payment.amount);
-            const currencyCode: string = payment.currency_code;
+                //compare amount paid to amount expected 
+                totalPaid += await getAmountPaidForOrder(payment.blockchain_data.chain_id, order.id, payment.amount);
+                const currencyCode: string = payment.currency_code;
 
-            //convert to correct number of decimals
-            const precision = getCurrencyPrecision(currencyCode, payment.chain_id);
-            totalExpected += BigInt(payment.amount * Math.pow(10, precision.native - precision.db));
+                //convert to correct number of decimals
+                const precision = getCurrencyPrecision(currencyCode, payment.blockchain_data.chain_id);
+                totalExpected += BigInt(payment.amount * Math.pow(10, precision.native - precision.db));
+            }
         }
 
         this.logger.debug(`expected:, ${totalExpected}`);

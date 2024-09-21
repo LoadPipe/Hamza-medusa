@@ -610,10 +610,12 @@ export default class OrderService extends MedusaOrderService {
         payments.forEach((p, i) => {
             promises.push(
                 this.updatePaymentAfterTransaction(p.id, {
-                    transaction_id: transactionId,
-                    payer_address: payerAddress,
-                    escrow_contract_address: escrowContractAddress,
-                    chain_id: chainId
+                    blockchain_data: {
+                        transaction_id: transactionId,
+                        payer_address: payerAddress,
+                        escrow_address: escrowContractAddress,
+                        chain_id: chainId
+                    }
                 })
             );
         });

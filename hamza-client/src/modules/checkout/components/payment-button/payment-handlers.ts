@@ -17,7 +17,7 @@ import { ISwitchMultiPaymentInput } from 'web3';
 export type WalletPaymentResponse = {
     transaction_id: string;
     payer_address: string;
-    escrow_contract_address: string;
+    escrow_address: string;
     message?: string;
     chain_id: number;
     success: boolean;
@@ -96,7 +96,7 @@ export class MassmarketWalletPaymentHandler implements IWalletPaymentHandler {
         chainId: any,
         data: any
     ): Promise<WalletPaymentResponse> {
-        const escrow_contract_address = getMasterSwitchAddress(chainId);
+        const escrow_address = getMasterSwitchAddress(chainId);
         let transaction_id = '';
         let payer_address = '';
 
@@ -108,11 +108,11 @@ export class MassmarketWalletPaymentHandler implements IWalletPaymentHandler {
                     provider,
                     signer,
                     paymentContractAddr,
-                    escrow_contract_address
+                    escrow_address
                 );
 
             console.log('payment address:', paymentContractAddr);
-            console.log('escrow address:', escrow_contract_address);
+            console.log('escrow address:', escrow_address);
 
             //create the inputs
             const paymentInput: IMultiPaymentInput[] =
@@ -135,7 +135,7 @@ export class MassmarketWalletPaymentHandler implements IWalletPaymentHandler {
         return {
             transaction_id,
             payer_address,
-            escrow_contract_address,
+            escrow_address,
             chain_id: chainId,
             success:
                 transaction_id && transaction_id.length ? true : false,
@@ -215,7 +215,7 @@ export class FakeWalletPaymentHandler implements IWalletPaymentHandler {
         }
 
         return {
-            escrow_contract_address: '0x0',
+            escrow_address: '0x0',
             transaction_id,
             payer_address,
             chain_id: chainId,
@@ -257,7 +257,7 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
                 const { currency, amount } = cp;
                 if (!(await checkSenderBalanceBigInt(provider, signer, chainId, currency, amount as bigint))) {
                     return {
-                        escrow_contract_address: '0x0',
+                        escrow_address: '0x0',
                         transaction_id,
                         payer_address,
                         success: false,
@@ -272,7 +272,7 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
         }
 
         return {
-            escrow_contract_address: contractAddress,
+            escrow_address: contractAddress,
             payer_address,
             transaction_id,
             chain_id: chainId,
@@ -349,7 +349,7 @@ export class SwitchWalletPaymentHandler implements IWalletPaymentHandler {
         data: any
     ): Promise<WalletPaymentResponse> {
         return {
-            escrow_contract_address: '',
+            escrow_address: '',
             payer_address: '',
             transaction_id: '',
             success: false,
@@ -392,7 +392,7 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
                 //check balance first 
                 if (!(await checkSenderBalance(provider, signer, chainId, currency, amount))) {
                     return {
-                        escrow_contract_address: '0x0',
+                        escrow_address: '0x0',
                         transaction_id,
                         payer_address,
                         success: false,
@@ -437,7 +437,7 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
         }
 
         const output = {
-            escrow_contract_address: '0x0',
+            escrow_address: '0x0',
             transaction_id,
             payer_address,
             chain_id: chainId,

@@ -441,7 +441,7 @@ export async function finalizeCheckout(
     cart_id: string,
     transaction_id: string,
     payer_address: string,
-    escrow_contract_address: string,
+    escrow_address: string,
     chain_id: number
     //cart_products: any
 ) {
@@ -449,7 +449,7 @@ export async function finalizeCheckout(
         cart_id,
         transaction_id,
         payer_address,
-        escrow_contract_address,
+        escrow_address,
         chain_id,
     });
 }

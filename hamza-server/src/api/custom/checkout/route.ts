@@ -78,8 +78,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             'cart_id',
             'transaction_id',
             'payer_address',
-            'escrow_contract_address',
+            'escrow_address',
             'chain_id',
+            'block_number',
         ]
     );
 
@@ -105,8 +106,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 handler.inputParams.cart_id,
                 handler.inputParams.transaction_id,
                 handler.inputParams.payer_address,
-                handler.inputParams.escrow_contract_address,
-                handler.inputParams.chain_id
+                handler.inputParams.escrow_address,
+                handler.inputParams.chain_id,
+                //handler.inputParams.block_number
             );
             handler.returnStatusWithMessage(
                 200,

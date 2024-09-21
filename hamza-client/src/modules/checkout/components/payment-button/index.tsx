@@ -232,8 +232,9 @@ const CryptoPaymentButton = ({
                         cartId,
                         output.transaction_id,
                         output.payer_address,
-                        output.escrow_contract_address,
-                        output.chain_id
+                        output.escrow_address,
+                        output.chain_id,
+                        //output.block_number
                     );
 
                     // TODO: examine response
