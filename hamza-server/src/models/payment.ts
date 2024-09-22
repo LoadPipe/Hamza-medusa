@@ -3,6 +3,6 @@ import { Payment as MedusaPayment } from '@medusajs/medusa';
 
 @Entity()
 export class Payment extends MedusaPayment {
-    @Column()
+    @Column('jsonb')
     blockchain_data?: Record<string, any>;
 }

@@ -61,10 +61,13 @@ export default class PaymentVerificationService extends TransactionBaseService {
             for (let payment of payments) {
                 this.logger.info(`verifying payment ${payment.id} for order ${order.id}`);
 
+                const chainId: number = payment.blockchain_data?.chain_id ?? 0;
+                const transactionId: string = payment.blockchain_data?.transaction_id;
+
                 //compare amount paid to amount expected 
                 totalPaid += await getAmountPaidForOrder(
-                    payment.blockchain_data?.chain_id,
-                    payment.blockchain_data?.transaction_id,
+                    chainId,
+                    transactionId,
                     order.id,
                     payment.amount
                 );
@@ -72,7 +75,7 @@ export default class PaymentVerificationService extends TransactionBaseService {
                 this.logger.info(`Total paid for ${payment.id} of order ${order.id} is ${totalPaid}`);
 
                 //convert to correct number of decimals
-                const precision = getCurrencyPrecision(currencyCode, payment.blockchain_data?.chain_id);
+                const precision = getCurrencyPrecision(currencyCode, chainId);
                 totalExpected += BigInt(payment.amount * Math.pow(10, precision.native - precision.db));
             }
 
