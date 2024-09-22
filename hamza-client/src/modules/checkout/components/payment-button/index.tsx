@@ -6,6 +6,7 @@ import {
     MassmarketWalletPaymentHandler,
     LiteSwitchWalletPaymentHandler,
     DirectWalletPaymentHandler,
+    CheckoutData
 } from './payment-handlers';
 import { Button } from '@chakra-ui/react';
 import React, { useState, useEffect, useRef } from 'react';
@@ -28,18 +29,6 @@ const MEDUSA_SERVER_URL =
 
 type PaymentButtonProps = {
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
-};
-
-type CheckoutData = {
-    order_id: string; //medusa order id
-    cart_id: string; //medusa cart id
-    wallet_address: string; //wallet address of store owner
-    currency_code: string; //currency code
-    amount: string; //medusa amount
-    massmarket_amount: string; //massmarket amount
-    massmarket_order_id: string; //keccak256 of cartId (massmarket)
-    massmarket_ttl: number;
-    orders: any[]; //medusa orders
 };
 
 // Extend the Window interface
@@ -232,6 +221,7 @@ const CryptoPaymentButton = ({
                         cartId,
                         output.transaction_id,
                         output.payer_address,
+                        output.receiver_address,
                         output.escrow_address,
                         output.chain_id
                     );

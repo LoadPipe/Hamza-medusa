@@ -185,6 +185,7 @@ export default class OrderService extends MedusaOrderService {
         cartId: string,
         transactionId: string,
         payerAddress: string,
+        receiverAddress: string,
         escrowContractAddress: string,
         chainId: number
     ): Promise<Order[]> {
@@ -217,6 +218,7 @@ export default class OrderService extends MedusaOrderService {
             payments,
             transactionId,
             payerAddress,
+            receiverAddress,
             escrowContractAddress,
             chainId
         );
@@ -601,7 +603,8 @@ export default class OrderService extends MedusaOrderService {
         payments: Payment[],
         transactionId: string,
         payerAddress: string,
-        escrowContractAddress: string,
+        receiverAddress: string,
+        escrowAddress: string,
         chainId: number,
     ): Promise<Order | Payment>[] {
         const promises: Promise<Order | Payment>[] = [];
@@ -613,7 +616,8 @@ export default class OrderService extends MedusaOrderService {
                     blockchain_data: {
                         transaction_id: transactionId,
                         payer_address: payerAddress,
-                        escrow_address: escrowContractAddress,
+                        escrow_address: escrowAddress,
+                        receiver_address: receiverAddress,
                         chain_id: chainId,
                     }
                 })
