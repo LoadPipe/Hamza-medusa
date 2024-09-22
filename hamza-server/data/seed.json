@@ -182,11 +182,11 @@
             "is_giftcard": false,
             "weight": 70,
             "images": [
-                "https://images.hamza.biz/Legendary/indout/LLD_indout1.png",
-                "https://images.hamza.biz/Legendary/indout/lld_indout2.jpg",
-                "https://images.hamza.biz/Legendary/indout/lld_indout3.jpg",
-                "https://images.hamza.biz/Legendary/indout/lld_indout4.jpg",
-                "https://images.hamza.biz/Legendary/indout/lld_indout5.jpg"
+                "https://images.hamza.market/Legendary/indout/LLD_indout1.png",
+                "https://images.hamza.market/Legendary/indout/lld_indout2.jpg",
+                "https://images.hamza.market/Legendary/indout/lld_indout3.jpg",
+                "https://images.hamza.market/Legendary/indout/lld_indout4.jpg",
+                "https://images.hamza.market/Legendary/indout/lld_indout5.jpg"
             ],
             "options": [
                 {
@@ -235,11 +235,11 @@
             "is_giftcard": false,
             "weight": 260,
             "images": [
-                "https://images.hamza.biz/Legendary/tripod/LLD_tripod1.png",
-                "https://images.hamza.biz/Legendary/tripod/lld_tripod2.jpg",
-                "https://images.hamza.biz/Legendary/tripod/lld_tripod3.jpg",
-                "https://images.hamza.biz/Legendary/tripod/lld_tripod4.jpeg",
-                "https://images.hamza.biz/Legendary/tripod/lld_tripod5.jpeg"
+                "https://images.hamza.market/Legendary/tripod/LLD_tripod1.png",
+                "https://images.hamza.market/Legendary/tripod/lld_tripod2.jpg",
+                "https://images.hamza.market/Legendary/tripod/lld_tripod3.jpg",
+                "https://images.hamza.market/Legendary/tripod/lld_tripod4.jpeg",
+                "https://images.hamza.market/Legendary/tripod/lld_tripod5.jpeg"
             ],
             "options": [
                 {
@@ -288,11 +288,11 @@
             "is_giftcard": false,
             "weight": 69,
             "images": [
-                "https://images.hamza.biz/Legendary/mood/LLD_mood1.webp",
-                "https://images.hamza.biz/Legendary/mood/lld_mood2.jpeg",
-                "https://images.hamza.biz/Legendary/mood/lld_mood3.jpeg",
-                "https://images.hamza.biz/Legendary/mood/lld_mood4.jpeg",
-                "https://images.hamza.biz/Legendary/mood/lld_mood5.jpeg"
+                "https://images.hamza.market/Legendary/mood/LLD_mood1.webp",
+                "https://images.hamza.market/Legendary/mood/lld_mood2.jpeg",
+                "https://images.hamza.market/Legendary/mood/lld_mood3.jpeg",
+                "https://images.hamza.market/Legendary/mood/lld_mood4.jpeg",
+                "https://images.hamza.market/Legendary/mood/lld_mood5.jpeg"
             ],
             "options": [
                 {
@@ -341,11 +341,11 @@
             "is_giftcard": false,
             "weight": 69,
             "images": [
-                "https://images.hamza.biz/Legendary/wall/wall1.jpeg",
-                "https://images.hamza.biz/Legendary/wall/wall2.jpeg",
-                "https://images.hamza.biz/Legendary/wall/wall3.jpeg",
-                "https://images.hamza.biz/Legendary/wall/wall4.jpeg",
-                "https://images.hamza.biz/Legendary/wall/wall5.jpeg"
+                "https://images.hamza.market/Legendary/wall/wall1.jpeg",
+                "https://images.hamza.market/Legendary/wall/wall2.jpeg",
+                "https://images.hamza.market/Legendary/wall/wall3.jpeg",
+                "https://images.hamza.market/Legendary/wall/wall4.jpeg",
+                "https://images.hamza.market/Legendary/wall/wall5.jpeg"
             ],
             "options": [
                 {
@@ -394,11 +394,11 @@
             "is_giftcard": false,
             "weight": 69,
             "images": [
-                "https://images.hamza.biz/Legendary/infinity/lld_inf5.png",
-                "https://images.hamza.biz/Legendary/infinity/lld_inf1.png",
-                "https://images.hamza.biz/Legendary/infinity/lld_inf2.png",
-                "https://images.hamza.biz/Legendary/infinity/lld_inf3.png",
-                "https://images.hamza.biz/Legendary/infinity/lld_inf4.png"
+                "https://images.hamza.market/Legendary/infinity/lld_inf5.png",
+                "https://images.hamza.market/Legendary/infinity/lld_inf1.png",
+                "https://images.hamza.market/Legendary/infinity/lld_inf2.png",
+                "https://images.hamza.market/Legendary/infinity/lld_inf3.png",
+                "https://images.hamza.market/Legendary/infinity/lld_inf4.png"
             ],
             "options": [
                 {
@@ -447,11 +447,11 @@
             "is_giftcard": false,
             "weight": 69,
             "images": [
-                "https://images.hamza.biz/Legendary/recessed/outdoor1.webp",
-                "https://images.hamza.biz/Legendary/recessed/outdoor2.jpg",
-                "https://images.hamza.biz/Legendary/recessed/outdoor3.jpg",
-                "https://images.hamza.biz/Legendary/recessed/outdoor4.webp",
-                "https://images.hamza.biz/Legendary/recessed/outdoor5.jpg"
+                "https://images.hamza.market/Legendary/recessed/outdoor1.webp",
+                "https://images.hamza.market/Legendary/recessed/outdoor2.jpg",
+                "https://images.hamza.market/Legendary/recessed/outdoor3.jpg",
+                "https://images.hamza.market/Legendary/recessed/outdoor4.webp",
+                "https://images.hamza.market/Legendary/recessed/outdoor5.jpg"
             ],
             "options": [
                 {
@@ -499,7 +499,7 @@
             "handle": "headphones",
             "is_giftcard": false,
             "weight": 69,
-            "images": ["https://images.hamza.biz/headphones.webp"],
+            "images": ["https://images.hamza.market/headphones.webp"],
             "options": [
                 {
                     "title": "Color",
@@ -546,7 +546,7 @@
             "handle": "headset_future",
             "is_giftcard": false,
             "weight": 300,
-            "images": ["https://images.hamza.biz/dalle_black_vr.webp"],
+            "images": ["https://images.hamza.market/dalle_black_vr.webp"],
             "options": [
                 {
                     "title": "Color",
@@ -593,7 +593,7 @@
             "handle": "headset_audio",
             "is_giftcard": false,
             "weight": 260,
-            "images": ["https://images.hamza.biz/dalle_vr.webp"],
+            "images": ["https://images.hamza.market/dalle_vr.webp"],
             "options": [
                 {
                     "title": "Color",
@@ -640,7 +640,7 @@
             "handle": "headset_sleek",
             "is_giftcard": false,
             "weight": 290,
-            "images": ["https://images.hamza.biz/dalle_vr_2.webp"],
+            "images": ["https://images.hamza.market/dalle_vr_2.webp"],
             "options": [
                 {
                     "title": "Color",
@@ -687,7 +687,7 @@
             "handle": "headset_aural",
             "is_giftcard": false,
             "weight": 275,
-            "images": ["https://images.hamza.biz/dalle_vr_headset.webp"],
+            "images": ["https://images.hamza.market/dalle_vr_headset.webp"],
             "options": [
                 {
                     "title": "Color",
@@ -734,7 +734,7 @@
             "handle": "headset_vision",
             "is_giftcard": false,
             "weight": 310,
-            "images": ["https://images.hamza.biz/dalle_vr_headset3.webp"],
+            "images": ["https://images.hamza.market/dalle_vr_headset3.webp"],
             "options": [
                 {
                     "title": "Color",
@@ -781,7 +781,7 @@
             "handle": "headset_echo",
             "is_giftcard": false,
             "weight": 69,
-            "images": ["https://images.hamza.biz/vr_3.webp"],
+            "images": ["https://images.hamza.market/vr_3.webp"],
             "options": [
                 {
                     "title": "Color",
@@ -828,7 +828,7 @@
             "handle": "headset_nova",
             "is_giftcard": false,
             "weight": 285,
-            "images": ["https://images.hamza.biz/sony_wh1000xm4.jpeg"],
+            "images": ["https://images.hamza.market/sony_wh1000xm4.jpeg"],
             "options": [
                 {
                     "title": "Color",
@@ -1792,11 +1792,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Drones/dji_mini_4_pro/dji_mini_pro_1.jpg",
-                "https://images.hamza.biz/Drones/dji_mini_4_pro/dji_mini_pro_2.jpg",
-                "https://images.hamza.biz/Drones/dji_mini_4_pro/dji_mini_pro_3.jpg",
-                "https://images.hamza.biz/Drones/dji_mini_4_pro/dji_mini_pro_4.jpg",
-                "https://images.hamza.biz/Drones/dji_mini_4_pro/dji_mini_pro_5.jpg"
+                "https://images.hamza.market/Drones/dji_mini_4_pro/dji_mini_pro_1.jpg",
+                "https://images.hamza.market/Drones/dji_mini_4_pro/dji_mini_pro_2.jpg",
+                "https://images.hamza.market/Drones/dji_mini_4_pro/dji_mini_pro_3.jpg",
+                "https://images.hamza.market/Drones/dji_mini_4_pro/dji_mini_pro_4.jpg",
+                "https://images.hamza.market/Drones/dji_mini_4_pro/dji_mini_pro_5.jpg"
             ],
             "options": [
                 {
@@ -1845,11 +1845,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Drones/dji_avata/dji_avata_1.jpg",
-                "https://images.hamza.biz/Drones/dji_avata/dji_avata_2.jpg",
-                "https://images.hamza.biz/Drones/dji_avata/dji_avata_3.jpg",
-                "https://images.hamza.biz/Drones/dji_avata/dji_avata_4.jpg",
-                "https://images.hamza.biz/Drones/dji_avata/dji_avata_5.jpg"
+                "https://images.hamza.market/Drones/dji_avata/dji_avata_1.jpg",
+                "https://images.hamza.market/Drones/dji_avata/dji_avata_2.jpg",
+                "https://images.hamza.market/Drones/dji_avata/dji_avata_3.jpg",
+                "https://images.hamza.market/Drones/dji_avata/dji_avata_4.jpg",
+                "https://images.hamza.market/Drones/dji_avata/dji_avata_5.jpg"
             ],
             "options": [
                 {
@@ -1898,11 +1898,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Drones/dji_mini_3_pro/dji_mini_3_pro_1.jpg",
-                "https://images.hamza.biz/Drones/dji_mini_3_pro/dji_mini_3_pro_2.jpg",
-                "https://images.hamza.biz/Drones/dji_mini_3_pro/dji_mini_3_pro_3.jpg",
-                "https://images.hamza.biz/Drones/dji_mini_3_pro/dji_mini_3_pro_4.jpg",
-                "https://images.hamza.biz/Drones/dji_mini_3_pro/dji_mini_3_pro_5.jpg"
+                "https://images.hamza.market/Drones/dji_mini_3_pro/dji_mini_3_pro_1.jpg",
+                "https://images.hamza.market/Drones/dji_mini_3_pro/dji_mini_3_pro_2.jpg",
+                "https://images.hamza.market/Drones/dji_mini_3_pro/dji_mini_3_pro_3.jpg",
+                "https://images.hamza.market/Drones/dji_mini_3_pro/dji_mini_3_pro_4.jpg",
+                "https://images.hamza.market/Drones/dji_mini_3_pro/dji_mini_3_pro_5.jpg"
             ],
             "options": [
                 {
@@ -1951,11 +1951,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Drones/dji_mini_3_pro/dji_mini_3_tripod_1.jpg",
-                "https://images.hamza.biz/Drones/dji_mini_3_pro/dji_mini_3_tripod_2.jpg",
-                "https://images.hamza.biz/Drones/dji_mini_3_pro/dji_mini_3_tripod_3.jpg",
-                "https://images.hamza.biz/Drones/dji_mini_3_pro/dji_mini_3_tripod_4.jpg",
-                "https://images.hamza.biz/Drones/dji_mini_3_pro/dji_mini_3_tripod_5.jpg"
+                "https://images.hamza.market/Drones/dji_mini_3_pro/dji_mini_3_tripod_1.jpg",
+                "https://images.hamza.market/Drones/dji_mini_3_pro/dji_mini_3_tripod_2.jpg",
+                "https://images.hamza.market/Drones/dji_mini_3_pro/dji_mini_3_tripod_3.jpg",
+                "https://images.hamza.market/Drones/dji_mini_3_pro/dji_mini_3_tripod_4.jpg",
+                "https://images.hamza.market/Drones/dji_mini_3_pro/dji_mini_3_tripod_5.jpg"
             ],
             "options": [
                 {
@@ -2004,11 +2004,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Drones/v_evo/v_evo_1.jpg",
-                "https://images.hamza.biz/Drones/v_evo/v_evo_2.jpg",
-                "https://images.hamza.biz/Drones/v_evo/v_evo_3.jpg",
-                "https://images.hamza.biz/Drones/v_evo/v_evo_4.jpg",
-                "https://images.hamza.biz/Drones/v_evo/v_evo_5.jpg"
+                "https://images.hamza.market/Drones/v_evo/v_evo_1.jpg",
+                "https://images.hamza.market/Drones/v_evo/v_evo_2.jpg",
+                "https://images.hamza.market/Drones/v_evo/v_evo_3.jpg",
+                "https://images.hamza.market/Drones/v_evo/v_evo_4.jpg",
+                "https://images.hamza.market/Drones/v_evo/v_evo_5.jpg"
             ],
             "options": [
                 {
@@ -2057,11 +2057,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Drones/fifish/fifish_1.jpg",
-                "https://images.hamza.biz/Drones/fifish/fifish_2.jpg",
-                "https://images.hamza.biz/Drones/fifish/fifish_3.jpg",
-                "https://images.hamza.biz/Drones/fifish/fifish_4.jpg",
-                "https://images.hamza.biz/Drones/fifish/fifish_5.jpg"
+                "https://images.hamza.market/Drones/fifish/fifish_1.jpg",
+                "https://images.hamza.market/Drones/fifish/fifish_2.jpg",
+                "https://images.hamza.market/Drones/fifish/fifish_3.jpg",
+                "https://images.hamza.market/Drones/fifish/fifish_4.jpg",
+                "https://images.hamza.market/Drones/fifish/fifish_5.jpg"
             ],
             "options": [
                 {
@@ -2110,11 +2110,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Drones/thor/thor_1.jpg",
-                "https://images.hamza.biz/Drones/thor/thor_2.jpg",
-                "https://images.hamza.biz/Drones/thor/thor_3.jpg",
-                "https://images.hamza.biz/Drones/thor/thor_4.jpg",
-                "https://images.hamza.biz/Drones/thor/thor_5.jpg"
+                "https://images.hamza.market/Drones/thor/thor_1.jpg",
+                "https://images.hamza.market/Drones/thor/thor_2.jpg",
+                "https://images.hamza.market/Drones/thor/thor_3.jpg",
+                "https://images.hamza.market/Drones/thor/thor_4.jpg",
+                "https://images.hamza.market/Drones/thor/thor_5.jpg"
             ],
             "options": [
                 {
@@ -2163,11 +2163,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Lego/luke_helmet/luke_1.jpg",
-                "https://images.hamza.biz/Lego/luke_helmet/luke_2.jpg",
-                "https://images.hamza.biz/Lego/luke_helmet/luke_3.jpg",
-                "https://images.hamza.biz/Lego/luke_helmet/luke_4.jpg",
-                "https://images.hamza.biz/Lego/luke_helmet/luke_5.jpg"
+                "https://images.hamza.market/Lego/luke_helmet/luke_1.jpg",
+                "https://images.hamza.market/Lego/luke_helmet/luke_2.jpg",
+                "https://images.hamza.market/Lego/luke_helmet/luke_3.jpg",
+                "https://images.hamza.market/Lego/luke_helmet/luke_4.jpg",
+                "https://images.hamza.market/Lego/luke_helmet/luke_5.jpg"
             ],
             "options": [
                 {
@@ -2216,11 +2216,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Lego/R2D2/R2D2_1.jpg",
-                "https://images.hamza.biz/Lego/R2D2/R2D2_2.jpg",
-                "https://images.hamza.biz/Lego/R2D2/R2D2_3.jpg",
-                "https://images.hamza.biz/Lego/R2D2/R2D2_4.jpg",
-                "https://images.hamza.biz/Lego/R2D2/R2D2_5.jpg"
+                "https://images.hamza.market/Lego/R2D2/R2D2_1.jpg",
+                "https://images.hamza.market/Lego/R2D2/R2D2_2.jpg",
+                "https://images.hamza.market/Lego/R2D2/R2D2_3.jpg",
+                "https://images.hamza.market/Lego/R2D2/R2D2_4.jpg",
+                "https://images.hamza.market/Lego/R2D2/R2D2_5.jpg"
             ],
             "options": [
                 {
@@ -2269,11 +2269,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Lego/luke_ship/ship_1.jpg",
-                "https://images.hamza.biz/Lego/luke_ship/ship_2.jpg",
-                "https://images.hamza.biz/Lego/luke_ship/ship_3.jpg",
-                "https://images.hamza.biz/Lego/luke_ship/ship_4.jpg",
-                "https://images.hamza.biz/Lego/luke_ship/ship_5.jpg"
+                "https://images.hamza.market/Lego/luke_ship/ship_1.jpg",
+                "https://images.hamza.market/Lego/luke_ship/ship_2.jpg",
+                "https://images.hamza.market/Lego/luke_ship/ship_3.jpg",
+                "https://images.hamza.market/Lego/luke_ship/ship_4.jpg",
+                "https://images.hamza.market/Lego/luke_ship/ship_5.jpg"
             ],
             "options": [
                 {
@@ -2322,10 +2322,10 @@
             "is_giftcard": false,
             "weight": 69,
             "images": [
-                "https://images.hamza.biz/Lego/gandalf/gand_1.jpg",
-                "https://images.hamza.biz/Lego/gandalf/gand_2.jpg",
-                "https://images.hamza.biz/Lego/gandalf/gand_3.jpg",
-                "https://images.hamza.biz/Lego/gandalf/gand_4.jpg"
+                "https://images.hamza.market/Lego/gandalf/gand_1.jpg",
+                "https://images.hamza.market/Lego/gandalf/gand_2.jpg",
+                "https://images.hamza.market/Lego/gandalf/gand_3.jpg",
+                "https://images.hamza.market/Lego/gandalf/gand_4.jpg"
             ],
             "options": [
                 {
@@ -2374,11 +2374,11 @@
             "is_giftcard": false,
             "weight": 70,
             "images": [
-                "https://images.hamza.biz/Lego/rivendell/riv_1.jpg",
-                "https://images.hamza.biz/Lego/rivendell/riv_2.jpg",
-                "https://images.hamza.biz/Lego/rivendell/riv_3.jpg",
-                "https://images.hamza.biz/Lego/rivendell/riv_4.jpg",
-                "https://images.hamza.biz/Lego/rivendell/riv_5.jpg"
+                "https://images.hamza.market/Lego/rivendell/riv_1.jpg",
+                "https://images.hamza.market/Lego/rivendell/riv_2.jpg",
+                "https://images.hamza.market/Lego/rivendell/riv_3.jpg",
+                "https://images.hamza.market/Lego/rivendell/riv_4.jpg",
+                "https://images.hamza.market/Lego/rivendell/riv_5.jpg"
             ],
             "options": [
                 {
@@ -2427,11 +2427,11 @@
             "is_giftcard": false,
             "weight": 69,
             "images": [
-                "https://images.hamza.biz/Lego/007/007_1.jpg",
-                "https://images.hamza.biz/Lego/007/007_2.jpg",
-                "https://images.hamza.biz/Lego/007/007_3.jpg",
-                "https://images.hamza.biz/Lego/007/007_4.jpg",
-                "https://images.hamza.biz/Lego/007/007_5.jpg"
+                "https://images.hamza.market/Lego/007/007_1.jpg",
+                "https://images.hamza.market/Lego/007/007_2.jpg",
+                "https://images.hamza.market/Lego/007/007_3.jpg",
+                "https://images.hamza.market/Lego/007/007_4.jpg",
+                "https://images.hamza.market/Lego/007/007_5.jpg"
             ],
             "options": [
                 {
@@ -2480,11 +2480,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Lego/corvette/corvette_1.jpg",
-                "https://images.hamza.biz/Lego/corvette/corvette_2.jpg",
-                "https://images.hamza.biz/Lego/corvette/corvette_3.jpg",
-                "https://images.hamza.biz/Lego/corvette/corvette_4.jpg",
-                "https://images.hamza.biz/Lego/corvette/corvette_5.jpg"
+                "https://images.hamza.market/Lego/corvette/corvette_1.jpg",
+                "https://images.hamza.market/Lego/corvette/corvette_2.jpg",
+                "https://images.hamza.market/Lego/corvette/corvette_3.jpg",
+                "https://images.hamza.market/Lego/corvette/corvette_4.jpg",
+                "https://images.hamza.market/Lego/corvette/corvette_5.jpg"
             ],
             "options": [
                 {
@@ -2533,11 +2533,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Lego/chevy/chevy_1.jpg",
-                "https://images.hamza.biz/Lego/chevy/chevy_2.jpg",
-                "https://images.hamza.biz/Lego/chevy/chevy_3.jpg",
-                "https://images.hamza.biz/Lego/chevy/chevy_4.jpg",
-                "https://images.hamza.biz/Lego/chevy/chevy_5.jpg"
+                "https://images.hamza.market/Lego/chevy/chevy_1.jpg",
+                "https://images.hamza.market/Lego/chevy/chevy_2.jpg",
+                "https://images.hamza.market/Lego/chevy/chevy_3.jpg",
+                "https://images.hamza.market/Lego/chevy/chevy_4.jpg",
+                "https://images.hamza.market/Lego/chevy/chevy_5.jpg"
             ],
             "options": [
                 {
@@ -2586,11 +2586,11 @@
             "is_giftcard": false,
             "weight": 70,
             "images": [
-                "https://images.hamza.biz/Lego/peug/peug_1.jpg",
-                "https://images.hamza.biz/Lego/peug/peug_2.jpg",
-                "https://images.hamza.biz/Lego/peug/peug_3.jpg",
-                "https://images.hamza.biz/Lego/peug/peug_4.jpg",
-                "https://images.hamza.biz/Lego/peug/peug_5.jpg"
+                "https://images.hamza.market/Lego/peug/peug_1.jpg",
+                "https://images.hamza.market/Lego/peug/peug_2.jpg",
+                "https://images.hamza.market/Lego/peug/peug_3.jpg",
+                "https://images.hamza.market/Lego/peug/peug_4.jpg",
+                "https://images.hamza.market/Lego/peug/peug_5.jpg"
             ],
             "options": [
                 {
@@ -2639,11 +2639,11 @@
             "is_giftcard": false,
             "weight": 70,
             "images": [
-                "https://images.hamza.biz/Lego/porsche/porsche_1.jpg",
-                "https://images.hamza.biz/Lego/porsche/porsche_2.jpg",
-                "https://images.hamza.biz/Lego/porsche/porsche_3.jpg",
-                "https://images.hamza.biz/Lego/porsche/porsche_4.jpg",
-                "https://images.hamza.biz/Lego/porsche/porsche_5.jpg"
+                "https://images.hamza.market/Lego/porsche/porsche_1.jpg",
+                "https://images.hamza.market/Lego/porsche/porsche_2.jpg",
+                "https://images.hamza.market/Lego/porsche/porsche_3.jpg",
+                "https://images.hamza.market/Lego/porsche/porsche_4.jpg",
+                "https://images.hamza.market/Lego/porsche/porsche_5.jpg"
             ],
             "options": [
                 {
@@ -2692,11 +2692,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Workout/bench/bench_1.jpg",
-                "https://images.hamza.biz/Workout/bench/bench_2.jpg",
-                "https://images.hamza.biz/Workout/bench/bench_3.jpg",
-                "https://images.hamza.biz/Workout/bench/bench_4.jpg",
-                "https://images.hamza.biz/Workout/bench/bench_5.jpg"
+                "https://images.hamza.market/Workout/bench/bench_1.jpg",
+                "https://images.hamza.market/Workout/bench/bench_2.jpg",
+                "https://images.hamza.market/Workout/bench/bench_3.jpg",
+                "https://images.hamza.market/Workout/bench/bench_4.jpg",
+                "https://images.hamza.market/Workout/bench/bench_5.jpg"
             ],
             "options": [
                 {
@@ -2745,11 +2745,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Workout/pullup/pull_1.jpg",
-                "https://images.hamza.biz/Workout/pullup/pull_2.jpg",
-                "https://images.hamza.biz/Workout/pullup/pull_3.jpg",
-                "https://images.hamza.biz/Workout/pullup/pull_4.jpg",
-                "https://images.hamza.biz/Workout/pullup/pull_5.jpg"
+                "https://images.hamza.market/Workout/pullup/pull_1.jpg",
+                "https://images.hamza.market/Workout/pullup/pull_2.jpg",
+                "https://images.hamza.market/Workout/pullup/pull_3.jpg",
+                "https://images.hamza.market/Workout/pullup/pull_4.jpg",
+                "https://images.hamza.market/Workout/pullup/pull_5.jpg"
             ],
             "options": [
                 {
@@ -2798,11 +2798,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Workout/ladder/lad_1.jpg",
-                "https://images.hamza.biz/Workout/ladder/lad_2.jpg",
-                "https://images.hamza.biz/Workout/ladder/lad_3.jpg",
-                "https://images.hamza.biz/Workout/ladder/lad_4.jpg",
-                "https://images.hamza.biz/Workout/ladder/lad_5.jpg"
+                "https://images.hamza.market/Workout/ladder/lad_1.jpg",
+                "https://images.hamza.market/Workout/ladder/lad_2.jpg",
+                "https://images.hamza.market/Workout/ladder/lad_3.jpg",
+                "https://images.hamza.market/Workout/ladder/lad_4.jpg",
+                "https://images.hamza.market/Workout/ladder/lad_5.jpg"
             ],
             "options": [
                 {
@@ -2851,11 +2851,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Workout/shirt/shirt_1.jpg",
-                "https://images.hamza.biz/Workout/shirt/shirt_2.jpg",
-                "https://images.hamza.biz/Workout/shirt/shirt_3.jpg",
-                "https://images.hamza.biz/Workout/shirt/shirt_4.jpg",
-                "https://images.hamza.biz/Workout/shirt/shirt_5.jpg"
+                "https://images.hamza.market/Workout/shirt/shirt_1.jpg",
+                "https://images.hamza.market/Workout/shirt/shirt_2.jpg",
+                "https://images.hamza.market/Workout/shirt/shirt_3.jpg",
+                "https://images.hamza.market/Workout/shirt/shirt_4.jpg",
+                "https://images.hamza.market/Workout/shirt/shirt_5.jpg"
             ],
             "options": [
                 {
@@ -2904,11 +2904,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Workout/dumbbell/dumb_1.jpg",
-                "https://images.hamza.biz/Workout/dumbbell/dumb_2.jpg",
-                "https://images.hamza.biz/Workout/dumbbell/dumb_3.jpg",
-                "https://images.hamza.biz/Workout/dumbbell/dumb_4.jpg",
-                "https://images.hamza.biz/Workout/dumbbell/dumb_5.jpg"
+                "https://images.hamza.market/Workout/dumbbell/dumb_1.jpg",
+                "https://images.hamza.market/Workout/dumbbell/dumb_2.jpg",
+                "https://images.hamza.market/Workout/dumbbell/dumb_3.jpg",
+                "https://images.hamza.market/Workout/dumbbell/dumb_4.jpg",
+                "https://images.hamza.market/Workout/dumbbell/dumb_5.jpg"
             ],
             "options": [
                 {
@@ -2956,11 +2956,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Workout/band/band_1.jpg",
-                "https://images.hamza.biz/Workout/band/band_2.jpg",
-                "https://images.hamza.biz/Workout/band/band_3.jpg",
-                "https://images.hamza.biz/Workout/band/band_4.jpg",
-                "https://images.hamza.biz/Workout/band/band_5.jpg"
+                "https://images.hamza.market/Workout/band/band_1.jpg",
+                "https://images.hamza.market/Workout/band/band_2.jpg",
+                "https://images.hamza.market/Workout/band/band_3.jpg",
+                "https://images.hamza.market/Workout/band/band_4.jpg",
+                "https://images.hamza.market/Workout/band/band_5.jpg"
             ],
             "options": [
                 {
@@ -3008,11 +3008,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Workout/glove/glove_1.jpg",
-                "https://images.hamza.biz/Workout/glove/glove_2.jpg",
-                "https://images.hamza.biz/Workout/glove/glove_3.jpg",
-                "https://images.hamza.biz/Workout/glove/glove_4.jpg",
-                "https://images.hamza.biz/Workout/glove/glove_5.jpg"
+                "https://images.hamza.market/Workout/glove/glove_1.jpg",
+                "https://images.hamza.market/Workout/glove/glove_2.jpg",
+                "https://images.hamza.market/Workout/glove/glove_3.jpg",
+                "https://images.hamza.market/Workout/glove/glove_4.jpg",
+                "https://images.hamza.market/Workout/glove/glove_5.jpg"
             ],
             "options": [
                 {
@@ -3061,11 +3061,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Workout/glove/glove_1.jpg",
-                "https://images.hamza.biz/Workout/glove/glove_2.jpg",
-                "https://images.hamza.biz/Workout/glove/glove_3.jpg",
-                "https://images.hamza.biz/Workout/glove/glove_4.jpg",
-                "https://images.hamza.biz/Workout/glove/glove_5.jpg"
+                "https://images.hamza.market/Workout/glove/glove_1.jpg",
+                "https://images.hamza.market/Workout/glove/glove_2.jpg",
+                "https://images.hamza.market/Workout/glove/glove_3.jpg",
+                "https://images.hamza.market/Workout/glove/glove_4.jpg",
+                "https://images.hamza.market/Workout/glove/glove_5.jpg"
             ],
             "options": [
                 {
@@ -3114,11 +3114,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Workout/res_band/res_1.jpg",
-                "https://images.hamza.biz/Workout/res_band/res_2.jpg",
-                "https://images.hamza.biz/Workout/res_band/res_3.jpg",
-                "https://images.hamza.biz/Workout/res_band/res_4.jpg",
-                "https://images.hamza.biz/Workout/res_band/res_5.jpg"
+                "https://images.hamza.market/Workout/res_band/res_1.jpg",
+                "https://images.hamza.market/Workout/res_band/res_2.jpg",
+                "https://images.hamza.market/Workout/res_band/res_3.jpg",
+                "https://images.hamza.market/Workout/res_band/res_4.jpg",
+                "https://images.hamza.market/Workout/res_band/res_5.jpg"
             ],
             "options": [
                 {
@@ -3167,11 +3167,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Board_Games/clue/clue_1.jpg",
-                "https://images.hamza.biz/Board_Games/clue/clue_2.jpg",
-                "https://images.hamza.biz/Board_Games/clue/clue_3.jpg",
-                "https://images.hamza.biz/Board_Games/clue/clue_4.jpg",
-                "https://images.hamza.biz/Board_Games/clue/clue_5.jpg"
+                "https://images.hamza.market/Board_Games/clue/clue_1.jpg",
+                "https://images.hamza.market/Board_Games/clue/clue_2.jpg",
+                "https://images.hamza.market/Board_Games/clue/clue_3.jpg",
+                "https://images.hamza.market/Board_Games/clue/clue_4.jpg",
+                "https://images.hamza.market/Board_Games/clue/clue_5.jpg"
             ],
             "options": [
                 {
@@ -3220,11 +3220,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Board_Games/battle/battle_1.jpg",
-                "https://images.hamza.biz/Board_Games/battle/battle_2.jpg",
-                "https://images.hamza.biz/Board_Games/battle/battle_3.jpg",
-                "https://images.hamza.biz/Board_Games/battle/battle_4.jpg",
-                "https://images.hamza.biz/Board_Games/battle/battle_5.jpg"
+                "https://images.hamza.market/Board_Games/battle/battle_1.jpg",
+                "https://images.hamza.market/Board_Games/battle/battle_2.jpg",
+                "https://images.hamza.market/Board_Games/battle/battle_3.jpg",
+                "https://images.hamza.market/Board_Games/battle/battle_4.jpg",
+                "https://images.hamza.market/Board_Games/battle/battle_5.jpg"
             ],
             "options": [
                 {
@@ -3273,11 +3273,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Board_Games/catan/catan_1.jpg",
-                "https://images.hamza.biz/Board_Games/catan/catan_2.jpg",
-                "https://images.hamza.biz/Board_Games/catan/catan_3.jpg",
-                "https://images.hamza.biz/Board_Games/catan/catan_4.jpg",
-                "https://images.hamza.biz/Board_Games/catan/catan_5.jpg"
+                "https://images.hamza.market/Board_Games/catan/catan_1.jpg",
+                "https://images.hamza.market/Board_Games/catan/catan_2.jpg",
+                "https://images.hamza.market/Board_Games/catan/catan_3.jpg",
+                "https://images.hamza.market/Board_Games/catan/catan_4.jpg",
+                "https://images.hamza.market/Board_Games/catan/catan_5.jpg"
             ],
             "options": [
                 {
@@ -3326,11 +3326,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Board_Games/monopoly/mono_1.jpg",
-                "https://images.hamza.biz/Board_Games/monopoly/mono_2.jpg",
-                "https://images.hamza.biz/Board_Games/monopoly/mono_3.jpg",
-                "https://images.hamza.biz/Board_Games/monopoly/mono_4.jpg",
-                "https://images.hamza.biz/Board_Games/monopoly/mono_5.jpg"
+                "https://images.hamza.market/Board_Games/monopoly/mono_1.jpg",
+                "https://images.hamza.market/Board_Games/monopoly/mono_2.jpg",
+                "https://images.hamza.market/Board_Games/monopoly/mono_3.jpg",
+                "https://images.hamza.market/Board_Games/monopoly/mono_4.jpg",
+                "https://images.hamza.market/Board_Games/monopoly/mono_5.jpg"
             ],
             "options": [
                 {
@@ -3379,11 +3379,11 @@
             "is_giftcard": false,
             "weight": 69,
             "images": [
-                "https://images.hamza.biz/Board_Games/dark_souls/souls_1.jpg",
-                "https://images.hamza.biz/Board_Games/dark_souls/souls_2.jpg",
-                "https://images.hamza.biz/Board_Games/dark_souls/souls_3.jpg",
-                "https://images.hamza.biz/Board_Games/dark_souls/souls_4.jpg",
-                "https://images.hamza.biz/Board_Games/dark_souls/souls_5.jpg"
+                "https://images.hamza.market/Board_Games/dark_souls/souls_1.jpg",
+                "https://images.hamza.market/Board_Games/dark_souls/souls_2.jpg",
+                "https://images.hamza.market/Board_Games/dark_souls/souls_3.jpg",
+                "https://images.hamza.market/Board_Games/dark_souls/souls_4.jpg",
+                "https://images.hamza.market/Board_Games/dark_souls/souls_5.jpg"
             ],
             "options": [
                 {
@@ -3431,11 +3431,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Board_Games/underwater_cities/cities_1.jpg",
-                "https://images.hamza.biz/Board_Games/underwater_cities/cities_2.jpg",
-                "https://images.hamza.biz/Board_Games/underwater_cities/cities_3.jpg",
-                "https://images.hamza.biz/Board_Games/underwater_cities/cities_4.jpg",
-                "https://images.hamza.biz/Board_Games/underwater_cities/cities_5.jpg"
+                "https://images.hamza.market/Board_Games/underwater_cities/cities_1.jpg",
+                "https://images.hamza.market/Board_Games/underwater_cities/cities_2.jpg",
+                "https://images.hamza.market/Board_Games/underwater_cities/cities_3.jpg",
+                "https://images.hamza.market/Board_Games/underwater_cities/cities_4.jpg",
+                "https://images.hamza.market/Board_Games/underwater_cities/cities_5.jpg"
             ],
             "options": [
                 {
@@ -3484,11 +3484,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Board_Games/plunder/plunder_1.jpg",
-                "https://images.hamza.biz/Board_Games/plunder/plunder_2.jpg",
-                "https://images.hamza.biz/Board_Games/plunder/plunder_3.jpg",
-                "https://images.hamza.biz/Board_Games/plunder/plunder_4.jpg",
-                "https://images.hamza.biz/Board_Games/plunder/plunder_5.jpg"
+                "https://images.hamza.market/Board_Games/plunder/plunder_1.jpg",
+                "https://images.hamza.market/Board_Games/plunder/plunder_2.jpg",
+                "https://images.hamza.market/Board_Games/plunder/plunder_3.jpg",
+                "https://images.hamza.market/Board_Games/plunder/plunder_4.jpg",
+                "https://images.hamza.market/Board_Games/plunder/plunder_5.jpg"
             ],
             "options": [
                 {
@@ -3537,11 +3537,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Board_Games/world/world_1.jpg",
-                "https://images.hamza.biz/Board_Games/world/world_2.jpg",
-                "https://images.hamza.biz/Board_Games/world/world_3.jpg",
-                "https://images.hamza.biz/Board_Games/world/world_4.jpg",
-                "https://images.hamza.biz/Board_Games/world/world_5.jpg"
+                "https://images.hamza.market/Board_Games/world/world_1.jpg",
+                "https://images.hamza.market/Board_Games/world/world_2.jpg",
+                "https://images.hamza.market/Board_Games/world/world_3.jpg",
+                "https://images.hamza.market/Board_Games/world/world_4.jpg",
+                "https://images.hamza.market/Board_Games/world/world_5.jpg"
             ],
             "options": [
                 {
@@ -3590,11 +3590,11 @@
             "is_giftcard": false,
             "weight": 249,
             "images": [
-                "https://images.hamza.biz/Board_Games/exploding_kittens/kittens_1.jpg",
-                "https://images.hamza.biz/Board_Games/exploding_kittens/kittens_2.jpg",
-                "https://images.hamza.biz/Board_Games/exploding_kittens/kittens_3.jpg",
-                "https://images.hamza.biz/Board_Games/exploding_kittens/kittens_4.jpg",
-                "https://images.hamza.biz/Board_Games/exploding_kittens/kittens_5.jpg"
+                "https://images.hamza.market/Board_Games/exploding_kittens/kittens_1.jpg",
+                "https://images.hamza.market/Board_Games/exploding_kittens/kittens_2.jpg",
+                "https://images.hamza.market/Board_Games/exploding_kittens/kittens_3.jpg",
+                "https://images.hamza.market/Board_Games/exploding_kittens/kittens_4.jpg",
+                "https://images.hamza.market/Board_Games/exploding_kittens/kittens_5.jpg"
             ],
             "options": [
                 {
@@ -3643,11 +3643,11 @@
             "is_giftcard": false,
             "weight": 260,
             "images": [
-                "https://images.hamza.biz/gaming_store/1.1.png",
-                "https://images.hamza.biz/gaming_store/1.2.png",
-                "https://images.hamza.biz/gaming_store/1.3.png",
-                "https://images.hamza.biz/gaming_store/1.4.png",
-                "https://images.hamza.biz/gaming_store/1.5.png"
+                "https://images.hamza.market/gaming_store/1.1.png",
+                "https://images.hamza.market/gaming_store/1.2.png",
+                "https://images.hamza.market/gaming_store/1.3.png",
+                "https://images.hamza.market/gaming_store/1.4.png",
+                "https://images.hamza.market/gaming_store/1.5.png"
             ],
             "options": [
                 {
@@ -3696,11 +3696,11 @@
             "is_giftcard": false,
             "weight": 260,
             "images": [
-                "https://images.hamza.biz/gaming_store/2.1.png",
-                "https://images.hamza.biz/gaming_store/2.2.png",
-                "https://images.hamza.biz/gaming_store/2.3.png",
-                "https://images.hamza.biz/gaming_store/2.4.png",
-                "https://images.hamza.biz/gaming_store/2.5.png"
+                "https://images.hamza.market/gaming_store/2.1.png",
+                "https://images.hamza.market/gaming_store/2.2.png",
+                "https://images.hamza.market/gaming_store/2.3.png",
+                "https://images.hamza.market/gaming_store/2.4.png",
+                "https://images.hamza.market/gaming_store/2.5.png"
             ],
             "options": [
                 {
@@ -3749,11 +3749,11 @@
             "is_giftcard": false,
             "weight": 29,
             "images": [
-                "https://images.hamza.biz/gaming_store/3.1.png",
-                "https://images.hamza.biz/gaming_store/3.2.png",
-                "https://images.hamza.biz/gaming_store/3.3.png",
-                "https://images.hamza.biz/gaming_store/3.4.png",
-                "https://images.hamza.biz/gaming_store/3.5.png"
+                "https://images.hamza.market/gaming_store/3.1.png",
+                "https://images.hamza.market/gaming_store/3.2.png",
+                "https://images.hamza.market/gaming_store/3.3.png",
+                "https://images.hamza.market/gaming_store/3.4.png",
+                "https://images.hamza.market/gaming_store/3.5.png"
             ],
             "options": [
                 {
@@ -3802,11 +3802,11 @@
             "is_giftcard": false,
             "weight": 260,
             "images": [
-                "https://images.hamza.biz/gaming_store/4.1.png",
-                "https://images.hamza.biz/gaming_store/4.2.png",
-                "https://images.hamza.biz/gaming_store/4.3.png",
-                "https://images.hamza.biz/gaming_store/4.4.png",
-                "https://images.hamza.biz/gaming_store/4.5.png"
+                "https://images.hamza.market/gaming_store/4.1.png",
+                "https://images.hamza.market/gaming_store/4.2.png",
+                "https://images.hamza.market/gaming_store/4.3.png",
+                "https://images.hamza.market/gaming_store/4.4.png",
+                "https://images.hamza.market/gaming_store/4.5.png"
             ],
             "options": [
                 {
@@ -3855,11 +3855,11 @@
             "is_giftcard": false,
             "weight": 260,
             "images": [
-                "https://images.hamza.biz/gaming_store/5.1.png",
-                "https://images.hamza.biz/gaming_store/5.2.png",
-                "https://images.hamza.biz/gaming_store/5.3.png",
-                "https://images.hamza.biz/gaming_store/5.4.png",
-                "https://images.hamza.biz/gaming_store/5.5.png"
+                "https://images.hamza.market/gaming_store/5.1.png",
+                "https://images.hamza.market/gaming_store/5.2.png",
+                "https://images.hamza.market/gaming_store/5.3.png",
+                "https://images.hamza.market/gaming_store/5.4.png",
+                "https://images.hamza.market/gaming_store/5.5.png"
             ],
             "options": [
                 {
@@ -3908,11 +3908,11 @@
             "is_giftcard": false,
             "weight": 260,
             "images": [
-                "https://images.hamza.biz/gaming_store/6.1.png",
-                "https://images.hamza.biz/gaming_store/6.2.png",
-                "https://images.hamza.biz/gaming_store/6.3.png",
-                "https://images.hamza.biz/gaming_store/6.4.png",
-                "https://images.hamza.biz/gaming_store/6.5.png"
+                "https://images.hamza.market/gaming_store/6.1.png",
+                "https://images.hamza.market/gaming_store/6.2.png",
+                "https://images.hamza.market/gaming_store/6.3.png",
+                "https://images.hamza.market/gaming_store/6.4.png",
+                "https://images.hamza.market/gaming_store/6.5.png"
             ],
             "options": [
                 {
@@ -3961,11 +3961,11 @@
             "is_giftcard": false,
             "weight": 260,
             "images": [
-                "https://images.hamza.biz/gaming_store/7.1.png",
-                "https://images.hamza.biz/gaming_store/7.2.png",
-                "https://images.hamza.biz/gaming_store/7.3.png",
-                "https://images.hamza.biz/gaming_store/7.4.png",
-                "https://images.hamza.biz/gaming_store/7.5.png"
+                "https://images.hamza.market/gaming_store/7.1.png",
+                "https://images.hamza.market/gaming_store/7.2.png",
+                "https://images.hamza.market/gaming_store/7.3.png",
+                "https://images.hamza.market/gaming_store/7.4.png",
+                "https://images.hamza.market/gaming_store/7.5.png"
             ],
             "options": [
                 {
@@ -4014,11 +4014,11 @@
             "is_giftcard": false,
             "weight": 260,
             "images": [
-                "https://images.hamza.biz/gaming_store/8.1.png",
-                "https://images.hamza.biz/gaming_store/8.2.png",
-                "https://images.hamza.biz/gaming_store/8.3.png",
-                "https://images.hamza.biz/gaming_store/8.4.png",
-                "https://images.hamza.biz/gaming_store/8.5.png"
+                "https://images.hamza.market/gaming_store/8.1.png",
+                "https://images.hamza.market/gaming_store/8.2.png",
+                "https://images.hamza.market/gaming_store/8.3.png",
+                "https://images.hamza.market/gaming_store/8.4.png",
+                "https://images.hamza.market/gaming_store/8.5.png"
             ],
             "options": [
                 {
@@ -4067,11 +4067,11 @@
             "is_giftcard": false,
             "weight": 260,
             "images": [
-                "https://images.hamza.biz/gaming_store/9.1.png",
-                "https://images.hamza.biz/gaming_store/9.2.png",
-                "https://images.hamza.biz/gaming_store/9.3.png",
-                "https://images.hamza.biz/gaming_store/9.4.png",
-                "https://images.hamza.biz/gaming_store/9.5.png"
+                "https://images.hamza.market/gaming_store/9.1.png",
+                "https://images.hamza.market/gaming_store/9.2.png",
+                "https://images.hamza.market/gaming_store/9.3.png",
+                "https://images.hamza.market/gaming_store/9.4.png",
+                "https://images.hamza.market/gaming_store/9.5.png"
             ],
             "options": [
                 {
@@ -4115,7 +4115,7 @@
             "category_children": [],
             "handle": "board_games",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/board-games.svg"
+                "icon_url": "https://images.hamza.market/category-icons/board-games.svg"
             }
         },
         {
@@ -4125,7 +4125,7 @@
             "category_children": [],
             "handle": "gaming",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/gaming.svg"
+                "icon_url": "https://images.hamza.market/category-icons/gaming.svg"
             }
         },
         {
@@ -4135,7 +4135,7 @@
             "category_children": [],
             "handle": "fitness",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/fitness.svg"
+                "icon_url": "https://images.hamza.market/category-icons/fitness.svg"
             }
         },
         {
@@ -4145,7 +4145,7 @@
             "category_children": [],
             "handle": "gadgets",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/gadgets.svg"
+                "icon_url": "https://images.hamza.market/category-icons/gadgets.svg"
             }
         },
         {
@@ -4155,7 +4155,7 @@
             "category_children": [],
             "handle": "hobbies",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/hobbies.svg"
+                "icon_url": "https://images.hamza.market/category-icons/hobbies.svg"
             }
         },
         {
@@ -4165,7 +4165,7 @@
             "category_children": [],
             "handle": "electronics",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/electronics.svg"
+                "icon_url": "https://images.hamza.market/category-icons/electronics.svg"
             }
         },
         {
@@ -4175,7 +4175,7 @@
             "category_children": [],
             "handle": "home",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/home.svg"
+                "icon_url": "https://images.hamza.market/category-icons/home.svg"
             }
         },
         {
@@ -4185,7 +4185,7 @@
             "category_children": [],
             "handle": "featured",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/featured.svg"
+                "icon_url": "https://images.hamza.market/category-icons/featured.svg"
             }
         },
         {
@@ -4195,7 +4195,7 @@
             "category_children": [],
             "handle": "fashion",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/fashion.svg"
+                "icon_url": "https://images.hamza.market/category-icons/fashion.svg"
             }
         },
         {
@@ -4205,7 +4205,7 @@
             "category_children": [],
             "handle": "toys",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/toys.svg"
+                "icon_url": "https://images.hamza.market/category-icons/toys.svg"
             }
         },
         {
@@ -4215,7 +4215,7 @@
             "category_children": [],
             "handle": "beauty",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/beauty.svg"
+                "icon_url": "https://images.hamza.market/category-icons/beauty.svg"
             }
         },
         {
@@ -4225,7 +4225,7 @@
             "category_children": [],
             "handle": "sports_outdoors",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/sports-outdoors.svg"
+                "icon_url": "https://images.hamza.market/category-icons/sports-outdoors.svg"
             }
         },
         {
@@ -4235,7 +4235,7 @@
             "category_children": [],
             "handle": "health",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/health.svg"
+                "icon_url": "https://images.hamza.market/category-icons/health.svg"
             }
         },
         {
@@ -4245,7 +4245,7 @@
             "category_children": [],
             "handle": "automotive",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/automotive.svg"
+                "icon_url": "https://images.hamza.market/category-icons/automotive.svg"
             }
         },
         {
@@ -4255,7 +4255,7 @@
             "category_children": [],
             "handle": "books",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/books.svg"
+                "icon_url": "https://images.hamza.market/category-icons/books.svg"
             }
         },
         {
@@ -4265,7 +4265,7 @@
             "category_children": [],
             "handle": "office",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/office.svg"
+                "icon_url": "https://images.hamza.market/category-icons/office.svg"
             }
         },
         {
@@ -4275,7 +4275,7 @@
             "category_children": [],
             "handle": "pets",
             "metadata": {
-                "icon_url": "https://images.hamza.biz/category-icons/pets.svg"
+                "icon_url": "https://images.hamza.market/category-icons/pets.svg"
             }
         }
     ],

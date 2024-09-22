@@ -18,7 +18,6 @@ interface Category {
 
 const FilterBar = () => {
     const [startIdx, setStartIdx] = useState(0); // State to keep track of the starting index of visible categories
-    const [showLeftChevron, setShowLeftChevron] = useState(false); // Track if left chevron should be shown
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     // Fetching categories data
@@ -34,13 +33,11 @@ const FilterBar = () => {
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-              name: category.name,
-              id: category.id,
-              metadata: category.metadata,
-          }))
+            name: category.name,
+            id: category.id,
+            metadata: category.metadata,
+        }))
         : [];
-
-    console.log('data from filter bar', uniqueCategories);
 
     // Show more logic for categories (next or previous)
     const toggleShowMore = () => {
@@ -57,21 +54,10 @@ const FilterBar = () => {
         setStartIdx(nextIndex >= uniqueCategories.length ? 0 : nextIndex);
     };
 
-    // Logic to display only 6 categories at a time
-    let visibleCategories = uniqueCategories
-        .slice(startIdx, startIdx + 6)
-        .concat(
-            uniqueCategories.slice(
-                0,
-                Math.max(0, 6 - (uniqueCategories.length - startIdx))
-            )
-        );
-
-    if (uniqueCategories.length === 1)
-        visibleCategories = [visibleCategories[0]];
-
-    // Determine if the user is at the end to toggle the chevron direction
-    const isAtEnd = startIdx + 6 >= uniqueCategories.length;
+    // Logic to handle the scrolling. Visible categories will shift based on `startIdx`.
+    const visibleCategories = uniqueCategories
+        .slice(startIdx)
+        .concat(uniqueCategories.slice(0, startIdx));
 
     // Placeholder skeletons to be shown while loading
     const skeletons = Array(7)
@@ -105,9 +91,8 @@ const FilterBar = () => {
                 <FilterButton onClick={onOpen} />
 
                 <CategoryButtons
-                    categoryType={'All'}
                     categoryName={'All'}
-                    url={'https://images.hamza.biz/category-icons/all.svg'}
+                    url={'https://images.hamza.market/category-icons/all.svg'}
                 />
                 <Flex
                     maxW={'1100px'}
@@ -141,15 +126,14 @@ const FilterBar = () => {
                     {isLoading
                         ? skeletons // Show skeletons while loading
                         : visibleCategories.map((category, index) => {
-                              return (
-                                  <CategoryButtons
-                                      key={index}
-                                      categoryType={category.id}
-                                      categoryName={category.name}
-                                      url={category.metadata?.icon_url}
-                                  />
-                              );
-                          })}
+                            return (
+                                <CategoryButtons
+                                    key={index}
+                                    categoryName={category.name}
+                                    url={category.metadata?.icon_url}
+                                />
+                            );
+                        })}
                 </Flex>
 
                 {/* Conditional rendering of Chevron */}

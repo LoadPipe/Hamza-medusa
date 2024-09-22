@@ -26,10 +26,16 @@ import { useQuery } from '@tanstack/react-query';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { LuBadgeCheck } from 'react-icons/lu';
 
+type PriceDictionary = {
+    eth?: string;
+    usdc?: string;
+    usdt?: string;
+};
+
 interface WishlistCardProps {
     productData: WishlistProduct;
     productDescription: string;
-    productPrice: string;
+    productPrice: PriceDictionary | string;
     productImage: string;
     productId: string;
     productVariantId: string | null;
@@ -339,8 +345,8 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                 handle: productData.handle,
                                 thumbnail: productData.thumbnail,
                                 title: productData.title,
-                                price: productPrice || '',
-                                productVariantId: productVariantId || null,
+                                price: productPrice,
+                                productVariantId: productVariantId,
                             });
                         }}
                     >
