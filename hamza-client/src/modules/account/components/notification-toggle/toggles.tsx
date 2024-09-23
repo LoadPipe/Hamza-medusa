@@ -21,7 +21,10 @@ import {
 } from '@lib/data';
 
 const ToggleNotifications = ({ region }: { region: Region }) => {
-    const [selectedNotifications, setSelectedNotifications] = useState([]);
+    // Explicitly typing `selectedNotifications` as an array of strings
+    const [selectedNotifications, setSelectedNotifications] = useState<
+        string[]
+    >([]);
     const [notificationMethod, setNotificationMethod] = useState('');
     const [isSaving, setIsSaving] = useState(false);
 
@@ -56,6 +59,7 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
         }
     }, [authData.customer_id]);
 
+    // Ensure that `selectedNotifications` is always an array in case of undefined or null
     const handleCheckboxChange = (event: any) => {
         const value = event.target.value;
         setIsSaving(true);
@@ -63,18 +67,20 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
             setSelectedNotifications(['none' as never]);
         } else {
             setSelectedNotifications((prevSelected: any) => {
-                if (prevSelected.includes(value)) {
-                    return prevSelected.filter((item: any) => item !== value);
+                const notifications = Array.isArray(prevSelected)
+                    ? prevSelected
+                    : [];
+                if (notifications.includes(value)) {
+                    return notifications.filter((item: any) => item !== value);
                 } else {
                     return [
-                        ...prevSelected.filter((item: any) => item !== 'none'),
+                        ...notifications.filter((item: any) => item !== 'none'),
                         value,
                     ];
                 }
             });
         }
     };
-
     const handleSave = async () => {
         try {
             if (selectedNotifications.includes('none' as never)) {
@@ -115,9 +121,12 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                 <Flex>
                     <Switch
                         value="orderShipped"
-                        isChecked={selectedNotifications.includes(
-                            'orderShipped' as never
-                        )}
+                        isChecked={
+                            Array.isArray(selectedNotifications) &&
+                            selectedNotifications.includes(
+                                'orderShipped' as never
+                            )
+                        }
                         mr={4}
                         colorScheme="primary.green"
                         onChange={handleCheckboxChange}
@@ -128,9 +137,12 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                 <Flex>
                     <Switch
                         value="newProduct"
-                        isChecked={selectedNotifications.includes(
-                            'newProduct' as never
-                        )}
+                        isChecked={
+                            Array.isArray(selectedNotifications) &&
+                            selectedNotifications.includes(
+                                'newProduct' as never
+                            )
+                        }
                         mr={4}
                         colorScheme="primary.green"
                         onChange={handleCheckboxChange}
@@ -143,9 +155,12 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                 <Flex>
                     <Switch
                         value="orderStatusChanged"
-                        isChecked={selectedNotifications.includes(
-                            'orderStatusChanged' as never
-                        )}
+                        isChecked={
+                            Array.isArray(selectedNotifications) &&
+                            selectedNotifications.includes(
+                                'orderStatusChanged' as never
+                            )
+                        }
                         mr={4}
                         colorScheme="primary.green"
                         onChange={handleCheckboxChange}
@@ -156,9 +171,12 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                 <Flex>
                     <Switch
                         value="promotions"
-                        isChecked={selectedNotifications.includes(
-                            'promotions' as never
-                        )}
+                        isChecked={
+                            Array.isArray(selectedNotifications) &&
+                            selectedNotifications.includes(
+                                'promotions' as never
+                            )
+                        }
                         mr={4}
                         colorScheme="primary.green"
                         onChange={handleCheckboxChange}
@@ -169,9 +187,10 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                 <Flex>
                     <Switch
                         value="surveys"
-                        isChecked={selectedNotifications.includes(
-                            'surveys' as never
-                        )}
+                        isChecked={
+                            Array.isArray(selectedNotifications) &&
+                            selectedNotifications.includes('surveys' as never)
+                        }
                         mr={4}
                         colorScheme="primary.green"
                         onChange={handleCheckboxChange}
@@ -182,9 +201,10 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                 <Flex>
                     <Switch
                         value="none"
-                        isChecked={selectedNotifications.includes(
-                            'none' as never
-                        )}
+                        isChecked={
+                            Array.isArray(selectedNotifications) &&
+                            selectedNotifications.includes('none' as never)
+                        }
                         mr={4}
                         colorScheme="primary.green"
                         onChange={handleCheckboxChange}
@@ -210,7 +230,10 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
             </FormLabel>
             <Stack spacing={3} direction="column">
                 <Switch
-                    isChecked={selectedNotifications.includes('sms' as never)}
+                    isChecked={
+                        Array.isArray(selectedNotifications) &&
+                        selectedNotifications.includes('sms' as never)
+                    }
                     colorScheme="primary.green"
                     onChange={handleCheckboxChange}
                     value="sms"
@@ -218,7 +241,10 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                     SMS
                 </Switch>
                 <Switch
-                    isChecked={selectedNotifications.includes('email' as never)}
+                    isChecked={
+                        Array.isArray(selectedNotifications) &&
+                        selectedNotifications.includes('email' as never)
+                    }
                     onChange={handleCheckboxChange}
                     colorScheme="primary.green"
                     value="email"
@@ -226,7 +252,10 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                     Email
                 </Switch>
                 <Switch
-                    isChecked={selectedNotifications.includes('line' as never)}
+                    isChecked={
+                        Array.isArray(selectedNotifications) &&
+                        selectedNotifications.includes('line' as never)
+                    }
                     onChange={handleCheckboxChange}
                     colorScheme="primary.green"
                     value="line"
@@ -234,9 +263,10 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                     LINE
                 </Switch>
                 <Switch
-                    isChecked={selectedNotifications.includes(
-                        'whatsapp' as never
-                    )}
+                    isChecked={
+                        Array.isArray(selectedNotifications) &&
+                        selectedNotifications.includes('whatsapp' as never)
+                    }
                     onChange={handleCheckboxChange}
                     colorScheme="primary.green"
                     value="whatsapp"
