@@ -10,6 +10,8 @@ import getGoogleOAuthURL from '@lib/util/google-url';
 import getTwitterOauthUrl from '@lib/util/twitter-url';
 import toast from 'react-hot-toast';
 import { IoLogoGoogle } from 'react-icons/io5';
+import { FaXTwitter } from 'react-icons/fa6';
+import { BsDiscord } from 'react-icons/bs';
 
 import {
     Flex,
@@ -110,7 +112,7 @@ const VerifyEmail = () => {
                 {/* Twitter Auth */}
                 <a href={getTwitterOauthUrl(authParams)}>
                     <Button
-                        leftIcon={<IoLogoGoogle size={24} />}
+                        leftIcon={<FaXTwitter size={24} />}
                         borderWidth={'1px'}
                         borderColor={'#555555'}
                         borderRadius={'12px'}
@@ -131,7 +133,7 @@ const VerifyEmail = () => {
                     href={`https://discord.com/oauth2/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_DISCORD_ACCESS_KEY}&scope=identify+email&state=123456&redirect_uri=${process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URL}&prompt=consent`}
                 >
                     <Button
-                        leftIcon={<IoLogoGoogle size={24} />}
+                        leftIcon={<BsDiscord size={24} color="white" />}
                         borderWidth={'1px'}
                         borderColor={'#555555'}
                         borderRadius={'12px'}
@@ -147,6 +149,7 @@ const VerifyEmail = () => {
                 </a>
             </Flex>
             <Button
+                onClick={emailVerificationHandler}
                 mt="auto"
                 borderRadius={'full'}
                 backgroundColor={'primary.green.900'}
@@ -161,15 +164,3 @@ const VerifyEmail = () => {
 };
 
 export default VerifyEmail;
-
-{
-    /* <form
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        emailVerificationHandler();
-                    }}
-                >
-                 
-                    <button type="submit">Verify</button>
-                </form> */
-}
