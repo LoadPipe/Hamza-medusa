@@ -117,7 +117,7 @@ const AccountMenu = () => {
                         </MenuItem>
                     </Link>
                     {authData.is_verified === false && (
-                        <Link href={`/verify-email`}>
+                        <Link href={`/account/verify`}>
                             <MenuItem
                                 fontWeight={'600'}
                                 pl="1rem"
