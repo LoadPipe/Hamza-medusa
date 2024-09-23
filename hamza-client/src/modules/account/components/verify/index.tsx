@@ -58,11 +58,12 @@ const VerifyEmail = () => {
 
         try {
             let res: any = await verifyEmail(authData.customer_id, email);
-            if (res === true) {
-                toast.success('Email sent successfully!!');
+
+            if (res !== undefined) {
+                toast.success('Email sent successfully!');
                 router.replace('/');
             } else {
-                toast.error(res.message);
+                toast.error('Failed to send email. Please try again.');
                 return;
             }
         } catch (error) {
