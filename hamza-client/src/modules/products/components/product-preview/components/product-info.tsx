@@ -54,8 +54,7 @@ const ProductInfo = () => {
                 (selectedProductVariant.prices.find(
                     (p: any) =>
                         p.currency_code === (preferred_currency_code ?? 'usdc')
-                ) ??
-                    selectedProductVariant.prices[0]);
+                ));
             console.log(
                 'priceData object in PreviewCheckout comp',
                 productData
