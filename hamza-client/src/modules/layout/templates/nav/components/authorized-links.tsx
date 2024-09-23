@@ -26,7 +26,7 @@ const AuthorizedLinks = () => {
                     </NavLink>
 
                     {authData.is_verified == false && (
-                        <NavLink href={`/verify-email`}>
+                        <NavLink href={`/account/verify`}>
                             <MenuItem
                                 fontWeight={'600'}
                                 px="2rem"
