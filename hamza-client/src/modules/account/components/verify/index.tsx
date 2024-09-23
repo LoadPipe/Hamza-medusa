@@ -9,9 +9,17 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import getGoogleOAuthURL from '@lib/util/google-url';
 import getTwitterOauthUrl from '@lib/util/twitter-url';
 import toast from 'react-hot-toast';
-import { FcGoogle } from 'react-icons/fc';
-import { FaTwitter, FaDiscord } from 'react-icons/fa';
-import { Flex, Text, Input, Heading, Box } from '@chakra-ui/react';
+import { IoLogoGoogle } from 'react-icons/io5';
+
+import {
+    Flex,
+    Text,
+    Input,
+    Heading,
+    Box,
+    Divider,
+    Button,
+} from '@chakra-ui/react';
 import { verifyEmail } from '@lib/data/index';
 
 const VerifyEmail = () => {
@@ -59,7 +67,8 @@ const VerifyEmail = () => {
                 folder or resend the link.
             </Text>
 
-            <Flex w={'100%'} maxW={'468px'}>
+            <Flex w={'100%'} maxW={'468px'} flexDir={'column'} gap="1rem">
+                {/* Input Email Address */}
                 <Input
                     name="email"
                     placeholder="Your email address"
@@ -72,90 +81,73 @@ const VerifyEmail = () => {
                         setEmail(e.target.value);
                     }}
                 />
-            </Flex>
-            {/* <div>
-                {searchParams.get('auth_error') == 'true' && (
-                    <div>An error occurred during verification</div>
-                )}
 
-                <form
-                    className="space-y-4"
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        emailVerificationHandler();
-                    }}
+                <Flex flexDir={'row'} alignItems={'center'}>
+                    <Divider />
+                    <Text mx="1rem">OR</Text>
+                    <Divider />
+                </Flex>
+
+                {/* Google Auth */}
+                <a href={getGoogleOAuthURL(authParams)}>
+                    <Button
+                        leftIcon={<IoLogoGoogle size={24} />}
+                        borderWidth={'1px'}
+                        borderColor={'#555555'}
+                        borderRadius={'12px'}
+                        backgroundColor={'transparent'}
+                        color={'white'}
+                        height={'56px'}
+                        width={'100%'}
+                    >
+                        Verify with Google
+                    </Button>
+                </a>
+
+                {/* Twitter Auth */}
+                <a href={getTwitterOauthUrl(authParams)}>
+                    <Button
+                        leftIcon={<IoLogoGoogle size={24} />}
+                        borderWidth={'1px'}
+                        borderColor={'#555555'}
+                        borderRadius={'12px'}
+                        backgroundColor={'transparent'}
+                        color={'white'}
+                        height={'56px'}
+                        width={'100%'}
+                    >
+                        Verify with X
+                    </Button>
+                </a>
+
+                {/* Discord Auth */}
+                <a
+                    href={`https://discord.com/oauth2/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_DISCORD_ACCESS_KEY}&scope=identify+email&state=123456&redirect_uri=${process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URL}&prompt=consent`}
                 >
-                    <Input
-                        name="email"
-                        label="Your Email Address"
-                        value={email}
-                        type="email"
-                        onChange={(e) => {
-                            setEmail(e.target.value);
-                        }}
-                    />
-                    <button
-                        type="submit"
-                        className="w-full text-white bg-[#7B61FF] hover:bg-[#624DCC] focus:ring-4 focus:outline-none focus:ring-[#7B61FF] font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                    <Button
+                        leftIcon={<IoLogoGoogle size={24} />}
+                        borderWidth={'1px'}
+                        borderColor={'#555555'}
+                        borderRadius={'12px'}
+                        backgroundColor={'transparent'}
+                        color={'white'}
+                        height={'56px'}
+                        width={'100%'}
                     >
-                        Verify
-                    </button>
-                </form>
-                <div className="text-white text-md text-center p-4">Or</div>
-                <div className="buttons flex flex-col space-y-2 w-full">
-                    <a href={getGoogleOAuthURL(authParams)}>
-                        <button className="px-4 py-2 w-full border flex gap-2 border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-300 hover:shadow transition duration-150">
-                            <Flex>
-                                <Flex padding={'5px'}>
-                                    <FcGoogle
-                                        size={20}
-                                        style={{ alignSelf: 'center' }}
-                                    />
-                                </Flex>
-                                <Text ml="0.5rem" alignSelf={'center'}>
-                                    Verify with Google
-                                </Text>
-                            </Flex>
-                        </button>
-                    </a>
+                        Verify with Discord
+                    </Button>
+                </a>
 
-                    <a href={getTwitterOauthUrl(authParams)}>
-                        <button className="px-4 py-2 w-full border flex gap-2 border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-300 hover:shadow transition duration-150 items-center">
-                            <Flex>
-                                <Flex padding={'5px'}>
-                                    <FaTwitter
-                                        color="#1DA1F2"
-                                        size={20}
-                                        style={{ alignSelf: 'center' }}
-                                    />
-                                </Flex>
-                                <Text ml="0.5rem" alignSelf={'center'}>
-                                    Verify with Twitter
-                                </Text>
-                            </Flex>
-                        </button>
-                    </a>
-
-                    <a
-                        href={`https://discord.com/oauth2/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_DISCORD_ACCESS_KEY}&scope=identify+email&state=123456&redirect_uri=${process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URL}&prompt=consent`}
-                    >
-                        <button className="px-4 py-2 w-full border flex gap-2 border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-300 hover:shadow transition duration-150 items-center">
-                            <Flex>
-                                <Flex padding={'5px'}>
-                                    <FaDiscord
-                                        color="#5865F2"
-                                        size={20}
-                                        style={{ alignSelf: 'center' }}
-                                    />
-                                </Flex>
-                                <Text ml="0.5rem" alignSelf={'center'}>
-                                    Verify with Discord
-                                </Text>
-                            </Flex>
-                        </button>
-                    </a>
-                </div>
-            </div> */}
+                <Button
+                    mt="auto"
+                    borderRadius={'full'}
+                    backgroundColor={'primary.green.900'}
+                    height={'44px'}
+                    width={'100%'}
+                >
+                    Verify Account
+                </Button>
+            </Flex>
         </Flex>
     );
 };
