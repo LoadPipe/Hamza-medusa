@@ -1,7 +1,7 @@
 import { TabPanel, Text } from '@chakra-ui/react';
 import React from 'react';
 
-const ShippingpPolicy = () => {
+const ReturnPolicy = () => {
     return (
         <TabPanel>
             <Text>
@@ -10,11 +10,9 @@ const ShippingpPolicy = () => {
                 Please read our Payment Method Policy to understand how payments
                 work on our platform.
             </Text>
-
             <Text mt={4}>
                 Hamza supports payments using the following cryptocurrencies:
             </Text>
-
             <Text ml={4}>
                 • Bitcoin (BTC) <br />
                 • Ethereum (ETH) <br />
@@ -27,14 +25,12 @@ const ShippingpPolicy = () => {
                 • Dogecoin (DOGE) <br />
                 • Dai (DAI) <br />• Solana (SOL)
             </Text>
-
             <Text mt={4}>
                 We are continuously expanding our list of supported
                 cryptocurrencies to accommodate more options for buyers and
                 sellers. The available payment methods for each transaction will
                 be displayed at checkout.
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Blockchain Security:
             </Text>
@@ -42,7 +38,6 @@ const ShippingpPolicy = () => {
                 All transactions on Hamza are secured by blockchain technology,
                 ensuring transparency, immutability, and security.
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Two-Factor Authentication (2FA):
             </Text>
@@ -50,7 +45,6 @@ const ShippingpPolicy = () => {
                 We recommend enabling two-factor authentication (2FA) on your
                 account for added security during transactions.
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Escrow Protection:
             </Text>
@@ -59,11 +53,9 @@ const ShippingpPolicy = () => {
                 where the funds are temporarily held in a secure account until
                 both parties confirm that the transaction is complete.
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Payment Process
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Selecting a Payment Method:
             </Text>
@@ -73,7 +65,6 @@ const ShippingpPolicy = () => {
                 the chosen cryptocurrency will be calculated based on the
                 current market exchange rate at the time of purchase.
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Wallet Connectivity:
             </Text>
@@ -85,7 +76,6 @@ const ShippingpPolicy = () => {
                 cryptocurrency to cover the total amount, including any
                 potential transaction or gas fees.
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Transaction Confirmation:
             </Text>
@@ -96,11 +86,15 @@ const ShippingpPolicy = () => {
                 the blockchain. Upon confirmation, both the buyer and seller
                 will receive notification of a successful payment.
             </Text>
-
+            <Text mt={4} fontWeight="bold">
+                Accepted Payment Methods
+            </Text>
+            <Text mt={4} fontWeight="bold">
+                PaymentSecurity
+            </Text>
             <Text mt={4} fontWeight="bold">
                 Fees
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Transaction Fees:
             </Text>
@@ -113,7 +107,6 @@ const ShippingpPolicy = () => {
                 associated with their payment. The total amount, including fees,
                 will be displayed at checkout.
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Seller Fees:
             </Text>
@@ -122,11 +115,9 @@ const ShippingpPolicy = () => {
                 sale, which covers the cost of payment processing. This fee will
                 be deducted automatically from the payment amount.
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Refunds and Payment Reversals
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Cryptocurrency Refunds:
             </Text>
@@ -140,7 +131,6 @@ const ShippingpPolicy = () => {
                 <br />• Refunds are generally processed within 5-7 business days
                 after approval.
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Partial Refunds:
             </Text>
@@ -149,11 +139,9 @@ const ShippingpPolicy = () => {
                 process applies, with the equivalent amount in cryptocurrency
                 being refunded to the buyer.
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Handling Payment Disputes
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Disputes Between Buyers and Sellers:
             </Text>
@@ -166,7 +154,6 @@ const ShippingpPolicy = () => {
                 documentation (transaction ID, order number, proof of
                 communication) to start a formal dispute.
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Fraud Prevention:
             </Text>
@@ -178,11 +165,9 @@ const ShippingpPolicy = () => {
                 will take appropriate measures, which may include reversing
                 transactions or suspending accounts.
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Failed or Rejected Payments
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Insufficient Funds:
             </Text>
@@ -191,7 +176,6 @@ const ShippingpPolicy = () => {
                 cover the transaction (including fees), the payment will fail,
                 and the buyer will need to retry with a sufficient balance.
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Network Issues:
             </Text>
@@ -201,7 +185,6 @@ const ShippingpPolicy = () => {
                 try again after some time or contact our support team for
                 assistance.
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Incorrect Wallet Address:
             </Text>
@@ -210,11 +193,9 @@ const ShippingpPolicy = () => {
                 for payments. Hamza is not responsible for payments sent to
                 incorrect wallet addresses.
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Legal and Regulatory Compliance
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 KYC (Know Your Customer):
             </Text>
@@ -224,7 +205,6 @@ const ShippingpPolicy = () => {
                 This helps prevent money laundering, fraud, and other illegal
                 activities.
             </Text>
-
             <Text mt={4} fontWeight="bold">
                 Local Regulations:
             </Text>
@@ -238,4 +218,4 @@ const ShippingpPolicy = () => {
     );
 };
 
-export default ShippingpPolicy;
+export default ReturnPolicy;
