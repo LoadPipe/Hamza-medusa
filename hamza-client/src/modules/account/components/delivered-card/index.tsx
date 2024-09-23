@@ -80,7 +80,6 @@ const DeliveredCard = ({ order, handle }: OrderCardProps) => {
             await addToCart({
                 variantId: order.variant_id,
                 countryCode: countryCode,
-                currencyCode: order.currency_code,
                 quantity: order.quantity,
             });
         } catch (e) {

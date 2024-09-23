@@ -124,8 +124,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
             await addToCart({
                 variantId: productVariantId!,
                 quantity: 1,
-                countryCode: countryCode,
-                currencyCode: currencyCode,
+                countryCode: countryCode
             });
             if (showPopup) {
                 setCartModalOpen(true);
