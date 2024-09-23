@@ -38,6 +38,20 @@ const TermsOfService = () => {
         <Flex mt="1rem" flexDir={'column'} gap={5}>
             <Flex flexDir={'row'}>
                 <Flex maxW={'133px'} width={'100%'}>
+                    <Text color={'white'}>Shipping:</Text>
+                </Flex>
+                <Text
+                    textDecor={'underline'}
+                    cursor={'pointer'}
+                    color="#94D42A"
+                    onClick={() => openModal(0)} // Open modal and show Payment Methods tab
+                >
+                    See shipping policy
+                </Text>
+            </Flex>
+
+            <Flex flexDir={'row'}>
+                <Flex maxW={'133px'} width={'100%'}>
                     <Text color={'white'}>Returns:</Text>
                 </Flex>
                 <Text color={'white'} cursor={'pointer'}>
