@@ -13,14 +13,29 @@ import { getContractAddress } from 'contracts.config';
 import { erc20abi } from '../../../../web3/abi/erc20-abi';
 import { LiteSwitchClient } from 'web3/contracts/lite-switch';
 import { ISwitchMultiPaymentInput } from 'web3';
+import { block } from 'sharp';
 
 export type WalletPaymentResponse = {
     transaction_id: string;
     payer_address: string;
-    escrow_contract_address: string;
+    receiver_address: string;
+    escrow_address: string;
     message?: string;
     chain_id: number;
     success: boolean;
+};
+
+// checkout data retrieved from server, to help in creating blockchain payments
+export type CheckoutData = {
+    order_id: string; //medusa order id
+    cart_id: string; //medusa cart id
+    receiver_address: string; //wallet address of store owner
+    currency_code: string; //currency code
+    amount: string; //medusa amount
+    massmarket_amount: string; //massmarket amount
+    massmarket_order_id: string; //keccak256 of cartId (massmarket)
+    massmarket_ttl: number;
+    orders: any[]; //medusa orders
 };
 
 /**
@@ -32,7 +47,7 @@ export interface IWalletPaymentHandler {
         provider: ethers.Provider | null,
         signer: ethers.Signer | null,
         chainId: any,
-        data: any
+        data: CheckoutData
     ): Promise<WalletPaymentResponse>;
 }
 
@@ -76,11 +91,12 @@ export class MassmarketWalletPaymentHandler implements IWalletPaymentHandler {
         provider: ethers.Provider | null,
         signer: ethers.Signer | null,
         chainId: any,
-        data: any
+        data: CheckoutData
     ): Promise<WalletPaymentResponse> {
-        const escrow_contract_address = getMasterSwitchAddress(chainId);
+        const escrow_address = getMasterSwitchAddress(chainId);
         let transaction_id = '';
         let payer_address = '';
+        let receiver_address = data.receiver_address;
 
         if (provider && signer) {
             const paymentContractAddr =
@@ -90,11 +106,11 @@ export class MassmarketWalletPaymentHandler implements IWalletPaymentHandler {
                     provider,
                     signer,
                     paymentContractAddr,
-                    escrow_contract_address
+                    escrow_address
                 );
 
             console.log('payment address:', paymentContractAddr);
-            console.log('escrow address:', escrow_contract_address);
+            console.log('escrow address:', escrow_address);
 
             //create the inputs
             const paymentInput: IMultiPaymentInput[] =
@@ -117,7 +133,8 @@ export class MassmarketWalletPaymentHandler implements IWalletPaymentHandler {
         return {
             transaction_id,
             payer_address,
-            escrow_contract_address,
+            receiver_address,
+            escrow_address,
             chain_id: chainId,
             success:
                 transaction_id && transaction_id.length ? true : false,
@@ -179,10 +196,11 @@ export class FakeWalletPaymentHandler implements IWalletPaymentHandler {
         provider: ethers.Provider | null,
         signer: ethers.Signer | null,
         chainId: any,
-        data: any
+        data: CheckoutData
     ): Promise<WalletPaymentResponse> {
         let transaction_id = '';
         let payer_address = '';
+        let receiver_address = data.receiver_address;
 
         if (signer) {
             const tx = await signer.sendTransaction({
@@ -197,9 +215,10 @@ export class FakeWalletPaymentHandler implements IWalletPaymentHandler {
         }
 
         return {
-            escrow_contract_address: '0x0',
+            escrow_address: '0x0',
             transaction_id,
             payer_address,
+            receiver_address,
             chain_id: chainId,
             success:
                 transaction_id && transaction_id.length ? true : false,
@@ -216,11 +235,12 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
         provider: ethers.Provider | null,
         signer: ethers.Signer,
         chainId: any,
-        data: any
+        data: CheckoutData
     ): Promise<WalletPaymentResponse> {
         const contractAddress = getContractAddress('lite_switch', chainId);
         let transaction_id = '';
         let payer_address = '';
+        let receiver_address = data.receiver_address;
 
         if (provider) {
             const client: LiteSwitchClient = new LiteSwitchClient(
@@ -239,9 +259,10 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
                 const { currency, amount } = cp;
                 if (!(await checkWalletBalance(provider, signer, chainId, currency, amount as bigint))) {
                     return {
-                        escrow_contract_address: '0x0',
+                        escrow_address: '0x0',
                         transaction_id,
                         payer_address,
+                        receiver_address,
                         success: false,
                         chain_id: chainId,
                         message: `Wallet has an insufficient balance in ${currency.toUpperCase()} to pay for this transaction`
@@ -254,8 +275,9 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
         }
 
         return {
-            escrow_contract_address: contractAddress,
+            escrow_address: contractAddress,
             payer_address,
+            receiver_address,
             transaction_id,
             chain_id: chainId,
             success:
@@ -328,11 +350,12 @@ export class SwitchWalletPaymentHandler implements IWalletPaymentHandler {
         provider: ethers.Provider | null,
         signer: ethers.Signer | null,
         chainId: any,
-        data: any
+        data: CheckoutData
     ): Promise<WalletPaymentResponse> {
         return {
-            escrow_contract_address: '',
+            escrow_address: '',
             payer_address: '',
+            receiver_address: data.receiver_address,
             transaction_id: '',
             success: false,
             chain_id: chainId,
@@ -349,7 +372,7 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
         provider: ethers.Provider | null,
         signer: ethers.Signer | null,
         chainId: any,
-        data: any
+        data: CheckoutData
     ): Promise<WalletPaymentResponse> {
         console.log('DirectWalletPaymentHandler.doWalletPayment');
         const recipient: string = getContractAddress('dao', chainId);
@@ -358,6 +381,7 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
         const paymentGroups = this.createPaymentGroups(data, chainId);
         let transaction_id = '';
         let payer_address = '';
+        let receiver_address = data.receiver_address;
 
         if (signer && provider) {
             for (const currency in paymentGroups) {
@@ -374,9 +398,10 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
                 //check balance first 
                 if (!(await checkWalletBalance(provider, signer, chainId, currency, amount))) {
                     return {
-                        escrow_contract_address: '0x0',
+                        escrow_address: '0x0',
                         transaction_id,
                         payer_address,
+                        receiver_address,
                         success: false,
                         chain_id: chainId,
                         message: 'Insufficient balance'
@@ -419,9 +444,10 @@ export class DirectWalletPaymentHandler implements IWalletPaymentHandler {
         }
 
         const output = {
-            escrow_contract_address: '0x0',
+            escrow_address: '0x0',
             transaction_id,
             payer_address,
+            receiver_address,
             chain_id: chainId,
             success:
                 transaction_id && transaction_id.length ? true : false,

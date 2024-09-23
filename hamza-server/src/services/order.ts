@@ -147,17 +147,6 @@ export default class OrderService extends MedusaOrderService {
         });
     }
 
-    async updatePaymentAfterTransaction(
-        paymentId: string,
-        update: Partial<Payment>
-    ): Promise<Payment> {
-        const result = await this.paymentRepository_.save({
-            id: paymentId,
-            ...update,
-        });
-        return result;
-    }
-
     async updateInventory(
         variantOrVariantId: string,
         quantityToDeduct: number
@@ -196,6 +185,7 @@ export default class OrderService extends MedusaOrderService {
         cartId: string,
         transactionId: string,
         payerAddress: string,
+        receiverAddress: string,
         escrowContractAddress: string,
         chainId: number
     ): Promise<Order[]> {
@@ -228,6 +218,7 @@ export default class OrderService extends MedusaOrderService {
             payments,
             transactionId,
             payerAddress,
+            receiverAddress,
             escrowContractAddress,
             chainId
         );
@@ -530,6 +521,17 @@ export default class OrderService extends MedusaOrderService {
         });
     }
 
+    private async updatePaymentAfterTransaction(
+        paymentId: string,
+        update: Partial<Payment>
+    ): Promise<Payment> {
+        const result = await this.paymentRepository_.save({
+            id: paymentId,
+            ...update,
+        });
+        return result;
+    }
+
     private async processBuckydropOrders(
         cartId: string,
         orders: Order[]
@@ -601,8 +603,9 @@ export default class OrderService extends MedusaOrderService {
         payments: Payment[],
         transactionId: string,
         payerAddress: string,
-        escrowContractAddress: string,
-        chainId: number
+        receiverAddress: string,
+        escrowAddress: string,
+        chainId: number,
     ): Promise<Order | Payment>[] {
         const promises: Promise<Order | Payment>[] = [];
 
@@ -610,10 +613,13 @@ export default class OrderService extends MedusaOrderService {
         payments.forEach((p, i) => {
             promises.push(
                 this.updatePaymentAfterTransaction(p.id, {
-                    transaction_id: transactionId,
-                    payer_address: payerAddress,
-                    escrow_contract_address: escrowContractAddress,
-                    chain_id: chainId
+                    blockchain_data: {
+                        transaction_id: transactionId,
+                        payer_address: payerAddress,
+                        escrow_address: escrowAddress,
+                        receiver_address: receiverAddress,
+                        chain_id: chainId,
+                    }
                 })
             );
         });
