@@ -25,30 +25,50 @@ import {
 import { verifyEmail } from '@lib/data/index';
 
 const VerifyEmail = () => {
+    // Customer Authentication
     const { authData, setCustomerAuthData } = useCustomerAuthStore();
     const searchParams = useSearchParams();
 
+    // Email input hook
     const [email, setEmail] = useState('');
+
+    // Routing
     const router = useRouter();
     const authParams = `customer_id=${authData.customer_id}`;
 
-    if (authData.status == 'unauthenticated') {
-        return <div>Please connect wallet before adding email address.</div>;
-    }
+    // //
+    // if (authData.status == 'unauthenticated') {
+    //     return <div>Please connect wallet before adding email address.</div>;
+    // }
 
+    // Email validation
     const emailVerificationHandler = async () => {
-        if (email === '') {
+        // Regular expression for basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (email.trim() === '') {
             toast.error('Email address cannot be empty!');
             return;
         }
 
-        let res: any = await verifyEmail(authData.customer_id, email);
-        if (res == true) {
-            toast.success('Email sent successfully!!');
-            router.replace('/');
-        } else {
-            toast.error(res.message);
+        if (!emailRegex.test(email)) {
+            toast.error('Please enter a valid email address!');
             return;
+        }
+
+        try {
+            let res: any = await verifyEmail(authData.customer_id, email);
+            if (res === true) {
+                toast.success('Email sent successfully!!');
+                router.replace('/');
+            } else {
+                toast.error(res.message);
+                return;
+            }
+        } catch (error) {
+            toast.error(
+                'An error occurred while sending the email. Please try again.'
+            );
         }
     };
 
