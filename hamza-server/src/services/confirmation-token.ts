@@ -40,7 +40,8 @@ export default class ConfirmationTokenService extends TransactionBaseService {
         if (emailCheck) {
             throw new Error('Email already associated with different account');
         }
-        let token = ethers.keccak256(new Uint8Array(32));
+
+        let token = ethers.keccak256(ethers.randomBytes(32));
 
         this.logger.debug('token is ' + token);
         let confirmationToken = await this.confirmationTokenRepository_.save({
