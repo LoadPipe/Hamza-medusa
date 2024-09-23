@@ -99,8 +99,11 @@ const VerifyEmail = () => {
                         color={'white'}
                         height={'56px'}
                         width={'100%'}
+                        justifyContent={'center'}
                     >
-                        Verify with Google
+                        <Flex maxW={'157px'} width={'100%'}>
+                            <Text mr="auto"> Verify with Google</Text>
+                        </Flex>
                     </Button>
                 </a>
 
@@ -115,8 +118,11 @@ const VerifyEmail = () => {
                         color={'white'}
                         height={'56px'}
                         width={'100%'}
+                        justifyContent={'center'}
                     >
-                        Verify with X
+                        <Flex maxW={'157px'} width={'100%'}>
+                            <Text mr="auto">Verify with X</Text>
+                        </Flex>
                     </Button>
                 </a>
 
@@ -134,7 +140,9 @@ const VerifyEmail = () => {
                         height={'56px'}
                         width={'100%'}
                     >
-                        Verify with Discord
+                        <Flex maxW={'157px'} width={'100%'}>
+                            <Text mr="auto"> Verify with Discord</Text>
+                        </Flex>
                     </Button>
                 </a>
             </Flex>
