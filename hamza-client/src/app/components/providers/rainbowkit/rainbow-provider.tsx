@@ -16,7 +16,7 @@ import {
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 const queryClient = new QueryClient();
 import { SiweMessage } from 'siwe';
-import { getCustomer, getToken } from '@lib/data';
+import { getCustomer, getHamzaCustomer, getToken } from '@lib/data';
 import { signOut } from '@modules/account/actions';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import axios from 'axios';
@@ -75,6 +75,22 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     wallet_address: '',
                 });
                 return;
+            } else {
+                getHamzaCustomer().then((hamzaCust) => {
+                    console.log('hamza cust id:', hamzaCust?.id);
+                    console.log(' cust id:', customer?.id);
+                    if (!customer || (customer.id != hamzaCust?.id)) {
+                        console.log('setting auth to unauthenticated');
+                        setCustomerAuthData({
+                            customer_id: '',
+                            is_verified: false,
+                            status: 'unauthenticated',
+                            token: '',
+                            wallet_address: '',
+                        });
+                        return;
+                    }
+                });
             }
         });
     }, [authData.wallet_address]);
