@@ -23,6 +23,7 @@ import CartPopup from '../../cart-popup';
 import { getAverageRatings, getStore, getReviewCount } from '@lib/data';
 import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
 import Spinner from '@modules/common/icons/spinner';
+import TermsOfService from './terms-of-service/product-details-tos';
 
 interface PreviewCheckoutProps {
     productId: string;
@@ -546,6 +547,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     display={{ base: 'block', md: 'none' }}
                     mt="2rem"
                 />
+
                 <CartPopup
                     open={cartModalOpen}
                     closeModal={() => {
@@ -553,6 +555,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     }}
                 />
             </Flex>
+
+            {/* TOS */}
+            <TermsOfService />
         </Flex>
     );
 };
