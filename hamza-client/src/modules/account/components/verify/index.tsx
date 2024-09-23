@@ -57,9 +57,9 @@ const VerifyEmail = () => {
             height={'100%'}
             justifyContent={'center'}
             alignItems={'center'}
-            gap={5}
+            gap={6}
         >
-            <Text maxW={'746px'}>
+            <Text textAlign={'center'} maxW={'746px'}>
                 Please verify your account by clicking the link sent to your
                 email, or by logging in with your Google, X (formerly Twitter),
                 or Discord account. This will ensure full access to your account
@@ -82,7 +82,7 @@ const VerifyEmail = () => {
                     }}
                 />
 
-                <Flex flexDir={'row'} alignItems={'center'}>
+                <Flex flexDir={'row'} my="1rem" alignItems={'center'}>
                     <Divider />
                     <Text mx="1rem">OR</Text>
                     <Divider />
@@ -137,17 +137,17 @@ const VerifyEmail = () => {
                         Verify with Discord
                     </Button>
                 </a>
-
-                <Button
-                    mt="auto"
-                    borderRadius={'full'}
-                    backgroundColor={'primary.green.900'}
-                    height={'44px'}
-                    width={'100%'}
-                >
-                    Verify Account
-                </Button>
             </Flex>
+            <Button
+                mt="auto"
+                borderRadius={'full'}
+                backgroundColor={'primary.green.900'}
+                height={'44px'}
+                maxW={'468px'}
+                width={'100%'}
+            >
+                Verify Account
+            </Button>
         </Flex>
     );
 };
