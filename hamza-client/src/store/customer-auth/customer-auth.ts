@@ -21,6 +21,7 @@ type Actions = {
     setCustomerAuthData: (authData: State['authData']) => void;
     setCustomerPreferredCurrency: (currency: string) => void;
     setWhitelistConfig: (configData: State['whitelist_config']) => void;
+    setIsVerified: (isVerified: boolean) => void;
 };
 
 export const useCustomerAuthStore = create<State & Actions>()(
@@ -44,7 +45,6 @@ export const useCustomerAuthStore = create<State & Actions>()(
                 });
             },
             setCustomerPreferredCurrency: (currency) => {
-                console.log("CUSTOMER PREF CURRENCY IS ", currency)
                 set({ preferred_currency_code: currency });
             },
 
@@ -53,6 +53,14 @@ export const useCustomerAuthStore = create<State & Actions>()(
                     whitelist_config: configData,
                 });
             },
+            setIsVerified: (isVerified: boolean) => {
+                set((state) => ({
+                    authData: {
+                        ...state.authData,
+                        is_verified: isVerified,
+                    },
+                }));
+            }, // New function to update only `is_verified`
         }),
 
         {
