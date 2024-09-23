@@ -139,6 +139,9 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
                 if (!prices.length) prices = v.prices;
             }
 
+            if (!prices.length)
+                throw new Error('Prices.length is zero');
+
             //gather and return the output
             output.set(v.id, {
                 originalPrice: prices.length ? prices[0].amount : 0,
