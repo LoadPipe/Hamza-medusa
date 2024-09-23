@@ -20,6 +20,8 @@ import React from 'react';
 import ShippingpPolicy from './policies/shipping-policy';
 import PaymentPolicy from './policies/payment-policy';
 import ReturnPolicy from './policies/return-policy';
+import { MdCurrencyBitcoin } from 'react-icons/md';
+import { FiTruck } from 'react-icons/fi';
 
 const TermsOfService = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -37,8 +39,13 @@ const TermsOfService = () => {
     return (
         <Flex mt="1rem" flexDir={'column'} gap={5}>
             <Flex flexDir={'row'}>
-                <Flex maxW={'133px'} width={'100%'}>
-                    <Text color={'white'}>Shipping:</Text>
+                <Flex maxW={'133px'} width={'100%'} flexDir={'row'} gap={2}>
+                    <FiTruck
+                        color="white"
+                        size={20}
+                        style={{ alignSelf: 'center' }}
+                    />
+                    <Text color={'white'}>Delivery:</Text>
                 </Flex>
                 <Text
                     textDecor={'underline'}
@@ -69,7 +76,12 @@ const TermsOfService = () => {
             </Flex>
 
             <Flex flexDir={'row'}>
-                <Flex maxW={'133px'} width={'100%'}>
+                <Flex maxW={'133px'} width={'100%'} flexDir={'row'} gap={1}>
+                    <MdCurrencyBitcoin
+                        size={'20'}
+                        color="white"
+                        style={{ alignSelf: 'center' }}
+                    />
                     <Text color={'white'}>Payments:</Text>
                 </Flex>
                 <Text
