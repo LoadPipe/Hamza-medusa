@@ -22,13 +22,14 @@ export default async function Verify() {
     return (
         <Flex
             backgroundColor={'#121212'}
-            flexDirection={'column'}
-            justifyContent={'center'}
-            alignItems={'center'}
             color={'white'}
             borderRadius={'12px'}
-            py={'5rem'}
-            gap={'10px'}
+            py={'24px'}
+            px={'24px'}
+            // gap={'10px'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            height={'561px'}
             width={'100%'}
         >
             <VerifyEmail />
