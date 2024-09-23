@@ -101,12 +101,19 @@ const TermsOfService = () => {
                             <TabList
                                 backgroundColor={'#3E3E3E'}
                                 borderBottomWidth={'0px'}
+                                borderRadius={'12px'}
+                                height={'44px'}
                             >
                                 <Tab
                                     backgroundColor={
                                         selectedTab === 0
                                             ? 'primary.green.900'
                                             : '#3E3E3E'
+                                    }
+                                    borderWidth={'0px'}
+                                    borderLeftRadius={'12px'}
+                                    borderRightRadius={
+                                        selectedTab === 0 ? '12px' : '0px'
                                     }
                                     color={
                                         selectedTab === 0 ? 'black' : 'white'
@@ -121,6 +128,10 @@ const TermsOfService = () => {
                                             ? 'primary.green.900'
                                             : '#3E3E3E'
                                     }
+                                    borderWidth={'0px'}
+                                    borderRadius={
+                                        selectedTab === 1 ? '12px' : '0px'
+                                    }
                                     color={
                                         selectedTab === 1 ? 'black' : 'white'
                                     }
@@ -134,6 +145,11 @@ const TermsOfService = () => {
                                             ? 'primary.green.900'
                                             : '#3E3E3E'
                                     }
+                                    borderWidth={'0px'}
+                                    borderLeftRadius={
+                                        selectedTab === 2 ? '12px' : 0
+                                    }
+                                    borderRightRadius={'12px'}
                                     color={
                                         selectedTab === 2 ? 'black' : 'white'
                                     }
