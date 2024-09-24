@@ -438,7 +438,7 @@ class ProductService extends MedusaProductService {
      */
     async getAllProductCategories(): Promise<ProductCategory[]> {
         try {
-            return await categoryCache.retrieve();
+            return await categoryCache.retrieve(this.productCategoryRepository_);
         } catch (error) {
             this.logger.error(
                 'Error fetching product categories with prices:',
