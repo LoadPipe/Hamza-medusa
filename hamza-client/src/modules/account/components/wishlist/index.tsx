@@ -26,6 +26,30 @@ const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
 
     console.log(`WISHLIST: ${JSON.stringify(wishlist.products)}`);
 
+    const productPrice = (
+        productPrice: any,
+        preferred_currency_code: string
+    ) => {
+        if (
+            typeof productPrice === 'number' ||
+            typeof productPrice === 'string'
+        ) {
+            return productPrice;
+        } else if (
+            productPrice &&
+            typeof productPrice === 'object' &&
+            preferred_currency_code &&
+            ['eth', 'usdc', 'usdt'].includes(preferred_currency_code)
+        ) {
+            return productPrice[
+                preferred_currency_code as keyof PriceDictionary
+            ];
+        } else {
+            console.log(`Product Error`);
+            return;
+        }
+    };
+
     return (
         <Box color={'white'}>
             {wishlist.products && wishlist.products.length > 0 ? (
@@ -38,21 +62,10 @@ const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
                             productVariantId={product.productVariantId}
                             productImage={product.thumbnail}
                             productDescription={product.title}
-                            productPrice={
-                                typeof product.price === 'number' ||
-                                typeof product.price === 'string'
-                                    ? String(product.price) // Client-side price (converted to string)
-                                    : product.price &&
-                                        typeof product.price === 'object' &&
-                                        preferred_currency_code && // Ensure it's not null
-                                        ['eth', 'usdc', 'usdt'].includes(
-                                            preferred_currency_code
-                                        ) // Ensure it's one of the valid keys
-                                      ? product.price[
-                                            preferred_currency_code as keyof PriceDictionary
-                                        ] || ''
-                                      : product.price?.eth || '' // Fallback to eth or an empty string
-                            }
+                            productPrice={productPrice(
+                                product.price,
+                                preferred_currency_code as string
+                            )}
                             countryCode={countryCode}
                         />
                     </Box>
