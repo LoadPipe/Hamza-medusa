@@ -441,7 +441,8 @@ export async function finalizeCheckout(
     cart_id: string,
     transaction_id: string,
     payer_address: string,
-    escrow_contract_address: string,
+    receiver_address: string,
+    escrow_address: string,
     chain_id: number
     //cart_products: any
 ) {
@@ -449,8 +450,9 @@ export async function finalizeCheckout(
         cart_id,
         transaction_id,
         payer_address,
-        escrow_contract_address,
-        chain_id
+        receiver_address,
+        escrow_address,
+        chain_id,
     });
 }
 
@@ -499,13 +501,11 @@ export async function getCart(cartId: string) {
 export async function addItem({
     cartId,
     variantId,
-    quantity,
-    currencyCode,
+    quantity
 }: {
     cartId: string;
     variantId: string;
     quantity: number;
-    currencyCode: string;
 }) {
     const headers = getMedusaHeaders(['cart']);
 
@@ -743,6 +743,16 @@ export async function getHamzaCustomer(includeAddresses: boolean = true) {
     });
 
     return response ?? {};
+}
+
+export async function clearAuthCookie() {
+    try {
+        cookies().set('_medusa_jwt', '', {
+            maxAge: -1,
+        });
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 // Customer actions

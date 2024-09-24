@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Flex, Box, Skeleton } from '@chakra-ui/react';
+import { Flex, Box, Skeleton, Badge } from '@chakra-ui/react';
 import CategoryTopButton from './category-top-button';
 import { CgChevronRight } from 'react-icons/cg';
 import useVendors from '@modules/home/components/search-and-filter-panel/data/data';
@@ -15,7 +15,6 @@ interface Category {
 }
 const FilterBarStore = () => {
     const [startIdx, setStartIdx] = useState(0); // State to keep track of the starting index of visible categories
-    const [showLeftChevron, setShowLeftChevron] = useState(false); // Track if left chevron should be shown
 
     // Fetching categories data
     const { data, isLoading } = useQuery<Category[]>(
@@ -30,47 +29,30 @@ const FilterBarStore = () => {
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-              name: category.name,
-              id: category.id,
-              metadata: category.metadata,
-          }))
+            name: category.name,
+            id: category.id,
+            metadata: category.metadata,
+        }))
         : [];
 
-    // Show more logic for categories (next or previous)
-    const toggleShowMore = (direction: 'next' | 'prev') => {
-        const isAtStart = startIdx === 0;
-        const isAtEnd = startIdx + 6 >= uniqueCategories.length;
+    const toggleShowMore = () => {
+        // Calculate the remaining categories after the current start index
+        const remainingCategories = uniqueCategories.length - startIdx;
 
-        let nextIndex;
+        // If fewer than 3 categories are left, increase by the remaining count, otherwise increase by 3
+        const increment = remainingCategories >= 3 ? 3 : remainingCategories;
 
-        if (direction === 'next') {
-            nextIndex = isAtEnd ? 0 : startIdx + 1;
-            setShowLeftChevron(true); // Show left chevron when moving to next
-        } else {
-            nextIndex = isAtStart ? uniqueCategories.length - 1 : startIdx - 1;
-            if (nextIndex === 0) {
-                setShowLeftChevron(false); // Hide left chevron when back to the start
-            }
-        }
+        // Calculate the new index
+        const nextIndex = startIdx + increment;
 
-        setStartIdx(nextIndex);
+        // If the nextIndex exceeds the array length, loop back to the start
+        setStartIdx(nextIndex >= uniqueCategories.length ? 0 : nextIndex);
     };
 
-    // Logic to display only 6 categories at a time
-    let visibleCategories = uniqueCategories
-        .slice(startIdx, startIdx + 6)
-        .concat(
-            uniqueCategories.slice(
-                0,
-                Math.max(0, 6 - (uniqueCategories.length - startIdx))
-            )
-        );
-
-    if (uniqueCategories.length === 1)
-        visibleCategories = [visibleCategories[0]];
-
-    // Determine if the user is at the end to toggle the chevron direction
-    const isAtEnd = startIdx + 6 >= uniqueCategories.length;
+    // Logic to handle the scrolling. Visible categories will shift based on `startIdx`.
+    const visibleCategories = uniqueCategories
+        .slice(startIdx)
+        .concat(uniqueCategories.slice(0, startIdx));
 
     const skeletons = Array(7)
         .fill(null)
@@ -105,41 +87,47 @@ const FilterBarStore = () => {
                 >
                     <CategoryTopButton
                         categoryName={'All'}
-                        url={'https://images.hamza.biz/category-icons/all.svg'}
+                        url={'https://images.hamza.market/category-icons/all.svg'}
                     />
                     {isLoading
                         ? skeletons // Show skeletons while loading
-                        : uniqueCategories.map((category, index) => (
-                              <CategoryTopButton
-                                  key={index}
-                                  categoryName={category.name}
-                                  url={category.metadata?.icon_url}
-                              />
-                          ))}
+                        : visibleCategories.map((category, index) => (
+                            <CategoryTopButton
+                                key={index}
+                                categoryName={category.name}
+                                url={category.metadata?.icon_url}
+                            />
+                        ))}
                 </Flex>
                 <Flex
                     w="123px"
                     height={{ base: '42px', md: '63px' }}
                     justifyContent={'center'}
                     alignItems={'center'}
-                    onClick={() => toggleShowMore('next')}
+                    onClick={toggleShowMore}
                     cursor="pointer"
                     position="absolute"
                     right="0"
                     top="0"
-                    bg="linear-gradient(90deg, rgba(44, 39, 45, 0) 0%, #0a090b 75%)"
+                    bg="linear-gradient(90deg, rgba(2, 2, 2, 0) 0%, #020202 30%)"
                     userSelect={'none'}
+                    role="group"
                 >
                     <Flex
                         ml="auto"
-                        w="35px"
-                        mr="0.75rem"
-                        height={'100%'}
+                        w="60px"
+                        h="60px" // Set height and width for the circle effect
                         justifyContent={'center'}
                         alignItems={'center'}
                         alignSelf={'center'}
+                        borderRadius="50%" // Make it a circle
+                        transition="background-color 0.3s, border 0.3s" // Smooth transition for background and border
+                        _hover={{
+                            backgroundColor: '#272727',
+                        }}
+                        role="group"
                     >
-                        <CgChevronRight size="4rem" color="white" />
+                        <CgChevronRight size="2.5rem" color="white" />
                     </Flex>
                 </Flex>
             </Flex>

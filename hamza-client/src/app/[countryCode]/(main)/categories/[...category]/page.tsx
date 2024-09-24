@@ -20,9 +20,7 @@ export async function generateStaticParams() {
         return [];
     }
 
-    const countryCodes = await listRegions().then((regions) =>
-        regions?.map((r) => r.countries.map((c) => c.iso_2)).flat()
-    );
+    const countryCodes = ['us'];
 
     const categoryHandles = product_categories.map(
         (category) => category.handle

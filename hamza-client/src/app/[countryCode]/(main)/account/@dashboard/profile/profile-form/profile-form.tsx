@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 import ProfileCurrency from '@modules/account/components/profile-currency';
 import { setCurrency } from '@lib/data';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { getVerificationStatus } from '@lib/data';
 
 const ProfileForm = () => {
     // Todo: disable submiting if fields have not been changed
@@ -19,11 +20,35 @@ const ProfileForm = () => {
     const [emailValue, setEmailValue] = useState<string>('');
     const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
     const [customerId, setCustomerId] = useState<string>('');
-    const { preferred_currency_code, setCustomerPreferredCurrency } =
-        useCustomerAuthStore();
+    const {
+        preferred_currency_code,
+        setCustomerPreferredCurrency,
+        setIsVerified,
+        authData,
+    } = useCustomerAuthStore();
     // Hooks Avatar
     const [avatarFirstName, setAvatarFirstName] = useState<string>('');
     const [avatarLastName, setAvatarLastName] = useState<string>('');
+
+    // Grab the customers verification status from dB and update the store
+    useEffect(() => {
+        const fetchVerificationStatus = async () => {
+            try {
+                // Only Fetch if we don't already have a verified status
+                if (authData.is_verified) return;
+                const customer = await getHamzaCustomer();
+                const verificationStatus = await getVerificationStatus(
+                    customer.id
+                );
+                // Use the current state and only update is_verified
+                setIsVerified(verificationStatus.data);
+            } catch (error) {
+                console.error('Error fetching verification status:', error);
+            }
+        };
+
+        fetchVerificationStatus();
+    }, [setIsVerified]);
 
     //  Fetch customer and update hook states
     useEffect(() => {

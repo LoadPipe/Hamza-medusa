@@ -76,8 +76,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
         await addToCart({
             variantId: variantID ?? '',
             quantity: 1,
-            countryCode: countryCode ?? '',
-            currencyCode: 'eth',
+            countryCode: countryCode ?? ''
         });
         setLoadingAddToCard(false);
     };
@@ -89,8 +88,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
         await addToCart({
             variantId: variantID ?? '',
             quantity: 1,
-            countryCode: countryCode ?? '',
-            currencyCode: 'eth',
+            countryCode: countryCode ?? ''
         });
         setLoadingBuy(false);
     };
@@ -123,7 +121,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
         >
             <LocalizedClientLink href={`/products/${productHandle}`}>
                 <Box
-                    onClick={() => console.log('hello')}
+                    onClick={() => { }}
                     h="240px"
                     width="100%"
                     display="flex"

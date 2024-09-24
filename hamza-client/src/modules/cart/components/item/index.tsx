@@ -62,8 +62,8 @@ const Item = ({ item, region }: ItemProps) => {
                 <LocalizedClientLink href={`/products/${handle}`}>
                     <Flex
                         alignSelf={'center'}
-                        width={{ base: '48px', md: '110px' }}
-                        height={{ base: '48px', md: '110px' }}
+                        width={{ base: '60px', md: '110px' }}
+                        height={{ base: '60px', md: '110px' }}
                     >
                         <Thumbnail thumbnail={item.thumbnail} size="square" />
                     </Flex>
@@ -71,6 +71,7 @@ const Item = ({ item, region }: ItemProps) => {
 
                 <Flex width={'100%'} ml="1rem">
                     <Flex
+                        pr="1rem"
                         ml={{ base: '0', md: '1rem' }}
                         flexDirection={'column'}
                     >
@@ -98,7 +99,7 @@ const Item = ({ item, region }: ItemProps) => {
                             onChange={(value) =>
                                 changeQuantity(parseInt(value.target.value))
                             }
-                            className="w-12 h-8 md:w-14 md:h-10"
+                            className="w-12 h-8 md:w-14 md:h-10 mt-auto"
                         >
                             {Array.from(
                                 {

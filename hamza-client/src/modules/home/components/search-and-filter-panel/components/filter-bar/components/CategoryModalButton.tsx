@@ -6,57 +6,38 @@ import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
 import categoryIcons from '@modules/shop/data/category-icons';
 interface CategoryButtonProps {
     categoryName: string; // Single category name per button
-    categoryType: string; // Single category type per button
+
     url: string;
 }
 
 const CategoryModalButton: React.FC<CategoryButtonProps> = ({
     categoryName,
-    categoryType,
     url,
 }) => {
-    const {
-        homeModalCategoryFilterSelect,
-        homeModalCategoryTypeFilterSelect,
-        setHomeModalCategoryFilterSelect,
-        setHomeModalCategoryTypeFilterSelect,
-    } = useHomeModalFilter();
+    const { homeModalCategoryFilterSelect, setHomeModalCategoryFilterSelect } =
+        useHomeModalFilter();
 
-    const toggleCategorySelection = (category: string, type: string) => {
+    const toggleCategorySelection = (category: string) => {
         const currentCategorySelection = homeModalCategoryFilterSelect || [];
-        const currentTypeSelection = homeModalCategoryTypeFilterSelect || [];
 
         // If the category is already selected, we remove it along with its type
         if (currentCategorySelection.includes(category)) {
             const updatedCategorySelection = currentCategorySelection.filter(
                 (selectedCategory) => selectedCategory !== category
             );
-            const updatedTypeSelection = currentTypeSelection.filter(
-                (selectedType) => selectedType !== type
-            );
+
             setHomeModalCategoryFilterSelect(
-                updatedCategorySelection.length
-                    ? updatedCategorySelection
-                    : ['All']
-            );
-            setHomeModalCategoryTypeFilterSelect(
-                updatedTypeSelection.length ? updatedTypeSelection : ['All']
+                updatedCategorySelection.length ? updatedCategorySelection : []
             );
         } else {
             // If the category is not selected, we add both the category and type
             const updatedCategorySelection = currentCategorySelection.filter(
                 (cat) => cat !== 'All'
             );
-            const updatedTypeSelection = currentTypeSelection.filter(
-                (catType) => catType !== 'All'
-            );
+
             setHomeModalCategoryFilterSelect([
                 ...updatedCategorySelection,
                 category,
-            ]);
-            setHomeModalCategoryTypeFilterSelect([
-                ...updatedTypeSelection,
-                type,
             ]);
         }
     };
@@ -88,9 +69,7 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                     background: 'white',
                     color: 'black',
                 }}
-                onClick={() =>
-                    toggleCategorySelection(categoryName, categoryType)
-                }
+                onClick={() => toggleCategorySelection(categoryName)}
             >
                 <Image src={url} alt={categoryName} width={18} height={18} />
 

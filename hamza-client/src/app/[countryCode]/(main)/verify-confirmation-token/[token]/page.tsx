@@ -1,15 +1,17 @@
 'use client';
 
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import Input from '@modules/common/components/input';
 import { useEffect, useState } from 'react';
-import { Toast } from '@medusajs/ui';
+import toast from 'react-hot-toast';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { verifyToken } from '@lib/data/index';
 
 const VerifyEmail = () => {
-    const [message, setDisplayMessage] = useState(
-        'loading results, Please wait!!!!'
+    const [status, setStatus] = useState(
+        ''
+    );
+    const [message, setMessage] = useState(
+        ''
     );
     const router = useRouter();
     const { token } = useParams();
@@ -17,14 +19,20 @@ const VerifyEmail = () => {
 
     useEffect(() => {
         const confirmationTokenHandler = async () => {
-            let res: any = verifyToken(token as string);
-            if (res.status) {
-                setDisplayMessage('Email verified successfully!!!');
-                setCustomerAuthData({ ...authData, is_verified: true });
-                return;
-            } else {
-                setDisplayMessage(res?.message);
-                return;
+            if (status != 'ok') {
+                let res: any = await verifyToken(token as string);
+                if (res.status) {
+                    toast.success('Email verified successfully!');
+                    setCustomerAuthData({ ...authData, is_verified: true });
+
+                    setTimeout(() => {
+                        router.push('/account/');
+                    }, 3000);
+                    return;
+                } else {
+                    toast.error(res?.message);
+                    return;
+                }
             }
         };
         confirmationTokenHandler();

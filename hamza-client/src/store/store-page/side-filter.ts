@@ -7,27 +7,25 @@ interface CategoryItem {
 
 // Define the state and associated actions in an interface
 interface StoreFilterState {
-    selectCategoryStoreFilter: string[] | null;
-    categoryItemSideFilter: CategoryItem[] | null;
+    selectCategoryStoreFilter: string[];
+    categoryItemSideFilter: CategoryItem[];
     reviewStarsSelect: string | null;
     setSelectCategoryStoreFilter: (
-        items: string[] | ((prev: string[] | null) => string[] | null)
+        items: string[] | ((prev: string[]) => string[])
     ) => void;
     setCategoryItemSideFilter: (
-        items:
-            | CategoryItem[]
-            | ((prev: CategoryItem[] | null) => CategoryItem[] | null)
+        items: CategoryItem[] | ((prev: CategoryItem[]) => CategoryItem[])
     ) => void;
     setReviewStarsSelect: (stars: string | null) => void;
 }
 
 // Create the Zustand store
 const useSideFilter = create<StoreFilterState>((set) => ({
-    selectCategoryStoreFilter: ['All'], // Allow for multi-category selection
-    categoryItemSideFilter: null, // Initial state for category name and URL link
-    reviewStarsSelect: null,
+    selectCategoryStoreFilter: [], // Initialized to a default array
+    categoryItemSideFilter: [], // Initialized to an empty array
+    reviewStarsSelect: null, // Remains nullable since it's a single value
     setSelectCategoryStoreFilter: (
-        items: string[] | ((prev: string[] | null) => string[] | null)
+        items: string[] | ((prev: string[]) => string[])
     ) =>
         set((state) => ({
             selectCategoryStoreFilter:
@@ -36,9 +34,7 @@ const useSideFilter = create<StoreFilterState>((set) => ({
                     : items,
         })),
     setCategoryItemSideFilter: (
-        items:
-            | CategoryItem[]
-            | ((prev: CategoryItem[] | null) => CategoryItem[] | null)
+        items: CategoryItem[] | ((prev: CategoryItem[]) => CategoryItem[])
     ) =>
         set((state) => ({
             categoryItemSideFilter:

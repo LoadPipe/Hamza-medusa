@@ -4,7 +4,6 @@ import {
     CartService as MedusaCartService,
     MoneyAmount,
     Logger,
-    ShippingMethod
 } from '@medusajs/medusa';
 import CustomerRepository from '@medusajs/medusa/dist/repositories/customer';
 import { LineItem } from '../models/line-item';
@@ -12,7 +11,6 @@ import { Lifetime } from 'awilix';
 import { PriceConverter } from '../utils/price-conversion';
 import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 import { createLogger, ILogger } from '../utils/logging/logger';
-import ShippingMethodRepository from '@medusajs/medusa/dist/repositories/shipping-method';
 import ShippingOptionRepository from '@medusajs/medusa/dist/repositories/shipping-option';
 import { CartEmailRepository } from 'src/repositories/cart-email';
 
@@ -140,15 +138,13 @@ export default class CartService extends MedusaCartService {
             { relations: ['prices'] }
         );
 
-        //find either the preferred currency price, or just the first
+        //find the preferred currency price, or default
         let price: MoneyAmount = null;
-        if (preferredCurrency) {
-            price = variant.prices.find(
-                (p) => p.currency_code == preferredCurrency
-            );
-        }
+        price = variant.prices.find(
+            (p) => p.currency_code === (preferredCurrency ?? 'usdc')
+        );
 
         //if no preferred, return the first
-        return price?.currency_code ?? variant.prices[0].currency_code;
+        return price?.currency_code ?? 'usdc';
     }
 }

@@ -3,17 +3,6 @@ import ConfirmationTokenService from '../../../../services/confirmation-token';
 import { readRequestBody } from '../../../../utils/request-body';
 import { RouteHandler } from '../../../route-handler';
 
-/*
-checklist: 
-- check if route is used 
-- check route name 
-- check route verb 
-- remove commented code 
-- add securty if needed 
-- add validation 
-- remove req.query 
-*/
-
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     let confirmationTokenService: ConfirmationTokenService = req.scope.resolve(
         'confirmationTokenService'

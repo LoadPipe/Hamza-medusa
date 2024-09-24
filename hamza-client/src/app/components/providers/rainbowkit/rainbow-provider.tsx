@@ -16,7 +16,7 @@ import {
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 const queryClient = new QueryClient();
 import { SiweMessage } from 'siwe';
-import { getCustomer, getToken } from '@lib/data';
+import { clearAuthCookie, getCustomer, getHamzaCustomer, getToken } from '@lib/data';
 import { signOut } from '@modules/account/actions';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import axios from 'axios';
@@ -63,19 +63,21 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     }, [authData.status, customer_id]); // Dependency array includes any state variables that trigger a reload
 
     useEffect(() => {
-        getCustomer().then((customer) => {
-            console.log('CUSTOMER: ', customer);
-            if (!customer) {
-                console.log('setting auth to unauthenticated');
-                setCustomerAuthData({
-                    customer_id: '',
-                    is_verified: false,
-                    status: 'unauthenticated',
-                    token: '',
-                    wallet_address: '',
-                });
-                return;
-            }
+        getHamzaCustomer().then((hamzaCustomer) => {
+            console.log('CUSTOMER: ', hamzaCustomer);
+            getCustomer().then((customer) => {
+                if ((!customer || !hamzaCustomer) || customer?.id !== hamzaCustomer?.id) {
+                    console.log('setting auth to unauthenticated');
+                    setCustomerAuthData({
+                        customer_id: '',
+                        is_verified: false,
+                        status: 'unauthenticated',
+                        token: '',
+                        wallet_address: '',
+                    });
+                    clearAuthCookie();
+                }
+            });
         });
     }, [authData.wallet_address]);
 

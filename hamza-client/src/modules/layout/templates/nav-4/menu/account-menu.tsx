@@ -98,7 +98,7 @@ const AccountMenu = () => {
                     <Link href={`/account`}>
                         <MenuItem
                             fontWeight={'600'}
-                            mt="1rem"
+                            my="1rem"
                             pl="1rem"
                             color={'white'}
                             backgroundColor={'black'}
@@ -117,10 +117,12 @@ const AccountMenu = () => {
                         </MenuItem>
                     </Link>
                     {authData.is_verified === false && (
-                        <Link href={`/verify-email`}>
+                        <Link href={`/account/verify`}>
                             <MenuItem
                                 fontWeight={'600'}
                                 pl="1rem"
+                                mt="-1rem"
+                                mb="1rem"
                                 color={'white'}
                                 backgroundColor={'black'}
                                 _hover={{ color: 'primary.green.900' }}

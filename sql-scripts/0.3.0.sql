@@ -12,22 +12,22 @@ CREATE TABLE "bucky_logs"(
                 
 ALTER TABLE "payment" ADD "chain_id" bigint;
 
-UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/board-games.svg"}' where handle = 'board_games';
-UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/gaming.svg"}' where handle = 'gaming';
-UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/fitness.svg"}' where handle = 'fitness';
-UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/gadgets.svg"}' where handle = 'gadgets';
-UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/hobbies.svg"}' where handle = 'hobbies';
-UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/electronics.svg"}' where handle = 'electronics';
-UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/home.svg"}' where handle = 'home';
-UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/featured.svg"}' where handle = 'featured';
-UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/fashion.svg"}' where handle = 'fashion';
-UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/toys.svg"}' where handle = 'toys';
-UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/beauty.svg"}' where handle = 'beauty';
-UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/sports-outdoors.svg"}' where handle = 'sports_outdoors';
-UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/health.svg"}' where handle = 'health';
-UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/automotive.svg"}' where handle = 'automotive';
-UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/books.svg"}' where handle = 'books';
-UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/office.svg"}' where handle = 'office';
-UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.biz/category-icons/pets.svg"}' where handle = 'pets';
+UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.market/category-icons/board-games.svg"}' where handle = 'board_games';
+UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.market/category-icons/gaming.svg"}' where handle = 'gaming';
+UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.market/category-icons/fitness.svg"}' where handle = 'fitness';
+UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.market/category-icons/gadgets.svg"}' where handle = 'gadgets';
+UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.market/category-icons/hobbies.svg"}' where handle = 'hobbies';
+UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.market/category-icons/electronics.svg"}' where handle = 'electronics';
+UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.market/category-icons/home.svg"}' where handle = 'home';
+UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.market/category-icons/featured.svg"}' where handle = 'featured';
+UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.market/category-icons/fashion.svg"}' where handle = 'fashion';
+UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.market/category-icons/toys.svg"}' where handle = 'toys';
+UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.market/category-icons/beauty.svg"}' where handle = 'beauty';
+UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.market/category-icons/sports-outdoors.svg"}' where handle = 'sports_outdoors';
+UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.market/category-icons/health.svg"}' where handle = 'health';
+UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.market/category-icons/automotive.svg"}' where handle = 'automotive';
+UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.market/category-icons/books.svg"}' where handle = 'books';
+UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.market/category-icons/office.svg"}' where handle = 'office';
+UPDATE product_category set metadata = '{"icon_url":"https://images.hamza.market/category-icons/pets.svg"}' where handle = 'pets';
 
 

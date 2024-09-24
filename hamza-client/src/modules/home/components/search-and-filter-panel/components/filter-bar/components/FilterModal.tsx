@@ -44,21 +44,10 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
     onClose,
     categories,
 }) => {
-    const {
-        setCurrencySelect,
-        setReviewStarsSelect,
-        setCategorySelect,
-        setCategoryTypeSelect,
-    } = useHomeProductsPage();
+    const { setCategorySelect } = useHomeProductsPage();
 
     const {
-        homeModalCurrencyFilterSelect,
         homeModalCategoryFilterSelect,
-        homeModalCategoryTypeFilterSelect,
-        homeModalLowerPriceFilterSelect,
-        homeModalUpperPriceFilterSelect,
-        setHomeModalCategoryTypeFilterSelect,
-        setHomeModalCurrencyFilterSelect,
         setHomeModalCategoryFilterSelect,
         setHomeModalLowerPriceFilterSelect,
         setHomeModalUpperPriceFilterSelect,
@@ -76,10 +65,6 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
 
     const [range, setRange] = useState<RangeType>([0, 10000]);
 
-    console.log(
-        `what value is ${homeModalLowerPriceFilterSelect} and ${homeModalUpperPriceFilterSelect}`
-    );
-
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
@@ -88,6 +73,8 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
               metadata: category.metadata,
           }))
         : [];
+
+    const isDisabled = homeModalCategoryFilterSelect?.length === 0;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -123,7 +110,6 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                             (category: any, index: number) => (
                                 <CategoryModalButton
                                     key={index}
-                                    categoryType={category.id}
                                     categoryName={category.name}
                                     url={category.metadata?.icon_url}
                                 />
@@ -155,28 +141,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                             />
                         </>
                     )}
-                    {/* 
-                    <Text
-                        my="1.5rem"
-                        fontWeight={'600'}
-                        fontSize={'16px'}
-                        color="white"
-                    >
-                        Ratings
-                    </Text>
 
-                    <Flex
-                        mt="0.5rem"
-                        flexDirection={'row'}
-                        wrap={'wrap'}
-                        gap="12px"
-                    >
-                        <ReviewModalButton title={'All'} value={'All'} />
-                        <ReviewModalButton title={'4 Stars'} value={'4'} />
-                        <ReviewModalButton title={'3 Stars'} value={'3'} />
-                        <ReviewModalButton title={'2 Stars'} value={'2'} />
-                        <ReviewModalButton title={'1 Star'} value={'1'} />
-                    </Flex> */}
                     <Divider
                         mt="2rem"
                         opacity={'0.5'}
@@ -197,32 +162,21 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                         color={'white'}
                         backgroundColor={'transparent'}
                         onClick={() => {
-                            setHomeModalCategoryTypeFilterSelect(null),
-                                setHomeModalCurrencyFilterSelect(null),
-                                setHomeModalCategoryFilterSelect(null);
+                            setHomeModalCategoryFilterSelect([]);
                         }}
                     >
                         Clear All
                     </Button>
                     <Button
+                        isDisabled={isDisabled}
                         onClick={() => {
-                            if (homeModalCurrencyFilterSelect) {
-                                setCurrencySelect(
-                                    homeModalCurrencyFilterSelect
-                                );
-                            }
-
                             if (homeModalCategoryFilterSelect) {
                                 setCategorySelect(
                                     homeModalCategoryFilterSelect
-                                ); // Array of categories
-                                // setCategoryTypeSelect(
-                                //     homeModalCategoryTypeFilterSelect
-                                // );
+                                );
                             }
-                            setHomeModalCurrencyFilterSelect(null);
-                            setHomeModalCategoryFilterSelect(null);
-                            setHomeModalCategoryTypeFilterSelect(null);
+
+                            setHomeModalCategoryFilterSelect([]);
                             setHomeModalLowerPriceFilterSelect(range[0]);
                             setHomeModalUpperPriceFilterSelect(range[1]);
                             onClose();

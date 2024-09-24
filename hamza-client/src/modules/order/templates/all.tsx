@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { cancelOrder, getOrderBucket } from '@lib/data';
+import { getOrderBucket } from '@lib/data';
 import { Box, Button, Text } from '@chakra-ui/react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import CancelOrderModal from '../components/cancel-order-modal';
@@ -24,14 +24,7 @@ interface OrderState {
     Refunded: OrderType[];
 }
 
-const MIN_CANCEL_REASON_LENGTH = 30;
-
-const All = ({ orders }: { orders: any[] }) => {
-    const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [cancelReason, setCancelReason] = useState('');
-    const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
-    const [isCanceling, setIsCanceling] = useState(false);
+const All = ({ customer }: { customer: string }) => {
     const [customerId, setCustomerId] = useState<string | null>(null);
 
     const [customerOrder, setCustomerOrder] = useState<OrderState | null>({
@@ -44,15 +37,15 @@ const All = ({ orders }: { orders: any[] }) => {
 
     useEffect(() => {
         // console.log('Orders received in Cancelled:', orders);
-        if (orders && orders.length > 0) {
-            const customer_id = orders[0]?.customer_id;
+        if (customer && customer.length > 0) {
+            const customer_id = customer;
             // console.log(
             //     `Running fetchAllOrders with customerID ${customer_id}`
             // );
             fetchAllOrders(customer_id);
             setCustomerId(customer_id);
         }
-    }, [orders]);
+    }, [customer]);
 
     const fetchAllOrders = async (customerId: string) => {
         try {
@@ -100,30 +93,7 @@ const All = ({ orders }: { orders: any[] }) => {
             });
         }
     };
-    const closeCancelModal = () => {
-        setIsModalOpen(false);
-        setCancelReason('');
-        setIsAttemptedSubmit(false);
-    };
 
-    const handleCancel = async () => {
-        if ((cancelReason?.length ?? 0) < MIN_CANCEL_REASON_LENGTH) {
-            setIsAttemptedSubmit(true);
-            return;
-        }
-        if (!selectedOrderId) return;
-
-        setIsCanceling(true); //start loader for button in modal
-
-        try {
-            await cancelOrder(selectedOrderId);
-        } catch (error) {
-            console.error('Error cancelling order: ', error);
-        } finally {
-            setIsCanceling(false);
-            closeCancelModal();
-        }
-    };
     const areAllOrdersEmpty = customerOrder
         ? Object.values(customerOrder).every(
               (orderArray) => orderArray.length === 0
@@ -136,19 +106,19 @@ const All = ({ orders }: { orders: any[] }) => {
             {!areAllOrdersEmpty ? (
                 <Box>
                     <Box mt={4} mb={2}>
-                        <Processing orders={orders} />
+                        <Processing customer={customer} />
                     </Box>
                     <Box mt={4} mb={2}>
-                        <Shipped orders={orders} />
+                        <Shipped customer={customer} />
                     </Box>
                     <Box mt={4} mb={2}>
-                        <Delivered orders={orders} />
+                        <Delivered customer={customer} />
                     </Box>
                     <Box mt={4} mb={2}>
-                        <Cancelled orders={orders} />
+                        <Cancelled customer={customer} />
                     </Box>
                     <Box mt={4} mb={2}>
-                        <Refund orders={orders} />
+                        <Refund customer={customer} />
                     </Box>
                 </Box>
             ) : (
@@ -174,16 +144,6 @@ const All = ({ orders }: { orders: any[] }) => {
                     </LocalizedClientLink>
                 </Box>
             )}
-
-            <CancelOrderModal
-                isModalOpen={isModalOpen}
-                closeCancelModal={closeCancelModal}
-                handleCancel={handleCancel}
-                cancelReason={cancelReason}
-                setCancelReason={setCancelReason}
-                isAttemptedSubmit={isAttemptedSubmit}
-                isCanceling={isCanceling}
-            />
         </Box>
     );
 };
