@@ -745,6 +745,16 @@ export async function getHamzaCustomer(includeAddresses: boolean = true) {
     return response ?? {};
 }
 
+export async function clearAuthCookie() {
+    try {
+        cookies().set('_medusa_jwt', '', {
+            maxAge: -1,
+        });
+    } catch (e) {
+        console.error(e);
+    }
+}
+
 // Customer actions
 export async function getCustomer() {
     const headers = getMedusaHeaders(['customer']);
