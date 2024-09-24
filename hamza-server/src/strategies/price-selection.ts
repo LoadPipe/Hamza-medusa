@@ -50,9 +50,6 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
         const preferredCurrency: string =
             await this.getCustomerPreferredCurrency(context.customer_id);
 
-        console.log(context.customer_id);
-        console.log(preferredCurrency);
-
         //get all relevant variants, including preferred currency (if any)
         return await this.getPricesForVariants(
             data.map((d) => d.variantId), //variant ids

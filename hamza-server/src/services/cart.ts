@@ -38,32 +38,46 @@ export default class CartService extends MedusaCartService {
     }
 
     async retrieve(cartId: string, options?: FindConfig<Cart>, totalsConfig?: { force_taxes?: boolean; }): Promise<Cart> {
+        //add items & variant prices, and store (for default currency)
+        if (options?.relations) {
+            options.relations.push('items.variant.prices');
+            options.relations.push('items.variant.product.store');
+        }
+        else {
+            if (!options) options = {};
+            options.relations = ['items.variant.prices', 'items.variant.product.store'];
+        }
         const cart = await super.retrieve(cartId, options, totalsConfig);
 
         if (cart?.items) {
 
-            let currencyCode = 'usdc';
+            //get customer preferred currency
+            let userPreferredCurrency = 'usdc';
             if (cart.customer_id) {
                 if (cart.customer_id && !cart.customer)
                     cart.customer = await this.customerRepository_.findOne({ where: { id: cart.customer_id } });
 
-                currencyCode = cart.customer?.preferred_currency_id ?? currencyCode;
+                userPreferredCurrency = cart.customer?.preferred_currency_id ?? userPreferredCurrency;
             }
 
+            //adjust price for each line item, convert if necessary
             const itemsToSave: LineItem[] = [];
             for (let item of cart.items) {
-                if (item.currency_code != currencyCode) {
-                    this.logger.info(`cart item with currency ${item.currency_code} amount ${item.unit_price} changing to ${currencyCode}`)
+                let storeCurrency = item.variant.product.store?.default_currency_code;
+                item.currency_code = storeCurrency;
+                item.unit_price = item.variant.prices.find(p => p.currency_code === storeCurrency).amount;
+                if (storeCurrency != userPreferredCurrency) {
+                    this.logger.info(`cart item with currency ${storeCurrency} amount ${item.unit_price} changing to ${userPreferredCurrency}`)
 
                     const newPrice = await this.priceConverter.getPrice(
-                        { baseAmount: item.unit_price, baseCurrency: item.currency_code, toCurrency: currencyCode }
+                        { baseAmount: item.unit_price, baseCurrency: storeCurrency, toCurrency: userPreferredCurrency }
                     );
                     item.unit_price = newPrice;
-                    item.currency_code = currencyCode;
+                    item.currency_code = userPreferredCurrency;
 
-                    this.logger.info(`cart item with currency ${item.currency_code} amount ${item.unit_price} changed to ${currencyCode} with new price ${item.unit_price}`)
                     itemsToSave.push(item);
                 }
+                item.variant.product.store = null;
             }
 
             if (itemsToSave.length) {
