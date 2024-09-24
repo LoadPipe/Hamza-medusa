@@ -13,6 +13,7 @@ import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import ShippingOptionRepository from '@medusajs/medusa/dist/repositories/shipping-option';
 import { CartEmailRepository } from 'src/repositories/cart-email';
+import { IsNull } from 'typeorm';
 
 export default class CartService extends MedusaCartService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
@@ -90,6 +91,24 @@ export default class CartService extends MedusaCartService {
         const cartEmail = await this.cartEmailRepository_.findOne({ where: { id: cartId } });
         if (cartEmail)
             cart.email = cartEmail.email_address;
+
+        return cart;
+    }
+
+    async recover(customerId: string): Promise<Cart> {
+        //get last three carts 
+        const carts = await this.cartRepository_.find({
+            where: { customer_id: customerId },
+            order: { updated_at: "DESC" },
+            take: 1
+        });
+
+        //only return if the most recent one is not completed
+        let cart = null;
+        if (carts.length > 0) {
+            if (!carts[0].completed_at)
+                cart = carts[0];
+        }
 
         return cart;
     }

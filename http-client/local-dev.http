@@ -304,6 +304,9 @@ Content-Type: application/json
     "cart_id": "cart_01J6FRGW4Y4ZNVKVA2FHEM7N9A"
 }
 
+### GET request to recover a customer's last cart
+GET http://localhost:9000/custom/cart/recover?customer_id=cus_01J8FQES9MPH63SMSS52PS58GP
+
 
 ### Get Specific Customers All Orders METHOD: listCustomerOrders() in order.ts
 GET http://localhost:9000/custom/order/customer-orders?customer_id=cus_01J6FRW042PD32F7TVC0Z0D5V7&buckets=true
