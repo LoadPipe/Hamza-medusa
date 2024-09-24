@@ -205,6 +205,7 @@ export default class BuckydropService extends TransactionBaseService {
             }
 
             if (subtotal > 0) {
+                /*
                 const estimate =
                     await this.buckyClient.getShippingCostEstimate(input);
 
@@ -217,8 +218,9 @@ export default class BuckydropService extends TransactionBaseService {
                     );
                     gotPrice = true;
                 }
+                */
 
-                output = subtotal;
+                output = SHIPPING_COST_MAX; // subtotal;
                 output =
                     output < SHIPPING_COST_MIN ? SHIPPING_COST_MIN : output;
                 output =
@@ -227,7 +229,7 @@ export default class BuckydropService extends TransactionBaseService {
                 //convert to final currency
                 if (currency != 'usdc')
                     output = await this.priceConverter.convertPrice(
-                        estimate.data.total,
+                        output, //estimate.data.total,
                         'usdc',
                         currency
                     );
