@@ -96,13 +96,21 @@ export default class CartService extends MedusaCartService {
     }
 
     async recover(customerId: string): Promise<Cart> {
+        //get last three carts 
         const carts = await this.cartRepository_.find({
-            where: { customer_id: customerId, completed_at: IsNull() },
-            order: { updated_at: "desc" }
+            where: { customer_id: customerId },
+            order: { updated_at: "DESC" },
+            take: 1
         });
 
-        console.log('carts.length is', carts.length);
-        return carts?.length ? carts[0] : null;
+        //only return if the most recent one is not completed
+        let cart = null;
+        if (carts.length > 0) {
+            if (!carts[0].completed_at)
+                cart = carts[0];
+        }
+
+        return cart;
     }
 
     async addDefaultShippingMethod(cartId: string): Promise<void> {
