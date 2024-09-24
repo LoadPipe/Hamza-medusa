@@ -17,7 +17,7 @@ class WishlistService extends TransactionBaseService {
         this.customerService = container.customerService;
     }
 
-    async create(customer_id) {
+    async createOrRetrieve(customer_id) {
         const wishlistRepository = this.activeManager_.getRepository(Wishlist);
         return await this.atomicPhase_(async (transactionManager) => {
             if (!customer_id) {

@@ -284,7 +284,6 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                 <Text
                                     color={'white'}
                                     alignSelf={'center'}
-                                    w
                                     fontSize={'24px'}
                                     fontWeight={700}
                                 >
