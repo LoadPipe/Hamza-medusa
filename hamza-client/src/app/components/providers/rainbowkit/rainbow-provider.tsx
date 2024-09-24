@@ -16,7 +16,7 @@ import {
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 const queryClient = new QueryClient();
 import { SiweMessage } from 'siwe';
-import { clearAuthCookie, getCustomer, getHamzaCustomer, getToken } from '@lib/data';
+import { clearAuthCookie, getCart, getCustomer, getHamzaCustomer, getToken, recoverCart } from '@lib/data';
 import { signOut } from '@modules/account/actions';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import axios from 'axios';
@@ -139,7 +139,9 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         email: data.data.email,
                         password: '',
                     });
-                    setCustomerId(data.data.customer_id);
+
+                    const customerId = data.data.customer_id;
+                    setCustomerId(customerId);
                     console.log('token response is ', tokenResponse);
                     Cookies.set('_medusa_jwt', tokenResponse);
                     //localStorage.setItem('_medusa_jwt', tokenResponse);
@@ -156,6 +158,14 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     );
 
                     setWhitelistConfig(data.data.whitelist_config);
+
+                    try {
+                        recoverCart(customerId);
+                    }
+                    catch (e) {
+                        console.log('Error recovering cart');
+                        console.error(e);
+                    }
 
                     return true;
                 } else {
