@@ -23,6 +23,7 @@ import CartPopup from '../../cart-popup';
 import { getAverageRatings, getStore, getReviewCount } from '@lib/data';
 import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
 import Spinner from '@modules/common/icons/spinner';
+import TermsOfService from './terms-of-service/product-details-tos';
 
 interface PreviewCheckoutProps {
     productId: string;
@@ -173,7 +174,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                             (p: any) =>
                                 p.currency_code ===
                                 (preferred_currency_code ?? 'usdc')
-                        ) || selectedProductVariant.prices[0];
+                        );;
 
                     // Update the price state
                     setSelectedPrice(price?.amount ?? 0);
@@ -197,7 +198,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 variantId: selectedVariant.id!,
                 quantity: quantity,
                 countryCode: countryCode,
-                currencyCode: 'eth',
             });
 
             if (showPopup) {
@@ -219,7 +219,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             console.log('white list config ', whitelist_config);
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                whitelist_config.whitelisted_stores.includes(data.data)
+                    whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -533,8 +533,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     {!inStock && isWhitelisted
                         ? 'Add to cart'
                         : inStock
-                          ? 'Add to Cart'
-                          : 'Out of Stock'}
+                            ? 'Add to Cart'
+                            : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs text-white px-4 py-2">
@@ -547,6 +547,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     display={{ base: 'block', md: 'none' }}
                     mt="2rem"
                 />
+
                 <CartPopup
                     open={cartModalOpen}
                     closeModal={() => {
@@ -554,6 +555,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     }}
                 />
             </Flex>
+
+            {/* TOS */}
+            <TermsOfService />
         </Flex>
     );
 };

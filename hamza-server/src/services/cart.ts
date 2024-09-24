@@ -138,15 +138,13 @@ export default class CartService extends MedusaCartService {
             { relations: ['prices'] }
         );
 
-        //find either the preferred currency price, or just the first
+        //find the preferred currency price, or default
         let price: MoneyAmount = null;
-        if (preferredCurrency) {
-            price = variant.prices.find(
-                (p) => p.currency_code == preferredCurrency
-            );
-        }
+        price = variant.prices.find(
+            (p) => p.currency_code === (preferredCurrency ?? 'usdc')
+        );
 
         //if no preferred, return the first
-        return price?.currency_code ?? variant.prices[0].currency_code;
+        return price?.currency_code ?? 'usdc';
     }
 }

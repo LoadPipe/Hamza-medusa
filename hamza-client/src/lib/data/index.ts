@@ -501,13 +501,11 @@ export async function getCart(cartId: string) {
 export async function addItem({
     cartId,
     variantId,
-    quantity,
-    currencyCode,
+    quantity
 }: {
     cartId: string;
     variantId: string;
     quantity: number;
-    currencyCode: string;
 }) {
     const headers = getMedusaHeaders(['cart']);
 
