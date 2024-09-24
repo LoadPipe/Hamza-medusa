@@ -234,7 +234,12 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                             size={'16.35px'}
                         />
                     </Flex>
-                    <Flex flexDir={'row'} align="center">
+                    <Flex
+                        flexDir={'row'}
+                        align="center"
+                        justify="space-between"
+                        width="100%"
+                    >
                         {/* Product image and Description */}
                         <LocalizedClientLink
                             href={`/products/${productData.handle}`}
