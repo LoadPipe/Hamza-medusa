@@ -270,7 +270,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                 height={'22px'}
                                 alignItems={'center'}
                                 mb="auto"
-                                mr="0.5rem"
+                                mr="auto"
                                 shrink={0}
                             >
                                 <Image
@@ -280,14 +280,11 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                     layout="fixed"
                                 />
                             </Flex>
-                            <Flex
-                                height={'22px'}
-                                alignItems={'center'}
-                                mr="1rem"
-                            >
+                            <Flex height={'22px'} alignItems={'center'}>
                                 <Text
                                     color={'white'}
                                     alignSelf={'center'}
+                                    w
                                     fontSize={'24px'}
                                     fontWeight={700}
                                 >
