@@ -101,7 +101,7 @@ const VerifyEmail = () => {
                     borderRadius={'12px'}
                     height={'50px'}
                     onChange={(e) => {
-                        setEmail(e.target.value);
+                        setEmail(e.target.value.toLowerCase());
                     }}
                 />
 
