@@ -22,6 +22,8 @@ import PaymentPolicy from './policies/payment-policy';
 import ReturnPolicy from './policies/return-policy';
 import { MdCurrencyBitcoin } from 'react-icons/md';
 import { FiTruck } from 'react-icons/fi';
+import { GiAnticlockwiseRotation } from 'react-icons/gi';
+import { BsBoxSeam } from 'react-icons/bs';
 
 const TermsOfService = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -40,12 +42,12 @@ const TermsOfService = () => {
         <Flex mt="1rem" flexDir={'column'} gap={5}>
             <Flex flexDir={'row'}>
                 <Flex maxW={'133px'} width={'100%'} flexDir={'row'} gap={2}>
-                    <FiTruck
+                    <BsBoxSeam
                         color="white"
                         size={20}
                         style={{ alignSelf: 'center' }}
                     />
-                    <Text color={'white'}>Delivery:</Text>
+                    <Text color={'white'}>Shipping:</Text>
                 </Flex>
                 <Text
                     textDecor={'underline'}
@@ -58,8 +60,17 @@ const TermsOfService = () => {
             </Flex>
 
             <Flex flexDir={'row'}>
-                <Flex maxW={'133px'} width={'100%'}>
-                    <Text color={'white'}>Returns:</Text>
+                <Flex maxW={'133px'} width={'100%'} gap={2}>
+                    <GiAnticlockwiseRotation
+                        size={20}
+                        color="white"
+                        style={{
+                            marginBottom: 'auto',
+                        }}
+                    />
+                    <Text color={'white'} display={'flex'} flexDir={'row'}>
+                        Returns:
+                    </Text>
                 </Flex>
                 <Text color={'white'} cursor={'pointer'}>
                     30 days returns. Buyer pays for return shipping.{' '}
@@ -78,7 +89,7 @@ const TermsOfService = () => {
             <Flex flexDir={'row'}>
                 <Flex maxW={'133px'} width={'100%'} flexDir={'row'} gap={1}>
                     <MdCurrencyBitcoin
-                        size={'20'}
+                        size={20}
                         color="white"
                         style={{ alignSelf: 'center' }}
                     />
