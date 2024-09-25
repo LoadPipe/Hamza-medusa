@@ -2,11 +2,11 @@ import {
     Cart,
     CartCompletionResponse,
     IdempotencyKeyService,
-    ProductService,
-    CartService,
     Logger,
 } from '@medusajs/medusa';
 import OrderService from '../../services/order';
+import CartService from '../../services/cart';
+import ProductService from '../../services/product';
 import { PaymentService } from '@medusajs/medusa/dist/services';
 import { Payment } from '../../models/payment';
 import { Order } from '../../models/order';

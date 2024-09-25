@@ -227,6 +227,7 @@ export default class OrderService extends MedusaOrderService {
         const orderPromises = this.getPostCheckoutUpdateOrderPromises(orders);
 
         await this.eventBus_.emit('order.placed', {
+            customerId: orders[0].customer_id,
             orderIds: orderIds,
             orderId: orderIds[0],
             ...orders[0],

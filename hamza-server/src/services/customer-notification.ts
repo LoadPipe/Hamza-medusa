@@ -17,6 +17,12 @@ const notificationTypes = [
     //{ name: 'whatsapp' },
 ];
 
+export declare enum NotificationType {
+    OrderShipped = 'orderShipped',
+    OrderStatusChanged = 'orderStatusChanged',
+    Email = 'email'
+}
+
 class CustomerNotificationService extends TransactionBaseService {
     static LIFE_TIME = Lifetime.SCOPED;
     protected readonly logger: ILogger;
@@ -110,6 +116,19 @@ class CustomerNotificationService extends TransactionBaseService {
             this.logger.error(`Error removing notification: ${e}`);
             throw e;
         }
+    }
+
+    async hasNotification(customerId: string, notificationType: NotificationType): Promise<boolean> {
+        return this.hasNotifications(customerId, [notificationType]);
+    }
+
+    async hasNotifications(customerId: string, notificationTypes: string[]): Promise<boolean> {
+        const notifications: string[] = await this.getNotificationTypes(customerId);
+        for (let nt of notificationTypes) {
+            if (!notifications.includes(nt.toString()))
+                return false;
+        }
+        return true;
     }
 
     async setDefaultNotifications(customerId: string): Promise<void> {
