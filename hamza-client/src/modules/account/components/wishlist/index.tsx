@@ -64,7 +64,7 @@ const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
                             productDescription={product.title}
                             productPrice={productPrice(
                                 product.price,
-                                preferred_currency_code as string
+                                preferred_currency_code ?? 'usdc'
                             )}
                             countryCode={countryCode}
                         />
