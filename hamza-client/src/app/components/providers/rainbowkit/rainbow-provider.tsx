@@ -26,17 +26,17 @@ import useWishlistStore from '@store/wishlist/wishlist-store';
 
 const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
-const VERIFY_MSG = `${MEDUSA_SERVER_URL}/custom/verify`;
-const GET_NONCE = `${MEDUSA_SERVER_URL}/custom/nonce`;
+const VERIFY_MSG_URL = `${MEDUSA_SERVER_URL}/custom/verify`;
+const GET_NONCE_URL = `${MEDUSA_SERVER_URL}/custom/nonce`;
 
 async function sendVerifyRequest(message: any, signature: any) {
-    return await axios({
+    return await axios.post(VERIFY_MSG_URL, {
         method: 'post',
+        cache: false,
         data: {
             message,
             signature,
         },
-        url: `${VERIFY_MSG}`,
         headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',
@@ -84,7 +84,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     const walletSignature = createAuthenticationAdapter({
         getNonce: async () => {
             console.log('FETCHING NONCE.....');
-            const response = await fetch(GET_NONCE);
+            const response = await fetch(GET_NONCE_URL);
             const data = await response.json();
             console.log('NONCE DATA: ', data.nonce);
             return data?.nonce ?? '';
@@ -140,40 +140,55 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         password: '',
                     });
 
-                    const customerId = data.data.customer_id;
-                    setCustomerId(customerId);
-                    console.log('token response is ', tokenResponse);
-                    Cookies.set('_medusa_jwt', tokenResponse);
-                    //localStorage.setItem('_medusa_jwt', tokenResponse);
+                    //check that customer data and wallet address match 
+                    if (data.data.wallet_address.trim().toLowerCase() === message.address) {
+                        const customerId = data.data.customer_id;
+                        setCustomerId(customerId);
+                        console.log('token response is ', tokenResponse);
+                        Cookies.set('_medusa_jwt', tokenResponse);
+                        //localStorage.setItem('_medusa_jwt', tokenResponse);
 
-                    setCustomerAuthData({
-                        token: tokenResponse,
-                        wallet_address: message.address,
-                        customer_id: data.data.customer_id,
-                        is_verified: data.data.is_verified,
-                        status: 'authenticated',
-                    });
-                    setCustomerPreferredCurrency(
-                        data.data.preferred_currency.code
-                    );
+                        setCustomerAuthData({
+                            token: tokenResponse,
+                            wallet_address: message.address,
+                            customer_id: data.data.customer_id,
+                            is_verified: data.data.is_verified,
+                            status: 'authenticated',
+                        });
 
-                    setWhitelistConfig(data.data.whitelist_config);
+                        setCustomerPreferredCurrency(
+                            data.data.preferred_currency.code
+                        );
 
-                    try {
-                        recoverCart(customerId);
+                        setWhitelistConfig(data.data.whitelist_config);
+
+                        try {
+                            recoverCart(customerId);
+                        }
+                        catch (e) {
+                            console.log('Error recovering cart');
+                            console.error(e);
+                        }
+
+                        return true;
                     }
-                    catch (e) {
-                        console.log('Error recovering cart');
-                        console.error(e);
+                    else {
+                        console.log('Wallet address mismatch on login');
+                        setCustomerAuthData({
+                            ...authData,
+                            status: 'unauthenticated',
+                        });
+                        clearAuthCookie();
+                        return false;
                     }
 
-                    return true;
                 } else {
                     console.log('running verify unauthenticated');
                     setCustomerAuthData({
                         ...authData,
                         status: 'unauthenticated',
                     });
+                    clearAuthCookie();
                     throw new Error(data.message);
                 }
 
