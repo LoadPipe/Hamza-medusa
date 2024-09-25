@@ -191,18 +191,24 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                             )}
                                         </Text>
                                         <Flex alignItems="center" gap={2}>
-                                            <Image
-                                                rounded={'lg'}
-                                                width={{
-                                                    base: '50px',
-                                                    md: '72px',
-                                                }}
-                                                height={{
-                                                    base: '50px',
-                                                    md: '72px',
-                                                }}
-                                                src={review.product.thumbnail}
-                                            />
+                                            <Link
+                                                href={`/us/products/${review.product.handle}`}
+                                            >
+                                                <Image
+                                                    rounded={'lg'}
+                                                    width={{
+                                                        base: '50px',
+                                                        md: '72px',
+                                                    }}
+                                                    height={{
+                                                        base: '50px',
+                                                        md: '72px',
+                                                    }}
+                                                    src={
+                                                        review.product.thumbnail
+                                                    }
+                                                />
+                                            </Link>
                                             <Text
                                                 maxWidth={{
                                                     base: '300px',

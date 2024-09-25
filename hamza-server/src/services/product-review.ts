@@ -137,25 +137,17 @@ class ProductReviewService extends TransactionBaseService {
         try {
             const productReviewRepository =
                 this.activeManager_.getRepository(ProductReview);
-
-            // Join the ProductReview with the Product table to access the handle
-            const productReview = await productReviewRepository
-                .createQueryBuilder('review')
-                .leftJoinAndSelect('review.product', 'product') // assuming the relationship name is 'product'
-                .select(['review.content', 'review.rating', 'product.handle']) // explicitly select fields to fetch
-                .where('review.order_id = :order_id', { order_id })
-                .andWhere('review.product_id = :product_id', { product_id })
-                .getOne();
+            const productReview = await productReviewRepository.findOne({
+                where: { order_id, product_id: product_id },
+            });
 
             console.log(`ProductReview is ${JSON.stringify(productReview)}`);
-
-            if (!productReview) {
-                return { content: '', rating: 0, handle: '' };
+            if (productReview === undefined) {
+                return { content: '', rating: 0 };
             }
-            const { content, rating, product } = productReview;
+            const { content, rating } = productReview;
 
-            // Extract handle from product if product data is available
-            return { content, rating, handle: product ? product.handle : '' };
+            return { content, rating };
         } catch (e) {
             this.logger.error(`Error fetching specific review: ${e}`);
             throw e;
@@ -207,9 +199,12 @@ class ProductReviewService extends TransactionBaseService {
             .select([
                 'review', // Assuming you want the review's ID; add other review fields as needed
                 'product.thumbnail', // This specifies that only the thumbnail field from the product should be included
+                'product.handle',
             ])
             .where('review.customer_id = :customer_id', { customer_id })
             .getMany();
+
+        console.log(`reviews: ${JSON.stringify(reviews)}`);
 
         if (!reviews.length) {
             throw new Error('No reviews found');
