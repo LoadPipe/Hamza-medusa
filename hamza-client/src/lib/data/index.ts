@@ -53,7 +53,7 @@ async function axiosCall(
         url = `${BACKEND_URL}${url}`;
 
         let config: any = {
-            cache: false, headers: { 'Cache-Control': 'no-store' }
+            cache: false, headers: { 'Cache-Control': 'no-cache, no-store' }
         };
         if (requiresSecurity) {
             config.headers.authorization = cookies().get('_medusa_jwt')?.value

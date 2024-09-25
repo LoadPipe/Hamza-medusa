@@ -30,18 +30,33 @@ const VERIFY_MSG_URL = `${MEDUSA_SERVER_URL}/custom/verify`;
 const GET_NONCE_URL = `${MEDUSA_SERVER_URL}/custom/nonce`;
 
 async function sendVerifyRequest(message: any, signature: any) {
-    return await axios.post(VERIFY_MSG_URL, {
-        method: 'post',
-        cache: false,
-        data: {
+    return await axios.post(VERIFY_MSG_URL,
+        {
             message,
             signature,
         },
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                //'Cache-control': 'no-cache, no-store',
+                Accept: 'application/json',
+            }
+        }
+    );
+}
+
+async function getNonce() {
+    //const response = await fetch(GET_NONCE_URL);
+    //const data = await response.json();
+    const output = await axios.get(GET_NONCE_URL, {
         headers: {
             'Content-Type': 'application/json',
+            'Cache-control': 'no-cache, no-store',
             Accept: 'application/json',
         },
     });
+
+    return output?.data?.nonce ?? '';
 }
 
 export function RainbowWrapper({ children }: { children: React.ReactNode }) {
@@ -83,11 +98,8 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
 
     const walletSignature = createAuthenticationAdapter({
         getNonce: async () => {
-            console.log('FETCHING NONCE.....');
-            const response = await fetch(GET_NONCE_URL);
-            const data = await response.json();
-            console.log('NONCE DATA: ', data.nonce);
-            return data?.nonce ?? '';
+            const nonce = await getNonce();
+            return nonce ?? '';
         },
 
         createMessage: ({ nonce, address, chainId }) => {
@@ -108,9 +120,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         },
 
         getMessageBody: ({ message }) => {
-            console.log('Preparing message:', message);
             const preparedMessage = message.prepareMessage();
-            console.log('Message prepared:', preparedMessage);
             return preparedMessage;
         },
 
@@ -141,10 +151,9 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     });
 
                     //check that customer data and wallet address match 
-                    if (data.data.wallet_address.trim().toLowerCase() === message.address) {
+                    if (data.data.wallet_address.trim().toLowerCase() === message?.address?.trim()?.toLowerCase()) {
                         const customerId = data.data.customer_id;
                         setCustomerId(customerId);
-                        console.log('token response is ', tokenResponse);
                         Cookies.set('_medusa_jwt', tokenResponse);
                         //localStorage.setItem('_medusa_jwt', tokenResponse);
 
@@ -163,6 +172,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         setWhitelistConfig(data.data.whitelist_config);
 
                         try {
+                            console.log('recovering cart');
                             recoverCart(customerId);
                         }
                         catch (e) {
