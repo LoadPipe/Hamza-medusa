@@ -60,7 +60,7 @@ async function axiosCall(
         }
 
         //caching false by default
-        if (!payload.cache) {
+        if (payload && !payload.cache) {
             payload.cache = false
         }
 

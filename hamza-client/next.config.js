@@ -64,6 +64,10 @@ const nextConfig = withStoreConfig({
             {
                 protocol: 'https',
                 hostname: 'global-img-cdn.1688.com'
+            },
+            {
+                protocol: 'https',
+                hostname: 'static.snapchum.com'
             }
         ],
     },
