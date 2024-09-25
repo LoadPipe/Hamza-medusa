@@ -95,7 +95,7 @@ const AccountMenu = () => {
                             borderColor={'white'}
                         />
                     </Box>
-                    <Link href={`/account`}>
+                    <Link href={`/account/profile`}>
                         <MenuItem
                             fontWeight={'600'}
                             my="1rem"
