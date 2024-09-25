@@ -122,7 +122,7 @@ class CustomerNotificationService extends TransactionBaseService {
         return this.hasNotifications(customerId, [notificationType]);
     }
 
-    async hasNotifications(customerId: string, notificationTypes: NotificationType[]): Promise<boolean> {
+    async hasNotifications(customerId: string, notificationTypes: string[]): Promise<boolean> {
         const notifications: string[] = await this.getNotificationTypes(customerId);
         for (let nt of notificationTypes) {
             if (!notifications.includes(nt.toString()))

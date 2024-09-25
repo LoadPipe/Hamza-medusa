@@ -38,14 +38,15 @@ class SmtpNotificationService extends AbstractNotificationService {
     }> {
         switch (event) {
             case 'order.placed':
-                if (this.logger) console.log('sending email to ', data);
                 const customerId = data.customerId;
                 if (!this.customerNotificationService_.hasNotifications(
                     customerId,
-                    [NotificationType.Email, NotificationType.OrderStatusChanged])
+                    ['email', 'orderStatusChanged'])
                 ) {
                     return;
                 }
+
+                this.logger.info(`sending email to ${data}`);
 
                 let ordersData = await Promise.all(
                     data.orderIds.map(async (orderId: string) => {

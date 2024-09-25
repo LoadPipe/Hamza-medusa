@@ -152,7 +152,6 @@ export class BasicCheckoutProcessor {
                 'customer'
             ],
         });
-        console.log(this.cart);
     }
 
     /**
