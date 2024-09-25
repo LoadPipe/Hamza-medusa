@@ -47,7 +47,7 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                         authData.customer_id
                     );
                     console.log('Notification Data:', response);
-                    setSelectedNotifications(response.types);
+                    setSelectedNotifications(response);
                 } catch (error) {
                     console.error(
                         'Error fetching notification preferences:',
