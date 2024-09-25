@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { verifyToken } from '@lib/data/index';
 import { Box, Flex, Text, Button } from '@chakra-ui/react';
+import { FaRegCheckCircle } from 'react-icons/fa';
 
 const VerifyEmail = () => {
     const [status, setStatus] = useState('');
@@ -39,14 +40,9 @@ const VerifyEmail = () => {
     }, []);
 
     return (
-        <Flex
-            direction="column"
-            justify="center"
-            align="center"
-            height={'100vh'}
-            p={4}
-        >
+        <Flex direction="column" align="center" height={'100vh'} p={4}>
             <Flex
+                mt="4rem"
                 p={'24px'}
                 borderRadius={'12px'}
                 maxWidth={'435px'}
@@ -54,17 +50,28 @@ const VerifyEmail = () => {
                 width={'100%'}
                 backgroundColor={'#121212'}
                 flexDirection={'column'}
-                justifyContent={'center'}
+                justifyContent={'space-evenly'}
                 alignItems={'center'}
                 color={'white'}
-                gap={2}
             >
-                <Text fontSize={'24px'}>You account has been verified!</Text>
+                <FaRegCheckCircle color={'#94D42A'} size={72} />
+                <Text fontSize={'24px'} fontWeight={900} mt="1rem">
+                    Your account has been verified!
+                </Text>
                 <Text textAlign={'center'}>
                     Your account is now fully activated, and you can start
                     enjoying all the features.
                 </Text>
-                <Button mt="2rem">Go Back Home</Button>
+                <a href="/">
+                    <Button
+                        borderRadius={'full'}
+                        backgroundColor={'primary.green.900'}
+                        height={'44px'}
+                        mt="2rem"
+                    >
+                        Go Back Home
+                    </Button>
+                </a>
             </Flex>
         </Flex>
     );
