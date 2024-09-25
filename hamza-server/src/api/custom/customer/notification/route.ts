@@ -21,7 +21,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         //security
         if (!handler.enforceCustomerId(handler.inputParams.customer_id)) return;
 
-        const types = await customerNotificationService.getNotifications(
+        const types = await customerNotificationService.getNotificationTypes(
             handler.inputParams.customer_id
         );
 
