@@ -31,19 +31,16 @@ const VerifyEmail = () => {
 
     // Email input hook
     const [email, setEmail] = useState('');
+    const [loading, setLoading] = useState(false);
 
     // Routing
     const router = useRouter();
     const authParams = `customer_id=${authData.customer_id}`;
 
-    // //
-    // if (authData.status == 'unauthenticated') {
-    //     return <div>Please connect wallet before adding email address.</div>;
-    // }
-
     // Email validation
     const emailVerificationHandler = async () => {
-        // Regular expression for basic email validation
+        setLoading(true);
+        console.log('hello');
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (email.trim() === '') {
@@ -57,8 +54,9 @@ const VerifyEmail = () => {
         }
 
         try {
+            console.log('response lets go');
             let res: any = await verifyEmail(authData.customer_id, email);
-
+            console.log('response', res);
             if (res !== undefined) {
                 toast.success('Email sent successfully!');
                 router.replace('/');
@@ -70,6 +68,8 @@ const VerifyEmail = () => {
             toast.error(
                 'An error occurred while sending the email. Please try again.'
             );
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -101,7 +101,7 @@ const VerifyEmail = () => {
                     borderRadius={'12px'}
                     height={'50px'}
                     onChange={(e) => {
-                        setEmail(e.target.value);
+                        setEmail(e.target.value.toLowerCase());
                     }}
                 />
 
@@ -170,7 +170,11 @@ const VerifyEmail = () => {
                 </a>
             </Flex>
             <Button
-                onClick={emailVerificationHandler}
+                isLoading={loading}
+                onClick={() => {
+                    console.log('Button Clicked!');
+                    emailVerificationHandler();
+                }}
                 mt="auto"
                 borderRadius={'full'}
                 backgroundColor={'primary.green.900'}
