@@ -134,6 +134,7 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                     <FormLabel>Notify when order shipped</FormLabel>
                 </Flex>
 
+                {/*
                 <Flex>
                     <Switch
                         value="newProduct"
@@ -151,7 +152,7 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                         Notify when followed sellers post a new product
                     </FormLabel>
                 </Flex>
-
+                */}
                 <Flex>
                     <Switch
                         value="orderStatusChanged"
@@ -229,6 +230,7 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                 offline
             </FormLabel>
             <Stack spacing={3} direction="column">
+                {/*
                 <Switch
                     isChecked={
                         Array.isArray(selectedNotifications) &&
@@ -240,6 +242,7 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                 >
                     SMS
                 </Switch>
+                */}
                 <Switch
                     isChecked={
                         Array.isArray(selectedNotifications) &&
@@ -251,6 +254,7 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                 >
                     Email
                 </Switch>
+                {/*
                 <Switch
                     isChecked={
                         Array.isArray(selectedNotifications) &&
@@ -273,6 +277,7 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                 >
                     WhatsApp
                 </Switch>
+                */}
             </Stack>
             <Box
                 as="button"
