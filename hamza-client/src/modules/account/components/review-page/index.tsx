@@ -62,7 +62,7 @@ const ReviewPage = ({ region }: { region: Region }) => {
     } = useDisclosure();
     const [selectedReview, setSelectedReview] = useState(null);
     const [selectedPendingReview, setSelectedPendingReview] = useState(null);
-    const [activeButton, setActiveButton] = useState('reviews');
+    const [activeButton, setActiveButton] = useState('pending');
     const [pendingReviews, setPendingReviews] = useState([]);
 
     const fetchReviews = async () => {
@@ -278,79 +278,68 @@ const ReviewPage = ({ region }: { region: Region }) => {
                 <>
                     {pendingReviews.length > 0 ? (
                         <Stack divider={<StackDivider />} spacing={4}>
-                            {pendingReviews.map(
-                                (review: any) =>
-                                    review.items.length > 0 && (
-                                        <CardBody key={review.id}>
-                                            <Flex
-                                                direction="row"
-                                                justify="space-between"
-                                                align="center"
-                                            >
-                                                {/* Left Column */}
-                                                <Box flex="1" pr={4}>
+                            {pendingReviews.map((review: any) =>
+                                review.items.map((item: any) => (
+                                    <CardBody key={item.id}>
+                                        <Flex
+                                            direction="row"
+                                            justify="space-between"
+                                            align="center"
+                                        >
+                                            {/* Left Column */}
+                                            <Box flex="1" pr={4}>
+                                                <Text fontSize="16px" pb={8}>
                                                     <Text
-                                                        fontSize="16px"
-                                                        pb={8}
+                                                        as="span"
+                                                        color="#555555"
                                                     >
-                                                        <Text
-                                                            as="span"
-                                                            color="#555555"
-                                                        >
-                                                            Purchase Date:{' '}
-                                                        </Text>
-                                                        {format(
-                                                            new Date(
-                                                                review.created_at
-                                                            ),
-                                                            'PPP'
-                                                        )}
+                                                        Purchase Date:{' '}
                                                     </Text>
-                                                    <Flex
-                                                        flexDir="row"
-                                                        alignItems="center"
-                                                        gap={2}
+                                                    {format(
+                                                        new Date(
+                                                            review.created_at
+                                                        ),
+                                                        'PPP'
+                                                    )}
+                                                </Text>
+                                                <Flex
+                                                    flexDir="row"
+                                                    alignItems="center"
+                                                    gap={2}
+                                                >
+                                                    <Image
+                                                        rounded={'lg'}
+                                                        width={'72px'}
+                                                        height={'72px'}
+                                                        src={item.thumbnail}
+                                                    />
+                                                    <Text
+                                                        fontSize={'18px'}
+                                                        maxWidth={'500px'}
+                                                        fontWeight={'bold'}
+                                                        textTransform="uppercase"
                                                     >
-                                                        <Image
-                                                            rounded={'lg'}
-                                                            width={'72px'}
-                                                            height={'72px'}
-                                                            src={
-                                                                review.items[0]
-                                                                    .thumbnail
-                                                            }
-                                                        />
-                                                        <Text
-                                                            fontSize={'18px'}
-                                                            maxWidth={'500px'}
-                                                            fontWeight={'bold'}
-                                                            textTransform="uppercase"
-                                                        >
-                                                            {
-                                                                review.items[0]
-                                                                    .title
-                                                            }
-                                                        </Text>
-                                                    </Flex>
-                                                </Box>
-
-                                                {/* Right Column */}
-                                                <Box>
-                                                    <Button
-                                                        onClick={() =>
-                                                            handlePendingReview(
-                                                                review
-                                                            )
-                                                        }
-                                                        colorScheme="green"
-                                                        m={8}
-                                                    >
-                                                        Review
-                                                    </Button>
-                                                </Box>
-                                            </Flex>
-                                        </CardBody>
-                                    )
+                                                        {item.title}
+                                                    </Text>
+                                                </Flex>
+                                            </Box>
+                                            {/* Right Column */}
+                                            <Box>
+                                                <Button
+                                                    onClick={() =>
+                                                        handlePendingReview(
+                                                            review
+                                                        )
+                                                    }
+                                                    colorScheme="green"
+                                                    m={8}
+                                                >
+                                                    Review
+                                                </Button>
+                                            </Box>
+                                        </Flex>
+                                    </CardBody>
+                                ))
                             )}
                         </Stack>
                     ) : (

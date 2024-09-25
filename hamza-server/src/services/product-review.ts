@@ -88,56 +88,48 @@ class ProductReviewService extends TransactionBaseService {
         const productReviewRepository =
             this.activeManager_.getRepository(ProductReview);
 
-        // Fetch all non-archived orders for the customer
-        // TODO: This should be swapped to shipped in production
-        //            .andWhere('order.status != :status', { fulfillment_status: 'shipped?' })
+        // Fetch all non-archived and non-canceled orders for the customer
         const orders = await orderRepository
             .createQueryBuilder('order')
-            .select(['order.id', 'order.status'])
+            .leftJoinAndSelect('order.items', 'item')
+            .leftJoinAndSelect('item.variant', 'variant')
+            .leftJoinAndSelect('variant.product', 'product')
             .where('order.customer_id = :customer_id', { customer_id })
-            .andWhere('order.status != :archivedStatus', {
-                archivedStatus: 'archived',
-            })
-            .andWhere('order.status != :cancelledStatus', {
-                cancelledStatus: 'canceled',
+            .andWhere('order.status NOT IN (:...activeStatuses)', {
+                activeStatuses: ['archived', 'canceled'],
             })
             .getMany();
 
-        // If no orders are found, throw an error
-        if (!orders || orders.length === 0) {
+        console.log(`Orders Fetched: ${orders.length} orders`);
+        console.log(
+            `Order ITEMS Fetched: ${JSON.stringify(orders[0].items)} items`
+        );
+        if (orders.length === 0) {
             return [];
         }
 
-        // Fetch all reviews for the customer
-        const reviews = await productReviewRepository
+        // Fetch all reviewed product IDs for the customer
+        const reviewedProducts = await productReviewRepository
             .createQueryBuilder('review')
-            .select('review.order_id')
+            .select('review.product_id')
             .where('review.customer_id = :customer_id', { customer_id })
             .getMany();
 
-        // Extract order_ids from reviews
-        const reviewedOrderIds = reviews.map((review) => review.order_id);
+        const reviewedProductIds = new Set(
+            reviewedProducts.map((review) => review.product_id)
+        );
 
-        // Filter the orders to find those not reviewed
-        const unreviewedOrderIds = orders
-            .filter((order) => !reviewedOrderIds.includes(order.id))
-            .map((order) => order.id);
+        // Remove reviewed items from each order
+        const ordersWithUnreviewedItems = orders
+            .map((order) => ({
+                ...order,
+                items: order.items.filter(
+                    (item) => !reviewedProductIds.has(item.variant.product.id)
+                ),
+            }))
+            .filter((order) => order.items.length > 0); // Optionally remove orders that end up with no items
 
-        if (unreviewedOrderIds.length === 0) {
-            return [];
-        }
-
-        // Fetch detailed information only for unreviewed orders
-        const unreviewedOrders = await orderRepository.find({
-            where: {
-                id: In(unreviewedOrderIds),
-                customer_id: customer_id,
-                status: Not(In([OrderStatus.ARCHIVED, OrderStatus.REQUIRES_ACTION])),
-            },
-            relations: ['items', 'items.variant.product'],
-        });
-
-        return unreviewedOrders;
+        return ordersWithUnreviewedItems;
     }
 
     async getSpecificReview(order_id: string, product_id: string) {
