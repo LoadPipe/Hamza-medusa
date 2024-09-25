@@ -13,7 +13,7 @@ const PaymentPolicy = () => {
             <Text mt={4}>
                 Hamza supports payments using the following cryptocurrencies:
             </Text>
-            <Text ml={4}>
+            <Text ml={4} mt={2}>
                 • Bitcoin (BTC) <br />
                 • Ethereum (ETH) <br />
                 • Tether (USDT) <br />
@@ -34,21 +34,21 @@ const PaymentPolicy = () => {
             <Text mt={4} fontWeight="bold">
                 Blockchain Security:
             </Text>
-            <Text>
+            <Text mt={2}>
                 All transactions on Hamza are secured by blockchain technology,
                 ensuring transparency, immutability, and security.
             </Text>
             <Text mt={4} fontWeight="bold">
                 Two-Factor Authentication (2FA):
             </Text>
-            <Text>
+            <Text mt={2}>
                 We recommend enabling two-factor authentication (2FA) on your
                 account for added security during transactions.
             </Text>
             <Text mt={4} fontWeight="bold">
                 Escrow Protection:
             </Text>
-            <Text>
+            <Text mt={2}>
                 For high-value transactions, Hamza may offer escrow services
                 where the funds are temporarily held in a secure account until
                 both parties confirm that the transaction is complete.
@@ -59,7 +59,7 @@ const PaymentPolicy = () => {
             <Text mt={4} fontWeight="bold">
                 Selecting a Payment Method:
             </Text>
-            <Text>
+            <Text mt={2}>
                 • During the checkout process, buyers will have the option to
                 choose their preferred cryptocurrency. The equivalent amount in
                 the chosen cryptocurrency will be calculated based on the
@@ -68,23 +68,28 @@ const PaymentPolicy = () => {
             <Text mt={4} fontWeight="bold">
                 Wallet Connectivity:
             </Text>
-            <Text>
+            <Text mt={2}>
                 • Buyers must connect their cryptocurrency wallet to Hamza’s
                 platform for the payment to be processed. We support popular
                 wallet integrations like MetaMask, Trust Wallet, and others.
-                <br /> • Ensure that your wallet is funded with enough
-                cryptocurrency to cover the total amount, including any
-                potential transaction or gas fees.
+            </Text>
+
+            <Text mt={2}>
+                • Ensure that your wallet is funded with enough cryptocurrency
+                to cover the total amount, including any potential transaction
+                or gas fees.
             </Text>
             <Text mt={4} fontWeight="bold">
                 Transaction Confirmation:
             </Text>
-            <Text>
+            <Text mt={2}>
                 • Once payment is initiated, buyers will receive a confirmation
-                prompt from their connected wallet to approve the transaction.{' '}
-                <br /> • Transactions typically take a few minutes to confirm on
-                the blockchain. Upon confirmation, both the buyer and seller
-                will receive notification of a successful payment.
+                prompt from their connected wallet to approve the transaction.
+            </Text>
+            <Text mt={2}>
+                • Transactions typically take a few minutes to confirm on the
+                blockchain. Upon confirmation, both the buyer and seller will
+                receive notification of a successful payment.
             </Text>
             <Text mt={4} fontWeight="bold">
                 Accepted Payment Methods
@@ -98,12 +103,14 @@ const PaymentPolicy = () => {
             <Text mt={4} fontWeight="bold">
                 Transaction Fees:
             </Text>
-            <Text>
+            <Text mt={2}>
                 • Cryptocurrency payments may incur network or "gas" fees
                 depending on the blockchain used for the transaction. These fees
                 are set by the blockchain network and are not controlled by
                 Hamza.
-                <br />• Buyers are responsible for covering any transaction fees
+            </Text>
+            <Text mt={2}>
+                • Buyers are responsible for covering any transaction fees
                 associated with their payment. The total amount, including fees,
                 will be displayed at checkout.
             </Text>
@@ -121,15 +128,19 @@ const PaymentPolicy = () => {
             <Text mt={4} fontWeight="bold">
                 Cryptocurrency Refunds:
             </Text>
-            <Text>
+            <Text mt={2}>
                 • If a refund is requested and approved (per Hamza's Return
                 Policy), refunds will be processed in the original
                 cryptocurrency used for the transaction.
-                <br />• The refund amount will be calculated based on the
+            </Text>
+            <Text mt={2}>
+                • The refund amount will be calculated based on the
                 cryptocurrency’s value at the time of purchase, not at the time
                 of the refund.
-                <br />• Refunds are generally processed within 5-7 business days
-                after approval.
+            </Text>
+            <Text mt={2}>
+                • Refunds are generally processed within 5-7 business days after
+                approval.
             </Text>
             <Text mt={4} fontWeight="bold">
                 Partial Refunds:
@@ -145,25 +156,27 @@ const PaymentPolicy = () => {
             <Text mt={4} fontWeight="bold">
                 Disputes Between Buyers and Sellers:
             </Text>
-            <Text>
+            <Text mt={2}>
                 • In case of payment-related disputes, buyers and sellers are
                 encouraged to resolve the issue through Hamza’s messaging
                 platform. If a resolution cannot be reached, Hamza offers a
                 Dispute Resolution Process.
-                <br /> • Contact our support team with the necessary
-                documentation (transaction ID, order number, proof of
-                communication) to start a formal dispute.
+            </Text>
+            <Text mt={2}>
+                • Contact our support team with the necessary documentation
+                (transaction ID, order number, proof of communication) to start
+                a formal dispute.
             </Text>
             <Text mt={4} fontWeight="bold">
                 Fraud Prevention:
             </Text>
-            <Text>
-                • To prevent fraudulent activity, Hamza monitors transactions
-                for unusual behavior. If suspicious activity is detected, we
-                reserve the right to temporarily hold the funds until the
-                situation is reviewed. <br /> • In case of confirmed fraud, we
-                will take appropriate measures, which may include reversing
-                transactions or suspending accounts.
+            <Text mt={2}>
+                • In case of confirmed fraud, we will take appropriate measures,
+                which may include reversing transactions or suspending accounts.
+            </Text>
+            <Text mt={2}>
+                • In case of confirmed fraud, we will take appropriate measures,
+                which may include reversing transactions or suspending accounts.
             </Text>
             <Text mt={4} fontWeight="bold">
                 Failed or Rejected Payments
@@ -179,7 +192,7 @@ const PaymentPolicy = () => {
             <Text mt={4} fontWeight="bold">
                 Network Issues:
             </Text>
-            <Text>
+            <Text mt={2}>
                 • On rare occasions, network congestion or blockchain delays may
                 result in failed transactions. In such cases, the buyer should
                 try again after some time or contact our support team for
@@ -188,7 +201,7 @@ const PaymentPolicy = () => {
             <Text mt={4} fontWeight="bold">
                 Incorrect Wallet Address:
             </Text>
-            <Text>
+            <Text mt={2}>
                 • Buyers must ensure that the correct wallet address is provided
                 for payments. Hamza is not responsible for payments sent to
                 incorrect wallet addresses.
@@ -199,7 +212,7 @@ const PaymentPolicy = () => {
             <Text mt={4} fontWeight="bold">
                 KYC (Know Your Customer):
             </Text>
-            <Text>
+            <Text mt={2}>
                 • For higher-value transactions or certain jurisdictions, Hamza
                 may require buyers and sellers to complete KYC verification.
                 This helps prevent money laundering, fraud, and other illegal
@@ -208,7 +221,7 @@ const PaymentPolicy = () => {
             <Text mt={4} fontWeight="bold">
                 Local Regulations:
             </Text>
-            <Text>
+            <Text mt={2}>
                 • Hamza complies with local cryptocurrency regulations in
                 various regions. It is the responsibility of both buyers and
                 sellers to ensure that their transactions comply with local laws
