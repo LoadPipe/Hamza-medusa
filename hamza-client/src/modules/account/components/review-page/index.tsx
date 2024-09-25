@@ -46,6 +46,7 @@ const commonButtonStyles = {
     },
 };
 import { renderStars } from '@modules/products/components/product-preview/components/review-card';
+import Link from 'next/link';
 
 const ReviewPage = ({ region }: { region: Region }) => {
     const [reviews, setReviews] = useState([]);
@@ -307,12 +308,16 @@ const ReviewPage = ({ region }: { region: Region }) => {
                                                     alignItems="center"
                                                     gap={2}
                                                 >
-                                                    <Image
-                                                        rounded={'lg'}
-                                                        width={'72px'}
-                                                        height={'72px'}
-                                                        src={item.thumbnail}
-                                                    />
+                                                    <Link
+                                                        href={`/us/products/${item.variant.product.handle}`}
+                                                    >
+                                                        <Image
+                                                            rounded={'lg'}
+                                                            width={'72px'}
+                                                            height={'72px'}
+                                                            src={item.thumbnail}
+                                                        />
+                                                    </Link>
                                                     <Text
                                                         fontSize={'18px'}
                                                         maxWidth={'500px'}
