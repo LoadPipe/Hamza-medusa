@@ -13,6 +13,7 @@ import {
     CreateProductProductVariantPriceInput,
 } from '@medusajs/medusa/dist/types/product';
 import { Product } from '../models/product';
+import { ProductVariant } from '@medusajs/medusa';
 import { StoreRepository } from '../repositories/store';
 import { CachedExchangeRateRepository } from '../repositories/cached-exchange-rate';
 import PriceSelectionStrategy from '../strategies/price-selection';
@@ -221,7 +222,7 @@ class ProductService extends MedusaProductService {
     }
 
     async getProductsFromStoreWithPrices(storeId: string): Promise<Product[]> {
-        return await this.convertPrices(
+        return await this.convertProductPrices(
             (
                 await this.productRepository_.find({
                     where: {
@@ -235,7 +236,7 @@ class ProductService extends MedusaProductService {
     }
 
     async getAllProductsWithPrices(): Promise<Product[]> {
-        const products = await this.convertPrices(
+        const products = await this.convertProductPrices(
             await this.productRepository_.find({
                 relations: ['variants.prices', 'reviews'],
                 where: {
@@ -267,10 +268,12 @@ class ProductService extends MedusaProductService {
 
     async getCategoriesByStoreId(storeId: string): Promise<ProductCategory[]> {
         try {
-            const categories = await categoryCache.retrieve(this.productCategoryRepository_);
-            return categories.filter(c => (
-                c.products.find(p => p.store_id === storeId)
-            ));
+            const categories = await categoryCache.retrieve(
+                this.productCategoryRepository_
+            );
+            return categories.filter((c) =>
+                c.products.find((p) => p.store_id === storeId)
+            );
             /*
             const query = `
                 SELECT pc.*
@@ -389,7 +392,9 @@ class ProductService extends MedusaProductService {
 
             // Update product pricing
             await Promise.all(
-                filteredProducts.map((cat) => this.convertPrices(cat.products))
+                filteredProducts.map((cat) =>
+                    this.convertProductPrices(cat.products)
+                )
             );
 
             return filteredProducts; // Return all product data
@@ -476,24 +481,23 @@ class ProductService extends MedusaProductService {
 
             const key = normalizedCategoryNames.sort().join(',');
 
-            //retrieve products from cache 
+            //retrieve products from cache
             let products = await productFilterCache.retrieveWithKey(key, {
                 categoryRepository: this.productCategoryRepository_,
                 categoryNames: normalizedCategoryNames,
                 upperPrice,
                 lowerPrice,
-                convertPrices: async (prods) => {
-                    return this.convertPrices(prods);
+                convertProductPrices: async (prods) => {
+                    return this.convertProductPrices(prods);
                 },
             });
 
             //filter by store id if provided
             if (storeId) {
-                products = products.filter(p => p.store_id === storeId);
+                products = products.filter((p) => p.store_id === storeId);
             }
 
             return products;
-
         } catch (error) {
             // Handle the error here
             this.logger.error(
@@ -568,21 +572,18 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    private async convertPrices(
+    private async convertProductPrices(
         products: Product[],
         customerId: string = ''
     ): Promise<Product[]> {
+        const strategy: PriceSelectionStrategy = new PriceSelectionStrategy({
+            customerService: this.customerService_,
+            productVariantRepository: this.productVariantRepository_,
+            logger: this.logger,
+            cachedExchangeRateRepository: this.cacheExchangeRateRepository,
+        });
         for (const prod of products) {
             for (const variant of prod.variants) {
-                const strategy: PriceSelectionStrategy =
-                    new PriceSelectionStrategy({
-                        customerService: this.customerService_,
-                        productVariantRepository:
-                            this.productVariantRepository_,
-                        logger: this.logger,
-                        cachedExchangeRateRepository:
-                            this.cacheExchangeRateRepository,
-                    });
                 const results = await strategy.calculateVariantPrice(
                     [{ variantId: variant.id, quantity: 1 }],
                     { customer_id: customerId }
@@ -593,6 +594,29 @@ class ProductService extends MedusaProductService {
         }
 
         return products;
+    }
+
+    async convertVariantPrice(
+        variant: ProductVariant,
+        customerId: string = ''
+    ): Promise<ProductVariant> {
+        const strategy = new PriceSelectionStrategy({
+            customerService: this.customerService_,
+            productVariantRepository: this.productVariantRepository_,
+            logger: this.logger,
+            cachedExchangeRateRepository: this.cacheExchangeRateRepository,
+        });
+
+        const results = await strategy.calculateVariantPrice(
+            [{ variantId: variant.id, quantity: 1 }],
+            { customer_id: customerId }
+        );
+
+        if (results.has(variant.id)) {
+            variant.prices = results.get(variant.id).prices;
+        }
+
+        return variant;
     }
 }
 
@@ -611,7 +635,9 @@ class CategoryCache extends SeamlessCache {
         return super.retrieve(params);
     }
 
-    protected async getData(productCategoryRepository: any): Promise<ProductCategory[]> {
+    protected async getData(
+        productCategoryRepository: any
+    ): Promise<ProductCategory[]> {
         const categories = await productCategoryRepository.find({
             select: ['id', 'name', 'metadata', 'handle'],
             relations: [
@@ -701,7 +727,7 @@ class ProductFilterCache extends SeamlessCache {
         products = filterDuplicatesById(products);
 
         // Update product pricing
-        await params.convertPrices(products);
+        await params.convertProductPrices(products);
 
         return products; // Return filtered products
     }

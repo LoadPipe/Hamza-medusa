@@ -124,7 +124,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
             await addToCart({
                 variantId: productVariantId!,
                 quantity: 1,
-                countryCode: countryCode
+                countryCode: countryCode,
             });
             if (showPopup) {
                 setCartModalOpen(true);
@@ -234,7 +234,12 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                             size={'16.35px'}
                         />
                     </Flex>
-                    <Flex flexDir={'row'}>
+                    <Flex
+                        flexDir={'row'}
+                        align="center"
+                        justify="space-between"
+                        width="100%"
+                    >
                         {/* Product image and Description */}
                         <LocalizedClientLink
                             href={`/products/${productData.handle}`}
@@ -252,6 +257,9 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                             alignSelf={'center'}
                             fontSize={'18px'}
                             fontWeight={700}
+                            overflow={'hidden'}
+                            text-overflow={'ellipsis'}
+                            maxWidth="80%"
                         >
                             {productDescription}
                         </Text>
@@ -262,18 +270,17 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                 height={'22px'}
                                 alignItems={'center'}
                                 mb="auto"
+                                mr="auto"
+                                shrink={0}
                             >
                                 <Image
                                     className="h-[14px] w-[14px] md:h-[20px] md:w-[20px] self-center"
                                     src={currencyIcons[currencyCode ?? 'usdc']}
                                     alt={currencyCode}
+                                    layout="fixed"
                                 />
                             </Flex>
-                            <Flex
-                                ml="0.5rem"
-                                height={'22px'}
-                                alignItems={'center'}
-                            >
+                            <Flex height={'22px'} alignItems={'center'}>
                                 <Text
                                     color={'white'}
                                     alignSelf={'center'}
@@ -282,7 +289,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                 >
                                     {formatCryptoPrice(
                                         Number(productPrice),
-                                        currencyCode
+                                        currencyCode ?? 'usdc'
                                     )}
                                 </Text>
                             </Flex>

@@ -5,19 +5,22 @@ import { Lifetime } from 'awilix';
 import { WishlistItem } from '../models/wishlist-item';
 import { Wishlist } from '../models/wishlist';
 import { createLogger, ILogger } from '../utils/logging/logger';
+import ProductService from './product';
 
 class WishlistService extends TransactionBaseService {
     static LIFE_TIME = Lifetime.SCOPED;
     protected readonly logger: ILogger;
     protected readonly customerService: CustomerService;
+    protected readonly productService: ProductService;
 
     constructor(container) {
         super(container);
         this.logger = createLogger(container, 'WishlistService');
         this.customerService = container.customerService;
+        this.productService = container.productService;
     }
 
-    async create(customer_id) {
+    async createOrRetrieve(customer_id: string) {
         const wishlistRepository = this.activeManager_.getRepository(Wishlist);
         return await this.atomicPhase_(async (transactionManager) => {
             if (!customer_id) {
@@ -38,8 +41,18 @@ class WishlistService extends TransactionBaseService {
             });
 
             if (wishlist) {
+                let customer_id = wishlist.customer_id;
                 // Wishlist already exists, return it
                 this.logger.debug('Wishlist already exists for this customer');
+                for (const item of wishlist.items) {
+                    if (item.variant) {
+                        item.variant =
+                            await this.productService.convertVariantPrice(
+                                item.variant,
+                                customer_id
+                            );
+                    }
+                }
                 return wishlist;
             }
 
