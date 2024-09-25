@@ -137,17 +137,25 @@ class ProductReviewService extends TransactionBaseService {
         try {
             const productReviewRepository =
                 this.activeManager_.getRepository(ProductReview);
-            const productReview = await productReviewRepository.findOne({
-                where: { order_id, product_id: product_id },
-            });
+
+            // Join the ProductReview with the Product table to access the handle
+            const productReview = await productReviewRepository
+                .createQueryBuilder('review')
+                .leftJoinAndSelect('review.product', 'product') // assuming the relationship name is 'product'
+                .select(['review.content', 'review.rating', 'product.handle']) // explicitly select fields to fetch
+                .where('review.order_id = :order_id', { order_id })
+                .andWhere('review.product_id = :product_id', { product_id })
+                .getOne();
 
             console.log(`ProductReview is ${JSON.stringify(productReview)}`);
-            if (productReview === undefined) {
-                return { content: '', rating: 0 };
-            }
-            const { content, rating } = productReview;
 
-            return { content, rating };
+            if (!productReview) {
+                return { content: '', rating: 0, handle: '' };
+            }
+            const { content, rating, product } = productReview;
+
+            // Extract handle from product if product data is available
+            return { content, rating, handle: product ? product.handle : '' };
         } catch (e) {
             this.logger.error(`Error fetching specific review: ${e}`);
             throw e;

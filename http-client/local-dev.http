@@ -189,7 +189,7 @@ Content-Type: application/json
 GET http://localhost:9000/custom/review/exists?order_id=order_01J6FTE8CVJYAF9X81FDA3VVV8&customer_id=cus_01J6FRW042PD32F7TVC0Z0D5V7&variant_id=variant_01J6FN17AVHC515FX8P41JYH60
 
 ### Return review and rating of existing product
-GET http://localhost:9000/custom/review/existing?order_id=order_01J6FRWMAJ49WY8910T1H5JX1E&product_id=prod_01J3CF1GXW1C0QSSMPBQR04GBK
+GET http://localhost:9000/custom/review/existing?order_id=order_01J8MXRYQQXWXEM1HYYK00T6DX&product_id=prod_01J8MCXP709STCJB3SD89TCFFQ
 Content-Type: application/json
 
 
