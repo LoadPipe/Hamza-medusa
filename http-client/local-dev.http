@@ -358,7 +358,7 @@ PUT http://localhost:9000/custom/bucky/orders
 Content-Type: application/json
 
 ### GET Import Bucky Products by name...
-GET http://localhost:9000/custom/bucky/import?keyword=bowl&count=5&page=1&store=store_01J7DT2M77XAKB6KQ1KK9Z35NW
+GET http://localhost:9000/custom/bucky/import?keyword=dildo&count=1&store=Drones&category_id=pcat_gadgets
 Content-Type: application/json
 
 ### GET products by category name
