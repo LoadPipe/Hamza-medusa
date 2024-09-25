@@ -7,7 +7,7 @@ import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import { Customer } from '../models/customer';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import { Product } from '../models/product';
-import { In, Not } from 'typeorm';
+import { Brackets, In, Not } from 'typeorm';
 import { createLogger, ILogger } from '../utils/logging/logger';
 
 class ProductReviewService extends TransactionBaseService {
@@ -95,15 +95,24 @@ class ProductReviewService extends TransactionBaseService {
             .leftJoinAndSelect('item.variant', 'variant')
             .leftJoinAndSelect('variant.product', 'product')
             .where('order.customer_id = :customer_id', { customer_id })
-            .andWhere('order.status NOT IN (:...activeStatuses)', {
-                activeStatuses: ['archived', 'canceled'],
-            })
+            .andWhere(
+                new Brackets((qb) => {
+                    qb.where(
+                        new Brackets((qb2) => {
+                            qb2.where('order.status = :completedStatus', {
+                                completedStatus: 'completed',
+                            }).andWhere(
+                                'order.fulfillment_status = :fulfilledStatus',
+                                { fulfilledStatus: 'shipped' }
+                            );
+                        })
+                    ).orWhere('order.payment_status = :refundedStatus', {
+                        refundedStatus: 'refunded',
+                    });
+                })
+            )
             .getMany();
 
-        console.log(`Orders Fetched: ${orders.length} orders`);
-        console.log(
-            `Order ITEMS Fetched: ${JSON.stringify(orders[0].items)} items`
-        );
         if (orders.length === 0) {
             return [];
         }
