@@ -58,9 +58,14 @@ export default function Page({ params }: { params: { slug: string } }) {
     // reveal more text mobile about
     const [showMore, setShowMore] = useState(3);
     console.log(`slug name ${displaySlug}`);
+    const router = useRouter();
 
     useEffect(() => {
-        getVendorPage();
+        getVendorPage().then(r => {
+            console.log(r);
+            if (r?.length)
+                router.push(r);
+        });
     }, [params.slug]);
 
     const getVendorPage = async () => {
@@ -76,10 +81,14 @@ export default function Page({ params }: { params: { slug: string } }) {
                 console.log(`THUMBNAIL: ${response.thumbnail}`);
             } else {
                 console.log('Response was null or no data changes');
+                return '/not-found';
             }
         } catch (error) {
             console.log(`Error ${error}`);
+            return '/error';
         }
+
+        return '';
     };
 
     let readableDate = 'Invalid date';
