@@ -52,11 +52,16 @@ async function axiosCall(
         if (!url.startsWith('/')) url = '/' + url;
         url = `${BACKEND_URL}${url}`;
 
-        let config = undefined;
+        let config: any = {
+            cache: false, headers: { 'Cache-Control': 'no-cache, no-store' }
+        };
         if (requiresSecurity) {
-            config = {
-                headers: { authorization: cookies().get('_medusa_jwt')?.value },
-            };
+            config.headers.authorization = cookies().get('_medusa_jwt')?.value
+        }
+
+        //caching false by default
+        if (!payload.cache) {
+            payload.cache = false
         }
 
         let response = { data: undefined };
@@ -66,6 +71,9 @@ async function axiosCall(
                     const input: any = {};
                     if (payload) input.params = payload;
                     if (requiresSecurity) input.headers = config?.headers;
+                    if (!input.cache) {
+                        input.cache = false;
+                    }
 
                     response = await axios.get(url, input);
                 }
@@ -75,6 +83,9 @@ async function axiosCall(
                     const input: any = {};
                     if (payload) input.data = payload;
                     if (requiresSecurity) input.headers = config?.headers;
+                    if (!input.cache) {
+                        input.cache = false;
+                    }
 
                     response = await axios.delete(url, input);
                 }
