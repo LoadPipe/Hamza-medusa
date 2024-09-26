@@ -90,14 +90,6 @@ export class RouteHandler {
         if (truncateToMax > 0)
             payloadString = payloadString.substring(0, truncateToMax) + '...';
 
-        if (status != 200) {
-            console.log(
-                '*********************** STATUS IS',
-                status,
-                '***********************************'
-            );
-        }
-
         if (status == 500)
             this.logger.error(`Returning ${status} with ${payloadString}`);
         else this.logger.info(`Returning ${status} with ${payloadString}`);

@@ -46,7 +46,6 @@ async function axiosCall(
     returnRaw: boolean = false
 ): Promise<any> {
     try {
-        console.log('********** RETURN RAW *******', returnRaw);
         console.log(
             `calling ${verb.toUpperCase()} ${path} ${payload ? JSON.stringify(payload) : ''}`
         );
