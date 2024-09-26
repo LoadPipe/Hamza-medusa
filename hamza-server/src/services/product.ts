@@ -8,6 +8,7 @@ import {
     ProductStatus,
     ProductCategory,
 } from '@medusajs/medusa';
+import axios from 'axios';
 import {
     CreateProductInput,
     CreateProductProductVariantPriceInput,
@@ -125,6 +126,83 @@ class ProductService extends MedusaProductService {
             );
         } catch (e) {
             this.logger.error('Error updating variant prices:', e);
+        }
+    }
+
+    // get all products from product table
+    async reindexProducts() {
+        try {
+            // Fetch all products
+            const products = await this.productRepository_.find();
+
+            // Handle empty product list
+            if (products.length === 0) {
+                this.logger.info('No products found to index.');
+                return;
+            }
+
+            const cleanProducts = products.map((product) => ({
+                id: product.id,
+                title: product.title,
+                description: product.description.replace(/<[^>]*>/g, ''), // Strip HTML
+                thumbnail: product.thumbnail,
+                handle: product.handle,
+                status: product.status, // Include status for all products, including drafts
+            }));
+
+            // Prepare the HTTP request headers
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${process.env.BEARER_TOKEN}`,
+                },
+            };
+
+            // URL of the Meilisearch API
+            const url = 'http://localhost:7700/indexes/products/documents';
+
+            console.log(
+                `Sending ${cleanProducts.length} products to be indexed.`
+            );
+
+            // Send products to be indexed
+            const indexResponse = await axios.post(url, cleanProducts, config);
+
+            // Check if the indexing was successful
+            if (indexResponse.status === 200 || indexResponse.status === 202) {
+                this.logger.info(
+                    `Reindexed ${cleanProducts.length} products successfully.`
+                );
+            } else {
+                this.logger.error(
+                    'Failed to index products:',
+                    indexResponse.status
+                );
+                return;
+            }
+
+            // Delete drafts immediately after reindexing
+            const deleteResponse = await axios.post(
+                'http://localhost:7700/indexes/products/documents/delete',
+                { filter: 'status = draft' },
+                config
+            );
+            // Check if the deletion was successful
+            if (
+                deleteResponse.status === 200 ||
+                deleteResponse.status === 202
+            ) {
+                this.logger.info(
+                    'Draft products have been removed from the index.'
+                );
+            } else {
+                this.logger.error(
+                    'Failed to delete draft products:',
+                    deleteResponse.status
+                );
+            }
+        } catch (e) {
+            this.logger.error('Error reindexing products:', e);
         }
     }
 

@@ -19,7 +19,7 @@ switch (process.env.NODE_ENV) {
 
 try {
     dotenv.config({ path: process.cwd() + '/' + ENV_FILE_NAME });
-} catch (e) { }
+} catch (e) {}
 
 // CORS when consuming Medusa from admin
 const ADMIN_CORS =
@@ -75,9 +75,32 @@ const plugins = [
                             'variant_sku',
                             'thumbnail',
                             'handle',
+                            'status',
                         ],
                     },
                     primaryKey: 'id',
+                    transformer: (product) => {
+                        console.log(
+                            'Transforming product:',
+                            product.id,
+                            'Status:',
+                            product.status
+                        );
+                        if (product.status !== 'draft') {
+                            return {
+                                id: product.id,
+                                title: product.title,
+                                description: product.description,
+                                variant_sku: product.variant_sku,
+                                thumbnail: product.thumbnail,
+                                handle: product.handle,
+                                status: product.status,
+                            };
+                        } else {
+                            console.log('Skipping draft product:', product.id);
+                            return null;
+                        }
+                    },
                 },
             },
         },
