@@ -345,11 +345,16 @@ export async function getOrderDetails(customer_id: string) {
     return output.orders.orders;
 }
 
-export async function getOrderBucket(customer_id: string) {
+export async function getOrderBucket(
+    customer_id: string,
+    check_buckets = false
+) {
     const response = await getSecure('/custom/order/customer-orders', {
         customer_id,
         buckets: true,
+        check_buckets,
     });
+    if (check_buckets) return response.buckets;
     return response.orders;
 }
 
