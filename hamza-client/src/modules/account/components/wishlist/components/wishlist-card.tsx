@@ -255,7 +255,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                         <Text
                             ml="1rem"
                             alignSelf={'center'}
-                            fontSize={'18px'}
+                            fontSize={{ base: '14px', md: '18px' }}
                             fontWeight={700}
                             overflow={'hidden'}
                             text-overflow={'ellipsis'}
@@ -270,7 +270,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                 height={'22px'}
                                 alignItems={'center'}
                                 mb="auto"
-                                mr="auto"
+                                mr="0.5rem"
                                 shrink={0}
                             >
                                 <Image
@@ -284,7 +284,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                 <Text
                                     color={'white'}
                                     alignSelf={'center'}
-                                    fontSize={'24px'}
+                                    fontSize={{ base: '14px', md: '24px' }}
                                     fontWeight={700}
                                 >
                                     {formatCryptoPrice(
