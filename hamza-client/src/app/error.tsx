@@ -27,7 +27,11 @@ export default function Error({ error, reset }: ErrorPageProps) {
     }, [error]);
 
     const handleBack = () => {
-        router.back();
+        router.push('/'); // Redirects user to the homepage
+    };
+
+    const handleTryAgain = () => {
+        window.location.reload(); // Refreshes the page
     };
 
     return (
@@ -82,6 +86,7 @@ export default function Error({ error, reset }: ErrorPageProps) {
                             color={'primary.green.900'}
                             backgroundColor={'transparent'}
                             mr={'1rem'}
+                            onClick={handleTryAgain}
                         >
                             Try Again
                         </Button>

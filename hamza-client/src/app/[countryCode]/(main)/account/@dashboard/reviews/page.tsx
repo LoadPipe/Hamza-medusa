@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { AuthRequiredError } from '@lib/exceptions';
 import Error from '../../../../../error';
 import { Text, Box } from '@chakra-ui/react';
 import {
@@ -27,9 +26,8 @@ export default async function Reviews() {
 
     // if customer is found, check if the customer is verified
     const verificationStatus = await getVerificationStatus(customer.id);
-    console.log('VERIFY', verificationStatus.data);
     if (!verificationStatus.data) {
-        return <Error error={'Verification status data is missing.'} />;
+        return <Error error={'Verify your email to access this page.'} />;
     }
 
     return (
