@@ -35,7 +35,7 @@ type PriceDictionary = {
 interface WishlistCardProps {
     productData: WishlistProduct;
     productDescription: string;
-    productPrice: PriceDictionary | string;
+    productPrice: PriceDictionary;
     productImage: string;
     productId: string;
     productVariantId: string | null;

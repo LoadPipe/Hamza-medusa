@@ -14,7 +14,7 @@ export type WishlistProduct = {
     title: string;
     handle: string;
     description: string;
-    price?: PriceDictionary | string; // Dictionary type for price...
+    price?: PriceDictionary; // Dictionary type for price...
     productVariantId: string | null;
 };
 
