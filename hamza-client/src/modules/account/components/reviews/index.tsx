@@ -125,7 +125,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
             <ButtonGroup
                 isAttached
                 justifyContent="center"
-                flexWrap="wrap"
+                flexWrap="nowrap"
                 mb={{ base: 4, md: 8 }}
             >
                 <Button
