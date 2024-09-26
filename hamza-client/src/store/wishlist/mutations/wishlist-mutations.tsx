@@ -43,7 +43,7 @@ export function useWishlistMutations() {
         {
             onSuccess: (data, product) => {
                 // loadWishlist(customer_id);
-                console.log('Adding Wish list item in DB!');
+                console.log('Adding Wish list item ', product.productVariantId, ' in DB!');
             },
             onError: (error, product) => {
                 removeWishlistProduct(product.productVariantId ?? '');

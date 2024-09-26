@@ -18,7 +18,7 @@ import { Variant } from 'types/medusa';
 
 const ProductInfo = () => {
     // Zustand
-    const { productData, variantId, quantity, setVariantId } =
+    let { productData, variantId, quantity, setVariantId } =
         useProductPreview();
     const { wishlist } = useWishlistStore();
     const { addWishlistItemMutation, removeWishlistItemMutation } =
@@ -44,17 +44,12 @@ const ProductInfo = () => {
 
     useEffect(() => {
         if (productData && productData.variants) {
-            if (!variantId) {
-                console.log(`variantId in PreviewCheckout comp is not set yet`);
-                setVariantId(productData.variants[0].id);
-            }
+            variantId = variantId ?? productData?.variants[0]?.id;
+            setVariantId(variantId ?? '');
+
             let selectedProductVariant = productData.variants.find(
-                (a: any) => a.id == productData.variants[0]?.id
-                // (a: any) => a.id == variantId
+                (a: any) => a.id == variantId
             );
-            if (!variantId) {
-                setVariantId(selectedProductVariant.id);
-            }
 
             setSelectedVariant(selectedProductVariant);
             const price =
@@ -64,7 +59,6 @@ const ProductInfo = () => {
                         p.currency_code === (preferred_currency_code ?? 'usdc')
                 ));
             setSelectedPrice(price?.amount ?? 0);
-            // console.log(productData);
         }
     }, [productData, variantId]);
 
