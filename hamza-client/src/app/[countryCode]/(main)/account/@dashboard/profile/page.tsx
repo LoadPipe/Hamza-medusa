@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { getHamzaCustomer, listRegions } from '@lib/data';
 import { notFound } from 'next/navigation';
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import ProfileForm from './profile-form/profile-form';
 
 export const metadata: Metadata = {
@@ -29,7 +29,7 @@ export default async function Profile() {
             p={'1.5rem'}
         >
             {/* Profile Form */}
-            <ProfileForm />
+            <ProfileForm customer={customer} />
         </Flex>
     );
 }

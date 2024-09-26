@@ -10,11 +10,13 @@ import {
     getVerificationStatus,
     setCurrency,
     updateCustomer,
+    getNonSecureCustomer,
 } from '@lib/data';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
-const ProfileForm = () => {
+const ProfileForm: React.FC<any> = ({ customer }) => {
     // Todo: disable submitting if fields have not been changed
     // Todo: add error message on input
     // Hooks Form
@@ -34,15 +36,23 @@ const ProfileForm = () => {
     const [avatarLastName, setAvatarLastName] = useState<string>('');
 
     // Queries
-    const {
-        data: customer,
-        isError,
-        isLoading,
-    } = useQuery(['customer'], ({ queryKey }) => {
-        // Assuming the first element of queryKey can be used to determine if addresses should be included
-        const includeAddresses = queryKey[1] === 'includeAddresses'; // You can adjust the logic here as needed
-        return getHamzaCustomer(includeAddresses);
-    });
+    // const {
+    //     data: customer,
+    //     isError,
+    //     isLoading,
+    // } = useQuery(
+    //     ['customer'],
+    //     async () => {
+    //         const response = await axios.get(
+    //             'http://localhost:9000/custom/customer?customer_id=cus_01J8MD5FK7AT7CRHCXGNVXTB54'
+    //         );
+    //         return response.data; // This will be your customer data
+    //     },
+    //     {
+    //         staleTime: 5 * 60 * 1000, // data is considered fresh for 5 minutes
+    //         retry: 3, // retry the query 3 times in case of failure
+    //     }
+    // );
 
     // Update local state with customer data
     useEffect(() => {
@@ -96,13 +106,18 @@ const ProfileForm = () => {
         }
     };
 
-    if (isLoading) {
-        return <Text>Loading...</Text>;
-    }
-
-    if (isError) {
-        return <Text>Error fetching customer data.</Text>;
-    }
+    // if (isLoading) {
+    //     return (
+    //         <Text>
+    //             Please refresh the page, an error has occurred loading your
+    //             profile...
+    //         </Text>
+    //     );
+    // }
+    //
+    // if (isError) {
+    //     return <Text>Error fetching customer data.</Text>;
+    // }
 
     return (
         <Flex
