@@ -1,18 +1,23 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { Flex, Button, Text } from '@chakra-ui/react';
 import ProfileInput from './components/profile-input';
-import { updateCustomer } from '@lib/data';
-import { getHamzaCustomer } from '@lib/data';
 import ProfileImage from './components/profile-image';
-import toast from 'react-hot-toast';
 import ProfileCurrency from '@modules/account/components/profile-currency';
-import { setCurrency } from '@lib/data';
+import {
+    getHamzaCustomer,
+    getVerificationStatus,
+    setCurrency,
+    updateCustomer,
+    getNonSecureCustomer,
+} from '@lib/data';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import { getVerificationStatus } from '@lib/data';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
-const ProfileForm = () => {
-    // Todo: disable submiting if fields have not been changed
+const ProfileForm: React.FC<any> = ({ customer }) => {
+    // Todo: disable submitting if fields have not been changed
     // Todo: add error message on input
     // Hooks Form
     const [firstNameValue, setFirstNameValue] = useState<string>('');
@@ -30,17 +35,46 @@ const ProfileForm = () => {
     const [avatarFirstName, setAvatarFirstName] = useState<string>('');
     const [avatarLastName, setAvatarLastName] = useState<string>('');
 
-    // Grab the customers verification status from dB and update the store
+    // Queries
+    // const {
+    //     data: customer,
+    //     isError,
+    //     isLoading,
+    // } = useQuery(
+    //     ['customer'],
+    //     async () => {
+    //         const response = await axios.get(
+    //             'http://localhost:9000/custom/customer?customer_id=cus_01J8MD5FK7AT7CRHCXGNVXTB54'
+    //         );
+    //         return response.data; // This will be your customer data
+    //     },
+    //     {
+    //         staleTime: 5 * 60 * 1000, // data is considered fresh for 5 minutes
+    //         retry: 3, // retry the query 3 times in case of failure
+    //     }
+    // );
+
+    // Update local state with customer data
     useEffect(() => {
+        if (customer) {
+            setFirstNameValue(customer.first_name);
+            setLastNameValue(customer.last_name);
+            setAvatarFirstName(customer.first_name);
+            setAvatarLastName(customer.last_name);
+            setCustomerId(customer.id);
+            setEmailValue(
+                customer.email.includes('@evm.blockchain') ? '' : customer.email
+            );
+        }
+    }, [customer]);
+
+    // Grab the customer's verification status from db and update the store
+    useEffect(() => {
+        if (authData.is_verified || !customerId) return;
         const fetchVerificationStatus = async () => {
             try {
-                // Only Fetch if we don't already have a verified status
-                if (authData.is_verified) return;
-                const customer = await getHamzaCustomer();
-                const verificationStatus = await getVerificationStatus(
-                    customer.id
-                );
-                // Use the current state and only update is_verified
+                const verificationStatus =
+                    await getVerificationStatus(customerId);
                 setIsVerified(verificationStatus.data);
             } catch (error) {
                 console.error('Error fetching verification status:', error);
@@ -48,34 +82,7 @@ const ProfileForm = () => {
         };
 
         fetchVerificationStatus();
-    }, [setIsVerified]);
-
-    //  Fetch customer and update hook states
-    useEffect(() => {
-        const fetchCustomer = async () => {
-            try {
-                const customer = await getHamzaCustomer();
-                if (customer === null) {
-                    return;
-                } else {
-                    setFirstNameValue(customer.first_name);
-                    setLastNameValue(customer.last_name);
-                    setAvatarFirstName(customer.first_name);
-                    setAvatarLastName(customer.last_name);
-                    setCustomerId(customer.id);
-                    setEmailValue(
-                        customer.email.includes('@evm.blockchain')
-                            ? ''
-                            : customer.email
-                    );
-                }
-            } catch (error) {
-                console.error('Error fetching customer data:', error);
-            }
-        };
-
-        fetchCustomer();
-    }, [isSubmitted]);
+    }, [customerId, setIsVerified, authData.is_verified]);
 
     const handleSubmit = async () => {
         if (firstNameValue === '' || lastNameValue === '') {
@@ -99,6 +106,19 @@ const ProfileForm = () => {
         }
     };
 
+    // if (isLoading) {
+    //     return (
+    //         <Text>
+    //             Please refresh the page, an error has occurred loading your
+    //             profile...
+    //         </Text>
+    //     );
+    // }
+    //
+    // if (isError) {
+    //     return <Text>Error fetching customer data.</Text>;
+    // }
+
     return (
         <Flex
             flexDirection={'column'}
@@ -119,17 +139,16 @@ const ProfileForm = () => {
                 Personal Information
             </Text>
 
-            {/* First and last name input */}
             <Flex gap={'15px'} flexDirection={{ base: 'column', md: 'row' }}>
                 <ProfileInput
-                    placeholder={firstNameValue}
-                    label="first name"
+                    placeholder="First Name"
+                    label="First Name"
                     value={firstNameValue}
                     setValue={setFirstNameValue}
                 />
                 <ProfileInput
-                    placeholder={lastNameValue}
-                    label="last name"
+                    placeholder="Last Name"
+                    label="Last Name"
                     value={lastNameValue}
                     setValue={setLastNameValue}
                 />
@@ -140,19 +159,10 @@ const ProfileForm = () => {
                 flexDirection={{ base: 'column', md: 'row' }}
                 gap={'15px'}
             >
-                <Flex
-                    gap={'15px'}
-                    maxW={{ base: '100%', md: '430px' }}
-                    width={{ base: '100%', md: '50%' }}
-                >
-                    <ProfileCurrency
-                        preferred_currency_code={preferred_currency_code}
-                        setCustomerPreferredCurrency={
-                            setCustomerPreferredCurrency
-                        }
-                    />
-                    {/* Email input */}
-                </Flex>
+                <ProfileCurrency
+                    preferred_currency_code={preferred_currency_code}
+                    setCustomerPreferredCurrency={setCustomerPreferredCurrency}
+                />
                 {emailValue?.length > 0 && (
                     <Flex
                         flexDirection={'column'}

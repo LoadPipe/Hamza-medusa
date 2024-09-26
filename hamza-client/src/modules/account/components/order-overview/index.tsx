@@ -31,7 +31,13 @@ const commonButtonStyles = {
     },
 };
 
-const OrderOverview = ({ customer }: { customer: any }) => {
+const OrderOverview = ({
+    customer,
+    ordersExist,
+}: {
+    customer: any;
+    ordersExist: boolean;
+}) => {
     const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
     const setOrderActiveTab = useOrderTabStore(
@@ -57,7 +63,7 @@ const OrderOverview = ({ customer }: { customer: any }) => {
             case TABS.REFUND:
                 return <Refund customer={customer.id} isEmpty={true} />;
             default:
-                return <All customer={customer.id} />;
+                return <All customer={customer.id} ordersExist={ordersExist} />;
         }
     };
 

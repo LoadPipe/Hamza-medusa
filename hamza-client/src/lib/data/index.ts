@@ -53,15 +53,16 @@ async function axiosCall(
         url = `${BACKEND_URL}${url}`;
 
         let config: any = {
-            cache: false, headers: { 'Cache-Control': 'no-cache, no-store' }
+            cache: false,
+            headers: { 'Cache-Control': 'no-cache, no-store' },
         };
         if (requiresSecurity) {
-            config.headers.authorization = cookies().get('_medusa_jwt')?.value
+            config.headers.authorization = cookies().get('_medusa_jwt')?.value;
         }
 
         //caching false by default
         if (payload && !payload.cache) {
-            payload.cache = false
+            payload.cache = false;
         }
 
         let response = { data: undefined };
@@ -344,11 +345,16 @@ export async function getOrderDetails(customer_id: string) {
     return output.orders.orders;
 }
 
-export async function getOrderBucket(customer_id: string) {
+export async function getOrderBucket(
+    customer_id: string,
+    check_buckets = false
+) {
     const response = await getSecure('/custom/order/customer-orders', {
         customer_id,
         buckets: true,
+        check_buckets,
     });
+    if (check_buckets) return response.buckets;
     return response.orders;
 }
 
@@ -520,7 +526,7 @@ export async function getCart(cartId: string) {
 export async function addItem({
     cartId,
     variantId,
-    quantity
+    quantity,
 }: {
     cartId: string;
     variantId: string;
@@ -762,6 +768,17 @@ export async function getHamzaCustomer(includeAddresses: boolean = true) {
     });
 
     return response ?? {};
+}
+
+export async function getNonSecureCustomer(includedAddresses: boolean = true) {
+    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? {
+        customer_id: '',
+    };
+    const customer_id: string = token?.customer_id ?? '';
+    return await get('/custom/customer', {
+        customer_id,
+        include_addresses: includedAddresses ? 'true' : 'false',
+    });
 }
 
 export async function clearAuthCookie() {
