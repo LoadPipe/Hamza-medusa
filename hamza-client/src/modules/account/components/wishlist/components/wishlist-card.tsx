@@ -310,7 +310,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                             borderRadius="full"
                             px="2"
                             py="1"
-                            fontSize="0.8rem"
+                            fontSize={{ base: '10px', md: '0.8rem' }}
                             textTransform="capitalize"
                         >
                             {productInventory < 1
