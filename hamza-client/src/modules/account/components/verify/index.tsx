@@ -45,29 +45,34 @@ const VerifyEmail = () => {
 
         if (email.trim() === '') {
             toast.error('Email address cannot be empty!');
+            setLoading(false);
             return;
         }
 
         if (!emailRegex.test(email)) {
             toast.error('Please enter a valid email address!');
+            setLoading(false);
             return;
         }
 
         try {
             console.log('response lets go');
-            let res: any = await verifyEmail(authData.customer_id, email);
-            console.log('response', res);
-            if (res !== undefined) {
-                toast.success('Email sent successfully!');
-                router.replace('/');
-            } else {
-                toast.error('Failed to send email. Please try again.');
-                return;
-            }
+            let res: any = await verifyEmail(authData.customer_id, email, true);
+
+            console.log(res.status);
+
+            setLoading(false);
+
+            // if (res !== undefined) {
+            //     toast.success('Email sent successfully!');
+            //     router.replace('/');
+            // } else if (res.status === '409') {
+            //     toast.error('Failed to send email. Please try again.');
+            //     return;
+            // }
         } catch (error) {
-            toast.error(
-                'An error occurred while sending the email. Please try again.'
-            );
+            console.error('Error in email verification:', error);
+            setLoading(false);
         } finally {
             setLoading(false);
         }
