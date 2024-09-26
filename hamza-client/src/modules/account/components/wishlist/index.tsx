@@ -26,10 +26,11 @@ const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
 
     console.log(`WISHLIST: ${JSON.stringify(wishlist.products)}`);
 
-    const productPrice = (
+    const convertPrice = (
         productPrice: any,
         preferred_currency_code: string
     ) => {
+        console.log('WISHLIST ITEM PRICE IS', productPrice);
         if (
             typeof productPrice === 'number' ||
             typeof productPrice === 'string'
@@ -62,7 +63,7 @@ const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
                             productVariantId={product.productVariantId}
                             productImage={product.thumbnail}
                             productDescription={product.title}
-                            productPrice={productPrice(
+                            productPrice={convertPrice(
                                 product.price,
                                 preferred_currency_code ?? 'usdc'
                             )}
