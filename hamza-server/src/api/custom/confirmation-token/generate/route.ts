@@ -31,7 +31,10 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
         if (result.status === 'error') {
             console.log('Email conflict detected, returning 409');
-            return handler.returnStatusWithMessage(409, 'Email already exists');
+            return handler.returnStatusWithMessage(
+                200,
+                '409: Email already exists'
+            );
         }
 
         return handler.returnStatusWithMessage(

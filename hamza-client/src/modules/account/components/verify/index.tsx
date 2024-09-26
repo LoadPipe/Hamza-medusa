@@ -57,19 +57,17 @@ const VerifyEmail = () => {
 
         try {
             console.log('response lets go');
-            let res: any = await verifyEmail(authData.customer_id, email, true);
+            let res: any = await verifyEmail(authData.customer_id, email);
 
-            console.log(res.status);
-
-            setLoading(false);
-
-            // if (res !== undefined) {
-            //     toast.success('Email sent successfully!');
-            //     router.replace('/');
-            // } else if (res.status === '409') {
-            //     toast.error('Failed to send email. Please try again.');
-            //     return;
-            // }
+            if (res.message.includes('409')) {
+                toast.error(
+                    'This email address is already in use. Please try using a different email.'
+                );
+            }
+            if (res !== undefined && !res.message.includes('409')) {
+                toast.success('Email sent successfully!');
+                router.replace('/');
+            }
         } catch (error) {
             console.error('Error in email verification:', error);
             setLoading(false);
