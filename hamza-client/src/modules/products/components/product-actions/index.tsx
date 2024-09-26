@@ -41,8 +41,6 @@ export default function ProductActions({
     const [options, setOptions] = useState<Record<string, string>>({});
     const [isAdding, setIsAdding] = useState(false);
     const [buyNowLoader, setBuyNowLoader] = useState(false);
-    const { addWishlistItemMutation, removeWishlistItemMutation } =
-        useWishlistMutations();
     const [inventoryCount, setInventoryCount] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');

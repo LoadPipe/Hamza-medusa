@@ -60,8 +60,6 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
     //Auth states
     const { authData, whitelist_config, setWhitelistConfig } =
         useCustomerAuthStore();
-    const { addWishlistItemMutation, removeWishlistItemMutation } =
-        useWishlistMutations();
 
     //Wishlist store
     const { wishlist } = useWishlistStore();

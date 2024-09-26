@@ -35,7 +35,7 @@ type PriceDictionary = {
 interface WishlistCardProps {
     productData: WishlistProduct;
     productDescription: string;
-    productPrice: PriceDictionary | string;
+    productPrice: PriceDictionary;
     productImage: string;
     productId: string;
     productVariantId: string | null;
@@ -329,7 +329,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                         isDisabled={productInventory < 1}
                         onClick={() => handleAddToCart()}
                     >
-                        Add To Cart
+                        Add to Cart
                     </Button>
                     <Flex
                         ml="0.75rem"

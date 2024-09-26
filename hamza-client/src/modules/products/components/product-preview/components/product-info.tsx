@@ -11,7 +11,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import useProductPreview from '@store/product-preview/product-preview';
 import { BiHeart, BiSolidHeart } from 'react-icons/bi';
-import useWishlistStore from '@store/wishlist/wishlist-store';
+import useWishlistStore, { WishlistProduct } from '@store/wishlist/wishlist-store';
 import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { Variant } from 'types/medusa';
@@ -32,6 +32,16 @@ const ProductInfo = () => {
         null
     );
 
+    const convertToPriceDictionary = (selectedVariant: Variant | null) => {
+        const output: { [key: string]: number } = {};
+        if (selectedVariant) {
+            for (let price of selectedVariant.prices) {
+                output[price.currency_code] = price.amount;
+            }
+        }
+        return output;
+    };
+
     useEffect(() => {
         if (productData && productData.variants) {
             if (!variantId) {
@@ -42,11 +52,9 @@ const ProductInfo = () => {
                 (a: any) => a.id == productData.variants[0]?.id
                 // (a: any) => a.id == variantId
             );
-            console.log(`variantID in PreviewCheckout comp is: ${variantId}`);
             if (!variantId) {
                 setVariantId(selectedProductVariant.id);
             }
-            console.log(`variantID in PreviewCheckout comp is: ${variantId}`);
 
             setSelectedVariant(selectedProductVariant);
             const price =
@@ -55,18 +63,12 @@ const ProductInfo = () => {
                     (p: any) =>
                         p.currency_code === (preferred_currency_code ?? 'usdc')
                 ));
-            console.log(
-                'priceData object in PreviewCheckout comp',
-                productData
-            );
             setSelectedPrice(price?.amount ?? 0);
             // console.log(productData);
         }
     }, [productData, variantId]);
 
     const isLoading = !productData || Object.keys(productData).length === 0;
-
-    console.log('this is product data', productData);
 
     if (isLoading) {
         return (
@@ -130,7 +132,7 @@ const ProductInfo = () => {
                                         handle: productData.handle,
                                         thumbnail: productData.thumbnail,
                                         title: productData.title,
-                                        price: selectedPrice || '',
+                                        price: convertToPriceDictionary(selectedVariant),
                                         productVariantId: variantId || null,
                                     });
                                 }}
@@ -145,7 +147,7 @@ const ProductInfo = () => {
                                         handle: productData.handle,
                                         thumbnail: productData.thumbnail,
                                         title: productData.title,
-                                        price: selectedPrice || '',
+                                        price: convertToPriceDictionary(selectedVariant),
                                         productVariantId: variantId || null,
                                     });
                                 }}
