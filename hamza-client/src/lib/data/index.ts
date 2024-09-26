@@ -42,7 +42,8 @@ async function axiosCall(
     verb: 'get' | 'post' | 'patch' | 'put' | 'delete',
     path: string,
     payload: any,
-    requiresSecurity: boolean = false
+    requiresSecurity: boolean = false,
+    returnRaw: boolean = false
 ): Promise<any> {
     try {
         console.log(
@@ -102,73 +103,98 @@ async function axiosCall(
                 break;
         }
 
-        return response.data;
-    } catch (error) {
+        if (returnRaw) {
+            console.log(response);
+        }
+        return returnRaw ? response : response.data;
+    } catch (error: any) {
         console.error(
             `${verb.toUpperCase()} ${path} ${JSON.stringify(payload) ?? ''} error: `,
             error
         );
+        //return returnRaw ? error : error.data;
     }
 }
 
 async function get(
     url: string,
     params: any = null,
-    requiresSecurity: boolean = false
+    requiresSecurity: boolean = false,
+    returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('get', url, params, requiresSecurity);
+    return await axiosCall('get', url, params, requiresSecurity, returnRaw);
 }
 
 async function post(
     url: string,
     payload: any,
-    requiresSecurity: boolean = false
+    requiresSecurity: boolean = false,
+    returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('post', url, payload, requiresSecurity);
+    return await axiosCall('post', url, payload, requiresSecurity, returnRaw);
 }
 
 async function put(
     url: string,
     payload: any,
-    requiresSecurity: boolean = false
+    requiresSecurity: boolean = false,
+    returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('put', url, payload, requiresSecurity);
+    return await axiosCall('put', url, payload, requiresSecurity, returnRaw);
 }
 
 async function del(
     url: string,
     payload: any,
-    requiresSecurity: boolean = false
+    requiresSecurity: boolean = false,
+    returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('delete', url, payload, requiresSecurity);
+    return await axiosCall('delete', url, payload, requiresSecurity, returnRaw);
 }
 
 async function patch(
     url: string,
     payload: any,
-    requiresSecurity: boolean = false
+    requiresSecurity: boolean = false,
+    returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('patch', url, payload, requiresSecurity);
+    return await axiosCall('patch', url, payload, requiresSecurity, returnRaw);
 }
 
-async function getSecure(url: string, params: any) {
-    return await get(url, params, true);
+async function getSecure(url: string, params: any, returnRaw: boolean = false) {
+    return await get(url, params, true, returnRaw);
 }
 
-async function postSecure(url: string, payload: any) {
-    return await post(url, payload, true);
+async function postSecure(
+    url: string,
+    payload: any,
+    returnRaw: boolean = false
+) {
+    return await post(url, payload, true, returnRaw);
 }
 
-async function putSecure(url: string, payload: any) {
-    return await put(url, payload, true);
+async function putSecure(
+    url: string,
+    payload: any,
+    returnRaw: boolean = false
+) {
+    return await put(url, payload, true, returnRaw);
 }
 
-async function delSecure(url: string, payload: any) {
-    return await del(url, payload, true);
+async function delSecure(
+    url: string,
+    payload: any,
+    returnRaw: boolean = false
+) {
+    return await del(url, payload, true, returnRaw);
 }
 
-async function patchSecure(url: string, payload: any) {
-    return await patch(url, payload, true);
+async function patchSecure(
+    url: string,
+    payload: any,
+    returnRaw: boolean = false
+) {
+    return await patch(url, payload, true, returnRaw);
 }
 
 /**
@@ -313,11 +339,19 @@ export async function cancelOrderCart(cart_id: string) {
     return await postSecure('/custom/cart/cancel', { cart_id });
 }
 
-export async function verifyEmail(customer_id: string, email: string) {
-    return await postSecure('/custom/confirmation-token/generate', {
-        customer_id,
-        email,
-    });
+export async function verifyEmail(
+    customer_id: string,
+    email: string,
+    returnRaw: boolean = false
+) {
+    return await postSecure(
+        '/custom/confirmation-token/generate',
+        {
+            customer_id,
+            email,
+        },
+        returnRaw
+    );
 }
 
 export async function addNotifications(
