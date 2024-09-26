@@ -153,7 +153,7 @@ class ProductService extends MedusaProductService {
             const config = {
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: 'Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj',
+                    Authorization: `Bearer ${process.env.BEARER_TOKEN}`,
                 },
             };
 
@@ -345,10 +345,12 @@ class ProductService extends MedusaProductService {
 
     async getCategoriesByStoreId(storeId: string): Promise<ProductCategory[]> {
         try {
-            const categories = await categoryCache.retrieve(this.productCategoryRepository_);
-            return categories.filter(c => (
-                c.products.find(p => p.store_id === storeId)
-            ));
+            const categories = await categoryCache.retrieve(
+                this.productCategoryRepository_
+            );
+            return categories.filter((c) =>
+                c.products.find((p) => p.store_id === storeId)
+            );
             /*
             const query = `
                 SELECT pc.*
@@ -554,7 +556,7 @@ class ProductService extends MedusaProductService {
 
             const key = normalizedCategoryNames.sort().join(',');
 
-            //retrieve products from cache 
+            //retrieve products from cache
             let products = await productFilterCache.retrieveWithKey(key, {
                 categoryRepository: this.productCategoryRepository_,
                 categoryNames: normalizedCategoryNames,
@@ -567,11 +569,10 @@ class ProductService extends MedusaProductService {
 
             //filter by store id if provided
             if (storeId) {
-                products = products.filter(p => p.store_id === storeId);
+                products = products.filter((p) => p.store_id === storeId);
             }
 
             return products;
-
         } catch (error) {
             // Handle the error here
             this.logger.error(
@@ -689,7 +690,9 @@ class CategoryCache extends SeamlessCache {
         return super.retrieve(params);
     }
 
-    protected async getData(productCategoryRepository: any): Promise<ProductCategory[]> {
+    protected async getData(
+        productCategoryRepository: any
+    ): Promise<ProductCategory[]> {
         const categories = await productCategoryRepository.find({
             select: ['id', 'name', 'metadata', 'handle'],
             relations: [
