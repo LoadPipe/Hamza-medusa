@@ -16,7 +16,7 @@ import ErrorIcon from '../../public/images/error/error-icon.svg';
 
 type ErrorPageProps = {
     error: any;
-    reset: any;
+    reset?: any;
 };
 
 export default function Error({ error, reset }: ErrorPageProps) {
@@ -69,23 +69,7 @@ export default function Error({ error, reset }: ErrorPageProps) {
 
                     <Flex flexDir={'column'}>
                         <Heading fontSize={'24px'}>What can you do?</Heading>
-                        <UnorderedList>
-                            <ListItem>
-                                Try refreshing the page. Sometimes, that's all
-                                it takes.
-                            </ListItem>
-                            <ListItem>
-                                Check your connection/ Make sure you're
-                                connected to the internet.
-                            </ListItem>
-                            <ListItem>
-                                Return the homepage or use the navigation above
-                                to find what you're looking for.
-                            </ListItem>
-                            <ListItem>
-                                If the problem persists, please contact support.
-                            </ListItem>
-                        </UnorderedList>
+                        <Text>{error ? error : 'Something went wrong'}</Text>
                     </Flex>
 
                     <Flex maxW={'413px'} width="100%">
@@ -97,6 +81,7 @@ export default function Error({ error, reset }: ErrorPageProps) {
                             borderWidth={'2px'}
                             color={'primary.green.900'}
                             backgroundColor={'transparent'}
+                            mr={'1rem'}
                         >
                             Try Again
                         </Button>

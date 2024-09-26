@@ -1,8 +1,13 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-
+import { AuthRequiredError } from '@lib/exceptions';
+import Error from '../../../../../error';
 import { Text, Box } from '@chakra-ui/react';
-import { getHamzaCustomer, listRegions } from '@lib/data';
+import {
+    getHamzaCustomer,
+    listRegions,
+    getVerificationStatus,
+} from '@lib/data';
 import ReviewPage from 'modules/account/components/reviews';
 
 export const metadata: Metadata = {
@@ -10,12 +15,21 @@ export const metadata: Metadata = {
     description: 'View your Reviews',
 };
 
+// TODO - Lets call the getServerSideAuth check here and if that fails after the if (!customer || !regions)
+// we can redirect to the AuthRequired Error
 export default async function Reviews() {
     const customer = await getHamzaCustomer();
     const regions = await listRegions();
 
     if (!customer || !regions) {
         notFound();
+    }
+
+    // if customer is found, check if the customer is verified
+    const verificationStatus = await getVerificationStatus(customer.id);
+    console.log('VERIFY', verificationStatus.data);
+    if (!verificationStatus.data) {
+        return <Error error={'Verification status data is missing.'} />;
     }
 
     return (
