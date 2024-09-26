@@ -40,8 +40,11 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
         for (let n = 0; n < cart.items.length; n++) {
             const item: ExtendedLineItem = cart.items[n];
             const currency =
-                preferred_currency_code ?? item.currency_code ?? 'usdc';
+                item.currency_code ?? preferred_currency_code ?? 'usdc';
 
+            console.log('preferred_currency_code is', preferred_currency_code);
+            console.log('item.currency_code is', item.currency_code);
+            console.log('currency for item is', currency);
             if (currency?.length) {
                 if (!subtotals[currency]) {
                     subtotals[currency] = 0;
