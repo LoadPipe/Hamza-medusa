@@ -265,16 +265,15 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                         </Text>
 
                         {/* Currency Icon and Price */}
-                        <Flex ml="auto" alignSelf={'center'}>
+                        <Flex ml="auto" alignSelf={'center'} height={'24px'}>
                             <Flex
                                 height={'22px'}
                                 alignItems={'center'}
-                                mb="auto"
                                 mr="0.5rem"
                                 shrink={0}
                             >
                                 <Image
-                                    className="h-[14px] w-[14px] md:h-[20px] md:w-[20px] self-center"
+                                    className="h-[18px] w-[18px] md:h-[20px] md:w-[20px] self-center"
                                     src={currencyIcons[currencyCode ?? 'usdc']}
                                     alt={currencyCode}
                                     layout="fixed"
@@ -284,7 +283,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                 <Text
                                     color={'white'}
                                     alignSelf={'center'}
-                                    fontSize={{ base: '14px', md: '24px' }}
+                                    fontSize={{ base: '20px', md: '24px' }}
                                     fontWeight={700}
                                 >
                                     {formatCryptoPrice(
