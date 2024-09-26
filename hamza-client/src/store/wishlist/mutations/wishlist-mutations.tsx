@@ -46,7 +46,7 @@ export function useWishlistMutations() {
                 console.log('Adding Wish list item ', product.productVariantId, ' in DB!');
             },
             onError: (error, product) => {
-                removeWishlistProduct(product.productVariantId ?? '');
+                removeWishlistProduct(product.id ?? '');
                 console.error('Error adding item to wishlist', error);
             },
         }
@@ -55,7 +55,7 @@ export function useWishlistMutations() {
     const removeWishlistItemMutation = useMutation(
         (product: WishlistProduct) => {
             // Return the axios delete call from the mutation function
-            removeWishlistProduct(product.productVariantId ?? '');
+            removeWishlistProduct(product.id ?? '');
             //TODO: MOVE TO INDEX.TS
             return axios.delete(`${BACKEND_URL}/custom/wishlist/item`, {
                 data: {

@@ -62,15 +62,15 @@ const useWishlistStore = create<WishlistType>()(
                     },
                 }));
             },
-            removeWishlistProduct: async (productVariantId) => {
+            removeWishlistProduct: async (productId) => {
                 console.log(
-                    'Attempting to remove product variant with ID:',
-                    productVariantId
+                    'Attempting to remove product with ID:',
+                    productId
                 );
                 const { wishlist } = get();
                 set((state) => {
                     const filteredItems = wishlist.products.filter(
-                        (p) => p.productVariantId !== productVariantId
+                        (p) => p.id !== productId
                     );
                     console.log('Filtered items:', filteredItems);
                     return {
@@ -130,52 +130,6 @@ const useWishlistStore = create<WishlistType>()(
             // Optional: You can trigger loadWishlist after the store has been rehydrated from localStorage
             onRehydrateStorage: () => (state, error) => {
                 console.log('Rehydration process triggered');
-                /*
-                if (error) {
-                    console.error('Rehydration error:', error);
-                    return;
-                }
-                // console.log(
-                //     'Rehydration successful, checking for customer data...'
-                // );
-                const customerData = localStorage.getItem('__hamza_customer');
-                if (customerData) {
-                    const parsedData = JSON.parse(customerData);
-                    if (parsedData.state.status === 'authenticated') {
-                        console.log('Customer now authenticated');
-                        try {
-                            state?.updateAuthentication(true);
-                            const customer_id = parsedData.state.customer_id;
-                            if (customer_id) {
-                                console.log(
-                                    'Customer ID found:',
-                                    customer_id,
-                                    'Loading wishlist...'
-                                );
-                                state?.loadWishlist(customer_id);
-                            }
-                        } catch (parseError) {
-                            console.error(
-                                'Error parsing customer data:',
-                                parseError
-                            );
-                        }
-                    } else if (parsedData.state.status === 'unauthenticated') {
-                        try {
-                            state?.updateAuthentication(false);
-                        } catch (e) {
-                            console.log(`Couldn't unauthenticate, ${e}`);
-                        }
-                        console.log(`Customer is now unauthenticated`);
-                    } else {
-                        console.log(
-                            'No customer data found, possibly new session'
-                        );
-                    }
-                } else {
-                    console.log('No customer data found in local storage.');
-                }
-                */
             },
         }
     )

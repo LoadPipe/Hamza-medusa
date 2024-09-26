@@ -81,8 +81,6 @@ const ProductInfo = () => {
         );
     }
 
-    console.log('this is selected price', selectedPrice);
-
     return (
         <Flex
             width="100%"
