@@ -1,12 +1,9 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-import Review from '@modules/account/components/reviews';
 import { Text, Box } from '@chakra-ui/react';
-import { getHamzaCustomer } from '@lib/data';
-
-import { getRegion } from 'app/actions';
-import { headers } from 'next/headers';
+import { getHamzaCustomer, listRegions } from '@lib/data';
+import ReviewPage from 'modules/account/components/reviews';
 
 export const metadata: Metadata = {
     title: 'Reviews',
@@ -14,14 +11,10 @@ export const metadata: Metadata = {
 };
 
 export default async function Reviews() {
-    const nextHeaders = headers();
-    const countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY
-        ? 'us'
-        : nextHeaders.get('next-url')?.split('/')[1] || '';
     const customer = await getHamzaCustomer();
-    const region = await getRegion(countryCode);
+    const regions = await listRegions();
 
-    if (!customer || !region) {
+    if (!customer || !regions) {
         notFound();
     }
 
@@ -35,7 +28,7 @@ export default async function Reviews() {
                 >
                     My Reviews
                 </Text>
-                <Review customer={customer} region={region} />
+                <ReviewPage customer={customer} />
             </Box>
         </Box>
     );
