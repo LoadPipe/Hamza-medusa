@@ -12,12 +12,18 @@ import {
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import NavLink from '../components/nav-link';
-import AuthorizedLinks from '../components/authorized-links';
-import CartButton from '@modules/layout/components/cart-button';
-import Wishlist from '@/components/wishlist';
-// Icons
-import { AiOutlineMenu } from 'react-icons/ai';
+
 import { GiHamburgerMenu } from 'react-icons/gi';
+import {
+    MdOutlinePeople,
+    MdOutlineStorefront,
+    MdOutlineSell,
+    MdOutlineHelpCenter,
+    MdOutlineFiberSmartRecord,
+    MdOutlineLibraryBooks,
+} from 'react-icons/md';
+import { IoMdMenu } from 'react-icons/io';
+import { FaHome } from 'react-icons/fa';
 
 export default function MobileMenu() {
     return (
@@ -61,7 +67,14 @@ export default function MobileMenu() {
                         backgroundColor={'transparent'}
                         _hover={{ color: 'primary.green.900' }}
                     >
-                        Sell on Hamza
+                        <Flex
+                            w="30px"
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                        >
+                            <MdOutlineStorefront size={28} />
+                        </Flex>
+                        <Text ml="0.5rem">Sell on Hamza</Text>
                     </MenuItem>
                 </Link>
                 <Link
@@ -76,7 +89,14 @@ export default function MobileMenu() {
                         backgroundColor={'transparent'}
                         _hover={{ color: 'primary.green.900' }}
                     >
-                        Be an affiliate
+                        <Flex
+                            w="30px"
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                        >
+                            <MdOutlinePeople size={30} />
+                        </Flex>
+                        <Text ml="0.5rem">Be an affiliate</Text>
                     </MenuItem>
                 </Link>
                 <Box>
@@ -95,7 +115,14 @@ export default function MobileMenu() {
                         backgroundColor={'transparent'}
                         _hover={{ color: 'primary.green.900' }}
                     >
-                        <Text>Home</Text>
+                        <Flex
+                            w="30px"
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                        >
+                            <FaHome size={25} />
+                        </Flex>
+                        <Text ml="0.5rem">Home</Text>
                     </MenuItem>
                 </NavLink>
                 <NavLink href={`/shop`}>
@@ -106,7 +133,14 @@ export default function MobileMenu() {
                         backgroundColor={'transparent'}
                         _hover={{ color: 'primary.green.900' }}
                     >
-                        <Text>Shop</Text>
+                        <Flex
+                            w="30px"
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                        >
+                            <MdOutlineSell size={25} />
+                        </Flex>
+                        <Text ml="0.5rem">Shop</Text>
                     </MenuItem>
                 </NavLink>
 
@@ -118,7 +152,14 @@ export default function MobileMenu() {
                         backgroundColor={'transparent'}
                         _hover={{ color: 'primary.green.900' }}
                     >
-                        Blog
+                        <Flex
+                            w="30px"
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                        >
+                            <MdOutlineLibraryBooks size={28} />
+                        </Flex>
+                        <Text ml="0.5rem">Blog</Text>
                     </MenuItem>
                 </a>
 
@@ -130,7 +171,14 @@ export default function MobileMenu() {
                         backgroundColor={'transparent'}
                         _hover={{ color: 'primary.green.900' }}
                     >
-                        About Us
+                        <Flex
+                            w="30px"
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                        >
+                            <MdOutlineFiberSmartRecord size={28} />
+                        </Flex>
+                        <Text ml="0.5rem">About Us</Text>
                     </MenuItem>
                 </a>
 
@@ -143,7 +191,14 @@ export default function MobileMenu() {
                         backgroundColor={'transparent'}
                         _hover={{ color: 'primary.green.900' }}
                     >
-                        Help Center
+                        <Flex
+                            w="30px"
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                        >
+                            <MdOutlineHelpCenter size={28} />
+                        </Flex>
+                        <Text ml="0.5rem">Help Center</Text>
                     </MenuItem>
                 </a>
 
