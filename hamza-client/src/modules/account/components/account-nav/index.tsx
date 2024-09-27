@@ -279,16 +279,14 @@ const AccountNav = ({
 
                 {/* Wishlist */}
 
-                {authData.is_verified && (
-                    <Box>
-                        <NavLink
-                            href="/account/wishlist"
-                            route={route!}
-                            title="Wishlist"
-                            icon={<FaRegHeart color="white" size="22px" />}
-                        />
-                    </Box>
-                )}
+                <Box>
+                    <NavLink
+                        href="/account/wishlist"
+                        route={route!}
+                        title="Wishlist"
+                        icon={<FaRegHeart color="white" size="22px" />}
+                    />
+                </Box>
 
                 {authData.is_verified && (
                     <NavLink

@@ -23,7 +23,7 @@ export default function Error({ error, reset }: ErrorPageProps) {
     const router = useRouter();
 
     useEffect(() => {
-        console.error(error);
+        // console.error(error);
     }, [error]);
 
     const handleBack = () => {
