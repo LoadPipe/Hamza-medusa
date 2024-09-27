@@ -49,21 +49,17 @@ const HeroBanner = () => {
                     flexDirection={{ base: 'column', md: 'row' }}
                 >
                     <Text
-                        color={'#FBFDFA'}
-                        fontWeight={'200'}
-                        fontSize={{ base: '24px', md: '32px' }}
-                    >
-                        The
-                    </Text>
-                    <Text
+                        as="span"
                         mt={{ base: '-0.5rem', md: '0' }}
                         fontWeight={'200'}
                         color={'#FBFDFA'}
                         fontSize={{ base: '24px', md: '32px' }}
+                        textAlign={'center'}
                     >
-                        <span style={{ color: '#7B61FF', fontWeight: '700' }}>
-                            <b>World's First</b>
-                        </span>{' '}
+                        The{' '}
+                        <Text as="span" fontWeight={700} color={'#7B61FF'}>
+                            World's First
+                        </Text>{' '}
                         Decom Marketplace
                     </Text>
                 </Flex>
