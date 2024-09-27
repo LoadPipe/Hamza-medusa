@@ -14,7 +14,7 @@ import NavSearchBar from './menu-desktop/components/nav-searchbar';
 import MobileMenu from './menu-mobile/mobile-menu';
 import MobileNav from './menu-mobile/mobile-nav';
 import MainMenu from './menu-desktop/main-menu';
-import { WalletConnectButton } from './connect-button';
+import { WalletConnectButton } from './menu-desktop/connect-wallet';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { LineItem } from '@medusajs/medusa';

@@ -1,5 +1,4 @@
 import React from 'react';
-// Components
 import {
     Flex,
     Text,
@@ -22,7 +21,6 @@ import {
     MdOutlineFiberSmartRecord,
     MdOutlineLibraryBooks,
 } from 'react-icons/md';
-import { IoMdMenu } from 'react-icons/io';
 import { FaHome } from 'react-icons/fa';
 
 export default function MobileMenu() {

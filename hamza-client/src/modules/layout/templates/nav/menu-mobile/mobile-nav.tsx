@@ -5,7 +5,8 @@ import Image from 'next/image';
 import HamzaLogo from '../../../../../../public/images/logo/logo_green.svg';
 import HamzaTitle from '../../../../../../public/images/logo/hamza-title.svg';
 import MobileMenu from './mobile-menu';
-import ConnectWallet from './connect-mobile';
+import { WalletConnectButton } from './connect-wallet/connect-button';
+import CartButtonMobile from './components/cart-button';
 
 // import CartButton from '@modules/layout/components/cart-button';
 import CartButton from '@modules/layout/components/cart-button-mobile';
@@ -48,8 +49,9 @@ export default async function MobileNav() {
 
                 <Flex flex={1}>
                     <Flex ml="auto">
-                        <ConnectWallet />
+                        <WalletConnectButton />
                     </Flex>
+                    <CartButtonMobile />
                 </Flex>
             </Flex>
         </Flex>
