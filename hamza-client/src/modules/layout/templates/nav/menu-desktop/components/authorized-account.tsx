@@ -10,9 +10,9 @@ export const AuthorizedAccount = () => {
                 return (
                     <MenuItem
                         p="0"
-                        borderTopWidth={'2px'}
+                        // borderTopWidth={'2px'}
                         borderBottomRadius={'15px'}
-                        borderColor="rgba(255, 255, 255, 0.5)"
+                        // borderColor="rgba(255, 255, 255, 0.5)"
                         height={'91px'}
                         backgroundColor={'#2C272D'}
                         alignItems={'center'}

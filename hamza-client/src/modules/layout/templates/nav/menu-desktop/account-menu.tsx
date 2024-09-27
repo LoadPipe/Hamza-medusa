@@ -140,7 +140,11 @@ const AccountMenu = () => {
                             </MenuItem>
                         </Link>
                     )}
-
+                    <MenuDivider
+                        mb="0"
+                        opacity={{ base: '0.5', md: '1' }}
+                        borderColor={'white'}
+                    />
                     <AuthorizedAccount />
                 </MenuList>
             </Menu>

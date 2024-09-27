@@ -31,7 +31,7 @@ const MobileAccountMenu = () => {
         }, 0) || 0;
 
     return (
-        <Menu placement="bottom-start">
+        <Menu placement="bottom-end">
             <MenuButton
                 width={'26px'}
                 height={'26px'}
@@ -95,7 +95,7 @@ const MobileAccountMenu = () => {
                 >
                     <Wishlist />
 
-                    <MenuDivider borderColor={'white'} />
+                    <MenuDivider borderColor={'#555555'} />
 
                     <Link href={`/account/profile`}>
                         <MenuItem
@@ -142,7 +142,7 @@ const MobileAccountMenu = () => {
                             </MenuItem>
                         </Link>
                     )}
-
+                    <MenuDivider mb="0" borderColor={'#555555'} />
                     <AuthorizedAccount />
                 </MenuList>
             </MenuList>

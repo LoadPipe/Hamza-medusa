@@ -98,10 +98,7 @@ export default function MobileMainMenu() {
                     </MenuItem>
                 </Link>
                 <Box>
-                    <MenuDivider
-                        opacity={{ base: '0.5', md: '1' }}
-                        borderColor={'white'}
-                    />
+                    <MenuDivider opacity={'0.5'} borderColor={'white'} />
                 </Box>
 
                 <NavLink href={`/`}>
