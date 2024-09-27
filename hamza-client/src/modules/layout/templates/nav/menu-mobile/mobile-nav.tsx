@@ -4,12 +4,10 @@ import { Flex, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 import HamzaLogo from '../../../../../../public/images/logo/logo_green.svg';
 import HamzaTitle from '../../../../../../public/images/logo/hamza-title.svg';
-import MobileMenu from './mobile-menu';
+import MobileMainMenu from './menu/mobile-main-menu';
 import { WalletConnectButton } from './connect-wallet/connect-button';
 import CartButtonMobile from './components/cart-button';
 
-// import CartButton from '@modules/layout/components/cart-button';
-import CartButton from '@modules/layout/components/cart-button-mobile';
 export default async function MobileNav() {
     return (
         <Flex
@@ -24,7 +22,7 @@ export default async function MobileNav() {
         >
             <Flex width={'100%'} justifyContent={'center'} alignItems="center">
                 <Flex flex={1}>
-                    <MobileMenu />
+                    <MobileMainMenu />
                 </Flex>
                 <Flex flex={1} justifyContent={'center'}>
                     <LocalizedClientLink href="/">

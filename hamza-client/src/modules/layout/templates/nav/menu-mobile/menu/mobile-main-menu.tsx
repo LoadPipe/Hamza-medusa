@@ -10,7 +10,7 @@ import {
     MenuDivider,
 } from '@chakra-ui/react';
 import Link from 'next/link';
-import NavLink from '../components/nav-link';
+import NavLink from '../../components/nav-link';
 
 import { GiHamburgerMenu } from 'react-icons/gi';
 import {
@@ -23,7 +23,7 @@ import {
 } from 'react-icons/md';
 import { FaHome } from 'react-icons/fa';
 
-export default function MobileMenu() {
+export default function MobileMainMenu() {
     return (
         <Menu>
             <MenuButton
