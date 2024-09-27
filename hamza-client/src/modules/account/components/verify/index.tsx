@@ -121,7 +121,11 @@ const VerifyEmail = () => {
                     }}
                 />
 
-                <Flex flexDir={'row'} my={'0.5rem'} alignItems={'center'}>
+                <Flex
+                    flexDir={'row'}
+                    my={{ base: '0px', md: '0.5rem' }}
+                    alignItems={'center'}
+                >
                     <Divider />
                     <Text mx="1rem">OR</Text>
                     <Divider />
