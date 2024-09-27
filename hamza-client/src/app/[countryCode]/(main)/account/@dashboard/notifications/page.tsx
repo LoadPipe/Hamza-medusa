@@ -1,9 +1,10 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Text } from '@chakra-ui/react';
+import Error from '../../../../../error';
 import Notification from '@modules/account/components/notifications';
 
-import { getHamzaCustomer } from '@lib/data';
+import { getHamzaCustomer, getVerificationStatus } from '@lib/data';
 
 import { getRegion } from 'app/actions';
 import { headers } from 'next/headers';
@@ -23,6 +24,12 @@ export default async function Notifications() {
 
     if (!customer || !region) {
         notFound();
+    }
+
+    // if customer is found, check if the customer is verified
+    const verificationStatus = await getVerificationStatus(customer.id);
+    if (!verificationStatus.data) {
+        return <Error error={'Verify your email to access this page.'} />;
     }
 
     return (
