@@ -11,7 +11,7 @@ import {
     Skeleton,
 } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import AccountMenu from '@modules/layout/templates/nav-4/menu/account-menu';
+import AccountMenu from '@modules/layout/templates/nav/menu-desktop/account-menu';
 import { useSwitchNetwork } from 'wagmi';
 import {
     getAllowedChainsFromConfig,
