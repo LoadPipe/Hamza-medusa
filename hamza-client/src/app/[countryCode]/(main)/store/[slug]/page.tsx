@@ -58,9 +58,14 @@ export default function Page({ params }: { params: { slug: string } }) {
     // reveal more text mobile about
     const [showMore, setShowMore] = useState(3);
     console.log(`slug name ${displaySlug}`);
+    const router = useRouter();
 
     useEffect(() => {
-        getVendorPage();
+        getVendorPage().then(r => {
+            console.log(r);
+            if (r?.length)
+                router.push(r);
+        });
     }, [params.slug]);
 
     const getVendorPage = async () => {
@@ -76,10 +81,14 @@ export default function Page({ params }: { params: { slug: string } }) {
                 console.log(`THUMBNAIL: ${response.thumbnail}`);
             } else {
                 console.log('Response was null or no data changes');
+                return '/not-found';
             }
         } catch (error) {
             console.log(`Error ${error}`);
+            return '/error';
         }
+
+        return '';
     };
 
     let readableDate = 'Invalid date';
@@ -183,25 +192,25 @@ export default function Page({ params }: { params: { slug: string } }) {
                                     </Text>
                                 </Flex>
                             </Flex>
-                            <Flex
-                                display={{ base: 'flex', md: 'none' }}
-                                height={'33px'}
-                                width={'120px'}
-                                ml="auto"
-                                borderColor={'primary.indigo.900'}
-                                borderWidth={'1px'}
-                                borderRadius={'37px'}
-                                justifyContent={'center'}
-                                cursor={'pointer'}
-                                fontSize={{ base: '12px', md: '16px' }}
-                            >
-                                <Text
-                                    alignSelf={'center'}
-                                    color="primary.indigo.900"
-                                >
-                                    Follow Seller
-                                </Text>
-                            </Flex>
+                            {/*<Flex*/}
+                            {/*    display={{ base: 'flex', md: 'none' }}*/}
+                            {/*    height={'33px'}*/}
+                            {/*    width={'120px'}*/}
+                            {/*    ml="auto"*/}
+                            {/*    borderColor={'primary.indigo.900'}*/}
+                            {/*    borderWidth={'1px'}*/}
+                            {/*    borderRadius={'37px'}*/}
+                            {/*    justifyContent={'center'}*/}
+                            {/*    cursor={'pointer'}*/}
+                            {/*    fontSize={{ base: '12px', md: '16px' }}*/}
+                            {/*>*/}
+                            {/*    <Text*/}
+                            {/*        alignSelf={'center'}*/}
+                            {/*        color="primary.indigo.900"*/}
+                            {/*    >*/}
+                            {/*        Follow Seller*/}
+                            {/*    </Text>*/}
+                            {/*</Flex>*/}
                         </Flex>
 
                         {/* Stats */}
@@ -301,7 +310,12 @@ export default function Page({ params }: { params: { slug: string } }) {
                         {/*End of Stats*/}
 
                         {/* Chat / Report */}
-                        <Flex ml={'auto'} flexDir={'column'} gap="16px">
+                        <Flex
+                            ml={'auto'}
+                            flexDir={'column'}
+                            gap="16px"
+                            justifyContent={'center'}
+                        >
                             <Flex
                                 display={{ base: 'none', md: 'flex' }}
                                 height={{ base: '33px', md: '47px' }}
@@ -321,24 +335,24 @@ export default function Page({ params }: { params: { slug: string } }) {
                                 </Text>
                             </Flex>
 
-                            <Flex
-                                display={{ base: 'none', md: 'flex' }}
-                                height={{ base: '33px', md: '47px' }}
-                                width={{ base: '120px', md: '190px' }}
-                                borderColor={'primary.indigo.900'}
-                                borderWidth={'1px'}
-                                borderRadius={'37px'}
-                                justifyContent={'center'}
-                                cursor={'pointer'}
-                                fontSize={{ base: '12px', md: '16px' }}
-                            >
-                                <Text
-                                    alignSelf={'center'}
-                                    color="primary.indigo.900"
-                                >
-                                    Follow Seller
-                                </Text>
-                            </Flex>
+                            {/*<Flex*/}
+                            {/*    display={{ base: 'none', md: 'flex' }}*/}
+                            {/*    height={{ base: '33px', md: '47px' }}*/}
+                            {/*    width={{ base: '120px', md: '190px' }}*/}
+                            {/*    borderColor={'primary.indigo.900'}*/}
+                            {/*    borderWidth={'1px'}*/}
+                            {/*    borderRadius={'37px'}*/}
+                            {/*    justifyContent={'center'}*/}
+                            {/*    cursor={'pointer'}*/}
+                            {/*    fontSize={{ base: '12px', md: '16px' }}*/}
+                            {/*>*/}
+                            {/*    <Text*/}
+                            {/*        alignSelf={'center'}*/}
+                            {/*        color="primary.indigo.900"*/}
+                            {/*    >*/}
+                            {/*        Follow Seller*/}
+                            {/*    </Text>*/}
+                            {/*</Flex>*/}
                         </Flex>
                     </Flex>
                     <Divider

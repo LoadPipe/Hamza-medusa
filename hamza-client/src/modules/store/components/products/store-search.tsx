@@ -5,7 +5,7 @@ import { Flex } from '@chakra-ui/react';
 import StoreCatButton from './store-cat-button';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import ProductCardGroup from '@modules/products/components/product-group-vendor';
+import ProductCardGroup from '@modules/products/components/product-group-store';
 
 type Props = {
     storeName: string;
@@ -29,6 +29,7 @@ const StoreSearch = ({ storeName }: Props) => {
 
         data.data.forEach((item: any) => {
             const handle = item?.handle;
+            console.log(item);
             if (handle) {
                 uniqueHandles.add(handle);
             }

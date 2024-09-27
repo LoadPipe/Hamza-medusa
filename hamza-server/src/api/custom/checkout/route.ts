@@ -42,7 +42,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         //enforce security
         if (!handler.enforceCustomerId(cart.customer_id)) return;
 
-        const orders = await orderService.getOrdersForCart(cartId);
+        const orders = await orderService.getOrdersForCheckout(cartId);
         const output: ICheckoutData[] = [];
         orders.forEach((o) => {
             output.push({
@@ -78,7 +78,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             'cart_id',
             'transaction_id',
             'payer_address',
-            'escrow_contract_address',
+            'receiver_address',
+            'escrow_address',
             'chain_id',
         ]
     );
@@ -101,12 +102,12 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             if (!handler.enforceCustomerId(cart.customer_id)) return;
 
             await orderService.finalizeCheckout(
-                //handler.inputParams.cart_products,
                 handler.inputParams.cart_id,
                 handler.inputParams.transaction_id,
                 handler.inputParams.payer_address,
-                handler.inputParams.escrow_contract_address,
-                handler.inputParams.chain_id
+                handler.inputParams.receiver_address,
+                handler.inputParams.escrow_address,
+                handler.inputParams.chain_id,
             );
             handler.returnStatusWithMessage(
                 200,

@@ -7,17 +7,21 @@ import NotificationDataService from './notification-data-handler';
 import SmtpMailService from './smtp-mail';
 import ordersDataParser from '../utils/notification/order-data-handler';
 import { createLogger, ILogger } from '../utils/logging/logger';
+import CustomerNotificationSerivce from './customer-notification';
+import { NotificationType } from './customer-notification';
 
 class SmtpNotificationService extends AbstractNotificationService {
     static identifier = 'smtp-notification';
-    notificationDataService: NotificationDataService;
-    smtpMailService: SmtpMailService;
-    logger: ILogger;
-    orderService_: OrderService;
+    private notificationDataService: NotificationDataService;
+    private customerNotificationService_: CustomerNotificationSerivce;
+    private smtpMailService: SmtpMailService;
+    private logger: ILogger;
+    private orderService_: OrderService;
 
     constructor(container) {
         super(container);
         this.notificationDataService = new NotificationDataService(container);
+        this.customerNotificationService_ = container.customerNotificationService;
         this.smtpMailService = new SmtpMailService();
         this.logger = createLogger(container, 'SmtpNotificationService');
         this.orderService_ = container.orderService;
@@ -34,7 +38,15 @@ class SmtpNotificationService extends AbstractNotificationService {
     }> {
         switch (event) {
             case 'order.placed':
-                if (this.logger) console.log('sending email to ', data);
+                const customerId = data.customerId;
+                if (!this.customerNotificationService_.hasNotifications(
+                    customerId,
+                    ['email', 'orderStatusChanged'])
+                ) {
+                    return;
+                }
+
+                this.logger.info(`sending email to ${data}`);
 
                 let ordersData = await Promise.all(
                     data.orderIds.map(async (orderId: string) => {

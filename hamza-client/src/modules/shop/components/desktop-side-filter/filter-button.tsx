@@ -16,14 +16,20 @@ const FilterButton = () => {
         categoryItemSideFilter,
     } = useSideFilter();
 
+    const isDisabled = selectCategoryStoreFilter?.length === 0;
+
     return (
         <Button
+            isDisabled={isDisabled}
             onClick={() => {
                 // Delete current settings
                 setCategorySelect([]);
 
                 // Update settings
-                if (selectCategoryStoreFilter && categoryItemSideFilter) {
+                if (
+                    selectCategoryStoreFilter?.length > 0 &&
+                    categoryItemSideFilter?.length > 0
+                ) {
                     setCategorySelect(selectCategoryStoreFilter);
                     setCategoryItem(categoryItemSideFilter);
                     // Reset side menu states
@@ -43,6 +49,12 @@ const FilterButton = () => {
             borderColor={'white'}
             width="100%"
             h={'3.5rem'}
+            _hover={{
+                backgroundColor: isDisabled
+                    ? 'secondary.onyx.900'
+                    : 'secondary.onyx.700',
+                cursor: isDisabled ? 'not-allowed' : 'pointer',
+            }}
         >
             <Flex>
                 <Image

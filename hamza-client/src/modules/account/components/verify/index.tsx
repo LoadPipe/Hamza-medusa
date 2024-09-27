@@ -1,7 +1,7 @@
 'use client';
 
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import Input from '@modules/common/components/input';
+// import Input from '@modules/common/components/input';
 import axios from 'axios';
 import { useState } from 'react';
 import { Toast } from '@medusajs/ui';
@@ -9,137 +9,184 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import getGoogleOAuthURL from '@lib/util/google-url';
 import getTwitterOauthUrl from '@lib/util/twitter-url';
 import toast from 'react-hot-toast';
-import { FcGoogle } from 'react-icons/fc';
-import { FaTwitter, FaDiscord } from 'react-icons/fa';
-import { Flex, Text, Heading } from '@chakra-ui/react';
+import { IoLogoGoogle } from 'react-icons/io5';
+import { FaXTwitter } from 'react-icons/fa6';
+import { BsDiscord } from 'react-icons/bs';
+
+import {
+    Flex,
+    Text,
+    Input,
+    Heading,
+    Box,
+    Divider,
+    Button,
+} from '@chakra-ui/react';
 import { verifyEmail } from '@lib/data/index';
 
 const VerifyEmail = () => {
+    // Customer Authentication
     const { authData, setCustomerAuthData } = useCustomerAuthStore();
     const searchParams = useSearchParams();
 
+    // Email input hook
     const [email, setEmail] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    // Routing
     const router = useRouter();
     const authParams = `customer_id=${authData.customer_id}`;
 
-    if (authData.status == 'unauthenticated') {
-        return <div>Please connect wallet before adding email address.</div>;
-    }
-
+    // Email validation
     const emailVerificationHandler = async () => {
-        if (email === '') {
+        setLoading(true);
+        console.log('hello');
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (email.trim() === '') {
             toast.error('Email address cannot be empty!');
+            setLoading(false);
             return;
         }
 
-        let res: any = await verifyEmail(authData.customer_id, email);
-        if (res == true) {
-            toast.success('Email sent successfully!!');
-            router.replace('/');
-        } else {
-            toast.error(res.message);
+        if (!emailRegex.test(email)) {
+            toast.error('Please enter a valid email address!');
+            setLoading(false);
             return;
+        }
+
+        try {
+            console.log('response lets go');
+            let res: any = await verifyEmail(authData.customer_id, email);
+
+            if (res.message.includes('409')) {
+                toast.error(
+                    'This email address is already in use. Please try using a different email.'
+                );
+            }
+            if (res !== undefined && !res.message.includes('409')) {
+                toast.success('Email sent successfully!');
+                router.replace('/');
+            }
+        } catch (error) {
+            console.error('Error in email verification:', error);
+            setLoading(false);
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
-        <Flex>
-            <div className="flex flex-col items-center w-full">
-                <div className="my-8">
-                    <Text
-                        color={'primary.indigo.900'}
-                        className="font-semibold text-4xl  text-center"
+        <Flex
+            flexDir={'column'}
+            width={'100%'}
+            height={'100%'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            gap={6}
+        >
+            <Text textAlign={'center'} maxW={'746px'}>
+                Please verify your account by clicking the link sent to your
+                email, or by logging in with your Google, X (formerly Twitter),
+                or Discord account. This will ensure full access to your account
+                and features. If you didn’t receive the email, check your spam
+                folder or resend the link.
+            </Text>
+
+            <Flex w={'100%'} maxW={'468px'} flexDir={'column'} gap="1rem">
+                {/* Input Email Address */}
+                <Input
+                    name="email"
+                    placeholder="Your email address"
+                    value={email}
+                    type="email"
+                    width={'100%'}
+                    borderRadius={'12px'}
+                    height={'50px'}
+                    onChange={(e) => {
+                        setEmail(e.target.value.toLowerCase());
+                    }}
+                />
+
+                <Flex flexDir={'row'} my="1rem" alignItems={'center'}>
+                    <Divider />
+                    <Text mx="1rem">OR</Text>
+                    <Divider />
+                </Flex>
+
+                {/* Google Auth */}
+                <a href={getGoogleOAuthURL(authParams)}>
+                    <Button
+                        leftIcon={<IoLogoGoogle size={24} />}
+                        borderWidth={'1px'}
+                        borderColor={'#555555'}
+                        borderRadius={'12px'}
+                        backgroundColor={'transparent'}
+                        color={'white'}
+                        height={'56px'}
+                        width={'100%'}
+                        justifyContent={'center'}
                     >
-                        Account Verification
-                    </Text>
-                </div>
-                {searchParams.get('auth_error') == 'true' && (
-                    <div>An error occurred during verification</div>
-                )}
-                <div className="px-16">
-                    <div className="p-4 md:p-5">
-                        <form
-                            className="space-y-4"
-                            onSubmit={(e) => {
-                                e.preventDefault();
-                                emailVerificationHandler();
-                            }}
-                        >
-                            <Input
-                                name="email"
-                                label="Your Email Address"
-                                value={email}
-                                type="email"
-                                onChange={(e) => {
-                                    setEmail(e.target.value);
-                                }}
-                            />
-                            <button
-                                type="submit"
-                                className="w-full text-white bg-[#7B61FF] hover:bg-[#624DCC] focus:ring-4 focus:outline-none focus:ring-[#7B61FF] font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                            >
-                                Verify
-                            </button>
-                        </form>
-                        <div className="text-white text-md text-center p-4">
-                            Or
-                        </div>
-                        <div className="buttons flex flex-col space-y-2 w-full">
-                            <a href={getGoogleOAuthURL(authParams)}>
-                                <button className="px-4 py-2 w-full border flex gap-2 border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-300 hover:shadow transition duration-150">
-                                    <Flex>
-                                        <Flex padding={'5px'}>
-                                            <FcGoogle
-                                                size={20}
-                                                style={{ alignSelf: 'center' }}
-                                            />
-                                        </Flex>
-                                        <Text ml="0.5rem" alignSelf={'center'}>
-                                            Verify with Google
-                                        </Text>
-                                    </Flex>
-                                </button>
-                            </a>
+                        <Flex maxW={'157px'} width={'100%'}>
+                            <Text mr="auto"> Verify with Google</Text>
+                        </Flex>
+                    </Button>
+                </a>
 
-                            <a href={getTwitterOauthUrl(authParams)}>
-                                <button className="px-4 py-2 w-full border flex gap-2 border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-300 hover:shadow transition duration-150 items-center">
-                                    <Flex>
-                                        <Flex padding={'5px'}>
-                                            <FaTwitter
-                                                color="#1DA1F2"
-                                                size={20}
-                                                style={{ alignSelf: 'center' }}
-                                            />
-                                        </Flex>
-                                        <Text ml="0.5rem" alignSelf={'center'}>
-                                            Verify with Twitter
-                                        </Text>
-                                    </Flex>
-                                </button>
-                            </a>
+                {/* Twitter Auth */}
+                <a href={getTwitterOauthUrl(authParams)}>
+                    <Button
+                        leftIcon={<FaXTwitter size={24} />}
+                        borderWidth={'1px'}
+                        borderColor={'#555555'}
+                        borderRadius={'12px'}
+                        backgroundColor={'transparent'}
+                        color={'white'}
+                        height={'56px'}
+                        width={'100%'}
+                        justifyContent={'center'}
+                    >
+                        <Flex maxW={'157px'} width={'100%'}>
+                            <Text mr="auto">Verify with X</Text>
+                        </Flex>
+                    </Button>
+                </a>
 
-                            <a
-                                href={`https://discord.com/oauth2/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_DISCORD_ACCESS_KEY}&scope=identify+email&state=123456&redirect_uri=${process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URL}&prompt=consent`}
-                            >
-                                <button className="px-4 py-2 w-full border flex gap-2 border-slate-200 dark:border-slate-700 rounded-lg text-slate-700 dark:text-slate-200 hover:border-slate-400 dark:hover:border-slate-500 hover:text-slate-900 dark:hover:text-slate-300 hover:shadow transition duration-150 items-center">
-                                    <Flex>
-                                        <Flex padding={'5px'}>
-                                            <FaDiscord
-                                                color="#5865F2"
-                                                size={20}
-                                                style={{ alignSelf: 'center' }}
-                                            />
-                                        </Flex>
-                                        <Text ml="0.5rem" alignSelf={'center'}>
-                                            Verify with Discord
-                                        </Text>
-                                    </Flex>
-                                </button>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                {/* Discord Auth */}
+                <a
+                    href={`https://discord.com/oauth2/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_DISCORD_ACCESS_KEY}&scope=identify+email&state=123456&redirect_uri=${process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URL}&prompt=consent`}
+                >
+                    <Button
+                        leftIcon={<BsDiscord size={24} color="white" />}
+                        borderWidth={'1px'}
+                        borderColor={'#555555'}
+                        borderRadius={'12px'}
+                        backgroundColor={'transparent'}
+                        color={'white'}
+                        height={'56px'}
+                        width={'100%'}
+                    >
+                        <Flex maxW={'157px'} width={'100%'}>
+                            <Text mr="auto"> Verify with Discord</Text>
+                        </Flex>
+                    </Button>
+                </a>
+            </Flex>
+            <Button
+                isLoading={loading}
+                onClick={() => {
+                    console.log('Button Clicked!');
+                    emailVerificationHandler();
+                }}
+                mt="auto"
+                borderRadius={'full'}
+                backgroundColor={'primary.green.900'}
+                height={'44px'}
+                maxW={'468px'}
+                width={'100%'}
+            >
+                Verify Account
+            </Button>
         </Flex>
     );
 };

@@ -26,10 +26,16 @@ import { useQuery } from '@tanstack/react-query';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { LuBadgeCheck } from 'react-icons/lu';
 
+type PriceDictionary = {
+    eth?: string;
+    usdc?: string;
+    usdt?: string;
+};
+
 interface WishlistCardProps {
     productData: WishlistProduct;
     productDescription: string;
-    productPrice: string;
+    productPrice: PriceDictionary;
     productImage: string;
     productId: string;
     productVariantId: string | null;
@@ -119,7 +125,6 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                 variantId: productVariantId!,
                 quantity: 1,
                 countryCode: countryCode,
-                currencyCode: currencyCode,
             });
             if (showPopup) {
                 setCartModalOpen(true);
@@ -216,11 +221,16 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                         <ChakraImage
                             src={storeData?.icon}
                             alt={storeData?.icon}
-                            width={'32px'}
-                            height={'32px'}
+                            width={{ base: '20px', md: '32px' }}
+                            height={{ base: '20px', md: '32px' }}
                             borderRadius={'full'}
+                            objectFit={'cover'}
                         />
-                        <Text ml="1rem" alignSelf={'center'}>
+                        <Text
+                            ml="1rem"
+                            fontSize={{ base: '12px', md: '16px' }}
+                            alignSelf={'center'}
+                        >
                             {storeData?.name}
                         </Text>
                         <LuBadgeCheck
@@ -229,55 +239,66 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                             size={'16.35px'}
                         />
                     </Flex>
-                    <Flex flexDir={'row'}>
+                    <Flex
+                        flexDir={'row'}
+                        // align="center"
+                        // justify="space-between"
+                        width="100%"
+                    >
                         {/* Product image and Description */}
                         <LocalizedClientLink
+                            className={"w-['75px'] h-['75px']"}
                             href={`/products/${productData.handle}`}
                         >
                             <ChakraImage
                                 src={productImage}
                                 alt={productImage}
+                                maxWidth={'75px'}
                                 width={'75px'}
                                 height={'75px'}
+                                objectFit={'cover'}
                                 style={{ borderRadius: '8px' }}
                             />
                         </LocalizedClientLink>
                         <Text
                             ml="1rem"
-                            alignSelf={'center'}
-                            fontSize={'18px'}
+                            mb={{ base: 'auto', md: '0px' }}
+                            alignSelf={{ base: 'normal', md: 'center' }}
+                            fontSize={{ base: '14px', md: '18px' }}
                             fontWeight={700}
+                            overflow={'hidden'}
+                            text-overflow={'ellipsis'}
+                            noOfLines={2}
+                            maxWidth={{ base: '100%', md: '50%' }}
                         >
-                            {productDescription}
+                            {productDescription} adsfasdfsadfasdf aDAsd aSD
+                            sdaSDAsdaSD a sadå
                         </Text>
 
                         {/* Currency Icon and Price */}
-                        <Flex ml="auto" alignSelf={'center'}>
-                            <Flex
-                                height={'22px'}
-                                alignItems={'center'}
-                                mb="auto"
-                            >
-                                <Image
-                                    className="h-[14px] w-[14px] md:h-[20px] md:w-[20px] self-center"
-                                    src={currencyIcons[currencyCode ?? 'usdc']}
-                                    alt={currencyCode}
-                                />
-                            </Flex>
-                            <Flex
-                                ml="0.5rem"
-                                height={'22px'}
-                                alignItems={'center'}
-                            >
+                        <Flex
+                            ml="auto"
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                            display={{ base: 'none', md: 'flex' }}
+                        >
+                            <Image
+                                className="h-[16px] w-[16px] md:h-[20px] md:w-[20px]  mr-2"
+                                src={currencyIcons[currencyCode ?? 'usdc']}
+                                alt={currencyCode}
+                            />
+
+                            <Flex height={'22px'} alignItems={'center'}>
                                 <Text
                                     color={'white'}
-                                    alignSelf={'center'}
-                                    fontSize={'24px'}
+                                    fontSize={{ base: '14px', md: '24px' }}
+                                    lineHeight={{ base: '14px', md: '24px' }}
+                                    display="inline-block"
                                     fontWeight={700}
                                 >
                                     {formatCryptoPrice(
                                         Number(productPrice),
-                                        currencyCode
+                                        currencyCode ?? 'usdc'
                                     )}
                                 </Text>
                             </Flex>
@@ -287,7 +308,10 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
 
                 {/* Add To Cart */}
                 <Flex>
-                    <Text alignSelf={'center'}>
+                    <Text
+                        alignSelf={'center'}
+                        display={{ base: 'none', md: 'block' }}
+                    >
                         <Badge
                             backgroundColor={
                                 productInventory < 1
@@ -298,7 +322,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                             borderRadius="full"
                             px="2"
                             py="1"
-                            fontSize="0.8rem"
+                            fontSize={{ base: '10px', md: '0.8rem' }}
                             textTransform="capitalize"
                         >
                             {productInventory < 1
@@ -306,9 +330,38 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                 : `${productInventory} in stock`}
                         </Badge>
                     </Text>
+
+                    <Flex
+                        justifyContent={'center'}
+                        alignItems={'center'}
+                        display={{ base: 'flex', md: 'none' }}
+                    >
+                        <Image
+                            className="h-[22px] w-[22px] md:h-[20px] md:w-[20px]  mr-2"
+                            src={currencyIcons[currencyCode ?? 'usdc']}
+                            alt={currencyCode}
+                            layout="fixed"
+                        />
+
+                        <Flex height={'22px'} alignItems={'center'}>
+                            <Text
+                                color={'white'}
+                                alignSelf={'center'}
+                                fontSize={{ base: '20px', md: '24px' }}
+                                lineHeight={{ base: '20px', md: '24px' }}
+                                fontWeight={700}
+                            >
+                                {formatCryptoPrice(
+                                    Number(productPrice),
+                                    currencyCode ?? 'usdc'
+                                )}
+                            </Text>
+                        </Flex>
+                    </Flex>
+
                     <Button
                         ml="auto"
-                        height={'36px'}
+                        height={'42px'}
                         backgroundColor={'transparent'}
                         borderWidth={'1px'}
                         borderColor={'white'}
@@ -317,7 +370,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                         isDisabled={productInventory < 1}
                         onClick={() => handleAddToCart()}
                     >
-                        Add To Cart
+                        Add to Cart
                     </Button>
                     <Flex
                         ml="0.75rem"
@@ -339,8 +392,8 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                 handle: productData.handle,
                                 thumbnail: productData.thumbnail,
                                 title: productData.title,
-                                price: productPrice || '',
-                                productVariantId: productVariantId || null,
+                                price: productPrice,
+                                productVariantId: productVariantId,
                             });
                         }}
                     >

@@ -1,6 +1,5 @@
 'use client';
 
-import { Order } from '@medusajs/medusa';
 import { TABS } from 'modules/order-tab-management';
 import { Button, ButtonGroup, Box } from '@chakra-ui/react';
 import All from '@modules/order/templates/all';
@@ -32,7 +31,13 @@ const commonButtonStyles = {
     },
 };
 
-const OrderOverview = ({ orders }: { orders: Order[] }) => {
+const OrderOverview = ({
+    customer,
+    ordersExist,
+}: {
+    customer: any;
+    ordersExist: boolean;
+}) => {
     const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
     const setOrderActiveTab = useOrderTabStore(
@@ -48,17 +53,17 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
     const renderTabContent = () => {
         switch (orderActiveTab) {
             case TABS.PROCESSING:
-                return <Processing orders={orders} isEmpty={true} />;
+                return <Processing customer={customer.id} isEmpty={true} />;
             case TABS.SHIPPED:
-                return <Shipped orders={orders} isEmpty={true} />;
+                return <Shipped customer={customer.id} isEmpty={true} />;
             case TABS.DELIVERED:
-                return <Delivered orders={orders} isEmpty={true} />;
+                return <Delivered customer={customer.id} isEmpty={true} />;
             case TABS.CANCELLED:
-                return <Cancelled orders={orders} isEmpty={true} />;
+                return <Cancelled customer={customer.id} isEmpty={true} />;
             case TABS.REFUND:
-                return <Refund orders={orders} isEmpty={true} />;
+                return <Refund customer={customer.id} isEmpty={true} />;
             default:
-                return <All orders={orders} />;
+                return <All customer={customer.id} ordersExist={ordersExist} />;
         }
     };
 

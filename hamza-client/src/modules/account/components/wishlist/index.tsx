@@ -4,14 +4,52 @@ import React from 'react';
 import { Flex, Box, Text } from '@chakra-ui/react';
 import WishlistCard from './components/wishlist-card';
 import useWishlistStore from '@store/wishlist/wishlist-store';
+import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
 
 interface AccountWishListProps {
     countryCode: string; // Accept region as a prop
 }
+
+type PriceDictionary = {
+    eth?: string;
+    usdc?: string;
+    usdt?: string;
+};
+
 const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
     const { wishlist } = useWishlistStore((state) => ({
         wishlist: state.wishlist,
     }));
+
+    const { preferred_currency_code } = useCustomerAuthStore();
+
+    console.log(`WISHLIST: ${JSON.stringify(wishlist.products)}`);
+
+    const convertPrice = (
+        productPrice: any,
+        preferred_currency_code: string
+    ) => {
+        console.log('WISHLIST ITEM PRICE IS', productPrice);
+        if (
+            typeof productPrice === 'number' ||
+            typeof productPrice === 'string'
+        ) {
+            return productPrice;
+        } else if (
+            productPrice &&
+            typeof productPrice === 'object' &&
+            preferred_currency_code &&
+            ['eth', 'usdc', 'usdt'].includes(preferred_currency_code ?? 'usdc')
+        ) {
+            return productPrice[
+                preferred_currency_code as keyof PriceDictionary
+            ];
+        } else {
+            console.log(`Product Error`);
+            return;
+        }
+    };
 
     return (
         <Box color={'white'}>
@@ -25,7 +63,10 @@ const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
                             productVariantId={product.productVariantId}
                             productImage={product.thumbnail}
                             productDescription={product.title}
-                            productPrice={product?.price?.toString() ?? ''}
+                            productPrice={convertPrice(
+                                product.price,
+                                preferred_currency_code ?? 'usdc'
+                            )}
                             countryCode={countryCode}
                         />
                     </Box>

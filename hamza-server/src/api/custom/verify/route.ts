@@ -97,6 +97,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 checkCustomerWithWalletAddress.customer &&
                 checkCustomerWithWalletAddress.customer.preferred_currency,
             email: customerInputData.email,
+            wallet_address: customerInputData.wallet_address,
             created,
             is_verified:
                 checkCustomerWithWalletAddress &&

@@ -32,7 +32,7 @@ export function useWishlistMutations() {
             //TODO: MOVE TO INDEX.TS
             return axios.post(`${BACKEND_URL}/custom/wishlist/item`, {
                 customer_id: customer_id, // Ensure customer_id is handled when null
-                product_id: product.id,
+                variant_id: product.productVariantId,
             },
                 {
                     headers: {
@@ -43,10 +43,10 @@ export function useWishlistMutations() {
         {
             onSuccess: (data, product) => {
                 // loadWishlist(customer_id);
-                console.log('Adding Wish list item in DB!');
+                console.log('Adding Wish list item ', product.productVariantId, ' in DB!');
             },
             onError: (error, product) => {
-                removeWishlistProduct(product.id);
+                removeWishlistProduct(product.id ?? '');
                 console.error('Error adding item to wishlist', error);
             },
         }
@@ -55,12 +55,12 @@ export function useWishlistMutations() {
     const removeWishlistItemMutation = useMutation(
         (product: WishlistProduct) => {
             // Return the axios delete call from the mutation function
-            removeWishlistProduct(product.id);
+            removeWishlistProduct(product.id ?? '');
             //TODO: MOVE TO INDEX.TS
             return axios.delete(`${BACKEND_URL}/custom/wishlist/item`, {
                 data: {
                     customer_id: customer_id, // Ensure customer_id is handled when null
-                    product_id: product.id,
+                    variant_id: product.productVariantId,
                 },
                 headers: {
                     authorization: getClientCookie('_medusa_jwt'),

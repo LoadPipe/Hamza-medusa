@@ -36,7 +36,7 @@ POST http://localhost:9000/custom/wishlist
 Content-Type: application/json
 
 {
-  "customer_id": "cus_01HW298CJPT60818GCHWD8GAT7"
+  "customer_id": "cus_01J8F1G0DX7X819MKDEVT3HWVF"
 }
 
 
@@ -58,7 +58,7 @@ Content-Type: application/json
 
 {
   "customer_id": "cus_01HW298CJPT60818GCHWD8GAT7",
-  "product_id": "prod_01HW241PXAB61RVRDBJZT7Q706"
+  "variant_id": ""
 }
 
 ### Delete Wishlist item by Customer_id && Product_id
@@ -67,17 +67,88 @@ Content-Type: application/json
 
 {
   "customer_id": "cus_01HW298CJPT60818GCHWD8GAT7",
-  "product_id": "prod_01HW241PKFDCDGP55DKH0A5A85"
+  "variant_id": ""
 }
 
-### MeiliSearch Search
-GET http://localhost:7700/indexes?limit=3
+### MEILIESEARCH USEFUL API CALLS: https://www.meilisearch.com/docs/reference/api/indexes#create-an-index
+
+### MeiliSearch List All Indexes
+GET http://localhost:7700/indexes
+Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
+
+### MeiliSearch Get Product Index
+GET http://localhost:7700/indexes/products
 Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
 
 
 ### MeilieSearch Delete All by uid
-DELETE http://localhost:7700/indexes/products/documents
+DELETE http://localhost:7700/indexes/product
 Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
+
+### MeilieSearch Update the Documents
+POST http://localhost:7700/indexes/products/documents/fetch
+Content-Type: application/json
+Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
+
+{
+  "uid": "products"
+}
+
+### MEILIE Get documents?
+GET http://localhost:7700/indexes/products/documents?limit=65&offset=0
+Content-Type: application/json
+Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
+
+
+### DELETE BY FILTER?
+POST http://localhost:7700/indexes/products/documents/delete
+Content-Type: application/json
+Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
+
+{
+  "filter": "status = draft"
+}
+
+### ADD FILTERABLE ATTRIBUTE
+PUT http://localhost:7700/indexes/products/settings/filterable-attributes
+Content-Type: application/json
+Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
+
+  ["status"]
+
+
+
+### CHECK MeilieSearch taskUid
+GET http://localhost:7700/tasks/313
+Content-Type: application/json
+Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
+
+
+
+### Get All Products
+GET http://localhost:9000/custom/meilisearch
+Content-Type: application/json
+
+
+### MeilieSearch Create the index
+POST http://localhost:7700/indexes
+Content-Type: application/json
+Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
+
+{
+  "uid": "products",
+  "primaryKey": "id"
+}
+
+### MeilieSearch Update an Index
+PATCH http://localhost:7700/indexes/products
+Content-Type: application/json
+Authorization: Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj
+
+{
+  "uid": "products",
+  "primaryKey": "id"
+}
 
 
 ### Product Variant Response??
@@ -189,7 +260,7 @@ Content-Type: application/json
 GET http://localhost:9000/custom/review/exists?order_id=order_01J6FTE8CVJYAF9X81FDA3VVV8&customer_id=cus_01J6FRW042PD32F7TVC0Z0D5V7&variant_id=variant_01J6FN17AVHC515FX8P41JYH60
 
 ### Return review and rating of existing product
-GET http://localhost:9000/custom/review/existing?order_id=order_01J6FRWMAJ49WY8910T1H5JX1E&product_id=prod_01J3CF1GXW1C0QSSMPBQR04GBK
+GET http://localhost:9000/custom/review/existing?order_id=order_01J8MXRYQQXWXEM1HYYK00T6DX&product_id=prod_01J8MCXP709STCJB3SD89TCFFQ
 Content-Type: application/json
 
 
@@ -304,9 +375,12 @@ Content-Type: application/json
     "cart_id": "cart_01J6FRGW4Y4ZNVKVA2FHEM7N9A"
 }
 
+### GET request to recover a customer's last cart
+GET http://localhost:9000/custom/cart/recover?customer_id=cus_01J8FQES9MPH63SMSS52PS58GP
+
 
 ### Get Specific Customers All Orders METHOD: listCustomerOrders() in order.ts
-GET http://localhost:9000/custom/order/customer-orders?customer_id=cus_01J6FRW042PD32F7TVC0Z0D5V7&buckets=true
+GET http://localhost:9000/custom/order/customer-orders?customer_id=cus_01J8MD5FK7AT7CRHCXGNVXTB54&buckets=true&check_buckets=true
 Content-Type: application/json
 
 
@@ -325,7 +399,7 @@ Content-Type: application/json
 
 
 ### Get Customer Orders without reviews. getNotReviewed
-GET http://localhost:9000/custom/review/not-reviewed?customer_id=cus_01J6FRW042PD32F7TVC0Z0D5V7
+GET http://localhost:9000/custom/review/not-reviewed?customer_id=cus_01J8MD5FK7AT7CRHCXGNVXTB54
 
 ### POST Let's add products...
 POST http://localhost:9000/custom/product/add-product
@@ -358,7 +432,7 @@ PUT http://localhost:9000/custom/bucky/orders
 Content-Type: application/json
 
 ### GET Import Bucky Products by name...
-GET http://localhost:9000/custom/bucky/import?keyword=bowl&count=5&page=1&store=store_01J7DT2M77XAKB6KQ1KK9Z35NW
+GET http://localhost:9000/custom/bucky/import?keyword=drone&count=1&store=Drones&category_id=pcat_gadgets
 Content-Type: application/json
 
 ### GET products by category name

@@ -42,7 +42,8 @@ async function axiosCall(
     verb: 'get' | 'post' | 'patch' | 'put' | 'delete',
     path: string,
     payload: any,
-    requiresSecurity: boolean = false
+    requiresSecurity: boolean = false,
+    returnRaw: boolean = false
 ): Promise<any> {
     try {
         console.log(
@@ -52,11 +53,17 @@ async function axiosCall(
         if (!url.startsWith('/')) url = '/' + url;
         url = `${BACKEND_URL}${url}`;
 
-        let config = undefined;
+        let config: any = {
+            cache: false,
+            headers: { 'Cache-Control': 'no-cache, no-store' },
+        };
         if (requiresSecurity) {
-            config = {
-                headers: { authorization: cookies().get('_medusa_jwt')?.value },
-            };
+            config.headers.authorization = cookies().get('_medusa_jwt')?.value;
+        }
+
+        //caching false by default
+        if (payload && !payload.cache) {
+            payload.cache = false;
         }
 
         let response = { data: undefined };
@@ -66,6 +73,9 @@ async function axiosCall(
                     const input: any = {};
                     if (payload) input.params = payload;
                     if (requiresSecurity) input.headers = config?.headers;
+                    if (!input.cache) {
+                        input.cache = false;
+                    }
 
                     response = await axios.get(url, input);
                 }
@@ -75,6 +85,9 @@ async function axiosCall(
                     const input: any = {};
                     if (payload) input.data = payload;
                     if (requiresSecurity) input.headers = config?.headers;
+                    if (!input.cache) {
+                        input.cache = false;
+                    }
 
                     response = await axios.delete(url, input);
                 }
@@ -90,73 +103,98 @@ async function axiosCall(
                 break;
         }
 
-        return response.data;
-    } catch (error) {
+        if (returnRaw) {
+            console.log(response);
+        }
+        return returnRaw ? response : response.data;
+    } catch (error: any) {
         console.error(
             `${verb.toUpperCase()} ${path} ${JSON.stringify(payload) ?? ''} error: `,
             error
         );
+        //return returnRaw ? error : error.data;
     }
 }
 
 async function get(
     url: string,
     params: any = null,
-    requiresSecurity: boolean = false
+    requiresSecurity: boolean = false,
+    returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('get', url, params, requiresSecurity);
+    return await axiosCall('get', url, params, requiresSecurity, returnRaw);
 }
 
 async function post(
     url: string,
     payload: any,
-    requiresSecurity: boolean = false
+    requiresSecurity: boolean = false,
+    returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('post', url, payload, requiresSecurity);
+    return await axiosCall('post', url, payload, requiresSecurity, returnRaw);
 }
 
 async function put(
     url: string,
     payload: any,
-    requiresSecurity: boolean = false
+    requiresSecurity: boolean = false,
+    returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('put', url, payload, requiresSecurity);
+    return await axiosCall('put', url, payload, requiresSecurity, returnRaw);
 }
 
 async function del(
     url: string,
     payload: any,
-    requiresSecurity: boolean = false
+    requiresSecurity: boolean = false,
+    returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('delete', url, payload, requiresSecurity);
+    return await axiosCall('delete', url, payload, requiresSecurity, returnRaw);
 }
 
 async function patch(
     url: string,
     payload: any,
-    requiresSecurity: boolean = false
+    requiresSecurity: boolean = false,
+    returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('patch', url, payload, requiresSecurity);
+    return await axiosCall('patch', url, payload, requiresSecurity, returnRaw);
 }
 
-async function getSecure(url: string, params: any) {
-    return await get(url, params, true);
+async function getSecure(url: string, params: any, returnRaw: boolean = false) {
+    return await get(url, params, true, returnRaw);
 }
 
-async function postSecure(url: string, payload: any) {
-    return await post(url, payload, true);
+async function postSecure(
+    url: string,
+    payload: any,
+    returnRaw: boolean = false
+) {
+    return await post(url, payload, true, returnRaw);
 }
 
-async function putSecure(url: string, payload: any) {
-    return await put(url, payload, true);
+async function putSecure(
+    url: string,
+    payload: any,
+    returnRaw: boolean = false
+) {
+    return await put(url, payload, true, returnRaw);
 }
 
-async function delSecure(url: string, payload: any) {
-    return await del(url, payload, true);
+async function delSecure(
+    url: string,
+    payload: any,
+    returnRaw: boolean = false
+) {
+    return await del(url, payload, true, returnRaw);
 }
 
-async function patchSecure(url: string, payload: any) {
-    return await patch(url, payload, true);
+async function patchSecure(
+    url: string,
+    payload: any,
+    returnRaw: boolean = false
+) {
+    return await patch(url, payload, true, returnRaw);
 }
 
 /**
@@ -301,11 +339,19 @@ export async function cancelOrderCart(cart_id: string) {
     return await postSecure('/custom/cart/cancel', { cart_id });
 }
 
-export async function verifyEmail(customer_id: string, email: string) {
-    return await postSecure('/custom/confirmation-token/generate', {
-        customer_id,
-        email,
-    });
+export async function verifyEmail(
+    customer_id: string,
+    email: string,
+    returnRaw: boolean = false
+) {
+    return await postSecure(
+        '/custom/confirmation-token/generate',
+        {
+            customer_id,
+            email,
+        },
+        returnRaw
+    );
 }
 
 export async function addNotifications(
@@ -333,11 +379,16 @@ export async function getOrderDetails(customer_id: string) {
     return output.orders.orders;
 }
 
-export async function getOrderBucket(customer_id: string) {
+export async function getOrderBucket(
+    customer_id: string,
+    check_buckets = false
+) {
     const response = await getSecure('/custom/order/customer-orders', {
         customer_id,
         buckets: true,
+        check_buckets,
     });
+    if (check_buckets) return response.buckets;
     return response.orders;
 }
 
@@ -441,7 +492,8 @@ export async function finalizeCheckout(
     cart_id: string,
     transaction_id: string,
     payer_address: string,
-    escrow_contract_address: string,
+    receiver_address: string,
+    escrow_address: string,
     chain_id: number
     //cart_products: any
 ) {
@@ -449,8 +501,9 @@ export async function finalizeCheckout(
         cart_id,
         transaction_id,
         payer_address,
-        escrow_contract_address,
-        chain_id
+        receiver_address,
+        escrow_address,
+        chain_id,
     });
 }
 
@@ -460,6 +513,14 @@ export async function getCartEmail(cart_id: string) {
 
 export async function setCartEmail(cart_id: string, email_address: string) {
     return await putSecure('/custom/cart/email', { cart_id, email_address });
+}
+
+export async function recoverCart(customer_id: string) {
+    const output = await getSecure('/custom/cart/recover', { customer_id });
+    if (output?.cart) {
+        cookies().set('_medusa_cart_id', output.cart.id);
+    }
+    return output?.cart;
 }
 
 // Cart actions
@@ -500,12 +561,10 @@ export async function addItem({
     cartId,
     variantId,
     quantity,
-    currencyCode,
 }: {
     cartId: string;
     variantId: string;
     quantity: number;
-    currencyCode: string;
 }) {
     const headers = getMedusaHeaders(['cart']);
 
@@ -743,6 +802,27 @@ export async function getHamzaCustomer(includeAddresses: boolean = true) {
     });
 
     return response ?? {};
+}
+
+export async function getNonSecureCustomer(includedAddresses: boolean = true) {
+    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? {
+        customer_id: '',
+    };
+    const customer_id: string = token?.customer_id ?? '';
+    return await get('/custom/customer', {
+        customer_id,
+        include_addresses: includedAddresses ? 'true' : 'false',
+    });
+}
+
+export async function clearAuthCookie() {
+    try {
+        cookies().set('_medusa_jwt', '', {
+            maxAge: -1,
+        });
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 // Customer actions

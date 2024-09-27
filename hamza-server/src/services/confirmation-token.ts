@@ -37,19 +37,26 @@ export default class ConfirmationTokenService extends TransactionBaseService {
         let emailCheck = await this.customerRepository_.findOne({
             where: { email: email },
         });
-        if (emailCheck) {
-            throw new Error('Email already associated with different account');
-        }
-        let token = ethers.keccak256(new Uint8Array(32));
 
+        if (emailCheck) {
+            console.log('ERROR: email arready exists');
+            return {
+                status: 'error',
+                message: 'Email already associated with a different account',
+            };
+        }
+
+        let token = ethers.keccak256(ethers.randomBytes(32));
         this.logger.debug('token is ' + token);
+
         let confirmationToken = await this.confirmationTokenRepository_.save({
             id: token,
             customer: { id: customer_id },
             email_address: email,
             token: token,
         });
-        //sending email
+
+        // Send confirmation email
         let smtpService = new SmtpMailService();
         await smtpService.sendMail({
             from: process.env.SMTP_FROM,
@@ -61,7 +68,11 @@ export default class ConfirmationTokenService extends TransactionBaseService {
             },
         });
 
-        return;
+        return {
+            status: 'success',
+            message: 'Token created successfully',
+            token,
+        };
     }
 
     async getConfirmationToken(token: string): Promise<ConfirmationToken> {

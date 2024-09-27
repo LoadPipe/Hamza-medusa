@@ -1,34 +1,32 @@
 import { create } from 'zustand';
 
-// Define the state and associated actions in an interface
 interface CategoryItem {
     categoryName: string;
     urlLink: string;
 }
 
+// Define the state and associated actions in an interface
 interface ModalFilterState {
-    selectCategoryStoreModalFilter: string[] | null;
-    categoryItemStoreModalFilter: CategoryItem[] | null;
+    selectCategoryStoreModalFilter: string[];
+    categoryItemStoreModalFilter: CategoryItem[];
     modalReviewFilterSelect: string | null;
     setSelectCategoryModalFilter: (
-        items: string[] | ((prev: string[] | null) => string[] | null)
+        items: string[] | ((prev: string[]) => string[])
     ) => void;
     setCategoryItemStoreModalFilter: (
-        items:
-            | CategoryItem[]
-            | ((prev: CategoryItem[] | null) => CategoryItem[] | null)
+        items: CategoryItem[] | ((prev: CategoryItem[]) => CategoryItem[])
     ) => void;
-
     setModalReviewFilterSelect: (stars: string | null) => void;
 }
 
 // Create the Zustand store
 const useModalFilter = create<ModalFilterState>((set) => ({
-    selectCategoryStoreModalFilter: ['All'], // Allow for multi-category selection
-    categoryItemStoreModalFilter: null, // Initial state for category name and URL link
-    modalReviewFilterSelect: null,
+    selectCategoryStoreModalFilter: [], // Initialized to an empty array
+    categoryItemStoreModalFilter: [], // Initialized to an empty array
+    modalReviewFilterSelect: null, // Remains nullable since it's a single value
+
     setSelectCategoryModalFilter: (
-        items: string[] | ((prev: string[] | null) => string[] | null)
+        items: string[] | ((prev: string[]) => string[])
     ) =>
         set((state) => ({
             selectCategoryStoreModalFilter:
@@ -36,10 +34,9 @@ const useModalFilter = create<ModalFilterState>((set) => ({
                     ? items(state.selectCategoryStoreModalFilter)
                     : items,
         })),
+
     setCategoryItemStoreModalFilter: (
-        items:
-            | CategoryItem[]
-            | ((prev: CategoryItem[] | null) => CategoryItem[] | null)
+        items: CategoryItem[] | ((prev: CategoryItem[]) => CategoryItem[])
     ) =>
         set((state) => ({
             categoryItemStoreModalFilter:

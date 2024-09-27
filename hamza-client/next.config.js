@@ -35,27 +35,39 @@ const nextConfig = withStoreConfig({
             },
             {
                 protocol: 'https',
+                hostname: 'images.hamza.market',
+            },
+            {
+                protocol: 'https',
                 hostname: 'medusa-server-testing.s3.us-east-1.amazonaws.com',
             },
             {
                 protocol: 'https',
-                hostname: 'cbu01.alicdn.com', // Newly added entry
+                hostname: 'cbu01.alicdn.com', //buckydrop
             },
             {
                 protocol: 'https',
-                hostname: 'img.alicdn.com', // Newly added entry
+                hostname: 'img.alicdn.com', //buckydrop
             },
             {
                 protocol: 'https',
-                hostname: 'alpha.hamza.biz', // Newly added entry
+                hostname: 'alpha.hamza.biz',
             },
             {
                 protocol: 'https',
-                hostname: 'nhci-aigc.oss-cn-zhangjiakou.aliyuncs.com', // Newly added entry
+                hostname: 'alpha.hamza.market',
+            },
+            {
+                protocol: 'https',
+                hostname: 'nhci-aigc.oss-cn-zhangjiakou.aliyuncs.com', //buckydrop
             },
             {
                 protocol: 'https',
                 hostname: 'global-img-cdn.1688.com'
+            },
+            {
+                protocol: 'https',
+                hostname: 'static.snapchum.com'
             }
         ],
     },
