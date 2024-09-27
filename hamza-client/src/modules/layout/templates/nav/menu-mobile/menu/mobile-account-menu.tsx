@@ -80,7 +80,7 @@ const MobileAccountMenu = () => {
             <MenuList
                 marginTop={'1rem'}
                 px={'1rem'}
-                pb={'0px'}
+                py={'0px'}
                 borderWidth={'0px'}
                 backgroundColor={'transparent'}
                 justifyContent={'center'}
@@ -91,6 +91,7 @@ const MobileAccountMenu = () => {
                     borderColor={'#555555'}
                     borderWidth={'1px'}
                     pb={'0px'}
+                    width={'100%'}
                     backgroundColor={'#121212'}
                 >
                     <Wishlist />
