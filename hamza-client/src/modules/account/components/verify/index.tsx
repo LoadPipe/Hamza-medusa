@@ -83,9 +83,13 @@ const VerifyEmail = () => {
             height={'100%'}
             justifyContent={'center'}
             alignItems={'center'}
-            gap={6}
+            gap={{ base: 3, md: 6 }}
         >
-            <Text textAlign={'center'} maxW={'746px'}>
+            <Text
+                textAlign={'center'}
+                maxW={'746px'}
+                fontSize={{ base: '14px', md: '16px' }}
+            >
                 Please verify your account by clicking the link sent to your
                 email, or by logging in with your Google, X (formerly Twitter),
                 or Discord account. This will ensure full access to your account
@@ -93,7 +97,13 @@ const VerifyEmail = () => {
                 folder or resend the link.
             </Text>
 
-            <Flex w={'100%'} maxW={'468px'} flexDir={'column'} gap="1rem">
+            <Flex
+                w={'100%'}
+                maxW={'468px'}
+                flexDir={'column'}
+                mt="0.5rem"
+                gap="1rem"
+            >
                 {/* Input Email Address */}
                 <Input
                     name="email"
@@ -101,14 +111,17 @@ const VerifyEmail = () => {
                     value={email}
                     type="email"
                     width={'100%'}
+                    borderColor={'#555555'}
+                    backgroundColor={'black'}
                     borderRadius={'12px'}
                     height={'50px'}
+                    _placeholder={{ color: '#555555' }}
                     onChange={(e) => {
                         setEmail(e.target.value.toLowerCase());
                     }}
                 />
 
-                <Flex flexDir={'row'} my="1rem" alignItems={'center'}>
+                <Flex flexDir={'row'} my={'0.5rem'} alignItems={'center'}>
                     <Divider />
                     <Text mx="1rem">OR</Text>
                     <Divider />
@@ -121,7 +134,7 @@ const VerifyEmail = () => {
                         borderWidth={'1px'}
                         borderColor={'#555555'}
                         borderRadius={'12px'}
-                        backgroundColor={'transparent'}
+                        backgroundColor={'black'}
                         color={'white'}
                         height={'56px'}
                         width={'100%'}
@@ -140,7 +153,7 @@ const VerifyEmail = () => {
                         borderWidth={'1px'}
                         borderColor={'#555555'}
                         borderRadius={'12px'}
-                        backgroundColor={'transparent'}
+                        backgroundColor={'black'}
                         color={'white'}
                         height={'56px'}
                         width={'100%'}
@@ -161,7 +174,7 @@ const VerifyEmail = () => {
                         borderWidth={'1px'}
                         borderColor={'#555555'}
                         borderRadius={'12px'}
-                        backgroundColor={'transparent'}
+                        backgroundColor={'black'}
                         color={'white'}
                         height={'56px'}
                         width={'100%'}
