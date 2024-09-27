@@ -204,39 +204,39 @@ export default class BuckydropService extends TransactionBaseService {
                 }
             }
 
-            if (subtotal > 0) {
-                /*
-                const estimate =
-                    await this.buckyClient.getShippingCostEstimate(input);
+            //if (subtotal > 0) {
+            /*
+            const estimate =
+                await this.buckyClient.getShippingCostEstimate(input);
 
-                //convert to usd first
-                if (estimate?.data?.total) {
-                    output = await this.priceConverter.convertPrice(
-                        estimate.data.total,
-                        'cny',
-                        'usdc'
-                    );
-                    gotPrice = true;
-                }
-                */
-
-                output = SHIPPING_COST_MAX; // subtotal;
-                output =
-                    output < SHIPPING_COST_MIN ? SHIPPING_COST_MIN : output;
-                output =
-                    output > SHIPPING_COST_MAX ? SHIPPING_COST_MAX : output;
-
-                //convert to final currency
-                if (currency != 'usdc')
-                    output = await this.priceConverter.convertPrice(
-                        output, //estimate.data.total,
-                        'usdc',
-                        currency
-                    );
+            //convert to usd first
+            if (estimate?.data?.total) {
+                output = await this.priceConverter.convertPrice(
+                    estimate.data.total,
+                    'cny',
+                    'usdc'
+                );
+                gotPrice = true;
             }
+            */
+
+            output = SHIPPING_COST_MAX; // subtotal;
+            output =
+                output < SHIPPING_COST_MIN ? SHIPPING_COST_MIN : output;
+            output =
+                output > SHIPPING_COST_MAX ? SHIPPING_COST_MAX : output;
+
+            //convert to final currency
+            if (currency != 'usdc')
+                output = await this.priceConverter.convertPrice(
+                    output, //estimate.data.total,
+                    'usdc',
+                    currency
+                );
+            // }
 
             //if price was not yet converted, or nothing came back, do it now
-            if (!gotPrice) {
+            /*if (!gotPrice) {
                 //this needs to be converted to USDC in order to compare
                 if (output <= 0 && subtotal > 0) {
                     subtotal = await this.priceConverter.convertPrice(
@@ -259,6 +259,7 @@ export default class BuckydropService extends TransactionBaseService {
                     currency
                 );
             }
+            */
         } catch (e) {
             this.logger.error(
                 `Error calculating shipping costs in BuckydropService`,
