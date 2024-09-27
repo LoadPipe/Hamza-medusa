@@ -10,16 +10,17 @@ import {
     MenuList,
     MenuItem,
     MenuDivider,
+    Center,
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import { CgProfile } from 'react-icons/cg';
 import { MdOutlinePersonOutline, MdOutlineShield } from 'react-icons/md';
 import { AiFillSetting } from 'react-icons/ai';
-import { AuthorizedAccount } from './components/authorized-account';
+import { AuthorizedAccount } from '../../menu-desktop/components/authorized-account';
 import useWishlistStore from '@store/wishlist/wishlist-store';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
-const AccountMenu = () => {
+const MobileAccountMenu = () => {
     const { authData } = useCustomerAuthStore();
     const { wishlist } = useWishlistStore((state) => ({
         wishlist: state.wishlist,
@@ -30,78 +31,80 @@ const AccountMenu = () => {
         }, 0) || 0;
 
     return (
-        <Flex display={{ base: 'none', md: 'flex' }} height={'100%'}>
-            <Menu placement="bottom-end">
-                <MenuButton
-                    width={'60px'}
-                    height={'57px'}
-                    px="1rem"
-                    borderRadius={'full'}
-                    borderColor={'white'}
-                    borderWidth={'1px'}
-                    backgroundColor={'transparent'}
-                    cursor={'pointer'}
-                    position="relative"
-                    _hover={{
-                        '.profile-icon': {
-                            color: 'primary.green.900',
-                            transition: 'color 0.3s ease-in-out',
-                        },
-                        borderColor: 'primary.green.900',
-                        transition: 'border-color 0.3s ease-in-out',
-                    }}
+        <Menu placement="bottom-end">
+            <MenuButton
+                width={'26px'}
+                height={'26px'}
+                px="5px"
+                borderRadius={'full'}
+                borderColor={'white'}
+                borderWidth={'1px'}
+                backgroundColor={'transparent'}
+                cursor={'pointer'}
+                position="relative"
+                _hover={{
+                    '.profile-icon': {
+                        color: 'primary.green.900',
+                        transition: 'color 0.3s ease-in-out',
+                    },
+                    borderColor: 'primary.green.900',
+                    transition: 'border-color 0.3s ease-in-out',
+                }}
+            >
+                <Flex
+                    alignSelf={'center'}
+                    className="profile-icon"
+                    color={'white'}
                 >
+                    <CgProfile size={20} />
+                </Flex>
+                {totalItems > 0 && (
                     <Flex
-                        alignSelf={'center'}
-                        className="profile-icon"
-                        color={'white'}
+                        position="absolute"
+                        top="-4px"
+                        right="-4px"
+                        width="15px"
+                        height="15px"
+                        borderRadius="full"
+                        backgroundColor="#EB4C60"
+                        justifyContent="center"
+                        alignItems="center"
+                        fontSize="10px"
+                        color="white"
+                        fontWeight="700"
                     >
-                        <CgProfile size={30} />
+                        <Text fontSize={'10px'}>{totalItems}</Text>
                     </Flex>
-                    {totalItems > 0 && (
-                        <Flex
-                            position="absolute"
-                            top="0px"
-                            right="0px"
-                            width="20px"
-                            height="20px"
-                            borderRadius="full"
-                            backgroundColor="#EB4C60"
-                            justifyContent="center"
-                            alignItems="center"
-                            fontSize="10px"
-                            color="white"
-                            fontWeight="700"
-                        >
-                            <Text fontSize={'10px'}>{totalItems}</Text>
-                        </Flex>
-                    )}
-                </MenuButton>
+                )}
+            </MenuButton>
+            <MenuList
+                marginTop={'1rem'}
+                px={'1rem'}
+                py={'0px'}
+                borderWidth={'0px'}
+                backgroundColor={'transparent'}
+                justifyContent={'center'}
+                width={`calc(100vw)`}
+            >
                 <MenuList
-                    marginTop={'1rem'}
-                    pb={'0px'}
                     borderRadius={'16px'}
-                    borderColor={{
-                        base: 'transparent',
-                        md: 'white',
-                    }}
-                    backgroundColor={'black'}
-                    width={{ base: '100vw', md: '321px' }}
+                    borderColor={'#555555'}
+                    borderWidth={'1px'}
+                    pb={'0px'}
+                    width={'100%'}
+                    backgroundColor={'#121212'}
                 >
                     <Wishlist />
-                    <Box px={{ base: '2rem', md: 0 }}>
-                        <MenuDivider
-                            opacity={{ base: '0.5', md: '1' }}
-                            borderColor={'white'}
-                        />
-                    </Box>
+
+                    <MenuDivider borderColor={'#555555'} />
+
                     <Link href={`/account/profile`}>
                         <MenuItem
                             fontWeight={'600'}
                             my="1rem"
                             pl="1rem"
                             color={'white'}
-                            backgroundColor={'black'}
+                            backgroundColor={'#121212'}
                             _hover={{ color: 'primary.green.900' }}
                         >
                             <Flex
@@ -124,7 +127,7 @@ const AccountMenu = () => {
                                 mt="-1rem"
                                 mb="1rem"
                                 color={'white'}
-                                backgroundColor={'black'}
+                                backgroundColor={'#121212'}
                                 _hover={{ color: 'primary.green.900' }}
                             >
                                 <Flex
@@ -140,12 +143,12 @@ const AccountMenu = () => {
                             </MenuItem>
                         </Link>
                     )}
-
+                    <MenuDivider mb="0" borderColor={'#555555'} />
                     <AuthorizedAccount />
                 </MenuList>
-            </Menu>
-        </Flex>
+            </MenuList>
+        </Menu>
     );
 };
 
-export default AccountMenu;
+export default MobileAccountMenu;

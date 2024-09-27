@@ -12,6 +12,7 @@ import {
     Button,
     Image,
     Text,
+    Flex,
 } from '@chakra-ui/react';
 import { updateProductReview } from '@lib/data';
 import toast from 'react-hot-toast';
@@ -149,44 +150,52 @@ const EditReviewTemplate = ({
                                 Review must be at least 50 characters long.
                             </Text>
                         )}
-                        <Button
-                            variant="solid"
-                            borderColor={'primary.indigo.900'}
-                            color={'primary.indigo.900'}
-                            width={'180px'}
-                            height={'47px'}
-                            borderRadius={'37px'}
-                            onClick={() => {
-                                onClose();
-                                setRating(0);
-                                setCurrentReview('');
-                            }}
+                        <Flex
+                            flexDirection="row"
+                            justifyContent="center"
+                            alignItems="center"
+                            my={'1rem'}
                         >
-                            Cancel
-                        </Button>
+                            <Button
+                                variant="solid"
+                                borderColor={'primary.indigo.900'}
+                                color={'primary.indigo.900'}
+                                width={'180px'}
+                                height={'47px'}
+                                borderRadius={'37px'}
+                                onClick={() => {
+                                    onClose();
+                                    setRating(0);
+                                    setCurrentReview('');
+                                }}
+                            >
+                                Cancel
+                            </Button>
 
-                        <Box
-                            as="button"
-                            mt={4}
-                            borderRadius={'37px'}
-                            backgroundColor={
-                                rating === 0 || currentReview.trim().length < 50
-                                    ? 'gray.400'
-                                    : 'primary.indigo.900'
-                            }
-                            color={'white'}
-                            fontSize={'18px'}
-                            fontWeight={600}
-                            height={'47px'}
-                            width={'180px'}
-                            ml={'20px'}
-                            onClick={submitReview}
-                            disabled={
-                                rating === 0 || currentReview.trim().length < 50
-                            }
-                        >
-                            Submit
-                        </Box>
+                            <Box
+                                as="button"
+                                borderRadius={'37px'}
+                                backgroundColor={
+                                    rating === 0 ||
+                                    currentReview.trim().length < 50
+                                        ? 'gray.400'
+                                        : 'primary.indigo.900'
+                                }
+                                color={'white'}
+                                fontSize={'18px'}
+                                fontWeight={600}
+                                height={'47px'}
+                                width={'180px'}
+                                ml={'20px'}
+                                onClick={submitReview}
+                                disabled={
+                                    rating === 0 ||
+                                    currentReview.trim().length < 50
+                                }
+                            >
+                                Submit
+                            </Box>
+                        </Flex>
                     </Box>
                 </ModalBody>
             </ModalContent>

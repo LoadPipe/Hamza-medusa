@@ -3,28 +3,25 @@
 import {
     Button,
     Flex,
+    Text,
     Modal,
     ModalOverlay,
     ModalContent,
     ModalBody,
-    Text,
-    Skeleton,
 } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import AccountMenu from '@modules/layout/templates/nav-4/menu/account-menu';
-import { useSwitchNetwork } from 'wagmi';
+import MobileAccountMenu from '../menu/mobile-account-menu';
 import {
     getAllowedChainsFromConfig,
     getBlockchainNetworkName,
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
+import { MdOutlineWallet } from 'react-icons/md';
+import { useSwitchNetwork } from 'wagmi';
 
 export const WalletConnectButton = () => {
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
 
-    //const isProduction = process.env.NODE_ENV === 'production';
-    //const networkName = isProduction ? 'Optimism' : 'Sepolia';
-    //const switchNetworkId = isProduction ? 10 : 11155111;
     const switchNetworkId = getAllowedChainsFromConfig()[0];
     const networkName = getBlockchainNetworkName(switchNetworkId ?? '');
 
@@ -60,16 +57,17 @@ export const WalletConnectButton = () => {
                         {(() => {
                             if (!connected) {
                                 return (
-                                    <Button
-                                        borderRadius={'30px'}
+                                    <Flex
                                         backgroundColor={'primary.green.900'}
                                         onClick={openConnectModal}
-                                        ml="1rem"
-                                        height="54px"
-                                        fontSize={'20px'}
+                                        height="24px"
+                                        width="24px"
+                                        borderRadius={'3px'}
+                                        justifyContent={'center'}
+                                        alignItems={'center'}
                                     >
-                                        Connect Wallet
-                                    </Button>
+                                        <MdOutlineWallet />
+                                    </Flex>
                                 );
                             }
 
@@ -167,7 +165,7 @@ export const WalletConnectButton = () => {
                                     flexDirection={'row'}
                                     alignItems={'center'}
                                 >
-                                    <AccountMenu />
+                                    <MobileAccountMenu />
                                 </Flex>
                             );
                         })()}

@@ -3,27 +3,22 @@
 import {
     Button,
     Flex,
-    Text,
     Modal,
     ModalOverlay,
     ModalContent,
     ModalBody,
+    Text,
+    Skeleton,
 } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import AccountMenu from '@modules/layout/templates/nav-4/menu/account-menu';
-import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import { Cart } from '@medusajs/medusa';
-import { HiOutlineShoppingCart } from 'react-icons/hi';
-import { getAllowedChainsFromConfig, getBlockchainNetworkName, SwitchNetwork } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
-import { MdOutlineWallet } from 'react-icons/md';
+import AccountMenu from '@modules/layout/templates/nav/menu-desktop/account-menu';
 import { useSwitchNetwork } from 'wagmi';
+import {
+    getAllowedChainsFromConfig,
+    getBlockchainNetworkName,
+} from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 
-//Todo: If chain unsupported?
-export const WalletConnectButton = ({
-    cart: cartState,
-}: {
-    cart?: Omit<Cart, 'beforeInsert' | 'afterLoad'> | null;
-}) => {
+export const WalletConnectButton = () => {
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
 
@@ -38,6 +33,8 @@ export const WalletConnectButton = ({
             {({
                 account,
                 chain,
+                openAccountModal,
+                openChainModal,
                 openConnectModal,
                 authenticationStatus,
                 mounted,
@@ -50,17 +47,11 @@ export const WalletConnectButton = ({
                     (!authenticationStatus ||
                         authenticationStatus === 'authenticated');
 
-                const totalItems =
-                    cartState?.items?.reduce((acc: any, item: any) => {
-                        return acc + item.quantity;
-                    }, 0) || 0;
-
                 return (
                     <div
                         {...(!ready && {
                             'aria-hidden': true,
                             style: {
-                                opacity: 0,
                                 pointerEvents: 'none',
                                 userSelect: 'none',
                             },
@@ -69,28 +60,30 @@ export const WalletConnectButton = ({
                         {(() => {
                             if (!connected) {
                                 return (
-                                    <Flex
+                                    <Button
+                                        borderRadius={'30px'}
                                         backgroundColor={'primary.green.900'}
                                         onClick={openConnectModal}
-                                        height="24px"
-                                        width="24px"
-                                        borderRadius={'3px'}
-                                        justifyContent={'center'}
-                                        alignItems={'center'}
+                                        ml="1rem"
+                                        height="54px"
+                                        fontSize={'20px'}
                                     >
-                                        <MdOutlineWallet />
-                                    </Flex>
+                                        Connect Wallet
+                                    </Button>
                                 );
                             }
 
                             //if (chain && chain.unsupported) {
-                            if (chain && chain.id != getAllowedChainsFromConfig()[0]) {
+                            if (
+                                chain &&
+                                chain.id != getAllowedChainsFromConfig()[0]
+                            ) {
                                 console.log(chain);
                                 console.log('Network id is', switchNetworkId);
                                 return (
                                     <Modal
                                         isOpen={true}
-                                        onClose={() => { }}
+                                        onClose={() => {}}
                                         isCentered
                                     >
                                         <ModalOverlay />
@@ -174,58 +167,7 @@ export const WalletConnectButton = ({
                                     flexDirection={'row'}
                                     alignItems={'center'}
                                 >
-                                    <Flex alignSelf={'center'} ml="1rem">
-                                        <LocalizedClientLink href="/cart">
-                                            <Flex
-                                                position="relative"
-                                                width={'100%'}
-                                                color="white"
-                                                _hover={{
-                                                    '.cart-text, .cart-icon': {
-                                                        color: 'primary.green.900',
-                                                    },
-                                                }}
-                                            >
-                                                <Flex
-                                                    flexDirection={'row'}
-                                                    alignSelf={'center'}
-                                                    color={'white'}
-                                                    _hover={{
-                                                        '.cart-icon': {
-                                                            color: 'primary.green.900',
-                                                            transition:
-                                                                'color 0.3s ease-in-out',
-                                                        },
-                                                    }}
-                                                >
-                                                    <HiOutlineShoppingCart
-                                                        className="cart-icon"
-                                                        size={'25px'}
-                                                    />
-                                                </Flex>
-                                                {totalItems > 0 && (
-                                                    <Flex
-                                                        position="absolute"
-                                                        top="-4px"
-                                                        right="-4px"
-                                                        width="15px"
-                                                        height="15px"
-                                                        borderRadius="full"
-                                                        backgroundColor="#EB4C60"
-                                                        justifyContent="center"
-                                                        alignItems="center"
-                                                        fontSize="10px"
-                                                        color="white"
-                                                        fontWeight="700"
-                                                    >
-                                                        <Text fontSize={'10px'}>
-                                                            {totalItems}
-                                                        </Text>
-                                                    </Flex>
-                                                )}
-                                            </Flex>
-                                        </LocalizedClientLink>
-                                    </Flex>
+                                    <AccountMenu />
                                 </Flex>
                             );
                         })()}
