@@ -49,7 +49,6 @@ const HeroBanner = () => {
                     flexDirection={{ base: 'column', md: 'row' }}
                 >
                     <Text
-                        as="span"
                         mt={{ base: '-0.5rem', md: '0' }}
                         fontWeight={'200'}
                         color={'#FBFDFA'}
