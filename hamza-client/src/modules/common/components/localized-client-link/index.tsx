@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import React from 'react';
 
 /**
@@ -14,18 +14,36 @@ const LocalizedClientLink = ({
     ...props
 }: {
     children?: React.ReactNode;
-    href: string;
+    href?: string;
     className?: string;
     onClick?: () => void;
     passHref?: true;
     [x: string]: any;
 }) => {
     const { countryCode } = useParams();
+    const router = useRouter();
+
+    const handleClick = (
+        e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
+    ) => {
+        e.preventDefault(); // Prevent default anchor behavior
+
+        // If href is provided, navigate to it. Otherwise, go back one step in history
+        if (href) {
+            router.push(`/${countryCode}${href}`);
+        } else {
+            router.back();
+        }
+    };
 
     return (
-        <Link href={`/${countryCode}${href}`} {...props}>
+        <a
+            href={href ? `/${countryCode}${href}` : '#'}
+            onClick={handleClick}
+            {...props}
+        >
             {children}
-        </Link>
+        </a>
     );
 };
 
