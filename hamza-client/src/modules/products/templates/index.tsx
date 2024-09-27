@@ -104,7 +104,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                 width="100%"
                 flexDirection={'row'}
             >
-                <LocalizedClientLink href="/shop">
+                <LocalizedClientLink className="back-button">
                     <Flex
                         ml="-0.5rem"
                         height={'52px'}
