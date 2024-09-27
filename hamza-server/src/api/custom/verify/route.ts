@@ -11,6 +11,146 @@ import { RouteHandler } from '../../route-handler';
 
 // TODO: So once the user has been verified, we can use the CustomerService.create() method to create/login the user.
 
+class NewCustomerNames {
+    static firstNames = [
+        'Anonymous',
+        'John',
+        'Garo',
+        'Jonathan',
+        'Gar',
+        'Farver',
+        'Melchior',
+        'Zaaaane',
+        'Johnald',
+        'Feety',
+        'The Buddha',
+        'Conan',
+        'Bastrick',
+        'Weldrick',
+        'Javascript',
+        'Fleetwoooood',
+        'Farhrvenald',
+        'Bulbosaur',
+        'Captain',
+        'Peekachoo',
+        "J'Dinklage",
+        'Todd-Royal',
+        'Hingle',
+        'Jackmerius',
+        "D'Isaiah",
+        "D'Jasper",
+        'Caligula',
+        'Xmas',
+        'Beavis',
+        'Ozamatazzz',
+        'Beezer',
+        'X-Wing',
+        'Super Mario',
+        'Eeeeeeeeee',
+        'Skidooooosh',
+        'Torque',
+        'Bizmo',
+        'Donkeyteeth',
+        'Quiznatroid',
+        'Bidness',
+        'Funkayyyy',
+        "D'pez",
+        'Slayyyyyyyy',
+        'Beeeeg',
+        'Quackadilly',
+        'Blyrone',
+        'Jammie',
+        'Hamcorn',
+        'Cornelius',
+        'Dahistorius',
+        "Huka'Lakanaka",
+        'Haloopeeeno',
+        'Minanas',
+        'Ladadadadaladadada',
+        'Horsey',
+        'Mousecop',
+        'Squeeeeeeeeps',
+        'A.A.Ron',
+        'Firstname',
+        "T'Variousness",
+        'Juckson',
+    ];
+
+    static lastNames = [
+        'Gigachad',
+        'Kosinski',
+        'Nazarian',
+        'Bajada',
+        'Mnarnar',
+        'McZaza',
+        'Feetersen',
+        'McBoatface',
+        'Maguffin',
+        'Religion',
+        'Stonefist',
+        'Barnbarian',
+        'Fahhhhrrnald',
+        'McMc',
+        'Integer',
+        'The Mack',
+        'Nose',
+        'Licktoad',
+        'Morgoon',
+        'Ahab',
+        'Smoochie-Wallace',
+        'McKringleberry',
+        'Tacktheratrix',
+        'Billings-Clyde',
+        'Probincrux III',
+        'Beavus',
+        'Jaxon-Flaxon-Waxon',
+        'Hardunkichud',
+        'Buckshank',
+        'Washingbeard',
+        '@aliciousness',
+        'Bros',
+        'Eeeeeeeeee',
+        'Schoishse',
+        'Velociraptor',
+        'Barsoooom',
+        'Construction Noise',
+        'Funyuns',
+        'Mazimwellious',
+        'Skittle',
+        'Bidness',
+        'Stooooooiuzus',
+        'Poopsie',
+        'Queeeeeeenn',
+        'Boyahhh',
+        'Quackadilly',
+        'Blashington',
+        'Jammi-Jammy',
+        'Coooorrrrrnnnius',
+        'Chickeninthecorn',
+        'Lamystorius',
+        'LeMysterioso',
+        "Hakanakaheekalucka'hukahakafaka",
+        'Dala-dadaladaladalada',
+        'Harvard',
+        'Balakay',
+        'Lastname',
+        'Showerhandle',
+        'Powercandle',
+        'Mascarpone',
+        'Grundleplith',
+    ];
+
+    public static getRandom(): { first_name: string, last_name: string } {
+        const fRand = Math.floor(Math.random() * this.firstNames.length);
+        const lRand = Math.floor(Math.random() * this.firstNames.length);
+
+        return {
+            first_name: this.firstNames[fRand],
+            last_name: this.lastNames[lRand]
+        };
+    }
+}
+
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const customerService: CustomerService =
         req.scope.resolve('customerService');
@@ -39,11 +179,13 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 relations: { customer: { preferred_currency: true } },
             });
 
+        const { first_name, last_name } = NewCustomerNames.getRandom();
+
         //create customer input data
         const customerInputData = {
             email: `${checkCustomerWithWalletAddress && checkCustomerWithWalletAddress.customer ? checkCustomerWithWalletAddress.customer.email : `${wallet_address}@evm.blockchain`}`,
-            first_name: 'Anonymous',
-            last_name: 'Gigachad',
+            first_name,
+            last_name,
             password: 'password', //TODO: (JK) store the default password someplace
             wallet_address: wallet_address,
         };
