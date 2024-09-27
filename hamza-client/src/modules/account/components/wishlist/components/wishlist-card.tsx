@@ -246,15 +246,9 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                         width="100%"
                     >
                         {/* Product image and Description */}
-                        {/* <LocalizedClientLink
+                        <LocalizedClientLink
+                            className={"w-['75px'] h-['75px']"}
                             href={`/products/${productData.handle}`}
-                        > */}
-                        <a
-                            style={{
-                                width: '75px',
-                                height: '75px',
-                            }}
-                            href="/products/${productData.handle"
                         >
                             <ChakraImage
                                 src={productImage}
@@ -265,8 +259,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                 objectFit={'cover'}
                                 style={{ borderRadius: '8px' }}
                             />
-                        </a>
-                        {/* </LocalizedClientLink> */}
+                        </LocalizedClientLink>
                         <Text
                             ml="1rem"
                             mb={{ base: 'auto', md: '0px' }}
