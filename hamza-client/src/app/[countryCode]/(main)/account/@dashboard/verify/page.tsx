@@ -24,9 +24,7 @@ export default async function Verify() {
             backgroundColor={'#121212'}
             color={'white'}
             borderRadius={'12px'}
-            py={'24px'}
-            px={'24px'}
-            // gap={'10px'}
+            p={{ base: '16px', md: '24px' }}
             justifyContent={'center'}
             alignItems={'center'}
             height={'561px'}

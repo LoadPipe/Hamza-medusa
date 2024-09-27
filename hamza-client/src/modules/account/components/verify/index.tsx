@@ -83,9 +83,13 @@ const VerifyEmail = () => {
             height={'100%'}
             justifyContent={'center'}
             alignItems={'center'}
-            gap={6}
+            gap={{ base: 3, md: 6 }}
         >
-            <Text textAlign={'center'} maxW={'746px'}>
+            <Text
+                textAlign={'center'}
+                maxW={'746px'}
+                fontSize={{ base: '14px', md: '16px' }}
+            >
                 Please verify your account by clicking the link sent to your
                 email, or by logging in with your Google, X (formerly Twitter),
                 or Discord account. This will ensure full access to your account
@@ -101,6 +105,7 @@ const VerifyEmail = () => {
                     value={email}
                     type="email"
                     width={'100%'}
+                    borderColor={'#555555'}
                     borderRadius={'12px'}
                     height={'50px'}
                     onChange={(e) => {
@@ -108,7 +113,11 @@ const VerifyEmail = () => {
                     }}
                 />
 
-                <Flex flexDir={'row'} my="1rem" alignItems={'center'}>
+                <Flex
+                    flexDir={'row'}
+                    my={{ base: '0px', md: '1rem' }}
+                    alignItems={'center'}
+                >
                     <Divider />
                     <Text mx="1rem">OR</Text>
                     <Divider />
