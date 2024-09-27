@@ -22,6 +22,10 @@ const LocalizedClientLink = ({
 }) => {
     const { countryCode } = useParams();
     const router = useRouter();
+    const baseURL =
+        process.env.NEXT_PUBLIC_MEDUSA_CLIENT_URL || 'http://localhost:8000';
+    // default fallback path should go to homepage just incase they load website on child page...
+    const fallbackPath = countryCode ? `${baseURL}/${countryCode}` : baseURL;
 
     const handleClick = (
         e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
@@ -31,8 +35,10 @@ const LocalizedClientLink = ({
         // If href is provided, navigate to it. Otherwise, go back one step in history
         if (href) {
             router.push(`/${countryCode}${href}`);
-        } else {
+        } else if (window.history.length > 1) {
             router.back();
+        } else {
+            router.push(fallbackPath); // Navigate to fallback path if no history exists
         }
     };
 
