@@ -27,7 +27,8 @@ export default async function Verify() {
             p={{ base: '16px', md: '24px' }}
             justifyContent={'center'}
             alignItems={'center'}
-            height={'561px'}
+            maxH={'620px'}
+            minH={'561px'}
             width={'100%'}
         >
             <VerifyEmail />
