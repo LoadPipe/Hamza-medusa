@@ -79,7 +79,7 @@ export default function MobileMenu() {
                         Be an affiliate
                     </MenuItem>
                 </Link>
-                <Box px={{ base: '2rem', md: 0 }}>
+                <Box>
                     <MenuDivider
                         opacity={{ base: '0.5', md: '1' }}
                         borderColor={'white'}
@@ -98,7 +98,7 @@ export default function MobileMenu() {
                         <Text>Home</Text>
                     </MenuItem>
                 </NavLink>
-                <NavLink href={`/store`}>
+                <NavLink href={`/shop`}>
                     <MenuItem
                         fontWeight={'600'}
                         px="2rem"
@@ -106,9 +106,21 @@ export default function MobileMenu() {
                         backgroundColor={'transparent'}
                         _hover={{ color: 'primary.green.900' }}
                     >
-                        <Text> Market</Text>
+                        <Text>Shop</Text>
                     </MenuItem>
                 </NavLink>
+
+                <a target="_blank" href="https://blog.hamza.biz/about/">
+                    <MenuItem
+                        fontWeight={'600'}
+                        px="2rem"
+                        color={'white'}
+                        backgroundColor={'transparent'}
+                        _hover={{ color: 'primary.green.900' }}
+                    >
+                        Blog
+                    </MenuItem>
+                </a>
 
                 <a target="_blank" href="https://blog.hamza.biz/about/">
                     <MenuItem
