@@ -115,12 +115,18 @@ const ReviewPage = ({ customer }: { customer: any }) => {
 
     return (
         <Card
-            width="100%"
-            maxWidth={{ base: '100%', md: '700px', lg: '900px' }}
+            maxWidth={{
+                sm: '450px',
+                md: '430px',
+                lg: '680px',
+                xl: '950px',
+            }}
+            flexDir="column"
             mx="auto"
             bg="rgba(18, 18, 18, 0.9)"
-            p={{ base: 4, md: 8 }}
-            textColor="white"
+            p={{ base: 4, md: 6, lg: 8 }}
+            color={'white'}
+            // overflow={{ base: 'auto', md: 'hidden' }}
         >
             <ButtonGroup
                 isAttached
@@ -255,16 +261,21 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                         {review.order_id && (
                                             <Button
                                                 m={{ base: 2, md: 4 }}
+                                                height={'42px'}
+                                                backgroundColor={'transparent'}
+                                                border={'2px solid'} // Set the border width and style
+                                                borderColor={'white'} // Set the border color
+                                                color={'white'}
+                                                borderRadius={'full'}
                                                 onClick={() =>
                                                     handleReviewEdit(review)
                                                 }
-                                                colorScheme="green"
                                                 width={{
                                                     base: 'full',
                                                     md: 'auto',
                                                 }}
                                             >
-                                                Edit
+                                                Update Review
                                             </Button>
                                         )}
                                     </Box>
@@ -355,19 +366,25 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                             </Box>
                                             <Box>
                                                 <Button
+                                                    m={{ base: 2, md: 4 }}
+                                                    backgroundColor={
+                                                        'transparent'
+                                                    }
+                                                    border={'2px solid'} // Set the border width and style
+                                                    borderColor={'white'} // Set the border color
+                                                    color={'white'}
+                                                    borderRadius={'full'}
                                                     onClick={() =>
                                                         handlePendingReview(
                                                             review
                                                         )
                                                     }
-                                                    colorScheme="green"
-                                                    m={{ base: 4, md: 8 }}
                                                     width={{
                                                         base: 'full',
                                                         md: 'auto',
                                                     }}
                                                 >
-                                                    Review
+                                                    Review This Product
                                                 </Button>
                                             </Box>
                                         </Flex>

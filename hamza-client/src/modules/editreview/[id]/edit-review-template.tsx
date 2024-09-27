@@ -86,11 +86,7 @@ const EditReviewTemplate = ({
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
             <ModalContent>
-                <ModalHeader
-                    color={'primary.green.900'}
-                    justifyContent={'center'}
-                    alignContent={'center'}
-                >
+                <ModalHeader color={'primary.green.900'} textAlign={'center'}>
                     Edit Your Review
                 </ModalHeader>
                 <ModalCloseButton />
@@ -158,11 +154,13 @@ const EditReviewTemplate = ({
                         >
                             <Button
                                 variant="solid"
-                                borderColor={'primary.indigo.900'}
+                                backgroundColor={'transparent'}
                                 color={'primary.indigo.900'}
+                                border={'2px solid'} // Set the border width and style
+                                borderColor={'primary.indigo.900'} // Set the border color to indigo
                                 width={'180px'}
                                 height={'47px'}
-                                borderRadius={'37px'}
+                                borderRadius={'full'}
                                 onClick={() => {
                                     onClose();
                                     setRating(0);
