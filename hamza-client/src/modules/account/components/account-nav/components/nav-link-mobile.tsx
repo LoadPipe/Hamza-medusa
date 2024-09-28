@@ -8,17 +8,31 @@ type AccountNavLinkProps = {
     title: string;
     route: string;
     icon?: ReactElement;
+    onClick?: () => void;
 };
-const NavLinkMobile = ({ href, route, title, icon }: AccountNavLinkProps) => {
+
+const NavLinkMobile = ({
+    href,
+    route,
+    title,
+    icon,
+    onClick,
+}: AccountNavLinkProps) => {
     return (
-        <Link href={href}>
+        <Link href={href} style={{ width: '100%' }}>
             <Flex
+                as="a"
                 width={'100%'}
-                backgroundColor={'transparent'}
                 alignItems={'center'}
+                onClick={onClick} // Trigger onClick if provided
+                cursor="pointer"
             >
                 {icon && icon}
-                <Text ml={2} fontSize={'16px'}>
+                <Text
+                    ml={icon ? 2 : 0}
+                    fontSize={'16px'}
+                    fontWeight={route === href ? 'bold' : 'normal'}
+                >
                     {title}
                 </Text>
             </Flex>

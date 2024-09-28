@@ -27,6 +27,7 @@ import {
     MenuOptionGroup,
     MenuDivider,
     Button,
+    useDisclosure,
 } from '@chakra-ui/react';
 import {
     ChevronDownIcon,
@@ -53,10 +54,12 @@ const AccountNavMobile = ({
     const { countryCode } = useParams();
     const { setCustomerAuthData, authData } = useCustomerAuthStore();
     const router = useRouter();
-    const [isOpen, setIsOpen] = useState(false);
+
+    const { isOpen, onOpen, onClose } = useDisclosure(); // Use useDisclosure for menu state
 
     const [isAccountOpen, setIsAccountOpen] = useState(false);
     const [isOrdersOpen, setIsOrdersOpen] = useState(false);
+
     const toggleAccountCollapse = () => setIsAccountOpen(!isAccountOpen);
     const toggleOrdersCollapse = () => setIsOrdersOpen(!isOrdersOpen);
 
@@ -72,8 +75,6 @@ const AccountNavMobile = ({
         Cookies.remove('_medusa_cart_id');
         router.replace('/');
     };
-
-    const toggleCollapse = () => setIsOpen(!isOpen);
 
     const setOrderActiveTab = useOrderTabStore(
         (state) => state.setOrderActiveTab
@@ -110,13 +111,14 @@ const AccountNavMobile = ({
 
     return (
         <Flex flexDirection={'column'} width={'100%'}>
-            <Menu closeOnSelect={false}>
+            <Menu isOpen={isOpen} onClose={onClose} closeOnSelect={false}>
                 <MenuButton
                     as={Button}
                     height="56px"
                     backgroundColor={'#121212'}
                     color="primary.green.900"
                     rightIcon={<ChevronDownIcon color="white" />}
+                    onClick={isOpen ? onClose : onOpen}
                 >
                     Manage My Account
                 </MenuButton>
@@ -124,6 +126,7 @@ const AccountNavMobile = ({
                     color={'white'}
                     width={'calc(100vw - 2rem)'}
                     backgroundColor={'#121212'}
+                    borderColor={'grey'}
                 >
                     {/* Toggle Account Collapse */}
                     <MenuItem
@@ -131,7 +134,13 @@ const AccountNavMobile = ({
                         backgroundColor={'transparent'}
                     >
                         <Flex justifyContent="space-between" width="100%">
-                            <Text>Account</Text>
+                            <Flex flexDir={'row'} alignItems={'center'}>
+                                <CgProfile color="white" size={'22px'} />
+                                <Text ml={2} fontWeight={600}>
+                                    Account
+                                </Text>
+                            </Flex>
+
                             <Flex alignSelf={'center'}>
                                 {isAccountOpen ? (
                                     <ChevronDownIcon />
@@ -148,6 +157,7 @@ const AccountNavMobile = ({
                                     href="/account/profile"
                                     route={route!}
                                     title="My Profile"
+                                    onClick={onClose}
                                 />
                             </MenuItem>
                             <MenuItem
@@ -158,6 +168,7 @@ const AccountNavMobile = ({
                                     href="/account/addresses"
                                     route={route!}
                                     title="My Addresses"
+                                    onClick={onClose}
                                 />
                             </MenuItem>
                         </Box>
@@ -170,7 +181,12 @@ const AccountNavMobile = ({
                         color="white"
                     >
                         <Flex justifyContent="space-between" width="100%">
-                            <Text>Orders</Text>
+                            <Flex flexDir={'row'} alignItems={'center'}>
+                                <LiaBoxOpenSolid color="white" size={'22px'} />
+                                <Text ml={2} fontWeight={600}>
+                                    Orders
+                                </Text>
+                            </Flex>
 
                             <Flex alignSelf={'center'}>
                                 {isOrdersOpen ? (
@@ -183,42 +199,87 @@ const AccountNavMobile = ({
                     </MenuItem>
                     <Collapse in={isOrdersOpen} animateOpacity>
                         <Box pl={4} mt={2}>
-                            <MenuItem>Order 1</MenuItem>
-                            <MenuItem>Order 2</MenuItem>
-                            <MenuItem>Order 3</MenuItem>
-                            <MenuItem>Order 4</MenuItem>
+                            <MenuItem
+                                backgroundColor={'transparent'}
+                                color="white"
+                            >
+                                All Orders
+                            </MenuItem>
+                            <MenuItem
+                                backgroundColor={'transparent'}
+                                color="white"
+                            >
+                                Processing
+                            </MenuItem>
+                            <MenuItem
+                                backgroundColor={'transparent'}
+                                color="white"
+                            >
+                                Shipped
+                            </MenuItem>
+                            <MenuItem
+                                backgroundColor={'transparent'}
+                                color="white"
+                            >
+                                Delivered
+                            </MenuItem>
+                            <MenuItem
+                                backgroundColor={'transparent'}
+                                color="white"
+                            >
+                                Canceled
+                            </MenuItem>
                         </Box>
                     </Collapse>
 
                     {!authData.is_verified && (
-                        <MenuItem backgroundColor={'transparent'} color="white">
+                        <MenuItem
+                            backgroundColor={'transparent'}
+                            color="white"
+                            fontWeight={600}
+                        >
                             <NavLinkMobile
                                 href="/account/verify"
                                 route={route!}
                                 title={'Verify'}
+                                onClick={onClose}
                             />
                         </MenuItem>
                     )}
-                    <MenuItem backgroundColor={'transparent'} color="white">
+                    <MenuItem
+                        backgroundColor={'transparent'}
+                        color="white"
+                        fontWeight={600}
+                    >
                         <NavLinkMobile
                             href="/account/wishlist"
                             route={route!}
                             title="Wishlist"
                             icon={<FaRegHeart color="white" size="20px" />}
+                            onClick={onClose}
                         />
                     </MenuItem>
                     {authData.is_verified && (
-                        <MenuItem backgroundColor={'transparent'} color="white">
+                        <MenuItem
+                            backgroundColor={'transparent'}
+                            color="white"
+                            fontWeight={600}
+                        >
                             <NavLinkMobile
                                 href="/account/notifications"
                                 route={route!}
                                 title="Notifications"
                                 icon={<FaRegBell color="white" size="22px" />}
+                                onClick={onClose}
                             />
                         </MenuItem>
                     )}
                     {authData.is_verified && (
-                        <MenuItem backgroundColor={'transparent'} color="white">
+                        <MenuItem
+                            backgroundColor={'transparent'}
+                            color="white"
+                            fontWeight={600}
+                        >
                             <NavLinkMobile
                                 href="/account/reviews"
                                 route={route!}
@@ -229,6 +290,7 @@ const AccountNavMobile = ({
                                         size={'22px'}
                                     />
                                 }
+                                onClick={onClose}
                             />
                         </MenuItem>
                     )}
