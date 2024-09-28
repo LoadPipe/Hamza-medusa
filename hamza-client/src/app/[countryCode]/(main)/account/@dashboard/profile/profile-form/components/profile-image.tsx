@@ -8,14 +8,14 @@ import { size } from 'lodash';
 type Profile = {
     firstName: string;
     lastName: string;
-    walletAddress?: string
+    uniqueKey?: string
 };
 
 // Props get passed from form into image component
-const ProfileImage: React.FC<Profile> = ({ firstName, lastName, walletAddress }) => {
+const ProfileImage: React.FC<Profile> = ({ firstName, lastName, uniqueKey }) => {
     return (
         <Flex maxW={'858px'} width={'100%'}>
-            <Image src={`https://api.dicebear.com/9.x/bottts/svg?seed=${walletAddress ?? ''}`} style={{ width: '120px' }}></Image>
+            <Image src={`https://api.dicebear.com/9.x/bottts/svg?seed=${uniqueKey ?? ''}`} style={{ width: '120px' }}></Image>
         </Flex >
     );
 };

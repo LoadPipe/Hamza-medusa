@@ -125,7 +125,7 @@ const ProfileForm: React.FC<any> = ({ customer }) => {
             <ProfileImage
                 firstName={avatarFirstName}
                 lastName={avatarLastName}
-                walletAddress={customer.wallet_address}
+                uniqueKey={customer.id}
             />
 
             <Text
