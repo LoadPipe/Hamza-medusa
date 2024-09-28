@@ -127,8 +127,14 @@ const AccountNavMobile = ({
                     rightIcon={<ChevronDownIcon color="white" />}
                     onClick={isOpen ? onClose : onOpen}
                     _hover={{ backgroundColor: '#121212' }}
-                    _active={{ backgroundColor: '#121212' }}
-                    _focus={{ boxShadow: 'none' }}
+                    _active={{
+                        backgroundColor: '#121212',
+                        borderColor: '#555555',
+                        borderWidth: '1px',
+                    }}
+                    _focus={{
+                        boxShadow: 'none',
+                    }}
                 >
                     Manage My Account
                 </MenuButton>
@@ -136,7 +142,7 @@ const AccountNavMobile = ({
                     color={'white'}
                     width={'calc(100vw - 2rem)'}
                     backgroundColor={'#121212'}
-                    borderColor={'grey'}
+                    borderColor={'#555555'}
                 >
                     {/* Toggle Account Collapse */}
                     <MenuItem
