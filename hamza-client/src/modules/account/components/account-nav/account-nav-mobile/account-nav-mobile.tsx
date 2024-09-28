@@ -132,11 +132,13 @@ const AccountNavMobile = ({
                     >
                         <Flex justifyContent="space-between" width="100%">
                             <Text>Account</Text>
-                            {isAccountOpen ? (
-                                <ChevronDownIcon />
-                            ) : (
-                                <ChevronRightIcon />
-                            )}
+                            <Flex alignSelf={'center'}>
+                                {isAccountOpen ? (
+                                    <ChevronDownIcon />
+                                ) : (
+                                    <ChevronRightIcon />
+                                )}
+                            </Flex>
                         </Flex>
                     </MenuItem>
                     <Collapse in={isAccountOpen} animateOpacity>
@@ -162,14 +164,21 @@ const AccountNavMobile = ({
                     </Collapse>
 
                     {/* Toggle Orders Collapse */}
-                    <MenuItem onClick={toggleOrdersCollapse}>
+                    <MenuItem
+                        onClick={toggleOrdersCollapse}
+                        backgroundColor={'transparent'}
+                        color="white"
+                    >
                         <Flex justifyContent="space-between" width="100%">
                             <Text>Orders</Text>
-                            {isOrdersOpen ? (
-                                <ChevronDownIcon />
-                            ) : (
-                                <ChevronRightIcon />
-                            )}
+
+                            <Flex alignSelf={'center'}>
+                                {isOrdersOpen ? (
+                                    <ChevronDownIcon />
+                                ) : (
+                                    <ChevronRightIcon />
+                                )}
+                            </Flex>
                         </Flex>
                     </MenuItem>
                     <Collapse in={isOrdersOpen} animateOpacity>
@@ -181,16 +190,48 @@ const AccountNavMobile = ({
                         </Box>
                     </Collapse>
 
-                    <MenuItem>
+                    {!authData.is_verified && (
+                        <MenuItem backgroundColor={'transparent'} color="white">
+                            <NavLinkMobile
+                                href="/account/verify"
+                                route={route!}
+                                title={'Verify'}
+                            />
+                        </MenuItem>
+                    )}
+                    <MenuItem backgroundColor={'transparent'} color="white">
                         <NavLinkMobile
                             href="/account/wishlist"
                             route={route!}
                             title="Wishlist"
-                            icon={<FaRegHeart color="white" size="22px" />}
+                            icon={<FaRegHeart color="white" size="20px" />}
                         />
                     </MenuItem>
-                    <MenuItem>Reviews</MenuItem>
-                    <MenuItem>Notifications</MenuItem>
+                    {authData.is_verified && (
+                        <MenuItem backgroundColor={'transparent'} color="white">
+                            <NavLinkMobile
+                                href="/account/notifications"
+                                route={route!}
+                                title="Notifications"
+                                icon={<FaRegBell color="white" size="22px" />}
+                            />
+                        </MenuItem>
+                    )}
+                    {authData.is_verified && (
+                        <MenuItem backgroundColor={'transparent'} color="white">
+                            <NavLinkMobile
+                                href="/account/reviews"
+                                route={route!}
+                                title={'Reviews'}
+                                icon={
+                                    <PiNotePencilLight
+                                        color="white"
+                                        size={'22px'}
+                                    />
+                                }
+                            />
+                        </MenuItem>
+                    )}
                 </MenuList>
             </Menu>
         </Flex>
