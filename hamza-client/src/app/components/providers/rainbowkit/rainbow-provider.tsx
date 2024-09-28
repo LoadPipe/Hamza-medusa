@@ -16,7 +16,13 @@ import {
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 const queryClient = new QueryClient();
 import { SiweMessage } from 'siwe';
-import { clearAuthCookie, getCart, getCustomer, getHamzaCustomer, getToken, recoverCart } from '@lib/data';
+import {
+    clearAuthCookie,
+    getCustomer,
+    getHamzaCustomer,
+    getToken,
+    recoverCart
+} from '@lib/data';
 import { signOut } from '@modules/account/actions';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import axios from 'axios';
@@ -68,6 +74,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     } = useCustomerAuthStore();
     const router = useRouter();
     const [customer_id, setCustomerId] = useState('');
+    const [clientWallet, setClientWallet] = useState('');
     const { loadWishlist } = useWishlistStore((state) => state);
 
     useEffect(() => {
@@ -108,6 +115,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
             console.log(
                 `Creating message with nonce: ${nonce}, address: ${address}, chainId: ${chainId}`
             );
+            setClientWallet(address);
             const message = new SiweMessage({
                 domain: window.location.host,
                 address,
@@ -153,7 +161,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     });
 
                     //check that customer data and wallet address match 
-                    if (data.data.wallet_address.trim().toLowerCase() === message?.address?.trim()?.toLowerCase()) {
+                    if (data.data.wallet_address.trim().toLowerCase() === clientWallet?.trim()?.toLowerCase()) {
                         const customerId = data.data.customer_id;
                         setCustomerId(customerId);
                         Cookies.set('_medusa_jwt', tokenResponse);
