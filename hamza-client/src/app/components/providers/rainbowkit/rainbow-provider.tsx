@@ -79,8 +79,9 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         getHamzaCustomer().then((hamzaCustomer) => {
-            console.log('CUSTOMER: ', hamzaCustomer);
+            console.log('Hamza Customer: ', hamzaCustomer);
             getCustomer().then((customer) => {
+                console.log('Medusa Customer: ', customer);
                 if ((!customer || !hamzaCustomer) || customer?.id !== hamzaCustomer?.id) {
                     console.log('setting auth to unauthenticated');
                     setCustomerAuthData({
@@ -94,6 +95,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                 }
             });
         });
+        console.log(authData.wallet_address);
     }, [authData.wallet_address]);
 
     const walletSignature = createAuthenticationAdapter({
