@@ -16,7 +16,13 @@ import {
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 const queryClient = new QueryClient();
 import { SiweMessage } from 'siwe';
-import { clearAuthCookie, getCart, getCustomer, getHamzaCustomer, getToken, recoverCart } from '@lib/data';
+import {
+    clearAuthCookie,
+    getCustomer,
+    getHamzaCustomer,
+    getToken,
+    recoverCart
+} from '@lib/data';
 import { signOut } from '@modules/account/actions';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import axios from 'axios';
@@ -38,7 +44,7 @@ async function sendVerifyRequest(message: any, signature: any) {
         {
             headers: {
                 'Content-Type': 'application/json',
-                //'Cache-control': 'no-cache, no-store',
+                'Cache-control': 'no-cache, no-store',
                 Accept: 'application/json',
             }
         }
