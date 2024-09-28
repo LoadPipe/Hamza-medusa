@@ -17,7 +17,6 @@ const NavLink = ({ href, route, title, icon }: AccountNavLinkProps) => {
         <Link href={href}>
             <Flex
                 borderRadius={'8px'}
-                width={'245px'}
                 height={'56px'}
                 padding="16px"
                 color={active ? 'black' : 'white'}

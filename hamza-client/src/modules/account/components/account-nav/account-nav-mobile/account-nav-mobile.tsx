@@ -55,11 +55,12 @@ const AccountNavMobile = ({
     const { setCustomerAuthData, authData } = useCustomerAuthStore();
     const router = useRouter();
 
-    const { isOpen, onOpen, onClose } = useDisclosure(); // Use useDisclosure for menu state
+    // Open and close main menu
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
+    // Open and close child list of Account and Orders
     const [isAccountOpen, setIsAccountOpen] = useState(false);
     const [isOrdersOpen, setIsOrdersOpen] = useState(false);
-
     const toggleAccountCollapse = () => setIsAccountOpen(!isAccountOpen);
     const toggleOrdersCollapse = () => setIsOrdersOpen(!isOrdersOpen);
 
@@ -99,6 +100,7 @@ const AccountNavMobile = ({
             }
         }
     }, []);
+
     useEffect(() => {
         if (
             route == `/${countryCode}/account` &&
