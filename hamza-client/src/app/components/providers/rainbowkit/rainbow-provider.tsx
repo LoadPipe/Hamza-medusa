@@ -74,6 +74,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     } = useCustomerAuthStore();
     const router = useRouter();
     const [customer_id, setCustomerId] = useState('');
+    const [clientWallet, setClientWallet] = useState('');
     const { loadWishlist } = useWishlistStore((state) => state);
 
     useEffect(() => {
@@ -114,6 +115,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
             console.log(
                 `Creating message with nonce: ${nonce}, address: ${address}, chainId: ${chainId}`
             );
+            setClientWallet(address);
             const message = new SiweMessage({
                 domain: window.location.host,
                 address,
@@ -159,7 +161,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     });
 
                     //check that customer data and wallet address match 
-                    if (data.data.wallet_address.trim().toLowerCase() === message?.address?.trim()?.toLowerCase()) {
+                    if (data.data.wallet_address.trim().toLowerCase() === clientWallet?.trim()?.toLowerCase()) {
                         const customerId = data.data.customer_id;
                         setCustomerId(customerId);
                         Cookies.set('_medusa_jwt', tokenResponse);
