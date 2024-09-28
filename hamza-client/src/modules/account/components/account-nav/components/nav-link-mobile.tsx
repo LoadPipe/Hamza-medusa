@@ -23,7 +23,6 @@ const NavLinkMobile = ({
     return (
         <Link href={href} style={{ width: '100%' }}>
             <Flex
-                as="a"
                 width={'100%'}
                 alignItems={'center'}
                 onClick={onClick} // Trigger onClick if provided

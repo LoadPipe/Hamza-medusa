@@ -4,7 +4,7 @@ import { LiaBoxOpenSolid } from 'react-icons/lia';
 import { FaRegHeart, FaRegBell } from 'react-icons/fa';
 import { PiNotePencilLight } from 'react-icons/pi';
 import { CiLogout } from 'react-icons/ci';
-
+import { IoSettingsOutline } from 'react-icons/io5';
 import { Customer } from '@medusajs/medusa';
 import {
     useParams,
@@ -124,6 +124,9 @@ const AccountNavMobile = ({
                     height="56px"
                     backgroundColor={'#121212'}
                     color="primary.green.900"
+                    leftIcon={
+                        <IoSettingsOutline color="#94D42A" size={'22px'} />
+                    }
                     rightIcon={<ChevronDownIcon color="white" />}
                     onClick={isOpen ? onClose : onOpen}
                     _hover={{ backgroundColor: '#121212' }}
