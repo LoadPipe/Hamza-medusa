@@ -233,11 +233,7 @@ const AccountNavMobile = ({
                     </Collapse>
 
                     {!authData.is_verified && (
-                        <MenuItem
-                            backgroundColor={'transparent'}
-                            color="white"
-                            fontWeight={600}
-                        >
+                        <MenuItem backgroundColor={'transparent'} color="white">
                             <NavLinkMobile
                                 href="/account/verify"
                                 route={route!}
@@ -246,11 +242,7 @@ const AccountNavMobile = ({
                             />
                         </MenuItem>
                     )}
-                    <MenuItem
-                        backgroundColor={'transparent'}
-                        color="white"
-                        fontWeight={600}
-                    >
+                    <MenuItem backgroundColor={'transparent'} color="white">
                         <NavLinkMobile
                             href="/account/wishlist"
                             route={route!}
@@ -260,11 +252,7 @@ const AccountNavMobile = ({
                         />
                     </MenuItem>
                     {authData.is_verified && (
-                        <MenuItem
-                            backgroundColor={'transparent'}
-                            color="white"
-                            fontWeight={600}
-                        >
+                        <MenuItem backgroundColor={'transparent'} color="white">
                             <NavLinkMobile
                                 href="/account/notifications"
                                 route={route!}
@@ -275,11 +263,7 @@ const AccountNavMobile = ({
                         </MenuItem>
                     )}
                     {authData.is_verified && (
-                        <MenuItem
-                            backgroundColor={'transparent'}
-                            color="white"
-                            fontWeight={600}
-                        >
+                        <MenuItem backgroundColor={'transparent'} color="white">
                             <NavLinkMobile
                                 href="/account/reviews"
                                 route={route!}
