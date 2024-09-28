@@ -74,8 +74,10 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     } = useCustomerAuthStore();
     const router = useRouter();
     const [customer_id, setCustomerId] = useState('');
-    const [clientWallet, setClientWallet] = useState('');
+    //const [clientWallet, setClientWallet] = useState('');
     const { loadWishlist } = useWishlistStore((state) => state);
+
+    let clientWallet = '';
 
     useEffect(() => {
         if (authData.status === 'authenticated' && customer_id) {
@@ -115,7 +117,8 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
             console.log(
                 `Creating message with nonce: ${nonce}, address: ${address}, chainId: ${chainId}`
             );
-            setClientWallet(address);
+            console.log('setting client wallet to ', address);
+            clientWallet = address;
             const message = new SiweMessage({
                 domain: window.location.host,
                 address,
@@ -194,6 +197,9 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                     }
                     else {
                         console.log('Wallet address mismatch on login');
+                        console.log(data.data.wallet_address);
+                        console.log(clientWallet);
+                        console.log(message.address);
                         setCustomerAuthData({
                             ...authData,
                             status: 'unauthenticated',
