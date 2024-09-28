@@ -111,7 +111,12 @@ const AccountNavMobile = ({
 
     return (
         <Flex flexDirection={'column'} width={'100%'}>
-            <Menu isOpen={isOpen} onClose={onClose} closeOnSelect={false}>
+            <Menu
+                isOpen={isOpen}
+                onClose={onClose}
+                closeOnSelect={false}
+                placement="bottom"
+            >
                 <MenuButton
                     as={Button}
                     height="56px"
@@ -119,9 +124,9 @@ const AccountNavMobile = ({
                     color="primary.green.900"
                     rightIcon={<ChevronDownIcon color="white" />}
                     onClick={isOpen ? onClose : onOpen}
-                    _hover={{ backgroundColor: '#121212' }} // Prevent highlight on hover
-                    _active={{ backgroundColor: '#121212' }} // Prevent highlight on active/click
-                    _focus={{ boxShadow: 'none' }} // Remove the focus outline
+                    _hover={{ backgroundColor: '#121212' }}
+                    _active={{ backgroundColor: '#121212' }}
+                    _focus={{ boxShadow: 'none' }}
                 >
                     Manage My Account
                 </MenuButton>
