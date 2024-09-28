@@ -119,6 +119,9 @@ const AccountNavMobile = ({
                     color="primary.green.900"
                     rightIcon={<ChevronDownIcon color="white" />}
                     onClick={isOpen ? onClose : onOpen}
+                    _hover={{ backgroundColor: '#121212' }} // Prevent highlight on hover
+                    _active={{ backgroundColor: '#121212' }} // Prevent highlight on active/click
+                    _focus={{ boxShadow: 'none' }} // Remove the focus outline
                 >
                     Manage My Account
                 </MenuButton>
@@ -238,6 +241,7 @@ const AccountNavMobile = ({
                                 href="/account/verify"
                                 route={route!}
                                 title={'Verify'}
+                                fontWeight={600}
                                 onClick={onClose}
                             />
                         </MenuItem>
@@ -248,6 +252,7 @@ const AccountNavMobile = ({
                             route={route!}
                             title="Wishlist"
                             icon={<FaRegHeart color="white" size="20px" />}
+                            fontWeight={600}
                             onClick={onClose}
                         />
                     </MenuItem>
@@ -258,6 +263,7 @@ const AccountNavMobile = ({
                                 route={route!}
                                 title="Notifications"
                                 icon={<FaRegBell color="white" size="22px" />}
+                                fontWeight={600}
                                 onClick={onClose}
                             />
                         </MenuItem>
@@ -274,6 +280,7 @@ const AccountNavMobile = ({
                                         size={'22px'}
                                     />
                                 }
+                                fontWeight={600}
                                 onClick={onClose}
                             />
                         </MenuItem>

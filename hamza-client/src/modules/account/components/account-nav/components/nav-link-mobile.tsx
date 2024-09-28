@@ -9,6 +9,7 @@ type AccountNavLinkProps = {
     route: string;
     icon?: ReactElement;
     onClick?: () => void;
+    fontWeight?: number | string;
 };
 
 const NavLinkMobile = ({
@@ -17,6 +18,7 @@ const NavLinkMobile = ({
     title,
     icon,
     onClick,
+    fontWeight,
 }: AccountNavLinkProps) => {
     return (
         <Link href={href} style={{ width: '100%' }}>
@@ -31,7 +33,7 @@ const NavLinkMobile = ({
                 <Text
                     ml={icon ? 2 : 0}
                     fontSize={'16px'}
-                    fontWeight={route === href ? 'bold' : 'normal'}
+                    fontWeight={fontWeight}
                 >
                     {title}
                 </Text>
