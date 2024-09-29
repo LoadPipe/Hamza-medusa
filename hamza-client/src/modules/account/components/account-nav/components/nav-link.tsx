@@ -23,7 +23,13 @@ const NavLink = ({ href, route, title, icon }: AccountNavLinkProps) => {
                 backgroundColor={active ? '#121212' : 'transparent'}
                 alignItems={'center'}
             >
-                {icon && icon}
+                <Flex
+                    width={'26px'}
+                    height={'26px'}
+                    color={active ? 'primary.green.900' : 'white'}
+                >
+                    {icon && icon}
+                </Flex>
                 <Text
                     ml={2}
                     my="auto"
