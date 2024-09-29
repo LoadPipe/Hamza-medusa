@@ -28,7 +28,9 @@ const NavLinkMobile = ({
                 onClick={onClick} // Trigger onClick if provided
                 cursor="pointer"
             >
-                {icon && icon}
+                <Flex width={'22px'} height={'22px'}>
+                    {icon && icon}
+                </Flex>
                 <Text
                     ml={icon ? 2 : 0}
                     fontSize={'16px'}

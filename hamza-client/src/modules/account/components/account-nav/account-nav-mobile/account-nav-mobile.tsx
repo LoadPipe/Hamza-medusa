@@ -6,6 +6,7 @@ import { PiNotePencilLight } from 'react-icons/pi';
 import { CiLogout } from 'react-icons/ci';
 import { IoSettingsOutline } from 'react-icons/io5';
 import { Customer } from '@medusajs/medusa';
+import { MdOutlineRateReview } from 'react-icons/md';
 import {
     useParams,
     usePathname,
@@ -154,7 +155,17 @@ const AccountNavMobile = ({
                     >
                         <Flex justifyContent="space-between" width="100%">
                             <Flex flexDir={'row'} alignItems={'center'}>
-                                <CgProfile color="white" size={'22px'} />
+                                <Flex width={'22px'} height={'22px'}>
+                                    <CgProfile
+                                        color="white"
+                                        size={'20px'}
+                                        style={{
+                                            alignSelf: 'center',
+                                            margin: '0 auto',
+                                        }}
+                                    />
+                                </Flex>
+
                                 <Text ml={2} fontWeight={600}>
                                     Account
                                 </Text>
@@ -201,7 +212,16 @@ const AccountNavMobile = ({
                     >
                         <Flex justifyContent="space-between" width="100%">
                             <Flex flexDir={'row'} alignItems={'center'}>
-                                <LiaBoxOpenSolid color="white" size={'22px'} />
+                                <Flex width={'22px'} height={'22px'}>
+                                    <LiaBoxOpenSolid
+                                        color="white"
+                                        size={'22px'}
+                                        style={{
+                                            alignSelf: 'center',
+                                            margin: '0 auto',
+                                        }}
+                                    />
+                                </Flex>
                                 <Text ml={2} fontWeight={600}>
                                     Orders
                                 </Text>
@@ -257,6 +277,15 @@ const AccountNavMobile = ({
                                 href="/account/verify"
                                 route={route!}
                                 title={'Verify'}
+                                icon={
+                                    <MdOutlineRateReview
+                                        size="20px"
+                                        style={{
+                                            alignSelf: 'center',
+                                            margin: '0 auto',
+                                        }}
+                                    />
+                                }
                                 fontWeight={600}
                                 onClick={onClose}
                             />
@@ -267,7 +296,15 @@ const AccountNavMobile = ({
                             href="/account/wishlist"
                             route={route!}
                             title="Wishlist"
-                            icon={<FaRegHeart color="white" size="20px" />}
+                            icon={
+                                <FaRegHeart
+                                    size="20px"
+                                    style={{
+                                        alignSelf: 'center',
+                                        margin: '0 auto',
+                                    }}
+                                />
+                            }
                             fontWeight={600}
                             onClick={onClose}
                         />
@@ -278,7 +315,15 @@ const AccountNavMobile = ({
                                 href="/account/notifications"
                                 route={route!}
                                 title="Notifications"
-                                icon={<FaRegBell color="white" size="22px" />}
+                                icon={
+                                    <FaRegBell
+                                        size="20px"
+                                        style={{
+                                            alignSelf: 'center',
+                                            margin: '0 auto',
+                                        }}
+                                    />
+                                }
                                 fontWeight={600}
                                 onClick={onClose}
                             />
@@ -292,8 +337,11 @@ const AccountNavMobile = ({
                                 title={'Reviews'}
                                 icon={
                                     <PiNotePencilLight
-                                        color="white"
-                                        size={'22px'}
+                                        size="20px"
+                                        style={{
+                                            alignSelf: 'center',
+                                            margin: '0 auto',
+                                        }}
                                     />
                                 }
                                 fontWeight={600}
@@ -301,6 +349,30 @@ const AccountNavMobile = ({
                             />
                         </MenuItem>
                     )}
+                    <MenuItem backgroundColor={'transparent'} color="white">
+                        <Box onClick={handleLogout}>
+                            <Flex>
+                                <Flex width={'22px'} height={'22px'}>
+                                    <CiLogout
+                                        size={'20px'}
+                                        style={{
+                                            alignSelf: 'center',
+                                            margin: '0 auto',
+                                        }}
+                                    />
+                                </Flex>
+
+                                <Text
+                                    ml={2}
+                                    my="auto"
+                                    fontSize={'16px'}
+                                    fontWeight={600}
+                                >
+                                    Logout
+                                </Text>
+                            </Flex>
+                        </Box>
+                    </MenuItem>
                 </MenuList>
             </Menu>
         </Flex>

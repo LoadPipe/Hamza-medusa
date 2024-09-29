@@ -334,12 +334,10 @@ const AccountNavDesktop = ({
 
             <Box
                 as="button"
-                textAlign={'left'}
                 borderRadius={'8px'}
                 height={'56px'}
                 padding="16px"
                 bg="transparent"
-                borderColor="#ccd0d5"
                 color="white"
                 _active={{
                     bg: 'primary.green.900',
@@ -352,6 +350,7 @@ const AccountNavDesktop = ({
                 <Flex>
                     <Flex width={'26px'} height={'26px'}>
                         <CiLogout
+                            color="white"
                             size={'24px'}
                             style={{ alignSelf: 'center', margin: '0 auto' }}
                         />
