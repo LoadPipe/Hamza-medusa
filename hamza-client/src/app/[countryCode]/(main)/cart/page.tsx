@@ -40,5 +40,7 @@ export default async function Cart() {
     const cart = await fetchCart();
     const customer = await getHamzaCustomer();
 
-    return <CartTemplate cart={cart} customer={customer} />;
+    return <Loading />;
 }
+
+// <CartTemplate cart={cart} customer={customer} />;
