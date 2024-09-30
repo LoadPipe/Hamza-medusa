@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Error from '../../../../../error';
-import { Text, Box, Flex } from '@chakra-ui/react';
+import { Text, Flex } from '@chakra-ui/react';
 import {
     getHamzaCustomer,
     listRegions,
@@ -15,8 +15,6 @@ export const metadata: Metadata = {
     description: 'View your Reviews',
 };
 
-// TODO - Lets call the getServerSideAuth check here and if that fails after the if (!customer || !regions)
-// we can redirect to the AuthRequired Error
 export default async function Reviews() {
     const customer = await getHamzaCustomer();
     const regions = await listRegions();
