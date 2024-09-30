@@ -1,7 +1,5 @@
 import { MedusaRequest, MedusaResponse, OrderService } from '@medusajs/medusa';
-import { RouteHandler } from '../../../route-handler';
-import { Order } from '../../../../models/order';
-import { BuckyClient } from '../../../../buckydrop/bucky-client';
+import { RouteHandler } from '../../../../route-handler';
 import BuckydropService from 'src/services/buckydrop';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
@@ -18,7 +16,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        const orderId = handler.inputParams.order;
+        if (!handler.requireParam('order_id'))
+            return;
+        const orderId = handler.inputParams.order_id;
 
         const output = await buckyService.reconcileOrderStatus(orderId);
 

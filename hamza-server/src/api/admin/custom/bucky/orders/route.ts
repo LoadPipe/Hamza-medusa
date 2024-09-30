@@ -1,5 +1,5 @@
 import { MedusaRequest, MedusaResponse, Order, OrderService, ShippingOptionPriceType, ShippingOptionService } from '@medusajs/medusa';
-import { RouteHandler } from '../../../route-handler';
+import { RouteHandler } from '../../../../route-handler';
 import BuckydropService from 'src/services/buckydrop';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {

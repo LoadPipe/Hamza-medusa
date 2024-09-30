@@ -3,7 +3,7 @@ import {
     MedusaResponse,
     ShippingOptionPriceType,
 } from '@medusajs/medusa';
-import { RouteHandler } from '../../../route-handler';
+import { RouteHandler } from '../../../../route-handler';
 import ShippingOptionRepository from '@medusajs/medusa/dist/repositories/shipping-option';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
