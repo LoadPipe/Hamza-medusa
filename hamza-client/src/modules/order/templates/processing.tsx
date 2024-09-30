@@ -443,7 +443,8 @@ const Processing = ({
                                                                                                 fontSize="sm"
                                                                                                 color="gray.400"
                                                                                             >
-                                                                                                Tracking
+                                                                                                Shop
+                                                                                                Order
                                                                                                 Number:{' '}
                                                                                                 {
                                                                                                     event.shopOrderNo
