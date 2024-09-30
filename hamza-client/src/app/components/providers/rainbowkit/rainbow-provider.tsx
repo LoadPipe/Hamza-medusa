@@ -7,7 +7,7 @@ import {
     RainbowKitProvider,
     AuthenticationStatus,
 } from '@rainbow-me/rainbowkit';
-import { WagmiConfig } from 'wagmi';
+import { useWalletClient, WagmiConfig } from 'wagmi';
 import {
     chains,
     config,
@@ -22,7 +22,7 @@ import {
     getCustomer,
     getHamzaCustomer,
     getToken,
-    recoverCart
+    recoverCart,
 } from '@lib/data';
 import { signOut } from '@modules/account/actions';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
@@ -37,7 +37,8 @@ const VERIFY_MSG_URL = `${MEDUSA_SERVER_URL}/custom/verify`;
 const GET_NONCE_URL = `${MEDUSA_SERVER_URL}/custom/nonce`;
 
 async function sendVerifyRequest(message: any, signature: any) {
-    return await axios.post(VERIFY_MSG_URL,
+    return await axios.post(
+        VERIFY_MSG_URL,
         {
             message,
             signature,
@@ -47,7 +48,7 @@ async function sendVerifyRequest(message: any, signature: any) {
                 'Content-Type': 'application/json',
                 'Cache-control': 'no-cache, no-store',
                 Accept: 'application/json',
-            }
+            },
         }
     );
 }
@@ -65,7 +66,6 @@ async function getNonce() {
 
     return output?.data?.nonce ?? '';
 }
-
 
 export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     const {
@@ -88,11 +88,16 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     }, [authData.status, customer_id]); // Dependency array includes any state variables that trigger a reload
 
     useEffect(() => {
+        console.log('Saved wallet address', authData);
         getHamzaCustomer().then((hamzaCustomer) => {
             console.log('Hamza Customer: ', hamzaCustomer);
             getCustomer().then((customer) => {
                 console.log('Medusa Customer: ', customer);
-                if ((!customer || !hamzaCustomer) || customer?.id !== hamzaCustomer?.id) {
+                if (
+                    !customer ||
+                    !hamzaCustomer ||
+                    customer?.id !== hamzaCustomer?.id
+                ) {
                     console.log('setting auth to unauthenticated');
                     setCustomerAuthData({
                         customer_id: '',
@@ -164,8 +169,11 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         password: '',
                     });
 
-                    //check that customer data and wallet address match 
-                    if (data.data.wallet_address.trim().toLowerCase() === clientWallet?.trim()?.toLowerCase()) {
+                    //check that customer data and wallet address match
+                    if (
+                        data.data.wallet_address.trim().toLowerCase() ===
+                        clientWallet?.trim()?.toLowerCase()
+                    ) {
                         const customerId = data.data.customer_id;
                         setCustomerId(customerId);
                         Cookies.set('_medusa_jwt', tokenResponse);
@@ -188,15 +196,13 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         try {
                             console.log('recovering cart');
                             recoverCart(customerId);
-                        }
-                        catch (e) {
+                        } catch (e) {
                             console.log('Error recovering cart');
                             console.error(e);
                         }
 
                         return true;
-                    }
-                    else {
+                    } else {
                         console.log('Wallet address mismatch on login');
                         console.log(data.data.wallet_address);
                         console.log(clientWallet);
@@ -208,7 +214,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         clearAuthCookie();
                         return false;
                     }
-
                 } else {
                     console.log('running verify unauthenticated');
                     setCustomerAuthData({

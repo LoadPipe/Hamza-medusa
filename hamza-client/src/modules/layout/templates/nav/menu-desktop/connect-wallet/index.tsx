@@ -12,15 +12,20 @@ import {
 } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import AccountMenu from '@modules/layout/templates/nav/menu-desktop/account-menu';
-import { useSwitchNetwork } from 'wagmi';
+import { useSwitchNetwork, useWalletClient, useAccount } from 'wagmi';
 import {
     getAllowedChainsFromConfig,
     getBlockchainNetworkName,
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
+import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
 export const WalletConnectButton = () => {
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
+
+    const { data: walletClient, isError } = useWalletClient();
+
+    const account = useAccount();
 
     //const isProduction = process.env.NODE_ENV === 'production';
     //const networkName = isProduction ? 'Optimism' : 'Sepolia';
