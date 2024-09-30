@@ -12,6 +12,7 @@ import {
     chains,
     config,
     darkThemeConfig,
+    SwitchNetwork,
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 const queryClient = new QueryClient();
@@ -65,6 +66,7 @@ async function getNonce() {
     return output?.data?.nonce ?? '';
 }
 
+
 export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     const {
         authData,
@@ -86,8 +88,8 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     }, [authData.status, customer_id]); // Dependency array includes any state variables that trigger a reload
 
     useEffect(() => {
-        const { data: walletClient } = useWalletClient();
-        console.log('WALLET CLIENT ADDRESS', walletClient?.account?.address);
+        //const { data: walletClient } = useWalletClient();
+        //console.log('WALLET CLIENT ADDRESS', walletClient?.account?.address);
         getHamzaCustomer().then((hamzaCustomer) => {
             console.log('Hamza Customer: ', hamzaCustomer);
             getCustomer().then((customer) => {
@@ -140,8 +142,8 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
 
         verify: async ({ message, signature }) => {
             try {
-                const { data: walletClient } = useWalletClient();
-                console.log('WALLET CLIENT ADDRESS', walletClient?.account?.address)
+                //const { data: walletClient } = useWalletClient();
+                //console.log('WALLET CLIENT ADDRESS', walletClient?.account?.address)
                 console.log(
                     'Verifying message with signature:',
                     message,
@@ -251,6 +253,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         adapter={walletSignature}
                         status={authData.status}
                     >
+                        <SwitchNetwork enabled={false}></SwitchNetwork>
                         <RainbowKitProvider
                             theme={darkThemeConfig}
                             chains={chains}
