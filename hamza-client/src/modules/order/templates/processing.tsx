@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { cancelOrder, getOrderStatus, getSingleBucket } from '@lib/data';
+import React, { useState } from 'react';
+import { cancelOrder, getSingleBucket } from '@lib/data';
 import {
     Box,
     Button,
@@ -13,7 +13,6 @@ import {
     TabPanels,
     Tab,
     TabPanel,
-    Icon,
     ModalOverlay,
     ModalContent,
     ModalHeader,
@@ -25,12 +24,47 @@ import {
     ModalFooter,
     Modal,
 } from '@chakra-ui/react';
-import { BsCircleFill } from 'react-icons/bs';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import EmptyState from '@modules/order/components/empty-state';
-import { useOrdersStore } from '@store/orders-refresh';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import Spinner from '@modules/common/icons/spinner';
 
 import ProcessingOrderCard from '@modules/account/components/processing-order-card';
+
+/**
+ * The Processing component displays and manages the customer's processing orders, allowing users to view order details,
+ * collapse or expand order views, and request cancellations of individual orders.
+ *
+ * @Author: Garo Nazarian
+ *
+ * Features:
+ * - Fetches the customer's processing orders using `useQuery` from Tanstack React Query.
+ * - Allows users to view individual order details by expanding the order view.
+ * - Provides the option to request an order cancellation, with a modal for submitting the cancellation reason.
+ * - Utilizes `useMutation` for handling the cancellation of orders and ensures the page refreshes after a successful cancellation.
+ * - Refetches the order data after a cancellation request via query invalidation to ensure the UI is up-to-date.
+ * - Displays loading spinners and handles error states during order data fetching and cancellations.
+ *
+ * Usage:
+ * This component is used in the account section of the web app to display and manage orders that are still being processed.
+ * It interacts with a backend via React Query's `useQuery` and `useMutation` for asynchronous data management.
+ *
+ * Main Workflow:
+ * 1. Fetch processing orders for the logged-in customer on component load.
+ * 2. Allow users to expand/collapse order views and see order details.
+ * 3. Present a modal for submitting a cancellation reason when a user requests cancellation of an order.
+ * 4. Automatically refetch the list of orders after a successful cancellation to keep the UI in sync with the backend.
+ *
+ * Key Components:
+ * - `useQuery`: Fetches processing orders for the customer.
+ * - `useMutation`: Handles order cancellation and invalidates the query to refetch data.
+ * - Chakra UI components (e.g., Modal, Collapse, Tabs, Buttons) are used to structure the UI and interactions.
+ * - `Spinner`: Displays a loading indicator while processing orders are being fetched.
+ *
+ * Edge Cases:
+ * - Handles scenarios where no orders are available (shows an empty state).
+ * - Ensures the cancellation modal doesn't close prematurely unless the cancellation succeeds.
+ */
 
 const Processing = ({
     customer,
@@ -39,23 +73,55 @@ const Processing = ({
     customer: string;
     isEmpty?: boolean;
 }) => {
-    const [customerId, setCustomerId] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
     const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [cancelReason, setCancelReason] = useState('');
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
     const [expandViewOrder, setExpandViewOrder] = useState(false);
-    const [orderStatuses, setOrderStatuses] = useState<{
-        [key: string]: string;
-    }>({});
-    const [customerOrder, setCustomerOrder] = useState<any[]>([]);
 
-    const incrementOrderVersion = useOrdersStore(
-        (state) => state.incrementOrdersVersion
+    const queryClient = useQueryClient();
+
+    const {
+        data: customerOrder,
+        isLoading: processingOrdersLoading,
+        isError: processingOrdersError,
+    } = useQuery(
+        ['fetchAllOrders', customer],
+        () => getSingleBucket(customer, 1),
+        {
+            enabled: !!customer,
+        }
     );
 
-    // console.log(`ORDER FOR PROCESSING ${JSON.stringify(orders)}`);
+    const mutation = useMutation(cancelOrder, {
+        onSuccess: async () => {
+            try {
+                // Refetch orders after a successful cancellation
+                await queryClient.invalidateQueries([
+                    'fetchAllOrders',
+                    customer,
+                ]);
+                setIsModalOpen(false); // Close the modal
+                setSelectedOrderId(null); // Clear selected order ID
+            } catch (error) {
+                console.error('Error invalidating queries:', error);
+            }
+        },
+        onError: (error) => {
+            console.error('Error cancelling order: ', error);
+        },
+    });
+
+    const handleCancel = async () => {
+        if (!cancelReason) {
+            setIsAttemptedSubmit(true);
+            return;
+        }
+        if (!selectedOrderId) return;
+
+        mutation.mutate(selectedOrderId);
+    };
+
     const openModal = (orderId: string) => {
         setSelectedOrderId(orderId);
         setCancelReason(''); // Ensure cancel reason is cleared here
@@ -71,37 +137,7 @@ const Processing = ({
         setExpandViewOrder(expandViewOrder === orderId ? null : orderId);
     };
 
-    useEffect(() => {
-        // This runs when `isModalOpen` changes
-        if (!isModalOpen) {
-            // Clean up the state when the modal is closed
-            setCancelReason('');
-            setIsAttemptedSubmit(false); // Reset submission attempts as well
-        }
-    }, [isModalOpen]);
-
-    const handleCancel = async () => {
-        if (!cancelReason) {
-            setIsAttemptedSubmit(true);
-            return;
-        }
-        if (!selectedOrderId) return;
-
-        console.log(`selectedORDER ID ${selectedOrderId}`);
-        try {
-            await cancelOrder(selectedOrderId);
-            setOrderStatuses((prevStatuses) => ({
-                ...prevStatuses,
-                [selectedOrderId]: 'canceled',
-            }));
-            fetchAllOrders(customerId as string);
-            incrementOrderVersion();
-            setIsModalOpen(false);
-        } catch (error) {
-            console.error('Error cancelling order: ', error);
-        }
-    };
-
+    // **** DO NOT REMOVE ***** Order history commented out atm so this is not in use **** DO NOT REMOVE *****
     const getAmount = (amount?: number | null, currency_code?: string) => {
         if (amount === null || amount === undefined) {
             return;
@@ -110,107 +146,34 @@ const Processing = ({
         return formatCryptoPrice(amount, currency_code || 'USDC');
     };
 
-    useEffect(() => {
-        console.log('Customer received in Processing:', customer);
-        if (customer && customer.length > 0) {
-            console.log(`Running fetchAllOrders with customerID ${customer}`);
-            fetchAllOrders(customer);
-            setCustomerId(customer);
-        }
-    }, [customer]);
-
-    const fetchAllOrders = async (customerId: string) => {
-        setIsLoading(true);
-        setCustomerId(customerId);
-        try {
-            const bucket = await getSingleBucket(customerId, 1);
-
-            if (bucket === undefined || bucket === null) {
-                console.error('Bucket is undefined or null');
-                setCustomerOrder([]); // Set empty state
-                setIsLoading(false);
-                return;
-            }
-
-            if (Array.isArray(bucket)) {
-                setCustomerOrder(bucket);
-                console.log(`BUCKETS ${JSON.stringify(bucket)}`);
-            } else {
-                console.error('Expected an array but got:', bucket);
-                setCustomerOrder([]);
-            }
-        } catch (error) {
-            console.error('Error fetching processing orders:', error);
-            setCustomerOrder([]);
-        }
-        setIsLoading(false);
-    };
-
-    useEffect(() => {
-        const fetchStatuses = async () => {
-            if (!customerOrder || customerOrder.length === 0) return;
-
-            console.log(`Customer Order ${JSON.stringify(customerOrder)}`);
-
-            const statuses = await Promise.allSettled(
-                customerOrder.map(async (order) => {
-                    try {
-                        const statusRes = await getOrderStatus(order.id);
-                        console.log(
-                            `Fetching status for order ${order.id} StatusResponse ${statusRes.order}`
-                        );
-                        return {
-                            orderId: order.id,
-                            status: statusRes.order,
-                        };
-                    } catch (error) {
-                        console.error(
-                            `Error fetching status for order ${order.id}:`,
-                            error
-                        );
-                        return {
-                            orderId: order.id,
-                            status: 'unknown',
-                        };
-                    }
-                })
-            );
-
-            const statusMap: { [key: string]: any } = {};
-            statuses.forEach((result) => {
-                if (result.status === 'fulfilled') {
-                    const { orderId, status } = result.value;
-                    statusMap[orderId] = status;
-                } else {
-                    console.error(
-                        `Failed to fetch status for order: ${result.reason}`
-                    );
-                }
-            });
-
-            console.log(
-                `Fetching status for MAP: ${JSON.stringify(statusMap)}`
-            );
-
-            setOrderStatuses(statusMap);
-            console.log('Order statuses: ', statusMap);
-        };
-
-        fetchStatuses();
-    }, [customerOrder]);
-
-    if (isEmpty && customerOrder && customerOrder?.length == 0) {
+    if (isEmpty && customerOrder?.length === 0) {
         return <EmptyState />;
     }
 
     return (
         <div>
             {/* Processing-specific content */}
-            {customerOrder && customerOrder.length > 0 ? (
+            {processingOrdersLoading ? (
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    textAlign="center"
+                    py={5}
+                >
+                    <Text color="white" fontSize="lg" mb={8}>
+                        Loading orders...
+                    </Text>
+                    <Spinner size={80} />
+                </Box>
+            ) : processingOrdersError ? (
+                <Text>Error fetching processing orders</Text>
+            ) : customerOrder && customerOrder.length > 0 ? (
                 <>
                     <h1>Processing Orders</h1>
 
-                    {customerOrder.map((order) => (
+                    {customerOrder.map((order: any) => (
                         <>
                             <div
                                 key={order.id} // Changed from cart_id to id since it's more reliable and unique
@@ -777,8 +740,7 @@ const Processing = ({
                                             borderBottom: 'none',
                                         }}
                                     >
-                                        {orderStatuses[order.id] ===
-                                        'canceled' ? (
+                                        {order.status === 'canceled' ? (
                                             <Button
                                                 colorScheme="red"
                                                 ml={4}
