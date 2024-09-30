@@ -35,7 +35,7 @@ export default class AuthService extends MedusaAuthService {
         password: string,
         wallet_address?: string
     ): Promise<ExtendedAuthenticateResult | AuthenticateResult> {
-        this.logger.info('calling medusa authenticate....');
+        this.logger.info(`calling medusa authenticate....${email} ${password}`);
         const authResult: AuthenticateResult = await super.authenticate(
             email,
             password
@@ -63,7 +63,7 @@ export default class AuthService extends MedusaAuthService {
         password: string,
         wallet_address?: string
     ): Promise<ExtendedAuthenticateResult> {
-        this.logger.debug('calling medusa authenticate....');
+        this.logger.debug('calling medusa authenticate....' + JSON.stringify({ email, password, wallet_address }));
         const authResult: AuthenticateResult = await super.authenticateCustomer(
             email,
             password

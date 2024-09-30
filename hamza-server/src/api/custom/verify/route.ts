@@ -166,6 +166,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     await handler.handle(async () => {
         //get the service instances
         let created = false;
+        handler.logger.debug('IN THE HANDLER FOR /VERIFY ROUTE');
 
         //TODO: needs security
 
@@ -179,6 +180,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 relations: { customer: { preferred_currency: true } },
             });
 
+        handler.logger.debug(`FOUND CUSTOMER ${JSON.stringify(checkCustomerWithWalletAddress)}`);
+
         const { first_name, last_name } = NewCustomerNames.getRandom();
 
         //create customer input data
@@ -190,11 +193,11 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             wallet_address: wallet_address,
         };
 
-        handler.logger.debug('customer input is ' + customerInputData);
+        handler.logger.debug('customer input is ' + JSON.stringify(customerInputData));
         //verify the signature
         const siweMessage = new SiweMessage(message);
         let siweResponse = await siweMessage.verify({ signature });
-        handler.logger.debug('siwe response is ' + siweResponse);
+        handler.logger.debug('siwe response is ' + JSON.stringify(siweResponse));
         if (!siweResponse.success) {
             throw new Error('Error in validating wallet address signature');
         }
@@ -218,7 +221,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 customerInputData.password,
                 customerInputData.wallet_address
             );
-            handler.logger.debug('auth result is ' + authResult);
+            handler.logger.debug('auth result is ' + JSON.stringify(authResult));
             if (!authResult.success) {
                 throw new Error('Error in verifying email and password');
             }
