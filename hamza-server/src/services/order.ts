@@ -246,7 +246,7 @@ export default class OrderService extends MedusaOrderService {
         return orders;
     }
 
-    async cancelOrder(orderId: string) {
+    async cancelOrder(orderId: string, cancel_reason: string) {
         //get order
         let order: Order = await this.orderRepository_.findOne({
             where: { id: orderId },
@@ -258,6 +258,8 @@ export default class OrderService extends MedusaOrderService {
             order.status === OrderStatus.REQUIRES_ACTION
         ) {
             order.status = OrderStatus.CANCELED;
+            order.canceled_at = new Date();
+            order.metadata = { cancel_reason: cancel_reason };
 
             await this.orderRepository_.save(order);
         }

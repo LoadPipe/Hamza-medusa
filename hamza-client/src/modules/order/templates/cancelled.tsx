@@ -83,6 +83,14 @@ const Cancelled = ({
                                         <CancelCard
                                             key={item.id}
                                             order={item}
+                                            cancel_reason={
+                                                order.metadata?.cancel_reason ||
+                                                'No cancellation details were provided.'
+                                            }
+                                            cancelled_date={
+                                                order.canceled_at ||
+                                                'Cancel date N/A'
+                                            }
                                             handle={
                                                 item.variant?.product?.handle ||
                                                 'N/A'

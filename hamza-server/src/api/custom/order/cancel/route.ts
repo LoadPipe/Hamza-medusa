@@ -15,18 +15,25 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
         res,
         'PUT',
         '/custom/order/cancel',
-        ['order_id']
+        ['order_id', 'cancel_reason']
     );
 
     await handler.handle(async () => {
         //validate
-        if (!handler.inputParams.order_id) {
-            return handler.returnStatusWithMessage(400, 'order_id is required');
+        if (
+            !handler.inputParams.order_id ||
+            !handler.inputParams.cancel_reason
+        ) {
+            return handler.returnStatusWithMessage(
+                400,
+                'order_id && cancel reason is required'
+            );
         }
 
         //normal cancellation
         let order = await orderService.cancelOrder(
-            handler.inputParams.order_id
+            handler.inputParams.order_id,
+            handler.inputParams.cancel_reason
         );
 
         //check customer id
