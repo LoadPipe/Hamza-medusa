@@ -19,6 +19,8 @@ import { format } from 'date-fns';
 import { getAllProductReviews, getNotReviewedOrders } from '@lib/data';
 import EditReviewTemplate from '@modules/editreview/[id]/edit-review-template';
 import ReviewTemplate from '@modules/review/[id]/review-template';
+import { useQuery } from '@tanstack/react-query';
+import Spinner from '@modules/common/icons/spinner';
 
 const commonButtonStyles = {
     borderRadius: '8px',
@@ -58,7 +60,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
     const [selectedReview, setSelectedReview] = useState(null);
     const [selectedPendingReview, setSelectedPendingReview] = useState(null);
     const [activeButton, setActiveButton] = useState('pending');
-    const [pendingReviews, setPendingReviews] = useState([]);
+    // const [pendingReviews, setPendingReviews] = useState([]);
 
     const fetchReviews = async () => {
         try {
@@ -70,6 +72,22 @@ const ReviewPage = ({ customer }: { customer: any }) => {
         }
     };
 
+    // useQuery for pending reviews
+    const {
+        data: pendingReviews,
+        isLoading: pendingLoading,
+        isError: pendingError,
+        refetch: fetchPendingReviews,
+    } = useQuery(
+        ['pendingReviews', customer.id],
+        () => getNotReviewedOrders(customer.id), // Correct return for the function
+        {
+            enabled: false, // This should be inside the options object
+        }
+    );
+
+    // useQuery for reviewed items..
+
     const handleReviewUpdated = async () => {
         // This function will be called after a review is updated
         await fetchReviews();
@@ -77,23 +95,6 @@ const ReviewPage = ({ customer }: { customer: any }) => {
 
     const handlePendingUpdated = async () => {
         await fetchPendingReviews();
-    };
-
-    const fetchPendingReviews = async () => {
-        console.log('Fetching pending reviews...'); // For debugging
-        try {
-            const response = await getNotReviewedOrders(customer.id);
-            console.log(`Response ${JSON.stringify(response)}`);
-            if (response.length !== 0) {
-                setPendingReviews(response);
-            } else {
-                setPendingReviews([]);
-            }
-            console.log(`Pending reviews: ${JSON.stringify(response)}`); // For debugging
-        } catch (error) {
-            console.error(`Error fetching not reviewed orders: ${error}`);
-            // Handle error state in UI if necessary, e.g., show a message
-        }
     };
 
     useEffect(() => {
@@ -141,6 +142,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                     }}
                     {...commonButtonStyles}
                     isActive={activeButton === 'pending'}
+                    isLoading={pendingLoading}
                 >
                     Pending Reviews
                 </Button>
@@ -278,7 +280,27 @@ const ReviewPage = ({ customer }: { customer: any }) => {
 
             {activeButton === 'pending' && (
                 <>
-                    {pendingReviews.length > 0 ? (
+                    {pendingLoading ? (
+                        <Box
+                            display="flex"
+                            flexDirection="column"
+                            justifyContent="center"
+                            alignItems="center"
+                            textAlign="center"
+                            py={5}
+                        >
+                            <Text color="white" fontSize="lg" mb={8}>
+                                Loading pending reviews...
+                            </Text>
+                            <Spinner size={80} />
+                        </Box>
+                    ) : pendingError ? (
+                        <Box textAlign="center" py={5}>
+                            <Text color="red.500" fontSize="lg">
+                                Error fetching pending reviews.
+                            </Text>
+                        </Box>
+                    ) : pendingReviews?.length > 0 ? (
                         <Stack divider={<StackDivider />} spacing={4}>
                             {pendingReviews.map((review: any) =>
                                 review.items.map((item: any) => (
@@ -377,9 +399,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                         </Stack>
                     ) : (
                         <Box textAlign="center" py={5}>
-                            <Text color="red.500" fontSize="lg">
-                                No pending reviews available.
-                            </Text>
+                            <Text>No pending reviews available.</Text>
                         </Box>
                     )}
                     <CardFooter />
