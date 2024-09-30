@@ -88,8 +88,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     }, [authData.status, customer_id]); // Dependency array includes any state variables that trigger a reload
 
     useEffect(() => {
-        //const { data: walletClient } = useWalletClient();
-        //console.log('WALLET CLIENT ADDRESS', walletClient?.account?.address);
         getHamzaCustomer().then((hamzaCustomer) => {
             console.log('Hamza Customer: ', hamzaCustomer);
             getCustomer().then((customer) => {
@@ -142,8 +140,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
 
         verify: async ({ message, signature }) => {
             try {
-                //const { data: walletClient } = useWalletClient();
-                //console.log('WALLET CLIENT ADDRESS', walletClient?.account?.address)
                 console.log(
                     'Verifying message with signature:',
                     message,
