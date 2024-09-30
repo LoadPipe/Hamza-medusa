@@ -7,7 +7,7 @@ import {
     RainbowKitProvider,
     AuthenticationStatus,
 } from '@rainbow-me/rainbowkit';
-import { WagmiConfig } from 'wagmi';
+import { useWalletClient, WagmiConfig } from 'wagmi';
 import {
     chains,
     config,
@@ -74,7 +74,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     } = useCustomerAuthStore();
     const router = useRouter();
     const [customer_id, setCustomerId] = useState('');
-    //const [clientWallet, setClientWallet] = useState('');
     const { loadWishlist } = useWishlistStore((state) => state);
 
     let clientWallet = '';
@@ -87,6 +86,8 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     }, [authData.status, customer_id]); // Dependency array includes any state variables that trigger a reload
 
     useEffect(() => {
+        const { data: walletClient } = useWalletClient();
+        console.log('WALLET CLIENT ADDRESS', walletClient?.account?.address);
         getHamzaCustomer().then((hamzaCustomer) => {
             console.log('Hamza Customer: ', hamzaCustomer);
             getCustomer().then((customer) => {
@@ -139,6 +140,8 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
 
         verify: async ({ message, signature }) => {
             try {
+                const { data: walletClient } = useWalletClient();
+                console.log('WALLET CLIENT ADDRESS', walletClient?.account?.address)
                 console.log(
                     'Verifying message with signature:',
                     message,
