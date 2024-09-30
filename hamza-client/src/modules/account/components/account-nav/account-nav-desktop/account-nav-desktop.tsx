@@ -23,6 +23,7 @@ import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import NavLink from '../components/nav-link';
+import NavLinkOrders from '../components/nav-link-desktop-orders';
 import { TABS } from 'modules/order-tab-management';
 import { RiShoppingBasket2Line } from 'react-icons/ri';
 
@@ -122,16 +123,18 @@ const AccountNavDesktop = ({
 
             {/* Collapsible Panel */}
             <Collapse in={isOpen} animateOpacity>
-                <Box mt={2} pl={4}>
+                <Box mt={2} pl={2}>
                     <NavLink
                         href="/account/profile"
                         route={route!}
                         title="My Profile"
+                        fontSize={'16px'}
                     />
                     <NavLink
                         href="/account/addresses"
                         route={route!}
                         title="My Addresses"
+                        fontSize={'16px'}
                     />
                 </Box>
             </Collapse>
@@ -207,84 +210,49 @@ const AccountNavDesktop = ({
 
             {/* Collapsible Panel for Orders */}
             <Collapse in={isOrdersOpen} animateOpacity>
-                <Box mt={2} pl={4}>
-                    <Box
-                        as="button"
-                        textAlign="left"
-                        width="100%"
-                        py={2} // Add padding for better click area
-                        color="white"
-                        bg="transparent"
-                        _hover={{ color: 'primary.green.900' }} // Update hover color to primary.green.900
-                        onClick={() => handleTabChange(TABS.ALL)}
-                    >
-                        All Orders
-                    </Box>
-                    <Box
-                        as="button"
-                        textAlign="left"
-                        width="100%"
-                        py={2}
-                        mt={1} // Ensure consistent spacing
-                        color="white"
-                        bg="transparent"
-                        _hover={{ color: 'primary.green.900' }}
-                        onClick={() => handleTabChange(TABS.PROCESSING)}
-                    >
-                        Processing
-                    </Box>
-                    <Box
-                        as="button"
-                        textAlign="left"
-                        width="100%"
-                        py={2}
-                        mt={1}
-                        color="white"
-                        bg="transparent"
-                        _hover={{ color: 'primary.green.900' }}
-                        onClick={() => handleTabChange(TABS.SHIPPED)}
-                    >
-                        Shipped
-                    </Box>
-                    <Box
-                        as="button"
-                        textAlign="left"
-                        width="100%"
-                        py={2}
-                        mt={1}
-                        color="white"
-                        bg="transparent"
-                        _hover={{ color: 'primary.green.900' }}
-                        onClick={() => handleTabChange(TABS.DELIVERED)}
-                    >
-                        Delivered
-                    </Box>
-                    <Box
-                        as="button"
-                        textAlign="left"
-                        width="100%"
-                        py={2}
-                        mt={1}
-                        color="white"
-                        bg="transparent"
-                        _hover={{ color: 'primary.green.900' }}
-                        onClick={() => handleTabChange(TABS.CANCELLED)}
-                    >
-                        Cancelled
-                    </Box>
-                    <Box
-                        as="button"
-                        textAlign="left"
-                        width="100%"
-                        py={2}
-                        mt={1}
-                        color="white"
-                        bg="transparent"
-                        _hover={{ color: 'primary.green.900' }}
-                        onClick={() => handleTabChange(TABS.REFUND)}
-                    >
-                        Refund
-                    </Box>
+                <Box mt={2} pl={2}>
+                    <NavLinkOrders
+                        href={'/account/orders'}
+                        route={route!}
+                        title="All Orders"
+                        tab={'All Orders'}
+                        handleTabChange={() => handleTabChange(TABS.ALL)}
+                    />
+                    <NavLinkOrders
+                        href={'/account/orders'}
+                        route={route!}
+                        title="Processing"
+                        tab={'Processing'}
+                        handleTabChange={() => handleTabChange(TABS.PROCESSING)}
+                    />
+                    <NavLinkOrders
+                        href={'/account/orders'}
+                        route={route!}
+                        title="Shipped"
+                        tab={'Shipped'}
+                        handleTabChange={() => handleTabChange(TABS.SHIPPED)}
+                    />
+                    <NavLinkOrders
+                        href={'/account/orders'}
+                        route={route!}
+                        title="Delivered"
+                        tab={'Delivered'}
+                        handleTabChange={() => handleTabChange(TABS.DELIVERED)}
+                    />
+                    <NavLinkOrders
+                        href={'/account/orders'}
+                        route={route!}
+                        title="Cancelled"
+                        tab={'Cancelled'}
+                        handleTabChange={() => handleTabChange(TABS.CANCELLED)}
+                    />
+                    <NavLinkOrders
+                        href={'/account/orders'}
+                        route={route!}
+                        title="Refund"
+                        tab={'Refund'}
+                        handleTabChange={() => handleTabChange(TABS.REFUND)}
+                    />
                 </Box>
             </Collapse>
 

@@ -43,6 +43,7 @@ import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import NavLink from '../components/nav-link';
 import NavLinkMobile from '../components/nav-link-mobile';
+import NavLinkMobileOrders from '../components/nav-link-mobile-orders';
 
 import { TABS } from 'modules/order-tab-management';
 const AccountNavMobile = ({
@@ -242,31 +243,91 @@ const AccountNavMobile = ({
                                 backgroundColor={'transparent'}
                                 color="white"
                             >
-                                All Orders
+                                <NavLinkMobileOrders
+                                    href="/account/orders"
+                                    route={route!}
+                                    title={'All Orders'}
+                                    tab={'All Orders'}
+                                    handleTabChange={() =>
+                                        handleTabChange(TABS.ALL)
+                                    }
+                                    onClick={onClose}
+                                />
                             </MenuItem>
                             <MenuItem
                                 backgroundColor={'transparent'}
                                 color="white"
                             >
-                                Processing
+                                <NavLinkMobileOrders
+                                    href="/account/orders"
+                                    route={route!}
+                                    title={'Processing'}
+                                    tab={'Processing'}
+                                    handleTabChange={() =>
+                                        handleTabChange(TABS.PROCESSING)
+                                    }
+                                    onClick={onClose}
+                                />
                             </MenuItem>
                             <MenuItem
                                 backgroundColor={'transparent'}
                                 color="white"
                             >
-                                Shipped
+                                <NavLinkMobileOrders
+                                    href="/account/orders"
+                                    route={route!}
+                                    title={'Shipped'}
+                                    tab={'Shipped'}
+                                    handleTabChange={() =>
+                                        handleTabChange(TABS.SHIPPED)
+                                    }
+                                    onClick={onClose}
+                                />
                             </MenuItem>
                             <MenuItem
                                 backgroundColor={'transparent'}
                                 color="white"
                             >
-                                Delivered
+                                <NavLinkMobileOrders
+                                    href="/account/orders"
+                                    route={route!}
+                                    title={'Delivered'}
+                                    tab={'Delivered'}
+                                    handleTabChange={() =>
+                                        handleTabChange(TABS.DELIVERED)
+                                    }
+                                    onClick={onClose}
+                                />
                             </MenuItem>
                             <MenuItem
                                 backgroundColor={'transparent'}
                                 color="white"
                             >
-                                Canceled
+                                <NavLinkMobileOrders
+                                    href="/account/orders"
+                                    route={route!}
+                                    title={'Cancelled'}
+                                    tab={'Cancelled'}
+                                    handleTabChange={() =>
+                                        handleTabChange(TABS.CANCELLED)
+                                    }
+                                    onClick={onClose}
+                                />
+                            </MenuItem>
+                            <MenuItem
+                                backgroundColor={'transparent'}
+                                color="white"
+                            >
+                                <NavLinkMobileOrders
+                                    href="/account/orders"
+                                    route={route!}
+                                    title={'Refund'}
+                                    tab={'Refund'}
+                                    handleTabChange={() =>
+                                        handleTabChange(TABS.REFUND)
+                                    }
+                                    onClick={onClose}
+                                />
                             </MenuItem>
                         </Box>
                     </Collapse>
