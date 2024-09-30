@@ -176,7 +176,7 @@ const Processing = ({
                     py={5}
                 >
                     <Text color="white" fontSize="lg" mb={8}>
-                        Loading orders...
+                        Loading Processing orders...
                     </Text>
                     <Spinner size={80} />
                 </Box>
