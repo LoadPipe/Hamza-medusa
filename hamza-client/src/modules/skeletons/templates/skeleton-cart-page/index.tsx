@@ -83,14 +83,14 @@ const SkeletonCartPage = () => {
                                                 startColor="gray.300"
                                                 endColor="gray.600"
                                             />
-                                            <Skeleton
+                                            {/* <Skeleton
                                                 ml="auto"
                                                 borderRadius={'full'}
                                                 height="24px"
                                                 width="100px"
                                                 startColor="gray.300"
                                                 endColor="gray.600"
-                                            />
+                                            /> */}
                                         </Flex>
                                         <Flex flexDir={'row'}>
                                             <Skeleton
