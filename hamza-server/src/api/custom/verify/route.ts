@@ -166,21 +166,18 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     await handler.handle(async () => {
         //get the service instances
         let created = false;
-        handler.logger.debug('IN THE HANDLER FOR /VERIFY ROUTE');
 
         //TODO: needs security
 
         const { message, signature } = handler.inputParams;
 
-        const wallet_address = message.address;
+        const wallet_address = message.address?.trim()?.toLowerCase();
 
         let checkCustomerWithWalletAddress =
             await CustomerWalletAddressRepository.findOne({
                 where: { wallet_address: wallet_address },
                 relations: { customer: { preferred_currency: true } },
             });
-
-        handler.logger.debug(`FOUND CUSTOMER ${JSON.stringify(checkCustomerWithWalletAddress)}`);
 
         const { first_name, last_name } = NewCustomerNames.getRandom();
 
@@ -192,6 +189,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             password: 'password', //TODO: (JK) store the default password someplace
             wallet_address: wallet_address,
         };
+        const email = customerInputData.email?.trim().toLowerCase() ?? '';
 
         handler.logger.debug('customer input is ' + JSON.stringify(customerInputData));
         //verify the signature
@@ -206,18 +204,19 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             'customer data is ' + checkCustomerWithWalletAddress
         );
         let newCustomerData: Customer;
+
         if (!checkCustomerWithWalletAddress) {
             handler.logger.debug('creating new customer ');
             await customerService.create(customerInputData);
             newCustomerData = await CustomerRepository.findOne({
-                where: { email: customerInputData.email.toLowerCase() },
+                where: { email: email },
                 relations: { preferred_currency: true },
             });
             created = true;
         } else {
             //if customer record exists, authenticate the user
             let authResult = await authService.authenticateCustomer(
-                customerInputData.email.toLowerCase(),
+                email,
                 customerInputData.password,
                 customerInputData.wallet_address
             );
@@ -241,7 +240,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 checkCustomerWithWalletAddress &&
                 checkCustomerWithWalletAddress.customer &&
                 checkCustomerWithWalletAddress.customer.preferred_currency,
-            email: customerInputData.email,
+            email: email,
             wallet_address: customerInputData.wallet_address,
             created,
             is_verified:

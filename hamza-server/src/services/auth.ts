@@ -37,9 +37,10 @@ export default class AuthService extends MedusaAuthService {
     ): Promise<ExtendedAuthenticateResult | AuthenticateResult> {
         this.logger.info(`calling medusa authenticate....${email} ${password}`);
         const authResult: AuthenticateResult = await super.authenticate(
-            email,
-            password
+            email?.trim()?.toLowerCase() ?? '',
+            password?.trim()?.toLowerCase() ?? ''
         );
+        this.logger.info(`Auth result: ${JSON.stringify(authResult)}`)
 
         // Handle the wallet address logic separately, depending on your application's needs
         // This could be adding the wallet address to the user's profile, logging it, etc.
