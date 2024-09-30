@@ -1,15 +1,15 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
-import { RouteHandler } from '../../../route-handler';
-import { Order } from '../../../../models/order';
-import { Payment } from '../../../../models/payment';
-import PaymentVerificationService from '../../../../services/payment-verification';
-import BuckydropService from '../../../../services/buckydrop';
+import { RouteHandler } from '../../../../route-handler';
+import { Order } from '../../../../../models/order';
+import { Payment } from '../../../../../models/payment';
+import PaymentVerificationService from '../../../../../services/payment-verification';
+import BuckydropService from '../../../../../services/buckydrop';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const paymentVerificationService: PaymentVerificationService = req.scope.resolve('paymentVerificationService');
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'POST', '/admin/custom/payments/verify', ['products']
+        req, res, 'POST', '/admin/custom/bucky/verify', ['products']
     );
 
     await handler.handle(async () => {
