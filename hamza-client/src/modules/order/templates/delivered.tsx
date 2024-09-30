@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
 import { getSingleBucket } from '@lib/data';
-import { Box } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
+import Spinner from '@modules/common/icons/spinner';
 
 import DeliveredCard from '@modules/account/components/delivered-card';
 import EmptyState from '@modules/order/components/empty-state';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import { useQuery } from '@tanstack/react-query';
+import React from 'react';
 
 const Delivered = ({
     customer,
@@ -13,22 +15,17 @@ const Delivered = ({
     customer: string;
     isEmpty?: boolean;
 }) => {
-    const [customerOrder, setCustomerOrder] = useState<any[]>([]);
-    const [customerId, setCustomerId] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
-
-    // console.log(`ORDERS ARE ${JSON.stringify(orders)}`);
-    useEffect(() => {
-        // console.log('Orders received in Cancelled:', orders);
-        if (customer && customer.length > 0) {
-            const customer_id = customer;
-            // console.log(
-            //     `Running fetchAllOrders with customerID ${customer_id}`
-            // );
-            fetchAllOrders(customer_id);
-            setCustomerId(customer_id);
+    const {
+        data: customerOrder,
+        isLoading,
+        isError,
+    } = useQuery(
+        ['fetchAllOrders', customer],
+        () => getSingleBucket(customer, 3),
+        {
+            enabled: !!customer, // Only fetch if `customer` is provided
         }
-    }, [customer]);
+    );
 
     const getAmount = (
         amount?: number | null,
@@ -41,30 +38,40 @@ const Delivered = ({
         return formatCryptoPrice(amount, currency_code || 'USDC');
     };
 
-    const fetchAllOrders = async (customerId: string) => {
-        setIsLoading(true);
-        try {
-            const bucket = await getSingleBucket(customerId, 3);
+    if (isLoading) {
+        return (
+            <Box
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                textAlign="center"
+                py={5}
+            >
+                <Text color="white" fontSize="lg" mb={8}>
+                    Loading Delivered orders...
+                </Text>
+                <Spinner size={80} />
+            </Box>
+        );
+    }
 
-            if (bucket === undefined || bucket === null) {
-                console.error('Bucket is undefined or null');
-                setCustomerOrder([]); // Set empty state
-                setIsLoading(false);
-                return;
-            }
-
-            if (Array.isArray(bucket)) {
-                setCustomerOrder(bucket);
-            } else {
-                console.error('Expected an array but got:', bucket);
-                setCustomerOrder([]);
-            }
-        } catch (error) {
-            console.error('Error fetching processing orders:', error);
-            setCustomerOrder([]);
-        }
-        setIsLoading(false);
-    };
+    if (isError) {
+        return (
+            <Box
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                textAlign="center"
+                py={5}
+            >
+                <Text color="red.500" fontSize="lg" mb={8}>
+                    Error fetching delivered orders.
+                </Text>
+            </Box>
+        );
+    }
 
     if (isEmpty && customerOrder && customerOrder?.length == 0) {
         return <EmptyState />;
@@ -77,7 +84,7 @@ const Delivered = ({
                 <>
                     <h1>Delivered Orders</h1>
 
-                    {customerOrder.map((order) => (
+                    {customerOrder.map((order: any) => (
                         <div
                             key={order.id} // Changed from cart_id to id since it's more reliable and unique
                             className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"

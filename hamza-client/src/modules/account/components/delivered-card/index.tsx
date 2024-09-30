@@ -2,12 +2,15 @@ import { formatAmount } from '@lib/util/prices';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { getStore } from '@lib/data';
 import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import Spinner from '@modules/common/icons/spinner';
+
 type OrderDetails = {
     thumbnail: string;
     title: string;
@@ -41,16 +44,10 @@ type OrderCardProps = {
 };
 
 const DeliveredCard = ({ order, handle }: OrderCardProps) => {
-    const [vendor, setVendor] = useState('');
     const orderString = typeof order.currency_code;
     const router = useRouter();
     let countryCode = useParams().countryCode as string;
     if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY) countryCode = 'us';
-
-    // console.log(
-    //     `Order Card details ${JSON.stringify(order.variant.product_id)}`
-    // );
-    // console.log(`Product details ${JSON.stringify(handle)} `);
 
     const getAmount = (amount?: number | null) => {
         if (amount === null || amount === undefined) {
@@ -60,21 +57,15 @@ const DeliveredCard = ({ order, handle }: OrderCardProps) => {
         return formatCryptoPrice(amount, order.currency_code || 'USDC');
     };
 
-    useEffect(() => {
-        // Fetch Vendor Name from product.id
-        const fetchVendor = async () => {
-            try {
-                const data = await getStore(order.variant.product_id as string);
-                // console.log(`Vendor: ${data}`);
-                setVendor(data.name);
-            } catch (error) {
-                console.error('Error fetching vendor: ', error);
-            }
-        };
+    const {
+        data: vendorData,
+        isLoading: isVendorLoading,
+        isError: isVendorError,
+    } = useQuery(['vendor', order.variant.product_id], () =>
+        getStore(order.variant.product_id as string)
+    );
 
-        fetchVendor();
-    }, [order]);
-
+    //TODO: Refactor to a mutation
     const handleReorder = async (order: any) => {
         try {
             await addToCart({
@@ -104,13 +95,19 @@ const DeliveredCard = ({ order, handle }: OrderCardProps) => {
             mt={2}
         >
             <Flex alignItems="center" mb={2}>
-                <Text
-                    fontSize={{ base: '14px', md: '24px' }}
-                    fontWeight="bold"
-                    noOfLines={1}
-                >
-                    {vendor}
-                </Text>
+                {isVendorLoading ? (
+                    <Spinner />
+                ) : isVendorError ? (
+                    <Text color="red.500">Error loading vendor name</Text>
+                ) : (
+                    <Text
+                        fontSize={{ base: '14px', md: '24px' }}
+                        fontWeight="bold"
+                        noOfLines={1}
+                    >
+                        {vendorData?.name || 'N/A'}
+                    </Text>
+                )}
                 <Flex
                     display={{ base: 'none', md: 'flex' }}
                     ml={2}
@@ -119,7 +116,6 @@ const DeliveredCard = ({ order, handle }: OrderCardProps) => {
                     <FaCheckCircle color="#3196DF" />
                 </Flex>
             </Flex>
-
             <Flex alignItems="center" justifyContent="space-between">
                 <Link href={`/us/products/${handle}`}>
                     <Image
