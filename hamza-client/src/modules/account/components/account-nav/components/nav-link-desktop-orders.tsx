@@ -42,10 +42,17 @@ const NavLinkOrders = ({
                 alignItems={'center'}
                 onClick={handleClick}
             >
+                <Flex
+                    width={'26px'}
+                    height={'26px'}
+                    color={active ? 'primary.green.900' : 'white'}
+                >
+                    {icon && icon}
+                </Flex>
                 <Text
                     ml={2}
                     my="auto"
-                    fontSize={'18px'}
+                    fontSize={'16px'}
                     color={active ? 'primary.green.900' : 'white'}
                     fontWeight={600}
                 >

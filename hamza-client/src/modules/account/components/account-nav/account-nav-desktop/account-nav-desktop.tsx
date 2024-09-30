@@ -123,16 +123,18 @@ const AccountNavDesktop = ({
 
             {/* Collapsible Panel */}
             <Collapse in={isOpen} animateOpacity>
-                <Box mt={2} pl={4}>
+                <Box mt={2} pl={2}>
                     <NavLink
                         href="/account/profile"
                         route={route!}
                         title="My Profile"
+                        fontSize={'16px'}
                     />
                     <NavLink
                         href="/account/addresses"
                         route={route!}
                         title="My Addresses"
+                        fontSize={'16px'}
                     />
                 </Box>
             </Collapse>
@@ -208,7 +210,7 @@ const AccountNavDesktop = ({
 
             {/* Collapsible Panel for Orders */}
             <Collapse in={isOrdersOpen} animateOpacity>
-                <Box mt={2} pl={4}>
+                <Box mt={2} pl={2}>
                     <NavLinkOrders
                         href={'/account/orders'}
                         route={route!}

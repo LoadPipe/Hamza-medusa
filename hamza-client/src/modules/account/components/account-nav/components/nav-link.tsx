@@ -8,9 +8,16 @@ type AccountNavLinkProps = {
     href: string;
     title: string;
     route: string;
+    fontSize?: string;
     icon?: ReactElement;
 };
-const NavLink = ({ href, route, title, icon }: AccountNavLinkProps) => {
+const NavLink = ({
+    href,
+    route,
+    title,
+    icon,
+    fontSize = '18px',
+}: AccountNavLinkProps) => {
     const { countryCode }: { countryCode: string } = useParams();
     const active = route.split(countryCode)[1] === href;
     return (
@@ -32,7 +39,7 @@ const NavLink = ({ href, route, title, icon }: AccountNavLinkProps) => {
                 </Flex>
                 <Text
                     ml={2}
-                    fontSize={'18px'}
+                    fontSize={fontSize}
                     color={active ? 'primary.green.900' : 'white'}
                     fontWeight={600}
                 >
