@@ -46,7 +46,6 @@ import { renderStars } from '@modules/products/components/product-preview/compon
 import Link from 'next/link';
 
 const ReviewPage = ({ customer }: { customer: any }) => {
-    const [reviews, setReviews] = useState([]);
     const {
         isOpen: isEditReviewOpen,
         onOpen: onEditReviewOpen,
@@ -60,17 +59,6 @@ const ReviewPage = ({ customer }: { customer: any }) => {
     const [selectedReview, setSelectedReview] = useState(null);
     const [selectedPendingReview, setSelectedPendingReview] = useState(null);
     const [activeButton, setActiveButton] = useState('pending');
-    // const [pendingReviews, setPendingReviews] = useState([]);
-
-    const fetchReviews = async () => {
-        try {
-            const response = await getAllProductReviews(customer.id);
-            if (response.length !== 0) setReviews(response);
-            console.log('Reviews:', JSON.stringify(response));
-        } catch (error) {
-            console.error('Error fetching reviews:', error);
-        }
-    };
 
     // useQuery for pending reviews
     const {
@@ -80,13 +68,25 @@ const ReviewPage = ({ customer }: { customer: any }) => {
         refetch: fetchPendingReviews,
     } = useQuery(
         ['pendingReviews', customer.id],
-        () => getNotReviewedOrders(customer.id), // Correct return for the function
+        () => getNotReviewedOrders(customer.id),
         {
             enabled: false, // This should be inside the options object
         }
     );
 
     // useQuery for reviewed items..
+    const {
+        data: reviews,
+        isLoading: reviewsLoading,
+        isError: reviewsError,
+        refetch: fetchReviews,
+    } = useQuery(
+        ['fetchReviews', customer.id],
+        () => getAllProductReviews(customer.id),
+        {
+            enabled: false,
+        }
+    );
 
     const handleReviewUpdated = async () => {
         // This function will be called after a review is updated
@@ -142,7 +142,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                     }}
                     {...commonButtonStyles}
                     isActive={activeButton === 'pending'}
-                    isLoading={pendingLoading}
+                    // isLoading={pendingLoading}
                 >
                     Pending Reviews
                 </Button>
@@ -154,6 +154,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                     }}
                     {...commonButtonStyles}
                     isActive={activeButton === 'reviews'}
+                    // isLoading={reviewsLoading}
                 >
                     Review Archives
                 </Button>
@@ -161,119 +162,149 @@ const ReviewPage = ({ customer }: { customer: any }) => {
 
             {activeButton === 'reviews' && reviews.length > 0 && (
                 <>
-                    <Stack divider={<StackDivider />} spacing={4}>
-                        {reviews.map((review: any) => (
-                            <CardBody key={review.id}>
-                                <Flex
-                                    direction={{ base: 'column', md: 'row' }}
-                                    justify="space-between"
-                                    align={{
-                                        base: 'stretch',
-                                        md: 'flex-start',
-                                    }}
-                                    gap={4}
-                                >
-                                    <Box flex="1" pr={{ base: 0, md: 4 }}>
-                                        <Text
-                                            fontSize={{
-                                                base: '14px',
-                                                md: '16px',
-                                            }}
-                                            pb={{ base: 2, md: 4 }}
-                                        >
-                                            <Text as="span" color="#555555">
-                                                Purchase Date:{' '}
-                                            </Text>
-                                            {format(
-                                                new Date(review.created_at),
-                                                'PPP'
-                                            )}
-                                        </Text>
-                                        <Flex alignItems="center" gap={2}>
-                                            <Link
-                                                href={`/us/products/${review.product.handle}`}
-                                            >
-                                                <Image
-                                                    rounded="lg"
-                                                    width={{
-                                                        base: '72px',
-                                                        md: '100px',
-                                                    }}
-                                                    height={{
-                                                        base: '72px',
-                                                        md: '100px',
-                                                    }}
-                                                    src={
-                                                        review.product.thumbnail
-                                                    }
-                                                />
-                                            </Link>
+                    {reviewsLoading ? (
+                        <Box
+                            display="flex"
+                            flexDirection="column"
+                            justifyContent="center"
+                            alignItems="center"
+                            textAlign="center"
+                            py={5}
+                        >
+                            <Text color="white" fontSize="lg" mb={8}>
+                                Loading reviews...
+                            </Text>
+                            <Spinner size={80} />
+                        </Box>
+                    ) : reviewsError ? (
+                        <Box textAlign="center" py={5}>
+                            <Text color="red.500" fontSize="lg">
+                                Error fetching reviews.
+                            </Text>
+                        </Box>
+                    ) : reviews?.length > 0 ? (
+                        <Stack divider={<StackDivider />} spacing={4}>
+                            {reviews.map((review: any) => (
+                                <CardBody key={review.id}>
+                                    <Flex
+                                        direction={{
+                                            base: 'column',
+                                            md: 'row',
+                                        }}
+                                        justify="space-between"
+                                        align={{
+                                            base: 'stretch',
+                                            md: 'flex-start',
+                                        }}
+                                        gap={4}
+                                    >
+                                        <Box flex="1" pr={{ base: 0, md: 4 }}>
                                             <Text
-                                                maxWidth="100%"
                                                 fontSize={{
                                                     base: '14px',
-                                                    md: '18px',
+                                                    md: '16px',
+                                                }}
+                                                pb={{ base: 2, md: 4 }}
+                                            >
+                                                <Text as="span" color="#555555">
+                                                    Purchase Date:{' '}
+                                                </Text>
+                                                {format(
+                                                    new Date(review.created_at),
+                                                    'PPP'
+                                                )}
+                                            </Text>
+                                            <Flex alignItems="center" gap={2}>
+                                                <Link
+                                                    href={`/us/products/${review.product.handle}`}
+                                                >
+                                                    <Image
+                                                        rounded="lg"
+                                                        width={{
+                                                            base: '72px',
+                                                            md: '100px',
+                                                        }}
+                                                        height={{
+                                                            base: '72px',
+                                                            md: '100px',
+                                                        }}
+                                                        src={
+                                                            review.product
+                                                                .thumbnail
+                                                        }
+                                                    />
+                                                </Link>
+                                                <Text
+                                                    maxWidth="100%"
+                                                    fontSize={{
+                                                        base: '14px',
+                                                        md: '18px',
+                                                    }}
+                                                    fontWeight="bold"
+                                                    textTransform="uppercase"
+                                                    isTruncated
+                                                >
+                                                    {review.title}
+                                                </Text>
+                                            </Flex>
+                                            <Text
+                                                my={2}
+                                                fontSize={{
+                                                    base: '14px',
+                                                    md: '16px',
                                                 }}
                                                 fontWeight="bold"
-                                                textTransform="uppercase"
-                                                isTruncated
+                                                color="rgba(85, 85, 85, 0.6)"
                                             >
-                                                {review.title}
+                                                Your Product Rating & Review:
                                             </Text>
-                                        </Flex>
-                                        <Text
-                                            my={2}
-                                            fontSize={{
-                                                base: '14px',
-                                                md: '16px',
-                                            }}
-                                            fontWeight="bold"
-                                            color="rgba(85, 85, 85, 0.6)"
-                                        >
-                                            Your Product Rating & Review:
-                                        </Text>
-                                        <Text
-                                            p={2}
-                                            fontSize={{
-                                                base: '12px',
-                                                md: 'sm',
-                                            }}
-                                            maxWidth="100%"
-                                        >
-                                            {renderStars(review.rating)}
-                                        </Text>
-                                        <Text
-                                            rounded="lg"
-                                            fontSize={{
-                                                base: '12px',
-                                                md: 'sm',
-                                            }}
-                                            bg="black"
-                                            m={2}
-                                            p={{ base: 4, md: 8 }}
-                                        >
-                                            {review.content}
-                                        </Text>
-                                        {review.order_id && (
-                                            <Button
-                                                m={{ base: 2, md: 4 }}
-                                                onClick={() =>
-                                                    handleReviewEdit(review)
-                                                }
-                                                colorScheme="green"
-                                                width={{
-                                                    base: 'full',
-                                                    md: 'auto',
+                                            <Text
+                                                p={2}
+                                                fontSize={{
+                                                    base: '12px',
+                                                    md: 'sm',
                                                 }}
+                                                maxWidth="100%"
                                             >
-                                                Edit
-                                            </Button>
-                                        )}
-                                    </Box>
-                                </Flex>
-                            </CardBody>
-                        ))}
-                    </Stack>
+                                                {renderStars(review.rating)}
+                                            </Text>
+                                            <Text
+                                                rounded="lg"
+                                                fontSize={{
+                                                    base: '12px',
+                                                    md: 'sm',
+                                                }}
+                                                bg="black"
+                                                m={2}
+                                                p={{ base: 4, md: 8 }}
+                                            >
+                                                {review.content}
+                                            </Text>
+                                            {review.order_id && (
+                                                <Button
+                                                    m={{ base: 2, md: 4 }}
+                                                    onClick={() =>
+                                                        handleReviewEdit(review)
+                                                    }
+                                                    colorScheme="green"
+                                                    width={{
+                                                        base: 'full',
+                                                        md: 'auto',
+                                                    }}
+                                                >
+                                                    Edit
+                                                </Button>
+                                            )}
+                                        </Box>
+                                    </Flex>
+                                </CardBody>
+                            ))}
+                        </Stack>
+                    ) : (
+                        <Box textAlign="center" py={5}>
+                            <Text>No reviews available.</Text>
+                        </Box>
+                    )}
                     <CardFooter />
                 </>
             )}
