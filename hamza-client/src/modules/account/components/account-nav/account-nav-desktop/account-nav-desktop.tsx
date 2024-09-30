@@ -12,6 +12,8 @@ import {
     useRouter,
     useSearchParams,
 } from 'next/navigation';
+import { MdOutlineRateReview } from 'react-icons/md';
+
 import { Flex, Box, Text, IconButton, Collapse } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import NextLink from 'next/link';
@@ -22,6 +24,7 @@ import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import NavLink from '../components/nav-link';
 import { TABS } from 'modules/order-tab-management';
+import { RiShoppingBasket2Line } from 'react-icons/ri';
 
 const AccountNavDesktop = ({
     customer,
@@ -97,8 +100,13 @@ const AccountNavDesktop = ({
                 cursor="pointer"
             >
                 <Flex justifyContent={'center'} alignContent={'center'}>
-                    <CgProfile color="white" size={'28px'} />
-
+                    <Flex width={'26px'} height={'26px'}>
+                        <CgProfile
+                            color="white"
+                            size={'24px'}
+                            style={{ alignSelf: 'center', margin: '0 auto' }}
+                        />
+                    </Flex>
                     <Text ml={2} my="auto" fontSize={'18px'} fontWeight={600}>
                         Manage My Account
                     </Text>
@@ -133,6 +141,12 @@ const AccountNavDesktop = ({
                     href="/account/verify"
                     route={route!}
                     title={'Verify'}
+                    icon={
+                        <MdOutlineRateReview
+                            size="24px"
+                            style={{ alignSelf: 'center', margin: '0 auto' }}
+                        />
+                    }
                 />
             )}
 
@@ -145,11 +159,16 @@ const AccountNavDesktop = ({
                 justifyContent="space-between"
                 color="white"
                 backgroundColor={'transparent'}
-                mt="4"
                 cursor="pointer"
                 onClick={toggleOrdersCollapse} // Toggle collapse when the whole Flex container is clicked
             >
-                <LiaBoxOpenSolid color="white" size={'28px'} />
+                <Flex width={'26px'} height={'26px'}>
+                    <RiShoppingBasket2Line
+                        color="white"
+                        size={'26px'}
+                        style={{ alignSelf: 'center', margin: '0 auto' }}
+                    />
+                </Flex>
                 <Flex
                     as={NextLink}
                     href="/account/orders"
@@ -276,7 +295,12 @@ const AccountNavDesktop = ({
                     href="/account/wishlist"
                     route={route!}
                     title="Wishlist"
-                    icon={<FaRegHeart color="white" size="22px" />}
+                    icon={
+                        <FaRegHeart
+                            size="24px"
+                            style={{ alignSelf: 'center', margin: '0 auto' }}
+                        />
+                    }
                 />
             </Box>
 
@@ -285,7 +309,12 @@ const AccountNavDesktop = ({
                     href="/account/notifications"
                     route={route!}
                     title="Notifications"
-                    icon={<FaRegBell color="white" size="22px" />}
+                    icon={
+                        <FaRegBell
+                            size="24px"
+                            style={{ alignSelf: 'center', margin: '0 auto' }}
+                        />
+                    }
                 />
             )}
 
@@ -294,18 +323,21 @@ const AccountNavDesktop = ({
                     href="/account/reviews"
                     route={route!}
                     title={'Reviews'}
-                    icon={<PiNotePencilLight color="white" size={'22px'} />}
+                    icon={
+                        <PiNotePencilLight
+                            size={'24px'}
+                            style={{ alignSelf: 'center', margin: '0 auto' }}
+                        />
+                    }
                 />
             )}
 
             <Box
                 as="button"
-                textAlign={'left'}
                 borderRadius={'8px'}
                 height={'56px'}
                 padding="16px"
                 bg="transparent"
-                borderColor="#ccd0d5"
                 color="white"
                 _active={{
                     bg: 'primary.green.900',
@@ -316,7 +348,14 @@ const AccountNavDesktop = ({
                 onClick={handleLogout}
             >
                 <Flex>
-                    <CiLogout color="white" size={'22px'} />
+                    <Flex width={'26px'} height={'26px'}>
+                        <CiLogout
+                            color="white"
+                            size={'24px'}
+                            style={{ alignSelf: 'center', margin: '0 auto' }}
+                        />
+                    </Flex>
+
                     <Text ml={2} my="auto" fontSize={'18px'} fontWeight={600}>
                         Logout
                     </Text>
