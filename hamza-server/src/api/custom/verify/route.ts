@@ -167,11 +167,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         //get the service instances
         let created = false;
 
-        //TODO: needs security
-
         const { message, signature } = handler.inputParams;
 
-        const wallet_address = message.address;
+        const wallet_address = message.address?.trim()?.toLowerCase();
 
         let checkCustomerWithWalletAddress =
             await CustomerWalletAddressRepository.findOne({
@@ -189,12 +187,13 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             password: 'password', //TODO: (JK) store the default password someplace
             wallet_address: wallet_address,
         };
+        const email = customerInputData.email?.trim().toLowerCase() ?? '';
 
-        handler.logger.debug('customer input is ' + customerInputData);
+        handler.logger.debug('customer input is ' + JSON.stringify(customerInputData));
         //verify the signature
         const siweMessage = new SiweMessage(message);
         let siweResponse = await siweMessage.verify({ signature });
-        handler.logger.debug('siwe response is ' + siweResponse);
+        handler.logger.debug('siwe response is ' + JSON.stringify(siweResponse));
         if (!siweResponse.success) {
             throw new Error('Error in validating wallet address signature');
         }
@@ -203,22 +202,23 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             'customer data is ' + checkCustomerWithWalletAddress
         );
         let newCustomerData: Customer;
+
         if (!checkCustomerWithWalletAddress) {
             handler.logger.debug('creating new customer ');
             await customerService.create(customerInputData);
             newCustomerData = await CustomerRepository.findOne({
-                where: { email: customerInputData.email.toLowerCase() },
+                where: { email: email },
                 relations: { preferred_currency: true },
             });
             created = true;
         } else {
             //if customer record exists, authenticate the user
             let authResult = await authService.authenticateCustomer(
-                customerInputData.email.toLowerCase(),
+                email,
                 customerInputData.password,
                 customerInputData.wallet_address
             );
-            handler.logger.debug('auth result is ' + authResult);
+            handler.logger.debug('auth result is ' + JSON.stringify(authResult));
             if (!authResult.success) {
                 throw new Error('Error in verifying email and password');
             }
@@ -238,7 +238,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 checkCustomerWithWalletAddress &&
                 checkCustomerWithWalletAddress.customer &&
                 checkCustomerWithWalletAddress.customer.preferred_currency,
-            email: customerInputData.email,
+            email: email,
             wallet_address: customerInputData.wallet_address,
             created,
             is_verified:

@@ -12,6 +12,7 @@ import {
     chains,
     config,
     darkThemeConfig,
+    SwitchNetwork,
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 const queryClient = new QueryClient();
@@ -65,6 +66,7 @@ async function getNonce() {
     return output?.data?.nonce ?? '';
 }
 
+
 export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     const {
         authData,
@@ -74,7 +76,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     } = useCustomerAuthStore();
     const router = useRouter();
     const [customer_id, setCustomerId] = useState('');
-    //const [clientWallet, setClientWallet] = useState('');
     const { loadWishlist } = useWishlistStore((state) => state);
 
     let clientWallet = '';
