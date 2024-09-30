@@ -1,6 +1,19 @@
 import { formatAmount } from '@lib/util/prices';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
+import {
+    Box,
+    Flex,
+    Text,
+    Button,
+    Image,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    useDisclosure,
+} from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
 import React, { useEffect, useState } from 'react';
 import { getStore } from '@lib/data';
@@ -31,20 +44,22 @@ type Order = {
         id: string;
         name: string;
     };
+    metadata: {
+        cancel_reason?: string;
+    };
 };
 
 type OrderCardProps = {
     order: Order;
     handle: any;
+    cancel_reason: string;
 };
 
-const CancelCard = ({ order, handle }: OrderCardProps) => {
+const CancelCard = ({ order, handle, cancel_reason }: OrderCardProps) => {
     const [vendor, setVendor] = useState('');
     const orderString = typeof order.currency_code;
-    // console.log(
-    //     `Order Card details ${JSON.stringify(order.variant.product_id)}`
-    // );
-    // console.log(`Product details ${JSON.stringify(handle)} `);
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    console.log('Order Metadata:', cancel_reason);
 
     const getAmount = (amount?: number | null) => {
         if (amount === null || amount === undefined) {
@@ -177,6 +192,7 @@ const CancelCard = ({ order, handle }: OrderCardProps) => {
                     variant="outline"
                     colorScheme="white"
                     borderRadius={'37px'}
+                    onClick={onOpen}
                 >
                     View Cancellation Details
                 </Button>
@@ -189,6 +205,22 @@ const CancelCard = ({ order, handle }: OrderCardProps) => {
                     Contact Seller
                 </Button>
             </Flex>
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader textAlign="center">
+                        Cancellation Details
+                    </ModalHeader>
+                    <ModalBody>
+                        <Text>{cancel_reason}</Text>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button colorScheme="blue" onClick={onClose}>
+                            Close
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </Box>
     );
 };
