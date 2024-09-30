@@ -5,6 +5,7 @@ import { FaCheckCircle } from 'react-icons/fa';
 import React, { useEffect, useState } from 'react';
 import { getStore } from '@lib/data';
 import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
 
 type OrderDetails = {
     thumbnail: string;
@@ -39,31 +40,45 @@ type OrderCardProps = {
 };
 
 const RefundCard = ({ order, handle }: OrderCardProps) => {
-    const [vendor, setVendor] = useState('');
     const orderString = typeof order.currency_code;
-    // console.log(
-    //     `Order Card details ${JSON.stringify(order.variant.product_id)}`
-    // );
-    // console.log(`Product details ${JSON.stringify(handle)} `);
+    const {
+        data: vendorData,
+        isLoading,
+        isError,
+    } = useQuery(
+        ['fetchVendor', order.variant.product_id],
+        () => getStore(order.variant.product_id as string),
+        {
+            enabled: !!order.variant.product_id,
+        }
+    );
 
-    useEffect(() => {
-        // Fetch Vendor Name from product.id
-        const fetchVendor = async () => {
-            try {
-                const data = await getStore(order.variant.product_id as string);
-                // console.log(`Vendor: ${data}`);
-                setVendor(data.name);
-            } catch (error) {
-                console.error('Error fetching vendor: ', error);
-            }
-        };
-
-        fetchVendor();
-    }, [order]);
-
-    if (!order) {
-        return <div>Loading...</div>; // Display loading message if order is undefined
+    if (isLoading) {
+        return (
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                py={5}
+            >
+                <Text> loading...</Text>
+            </Box>
+        );
     }
+
+    if (isError || !vendorData) {
+        return (
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                py={5}
+            >
+                <Text color="red">Error fetching vendor data</Text>
+            </Box>
+        );
+    }
+
     return (
         <Box
             // bg={'#272727'}
@@ -81,7 +96,7 @@ const RefundCard = ({ order, handle }: OrderCardProps) => {
                     fontWeight="bold"
                     noOfLines={1}
                 >
-                    {vendor}
+                    {vendorData.name}
                 </Text>
                 <Flex
                     display={{ base: 'none', md: 'flex' }}
