@@ -53,13 +53,19 @@ type OrderCardProps = {
     order: Order;
     handle: any;
     cancel_reason: string;
+    cancelled_date: string;
 };
 
-const CancelCard = ({ order, handle, cancel_reason }: OrderCardProps) => {
+const CancelCard = ({
+    order,
+    handle,
+    cancel_reason,
+    cancelled_date,
+}: OrderCardProps) => {
     const [vendor, setVendor] = useState('');
     const orderString = typeof order.currency_code;
     const { isOpen, onOpen, onClose } = useDisclosure();
-    console.log('Order Metadata:', cancel_reason);
+    console.log('Order Metadata:', cancel_reason, 'on date', cancelled_date);
 
     const getAmount = (amount?: number | null) => {
         if (amount === null || amount === undefined) {
@@ -212,7 +218,23 @@ const CancelCard = ({ order, handle, cancel_reason }: OrderCardProps) => {
                         Cancellation Details
                     </ModalHeader>
                     <ModalBody>
-                        <Text>{cancel_reason}</Text>
+                        <Text fontSize="lg" fontWeight="bold" mb={2}>
+                            Reason for Cancellation:
+                        </Text>
+                        <Text mb={4}>{cancel_reason}</Text>
+                        <Text fontSize="lg" fontWeight="bold" mb={2}>
+                            Cancellation Date:
+                        </Text>
+                        <Text>
+                            {new Date(cancelled_date).toLocaleDateString(
+                                undefined,
+                                {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                }
+                            )}
+                        </Text>
                     </ModalBody>
                     <ModalFooter>
                         <Button colorScheme="blue" onClick={onClose}>
