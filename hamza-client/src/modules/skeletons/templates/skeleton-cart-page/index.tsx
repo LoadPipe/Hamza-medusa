@@ -76,22 +76,21 @@ const SkeletonCartPage = () => {
                                                 width={'32px'}
                                                 height={'32px'}
                                             />
-                                            <SkeletonText
+                                            <Skeleton
                                                 alignSelf={'center'}
-                                                height="14px"
+                                                height="12px"
                                                 width="20%"
                                                 startColor="gray.300"
                                                 endColor="gray.600"
-                                                noOfLines={1}
                                             />
-                                            {/* <Skeleton
+                                            <Skeleton
                                                 ml="auto"
                                                 borderRadius={'full'}
                                                 height="24px"
                                                 width="100px"
                                                 startColor="gray.300"
                                                 endColor="gray.600"
-                                            /> */}
+                                            />
                                         </Flex>
                                         <Flex flexDir={'row'}>
                                             <Skeleton
