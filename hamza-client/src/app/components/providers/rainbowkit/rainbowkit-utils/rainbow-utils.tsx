@@ -210,6 +210,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     console.log('WALLET CLIENT ADDRESS: ' + walletClient?.account?.address)
 
     if (enabled) {
+        /*
         const { chain } = useNetwork();
         if (EXTRA_LOGGING) console.log('CHAIN:', chain);
 
@@ -259,66 +260,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
             fetchChainId();
         }, [walletClient]);
 
-        return (
-            <Modal isOpen={enabled} onClose={() => { }} isCentered>
-                <ModalOverlay />
-                <ModalContent
-                    justifyContent={'center'}
-                    alignItems={'center'}
-                    borderRadius={'16px'}
-                    backgroundColor={'#121212'}
-                    border={'1px'}
-                    borderColor={'white'}
-                >
-                    <ModalBody width={'100%'} py="1.5rem">
-                        <Flex
-                            flexDirection={'column'}
-                            gap={'16px'}
-                            alignItems={'center'}
-                        >
-                            <Text
-                                fontSize={'2rem'}
-                                color={'white'}
-                                fontWeight={300}
-                            >
-                                Not Logged In
-                            </Text>
-                            <Text color={'white'}>
-                                Please connect your wallet to continue using Hamza.
-                            </Text>
-                            {/*<Button*/}
-                            {/*    backgroundColor={'primary.indigo.900'}*/}
-                            {/*    color={'white'}*/}
-                            {/*    height={'38px'}*/}
-                            {/*    borderRadius={'full'}*/}
-                            {/*    width="100%"*/}
-                            {/*    disabled={!switchNetwork || isLoading}*/}
-                            {/*    _hover={{*/}
-                            {/*        backgroundColor: 'primary.indigo.800',*/}
-                            {/*        transition: 'background-color 0.3s ease-in-out',*/}
-                            {/*    }}*/}
-                            {/*    _focus={{*/}
-                            {/*        boxShadow: 'none',*/}
-                            {/*        outline: 'none',*/}
-                            {/*    }}*/}
-                            {/*    onClick={() =>*/}
-                            {/*        switchNetwork*/}
-                            {/*            ? switchNetwork(preferredChainID)*/}
-                            {/*            : voidFunction()*/}
-                            {/*    }*/}
-                            {/*>*/}
-                            {/*    Switch to {preferredChainName}*/}
-                            {/*</Button>*/}
-                            <WalletConnectButton />
-                        </Flex>
-                        {/* {error && <p>Error: {error.message}</p>}
-                    {isLoading && pendingChainId && (
-                        <p>Switching to chain ID {pendingChainId}...</p>
-                    )} */}
-                    </ModalBody>
-                </ModalContent>
-            </Modal>
-        );
+        */
     }
 
     return (<></>);
