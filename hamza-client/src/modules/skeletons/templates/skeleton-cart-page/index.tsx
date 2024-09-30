@@ -72,7 +72,7 @@ const SkeletonCartPage = () => {
                                         gap={1}
                                     >
                                         <Flex gap={3}>
-                                            <SkeletonCircle
+                                            {/* <SkeletonCircle
                                                 width={'32px'}
                                                 height={'32px'}
                                             />
@@ -82,7 +82,7 @@ const SkeletonCartPage = () => {
                                                 width="20%"
                                                 startColor="gray.300"
                                                 endColor="gray.600"
-                                            />
+                                            /> */}
                                             {/* <Skeleton
                                                 ml="auto"
                                                 borderRadius={'full'}
