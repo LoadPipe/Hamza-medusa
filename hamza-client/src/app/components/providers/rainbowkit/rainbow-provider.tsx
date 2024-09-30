@@ -7,7 +7,7 @@ import {
     RainbowKitProvider,
     AuthenticationStatus,
 } from '@rainbow-me/rainbowkit';
-import { useWalletClient, WagmiConfig } from 'wagmi';
+import { WagmiConfig } from 'wagmi';
 import {
     chains,
     config,
@@ -249,7 +249,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         adapter={walletSignature}
                         status={authData.status}
                     >
-                        <SwitchNetwork enabled={false}></SwitchNetwork>
                         <RainbowKitProvider
                             theme={darkThemeConfig}
                             chains={chains}
