@@ -15,9 +15,11 @@ import {
     useDisclosure,
 } from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { getStore } from '@lib/data';
 import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
+import Spinner from '@modules/common/icons/spinner';
 
 type OrderDetails = {
     thumbnail: string;
@@ -62,7 +64,6 @@ const CancelCard = ({
     cancel_reason,
     cancelled_date,
 }: OrderCardProps) => {
-    const [vendor, setVendor] = useState('');
     const orderString = typeof order.currency_code;
     const { isOpen, onOpen, onClose } = useDisclosure();
     console.log('Order Metadata:', cancel_reason, 'on date', cancelled_date);
@@ -75,20 +76,13 @@ const CancelCard = ({
         return formatCryptoPrice(amount, order.currency_code || 'USDC');
     };
 
-    useEffect(() => {
-        // Fetch Vendor Name from product.id
-        const fetchVendor = async () => {
-            try {
-                const data = await getStore(order.variant.product_id as string);
-                // console.log(`Vendor: ${data}`);
-                setVendor(data.name);
-            } catch (error) {
-                console.error('Error fetching vendor: ', error);
-            }
-        };
-
-        fetchVendor();
-    }, [order]);
+    const {
+        data: vendorData,
+        isLoading: isVendorLoading,
+        isError: isVendorError,
+    } = useQuery(['vendor', order.variant.product_id], () =>
+        getStore(order.variant.product_id as string)
+    );
 
     if (!order) {
         return <div>Loading...</div>; // Display loading message if order is undefined
@@ -105,13 +99,19 @@ const CancelCard = ({
             mt={2}
         >
             <Flex alignItems="center" mb={2}>
-                <Text
-                    fontSize={{ base: '14px', md: '24px' }}
-                    fontWeight="bold"
-                    noOfLines={1}
-                >
-                    {vendor}
-                </Text>
+                {isVendorLoading ? (
+                    <Spinner />
+                ) : isVendorError ? (
+                    <Text color="red.500">Error loading vendor name</Text>
+                ) : (
+                    <Text
+                        fontSize={{ base: '14px', md: '24px' }}
+                        fontWeight="bold"
+                        noOfLines={1}
+                    >
+                        {vendorData.name}
+                    </Text>
+                )}
                 <Flex
                     display={{ base: 'none', md: 'flex' }}
                     ml={2}
