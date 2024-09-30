@@ -2,11 +2,14 @@ import React from 'react';
 import { Flex, Text } from '@chakra-ui/react';
 import Link from 'next/link';
 import { ReactElement } from 'react';
+import { useParams } from 'next/navigation';
+import { useOrderTabStore } from '@store/order-tab-state';
 
 type AccountNavLinkProps = {
     href: string;
     title: string;
     route: string;
+    tab: string;
     icon?: ReactElement;
     onClick?: () => void;
     fontWeight?: number | string;
@@ -17,11 +20,18 @@ const NavLinkMobileOrders = ({
     href,
     route,
     title,
+    tab,
     icon,
     onClick,
     fontWeight,
-    handleTabChange, // Destructure handleTabChange
+    handleTabChange,
 }: AccountNavLinkProps) => {
+    const { countryCode }: { countryCode: string } = useParams();
+    const currentHref = route.split(countryCode)[1] === href;
+    const { orderActiveTab } = useOrderTabStore();
+    const activeTab = orderActiveTab;
+    const active = activeTab === tab;
+
     const handleClick = () => {
         if (handleTabChange) {
             handleTabChange();
@@ -36,7 +46,7 @@ const NavLinkMobileOrders = ({
             <Flex
                 width={'100%'}
                 alignItems={'center'}
-                onClick={handleClick} // Trigger handleClick
+                onClick={handleClick}
                 cursor="pointer"
             >
                 <Flex width={'22px'} height={'22px'}>
@@ -46,6 +56,9 @@ const NavLinkMobileOrders = ({
                     ml={icon ? 2 : 0}
                     fontSize={'16px'}
                     fontWeight={fontWeight}
+                    color={
+                        active && currentHref ? 'primary.green.900' : 'white'
+                    }
                 >
                     {title}
                 </Text>

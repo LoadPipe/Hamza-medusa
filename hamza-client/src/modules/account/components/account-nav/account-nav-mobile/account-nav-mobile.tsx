@@ -247,6 +247,7 @@ const AccountNavMobile = ({
                                     href="/account/orders"
                                     route={route!}
                                     title={'All Orders'}
+                                    tab={'All Orders'}
                                     handleTabChange={() =>
                                         handleTabChange(TABS.ALL)
                                     }
@@ -261,6 +262,7 @@ const AccountNavMobile = ({
                                     href="/account/orders"
                                     route={route!}
                                     title={'Processing'}
+                                    tab={'Processing'}
                                     handleTabChange={() =>
                                         handleTabChange(TABS.PROCESSING)
                                     }
@@ -275,6 +277,7 @@ const AccountNavMobile = ({
                                     href="/account/orders"
                                     route={route!}
                                     title={'Shipped'}
+                                    tab={'Shipped'}
                                     handleTabChange={() =>
                                         handleTabChange(TABS.SHIPPED)
                                     }
@@ -289,6 +292,7 @@ const AccountNavMobile = ({
                                     href="/account/orders"
                                     route={route!}
                                     title={'Delivered'}
+                                    tab={'Delivered'}
                                     handleTabChange={() =>
                                         handleTabChange(TABS.DELIVERED)
                                     }
@@ -303,6 +307,7 @@ const AccountNavMobile = ({
                                     href="/account/orders"
                                     route={route!}
                                     title={'Cancelled'}
+                                    tab={'Cancelled'}
                                     handleTabChange={() =>
                                         handleTabChange(TABS.CANCELLED)
                                     }
@@ -317,6 +322,7 @@ const AccountNavMobile = ({
                                     href="/account/orders"
                                     route={route!}
                                     title={'Refund'}
+                                    tab={'Refund'}
                                     handleTabChange={() =>
                                         handleTabChange(TABS.REFUND)
                                     }

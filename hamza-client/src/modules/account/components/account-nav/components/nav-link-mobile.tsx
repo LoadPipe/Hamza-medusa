@@ -1,6 +1,7 @@
 import React from 'react';
 import { Flex, Text } from '@chakra-ui/react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { ReactElement } from 'react';
 
 type AccountNavLinkProps = {
@@ -20,18 +21,26 @@ const NavLinkMobile = ({
     onClick,
     fontWeight,
 }: AccountNavLinkProps) => {
+    const { countryCode }: { countryCode: string } = useParams();
+    const active = route.split(countryCode)[1] === href;
+
     return (
         <Link href={href} style={{ width: '100%' }}>
             <Flex
                 width={'100%'}
                 alignItems={'center'}
-                onClick={onClick} // Trigger onClick if provided
+                onClick={onClick} // Trigger onClick if provided to close menu
                 cursor="pointer"
             >
-                <Flex width={'22px'} height={'22px'}>
+                <Flex
+                    width={'22px'}
+                    height={'22px'}
+                    color={active ? 'primary.green.900' : 'white'}
+                >
                     {icon && icon}
                 </Flex>
                 <Text
+                    color={active ? 'primary.green.900' : 'white'}
                     ml={icon ? 2 : 0}
                     fontSize={'16px'}
                     fontWeight={fontWeight}
