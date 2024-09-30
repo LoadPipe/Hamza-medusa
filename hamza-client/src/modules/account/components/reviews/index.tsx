@@ -44,6 +44,24 @@ const commonButtonStyles = {
 };
 import { renderStars } from '@modules/products/components/product-preview/components/review-card';
 import Link from 'next/link';
+/**
+ * The ReviewPage component is responsible for displaying both pending reviews and previously submitted reviews for a customer.
+ * It allows users to see which products they have purchased but have yet to review, and provides a way to edit or submit reviews for those products.
+ * The component leverages React Query's `useQuery` to handle data fetching, caching, and error handling efficiently.
+ *
+ * @Author: [Garo Nazarian]
+ *
+ * Features:
+ * - Fetches and displays all product reviews and pending reviews for a specific customer.
+ * - Handles loading and error states with graceful UI messages.
+ * - Allows users to switch between pending reviews and review archives using a tab interface.
+ * - Supports editing existing reviews and submitting reviews for pending items.
+ * - Utilizes Chakra UI for responsive styling and modals for review interactions.
+ *
+ * Usage:
+ * Should be placed in a customer’s profile or order history section where users can manage their product reviews.
+ * Ensures that reviews are properly fetched and provides UI feedback during loading or errors.
+ */
 
 const ReviewPage = ({ customer }: { customer: any }) => {
     const {
