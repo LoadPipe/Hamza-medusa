@@ -3,6 +3,7 @@ import { getSingleBucket } from '@lib/data';
 import {
     Box,
     Collapse,
+    Flex,
     HStack,
     Icon,
     Tab,
@@ -172,36 +173,72 @@ const Shipped = ({
                                                                 >
                                                                     {' '}
                                                                     {/* Stack text vertically */}
-                                                                    <Text fontWeight="bold">
-                                                                        Your
-                                                                        order is
-                                                                        shipped
-                                                                        out for
-                                                                        delivery
+                                                                    <Flex alignItems="center">
+                                                                        <Text
+                                                                            fontWeight="bold"
+                                                                            mr={
+                                                                                2
+                                                                            }
+                                                                        >
+                                                                            Shipped
+                                                                            on
+                                                                            Date:
+                                                                        </Text>
+                                                                        <Text>
+                                                                            {order
+                                                                                .bucky_metadata
+                                                                                ?.tracking
+                                                                                ?.data
+                                                                                ?.soOrderInfo
+                                                                                ?.createTime
+                                                                                ? new Date(
+                                                                                      order.bucky_metadata.tracking.data.soOrderInfo.createTime
+                                                                                  ).toLocaleString(
+                                                                                      undefined,
+                                                                                      {
+                                                                                          year: 'numeric',
+                                                                                          month: 'long',
+                                                                                          day: 'numeric',
+                                                                                          hour: '2-digit',
+                                                                                          minute: '2-digit',
+                                                                                          second: '2-digit',
+                                                                                      }
+                                                                                  )
+                                                                                : 'Date not available'}
+                                                                        </Text>
+                                                                    </Flex>
+                                                                    <Text fontSize="16px">
+                                                                        <strong>
+                                                                            Order
+                                                                            Created:
+                                                                        </strong>{' '}
+                                                                        {order?.created_at
+                                                                            ? new Date(
+                                                                                  order.created_at
+                                                                              ).toLocaleDateString(
+                                                                                  undefined,
+                                                                                  {
+                                                                                      year: 'numeric',
+                                                                                      month: 'long',
+                                                                                      day: 'numeric',
+                                                                                      hour: '2-digit',
+                                                                                      minute: '2-digit',
+                                                                                      second: '2-digit',
+                                                                                  }
+                                                                              )
+                                                                            : 'N/A'}
                                                                     </Text>
-                                                                    <Text
-                                                                        color="gray.500"
-                                                                        fontSize="16px"
-                                                                    >
-                                                                        {new Date(
-                                                                            order.created_at
-                                                                        ).toLocaleDateString()}
-                                                                    </Text>
-                                                                    <Text
-                                                                        fontSize="sm"
-                                                                        color="gray.500"
-                                                                    >
-                                                                        Tracking
-                                                                        Number:
-                                                                        5896-0991-7811
-                                                                    </Text>
-                                                                    <Text
-                                                                        fontSize="sm"
-                                                                        color="gray.500"
-                                                                    >
-                                                                        Estimated
-                                                                        Time:
-                                                                        2:00 pm
+                                                                    <Text>
+                                                                        <strong>
+                                                                            Shop
+                                                                            Order
+                                                                            Number:
+                                                                        </strong>{' '}
+                                                                        {order
+                                                                            .bucky_metadata
+                                                                            ?.data
+                                                                            ?.shopOrderNo ||
+                                                                            'N/A'}
                                                                     </Text>
                                                                 </VStack>
                                                             </HStack>
@@ -215,9 +252,62 @@ const Shipped = ({
                                                                 borderRadius="lg"
                                                                 w="100%"
                                                             >
-                                                                <Text fontWeight="bold">
-                                                                    Item Details
-                                                                </Text>
+                                                                <VStack
+                                                                    align="start"
+                                                                    spacing={2}
+                                                                >
+                                                                    <Text fontSize="md">
+                                                                        <strong>
+                                                                            Product
+                                                                            Name:
+                                                                        </strong>{' '}
+                                                                        {order
+                                                                            .bucky_metadata
+                                                                            ?.data
+                                                                            ?.productList[0]
+                                                                            ?.productName ||
+                                                                            'N/A'}
+                                                                    </Text>
+                                                                    <Text fontSize="md">
+                                                                        <strong>
+                                                                            Quantity:
+                                                                        </strong>{' '}
+                                                                        {order
+                                                                            .bucky_metadata
+                                                                            ?.data
+                                                                            ?.productList[0]
+                                                                            ?.productCount ||
+                                                                            'N/A'}
+                                                                    </Text>
+                                                                    <Text fontSize="md">
+                                                                        <strong>
+                                                                            Price:
+                                                                        </strong>{' '}
+                                                                        ¥
+                                                                        {order
+                                                                            .bucky_metadata
+                                                                            ?.data
+                                                                            ?.productList[0]
+                                                                            ?.productPrice ||
+                                                                            'N/A'}{' '}
+                                                                        {order
+                                                                            .bucky_metadata
+                                                                            ?.data
+                                                                            .currency ||
+                                                                            'N/A'}
+                                                                    </Text>
+                                                                    <Text fontSize="md">
+                                                                        <strong>
+                                                                            Platform:
+                                                                        </strong>{' '}
+                                                                        {order
+                                                                            .bucky_metadata
+                                                                            ?.data
+                                                                            ?.productList[0]
+                                                                            ?.platform ||
+                                                                            'N/A'}
+                                                                    </Text>
+                                                                </VStack>
                                                             </VStack>
                                                         </TabPanel>
                                                     </TabPanels>
