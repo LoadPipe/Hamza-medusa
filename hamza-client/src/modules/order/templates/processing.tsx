@@ -93,24 +93,33 @@ const Processing = ({
         }
     );
 
-    const mutation = useMutation(cancelOrder, {
-        onSuccess: async () => {
-            try {
-                // Refetch orders after a successful cancellation
-                await queryClient.invalidateQueries([
-                    'fetchAllOrders',
-                    customer,
-                ]);
-                setIsModalOpen(false); // Close the modal
-                setSelectedOrderId(null); // Clear selected order ID
-            } catch (error) {
-                console.error('Error invalidating queries:', error);
-            }
-        },
-        onError: (error) => {
-            console.error('Error cancelling order: ', error);
-        },
-    });
+    const mutation = useMutation(
+        ({
+            order_id,
+            cancel_reason,
+        }: {
+            order_id: string;
+            cancel_reason: string;
+        }) => cancelOrder(order_id, cancel_reason),
+        {
+            onSuccess: async () => {
+                try {
+                    // Refetch orders after a successful cancellation
+                    await queryClient.invalidateQueries([
+                        'fetchAllOrders',
+                        customer,
+                    ]);
+                    setIsModalOpen(false); // Close the modal
+                    setSelectedOrderId(null); // Clear selected order ID
+                } catch (error) {
+                    console.error('Error invalidating queries:', error);
+                }
+            },
+            onError: (error) => {
+                console.error('Error cancelling order: ', error);
+            },
+        }
+    );
 
     const handleCancel = async () => {
         if (!cancelReason) {
@@ -119,7 +128,11 @@ const Processing = ({
         }
         if (!selectedOrderId) return;
 
-        mutation.mutate(selectedOrderId);
+        // Pass both order_id and cancel_reason to the mutation
+        mutation.mutate({
+            order_id: selectedOrderId,
+            cancel_reason: cancelReason,
+        });
     };
 
     const openModal = (orderId: string) => {
