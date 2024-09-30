@@ -5,6 +5,8 @@ import { FaCheckCircle } from 'react-icons/fa';
 import React, { useEffect, useState } from 'react';
 import { getStore } from '@lib/data';
 import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
+import Spinner from '@modules/common/icons/spinner';
 
 type OrderDetails = {
     thumbnail: string;
@@ -39,12 +41,7 @@ type OrderCardProps = {
 };
 
 const ShippedCard = ({ order, handle }: OrderCardProps) => {
-    const [store, setStore] = useState('');
     const orderString = typeof order.currency_code;
-    // console.log(
-    //     `Order Card details ${JSON.stringify(order.variant.product_id)}`
-    // );
-    // console.log(`Product details ${JSON.stringify(handle)} `);
 
     const getAmount = (amount?: number | null) => {
         if (amount === null || amount === undefined) {
@@ -54,20 +51,13 @@ const ShippedCard = ({ order, handle }: OrderCardProps) => {
         return formatCryptoPrice(amount, order.currency_code || 'USDC');
     };
 
-    useEffect(() => {
-        // Fetch Vendor Name from product.id
-        const fetchVendor = async () => {
-            try {
-                const data = await getStore(order.variant.product_id as string);
-                // console.log(`Vendor: ${data}`);
-                setStore(data.name);
-            } catch (error) {
-                console.error('Error fetching store: ', error);
-            }
-        };
-
-        fetchVendor();
-    }, [order]);
+    const {
+        data: storeData,
+        isLoading,
+        isError,
+    } = useQuery(['store', order.variant.product_id], () =>
+        getStore(order.variant.product_id as string)
+    );
 
     if (!order) {
         return <div>Loading...</div>; // Display loading message if order is undefined
@@ -84,13 +74,19 @@ const ShippedCard = ({ order, handle }: OrderCardProps) => {
             mt={2}
         >
             <Flex alignItems="center" mb={2}>
-                <Text
-                    fontSize={{ base: '14px', md: '24px' }}
-                    fontWeight="bold"
-                    noOfLines={1}
-                >
-                    {store}
-                </Text>
+                {isLoading ? (
+                    <Spinner />
+                ) : isError ? (
+                    <Text color="red.500">Error loading store name</Text>
+                ) : (
+                    <Text
+                        fontSize={{ base: '14px', md: '24px' }}
+                        fontWeight="bold"
+                        noOfLines={1}
+                    >
+                        {storeData.name || 'N/A'}
+                    </Text>
+                )}
                 <Flex
                     display={{ base: 'none', md: 'flex' }}
                     ml={2}
