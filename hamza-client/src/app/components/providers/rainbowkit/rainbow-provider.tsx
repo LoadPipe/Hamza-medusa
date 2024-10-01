@@ -79,7 +79,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     const [customer_id, setCustomerId] = useState('');
     const { loadWishlist } = useWishlistStore((state) => state);
 
-    let clientWallet = '';
+    let clientWallet = walletAddress;
 
     useEffect(() => {
         if (authData.status === 'authenticated' && customer_id) {
@@ -89,8 +89,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     }, [authData.status, customer_id]); // Dependency array includes any state variables that trigger a reload
 
     useEffect(() => {
-        // ZUSTAND WALLET ADDRESS STATE HERE
-        console.log('Saved wallet address', walletAddress);
+        console.log('Saved wallet address', clientWallet);
         getHamzaCustomer().then((hamzaCustomer) => {
             console.log('Hamza Customer: ', hamzaCustomer);
             getCustomer().then((customer) => {
@@ -125,8 +124,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
             console.log(
                 `Creating message with nonce: ${nonce}, address: ${address}, chainId: ${chainId}`
             );
-            console.log('setting client wallet to ', address);
-            clientWallet = address;
             const message = new SiweMessage({
                 domain: window.location.host,
                 address,
@@ -183,17 +180,17 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
 
                         setCustomerAuthData({
                             token: tokenResponse,
-                            wallet_address: message.address,
-                            customer_id: data.data.customer_id,
-                            is_verified: data.data.is_verified,
+                            wallet_address: message?.address,
+                            customer_id: data.data?.customer_id,
+                            is_verified: data.data?.is_verified,
                             status: 'authenticated',
                         });
 
                         setCustomerPreferredCurrency(
-                            data.data.preferred_currency.code
+                            data.data?.preferred_currency?.code
                         );
 
-                        setWhitelistConfig(data.data.whitelist_config);
+                        setWhitelistConfig(data.data?.whitelist_config);
 
                         try {
                             console.log('recovering cart');
@@ -206,9 +203,9 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         return true;
                     } else {
                         console.log('Wallet address mismatch on login');
-                        console.log(data.data.wallet_address);
+                        console.log(data.data?.wallet_address);
                         console.log(clientWallet);
-                        console.log(message.address);
+                        console.log(message?.address);
                         setCustomerAuthData({
                             ...authData,
                             status: 'unauthenticated',
