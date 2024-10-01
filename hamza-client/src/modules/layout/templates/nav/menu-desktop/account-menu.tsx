@@ -53,7 +53,7 @@ const AccountMenu = () => {
                     }}
                 >
                     <Image
-                        src={`https://api.dicebear.com/9.x/bottts/svg?seed=${authData.customer_id ?? ''}`}
+                        src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${authData.customer_id ?? ''}`}
                         width={'100%'}
                         height={'100%'}
                         borderRadius={'full'}

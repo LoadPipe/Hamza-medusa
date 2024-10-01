@@ -15,7 +15,7 @@ type Profile = {
 const ProfileImage: React.FC<Profile> = ({ firstName, lastName, uniqueKey }) => {
     return (
         <Flex maxW={'858px'} width={'100%'}>
-            <Image src={`https://api.dicebear.com/9.x/bottts/svg?seed=${uniqueKey ?? ''}`} style={{ width: '120px' }}></Image>
+            <Image src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${uniqueKey ?? ''}`} style={{ width: '120px' }}></Image>
         </Flex >
     );
 };
