@@ -11,24 +11,21 @@ import { debounce } from 'lodash';
 
 const Delivered = ({
     customer,
-    enabled,
+    chainEnabled,
     onSuccess,
     isEmpty,
 }: {
     customer: string;
-    enabled?: boolean;
+    chainEnabled?: boolean;
     onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
     const [shouldFetch, setShouldFetch] = useState(false);
+    console.log(`chainEnabled Delivered ${chainEnabled}`);
 
-    const debounceSetShouldFetch = debounce(() => setShouldFetch(true), 2000);
-
-    useEffect(() => {
-        if (customer) {
-            debounceSetShouldFetch();
-        }
-    }, [customer]);
+    const debouncedOnSuccess = debounce(() => {
+        onSuccess && onSuccess();
+    }, 5000);
 
     const {
         data: deliveredOrder,
@@ -38,11 +35,12 @@ const Delivered = ({
         failureCount,
         isStale,
         isSuccess,
+        refetch,
     } = useQuery(
         ['fetchDeliveredOrder', customer],
         () => getSingleBucket(customer, 3),
         {
-            enabled: shouldFetch && !!customer && enabled,
+            enabled: !!customer && chainEnabled, // Ensure query only runs when enabled is true
             staleTime: 5 * 60 * 1000, // 5 minutes
             retry: 5, // Retry 5 times
             retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
@@ -50,11 +48,19 @@ const Delivered = ({
         }
     );
 
+    // manually trigger a refetch if its stale
     useEffect(() => {
-        if (isSuccess) {
-            onSuccess && onSuccess();
+        if (isStale && chainEnabled && deliveredOrder == undefined) {
+            refetch();
         }
-    }, [isSuccess]);
+    }, [isStale]);
+
+    useEffect(() => {
+        if (isSuccess && deliveredOrder && deliveredOrder.length > 0) {
+            console.log(`TRIGGER`);
+            debouncedOnSuccess();
+        }
+    }, [isSuccess, chainEnabled]);
 
     // Log the queries for delivered state and data
     console.log({

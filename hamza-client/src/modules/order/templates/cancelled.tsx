@@ -9,25 +9,23 @@ import { debounce } from 'lodash';
 
 const Cancelled = ({
     customer,
-    enabled,
+    chainEnabled,
     onSuccess,
     isEmpty,
 }: {
     customer: string;
-    enabled?: boolean;
+    chainEnabled?: boolean;
     onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
     // Fetch canceled orders with useQuery
     const [shouldFetch, setShouldFetch] = useState(false);
+    console.log(`chainEnabled Cancelled ${chainEnabled}`);
 
-    const debounceSetShouldFetch = debounce(() => setShouldFetch(true), 3000);
+    const debouncedOnSuccess = debounce(() => {
+        onSuccess && onSuccess();
+    }, 5000);
 
-    useEffect(() => {
-        if (customer) {
-            debounceSetShouldFetch();
-        }
-    }, [customer]);
     const {
         data: canceledOrder,
         isLoading: cancelIsLoading,
@@ -36,23 +34,30 @@ const Cancelled = ({
         failureCount,
         isStale,
         isSuccess,
+        refetch,
     } = useQuery(
         ['fetchCanceledOrder', customer],
         () => getSingleBucket(customer, 4),
         {
-            enabled: shouldFetch && !!customer && enabled, // Only fetch if customer exists
+            enabled: !!customer && chainEnabled, // Ensure query only runs when enabled is true
             staleTime: 5 * 60 * 1000, // 5 minutes
-            retry: true,
-            retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
-            refetchOnWindowFocus: false,
+            retry: false,
         }
     );
 
+    // manually trigger a refetch if its stale
     useEffect(() => {
-        if (isSuccess) {
-            onSuccess && onSuccess();
+        if (isStale && chainEnabled && canceledOrder == undefined) {
+            refetch();
         }
-    }, [isSuccess]);
+    }, [isStale]);
+
+    useEffect(() => {
+        if (isSuccess && canceledOrder && canceledOrder.length > 0) {
+            console.log(`TRIGGER`);
+            debouncedOnSuccess();
+        }
+    }, [isSuccess, chainEnabled]);
 
     // Log the queries for cancelled state and data
     console.log({

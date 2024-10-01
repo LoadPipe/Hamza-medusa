@@ -32,28 +32,28 @@ const All = ({
                     <Box mt={4} mb={2}>
                         <Shipped
                             customer={customer}
-                            enabled={processingFetched}
+                            chainEnabled={processingFetched}
                             onSuccess={() => setShippedFetched(true)}
                         />
                     </Box>
                     <Box mt={4} mb={2}>
                         <Delivered
                             customer={customer}
-                            enabled={shippedFetched}
+                            chainEnabled={shippedFetched}
                             onSuccess={() => setDeliveredFetched(true)}
                         />
                     </Box>
                     <Box mt={4} mb={2}>
                         <Cancelled
                             customer={customer}
-                            enabled={deliveredFetched}
+                            chainEnabled={deliveredFetched}
                             onSuccess={() => setCancelledFetched(true)}
                         />
                     </Box>
                     <Box mt={4} mb={2}>
                         <Refund
                             customer={customer}
-                            enabled={cancelledFetched}
+                            chainEnabled={cancelledFetched}
                         />
                     </Box>
                 </Box>

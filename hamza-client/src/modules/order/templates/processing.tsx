@@ -85,13 +85,9 @@ const Processing = ({
     const [expandViewOrder, setExpandViewOrder] = useState(false);
     const [shouldFetch, setShouldFetch] = useState(false);
 
-    const debounceSetShouldFetch = debounce(() => setShouldFetch(true), 150);
-
-    useEffect(() => {
-        if (customer) {
-            debounceSetShouldFetch();
-        }
-    }, [customer]);
+    const debouncedOnSuccess = debounce(() => {
+        onSuccess && onSuccess(); // Call the parent onSuccess after debounce delay
+    }, 1000); // 1000ms (1 second) delay
 
     const queryClient = useQueryClient();
 
@@ -103,21 +99,31 @@ const Processing = ({
         failureCount,
         isStale,
         isSuccess,
+        refetch,
     } = useQuery(
         ['fetchProcessingOrder', customer],
         () => getSingleBucket(customer, 1),
         {
-            enabled: shouldFetch && !!customer,
+            enabled: !!customer, // Ensure query only runs when enabled is true
             staleTime: 5 * 60 * 1000, // 5 minutes
+            cacheTime: 5 * 60 * 1000, // 5 minutes
             retry: 5, // Retry 5 times
             retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
             refetchOnWindowFocus: false,
         }
     );
 
+    // manually trigger a refetch if its stale
     useEffect(() => {
-        if (isSuccess) {
-            onSuccess && onSuccess();
+        if (isStale && processingOrder == undefined) {
+            refetch();
+        }
+    }, [isStale]);
+
+    useEffect(() => {
+        if (isSuccess && processingOrder && processingOrder.length > 0) {
+            console.log(`TRIGGER`);
+            debouncedOnSuccess();
         }
     }, [isSuccess]);
 

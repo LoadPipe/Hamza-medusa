@@ -23,30 +23,27 @@ import { debounce } from 'lodash';
 
 const Shipped = ({
     customer,
-    enabled,
+    chainEnabled,
     onSuccess,
     isEmpty,
 }: {
     customer: string;
-    enabled?: boolean;
+    chainEnabled?: boolean;
     onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
     const [courierInfo, setCourierInfo] = useState(false);
     const [shouldFetch, setShouldFetch] = useState(false);
 
-    const debounceSetShouldFetch = debounce(() => setShouldFetch(true), 1000);
+    console.log(`chainEnabled Shipped ${chainEnabled}`);
 
-    useEffect(() => {
-        if (customer) {
-            debounceSetShouldFetch();
-        }
-    }, [customer]);
+    const debouncedOnSuccess = debounce(() => {
+        onSuccess && onSuccess();
+    }, 5000);
 
     const toggleCourierInfo = (orderId: any) => {
         setCourierInfo(courierInfo === orderId ? null : orderId);
     };
-    console.log(`shipped customer? ${customer}`);
 
     const {
         data: shippedOrder,
@@ -56,11 +53,12 @@ const Shipped = ({
         failureCount,
         isStale,
         isSuccess,
+        refetch,
     } = useQuery(
         ['fetchShippedOrder', customer],
         () => getSingleBucket(customer, 2), // Fetching shipped orders (bucket 2)
         {
-            enabled: shouldFetch && !!customer && enabled,
+            enabled: !!customer && chainEnabled, // Ensure query only runs when enabled is true
             staleTime: 5 * 60 * 1000, // 5 minutes
             retry: 5, // Retry 5 times
             retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
@@ -68,11 +66,19 @@ const Shipped = ({
         }
     );
 
+    // manually trigger a refetch if its stale
     useEffect(() => {
-        if (isSuccess) {
-            onSuccess && onSuccess();
+        if (isStale && chainEnabled && shippedOrder == undefined) {
+            refetch();
         }
-    }, [isSuccess]);
+    }, [isStale, chainEnabled]);
+
+    useEffect(() => {
+        if (isSuccess && shippedOrder && shippedOrder.length > 0) {
+            console.log(`TRIGGER`);
+            debouncedOnSuccess();
+        }
+    }, [isSuccess, chainEnabled]);
 
     console.log({
         template: 'SHIPPED',

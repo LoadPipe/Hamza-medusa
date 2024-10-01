@@ -11,25 +11,22 @@ import { debounce } from 'lodash';
 
 const Refund = ({
     customer,
-    enabled,
+    chainEnabled,
     onSuccess,
     isEmpty,
 }: {
     customer: string;
-    enabled?: boolean;
+    chainEnabled?: boolean;
     onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
     const [courierInfo, setCourierInfo] = useState(false);
     const [shouldFetch, setShouldFetch] = useState(false);
+    console.log(`chainEnabled Refund ${chainEnabled}`);
 
-    const debounceSetShouldFetch = debounce(() => setShouldFetch(true), 4000);
-
-    useEffect(() => {
-        if (customer) {
-            debounceSetShouldFetch();
-        }
-    }, [customer]);
+    const debouncedOnSuccess = debounce(() => {
+        onSuccess && onSuccess();
+    }, 5000);
 
     const {
         data: refundOrder,
@@ -39,11 +36,12 @@ const Refund = ({
         failureCount,
         isStale,
         isSuccess,
+        refetch,
     } = useQuery(
         ['fetchRefundOrder', customer],
         () => getSingleBucket(customer, 5),
         {
-            enabled: shouldFetch && !!customer && enabled,
+            enabled: !!customer && chainEnabled, // Ensure query only runs when enabled is true
             staleTime: 5 * 60 * 1000, // 5 minutes
             retry: 5, // Retry 5 times
             retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
@@ -51,11 +49,19 @@ const Refund = ({
         }
     );
 
+    // manually trigger a refetch if its stale
     useEffect(() => {
-        if (isSuccess) {
-            onSuccess && onSuccess();
+        if (isStale && chainEnabled && refundOrder == undefined) {
+            refetch();
         }
-    }, [isSuccess]);
+    }, [isStale]);
+
+    useEffect(() => {
+        if (isSuccess && refundOrder && refundOrder.length > 0) {
+            console.log(`TRIGGER`);
+            debouncedOnSuccess();
+        }
+    }, [isSuccess, chainEnabled]);
 
     // Log the queries for refunded state and data
     console.log({
