@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getSingleBucket } from '@lib/data';
 import {
     Box,
@@ -19,31 +19,76 @@ import ShippedCard from '@modules/account/components/shipped-card';
 import EmptyState from '@modules/order/components/empty-state';
 import { useQuery } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
+import { debounce } from 'lodash';
 
 const Shipped = ({
     customer,
+    chainEnabled,
+    onSuccess,
     isEmpty,
 }: {
     customer: string;
+    chainEnabled?: boolean;
+    onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
     const [courierInfo, setCourierInfo] = useState(false);
+    const [shouldFetch, setShouldFetch] = useState(false);
+
+    console.log(`chainEnabled Shipped ${chainEnabled}`);
+
+    const debouncedOnSuccess = debounce(() => {
+        onSuccess && onSuccess();
+    }, 5000);
 
     const toggleCourierInfo = (orderId: any) => {
         setCourierInfo(courierInfo === orderId ? null : orderId);
     };
 
     const {
-        data: customerOrder,
+        data: shippedOrder,
         isLoading,
         isError,
+        isFetching,
+        failureCount,
+        isStale,
+        isSuccess,
+        refetch,
     } = useQuery(
-        ['fetchAllOrders', customer],
+        ['fetchShippedOrder', customer],
         () => getSingleBucket(customer, 2), // Fetching shipped orders (bucket 2)
         {
-            enabled: !!customer, // Ensures the query runs only if customer is available
+            enabled: !!customer && chainEnabled, // Ensure query only runs when enabled is true
+            staleTime: 5 * 60 * 1000, // 5 minutes
+            retry: 5, // Retry 5 times
+            retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
+            refetchOnWindowFocus: false,
         }
     );
+
+    // manually trigger a refetch if its stale
+    useEffect(() => {
+        if (isStale && chainEnabled && shippedOrder == undefined) {
+            refetch();
+        }
+    }, [isStale, chainEnabled]);
+
+    useEffect(() => {
+        if (isSuccess && shippedOrder && shippedOrder.length > 0) {
+            console.log(`TRIGGER`);
+            debouncedOnSuccess();
+        }
+    }, [isSuccess, chainEnabled]);
+
+    console.log({
+        template: 'SHIPPED',
+        isLoading,
+        isError,
+        isFetching,
+        failureCount,
+        shippedOrder,
+        isStale,
+    });
 
     if (isLoading) {
         return (
@@ -56,14 +101,14 @@ const Shipped = ({
                 py={5}
             >
                 <Text color="white" fontSize="lg" mb={8}>
-                    Loading shipped orders...
+                    Loading Shipped orders...
                 </Text>
                 <Spinner size={80} />
             </Box>
         );
     }
 
-    if (isError || !customerOrder) {
+    if (isError || !shippedOrder) {
         return (
             <Box
                 display="flex"
@@ -80,18 +125,18 @@ const Shipped = ({
         );
     }
 
-    if (isEmpty && customerOrder?.length === 0) {
+    if (isEmpty && shippedOrder?.length === 0) {
         return <EmptyState />;
     }
 
     return (
         <div>
             {/* Processing-specific content */}
-            {customerOrder && customerOrder.length > 0 ? (
+            {shippedOrder && shippedOrder.length > 0 ? (
                 <>
                     <h1>Shipped Orders</h1>
 
-                    {customerOrder.map((order: any) => (
+                    {shippedOrder.map((order: any) => (
                         <div
                             key={order.id} // Changed from cart_id to id since it's more reliable and unique
                             className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
@@ -111,6 +156,7 @@ const Shipped = ({
                                         <ShippedCard
                                             key={item.id}
                                             order={item}
+                                            vendorName={order.store.name}
                                             handle={
                                                 item.variant?.product?.handle ||
                                                 'N/A'

@@ -6,26 +6,72 @@ import DeliveredCard from '@modules/account/components/delivered-card';
 import EmptyState from '@modules/order/components/empty-state';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useQuery } from '@tanstack/react-query';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { debounce } from 'lodash';
 
 const Delivered = ({
     customer,
+    chainEnabled,
+    onSuccess,
     isEmpty,
 }: {
     customer: string;
+    chainEnabled?: boolean;
+    onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
+    const [shouldFetch, setShouldFetch] = useState(false);
+    console.log(`chainEnabled Delivered ${chainEnabled}`);
+
+    const debouncedOnSuccess = debounce(() => {
+        onSuccess && onSuccess();
+    }, 5000);
+
     const {
-        data: customerOrder,
+        data: deliveredOrder,
         isLoading,
         isError,
+        isFetching,
+        failureCount,
+        isStale,
+        isSuccess,
+        refetch,
     } = useQuery(
-        ['fetchAllOrders', customer],
+        ['fetchDeliveredOrder', customer],
         () => getSingleBucket(customer, 3),
         {
-            enabled: !!customer, // Only fetch if `customer` is provided
+            enabled: !!customer && chainEnabled, // Ensure query only runs when enabled is true
+            staleTime: 5 * 60 * 1000, // 5 minutes
+            retry: 5, // Retry 5 times
+            retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
+            refetchOnWindowFocus: false,
         }
     );
+
+    // manually trigger a refetch if its stale
+    useEffect(() => {
+        if (isStale && chainEnabled && deliveredOrder == undefined) {
+            refetch();
+        }
+    }, [isStale]);
+
+    useEffect(() => {
+        if (isSuccess && deliveredOrder && deliveredOrder.length > 0) {
+            console.log(`TRIGGER`);
+            debouncedOnSuccess();
+        }
+    }, [isSuccess, chainEnabled]);
+
+    // Log the queries for delivered state and data
+    console.log({
+        template: 'DELIVERED',
+        isLoading,
+        isError,
+        isFetching,
+        failureCount,
+        deliveredOrder,
+        isStale,
+    });
 
     const getAmount = (
         amount?: number | null,
@@ -73,45 +119,40 @@ const Delivered = ({
         );
     }
 
-    if (isEmpty && customerOrder && customerOrder?.length == 0) {
+    if (isEmpty && deliveredOrder && deliveredOrder?.length == 0) {
         return <EmptyState />;
     }
 
     return (
         <div>
-            {/* Processing-specific content */}
-            {customerOrder && customerOrder.length > 0 ? (
+            {deliveredOrder && deliveredOrder.length > 0 ? (
                 <>
                     <h1>Delivered Orders</h1>
 
-                    {customerOrder.map((order: any) => (
+                    {deliveredOrder.map((order: any) => (
                         <div
                             key={order.id} // Changed from cart_id to id since it's more reliable and unique
                             className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
                         >
-                            {order.items?.map(
-                                (
-                                    item: any // Adjusting the map to the correct path
-                                ) => (
-                                    <Box
+                            {order.items?.map((item: any) => (
+                                <Box
+                                    key={item.id}
+                                    bg="rgba(39, 39, 39, 0.3)"
+                                    p={4}
+                                    m={2}
+                                    rounded="lg"
+                                >
+                                    <DeliveredCard
                                         key={item.id}
-                                        bg="rgba(39, 39, 39, 0.3)"
-                                        p={4}
-                                        m={2}
-                                        rounded="lg"
-                                    >
-                                        {/*item: {item.id} <br />*/}
-                                        <DeliveredCard
-                                            key={item.id}
-                                            order={item}
-                                            handle={
-                                                item.variant?.product?.handle ||
-                                                'N/A'
-                                            }
-                                        />
-                                    </Box>
-                                )
-                            )}
+                                        order={item}
+                                        vendorName={order.store.name}
+                                        handle={
+                                            item.variant?.product?.handle ||
+                                            'N/A'
+                                        }
+                                    />
+                                </Box>
+                            ))}
                         </div>
                     ))}
                 </>

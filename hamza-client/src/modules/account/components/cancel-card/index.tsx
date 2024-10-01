@@ -15,11 +15,7 @@ import {
     useDisclosure,
 } from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
-import React, { useState } from 'react';
-import { getStore } from '@lib/data';
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
-import Spinner from '@modules/common/icons/spinner';
 
 type OrderDetails = {
     thumbnail: string;
@@ -56,6 +52,7 @@ type OrderCardProps = {
     handle: any;
     cancel_reason: string;
     cancelled_date: string;
+    vendorName: string;
 };
 
 const CancelCard = ({
@@ -63,6 +60,7 @@ const CancelCard = ({
     handle,
     cancel_reason,
     cancelled_date,
+    vendorName,
 }: OrderCardProps) => {
     const orderString = typeof order.currency_code;
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -75,14 +73,6 @@ const CancelCard = ({
 
         return formatCryptoPrice(amount, order.currency_code || 'USDC');
     };
-
-    const {
-        data: vendorData,
-        isLoading: isVendorLoading,
-        isError: isVendorError,
-    } = useQuery(['vendor', order.variant.product_id], () =>
-        getStore(order.variant.product_id as string)
-    );
 
     if (!order) {
         return <div>Loading...</div>; // Display loading message if order is undefined
@@ -99,19 +89,13 @@ const CancelCard = ({
             mt={2}
         >
             <Flex alignItems="center" mb={2}>
-                {isVendorLoading ? (
-                    <Spinner />
-                ) : isVendorError ? (
-                    <Text color="red.500">Error loading vendor name</Text>
-                ) : (
-                    <Text
-                        fontSize={{ base: '14px', md: '24px' }}
-                        fontWeight="bold"
-                        noOfLines={1}
-                    >
-                        {vendorData.name}
-                    </Text>
-                )}
+                <Text
+                    fontSize={{ base: '14px', md: '24px' }}
+                    fontWeight="bold"
+                    noOfLines={1}
+                >
+                    {vendorName}
+                </Text>
                 <Flex
                     display={{ base: 'none', md: 'flex' }}
                     ml={2}

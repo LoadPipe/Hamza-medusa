@@ -2,14 +2,12 @@ import { formatAmount } from '@lib/util/prices';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
-import React, { useState } from 'react';
-import { getStore } from '@lib/data';
 import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
-import { useQuery, useMutation } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
+import React from 'react';
 
 type OrderDetails = {
     thumbnail: string;
@@ -41,9 +39,10 @@ type Order = {
 type OrderCardProps = {
     order: Order;
     handle: any;
+    vendorName: string;
 };
 
-const DeliveredCard = ({ order, handle }: OrderCardProps) => {
+const DeliveredCard = ({ order, handle, vendorName }: OrderCardProps) => {
     const orderString = typeof order.currency_code;
     const router = useRouter();
     let countryCode = useParams().countryCode as string;
@@ -56,14 +55,6 @@ const DeliveredCard = ({ order, handle }: OrderCardProps) => {
 
         return formatCryptoPrice(amount, order.currency_code || 'USDC');
     };
-
-    const {
-        data: vendorData,
-        isLoading: isVendorLoading,
-        isError: isVendorError,
-    } = useQuery(['vendor', order.variant.product_id], () =>
-        getStore(order.variant.product_id as string)
-    );
 
     //TODO: Refactor to a mutation
     const handleReorder = async (order: any) => {
@@ -95,19 +86,13 @@ const DeliveredCard = ({ order, handle }: OrderCardProps) => {
             mt={2}
         >
             <Flex alignItems="center" mb={2}>
-                {isVendorLoading ? (
-                    <Spinner />
-                ) : isVendorError ? (
-                    <Text color="red.500">Error loading vendor name</Text>
-                ) : (
-                    <Text
-                        fontSize={{ base: '14px', md: '24px' }}
-                        fontWeight="bold"
-                        noOfLines={1}
-                    >
-                        {vendorData?.name || 'N/A'}
-                    </Text>
-                )}
+                <Text
+                    fontSize={{ base: '14px', md: '24px' }}
+                    fontWeight="bold"
+                    noOfLines={1}
+                >
+                    {vendorName}
+                </Text>
                 <Flex
                     display={{ base: 'none', md: 'flex' }}
                     ml={2}

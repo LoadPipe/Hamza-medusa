@@ -2,11 +2,7 @@ import { formatAmount } from '@lib/util/prices';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
-import React, { useEffect, useState } from 'react';
-import { getStore } from '@lib/data';
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
-import Spinner from '@modules/common/icons/spinner';
 
 type OrderDetails = {
     thumbnail: string;
@@ -38,9 +34,10 @@ type Order = {
 type OrderCardProps = {
     order: Order;
     handle: any;
+    vendorName: string;
 };
 
-const ShippedCard = ({ order, handle }: OrderCardProps) => {
+const ShippedCard = ({ order, handle, vendorName }: OrderCardProps) => {
     const orderString = typeof order.currency_code;
 
     const getAmount = (amount?: number | null) => {
@@ -50,14 +47,6 @@ const ShippedCard = ({ order, handle }: OrderCardProps) => {
 
         return formatCryptoPrice(amount, order.currency_code || 'USDC');
     };
-
-    const {
-        data: storeData,
-        isLoading,
-        isError,
-    } = useQuery(['store', order.variant.product_id], () =>
-        getStore(order.variant.product_id as string)
-    );
 
     if (!order) {
         return <div>Loading...</div>; // Display loading message if order is undefined
@@ -74,19 +63,13 @@ const ShippedCard = ({ order, handle }: OrderCardProps) => {
             mt={2}
         >
             <Flex alignItems="center" mb={2}>
-                {isLoading ? (
-                    <Spinner />
-                ) : isError ? (
-                    <Text color="red.500">Error loading store name</Text>
-                ) : (
-                    <Text
-                        fontSize={{ base: '14px', md: '24px' }}
-                        fontWeight="bold"
-                        noOfLines={1}
-                    >
-                        {storeData.name || 'N/A'}
-                    </Text>
-                )}
+                <Text
+                    fontSize={{ base: '14px', md: '24px' }}
+                    fontWeight="bold"
+                    noOfLines={1}
+                >
+                    {vendorName}
+                </Text>
                 <Flex
                     display={{ base: 'none', md: 'flex' }}
                     ml={2}

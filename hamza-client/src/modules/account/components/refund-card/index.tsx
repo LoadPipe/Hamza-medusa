@@ -2,10 +2,7 @@ import { formatAmount } from '@lib/util/prices';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
-import React, { useEffect, useState } from 'react';
-import { getStore } from '@lib/data';
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
 
 type OrderDetails = {
     thumbnail: string;
@@ -37,46 +34,14 @@ type Order = {
 type OrderCardProps = {
     order: Order;
     handle: any;
+    vendorName: string;
 };
 
-const RefundCard = ({ order, handle }: OrderCardProps) => {
+const RefundCard = ({ order, handle, vendorName }: OrderCardProps) => {
     const orderString = typeof order.currency_code;
-    const {
-        data: vendorData,
-        isLoading,
-        isError,
-    } = useQuery(
-        ['fetchVendor', order.variant.product_id],
-        () => getStore(order.variant.product_id as string),
-        {
-            enabled: !!order.variant.product_id,
-        }
-    );
 
-    if (isLoading) {
-        return (
-            <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                py={5}
-            >
-                <Text> loading...</Text>
-            </Box>
-        );
-    }
-
-    if (isError || !vendorData) {
-        return (
-            <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                py={5}
-            >
-                <Text color="red">Error fetching vendor data</Text>
-            </Box>
-        );
+    if (!order) {
+        return <div>Loading...</div>; // Display loading message if order is undefined
     }
 
     return (
@@ -96,7 +61,7 @@ const RefundCard = ({ order, handle }: OrderCardProps) => {
                     fontWeight="bold"
                     noOfLines={1}
                 >
-                    {vendorData.name}
+                    {vendorName}
                 </Text>
                 <Flex
                     display={{ base: 'none', md: 'flex' }}

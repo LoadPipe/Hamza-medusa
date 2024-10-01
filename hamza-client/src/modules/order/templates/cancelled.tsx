@@ -4,70 +4,117 @@ import CancelCard from '@modules/account/components/cancel-card';
 import EmptyState from '@modules/order/components/empty-state';
 import { useQuery } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { debounce } from 'lodash';
 
 const Cancelled = ({
     customer,
+    chainEnabled,
+    onSuccess,
     isEmpty,
 }: {
     customer: string;
+    chainEnabled?: boolean;
+    onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
     // Fetch canceled orders with useQuery
+    const [shouldFetch, setShouldFetch] = useState(false);
+    console.log(`chainEnabled Cancelled ${chainEnabled}`);
+
+    const debouncedOnSuccess = debounce(() => {
+        onSuccess && onSuccess();
+    }, 5000);
+
     const {
-        data: customerOrder,
-        isLoading,
-        isError,
+        data: canceledOrder,
+        isLoading: cancelIsLoading,
+        isError: cancelIsError,
+        isFetching,
+        failureCount,
+        isStale,
+        isSuccess,
+        refetch,
     } = useQuery(
-        ['fetchCancelledOrders', customer],
-        () => getSingleBucket(customer, 4), // Fetch for status 4 (cancelled orders)
+        ['fetchCanceledOrder', customer],
+        () => getSingleBucket(customer, 4),
         {
-            enabled: !!customer, // Only fetch if customer exists
+            enabled: !!customer && chainEnabled, // Ensure query only runs when enabled is true
+            staleTime: 5 * 60 * 1000, // 5 minutes
+            retry: false,
         }
     );
 
-    if (isEmpty && customerOrder && customerOrder?.length == 0) {
+    // manually trigger a refetch if its stale
+    useEffect(() => {
+        if (isStale && chainEnabled && canceledOrder == undefined) {
+            refetch();
+        }
+    }, [isStale]);
+
+    useEffect(() => {
+        if (isSuccess && canceledOrder && canceledOrder.length > 0) {
+            console.log(`TRIGGER`);
+            debouncedOnSuccess();
+        }
+    }, [isSuccess, chainEnabled]);
+
+    // Log the queries for cancelled state and data
+    console.log({
+        template: 'CANCELLED',
+        cancelIsLoading,
+        cancelIsError,
+        isFetching,
+        failureCount,
+        canceledOrder,
+        isStale,
+    });
+
+    if (isEmpty && canceledOrder && canceledOrder?.length == 0) {
         return <EmptyState />;
     }
 
+    if (cancelIsLoading) {
+        return (
+            <Box
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                textAlign="center"
+                py={5}
+            >
+                <Text color="white" fontSize="lg" mb={8}>
+                    Loading Cancelled orders...
+                </Text>
+                <Spinner size={80} />
+            </Box>
+        );
+    }
+
+    if (cancelIsError || !canceledOrder) {
+        return (
+            <Box
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                textAlign="center"
+                py={5}
+            >
+                <Text color="red.500" fontSize="lg">
+                    Error fetching reviews.
+                </Text>
+            </Box>
+        );
+    }
     return (
         <div>
-            {isLoading && (
-                <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="center"
-                    textAlign="center"
-                    py={5}
-                >
-                    <Text color="white" fontSize="lg" mb={8}>
-                        Loading cancelled orders...
-                    </Text>
-                    <Spinner size={80} />
-                </Box>
-            )}
-
-            {isError && (
-                <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="center"
-                    textAlign="center"
-                    py={5}
-                >
-                    <Text color="red.500" fontSize="lg">
-                        Error fetching reviews.
-                    </Text>
-                </Box>
-            )}
-            {/* Processing-specific content */}
-            {customerOrder && customerOrder.length > 0 ? (
+            {canceledOrder && canceledOrder.length > 0 ? (
                 <>
                     <h1>Cancelled Orders</h1>
 
-                    {customerOrder.map((order: any) => (
+                    {canceledOrder.map((order: any) => (
                         <div
                             key={order.id} // Changed from cart_id to id since it's more reliable and unique
                             className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
@@ -87,6 +134,7 @@ const Cancelled = ({
                                         <CancelCard
                                             key={item.id}
                                             order={item}
+                                            vendorName={order.store.name}
                                             cancel_reason={
                                                 order.metadata?.cancel_reason ||
                                                 'No cancellation details were provided.'
