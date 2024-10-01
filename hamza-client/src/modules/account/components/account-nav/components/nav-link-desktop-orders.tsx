@@ -1,25 +1,36 @@
 import React from 'react';
 import { Flex, Text } from '@chakra-ui/react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+
 import { ReactElement } from 'react';
+import { useOrderTabStore } from '@store/order-tab-state';
 
 type AccountNavLinkProps = {
     href: string;
     title: string;
     route: string;
-    fontSize?: string;
+    tab: string;
     icon?: ReactElement;
+    handleTabChange?: () => void;
 };
-const NavLink = ({
+const NavLinkOrders = ({
     href,
-    route,
     title,
+    route,
+    tab,
     icon,
-    fontSize = '18px',
+    handleTabChange,
 }: AccountNavLinkProps) => {
-    const { countryCode }: { countryCode: string } = useParams();
-    const active = route.split(countryCode)[1] === href;
+    const { orderActiveTab } = useOrderTabStore();
+    const activeTab = orderActiveTab;
+    const active = activeTab === tab;
+
+    const handleClick = () => {
+        if (handleTabChange) {
+            handleTabChange();
+        }
+    };
+
     return (
         <Link href={href}>
             <Flex
@@ -29,6 +40,7 @@ const NavLink = ({
                 color={active ? 'black' : 'white'}
                 backgroundColor={active ? '#121212' : 'transparent'}
                 alignItems={'center'}
+                onClick={handleClick}
             >
                 <Flex
                     width={'26px'}
@@ -39,7 +51,8 @@ const NavLink = ({
                 </Flex>
                 <Text
                     ml={2}
-                    fontSize={fontSize}
+                    my="auto"
+                    fontSize={'16px'}
                     color={active ? 'primary.green.900' : 'white'}
                     fontWeight={600}
                 >
@@ -50,4 +63,4 @@ const NavLink = ({
     );
 };
 
-export default NavLink;
+export default NavLinkOrders;

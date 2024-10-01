@@ -100,6 +100,7 @@ const StoreBanner = (props: StoreProps) => {
                     </Text>
                 </Flex>
                 <Flex
+                    onClick={navigateToVendor}
                     height={{ base: '33px', md: '47px' }}
                     width={{ base: '120px', md: '190px' }}
                     borderColor={'transparent'}
@@ -110,7 +111,6 @@ const StoreBanner = (props: StoreProps) => {
                     cursor={'pointer'}
                 >
                     <Text
-                        onClick={navigateToVendor}
                         alignSelf={'center'}
                         color="white"
                         fontSize={{ base: '12px', md: '16px' }}

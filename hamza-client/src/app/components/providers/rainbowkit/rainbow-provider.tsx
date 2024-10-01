@@ -7,16 +7,23 @@ import {
     RainbowKitProvider,
     AuthenticationStatus,
 } from '@rainbow-me/rainbowkit';
-import { WagmiConfig } from 'wagmi';
+import { useWalletClient, WagmiConfig } from 'wagmi';
 import {
     chains,
     config,
     darkThemeConfig,
+    SwitchNetwork,
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 const queryClient = new QueryClient();
 import { SiweMessage } from 'siwe';
-import { clearAuthCookie, getCart, getCustomer, getHamzaCustomer, getToken, recoverCart } from '@lib/data';
+import {
+    clearAuthCookie,
+    getCustomer,
+    getHamzaCustomer,
+    getToken,
+    recoverCart,
+} from '@lib/data';
 import { signOut } from '@modules/account/actions';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import axios from 'axios';
@@ -30,7 +37,8 @@ const VERIFY_MSG_URL = `${MEDUSA_SERVER_URL}/custom/verify`;
 const GET_NONCE_URL = `${MEDUSA_SERVER_URL}/custom/nonce`;
 
 async function sendVerifyRequest(message: any, signature: any) {
-    return await axios.post(VERIFY_MSG_URL,
+    return await axios.post(
+        VERIFY_MSG_URL,
         {
             message,
             signature,
@@ -38,9 +46,9 @@ async function sendVerifyRequest(message: any, signature: any) {
         {
             headers: {
                 'Content-Type': 'application/json',
-                //'Cache-control': 'no-cache, no-store',
+                'Cache-control': 'no-cache, no-store',
                 Accept: 'application/json',
-            }
+            },
         }
     );
 }
@@ -70,6 +78,8 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     const [customer_id, setCustomerId] = useState('');
     const { loadWishlist } = useWishlistStore((state) => state);
 
+    let clientWallet = '';
+
     useEffect(() => {
         if (authData.status === 'authenticated' && customer_id) {
             loadWishlist(customer_id);
@@ -78,10 +88,16 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     }, [authData.status, customer_id]); // Dependency array includes any state variables that trigger a reload
 
     useEffect(() => {
+        console.log('Saved wallet address', authData);
         getHamzaCustomer().then((hamzaCustomer) => {
-            console.log('CUSTOMER: ', hamzaCustomer);
+            console.log('Hamza Customer: ', hamzaCustomer);
             getCustomer().then((customer) => {
-                if ((!customer || !hamzaCustomer) || customer?.id !== hamzaCustomer?.id) {
+                console.log('Medusa Customer: ', customer);
+                if (
+                    !customer ||
+                    !hamzaCustomer ||
+                    customer?.id !== hamzaCustomer?.id
+                ) {
                     console.log('setting auth to unauthenticated');
                     setCustomerAuthData({
                         customer_id: '',
@@ -94,6 +110,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                 }
             });
         });
+        console.log(authData.wallet_address);
     }, [authData.wallet_address]);
 
     const walletSignature = createAuthenticationAdapter({
@@ -106,6 +123,8 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
             console.log(
                 `Creating message with nonce: ${nonce}, address: ${address}, chainId: ${chainId}`
             );
+            console.log('setting client wallet to ', address);
+            clientWallet = address;
             const message = new SiweMessage({
                 domain: window.location.host,
                 address,
@@ -150,8 +169,11 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         password: '',
                     });
 
-                    //check that customer data and wallet address match 
-                    if (data.data.wallet_address.trim().toLowerCase() === message?.address?.trim()?.toLowerCase()) {
+                    //check that customer data and wallet address match
+                    if (
+                        data.data.wallet_address.trim().toLowerCase() ===
+                        clientWallet?.trim()?.toLowerCase()
+                    ) {
                         const customerId = data.data.customer_id;
                         setCustomerId(customerId);
                         Cookies.set('_medusa_jwt', tokenResponse);
@@ -174,16 +196,17 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         try {
                             console.log('recovering cart');
                             recoverCart(customerId);
-                        }
-                        catch (e) {
+                        } catch (e) {
                             console.log('Error recovering cart');
                             console.error(e);
                         }
 
                         return true;
-                    }
-                    else {
+                    } else {
                         console.log('Wallet address mismatch on login');
+                        console.log(data.data.wallet_address);
+                        console.log(clientWallet);
+                        console.log(message.address);
                         setCustomerAuthData({
                             ...authData,
                             status: 'unauthenticated',
@@ -191,7 +214,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         clearAuthCookie();
                         return false;
                     }
-
                 } else {
                     console.log('running verify unauthenticated');
                     setCustomerAuthData({

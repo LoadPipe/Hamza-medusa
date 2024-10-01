@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
 import { getSingleBucket } from '@lib/data';
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import CancelCard from '@modules/account/components/cancel-card';
 import EmptyState from '@modules/order/components/empty-state';
-import { useOrdersStore } from '@store/orders-refresh';
+import { useQuery } from '@tanstack/react-query';
+import Spinner from '@modules/common/icons/spinner';
+import React from 'react';
 
 const Cancelled = ({
     customer,
@@ -12,45 +13,18 @@ const Cancelled = ({
     customer: string;
     isEmpty?: boolean;
 }) => {
-    const [customerOrder, setCustomerOrder] = useState<any[]>([]);
-    const [customerId, setCustomerId] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const ordersVersion = useOrdersStore((state) => state.ordersVersion);
-
-    useEffect(() => {
-        console.log('customer received in Cancelled:', customer);
-        if (customer && customer.length > 0) {
-            const customer_id = customer;
-            console.log(
-                `Running fetchAllOrders with customerID ${customer_id}`
-            );
-            fetchAllOrders(customer_id);
-            setCustomerId(customer_id);
+    // Fetch canceled orders with useQuery
+    const {
+        data: customerOrder,
+        isLoading,
+        isError,
+    } = useQuery(
+        ['fetchCancelledOrders', customer],
+        () => getSingleBucket(customer, 4), // Fetch for status 4 (cancelled orders)
+        {
+            enabled: !!customer, // Only fetch if customer exists
         }
-    }, [customer, ordersVersion]);
-
-    const fetchAllOrders = async (customerId: string) => {
-        setIsLoading(true);
-        try {
-            const bucket = await getSingleBucket(customerId, 4);
-            if (bucket === undefined || bucket === null) {
-                console.error('Bucket is undefined or null');
-                setCustomerOrder([]); // Set empty state
-                setIsLoading(false);
-                return;
-            }
-            if (Array.isArray(bucket)) {
-                setCustomerOrder(bucket);
-            } else {
-                console.error('Expected an array but got:', bucket);
-                setCustomerOrder([]);
-            }
-        } catch (error) {
-            console.error('Error fetching processing orders:', error);
-            setCustomerOrder([]);
-        }
-        setIsLoading(false);
-    };
+    );
 
     if (isEmpty && customerOrder && customerOrder?.length == 0) {
         return <EmptyState />;
@@ -58,12 +32,42 @@ const Cancelled = ({
 
     return (
         <div>
+            {isLoading && (
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    textAlign="center"
+                    py={5}
+                >
+                    <Text color="white" fontSize="lg" mb={8}>
+                        Loading cancelled orders...
+                    </Text>
+                    <Spinner size={80} />
+                </Box>
+            )}
+
+            {isError && (
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    textAlign="center"
+                    py={5}
+                >
+                    <Text color="red.500" fontSize="lg">
+                        Error fetching reviews.
+                    </Text>
+                </Box>
+            )}
             {/* Processing-specific content */}
             {customerOrder && customerOrder.length > 0 ? (
                 <>
                     <h1>Cancelled Orders</h1>
 
-                    {customerOrder.map((order) => (
+                    {customerOrder.map((order: any) => (
                         <div
                             key={order.id} // Changed from cart_id to id since it's more reliable and unique
                             className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
@@ -83,6 +87,14 @@ const Cancelled = ({
                                         <CancelCard
                                             key={item.id}
                                             order={item}
+                                            cancel_reason={
+                                                order.metadata?.cancel_reason ||
+                                                'No cancellation details were provided.'
+                                            }
+                                            cancelled_date={
+                                                order.canceled_at ||
+                                                'Cancel date N/A'
+                                            }
                                             handle={
                                                 item.variant?.product?.handle ||
                                                 'N/A'

@@ -8,40 +8,42 @@ type AccountNavLinkProps = {
     href: string;
     title: string;
     route: string;
-    fontSize?: string;
     icon?: ReactElement;
+    onClick?: () => void;
+    fontWeight?: number | string;
 };
-const NavLink = ({
+
+const NavLinkMobile = ({
     href,
     route,
     title,
     icon,
-    fontSize = '18px',
+    onClick,
+    fontWeight,
 }: AccountNavLinkProps) => {
     const { countryCode }: { countryCode: string } = useParams();
     const active = route.split(countryCode)[1] === href;
+
     return (
-        <Link href={href}>
+        <Link href={href} style={{ width: '100%' }}>
             <Flex
-                borderRadius={'8px'}
-                height={'56px'}
-                padding="16px"
-                color={active ? 'black' : 'white'}
-                backgroundColor={active ? '#121212' : 'transparent'}
+                width={'100%'}
                 alignItems={'center'}
+                onClick={onClick} // Trigger onClick if provided to close menu
+                cursor="pointer"
             >
                 <Flex
-                    width={'26px'}
-                    height={'26px'}
+                    width={'22px'}
+                    height={'22px'}
                     color={active ? 'primary.green.900' : 'white'}
                 >
                     {icon && icon}
                 </Flex>
                 <Text
-                    ml={2}
-                    fontSize={fontSize}
                     color={active ? 'primary.green.900' : 'white'}
-                    fontWeight={600}
+                    ml={icon ? 2 : 0}
+                    fontSize={'16px'}
+                    fontWeight={fontWeight}
                 >
                     {title}
                 </Text>
@@ -50,4 +52,4 @@ const NavLink = ({
     );
 };
 
-export default NavLink;
+export default NavLinkMobile;

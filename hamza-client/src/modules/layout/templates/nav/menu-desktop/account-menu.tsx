@@ -10,6 +10,7 @@ import {
     MenuList,
     MenuItem,
     MenuDivider,
+    Image,
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import { CgProfile } from 'react-icons/cg';
@@ -51,13 +52,14 @@ const AccountMenu = () => {
                         transition: 'border-color 0.3s ease-in-out',
                     }}
                 >
-                    <Flex
-                        alignSelf={'center'}
-                        className="profile-icon"
-                        color={'white'}
-                    >
-                        <CgProfile size={30} />
-                    </Flex>
+                    <Image
+                        src={`https://api.dicebear.com/9.x/bottts/svg?seed=${authData.customer_id ?? ''}`}
+                        width={'100%'}
+                        height={'100%'}
+                        borderRadius={'full'}
+                        objectFit="cover"
+                        alt="Profile Icon"
+                    />
                     {totalItems > 0 && (
                         <Flex
                             position="absolute"

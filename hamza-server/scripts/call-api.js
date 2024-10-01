@@ -40,7 +40,7 @@ async function main() {
         );
 
         const buckyResponse = await fetch(
-            `http://localhost:${port}/custom/bucky/import?keyword=electronics&count=10`,
+            `http://localhost:${port}/custom/bucky/import?keyword=electronics&count=2`,
             {
                 method: 'GET',
                 headers: {

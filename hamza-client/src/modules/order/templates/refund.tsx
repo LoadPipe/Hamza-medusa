@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { getSingleBucket } from '@lib/data';
 import { Box, Collapse, HStack, Icon, Text, VStack } from '@chakra-ui/react';
 import { BsCircleFill } from 'react-icons/bs';
 import RefundCard from '@modules/account/components/refund-card';
 import EmptyState from '@modules/order/components/empty-state';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import Spinner from '@modules/common/icons/spinner';
+import { useQuery } from '@tanstack/react-query';
 
 const Refund = ({
     customer,
@@ -13,23 +15,19 @@ const Refund = ({
     customer: string;
     isEmpty?: boolean;
 }) => {
-    const [customerOrder, setCustomerOrder] = useState<any[]>([]);
-    const [customerId, setCustomerId] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
     const [courierInfo, setCourierInfo] = useState(false);
 
-    // console.log(`ORDERS ARE ${JSON.stringify(orders)}`);
-    useEffect(() => {
-        // console.log('Orders received in Cancelled:', orders);
-        if (customer && customer.length > 0) {
-            const customer_id = customer;
-            // console.log(
-            //     `Running fetchAllOrders with customerID ${customer_id}`
-            // );
-            fetchAllOrders(customer_id);
-            setCustomerId(customer_id);
+    const {
+        data: customerOrder,
+        isLoading,
+        isError,
+    } = useQuery(
+        ['fetchAllOrders', customer],
+        () => getSingleBucket(customer, 5),
+        {
+            enabled: !!customer,
         }
-    }, [customer]);
+    );
 
     const toggleRefundInfo = (orderId: any) => {
         setCourierInfo(courierInfo === orderId ? null : orderId);
@@ -46,30 +44,42 @@ const Refund = ({
         return formatCryptoPrice(amount, currency_code || 'USDC');
     };
 
-    const fetchAllOrders = async (customerId: string) => {
-        setIsLoading(true);
-        try {
-            const bucket = await getSingleBucket(customerId, 5);
+    // Show loading spinner when fetching data
+    if (isLoading) {
+        return (
+            <Box
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                textAlign="center"
+                py={5}
+            >
+                <Text color="white" fontSize="lg" mb={8}>
+                    Loading Refunded orders...
+                </Text>
+                <Spinner size={80} />
+            </Box>
+        );
+    }
 
-            if (bucket === undefined || bucket === null) {
-                console.error('Bucket is undefined or null');
-                setCustomerOrder([]); // Set empty state
-                setIsLoading(false);
-                return;
-            }
-
-            if (Array.isArray(bucket)) {
-                setCustomerOrder(bucket);
-            } else {
-                console.error('Expected an array but got:', bucket);
-                setCustomerOrder([]);
-            }
-        } catch (error) {
-            console.error('Error fetching processing orders:', error);
-            setCustomerOrder([]);
-        }
-        setIsLoading(false);
-    };
+    // Show error state if the fetch failed
+    if (isError || !customerOrder) {
+        return (
+            <Box
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                textAlign="center"
+                py={5}
+            >
+                <Text color="red" fontSize="lg" mb={8}>
+                    Error loading refund orders
+                </Text>
+            </Box>
+        );
+    }
 
     if (isEmpty && customerOrder && customerOrder?.length == 0) {
         return <EmptyState />;
@@ -82,7 +92,7 @@ const Refund = ({
                 <>
                     <h1>Refund Orders</h1>
 
-                    {customerOrder.map((order) => (
+                    {customerOrder.map((order: any) => (
                         <div
                             key={order.id} // Changed from cart_id to id since it's more reliable and unique
                             className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"

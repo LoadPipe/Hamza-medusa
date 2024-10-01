@@ -6,15 +6,11 @@ import ProfileInput from './components/profile-input';
 import ProfileImage from './components/profile-image';
 import ProfileCurrency from '@modules/account/components/profile-currency';
 import {
-    getHamzaCustomer,
     getVerificationStatus,
     setCurrency,
     updateCustomer,
-    getNonSecureCustomer,
 } from '@lib/data';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 
 const ProfileForm: React.FC<any> = ({ customer }) => {
     // Todo: disable submitting if fields have not been changed
@@ -129,6 +125,7 @@ const ProfileForm: React.FC<any> = ({ customer }) => {
             <ProfileImage
                 firstName={avatarFirstName}
                 lastName={avatarLastName}
+                uniqueKey={customer.id}
             />
 
             <Text

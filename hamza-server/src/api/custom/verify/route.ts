@@ -11,6 +11,146 @@ import { RouteHandler } from '../../route-handler';
 
 // TODO: So once the user has been verified, we can use the CustomerService.create() method to create/login the user.
 
+class NewCustomerNames {
+    static firstNames = [
+        'Anonymous',
+        'John',
+        'Garo',
+        'Jonathan',
+        'Gar',
+        'Farver',
+        'Melchior',
+        'Zaaaane',
+        'Johnald',
+        'Feety',
+        'The Buddha',
+        'Conan',
+        'Bastrick',
+        'Weldrick',
+        'Javascript',
+        'Fleetwoooood',
+        'Farhrvenald',
+        'Bulbosaur',
+        'Captain',
+        'Peekachoo',
+        "J'Dinklage",
+        'Todd-Royal',
+        'Hingle',
+        'Jackmerius',
+        "D'Isaiah",
+        "D'Jasper",
+        'Caligula',
+        'Xmas',
+        'Beavis',
+        'Ozamatazzz',
+        'Beezer',
+        'X-Wing',
+        'Super Mario',
+        'Eeeeeeeeee',
+        'Skidooooosh',
+        'Torque',
+        'Bizmo',
+        'Donkeyteeth',
+        'Quiznatroid',
+        'Bidness',
+        'Funkayyyy',
+        "D'pez",
+        'Slayyyyyyyy',
+        'Beeeeg',
+        'Quackadilly',
+        'Blyrone',
+        'Jammie',
+        'Hamcorn',
+        'Cornelius',
+        'Dahistorius',
+        "Huka'Lakanaka",
+        'Haloopeeeno',
+        'Minanas',
+        'Ladadadadaladadada',
+        'Horsey',
+        'Mousecop',
+        'Squeeeeeeeeps',
+        'A.A.Ron',
+        'Firstname',
+        "T'Variousness",
+        'Juckson',
+    ];
+
+    static lastNames = [
+        'Gigachad',
+        'Kosinski',
+        'Nazarian',
+        'Bajada',
+        'Mnarnar',
+        'McZaza',
+        'Feetersen',
+        'McBoatface',
+        'Maguffin',
+        'Religion',
+        'Stonefist',
+        'Barnbarian',
+        'Fahhhhrrnald',
+        'McMc',
+        'Integer',
+        'The Mack',
+        'Nose',
+        'Licktoad',
+        'Morgoon',
+        'Ahab',
+        'Smoochie-Wallace',
+        'McKringleberry',
+        'Tacktheratrix',
+        'Billings-Clyde',
+        'Probincrux III',
+        'Beavus',
+        'Jaxon-Flaxon-Waxon',
+        'Hardunkichud',
+        'Buckshank',
+        'Washingbeard',
+        '@aliciousness',
+        'Bros',
+        'Eeeeeeeeee',
+        'Schoishse',
+        'Velociraptor',
+        'Barsoooom',
+        'Construction Noise',
+        'Funyuns',
+        'Mazimwellious',
+        'Skittle',
+        'Bidness',
+        'Stooooooiuzus',
+        'Poopsie',
+        'Queeeeeeenn',
+        'Boyahhh',
+        'Quackadilly',
+        'Blashington',
+        'Jammi-Jammy',
+        'Coooorrrrrnnnius',
+        'Chickeninthecorn',
+        'Lamystorius',
+        'LeMysterioso',
+        "Hakanakaheekalucka'hukahakafaka",
+        'Dala-dadaladaladalada',
+        'Harvard',
+        'Balakay',
+        'Lastname',
+        'Showerhandle',
+        'Powercandle',
+        'Mascarpone',
+        'Grundleplith',
+    ];
+
+    public static getRandom(): { first_name: string, last_name: string } {
+        const fRand = Math.floor(Math.random() * this.firstNames.length);
+        const lRand = Math.floor(Math.random() * this.firstNames.length);
+
+        return {
+            first_name: this.firstNames[fRand],
+            last_name: this.lastNames[lRand]
+        };
+    }
+}
+
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const customerService: CustomerService =
         req.scope.resolve('customerService');
@@ -27,11 +167,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         //get the service instances
         let created = false;
 
-        //TODO: needs security
-
         const { message, signature } = handler.inputParams;
 
-        const wallet_address = message.address;
+        const wallet_address = message.address?.trim()?.toLowerCase();
 
         let checkCustomerWithWalletAddress =
             await CustomerWalletAddressRepository.findOne({
@@ -39,20 +177,23 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 relations: { customer: { preferred_currency: true } },
             });
 
+        const { first_name, last_name } = NewCustomerNames.getRandom();
+
         //create customer input data
         const customerInputData = {
             email: `${checkCustomerWithWalletAddress && checkCustomerWithWalletAddress.customer ? checkCustomerWithWalletAddress.customer.email : `${wallet_address}@evm.blockchain`}`,
-            first_name: 'Anonymous',
-            last_name: 'Gigachad',
+            first_name,
+            last_name,
             password: 'password', //TODO: (JK) store the default password someplace
             wallet_address: wallet_address,
         };
+        const email = customerInputData.email?.trim().toLowerCase() ?? '';
 
-        handler.logger.debug('customer input is ' + customerInputData);
+        handler.logger.debug('customer input is ' + JSON.stringify(customerInputData));
         //verify the signature
         const siweMessage = new SiweMessage(message);
         let siweResponse = await siweMessage.verify({ signature });
-        handler.logger.debug('siwe response is ' + siweResponse);
+        handler.logger.debug('siwe response is ' + JSON.stringify(siweResponse));
         if (!siweResponse.success) {
             throw new Error('Error in validating wallet address signature');
         }
@@ -61,22 +202,23 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             'customer data is ' + checkCustomerWithWalletAddress
         );
         let newCustomerData: Customer;
+
         if (!checkCustomerWithWalletAddress) {
             handler.logger.debug('creating new customer ');
             await customerService.create(customerInputData);
             newCustomerData = await CustomerRepository.findOne({
-                where: { email: customerInputData.email.toLowerCase() },
+                where: { email: email },
                 relations: { preferred_currency: true },
             });
             created = true;
         } else {
             //if customer record exists, authenticate the user
             let authResult = await authService.authenticateCustomer(
-                customerInputData.email.toLowerCase(),
+                email,
                 customerInputData.password,
                 customerInputData.wallet_address
             );
-            handler.logger.debug('auth result is ' + authResult);
+            handler.logger.debug('auth result is ' + JSON.stringify(authResult));
             if (!authResult.success) {
                 throw new Error('Error in verifying email and password');
             }
@@ -96,7 +238,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 checkCustomerWithWalletAddress &&
                 checkCustomerWithWalletAddress.customer &&
                 checkCustomerWithWalletAddress.customer.preferred_currency,
-            email: customerInputData.email,
+            email: email,
             wallet_address: customerInputData.wallet_address,
             created,
             is_verified:

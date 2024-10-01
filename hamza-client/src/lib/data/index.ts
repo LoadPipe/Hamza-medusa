@@ -413,8 +413,8 @@ export async function getOrderStatus(order_id: string) {
     });
 }
 
-export async function cancelOrder(order_id: string) {
-    return await putSecure('/custom/order/cancel', { order_id });
+export async function cancelOrder(order_id: string, cancel_reason: string) {
+    return await putSecure('/custom/order/cancel', { order_id, cancel_reason });
 }
 
 export async function getVerificationStatus(customer_id: string) {

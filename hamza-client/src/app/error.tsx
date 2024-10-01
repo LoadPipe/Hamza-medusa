@@ -4,14 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
-import {
-    Text,
-    Flex,
-    Heading,
-    Button,
-    ListItem,
-    UnorderedList,
-} from '@chakra-ui/react';
+import { Text, Flex, Heading, Button } from '@chakra-ui/react';
 import ErrorIcon from '../../public/images/error/error-icon.svg';
 
 type ErrorPageProps = {
@@ -23,7 +16,7 @@ export default function Error({ error, reset }: ErrorPageProps) {
     const router = useRouter();
 
     useEffect(() => {
-        console.error(error);
+        // console.error(error);
     }, [error]);
 
     const handleBack = () => {

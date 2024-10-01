@@ -7,6 +7,7 @@ import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { getCheckoutStep } from '@lib/util/get-checkout-step';
 import { CartWithCheckoutStep } from 'types/global';
 import { getHamzaCustomer } from '@lib/data';
+import Loading from './loading';
 
 export const metadata: Metadata = {
     title: 'Cart',
