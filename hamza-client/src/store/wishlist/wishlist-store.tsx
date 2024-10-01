@@ -84,9 +84,7 @@ const useWishlistStore = create<WishlistType>()(
             loadWishlist: async (customer_id) => {
                 try {
                     const response = await getWishlist(customer_id);
-                    const items = response.items;
-                    console.log('WISHLIST ITEMS');
-                    console.log(items);
+                    const items = response?.items ?? [];
                     const products = items.map((item: any) => {
                         // Correctly declare priceDictionary without the extra =
                         const priceDictionary: PriceDictionary =
