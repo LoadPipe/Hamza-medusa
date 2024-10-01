@@ -32,6 +32,12 @@ export default class CustomerService extends MedusaCustomerService {
             `CustomerService.create() method running with input; ${input}`
         );
 
+        if (input?.wallet_address)
+            input.wallet_address = input.wallet_address.trim().toLowerCase();
+
+        if (input?.email)
+            input.email = input.email.trim().toLowerCase();
+
         let existingWalletAddress =
             await CustomerWalletAddressRepository.findOne({
                 where: { wallet_address: input.wallet_address },

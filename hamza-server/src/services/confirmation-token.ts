@@ -34,6 +34,9 @@ export default class ConfirmationTokenService extends TransactionBaseService {
         customer_id: string;
         email: string;
     }) {
+        if (email)
+            email = email.trim().toLowerCase();
+
         let emailCheck = await this.customerRepository_.findOne({
             where: { email: email },
         });
