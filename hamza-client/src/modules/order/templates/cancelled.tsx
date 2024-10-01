@@ -14,7 +14,7 @@ const Cancelled = ({
     isEmpty?: boolean;
 }) => {
     // Fetch canceled orders with useQuery
-    console.log(`customer? ${customer}`);
+
     const {
         data: canceledOrder,
         isLoading,
@@ -49,39 +49,42 @@ const Cancelled = ({
         return <EmptyState />;
     }
 
+    if (isLoading) {
+        return (
+            <Box
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                textAlign="center"
+                py={5}
+            >
+                <Text color="white" fontSize="lg" mb={8}>
+                    Loading Cancelled orders...
+                </Text>
+                <Spinner size={80} />
+            </Box>
+        );
+    }
+
+    if (isError || !canceledOrder) {
+        return (
+            <Box
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                textAlign="center"
+                py={5}
+            >
+                <Text color="red.500" fontSize="lg">
+                    Error fetching reviews.
+                </Text>
+            </Box>
+        );
+    }
     return (
         <div>
-            {isLoading && (
-                <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="center"
-                    textAlign="center"
-                    py={5}
-                >
-                    <Text color="white" fontSize="lg" mb={8}>
-                        Loading Cancelled orders...
-                    </Text>
-                    <Spinner size={80} />
-                </Box>
-            )}
-
-            {isError && (
-                <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="center"
-                    textAlign="center"
-                    py={5}
-                >
-                    <Text color="red.500" fontSize="lg">
-                        Error fetching reviews.
-                    </Text>
-                </Box>
-            )}
-            {/* Processing-specific content */}
             {canceledOrder && canceledOrder.length > 0 ? (
                 <>
                     <h1>Cancelled Orders</h1>
@@ -106,6 +109,7 @@ const Cancelled = ({
                                         <CancelCard
                                             key={item.id}
                                             order={item}
+                                            vendorName={order.store.name}
                                             cancel_reason={
                                                 order.metadata?.cancel_reason ||
                                                 'No cancellation details were provided.'

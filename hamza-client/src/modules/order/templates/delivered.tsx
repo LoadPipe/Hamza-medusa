@@ -116,6 +116,7 @@ const Delivered = ({
                                     <DeliveredCard
                                         key={item.id}
                                         order={item}
+                                        vendorName={order.store.name}
                                         handle={
                                             item.variant?.product?.handle ||
                                             'N/A'
