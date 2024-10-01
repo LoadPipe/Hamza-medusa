@@ -3,7 +3,7 @@ import React from 'react';
 
 const ShippingpPolicy = () => {
     return (
-        <TabPanel>
+        <TabPanel fontSize={{ base: '14px', md: '16px' }}>
             <Text fontWeight="bold">1. Shipping Options</Text>
             <Text mt={2}>
                 At Hamza, sellers offer a variety of shipping options to suit

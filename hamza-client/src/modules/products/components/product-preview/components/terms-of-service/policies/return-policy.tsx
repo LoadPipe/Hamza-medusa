@@ -3,7 +3,7 @@ import React from 'react';
 
 const ReturnPolicy = () => {
     return (
-        <TabPanel>
+        <TabPanel fontSize={{ base: '14px', md: '16px' }}>
             <Text fontWeight="bold">Returns and Refunds</Text>
 
             <Text mt={4} fontWeight="bold">

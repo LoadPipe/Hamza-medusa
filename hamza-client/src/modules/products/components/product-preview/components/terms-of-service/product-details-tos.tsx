@@ -169,11 +169,13 @@ const TermsOfService = () => {
             <Modal isOpen={isOpen} onClose={closeModal} size="lg">
                 <ModalOverlay />
                 <ModalContent
-                    maxWidth={'760px'}
+                    maxWidth={{ base: 'calc(100% - 3rem)', md: '760px' }}
                     backgroundColor={'#121212'}
                     color={'white'}
                 >
-                    <ModalHeader>Shipping, returns, and payments</ModalHeader>
+                    <ModalHeader maxW={{ base: '253px' }} width={'100%'}>
+                        Shipping, returns, and payments
+                    </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <Tabs
@@ -188,6 +190,8 @@ const TermsOfService = () => {
                                 height={'44px'}
                             >
                                 <Tab
+                                    fontWeight={600}
+                                    fontSize={{ base: '14px', md: '16px' }}
                                     backgroundColor={
                                         selectedTab === 0
                                             ? 'primary.green.900'
@@ -206,6 +210,8 @@ const TermsOfService = () => {
                                     Shipping
                                 </Tab>
                                 <Tab
+                                    fontWeight={600}
+                                    fontSize={{ base: '14px', md: '16px' }}
                                     backgroundColor={
                                         selectedTab === 1
                                             ? 'primary.green.900'
@@ -223,6 +229,8 @@ const TermsOfService = () => {
                                     Returns
                                 </Tab>
                                 <Tab
+                                    fontWeight={600}
+                                    fontSize={{ base: '14px', md: '16px' }}
                                     backgroundColor={
                                         selectedTab === 2
                                             ? 'primary.green.900'
@@ -237,6 +245,10 @@ const TermsOfService = () => {
                                         selectedTab === 2 ? 'black' : 'white'
                                     }
                                     flex={1}
+                                    noOfLines={0}
+                                    whiteSpace="nowrap"
+                                    overflow={'hidden'}
+                                    textOverflow="ellipsis"
                                 >
                                     Payment Methods
                                 </Tab>
@@ -254,7 +266,11 @@ const TermsOfService = () => {
                         </Tabs>
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="blue" onClick={closeModal}>
+                        <Button
+                            fontSize={{ base: '14px', md: '16px' }}
+                            backgroundColor={'primary.green.900'}
+                            onClick={closeModal}
+                        >
                             Close
                         </Button>
                     </ModalFooter>
