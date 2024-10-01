@@ -11,9 +11,13 @@ import { debounce } from 'lodash';
 
 const Refund = ({
     customer,
+    enabled,
+    onSuccess,
     isEmpty,
 }: {
     customer: string;
+    enabled?: boolean;
+    onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
     const [courierInfo, setCourierInfo] = useState(false);
@@ -34,17 +38,24 @@ const Refund = ({
         isFetching,
         failureCount,
         isStale,
+        isSuccess,
     } = useQuery(
         ['fetchRefundOrder', customer],
         () => getSingleBucket(customer, 5),
         {
-            enabled: shouldFetch && !!customer,
+            enabled: shouldFetch && !!customer && enabled,
             staleTime: 5 * 60 * 1000, // 5 minutes
             retry: 5, // Retry 5 times
             retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
             refetchOnWindowFocus: false,
         }
     );
+
+    useEffect(() => {
+        if (isSuccess) {
+            onSuccess && onSuccess();
+        }
+    }, [isSuccess]);
 
     // Log the queries for refunded state and data
     console.log({

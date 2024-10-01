@@ -18,25 +18,43 @@ const All = ({
     const [shippedFetched, setShippedFetched] = useState(false);
     const [deliveredFetched, setDeliveredFetched] = useState(false);
     const [cancelledFetched, setCancelledFetched] = useState(false);
-    const [refundFetched, setRefundFetched] = useState(false);
+
     return (
         <Box>
             {ordersExist ? (
                 <Box>
                     <Box mt={4} mb={2}>
-                        <Processing customer={customer} />
+                        <Processing
+                            customer={customer}
+                            onSuccess={() => setProcessingFetched(true)}
+                        />
                     </Box>
                     <Box mt={4} mb={2}>
-                        <Shipped customer={customer} />
+                        <Shipped
+                            customer={customer}
+                            enabled={processingFetched}
+                            onSuccess={() => setShippedFetched(true)}
+                        />
                     </Box>
                     <Box mt={4} mb={2}>
-                        <Delivered customer={customer} />
+                        <Delivered
+                            customer={customer}
+                            enabled={shippedFetched}
+                            onSuccess={() => setDeliveredFetched(true)}
+                        />
                     </Box>
                     <Box mt={4} mb={2}>
-                        <Cancelled customer={customer} />
+                        <Cancelled
+                            customer={customer}
+                            enabled={deliveredFetched}
+                            onSuccess={() => setCancelledFetched(true)}
+                        />
                     </Box>
                     <Box mt={4} mb={2}>
-                        <Refund customer={customer} />
+                        <Refund
+                            customer={customer}
+                            enabled={cancelledFetched}
+                        />
                     </Box>
                 </Box>
             ) : (

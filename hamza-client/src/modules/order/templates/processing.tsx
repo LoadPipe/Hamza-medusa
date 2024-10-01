@@ -71,9 +71,11 @@ import { debounce } from 'lodash';
 
 const Processing = ({
     customer,
+    onSuccess,
     isEmpty,
 }: {
     customer: string;
+    onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
     const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
@@ -100,6 +102,7 @@ const Processing = ({
         isFetching,
         failureCount,
         isStale,
+        isSuccess,
     } = useQuery(
         ['fetchProcessingOrder', customer],
         () => getSingleBucket(customer, 1),
@@ -111,6 +114,12 @@ const Processing = ({
             refetchOnWindowFocus: false,
         }
     );
+
+    useEffect(() => {
+        if (isSuccess) {
+            onSuccess && onSuccess();
+        }
+    }, [isSuccess]);
 
     // Log the queries for processing state and data
     console.log({

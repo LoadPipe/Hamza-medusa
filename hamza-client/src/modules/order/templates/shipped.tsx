@@ -23,9 +23,13 @@ import { debounce } from 'lodash';
 
 const Shipped = ({
     customer,
+    enabled,
+    onSuccess,
     isEmpty,
 }: {
     customer: string;
+    enabled?: boolean;
+    onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
     const [courierInfo, setCourierInfo] = useState(false);
@@ -51,17 +55,24 @@ const Shipped = ({
         isFetching,
         failureCount,
         isStale,
+        isSuccess,
     } = useQuery(
         ['fetchShippedOrder', customer],
         () => getSingleBucket(customer, 2), // Fetching shipped orders (bucket 2)
         {
-            enabled: shouldFetch && !!customer,
+            enabled: shouldFetch && !!customer && enabled,
             staleTime: 5 * 60 * 1000, // 5 minutes
             retry: 5, // Retry 5 times
             retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
             refetchOnWindowFocus: false,
         }
     );
+
+    useEffect(() => {
+        if (isSuccess) {
+            onSuccess && onSuccess();
+        }
+    }, [isSuccess]);
 
     console.log({
         template: 'SHIPPED',
