@@ -23,7 +23,7 @@ const Cancelled = ({
         failureCount,
         isStale,
     } = useQuery(
-        ['fetchCancelledOrders', customer],
+        ['fetchAllOrders', customer],
         () => getSingleBucket(customer, 4),
         {
             enabled: !!customer, // Only fetch if customer exists
