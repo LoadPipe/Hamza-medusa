@@ -18,20 +18,27 @@ import {
     getBlockchainNetworkName,
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useEffect, useState } from 'react';
 
 export const WalletConnectButton = () => {
     const { error, isLoading, pendingChainId, switchNetwork } =
         useSwitchNetwork();
-
-    const { data: walletClient, isError } = useWalletClient();
-
-    const account = useAccount();
 
     //const isProduction = process.env.NODE_ENV === 'production';
     //const networkName = isProduction ? 'Optimism' : 'Sepolia';
     //const switchNetworkId = isProduction ? 10 : 11155111;
     const switchNetworkId = getAllowedChainsFromConfig()[0];
     const networkName = getBlockchainNetworkName(switchNetworkId ?? '');
+
+    //Update zustand store with Wagmi hook when connected
+    const account = useAccount();
+    const { setWalletAddress } = useCustomerAuthStore();
+    // useEffect to update Zustand state when the account is connected
+    useEffect(() => {
+        if (account?.address) {
+            setWalletAddress(account.address); // Update Zustand store
+        }
+    }, [account?.address, setWalletAddress]);
 
     return (
         <ConnectButton.Custom>

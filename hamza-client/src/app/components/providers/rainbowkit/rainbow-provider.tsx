@@ -69,6 +69,7 @@ async function getNonce() {
 
 export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     const {
+        walletAddress,
         authData,
         setCustomerAuthData,
         setCustomerPreferredCurrency,
@@ -88,7 +89,8 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     }, [authData.status, customer_id]); // Dependency array includes any state variables that trigger a reload
 
     useEffect(() => {
-        console.log('Saved wallet address', authData);
+        // ZUSTAND WALLET ADDRESS STATE HERE
+        console.log('Saved wallet address', walletAddress);
         getHamzaCustomer().then((hamzaCustomer) => {
             console.log('Hamza Customer: ', hamzaCustomer);
             getCustomer().then((customer) => {
