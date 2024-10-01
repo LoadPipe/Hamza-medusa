@@ -41,8 +41,8 @@ const TermsOfService = () => {
     };
 
     return (
-        <Flex mt="1rem" flexDir={'column'} gap={{ base: 2, md: 5 }}>
-            <Flex flexDir={'row'}>
+        <Flex mt="1rem" flexDir={'column'} gap={{ base: 3, md: 5 }}>
+            <Flex flexDir={{ base: 'column', md: 'row' }}>
                 <Flex maxW={'133px'} width={'100%'} flexDir={'row'} gap={2}>
                     <Flex width={'22px'} height={'22px'} alignSelf={'center'}>
                         <Flex
@@ -78,7 +78,7 @@ const TermsOfService = () => {
                 </Text>
             </Flex>
 
-            <Flex flexDir={'row'}>
+            <Flex flexDir={{ base: 'column', md: 'row' }}>
                 <Flex maxW={'133px'} width={'100%'} flexDir={'row'}>
                     <Flex mb="auto" gap={2}>
                         <Flex
@@ -127,7 +127,7 @@ const TermsOfService = () => {
                 </Text>
             </Flex>
 
-            <Flex flexDir={'row'}>
+            <Flex flexDir={{ base: 'column', md: 'row' }}>
                 <Flex maxW={'133px'} width={'100%'} flexDir={'row'} gap={2}>
                     <Flex width={'22px'} height={'22px'} alignSelf={'center'}>
                         <CiBitcoin
