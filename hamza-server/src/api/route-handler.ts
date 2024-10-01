@@ -81,11 +81,14 @@ export class RouteHandler {
             if (this.onError) {
                 if (!this.onError(err))
                     this.returnStatusWithMessage(500, errorInfo);
+            } else {
+                this.returnStatusWithMessage(500, errorInfo);
             }
         }
     }
 
     returnStatus(status: number, payload: any, truncateToMax: number = 0) {
+        console.log('RETURNING STATUS ', status)
         let payloadString = JSON.stringify(payload);
         if (truncateToMax > 0)
             payloadString = payloadString.substring(0, truncateToMax) + '...';

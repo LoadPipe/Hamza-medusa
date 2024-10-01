@@ -173,21 +173,25 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
         let checkCustomerWithWalletAddress =
             await CustomerWalletAddressRepository.findOne({
-                where: { wallet_address: wallet_address },
+                where: { wallet_address },
                 relations: { customer: { preferred_currency: true } },
             });
 
         const { first_name, last_name } = NewCustomerNames.getRandom();
 
         //create customer input data
+        const email = (
+            checkCustomerWithWalletAddress && checkCustomerWithWalletAddress.customer ?
+                checkCustomerWithWalletAddress.customer.email :
+                `${wallet_address}@evm.blockchain`).trim().toLowerCase();
+
         const customerInputData = {
-            email: `${checkCustomerWithWalletAddress && checkCustomerWithWalletAddress.customer ? checkCustomerWithWalletAddress.customer.email : `${wallet_address}@evm.blockchain`}`,
+            email,
             first_name,
             last_name,
             password: 'password', //TODO: (JK) store the default password someplace
-            wallet_address: wallet_address,
+            wallet_address,
         };
-        const email = customerInputData.email?.trim().toLowerCase() ?? '';
 
         handler.logger.debug('customer input is ' + JSON.stringify(customerInputData));
         //verify the signature
@@ -205,12 +209,17 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
         if (!checkCustomerWithWalletAddress) {
             handler.logger.debug('creating new customer ');
-            await customerService.create(customerInputData);
+            const customer = await customerService.create(customerInputData);
             newCustomerData = await CustomerRepository.findOne({
                 where: { email: email },
                 relations: { preferred_currency: true },
             });
-            created = true;
+            created = (customer ? true : false);
+
+            if (!created) {
+                handler.logger.error(`Failure to create customer record with ${JSON.stringify(customerInputData)}`);
+                throw new Error(`Failure to create customer record for ${customerInputData.wallet_address}.`);
+            }
         } else {
             //if customer record exists, authenticate the user
             let authResult = await authService.authenticateCustomer(
@@ -250,6 +259,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 whitelisted_stores: whitelistStatus.map((a) => a.store_id),
             },
         };
+
         handler.returnStatus(200, { status: true, data: body });
     });
 };
