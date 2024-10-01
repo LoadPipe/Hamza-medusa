@@ -21,6 +21,7 @@ import Tweet from '@/components/tweet';
 import { MdChevronLeft } from 'react-icons/md';
 import { getStore } from '@lib/data';
 import { BiBorderRadius } from 'react-icons/bi';
+import { FaArrowLeftLong } from 'react-icons/fa6';
 
 type ProductTemplateProps = {
     product: PricedProduct;
@@ -127,14 +128,20 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                         }}
                         className="ml-auto "
                     >
-                        <Flex width={'40px'} height={'40px'} ml="-0.5rem">
-                            <MdChevronLeft
-                                style={{
-                                    width: '100%',
-                                    height: '100%',
-                                    alignSelf: 'center',
-                                }}
-                            />
+                        <Flex width={'30px'} height={'40px'}>
+                            <Flex
+                                width={'20px'}
+                                height={'20px'}
+                                alignSelf={'center'}
+                            >
+                                <FaArrowLeftLong
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        alignSelf: 'center',
+                                    }}
+                                />
+                            </Flex>
                         </Flex>
                         <Text>Back to results</Text>
                     </LocalizedClientLink>
