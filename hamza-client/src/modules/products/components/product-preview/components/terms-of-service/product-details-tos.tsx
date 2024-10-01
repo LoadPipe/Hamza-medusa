@@ -24,6 +24,8 @@ import { MdCurrencyBitcoin } from 'react-icons/md';
 import { FiTruck } from 'react-icons/fi';
 import { GiAnticlockwiseRotation } from 'react-icons/gi';
 import { BsBoxSeam } from 'react-icons/bs';
+import { SiBitcoinsv } from 'react-icons/si';
+import { CiBitcoin } from 'react-icons/ci';
 
 const TermsOfService = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -39,20 +41,37 @@ const TermsOfService = () => {
     };
 
     return (
-        <Flex mt="1rem" flexDir={'column'} gap={5}>
+        <Flex mt="1rem" flexDir={'column'} gap={{ base: 2, md: 5 }}>
             <Flex flexDir={'row'}>
                 <Flex maxW={'133px'} width={'100%'} flexDir={'row'} gap={2}>
-                    <BsBoxSeam
-                        color="white"
-                        size={20}
-                        style={{ alignSelf: 'center' }}
-                    />
-                    <Text color={'white'}>Shipping:</Text>
+                    <Flex width={'22px'} height={'22px'} alignSelf={'center'}>
+                        <Flex
+                            width={'18px'}
+                            height={'18px'}
+                            mx="auto"
+                            alignSelf={'center'}
+                        >
+                            <BsBoxSeam
+                                color="white"
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                }}
+                            />
+                        </Flex>
+                    </Flex>
+                    <Text
+                        color={'white'}
+                        fontSize={{ base: '14px', md: '16px' }}
+                    >
+                        Shipping:
+                    </Text>
                 </Flex>
                 <Text
                     textDecor={'underline'}
                     cursor={'pointer'}
                     color="#94D42A"
+                    fontSize={{ base: '14px', md: '16px' }}
                     onClick={() => openModal(0)} // Open modal and show Payment Methods tab
                 >
                     See shipping policy
@@ -60,23 +79,41 @@ const TermsOfService = () => {
             </Flex>
 
             <Flex flexDir={'row'}>
-                <Flex
-                    maxW={'133px'}
-                    width={'100%'}
-                    flexDir={'row'}
-                    flexWrap={'nowrap'}
-                    alignItems={'center'}
-                >
+                <Flex maxW={'133px'} width={'100%'} flexDir={'row'}>
                     <Flex mb="auto" gap={2}>
-                        <GiAnticlockwiseRotation
-                            size={20}
-                            color="white"
-                            style={{ alignSelf: 'center' }}
-                        />
-                        <Text color={'white'}>Returns:</Text>
+                        <Flex
+                            width={'22px'}
+                            height={'22px'}
+                            alignSelf={'center'}
+                        >
+                            <Flex
+                                width={'20px'}
+                                height={'20px'}
+                                mx="auto"
+                                alignSelf={'center'}
+                            >
+                                <GiAnticlockwiseRotation
+                                    color="white"
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                    }}
+                                />
+                            </Flex>
+                        </Flex>
+                        <Text
+                            color={'white'}
+                            fontSize={{ base: '14px', md: '16px' }}
+                        >
+                            Returns:
+                        </Text>
                     </Flex>
                 </Flex>
-                <Text color={'white'} cursor={'pointer'}>
+                <Text
+                    color={'white'}
+                    cursor={'pointer'}
+                    fontSize={{ base: '14px', md: '16px' }}
+                >
                     30 days returns. Buyer pays for return shipping.{' '}
                     <span
                         style={{
@@ -91,18 +128,28 @@ const TermsOfService = () => {
             </Flex>
 
             <Flex flexDir={'row'}>
-                <Flex maxW={'133px'} width={'100%'} flexDir={'row'} gap={1}>
-                    <MdCurrencyBitcoin
-                        size={20}
-                        color="white"
-                        style={{ alignSelf: 'center' }}
-                    />
-                    <Text color={'white'}>Payments:</Text>
+                <Flex maxW={'133px'} width={'100%'} flexDir={'row'} gap={2}>
+                    <Flex width={'22px'} height={'22px'} alignSelf={'center'}>
+                        <CiBitcoin
+                            color="white"
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                            }}
+                        />
+                    </Flex>
+                    <Text
+                        color={'white'}
+                        fontSize={{ base: '14px', md: '16px' }}
+                    >
+                        Payments:
+                    </Text>
                 </Flex>
                 <Text
                     textDecor={'underline'}
                     cursor={'pointer'}
                     color="#94D42A"
+                    fontSize={{ base: '14px', md: '16px' }}
                     onClick={() => openModal(2)} // Open modal and show Payment Methods tab
                 >
                     See payment method policy
