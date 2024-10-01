@@ -75,6 +75,7 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                         ratio={1}
                         width={{ base: '100%', md: '100%' }} // Use full width on mobile, fixed on desktop
                         maxH="600px"
+                        minH="312px"
                         height="100%"
                         overflow="hidden"
                         onClick={() => openGallery(0)}
@@ -108,7 +109,8 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                             <GridItem key={index}>
                                 <Box
                                     width={{ base: '100%', md: '100%' }} // Full width on mobile, fixed on desktop
-                                    maxH="296px"
+                                    maxH={'296px'}
+                                    minH={'80px'}
                                     height="100%"
                                     aspectRatio="1"
                                     overflow="hidden"
