@@ -357,7 +357,7 @@ export default class OrderService extends MedusaOrderService {
             case OrderBucketType.PROCESSING:
                 return await this.getCustomerOrdersByStatus(customerId, {
                     fulfillmentStatus: FulfillmentStatus.NOT_FULFILLED,
-                    orderStatus: OrderStatus.PENDING,
+                    orderStatus: OrderStatus.PENDING
                 });
             case OrderBucketType.SHIPPED:
                 return await this.getCustomerOrdersByStatus(customerId, {
@@ -542,9 +542,9 @@ export default class OrderService extends MedusaOrderService {
 
         return relevantItems?.length
             ? {
-                  variants: relevantItems.map((i) => i.variant),
-                  quantities: relevantItems.map((i) => i.quantity),
-              }
+                variants: relevantItems.map((i) => i.variant),
+                quantities: relevantItems.map((i) => i.quantity),
+            }
             : { variants: [], quantities: [] };
     }
 
@@ -627,6 +627,7 @@ export default class OrderService extends MedusaOrderService {
                 'customer',
                 'items.variant.product',
             ],
+            order: { created_at: "DESC" }
         });
 
         if (orders) orders = orders.filter((o) => o.items?.length > 0);
