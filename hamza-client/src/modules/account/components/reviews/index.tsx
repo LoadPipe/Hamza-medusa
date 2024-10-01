@@ -82,13 +82,20 @@ const ReviewPage = ({ customer }: { customer: any }) => {
     const {
         data: pendingReviews,
         isLoading: pendingLoading,
+        isStale: pendingIsStale,
         isError: pendingError,
         refetch: fetchPendingReviews,
+        isSuccess: pendingSuccess,
     } = useQuery(
-        ['pendingReviews', customer.id],
+        ['pendingReviewsQuery', customer?.id],
         () => getNotReviewedOrders(customer.id),
         {
-            enabled: false, // This should be inside the options object
+            enabled: !!customer.id, // Ensure query only runs when enabled is true
+            staleTime: 0,
+            cacheTime: 0,
+            retry: 5, // Retry 5 times
+            retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
+            refetchOnWindowFocus: false,
         }
     );
 
@@ -96,29 +103,56 @@ const ReviewPage = ({ customer }: { customer: any }) => {
     const {
         data: reviews,
         isLoading: reviewsLoading,
+        isLoadingError: reviewsLoadingError,
+        isFetching: reviewsFetching,
+        failureCount: reviewsFailureCount,
+        failureReason: reviewsFailureReason,
+        isStale: reviewsIsStale,
         isError: reviewsError,
-        refetch: fetchReviews,
+        refetch,
+        isRefetching,
     } = useQuery(
-        ['fetchReviews', customer.id],
+        ['reviewQuery', customer?.id],
         () => getAllProductReviews(customer.id),
         {
-            enabled: false,
+            enabled: !!customer.id && pendingSuccess, // Ensure query only runs when enabled is true
+            staleTime: 0,
+            cacheTime: 0,
+            retry: 5, // Retry 5 times
+            retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
+            refetchOnWindowFocus: false,
         }
     );
 
+    console.log(`STALE REVIEW ${reviewsIsStale}`);
+
+    useEffect(() => {
+        console.log(`OK IT IS REFETCHING? ${isRefetching}`);
+    }, [isRefetching]);
+
+    useEffect(() => {
+        if (reviewsIsStale && reviews === undefined) {
+            console.log('Reviews are stale, attempting refetch');
+            refetch();
+        }
+    }, [reviewsIsStale, reviews]);
+
+    useEffect(() => {
+        if (pendingIsStale && pendingReviews === undefined) {
+            console.log('Pending reviews are stale, refetching');
+            fetchPendingReviews();
+        }
+    }, [pendingIsStale, pendingReviews]);
+
     const handleReviewUpdated = async () => {
-        // This function will be called after a review is updated
-        await fetchReviews();
+        // Check that refetch is properly triggered
+        const refetchResult = await refetch();
+        console.log('Refetch result:', refetchResult);
     };
 
     const handlePendingUpdated = async () => {
         await fetchPendingReviews();
     };
-
-    useEffect(() => {
-        fetchPendingReviews();
-        fetchReviews();
-    }, [customer]);
 
     const handleReviewEdit = (review: any) => {
         setSelectedReview(review);
@@ -149,14 +183,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
             >
                 <Button
                     onClick={() => {
-                        fetchPendingReviews()
-                            .then(() => {
-                                console.log('Fetch successful');
-                                setActiveButton('pending');
-                            })
-                            .catch((error) => {
-                                console.error('Failed to fetch: ', error);
-                            });
+                        setActiveButton('pending');
                     }}
                     {...commonButtonStyles}
                     isActive={activeButton === 'pending'}
@@ -167,8 +194,8 @@ const ReviewPage = ({ customer }: { customer: any }) => {
 
                 <Button
                     onClick={() => {
-                        fetchReviews();
                         setActiveButton('reviews');
+                        handleReviewUpdated();
                     }}
                     {...commonButtonStyles}
                     isActive={activeButton === 'reviews'}
@@ -178,7 +205,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                 </Button>
             </ButtonGroup>
 
-            {activeButton === 'reviews' && reviews.length > 0 && (
+            {activeButton === 'reviews' && (
                 <>
                     {reviewsLoading ? (
                         <Box
@@ -217,7 +244,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                         gap={4}
                                     >
                                         <Box flex="1" pr={{ base: 0, md: 4 }}>
-                                            <Text
+                                            <Box
                                                 fontSize={{
                                                     base: '14px',
                                                     md: '16px',
@@ -231,7 +258,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                     new Date(review.created_at),
                                                     'PPP'
                                                 )}
-                                            </Text>
+                                            </Box>
                                             <Flex alignItems="center" gap={2}>
                                                 <Link
                                                     href={`/us/products/${review.product.handle}`}
