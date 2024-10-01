@@ -14,19 +14,38 @@ const Cancelled = ({
     isEmpty?: boolean;
 }) => {
     // Fetch canceled orders with useQuery
+    console.log(`customer? ${customer}`);
     const {
-        data: customerOrder,
+        data: canceledOrder,
         isLoading,
         isError,
+        isFetching,
+        failureCount,
+        isStale,
     } = useQuery(
         ['fetchCancelledOrders', customer],
-        () => getSingleBucket(customer, 4), // Fetch for status 4 (cancelled orders)
+        () => getSingleBucket(customer, 4),
         {
             enabled: !!customer, // Only fetch if customer exists
+            staleTime: 60 * 1000,
+            retry: false,
+            retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
+            refetchOnWindowFocus: true,
         }
     );
 
-    if (isEmpty && customerOrder && customerOrder?.length == 0) {
+    // Log the queries for cancelled state and data
+    console.log({
+        template: 'CANCELLED',
+        isLoading,
+        isError,
+        isFetching,
+        failureCount,
+        canceledOrder,
+        isStale,
+    });
+
+    if (isEmpty && canceledOrder && canceledOrder?.length == 0) {
         return <EmptyState />;
     }
 
@@ -42,7 +61,7 @@ const Cancelled = ({
                     py={5}
                 >
                     <Text color="white" fontSize="lg" mb={8}>
-                        Loading cancelled orders...
+                        Loading Cancelled orders...
                     </Text>
                     <Spinner size={80} />
                 </Box>
@@ -63,11 +82,11 @@ const Cancelled = ({
                 </Box>
             )}
             {/* Processing-specific content */}
-            {customerOrder && customerOrder.length > 0 ? (
+            {canceledOrder && canceledOrder.length > 0 ? (
                 <>
                     <h1>Cancelled Orders</h1>
 
-                    {customerOrder.map((order: any) => (
+                    {canceledOrder.map((order: any) => (
                         <div
                             key={order.id} // Changed from cart_id to id since it's more reliable and unique
                             className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"

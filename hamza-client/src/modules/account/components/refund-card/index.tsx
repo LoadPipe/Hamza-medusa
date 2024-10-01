@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { getStore } from '@lib/data';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
+import Spinner from '@modules/common/icons/spinner';
 
 type OrderDetails = {
     thumbnail: string;
@@ -41,42 +42,17 @@ type OrderCardProps = {
 
 const RefundCard = ({ order, handle }: OrderCardProps) => {
     const orderString = typeof order.currency_code;
+
     const {
         data: vendorData,
-        isLoading,
-        isError,
-    } = useQuery(
-        ['fetchVendor', order.variant.product_id],
-        () => getStore(order.variant.product_id as string),
-        {
-            enabled: !!order.variant.product_id,
-        }
+        isLoading: isVendorLoading,
+        isError: isVendorError,
+    } = useQuery(['vendor', order.variant.product_id], () =>
+        getStore(order.variant.product_id as string)
     );
 
-    if (isLoading) {
-        return (
-            <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                py={5}
-            >
-                <Text> loading...</Text>
-            </Box>
-        );
-    }
-
-    if (isError || !vendorData) {
-        return (
-            <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                py={5}
-            >
-                <Text color="red">Error fetching vendor data</Text>
-            </Box>
-        );
+    if (!order) {
+        return <div>Loading...</div>; // Display loading message if order is undefined
     }
 
     return (
@@ -91,13 +67,19 @@ const RefundCard = ({ order, handle }: OrderCardProps) => {
             mt={2}
         >
             <Flex alignItems="center" mb={2}>
-                <Text
-                    fontSize={{ base: '14px', md: '24px' }}
-                    fontWeight="bold"
-                    noOfLines={1}
-                >
-                    {vendorData.name}
-                </Text>
+                {isVendorLoading ? (
+                    <Spinner />
+                ) : isVendorError ? (
+                    <Text color="red.500">Error loading vendor name</Text>
+                ) : (
+                    <Text
+                        fontSize={{ base: '14px', md: '24px' }}
+                        fontWeight="bold"
+                        noOfLines={1}
+                    >
+                        {vendorData.name || 'N/A'}
+                    </Text>
+                )}
                 <Flex
                     display={{ base: 'none', md: 'flex' }}
                     ml={2}

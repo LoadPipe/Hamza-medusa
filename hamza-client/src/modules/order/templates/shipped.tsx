@@ -32,18 +32,35 @@ const Shipped = ({
     const toggleCourierInfo = (orderId: any) => {
         setCourierInfo(courierInfo === orderId ? null : orderId);
     };
+    console.log(`shipped customer? ${customer}`);
 
     const {
-        data: customerOrder,
+        data: shippedOrder,
         isLoading,
         isError,
+        isFetching,
+        failureCount,
+        isStale,
     } = useQuery(
         ['fetchAllOrders', customer],
         () => getSingleBucket(customer, 2), // Fetching shipped orders (bucket 2)
         {
             enabled: !!customer, // Ensures the query runs only if customer is available
+            staleTime: 60 * 1000,
+            retry: 5, // Retry 5 times
+            retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
         }
     );
+
+    console.log({
+        template: 'SHIPPED',
+        isLoading,
+        isError,
+        isFetching,
+        failureCount,
+        shippedOrder,
+        isStale,
+    });
 
     if (isLoading) {
         return (
@@ -56,14 +73,14 @@ const Shipped = ({
                 py={5}
             >
                 <Text color="white" fontSize="lg" mb={8}>
-                    Loading shipped orders...
+                    Loading Shipped orders...
                 </Text>
                 <Spinner size={80} />
             </Box>
         );
     }
 
-    if (isError || !customerOrder) {
+    if (isError || !shippedOrder) {
         return (
             <Box
                 display="flex"
@@ -80,18 +97,18 @@ const Shipped = ({
         );
     }
 
-    if (isEmpty && customerOrder?.length === 0) {
+    if (isEmpty && shippedOrder?.length === 0) {
         return <EmptyState />;
     }
 
     return (
         <div>
             {/* Processing-specific content */}
-            {customerOrder && customerOrder.length > 0 ? (
+            {shippedOrder && shippedOrder.length > 0 ? (
                 <>
                     <h1>Shipped Orders</h1>
 
-                    {customerOrder.map((order: any) => (
+                    {shippedOrder.map((order: any) => (
                         <div
                             key={order.id} // Changed from cart_id to id since it's more reliable and unique
                             className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"

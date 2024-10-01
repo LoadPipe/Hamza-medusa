@@ -105,7 +105,7 @@ const DeliveredCard = ({ order, handle }: OrderCardProps) => {
                         fontWeight="bold"
                         noOfLines={1}
                     >
-                        {vendorData?.name || 'N/A'}
+                        {vendorData.name || 'N/A'}
                     </Text>
                 )}
                 <Flex
