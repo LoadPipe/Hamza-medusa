@@ -24,5 +24,3 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
         </div>
     );
 }
-
-//60vh for store page

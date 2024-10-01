@@ -3,7 +3,7 @@ import React from 'react';
 
 const PaymentPolicy = () => {
     return (
-        <TabPanel>
+        <TabPanel fontSize={{ base: '14px', md: '16px' }}>
             <Text>
                 At Hamza, we aim to provide a seamless, secure, and flexible
                 payment experience by offering multiple cryptocurrency options.

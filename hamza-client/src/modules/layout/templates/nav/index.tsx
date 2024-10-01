@@ -18,6 +18,8 @@ import { WalletConnectButton } from './menu-desktop/connect-wallet';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { LineItem } from '@medusajs/medusa';
+import { usePathname } from 'next/navigation';
+import { headers } from 'next/headers';
 
 const fetchCart = async () => {
     const cart = await retrieveCart();
@@ -34,6 +36,14 @@ const fetchCart = async () => {
 };
 
 export default async function Nav() {
+    // Get the current URL from headers
+    const headersList = headers();
+    const referer = headersList.get('referer') || ''; // Fallback if there's no referer
+    const url = new URL(referer); // Create a URL object to parse the path
+    const pathname = url.pathname; // Get the path from the referer
+    // Check if the route includes '/products'
+    const isProductRoute = pathname.includes('/products');
+
     const cart = await fetchCart();
 
     const totalItems =
@@ -51,6 +61,7 @@ export default async function Nav() {
             justifyContent={'center'}
             alignItems={'center'}
             backgroundColor={'#020202'}
+            display={{ base: isProductRoute ? 'none' : 'flex', md: 'flex' }}
         >
             <MobileNav />
 

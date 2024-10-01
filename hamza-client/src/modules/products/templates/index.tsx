@@ -146,7 +146,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                         <Text>Back to results</Text>
                     </LocalizedClientLink>
 
-                    <SearchBar />
+                    {/* <SearchBar /> */}
                 </Flex>
                 <Flex mt="2rem" mb={{ base: '-1rem', md: '0' }}>
                     <PreviewGallery

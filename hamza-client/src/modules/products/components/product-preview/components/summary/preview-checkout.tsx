@@ -6,7 +6,7 @@ import useProductPreview from '@store/product-preview/product-preview';
 import QuantityButton from '../quantity-button';
 import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
-import ReviewStar from '../../../../../../public/images/products/review-star.svg';
+import ReviewStar from '../../../../../../../public/images/products/review-star.svg';
 import Image from 'next/image';
 import { Variant } from 'types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
@@ -306,7 +306,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             backgroundColor={{ base: 'transparent', md: '#121212' }}
             overflow={'hidden'}
         >
-            <Flex gap={3} flexDirection={'column'}>
+            <Flex gap={{ base: 1, md: 3 }} flexDirection={'column'}>
                 <Heading
                     display={{ base: 'block', md: 'none' }}
                     fontSize={'16px'}
@@ -321,7 +321,10 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 >
                     Listing Price
                 </Heading>
-                <Flex gap={{ base: '5px', md: '10px' }} mb="-0.5rem">
+                <Flex
+                    gap={{ base: '5px', md: '10px' }}
+                    mb={{ base: '0', md: '-0.5rem' }}
+                >
                     <Image
                         className="h-[14px] w-[14px] md:h-[24px!important] md:w-[24px!important] self-center"
                         src={currencyIcons[preferred_currency_code ?? 'usdc']}
@@ -353,8 +356,12 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 >
                     {`${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} ${preferred_currency_code?.toUpperCase() ?? 'USDC'}`}
                 </Heading>
-                {/* {reviewCount > 0 ? (
-                    <Flex gap="5px" height="20px">
+                {reviewCount > 0 ? (
+                    <Flex
+                        gap="5px"
+                        height="20px"
+                        display={{ base: 'flex', md: 'none' }}
+                    >
                         <Flex flexDirection={'row'}>
                             <Flex flexDirection={'row'}>
                                 {renderStars(averageRating)}
@@ -373,7 +380,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         </Flex>
                     </Flex>
                 ) : (
-                    <Flex gap="5px" height="20px">
+                    <Flex
+                        gap="5px"
+                        height="20px"
+                        display={{ base: 'flex', md: 'none' }}
+                    >
                         <Flex flexDirection={'row'}>
                             <Image src={ReviewStar} alt={'star'} />
                             <Image src={ReviewStar} alt={'star'} />
@@ -406,7 +417,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                             </Heading>
                         </Flex>
                     </Flex>
-                )} */}
+                )}
 
                 <Heading
                     display={{ base: 'none', md: 'flex' }}

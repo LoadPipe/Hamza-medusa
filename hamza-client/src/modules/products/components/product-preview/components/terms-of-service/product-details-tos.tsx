@@ -41,8 +41,11 @@ const TermsOfService = () => {
     };
 
     return (
-        <Flex mt="1rem" flexDir={'column'} gap={{ base: 2, md: 5 }}>
-            <Flex flexDir={'row'}>
+        <Flex mt="1rem" flexDir={'column'} gap={{ base: 3, md: 5 }}>
+            <Flex
+                flexDir={{ base: 'column', md: 'row' }}
+                gap={{ base: 2, md: 0 }}
+            >
                 <Flex maxW={'133px'} width={'100%'} flexDir={'row'} gap={2}>
                     <Flex width={'22px'} height={'22px'} alignSelf={'center'}>
                         <Flex
@@ -78,7 +81,10 @@ const TermsOfService = () => {
                 </Text>
             </Flex>
 
-            <Flex flexDir={'row'}>
+            <Flex
+                flexDir={{ base: 'column', md: 'row' }}
+                gap={{ base: 2, md: 0 }}
+            >
                 <Flex maxW={'133px'} width={'100%'} flexDir={'row'}>
                     <Flex mb="auto" gap={2}>
                         <Flex
@@ -127,7 +133,10 @@ const TermsOfService = () => {
                 </Text>
             </Flex>
 
-            <Flex flexDir={'row'}>
+            <Flex
+                flexDir={{ base: 'column', md: 'row' }}
+                gap={{ base: 2, md: 0 }}
+            >
                 <Flex maxW={'133px'} width={'100%'} flexDir={'row'} gap={2}>
                     <Flex width={'22px'} height={'22px'} alignSelf={'center'}>
                         <CiBitcoin
@@ -160,11 +169,13 @@ const TermsOfService = () => {
             <Modal isOpen={isOpen} onClose={closeModal} size="lg">
                 <ModalOverlay />
                 <ModalContent
-                    maxWidth={'760px'}
+                    maxWidth={{ base: 'calc(100% - 3rem)', md: '760px' }}
                     backgroundColor={'#121212'}
                     color={'white'}
                 >
-                    <ModalHeader>Shipping, returns, and payments</ModalHeader>
+                    <ModalHeader maxW={{ base: '253px' }} width={'100%'}>
+                        Shipping, returns, and payments
+                    </ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <Tabs
@@ -179,6 +190,8 @@ const TermsOfService = () => {
                                 height={'44px'}
                             >
                                 <Tab
+                                    fontWeight={600}
+                                    fontSize={{ base: '14px', md: '16px' }}
                                     backgroundColor={
                                         selectedTab === 0
                                             ? 'primary.green.900'
@@ -197,6 +210,8 @@ const TermsOfService = () => {
                                     Shipping
                                 </Tab>
                                 <Tab
+                                    fontWeight={600}
+                                    fontSize={{ base: '14px', md: '16px' }}
                                     backgroundColor={
                                         selectedTab === 1
                                             ? 'primary.green.900'
@@ -214,6 +229,8 @@ const TermsOfService = () => {
                                     Returns
                                 </Tab>
                                 <Tab
+                                    fontWeight={600}
+                                    fontSize={{ base: '14px', md: '16px' }}
                                     backgroundColor={
                                         selectedTab === 2
                                             ? 'primary.green.900'
@@ -228,6 +245,10 @@ const TermsOfService = () => {
                                         selectedTab === 2 ? 'black' : 'white'
                                     }
                                     flex={1}
+                                    noOfLines={0}
+                                    whiteSpace="nowrap"
+                                    overflow={'hidden'}
+                                    textOverflow="ellipsis"
                                 >
                                     Payment Methods
                                 </Tab>
@@ -245,7 +266,11 @@ const TermsOfService = () => {
                         </Tabs>
                     </ModalBody>
                     <ModalFooter>
-                        <Button colorScheme="blue" onClick={closeModal}>
+                        <Button
+                            fontSize={{ base: '14px', md: '16px' }}
+                            backgroundColor={'primary.green.900'}
+                            onClick={closeModal}
+                        >
                             Close
                         </Button>
                     </ModalFooter>

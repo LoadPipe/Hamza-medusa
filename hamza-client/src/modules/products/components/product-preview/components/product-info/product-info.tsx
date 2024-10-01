@@ -158,7 +158,11 @@ const ProductInfo = () => {
                     </Heading>
 
                     {authData.status == 'authenticated' && (
-                        <Box ml="auto" mt="0.7rem">
+                        <Box
+                            display={{ base: 'none', md: 'block' }}
+                            ml="auto"
+                            mt="0.7rem"
+                        >
                             {wishlist.products.find(
                                 (a) => a.id == productData.id
                             ) ? (
@@ -205,7 +209,11 @@ const ProductInfo = () => {
                 </Flex>
 
                 {reviewCount > 0 ? (
-                    <Flex gap="5px" height="20px">
+                    <Flex
+                        display={{ base: 'none', md: 'flex' }}
+                        gap="5px"
+                        height="20px"
+                    >
                         <Flex flexDirection={'row'}>
                             <Flex flexDirection={'row'}>
                                 {renderStars(averageRating)}
@@ -224,7 +232,11 @@ const ProductInfo = () => {
                         </Flex>
                     </Flex>
                 ) : (
-                    <Flex gap="5px" height="20px">
+                    <Flex
+                        display={{ base: 'none', md: 'flex' }}
+                        gap="5px"
+                        height="20px"
+                    >
                         <Flex flexDirection={'row'}>
                             <Image src={ReviewStar} alt={'star'} />
                             <Image src={ReviewStar} alt={'star'} />
