@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getSingleBucket } from '@lib/data';
 import { Box, Collapse, HStack, Icon, Text, VStack } from '@chakra-ui/react';
 import { BsCircleFill } from 'react-icons/bs';
@@ -7,6 +7,7 @@ import EmptyState from '@modules/order/components/empty-state';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import Spinner from '@modules/common/icons/spinner';
 import { useQuery } from '@tanstack/react-query';
+import { debounce } from 'lodash';
 
 const Refund = ({
     customer,
@@ -16,6 +17,15 @@ const Refund = ({
     isEmpty?: boolean;
 }) => {
     const [courierInfo, setCourierInfo] = useState(false);
+    const [shouldFetch, setShouldFetch] = useState(false);
+
+    const debounceSetShouldFetch = debounce(() => setShouldFetch(true), 4000);
+
+    useEffect(() => {
+        if (customer) {
+            debounceSetShouldFetch();
+        }
+    }, [customer]);
 
     const {
         data: refundOrder,
@@ -25,13 +35,14 @@ const Refund = ({
         failureCount,
         isStale,
     } = useQuery(
-        ['fetchAllOrders', customer],
+        ['fetchRefundOrder', customer],
         () => getSingleBucket(customer, 5),
         {
-            enabled: !!customer,
-            staleTime: 60 * 1000,
+            enabled: shouldFetch && !!customer,
+            staleTime: 5 * 60 * 1000, // 5 minutes
             retry: 5, // Retry 5 times
             retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
+            refetchOnWindowFocus: false,
         }
     );
 

@@ -5,6 +5,7 @@ import Shipped from '@modules/order/templates/shipped';
 import Delivered from '@modules/order/templates/delivered';
 import Cancelled from '@modules/order/templates/cancelled';
 import Refund from '@modules/order/templates/refund';
+import { useState } from 'react';
 
 const All = ({
     customer,
@@ -13,6 +14,11 @@ const All = ({
     customer: string;
     ordersExist: boolean;
 }) => {
+    const [processingFetched, setProcessingFetched] = useState(false);
+    const [shippedFetched, setShippedFetched] = useState(false);
+    const [deliveredFetched, setDeliveredFetched] = useState(false);
+    const [cancelledFetched, setCancelledFetched] = useState(false);
+    const [refundFetched, setRefundFetched] = useState(false);
     return (
         <Box>
             {ordersExist ? (

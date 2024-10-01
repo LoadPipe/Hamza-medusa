@@ -6,7 +6,8 @@ import DeliveredCard from '@modules/account/components/delivered-card';
 import EmptyState from '@modules/order/components/empty-state';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useQuery } from '@tanstack/react-query';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { debounce } from 'lodash';
 
 const Delivered = ({
     customer,
@@ -15,6 +16,16 @@ const Delivered = ({
     customer: string;
     isEmpty?: boolean;
 }) => {
+    const [shouldFetch, setShouldFetch] = useState(false);
+
+    const debounceSetShouldFetch = debounce(() => setShouldFetch(true), 2000);
+
+    useEffect(() => {
+        if (customer) {
+            debounceSetShouldFetch();
+        }
+    }, [customer]);
+
     const {
         data: deliveredOrder,
         isLoading,
@@ -23,13 +34,14 @@ const Delivered = ({
         failureCount,
         isStale,
     } = useQuery(
-        ['fetchAllOrders', customer],
+        ['fetchDeliveredOrder', customer],
         () => getSingleBucket(customer, 3),
         {
-            enabled: !!customer, // Only fetch if `customer` is provided
-            staleTime: 60 * 1000,
+            enabled: shouldFetch && !!customer,
+            staleTime: 5 * 60 * 1000, // 5 minutes
             retry: 5, // Retry 5 times
             retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
+            refetchOnWindowFocus: false,
         }
     );
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getSingleBucket } from '@lib/data';
 import {
     Box,
@@ -19,6 +19,7 @@ import ShippedCard from '@modules/account/components/shipped-card';
 import EmptyState from '@modules/order/components/empty-state';
 import { useQuery } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
+import { debounce } from 'lodash';
 
 const Shipped = ({
     customer,
@@ -28,6 +29,15 @@ const Shipped = ({
     isEmpty?: boolean;
 }) => {
     const [courierInfo, setCourierInfo] = useState(false);
+    const [shouldFetch, setShouldFetch] = useState(false);
+
+    const debounceSetShouldFetch = debounce(() => setShouldFetch(true), 1000);
+
+    useEffect(() => {
+        if (customer) {
+            debounceSetShouldFetch();
+        }
+    }, [customer]);
 
     const toggleCourierInfo = (orderId: any) => {
         setCourierInfo(courierInfo === orderId ? null : orderId);
@@ -42,13 +52,14 @@ const Shipped = ({
         failureCount,
         isStale,
     } = useQuery(
-        ['fetchAllOrders', customer],
+        ['fetchShippedOrder', customer],
         () => getSingleBucket(customer, 2), // Fetching shipped orders (bucket 2)
         {
-            enabled: !!customer, // Ensures the query runs only if customer is available
-            staleTime: 60 * 1000,
+            enabled: shouldFetch && !!customer,
+            staleTime: 5 * 60 * 1000, // 5 minutes
             retry: 5, // Retry 5 times
             retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
+            refetchOnWindowFocus: false,
         }
     );
 

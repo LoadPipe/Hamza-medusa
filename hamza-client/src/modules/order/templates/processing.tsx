@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { cancelOrder, getSingleBucket } from '@lib/data';
 import {
     Box,
@@ -32,6 +32,7 @@ import Spinner from '@modules/common/icons/spinner';
 
 import ProcessingOrderCard from '@modules/account/components/processing-order-card';
 import { BsCircleFill } from 'react-icons/bs';
+import { debounce } from 'lodash';
 
 /**
  * The Processing component displays and manages the customer's processing orders, allowing users to view order details,
@@ -80,6 +81,15 @@ const Processing = ({
     const [cancelReason, setCancelReason] = useState('');
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
     const [expandViewOrder, setExpandViewOrder] = useState(false);
+    const [shouldFetch, setShouldFetch] = useState(false);
+
+    const debounceSetShouldFetch = debounce(() => setShouldFetch(true), 150);
+
+    useEffect(() => {
+        if (customer) {
+            debounceSetShouldFetch();
+        }
+    }, [customer]);
 
     const queryClient = useQueryClient();
 
@@ -91,13 +101,14 @@ const Processing = ({
         failureCount,
         isStale,
     } = useQuery(
-        ['fetchAllOrders', customer],
+        ['fetchProcessingOrder', customer],
         () => getSingleBucket(customer, 1),
         {
-            enabled: !!customer,
-            staleTime: 60 * 1000,
+            enabled: shouldFetch && !!customer,
+            staleTime: 5 * 60 * 1000, // 5 minutes
             retry: 5, // Retry 5 times
             retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
+            refetchOnWindowFocus: false,
         }
     );
 

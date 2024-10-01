@@ -4,7 +4,8 @@ import CancelCard from '@modules/account/components/cancel-card';
 import EmptyState from '@modules/order/components/empty-state';
 import { useQuery } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { debounce } from 'lodash';
 
 const Cancelled = ({
     customer,
@@ -14,31 +15,39 @@ const Cancelled = ({
     isEmpty?: boolean;
 }) => {
     // Fetch canceled orders with useQuery
+    const [shouldFetch, setShouldFetch] = useState(false);
 
+    const debounceSetShouldFetch = debounce(() => setShouldFetch(true), 3000);
+
+    useEffect(() => {
+        if (customer) {
+            debounceSetShouldFetch();
+        }
+    }, [customer]);
     const {
         data: canceledOrder,
-        isLoading,
-        isError,
+        isLoading: cancelIsLoading,
+        isError: cancelIsError,
         isFetching,
         failureCount,
         isStale,
     } = useQuery(
-        ['fetchAllOrders', customer],
+        ['fetchCanceledOrder', customer],
         () => getSingleBucket(customer, 4),
         {
-            enabled: !!customer, // Only fetch if customer exists
-            staleTime: 60 * 1000,
-            retry: false,
+            enabled: shouldFetch && !!customer, // Only fetch if customer exists
+            staleTime: 5 * 60 * 1000, // 5 minutes
+            retry: true,
             retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
-            refetchOnWindowFocus: true,
+            refetchOnWindowFocus: false,
         }
     );
 
     // Log the queries for cancelled state and data
     console.log({
         template: 'CANCELLED',
-        isLoading,
-        isError,
+        cancelIsLoading,
+        cancelIsError,
         isFetching,
         failureCount,
         canceledOrder,
@@ -49,7 +58,7 @@ const Cancelled = ({
         return <EmptyState />;
     }
 
-    if (isLoading) {
+    if (cancelIsLoading) {
         return (
             <Box
                 display="flex"
@@ -67,7 +76,7 @@ const Cancelled = ({
         );
     }
 
-    if (isError || !canceledOrder) {
+    if (cancelIsError || !canceledOrder) {
         return (
             <Box
                 display="flex"
