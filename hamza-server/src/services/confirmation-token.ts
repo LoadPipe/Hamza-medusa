@@ -34,8 +34,11 @@ export default class ConfirmationTokenService extends TransactionBaseService {
         customer_id: string;
         email: string;
     }) {
+        if (email)
+            email = email.trim().toLowerCase();
+
         let emailCheck = await this.customerRepository_.findOne({
-            where: { email: email },
+            where: { email },
         });
 
         if (emailCheck) {
@@ -116,7 +119,7 @@ export default class ConfirmationTokenService extends TransactionBaseService {
         //update customer record
         await this.customerRepository_.update(
             { id: customerData.id },
-            { is_verified: true, email: tokenCheck.email_address }
+            { is_verified: true, email: tokenCheck?.email_address?.trim()?.toLowerCase() }
         );
         await this.confirmationTokenRepository_.update(
             { token: tokenCheck.token },

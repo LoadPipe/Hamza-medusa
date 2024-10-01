@@ -161,13 +161,13 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         message,
                         signature
                     );
-                    data = authResponse.data;
+                    data = authResponse.data
                 }
 
                 if (data.status == true) {
                     const tokenResponse = await getToken({
                         wallet_address: message.address,
-                        email: data.data.email,
+                        email: data.data?.email?.trim()?.toLowerCase(),
                         password: '',
                     });
 
