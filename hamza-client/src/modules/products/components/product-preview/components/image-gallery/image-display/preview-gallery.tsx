@@ -11,7 +11,7 @@ import {
 import { getObjectFit } from '@modules/get-object-fit';
 import useProductPreview from '@store/product-preview/product-preview';
 import React, { useEffect, useState } from 'react';
-import ImageGalleryModal from './image-gallery/gallery-modal';
+import ImageGalleryModal from '../gallery-modal';
 
 interface PreviewGalleryProps {
     selectedVariantImage: string;
@@ -63,22 +63,22 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
     });
 
     return (
-        <Flex maxWidth={'1280px'} width={'100%'} flexDirection={'column'}>
+        <Flex maxW={'1280px'} width={'100%'} flexDirection={'column'}>
             <Grid
                 templateColumns={gridTemplateColumns}
                 templateRows={gridTemplateRows}
-                gap={3}
+                gap={2}
             >
                 {/* Main Square Image on the top (mobile) or left (desktop) */}
                 <GridItem>
                     <AspectRatio
                         ratio={1}
-                        maxH={'600px'}
-                        width={'100%'}
+                        width={{ base: '100%', md: '100%' }} // Use full width on mobile, fixed on desktop
+                        maxH="600px"
+                        height="100%"
                         overflow="hidden"
                         onClick={() => openGallery(0)}
                         cursor="pointer"
-                        backgroundColor={'white'}
                         borderRadius={{ base: '16px', md: '16px 0 0 16px' }}
                     >
                         <Image
@@ -102,15 +102,15 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                             base: 'repeat(1, 1fr)', // 1 row on mobile
                             md: 'repeat(2, 1fr)', // 2 rows on desktop
                         }}
-                        gap={3}
+                        gap={2}
                     >
                         {images.slice(1, 5).map((image, index) => (
                             <GridItem key={index}>
                                 <Box
-                                    minWidth={'50px'}
-                                    maxH={'292px'}
-                                    width={'100%'}
-                                    aspectRatio="1 / 1"
+                                    width={{ base: '100%', md: '100%' }} // Full width on mobile, fixed on desktop
+                                    maxH="296px"
+                                    height="100%"
+                                    aspectRatio="1"
                                     overflow="hidden"
                                     borderRadius={{
                                         base: '16px',
@@ -124,7 +124,6 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                                     }}
                                     onClick={() => openGallery(index + 1)}
                                     cursor="pointer"
-                                    backgroundColor="white"
                                 >
                                     <Image
                                         src={image}

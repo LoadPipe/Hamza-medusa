@@ -3,7 +3,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Text, Button, Flex, Box, Heading, Divider } from '@chakra-ui/react';
 import useProductPreview from '@store/product-preview/product-preview';
-import QuantityButton from './quantity-button';
+import QuantityButton from '../quantity-button';
 import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
 import ReviewStar from '../../../../../../public/images/products/review-star.svg';
@@ -12,18 +12,18 @@ import { Variant } from 'types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import toast from 'react-hot-toast';
-import OptionSelect from '../../option-select';
+import OptionSelect from '../../../option-select';
 import { isEqual } from 'lodash';
 import {
     TiStarFullOutline,
     TiStarHalfOutline,
     TiStarOutline,
 } from 'react-icons/ti';
-import CartPopup from '../../cart-popup';
+import CartPopup from '../../../cart-popup';
 import { getAverageRatings, getStore, getReviewCount } from '@lib/data';
-import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
+import currencyIcons from '../../../../../../../public/images/currencies/crypto-currencies';
 import Spinner from '@modules/common/icons/spinner';
-import TermsOfService from './terms-of-service/product-details-tos';
+import TermsOfService from '../terms-of-service/product-details-tos';
 
 interface PreviewCheckoutProps {
     productId: string;
@@ -81,9 +81,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         };
 
         fetchProductReview();
-        // console.log(
-        //     `ReviewCount ${reviewCount} AverageRating ${averageRating}`
-        // );
     }, [productId]);
 
     const showAvailableCurrencies = () => {
@@ -169,12 +166,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     setSelectedVariant(selectedProductVariant);
 
                     // Find the price for the selected currency or default to the first price available
-                    const price =
-                        selectedProductVariant.prices.find(
-                            (p: any) =>
-                                p.currency_code ===
-                                (preferred_currency_code ?? 'usdc')
-                        );;
+                    const price = selectedProductVariant.prices.find(
+                        (p: any) =>
+                            p.currency_code ===
+                            (preferred_currency_code ?? 'usdc')
+                    );
 
                     // Update the price state
                     setSelectedPrice(price?.amount ?? 0);
@@ -219,7 +215,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             console.log('white list config ', whitelist_config);
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                    whitelist_config.whitelisted_stores.includes(data.data)
+                whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -310,7 +306,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             backgroundColor={{ base: 'transparent', md: '#121212' }}
             overflow={'hidden'}
         >
-            <Flex gap="10px" flexDirection={'column'}>
+            <Flex gap={3} flexDirection={'column'}>
                 <Heading
                     display={{ base: 'block', md: 'none' }}
                     fontSize={'16px'}
@@ -320,7 +316,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 </Heading>
                 <Heading
                     display={{ base: 'none', md: 'block' }}
-                    fontSize={'16px'}
+                    fontSize={'24px'}
                     color="primary.green.900"
                 >
                     Listing Price
@@ -357,7 +353,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 >
                     {`${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} ${preferred_currency_code?.toUpperCase() ?? 'USDC'}`}
                 </Heading>
-                {reviewCount > 0 ? (
+                {/* {reviewCount > 0 ? (
                     <Flex gap="5px" height="20px">
                         <Flex flexDirection={'row'}>
                             <Flex flexDirection={'row'}>
@@ -410,7 +406,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                             </Heading>
                         </Flex>
                     </Flex>
-                )}
+                )} */}
 
                 <Heading
                     display={{ base: 'none', md: 'flex' }}
@@ -484,9 +480,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         }
                     }}
                     borderRadius={'56px'}
-                    height={{ base: '40px', md: '75px' }}
+                    height={{ base: '40px', md: '55px' }}
                     width="100%"
-                    backgroundColor={'primary.yellow.900'}
+                    backgroundColor={'primary.green.900'}
                     disabled={isLoading} // Disable button while loading
                     fontSize={{ base: '12px', md: '18px' }}
                 >
@@ -516,10 +512,10 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         }
                     }}
                     borderRadius={'56px'}
-                    height={{ base: '40px', md: '75px' }}
+                    height={{ base: '40px', md: '55px' }}
                     borderWidth={'1px'}
-                    color="primary.yellow.900"
-                    borderColor={'primary.yellow.900'}
+                    color="primary.green.900"
+                    borderColor={'primary.green.900'}
                     backgroundColor={'transparent'}
                     mt="1rem"
                     data-cy="add-to-cart-button"
@@ -533,8 +529,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     {!inStock && isWhitelisted
                         ? 'Add to cart'
                         : inStock
-                            ? 'Add to Cart'
-                            : 'Out of Stock'}
+                          ? 'Add to Cart'
+                          : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs text-white px-4 py-2">
