@@ -99,7 +99,12 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
             width={'100vw'}
             mx="auto"
         >
-            <Flex maxW="1280px" width={'100%'} mx="1rem" flexDirection="column">
+            <Flex
+                maxW="1280px"
+                width={'calc(100% - 2rem)'}
+                mx="rem"
+                flexDirection="column"
+            >
                 <Flex
                     mt="1rem"
                     mb="-1rem"
@@ -134,7 +139,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                         <Text>Back to results</Text>
                     </LocalizedClientLink>
 
-                    {/* <SearchBar /> */}
+                    <SearchBar />
                 </Flex>
                 <Flex mt="2rem" mb={{ base: '-1rem', md: '0' }}>
                     <PreviewGallery

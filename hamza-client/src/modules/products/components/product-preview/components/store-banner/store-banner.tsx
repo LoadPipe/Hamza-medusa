@@ -95,7 +95,11 @@ const StoreBanner = (props: StoreProps) => {
                     cursor={'pointer'}
                     fontSize={{ base: '12px', md: '16px' }}
                 >
-                    <Text alignSelf={'center'} color="primary.green.900">
+                    <Text
+                        alignSelf={'center'}
+                        color="primary.green.900"
+                        fontWeight={700}
+                    >
                         Chat with them
                     </Text>
                 </Flex>
@@ -112,7 +116,8 @@ const StoreBanner = (props: StoreProps) => {
                 >
                     <Text
                         alignSelf={'center'}
-                        color="white"
+                        color="#121212"
+                        fontWeight={700}
                         fontSize={{ base: '12px', md: '16px' }}
                     >
                         Visit Store
