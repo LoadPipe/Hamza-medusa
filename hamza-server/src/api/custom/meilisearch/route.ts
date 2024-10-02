@@ -5,7 +5,7 @@ import ProductService from '../../../services/product';
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     let productService: ProductService = req.scope.resolve('productService');
 
-    const handler = new RouteHandler(req, res, 'GET', '/products', ['id']);
+    const handler = new RouteHandler(req, res, 'GET', '/custom/meilisearch');
 
     await handler.handle(async () => {
         const product = await productService.reindexProducts();
