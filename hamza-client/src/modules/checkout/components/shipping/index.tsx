@@ -39,17 +39,17 @@ const Shipping: React.FC<ShippingProps> = ({
     console.log('user preferred currency code: ', preferred_currency_code);
 
     const isOpen = searchParams.get('step') === 'delivery';
-    const cartId = isOpen ? searchParams.get('cart') : cart.id;
+    const cartId = isOpen ? searchParams.get('cart') : cart?.id;
 
     const handleEdit = () => {
-        router.push(pathname + `?step=delivery&cart=${cart.id}`, {
+        router.push(pathname + `?step=delivery&cart=${cart?.id}`, {
             scroll: false,
         });
     };
 
     const handleSubmit = () => {
         setIsLoading(true);
-        addDefaultShippingMethod(cart.id).then(() => {
+        addDefaultShippingMethod(cart?.id).then(() => {
             router.push(pathname + '?step=review', {
                 scroll: false,
             });
@@ -83,7 +83,7 @@ const Shipping: React.FC<ShippingProps> = ({
         setIsLoading(false);
         setError(null);
 
-        if (cart.shipping_methods?.length) {
+        if (cart?.shipping_methods?.length) {
             set(
                 cart.shipping_methods?.length
                     ? cart.shipping_methods[0]?.shipping_option_id
@@ -92,7 +92,7 @@ const Shipping: React.FC<ShippingProps> = ({
         } else {
             if (isOpen) {
                 console.log('adding default shipping');
-                addDefaultShippingMethod(cart.id).then(() => {
+                addDefaultShippingMethod(cart?.id).then(() => {
                     router.push(pathname + '?step=review', {
                         scroll: false,
                     });
@@ -110,12 +110,12 @@ const Shipping: React.FC<ShippingProps> = ({
                         'flex flex-row text-3xl-regular gap-x-2 items-baseline text-white',
                         {
                             'opacity-50 pointer-events-none select-none':
-                                !isOpen && cart.shipping_methods.length === 0,
+                                !isOpen && cart?.shipping_methods?.length === 0,
                         }
                     )}
                 >
                     Delivery
-                    {!isOpen && cart.shipping_methods.length > 0 && (
+                    {!isOpen && cart?.shipping_methods?.length > 0 && (
                         <CheckCircleSolid />
                     )}
                 </Heading>
@@ -138,8 +138,8 @@ const Shipping: React.FC<ShippingProps> = ({
                     <div className="pb-8">
                         <RadioGroup
                             value={
-                                cart.shipping_methods?.length
-                                    ? cart.shipping_methods[0]
+                                cart?.shipping_methods?.length
+                                    ? cart?.shipping_methods[0]
                                           ?.shipping_option_id
                                     : ''
                             }
@@ -156,10 +156,10 @@ const Shipping: React.FC<ShippingProps> = ({
                                                 {
                                                     'border-ui-border-interactive':
                                                         option.id ===
-                                                        (cart.shipping_methods
+                                                        (cart?.shipping_methods
                                                             ?.length
                                                             ? cart
-                                                                  .shipping_methods[0]
+                                                                  ?.shipping_methods[0]
                                                                   ?.shipping_option_id
                                                             : ''),
                                                 }
@@ -170,10 +170,10 @@ const Shipping: React.FC<ShippingProps> = ({
                                                 <Radio
                                                     checked={
                                                         option.id ===
-                                                        (cart.shipping_methods
+                                                        (cart?.shipping_methods
                                                             ?.length
                                                             ? cart
-                                                                  .shipping_methods[0]
+                                                                  ?.shipping_methods[0]
                                                                   ?.shipping_option_id
                                                             : '')
                                                     }
@@ -215,8 +215,8 @@ const Shipping: React.FC<ShippingProps> = ({
                         }}
                         isLoading={isLoading}
                         disabled={
-                            !cart.shipping_methods?.length ||
-                            !cart.shipping_methods[0]
+                            !cart?.shipping_methods?.length ||
+                            !cart?.shipping_methods[0]
                         }
                     >
                         Continue to payment
@@ -225,19 +225,19 @@ const Shipping: React.FC<ShippingProps> = ({
             ) : (
                 <div>
                     <div className="text-small-regular">
-                        {cart && cart.shipping_methods.length > 0 && (
+                        {cart && cart?.shipping_methods.length > 0 && (
                             <div className="flex flex-col w-1/3">
                                 <Text className="txt-medium-plus text-ui-fg-base mb-1">
                                     Method
                                 </Text>
                                 <Text className="txt-medium text-white">
-                                    {cart.shipping_methods?.length
-                                        ? cart.shipping_methods[0]
-                                              .shipping_option.name
+                                    {cart?.shipping_methods?.length
+                                        ? cart?.shipping_methods[0]
+                                              .shipping_option?.name
                                         : ' '}{' '}
                                     (
                                     {
-                                        cart.shipping_methods[0].shipping_option
+                                        cart?.shipping_methods[0]?.shipping_option
                                             .amount
                                     }
                                     )
