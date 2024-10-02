@@ -56,7 +56,7 @@ const ProductInfo = () => {
     // Memoize the selected variant to avoid recalculating on every render
 
     useEffect(() => {
-        if (productData && productData.variants) {
+        if (productData?.variants) {
             variantId = variantId ?? productData?.variants[0]?.id;
             setVariantId(variantId ?? '');
 
@@ -112,9 +112,9 @@ const ProductInfo = () => {
     useEffect(() => {
         const fetchProductReview = async () => {
             const averageRatingResponse = await getAverageRatings(
-                productData.id
+                productData?.id ?? ''
             );
-            const reviewCountResponse = await getReviewCount(productData.id);
+            const reviewCountResponse = await getReviewCount(productData?.id ?? '');
 
             setAverageRating(averageRatingResponse);
             setReviewCount(reviewCountResponse);
@@ -158,7 +158,7 @@ const ProductInfo = () => {
                         fontSize={'32px'}
                         color="white"
                     >
-                        {productData.title}
+                        {productData?.title ?? ''}
                     </Heading>
 
                     {authData.status == 'authenticated' && (
@@ -168,18 +168,18 @@ const ProductInfo = () => {
                             mt="0.7rem"
                         >
                             {wishlist.products.find(
-                                (a) => a.id == productData.id
+                                (a) => a.id == productData?.id
                             ) ? (
                                 <BiSolidHeart
                                     size={'26px'}
                                     onClick={() => {
                                         removeWishlistItemMutation.mutate({
-                                            id: productData.id,
+                                            id: productData?.id ?? '',
                                             description:
-                                                productData.description,
-                                            handle: productData.handle,
-                                            thumbnail: productData.thumbnail,
-                                            title: productData.title,
+                                                productData?.description ?? '',
+                                            handle: productData?.handle ?? '',
+                                            thumbnail: productData?.thumbnail ?? '',
+                                            title: productData?.title ?? '',
                                             price: convertToPriceDictionary(
                                                 selectedVariant
                                             ),
@@ -193,12 +193,12 @@ const ProductInfo = () => {
                                     size={26}
                                     onClick={() => {
                                         addWishlistItemMutation.mutate({
-                                            id: productData.id,
+                                            id: productData?.id,
                                             description:
-                                                productData.description,
-                                            handle: productData.handle,
-                                            thumbnail: productData.thumbnail,
-                                            title: productData.title,
+                                                productData?.description ?? '',
+                                            handle: productData?.handle ?? '',
+                                            thumbnail: productData?.thumbnail ?? '',
+                                            title: productData?.title ?? '',
                                             price: convertToPriceDictionary(
                                                 selectedVariant
                                             ),
@@ -277,8 +277,8 @@ const ProductInfo = () => {
             </Flex>
 
             <ProductDescription
-                description={productData.description}
-                subtitle={productData.subtitle}
+                description={productData?.description ?? ''}
+                subtitle={productData?.subtitle ?? ''}
             />
         </Flex>
     );
