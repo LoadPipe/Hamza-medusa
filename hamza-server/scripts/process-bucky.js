@@ -13,7 +13,7 @@ async function main() {
         const authCookie = authResponse.headers.get('set-cookie');
 
         const buckyResponse = await fetch(
-            `http://localhost:${port}/admin/custom/bucky/verify?order_id=${process.argv[2]}`,
+            `http://localhost:${port}/admin/custom/bucky/process?order_id=${process.argv[2]}`,
             {
                 method: 'GET',
                 headers: {

@@ -47,6 +47,7 @@ export default class PaymentVerificationService extends TransactionBaseService {
     private async verifyPayment(order: Order): Promise<{ order: Order, payment: Payment }[]> {
         let output: { order: Order, payment: Payment }[] = [];
         let allPaid: boolean = true;
+
         const payments: Payment[] = order.payments;
 
         try {
