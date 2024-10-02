@@ -129,7 +129,7 @@ const ProductCardGroup = () => {
                             (acc: number, review: any) => acc + review.rating,
                             0
                         );
-                        const avgRating = totalRating / reviewCounter;
+                        const avgRating = reviewCounter ? totalRating / reviewCounter : 0;
                         const roundedAvgRating = parseFloat(
                             avgRating.toFixed(2)
                         );
