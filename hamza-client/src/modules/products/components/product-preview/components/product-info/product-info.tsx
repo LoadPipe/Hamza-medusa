@@ -85,18 +85,18 @@ const ProductInfo = () => {
                     .map((_, index) => (
                         <TiStarFullOutline
                             key={`full-${index}`}
-                            className="text-yellow-500 w-['20px'] h-['20px]"
+                            className="text-yellow-500 text-2xl  w-['20px'] h-['20px]"
                         />
                     ))}
                 {halfStar && (
-                    <TiStarHalfOutline className="text-yellow-500 text-2xl" />
+                    <TiStarHalfOutline className="text-yellow-500 text-2xl w-['20px'] h-['20px]" />
                 )}
                 {Array(emptyStars)
                     .fill(null)
                     .map((_, index) => (
                         <TiStarOutline
                             key={`empty-${index}`}
-                            className="text-yellow-500 text-2xl"
+                            className="text-yellow-500 text-2xl w-['20px'] h-['20px]"
                         />
                     ))}
             </div>

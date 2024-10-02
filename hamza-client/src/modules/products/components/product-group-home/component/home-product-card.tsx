@@ -54,13 +54,23 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
     // Get product ratings
     const [averageRating, setAverageRating] = useState<number>(0);
     const [reviewCount, setReviewCount] = useState<number>(0);
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
         const fetchProductReview = async () => {
-            const averageRatingResponse = await getAverageRatings(productId);
-            const reviewCountResponse = await getReviewCount(productId);
+            setLoading(true);
+            try {
+                const averageRatingResponse =
+                    await getAverageRatings(productId);
+                const reviewCountResponse = await getReviewCount(productId);
 
-            setAverageRating(averageRatingResponse);
-            setReviewCount(reviewCountResponse);
+                setAverageRating(averageRatingResponse);
+                setReviewCount(reviewCountResponse);
+            } catch (error) {
+                console.error('Error fetching product reviews:', error);
+            } finally {
+                setLoading(false);
+            }
         };
 
         fetchProductReview();
@@ -128,14 +138,27 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                             mb={{ base: '2.5px', md: '0' }}
                         >
                             <IoStar style={{ color: '#FEC84B' }} />
-                            {(reviewCount ?? 0) > 0 ? (
+                            {loading ? (
+                                <>
+                                    <Skeleton
+                                        height="14px"
+                                        width="20px"
+                                        ml="2"
+                                    />
+                                    <Skeleton
+                                        height="14px"
+                                        width="40px"
+                                        ml="2"
+                                    />
+                                </>
+                            ) : reviewCount > 0 ? (
                                 <>
                                     <Text
                                         color={'white'}
                                         alignSelf={'center'}
                                         fontWeight="700"
                                         fontSize={{ base: '14px', md: '14px' }}
-                                        ml="1"
+                                        ml={{ base: '1.5', md: '2' }}
                                     >
                                         {averageRating}
                                     </Text>
@@ -144,19 +167,24 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                                         fontWeight="700"
                                         fontSize={{ base: '14px', md: '16px' }}
                                         color="#555555"
-                                        ml="1"
+                                        ml="2"
                                     >
-                                        ({reviewCount} reviews)
+                                        ({reviewCount}{' '}
+                                        {reviewCount === 1
+                                            ? 'review'
+                                            : 'reviews'}
+                                        )
                                     </Text>
                                 </>
                             ) : (
                                 <Text
                                     alignSelf={'center'}
-                                    ml={{ base: '1.5', md: '2' }}
+                                    fontWeight="700"
                                     fontSize={{ base: '14px', md: '16px' }}
-                                    color={'white'}
+                                    color="#555555"
+                                    ml="2"
                                 >
-                                    no reviews yet
+                                    ({0} {'reviews'})
                                 </Text>
                             )}
                         </Flex>
