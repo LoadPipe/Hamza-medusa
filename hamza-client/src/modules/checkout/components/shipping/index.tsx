@@ -79,27 +79,27 @@ const Shipping: React.FC<ShippingProps> = ({
         set(value);
     };
 
-    // useEffect(() => {
-    //     setIsLoading(false);
-    //     setError(null);
+    useEffect(() => {
+        setIsLoading(false);
+        setError(null);
 
-    //     if (cart.shipping_methods?.length) {
-    //         set(
-    //             cart.shipping_methods?.length
-    //                 ? cart.shipping_methods[0]?.shipping_option_id
-    //                 : ''
-    //         );
-    //     } else {
-    //         if (isOpen) {
-    //             console.log('adding default shipping');
-    //             addDefaultShippingMethod(cart.id).then(() => {
-    //                 router.push(pathname + '?step=review', {
-    //                     scroll: false,
-    //                 });
-    //             });
-    //         }
-    //     }
-    // }, [isOpen]);
+        if (cart.shipping_methods?.length) {
+            set(
+                cart.shipping_methods?.length
+                    ? cart.shipping_methods[0]?.shipping_option_id
+                    : ''
+            );
+        } else {
+            if (isOpen) {
+                console.log('adding default shipping');
+                addDefaultShippingMethod(cart.id).then(() => {
+                    router.push(pathname + '?step=review', {
+                        scroll: false,
+                    });
+                });
+            }
+        }
+    }, [isOpen]);
 
     return (
         <div className="bg-black">

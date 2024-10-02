@@ -215,20 +215,32 @@ const ProductInfo = () => {
                         height="20px"
                     >
                         <Flex flexDirection={'row'}>
-                            <Flex flexDirection={'row'}>
+                            <Flex flexDirection={'row'} alignSelf={'center'}>
                                 {renderStars(averageRating)}
                             </Flex>
-                            <Heading
-                                ml="4px"
+                            <Text
+                                ml="2"
                                 as="h4"
-                                variant="semibold"
-                                fontSize={'16px'}
-                                color={'#555555'}
+                                fontWeight="600"
+                                fontSize={'20px'}
+                                color={'white'}
                                 alignSelf={'center'}
                                 mt="2px"
                             >
-                                ({reviewCount} Reviews)
-                            </Heading>
+                                {averageRating}
+                            </Text>
+                            <Text
+                                ml="2"
+                                as="h4"
+                                fontWeight="600"
+                                fontSize={'16px'}
+                                color={'white'}
+                                alignSelf={'center'}
+                                mt="2px"
+                            >
+                                ({reviewCount}{' '}
+                                {reviewCount === 1 ? 'review' : 'reviews'})
+                            </Text>
                         </Flex>
                     </Flex>
                 ) : (
@@ -238,35 +250,22 @@ const ProductInfo = () => {
                         height="20px"
                     >
                         <Flex flexDirection={'row'}>
-                            <Image src={ReviewStar} alt={'star'} />
-                            <Image src={ReviewStar} alt={'star'} />
-                            <Image src={ReviewStar} alt={'star'} />
-                            <Image src={ReviewStar} alt={'star'} />
-                            <Image src={ReviewStar} alt={'star'} />
-                        </Flex>
+                            <Flex flexDirection={'row'} alignSelf={'center'}>
+                                {renderStars(averageRating)}
+                            </Flex>
 
-                        <Flex flexDirection={'row'}>
-                            <Heading
+                            <Text
+                                ml="2"
                                 as="h4"
-                                variant="semibold"
+                                fontWeight="600"
                                 fontSize={'16px'}
                                 color={'white'}
                                 alignSelf={'center'}
                                 mt="2px"
                             >
-                                4.97
-                            </Heading>
-                            <Heading
-                                ml="4px"
-                                as="h4"
-                                variant="semibold"
-                                fontSize={'16px'}
-                                color={'#555555'}
-                                alignSelf={'center'}
-                                mt="2px"
-                            >
-                                (0 Reviews)
-                            </Heading>
+                                ({reviewCount}{' '}
+                                {reviewCount === 1 ? 'review' : 'reviews'})
+                            </Text>
                         </Flex>
                     </Flex>
                 )}
