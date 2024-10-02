@@ -60,7 +60,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             await CustomerRepository.update(
                 { id: decoded.customer_id },
                 {
-                    email: userResponse.data.email,
+                    email: userResponse.data?.email?.trim()?.toLowerCase(),
                     is_verified: true,
                     first_name: userResponse.data.global_name.split(' ')[0],
                     last_name:
