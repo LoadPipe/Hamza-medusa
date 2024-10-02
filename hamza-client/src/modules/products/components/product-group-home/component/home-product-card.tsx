@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Text,
     Box,
@@ -16,8 +16,6 @@ interface ProductCardProps {
     variantID: string;
     countryCode: string;
     productName: string;
-    reviewCount: number;
-    totalRating: number;
     productPrice: number | string;
     currencyCode: string;
     imageSrc: string;
@@ -27,16 +25,16 @@ interface ProductCardProps {
     allow_backorder: boolean;
     inventory: number;
     storeId: string;
+    productId: string;
 }
 
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { getAverageRatings, getReviewCount } from '@lib/data';
 
 const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
     variantID,
     countryCode,
     productName,
-    reviewCount,
-    totalRating,
     productPrice,
     currencyCode,
     imageSrc,
@@ -52,6 +50,21 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
     const { preferred_currency_code } = useCustomerAuthStore();
 
     const objectFit = getObjectFit(productHandle);
+
+    // Get product ratings
+    const [averageRating, setAverageRating] = useState<number>(0);
+    const [reviewCount, setReviewCount] = useState<number>(0);
+    useEffect(() => {
+        const fetchProductReview = async () => {
+            const averageRatingResponse = await getAverageRatings(productId);
+            const reviewCountResponse = await getReviewCount(productId);
+
+            setAverageRating(averageRatingResponse);
+            setReviewCount(reviewCountResponse);
+        };
+
+        fetchProductReview();
+    }, [productId]);
 
     return (
         <LocalizedClientLink href={`/products/${productHandle}`}>
@@ -124,7 +137,7 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                                         fontSize={{ base: '14px', md: '14px' }}
                                         ml="1"
                                     >
-                                        {totalRating}
+                                        {averageRating}
                                     </Text>
                                     <Text
                                         alignSelf={'center'}
@@ -154,7 +167,7 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                                     className="h-[18px] w-[18px] md:h-[20px] md:w-[20px]"
                                     src={
                                         currencyIcons[
-                                        preferred_currency_code || 'usdc'
+                                            preferred_currency_code || 'usdc'
                                         ]
                                     }
                                     alt={preferred_currency_code || 'usdc'}

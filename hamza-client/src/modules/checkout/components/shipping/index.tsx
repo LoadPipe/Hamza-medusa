@@ -53,7 +53,7 @@ const Shipping: React.FC<ShippingProps> = ({
             router.push(pathname + '?step=review', {
                 scroll: false,
             });
-        })
+        });
         //router.push(pathname + '?step=payment', { scroll: false });
     };
 
@@ -79,25 +79,27 @@ const Shipping: React.FC<ShippingProps> = ({
         set(value);
     };
 
-    useEffect(() => {
-        setIsLoading(false);
-        setError(null);
+    // useEffect(() => {
+    //     setIsLoading(false);
+    //     setError(null);
 
-        if (cart.shipping_methods?.length) {
-            set(cart.shipping_methods?.length
-                ? cart.shipping_methods[0]
-                    ?.shipping_option_id : '');
-        } else {
-            if (isOpen) {
-                console.log('adding default shipping');
-                addDefaultShippingMethod(cart.id).then(() => {
-                    router.push(pathname + '?step=review', {
-                        scroll: false,
-                    });
-                });
-            }
-        }
-    }, [isOpen]);
+    //     if (cart.shipping_methods?.length) {
+    //         set(
+    //             cart.shipping_methods?.length
+    //                 ? cart.shipping_methods[0]?.shipping_option_id
+    //                 : ''
+    //         );
+    //     } else {
+    //         if (isOpen) {
+    //             console.log('adding default shipping');
+    //             addDefaultShippingMethod(cart.id).then(() => {
+    //                 router.push(pathname + '?step=review', {
+    //                     scroll: false,
+    //                 });
+    //             });
+    //         }
+    //     }
+    // }, [isOpen]);
 
     return (
         <div className="bg-black">
@@ -138,7 +140,7 @@ const Shipping: React.FC<ShippingProps> = ({
                             value={
                                 cart.shipping_methods?.length
                                     ? cart.shipping_methods[0]
-                                        ?.shipping_option_id
+                                          ?.shipping_option_id
                                     : ''
                             }
                             onChange={(value: string) => handleChange(value)}
@@ -157,8 +159,8 @@ const Shipping: React.FC<ShippingProps> = ({
                                                         (cart.shipping_methods
                                                             ?.length
                                                             ? cart
-                                                                .shipping_methods[0]
-                                                                ?.shipping_option_id
+                                                                  .shipping_methods[0]
+                                                                  ?.shipping_option_id
                                                             : ''),
                                                 }
                                             )}
@@ -171,8 +173,8 @@ const Shipping: React.FC<ShippingProps> = ({
                                                         (cart.shipping_methods
                                                             ?.length
                                                             ? cart
-                                                                .shipping_methods[0]
-                                                                ?.shipping_option_id
+                                                                  .shipping_methods[0]
+                                                                  ?.shipping_option_id
                                                             : '')
                                                     }
                                                 />
@@ -181,7 +183,11 @@ const Shipping: React.FC<ShippingProps> = ({
                                                 </span>
                                             </div>
                                             <span className="justify-self-end text-white">
-                                                {formatCryptoPrice(option.amount ?? 0, preferred_currency_code ?? 'usdc')}{' '}
+                                                {formatCryptoPrice(
+                                                    option.amount ?? 0,
+                                                    preferred_currency_code ??
+                                                        'usdc'
+                                                )}{' '}
                                                 {preferred_currency_code?.toUpperCase()}
                                             </span>
                                         </RadioGroup.Option>
@@ -227,10 +233,14 @@ const Shipping: React.FC<ShippingProps> = ({
                                 <Text className="txt-medium text-white">
                                     {cart.shipping_methods?.length
                                         ? cart.shipping_methods[0]
-                                            .shipping_option.name
+                                              .shipping_option.name
                                         : ' '}{' '}
                                     (
-                                    {cart.shipping_methods[0].shipping_option.amount})
+                                    {
+                                        cart.shipping_methods[0].shipping_option
+                                            .amount
+                                    }
+                                    )
                                 </Text>
                             </div>
                         )}

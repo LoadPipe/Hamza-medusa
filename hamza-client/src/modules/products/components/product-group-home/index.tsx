@@ -16,6 +16,7 @@ import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import ProductCardHome from './component/home-product-card';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
+import { getAverageRatings, getReviewCount } from '@lib/data';
 
 const ProductCardGroup = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
@@ -162,8 +163,6 @@ const ProductCardGroup = () => {
                             <ProductCardHome
                                 key={index}
                                 productHandle={product.handle}
-                                reviewCount={product.review}
-                                totalRating={10}
                                 variantID={variant?.id}
                                 countryCode={product.origin_country}
                                 productName={product.title}

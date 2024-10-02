@@ -26,6 +26,9 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
         if (!handler.enforceCustomerId(cart.customer_id)) return;
 
         await cartService.addDefaultShippingMethod(cartId);
-        return handler.returnStatusWithMessage(200, 'Successfully added shipping method');
+        return handler.returnStatusWithMessage(
+            200,
+            'Successfully added shipping method'
+        );
     });
 };
