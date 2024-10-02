@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { Request, Response } from 'express';
-import { RouteHandler } from 'src/api/route-handler';
-import CustomerRepository from 'src/repositories/customer';
-import { ILogger } from 'src/utils/logging/logger';
+import { RouteHandler } from '../../route-handler';
+import CustomerRepository from '../../../repositories/customer';
+import { ILogger } from '../../../utils/logging/logger';
 import jwt from 'jsonwebtoken';
 
 // add your client id and secret here:
@@ -147,6 +147,11 @@ export async function GET(
                 last_name = fullName.slice(1).join(' ');
             }
         }
+
+        //redirect if no email address available
+        return res.redirect(
+            `${process.env.STORE_URL}/account/profile?verify=false&error=true`
+        );
 
         //update the user record if all good
         await customerRepository.update(
