@@ -14,7 +14,7 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import ProductCardStore from '@modules/shop/components/product-card';
+import ProductCard from '@modules/shop/components/product-card';
 import useStorePage from '@store/store-page/store-page';
 
 const ProductCardGroup = () => {
@@ -124,6 +124,16 @@ const ProductCardGroup = () => {
                             (preferred_currency_code ?? 'usdc') as string
                         );
 
+                        const reviewCounter = product.reviews.length;
+                        const totalRating = product.reviews.reduce(
+                            (acc: number, review: any) => acc + review.rating,
+                            0
+                        );
+                        const avgRating = totalRating / reviewCounter;
+                        const roundedAvgRating = parseFloat(
+                            avgRating.toFixed(2)
+                        );
+
                         return (
                             <GridItem
                                 key={index}
@@ -131,11 +141,11 @@ const ProductCardGroup = () => {
                                 height={{ base: '100%', md: '399px' }}
                                 width="100%"
                             >
-                                <ProductCardStore
+                                <ProductCard
                                     key={index}
+                                    reviewCount={reviewCounter}
+                                    totalRating={roundedAvgRating}
                                     productHandle={product?.handle ?? ''}
-                                    reviewCount={product?.review}
-                                    totalRating={10}
                                     variantID={variant?.id ?? ''}
                                     countryCode={product?.origin_country ?? ''}
                                     productName={product?.title ?? ''}

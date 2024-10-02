@@ -88,18 +88,18 @@ const ProductInfo = () => {
                     .map((_, index) => (
                         <TiStarFullOutline
                             key={`full-${index}`}
-                            className="text-yellow-500 w-['20px'] h-['20px]"
+                            className="text-yellow-500 text-2xl  w-['20px'] h-['20px]"
                         />
                     ))}
                 {halfStar && (
-                    <TiStarHalfOutline className="text-yellow-500 text-2xl" />
+                    <TiStarHalfOutline className="text-yellow-500 text-2xl w-['20px'] h-['20px]" />
                 )}
                 {Array(emptyStars)
                     .fill(null)
                     .map((_, index) => (
                         <TiStarOutline
                             key={`empty-${index}`}
-                            className="text-yellow-500 text-2xl"
+                            className="text-yellow-500 text-2xl w-['20px'] h-['20px]"
                         />
                     ))}
             </div>
@@ -219,20 +219,31 @@ const ProductInfo = () => {
                         height="20px"
                     >
                         <Flex flexDirection={'row'}>
-                            <Flex flexDirection={'row'}>
+                            <Flex flexDirection={'row'} alignSelf={'center'}>
                                 {renderStars(averageRating)}
                             </Flex>
-                            <Heading
-                                ml="4px"
+                            <Text
+                                ml="2"
                                 as="h4"
-                                variant="semibold"
-                                fontSize={'16px'}
-                                color={'#555555'}
+                                fontWeight="600"
+                                fontSize={'20px'}
+                                color={'white'}
                                 alignSelf={'center'}
                                 mt="2px"
                             >
-                                ({reviewCount} Reviews)
-                            </Heading>
+                                {averageRating}
+                            </Text>
+                            <Text
+                                ml="2"
+                                as="h4"
+                                fontWeight="600"
+                                fontSize={'14px'}
+                                color={'white'}
+                                mt="2px"
+                            >
+                                ({reviewCount}{' '}
+                                {reviewCount === 1 ? 'review' : 'reviews'})
+                            </Text>
                         </Flex>
                     </Flex>
                 ) : (
@@ -242,35 +253,21 @@ const ProductInfo = () => {
                         height="20px"
                     >
                         <Flex flexDirection={'row'}>
-                            <Image src={ReviewStar} alt={'star'} />
-                            <Image src={ReviewStar} alt={'star'} />
-                            <Image src={ReviewStar} alt={'star'} />
-                            <Image src={ReviewStar} alt={'star'} />
-                            <Image src={ReviewStar} alt={'star'} />
-                        </Flex>
+                            <Flex flexDirection={'row'} alignSelf={'center'}>
+                                {renderStars(averageRating)}
+                            </Flex>
 
-                        <Flex flexDirection={'row'}>
-                            <Heading
+                            <Text
+                                ml="2"
                                 as="h4"
-                                variant="semibold"
-                                fontSize={'16px'}
+                                fontWeight="600"
+                                fontSize={'14px'}
                                 color={'white'}
-                                alignSelf={'center'}
                                 mt="2px"
                             >
-                                4.97
-                            </Heading>
-                            <Heading
-                                ml="4px"
-                                as="h4"
-                                variant="semibold"
-                                fontSize={'16px'}
-                                color={'#555555'}
-                                alignSelf={'center'}
-                                mt="2px"
-                            >
-                                (0 Reviews)
-                            </Heading>
+                                ({reviewCount}{' '}
+                                {reviewCount === 1 ? 'review' : 'reviews'})
+                            </Text>
                         </Flex>
                     </Flex>
                 )}

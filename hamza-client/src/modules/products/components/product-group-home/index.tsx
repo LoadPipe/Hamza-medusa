@@ -16,6 +16,7 @@ import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import ProductCardHome from './component/home-product-card';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
+import { getAverageRatings, getReviewCount } from '@lib/data';
 
 const ProductCardGroup = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
@@ -147,10 +148,19 @@ const ProductCardGroup = () => {
                         )?.amount ||
                         variant?.prices?.[0]?.amount ||
                         0;
+
                     const formattedPrice = formatCryptoPrice(
                         productPricing ?? 0,
                         preferred_currency_code as string
                     );
+
+                    const reviewCounter = product.reviews.length;
+                    const totalRating = product.reviews.reduce(
+                        (acc: number, review: any) => acc + review.rating,
+                        0
+                    );
+                    const avgRating = totalRating / reviewCounter;
+                    const roundedAvgRating = parseFloat(avgRating.toFixed(2));
 
                     return (
                         <GridItem
@@ -161,9 +171,9 @@ const ProductCardGroup = () => {
                         >
                             <ProductCardHome
                                 key={index}
+                                reviewCount={reviewCounter}
+                                totalRating={roundedAvgRating}
                                 productHandle={product.handle}
-                                reviewCount={product.review}
-                                totalRating={10}
                                 variantID={variant?.id}
                                 countryCode={product.origin_country}
                                 productName={product.title}

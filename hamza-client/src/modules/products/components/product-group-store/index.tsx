@@ -113,7 +113,8 @@ const ProductCardGroup = ({ storeName }: Props) => {
                     const productPricing =
                         variant?.prices?.find(
                             (price: any) =>
-                                price.currency_code === (preferred_currency_code ?? 'usdc')
+                                price.currency_code ===
+                                (preferred_currency_code ?? 'usdc')
                         )?.amount ||
                         variant?.prices?.[0]?.amount ||
                         0;
@@ -121,6 +122,14 @@ const ProductCardGroup = ({ storeName }: Props) => {
                         productPricing ?? 0,
                         (preferred_currency_code ?? 'usdc') as string
                     );
+
+                    const reviewCounter = product.reviews.length;
+                    const totalRating = product.reviews.reduce(
+                        (acc: number, review: any) => acc + review.rating,
+                        0
+                    );
+                    const avgRating = totalRating / reviewCounter;
+                    const roundedAvgRating = parseFloat(avgRating.toFixed(2));
 
                     return (
                         <GridItem
@@ -132,9 +141,9 @@ const ProductCardGroup = ({ storeName }: Props) => {
                         >
                             <ProductCardHome
                                 key={index}
+                                reviewCount={reviewCounter}
+                                totalRating={roundedAvgRating}
                                 productHandle={product.handle}
-                                reviewCount={0}
-                                totalRating={0}
                                 variantID={'0'}
                                 countryCode={product.countryCode}
                                 productName={product.title}

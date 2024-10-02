@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Text,
     Box,
@@ -16,8 +16,6 @@ interface ProductCardProps {
     variantID: string;
     countryCode: string;
     productName: string;
-    reviewCount: number;
-    totalRating: number;
     productPrice: number | string;
     currencyCode: string;
     imageSrc: string;
@@ -27,16 +25,18 @@ interface ProductCardProps {
     allow_backorder: boolean;
     inventory: number;
     storeId: string;
+    productId: string;
+    reviewCount: number;
+    totalRating: number;
 }
 
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { getAverageRatings, getReviewCount } from '@lib/data';
 
 const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
     variantID,
     countryCode,
     productName,
-    reviewCount,
-    totalRating,
     productPrice,
     currencyCode,
     imageSrc,
@@ -47,6 +47,8 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
     allow_backorder,
     inventory,
     storeId,
+    reviewCount,
+    totalRating,
 }) => {
     const [imageLoaded, setImageLoaded] = useState(false);
     const { preferred_currency_code } = useCustomerAuthStore();
@@ -65,7 +67,7 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                 }}
             >
                 <Box
-                    height={{ base: '134.73', md: '238px' }}
+                    height={{ base: '134.73px', md: '238px' }}
                     display="flex"
                     justifyContent="center"
                     backgroundColor={objectFit === 'cover' ? 'black' : 'white'}
@@ -115,14 +117,14 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                             mb={{ base: '2.5px', md: '0' }}
                         >
                             <IoStar style={{ color: '#FEC84B' }} />
-                            {(reviewCount ?? 0) > 0 ? (
+                            {reviewCount > 0 ? (
                                 <>
                                     <Text
                                         color={'white'}
                                         alignSelf={'center'}
                                         fontWeight="700"
                                         fontSize={{ base: '14px', md: '14px' }}
-                                        ml="1"
+                                        ml={{ base: '1.5', md: '2' }}
                                     >
                                         {totalRating}
                                     </Text>
@@ -131,19 +133,24 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                                         fontWeight="700"
                                         fontSize={{ base: '14px', md: '16px' }}
                                         color="#555555"
-                                        ml="1"
+                                        ml="2"
                                     >
-                                        ({reviewCount} reviews)
+                                        ({reviewCount}{' '}
+                                        {reviewCount === 1
+                                            ? 'review'
+                                            : 'reviews'}
+                                        )
                                     </Text>
                                 </>
                             ) : (
                                 <Text
                                     alignSelf={'center'}
-                                    ml={{ base: '1.5', md: '2' }}
+                                    fontWeight="700"
                                     fontSize={{ base: '14px', md: '16px' }}
-                                    color={'white'}
+                                    color="#555555"
+                                    ml="2"
                                 >
-                                    no reviews yet
+                                    ({0} {'reviews'})
                                 </Text>
                             )}
                         </Flex>
@@ -154,7 +161,7 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                                     className="h-[18px] w-[18px] md:h-[20px] md:w-[20px]"
                                     src={
                                         currencyIcons[
-                                        preferred_currency_code || 'usdc'
+                                            preferred_currency_code || 'usdc'
                                         ]
                                     }
                                     alt={preferred_currency_code || 'usdc'}
