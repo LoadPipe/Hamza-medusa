@@ -279,17 +279,7 @@ export async function getAllStoreNames() {
 // TODO: There's no reason to await getSecure, we're returning a promise anyways and we're adding more things
 // to the event loop for no reason
 export async function getAllProductReviews(customer_id: string) {
-    try {
-        const data = await getSecure('/custom/review', { customer_id });
-        console.log(`were getting the data ${data}`);
-        return data ?? [];
-    } catch (error) {
-        console.error(
-            `Failed to fetch product reviews for customer: ${customer_id}`,
-            error
-        );
-        throw error;
-    }
+    return getSecure('/custom/review', { customer_id });
 }
 
 export async function checkReviewsExistence(order_id: string) {
