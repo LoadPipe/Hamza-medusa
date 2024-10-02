@@ -1,34 +1,35 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Image, Flex } from '@chakra-ui/react';
-import { getHamzaCustomer } from '@lib/data';
+import { useState } from 'react';
+import { Image, Flex, Avatar } from '@chakra-ui/react';
 
-const ProfileImage = () => {
-    const [customerId, setCustomerId] = useState<string | null>(null);
+const ProfileImage = ({ customerId }: { customerId: string | null }) => {
+    const [imageError, setImageError] = useState(false);
 
-    // Fetch customer data on the client side
-    useEffect(() => {
-        async function fetchCustomer() {
-            const customer = await getHamzaCustomer();
-            if (customer) {
-                setCustomerId(customer.id);
-            }
-        }
-        fetchCustomer();
-    }, []);
-
+    const handleImageError = () => {
+        setImageError(true); // Set error state when the image fails to load
+    };
     const imageUrl = `https://api.dicebear.com/9.x/bottts/svg?seed=${customerId ?? ''}`;
 
     return (
         <Flex maxW={'858px'} width={'100%'}>
-            <Image
-                src={imageUrl}
-                style={{ width: '120px' }}
-                borderRadius={'full'}
-                objectFit="cover"
-                alt="Profile Icon"
-            />
+            {!imageError ? (
+                <Image
+                    src={imageUrl}
+                    style={{ width: '120px' }}
+                    borderRadius={'full'}
+                    objectFit="cover"
+                    alt="Profile Icon"
+                    onError={handleImageError} // If image fails, trigger error
+                />
+            ) : (
+                <Avatar
+                    name="Customer Avatar"
+                    size="xl"
+                    bg="gray.300"
+                    src="" // Avatar fallback, empty src
+                />
+            )}
         </Flex>
     );
 };
