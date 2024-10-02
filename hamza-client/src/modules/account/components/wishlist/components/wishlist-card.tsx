@@ -22,9 +22,10 @@ import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutatio
 import { WishlistProduct } from '@store/wishlist/wishlist-store';
 import { Spinner, Trash } from '@medusajs/icons';
 import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { LuBadgeCheck } from 'react-icons/lu';
+import { string } from 'zod';
 
 type PriceDictionary = {
     eth?: string;
@@ -71,7 +72,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
     productVariantId,
     countryCode,
 }) => {
-    const { data, error, isLoading } = useQuery(
+    const { data, error, isLoading, isFetching } = useQuery(
         ['products', productVariantId], // Use the variant ID directly as part of the query key
         async () => {
             const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/inventory?variant_id=${productVariantId}`;
@@ -82,6 +83,17 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
             enabled: !!productVariantId, // Ensure the query only runs if productVarientId is defined
         }
     );
+
+    // Shot in the dark, I can't even simulate this...
+    const queryClient = useQueryClient();
+    useEffect(() => {
+        resetCard();
+    }, [productVariantId]);
+
+    const resetCard = async () => {
+        if (productVariantId !== null && isFetching)
+            await queryClient.resetQueries(['products']);
+    };
 
     // Get inventory data
     const productInventory = data?.data ?? 0;
