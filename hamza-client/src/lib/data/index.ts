@@ -276,10 +276,10 @@ export async function getAllStoreNames() {
 }
 
 // Get All Product reviews
+// TODO: There's no reason to await getSecure, we're returning a promise anyways and we're adding more things
+// to the event loop for no reason
 export async function getAllProductReviews(customer_id: string) {
-    return await getSecure('/custom/review', {
-        customer_id: customer_id,
-    });
+    return getSecure('/custom/review', { customer_id });
 }
 
 export async function checkReviewsExistence(order_id: string) {

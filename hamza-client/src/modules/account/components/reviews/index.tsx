@@ -19,7 +19,7 @@ import { format } from 'date-fns';
 import { getAllProductReviews, getNotReviewedOrders } from '@lib/data';
 import EditReviewTemplate from '@modules/editreview/[id]/edit-review-template';
 import ReviewTemplate from '@modules/review/[id]/review-template';
-import { useQuery } from '@tanstack/react-query';
+import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
 
 const commonButtonStyles = {
@@ -77,58 +77,42 @@ const ReviewPage = ({ customer }: { customer: any }) => {
     const [selectedReview, setSelectedReview] = useState(null);
     const [selectedPendingReview, setSelectedPendingReview] = useState(null);
     const [activeButton, setActiveButton] = useState('pending');
+    const customer_id = customer.id;
 
-    // useQuery for pending reviews
-    const {
-        data: pendingReviews,
-        isLoading: pendingLoading,
-        isError: pendingError,
-        refetch: fetchPendingReviews,
-    } = useQuery(
-        ['pendingReviews', customer.id],
-        () => getNotReviewedOrders(customer.id),
-        {
-            enabled: false, // This should be inside the options object
-        }
-    );
+    // setup query client
+    const queryClient = useQueryClient();
 
-    // useQuery for reviewed items..
-    const {
-        data: reviews,
-        isLoading: reviewsLoading,
-        isError: reviewsError,
-        refetch: fetchReviews,
-    } = useQuery(
-        ['fetchReviews', customer.id],
-        () => getAllProductReviews(customer.id),
-        {
-            enabled: false,
-        }
-    );
+    const results = useQueries({
+        queries: [
+            {
+                queryKey: ['pendingReviewsQuery', customer_id],
+                queryFn: () => getNotReviewedOrders(customer_id),
+            },
+            {
+                queryKey: ['reviewQuery', customer_id],
+                queryFn: async () => getAllProductReviews(customer_id),
+            },
+        ],
+    });
+
+    // destructuring the results
+    const [pendingReviewsQuery, reviewQuery] = results;
 
     const handleReviewUpdated = async () => {
-        // This function will be called after a review is updated
-        await fetchReviews();
+        await queryClient.resetQueries(['reviewQuery', customer_id]);
     };
 
     const handlePendingUpdated = async () => {
-        await fetchPendingReviews();
+        await pendingReviewsQuery.refetch();
     };
-
-    useEffect(() => {
-        fetchPendingReviews();
-        fetchReviews();
-    }, [customer]);
 
     const handleReviewEdit = (review: any) => {
         setSelectedReview(review);
-        console.log(`selected review modal`);
         onEditReviewOpen();
     };
 
     const handlePendingReview = (review: any) => {
         setSelectedPendingReview(review);
-        console.log(`Selecting pending review`);
         onReviewOpen();
     };
 
@@ -149,14 +133,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
             >
                 <Button
                     onClick={() => {
-                        fetchPendingReviews()
-                            .then(() => {
-                                console.log('Fetch successful');
-                                setActiveButton('pending');
-                            })
-                            .catch((error) => {
-                                console.error('Failed to fetch: ', error);
-                            });
+                        setActiveButton('pending');
                     }}
                     {...commonButtonStyles}
                     isActive={activeButton === 'pending'}
@@ -167,8 +144,8 @@ const ReviewPage = ({ customer }: { customer: any }) => {
 
                 <Button
                     onClick={() => {
-                        fetchReviews();
                         setActiveButton('reviews');
+                        handleReviewUpdated();
                     }}
                     {...commonButtonStyles}
                     isActive={activeButton === 'reviews'}
@@ -178,9 +155,9 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                 </Button>
             </ButtonGroup>
 
-            {activeButton === 'reviews' && reviews.length > 0 && (
+            {activeButton === 'reviews' && (
                 <>
-                    {reviewsLoading ? (
+                    {reviewQuery.isLoading ? (
                         <Box
                             display="flex"
                             flexDirection="column"
@@ -194,15 +171,15 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                             </Text>
                             <Spinner size={80} />
                         </Box>
-                    ) : reviewsError ? (
+                    ) : reviewQuery.isError ? (
                         <Box textAlign="center" py={5}>
                             <Text color="red.500" fontSize="lg">
                                 Error fetching reviews.
                             </Text>
                         </Box>
-                    ) : reviews?.length > 0 ? (
+                    ) : reviewQuery.data?.length > 0 ? (
                         <Stack divider={<StackDivider />} spacing={4}>
-                            {reviews.map((review: any) => (
+                            {reviewQuery.data.map((review: any) => (
                                 <CardBody key={review.id}>
                                     <Flex
                                         direction={{
@@ -217,7 +194,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                         gap={4}
                                     >
                                         <Box flex="1" pr={{ base: 0, md: 4 }}>
-                                            <Text
+                                            <Box
                                                 fontSize={{
                                                     base: '14px',
                                                     md: '16px',
@@ -231,7 +208,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                     new Date(review.created_at),
                                                     'PPP'
                                                 )}
-                                            </Text>
+                                            </Box>
                                             <Flex alignItems="center" gap={2}>
                                                 <Link
                                                     href={`/us/products/${review.product.handle}`}
@@ -329,7 +306,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
 
             {activeButton === 'pending' && (
                 <>
-                    {pendingLoading ? (
+                    {pendingReviewsQuery.isLoading ? (
                         <Box
                             display="flex"
                             flexDirection="column"
@@ -343,15 +320,15 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                             </Text>
                             <Spinner size={80} />
                         </Box>
-                    ) : pendingError ? (
+                    ) : pendingReviewsQuery.isError ? (
                         <Box textAlign="center" py={5}>
                             <Text color="red.500" fontSize="lg">
                                 Error fetching pending reviews.
                             </Text>
                         </Box>
-                    ) : pendingReviews?.length > 0 ? (
+                    ) : pendingReviewsQuery.data?.length > 0 ? (
                         <Stack divider={<StackDivider />} spacing={4}>
-                            {pendingReviews.map((review: any) =>
+                            {pendingReviewsQuery.data.map((review: any) =>
                                 review.items.map((item: any) => (
                                     <CardBody key={item.id}>
                                         <Flex
