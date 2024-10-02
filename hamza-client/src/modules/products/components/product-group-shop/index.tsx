@@ -144,7 +144,7 @@ const ProductCardGroup = () => {
                                 <ProductCard
                                     key={index}
                                     reviewCount={reviewCounter}
-                                    totalRating={avgRating}
+                                    totalRating={roundedAvgRating}
                                     productHandle={product?.handle ?? ''}
                                     variantID={variant?.id ?? ''}
                                     countryCode={product?.origin_country ?? ''}
