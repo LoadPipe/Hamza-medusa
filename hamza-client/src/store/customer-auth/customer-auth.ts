@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 type State = {
+    walletAddress: string;
     authData: {
         wallet_address: string;
         token: string;
@@ -18,18 +19,21 @@ type State = {
 };
 
 type Actions = {
+    setWalletAddress: (walletAddress: string) => void;
     setCustomerAuthData: (authData: State['authData']) => void;
     setCustomerPreferredCurrency: (currency: string) => void;
     setWhitelistConfig: (configData: State['whitelist_config']) => void;
+    setIsVerified: (isVerified: boolean) => void;
 };
 
 export const useCustomerAuthStore = create<State & Actions>()(
     persist(
         (set, get) => ({
+            walletAddress: '',
             authData: {
                 customer_id: '',
                 is_verified: false,
-                status: 'unauthenticated',
+                status: 'unauthenticated' as AuthenticationStatus, // Make sure to cast if needed
                 token: '',
                 wallet_address: '',
             },
@@ -38,26 +42,47 @@ export const useCustomerAuthStore = create<State & Actions>()(
                 is_whitelisted: false,
                 whitelisted_stores: [],
             },
+
+            // Correctly define setWalletAddress
+            setWalletAddress: (walletAddress: string) => {
+                set({
+                    walletAddress,
+                });
+            },
+
+            // Define setCustomerAuthData
             setCustomerAuthData: (authData) => {
                 set({
                     authData: authData,
                 });
             },
+
+            // Define setCustomerPreferredCurrency
             setCustomerPreferredCurrency: (currency) => {
-                console.log("CUSTOMER PREF CURRENCY IS ", currency)
                 set({ preferred_currency_code: currency });
             },
 
+            // Define setWhitelistConfig
             setWhitelistConfig: (configData) => {
                 set({
                     whitelist_config: configData,
                 });
             },
+
+            // Define setIsVerified
+            setIsVerified: (isVerified: boolean) => {
+                set((state) => ({
+                    authData: {
+                        ...state.authData,
+                        is_verified: isVerified,
+                    },
+                }));
+            },
         }),
 
         {
             name: '__hamza_customer', // name of the item in the storage (must be unique)
-            storage: createJSONStorage(() => localStorage), // (optional) by default, 'localStorage' is used
+            storage: createJSONStorage(() => localStorage), // Use localStorage by default
         }
     )
 );

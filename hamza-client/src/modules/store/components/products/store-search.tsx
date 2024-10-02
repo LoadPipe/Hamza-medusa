@@ -5,7 +5,7 @@ import { Flex } from '@chakra-ui/react';
 import StoreCatButton from './store-cat-button';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import ProductCardGroup from '@modules/products/components/product-group-vendor';
+import ProductCardGroup from '@modules/products/components/product-group-store';
 
 type Props = {
     storeName: string;

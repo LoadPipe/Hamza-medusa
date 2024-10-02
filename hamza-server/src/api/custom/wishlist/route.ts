@@ -19,7 +19,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         //security
         if (!handler.enforceCustomerId(customerId)) return;
 
-        const wishlist = await wishlistService.create(customerId);
+        const wishlist = await wishlistService.createOrRetrieve(customerId);
         handler.logger.debug(JSON.stringify(wishlist));
         handler.returnStatus(200, wishlist);
     });
@@ -43,7 +43,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         //security
         if (!handler.enforceCustomerId(customerId)) return;
 
-        const wishlist = await wishlistService.create(customerId);
+        const wishlist = await wishlistService.createOrRetrieve(customerId);
         if (wishlist) res.status(201).json(wishlist);
         else
             handler.returnStatusWithMessage(

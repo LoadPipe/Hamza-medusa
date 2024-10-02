@@ -16,7 +16,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         res,
         'GET',
         '/custom/order/customer-orders',
-        ['customer_id', 'buckets']
+        ['customer_id', 'buckets', 'check_buckets']
     );
 
     await handler.handle(async () => {
@@ -37,6 +37,15 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                     404,
                     `Customer id ${customerId} not found`
                 );
+            }
+
+            const checkBuckets = handler.inputParams.check_buckets;
+            console.log(`CHECK BUCKETS: ${checkBuckets}`);
+            if (checkBuckets) {
+                console.log(`WTF`);
+                const buckets =
+                    await orderService.checkCustomerOrderBucket(customerId);
+                handler.returnStatus(200, { buckets: buckets });
             } else {
                 if (handler.inputParams.buckets) {
                     const orders =

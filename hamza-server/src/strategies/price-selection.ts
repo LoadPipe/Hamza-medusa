@@ -53,7 +53,7 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
         //get all relevant variants, including preferred currency (if any)
         return await this.getPricesForVariants(
             data.map((d) => d.variantId), //variant ids
-            preferredCurrency
+            preferredCurrency ?? 'usdc'
         );
     }
 
@@ -73,7 +73,7 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
             return customer?.preferred_currency_id;
         }
 
-        return null;
+        return 'usdc';
     }
 
     /**
@@ -130,14 +130,17 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
             }
 
             //if preferred currency, filter out the non-matchers
-            if (preferredCurrencyId) {
+            /*if (preferredCurrencyId) {
                 prices = prices.filter(
                     (p) => p.currency_code == preferredCurrencyId
                 );
 
                 //if no matchers, then just return all
                 if (!prices.length) prices = v.prices;
-            }
+            }*/
+
+            if (!prices.length)
+                throw new Error('Prices.length is zero');
 
             //gather and return the output
             output.set(v.id, {

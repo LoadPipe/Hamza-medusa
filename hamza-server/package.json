@@ -32,7 +32,7 @@
         "nuke-old": "sudo docker-compose down --volumes --rmi all",
         "nuke": "sudo docker compose down --volumes --rmi all",
         "up-old": "docker-compose up -d",
-        "up": "sudo docker compose up -d",
+        "up": "docker compose up -d",
         "start:custom": "cross-env npm run build && node --preserve-symlinks --trace-warnings index.js",
         "dev": "cross-env npm run build:server && medusa develop",
         "ageddon": "sudo chmod +x ./scripts/armageddon.sh && ./scripts/armageddon.sh"

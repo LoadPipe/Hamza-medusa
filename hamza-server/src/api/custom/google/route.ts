@@ -34,7 +34,7 @@ async function getGoogleOAuthTokens({
         grant_type: 'authorization_code',
     };
 
-    logger.debug(`values: ${values}`);
+    logger.debug(`values: ${JSON.stringify(values)}`);
     try {
         const res = await axios.post<GoogleTokensResult>(
             url,
@@ -82,10 +82,9 @@ async function getGoogleUser({
             }
         );
 
-        logger.debug(`google user: ${res.data}`);
         return res.data;
     } catch (error: any) {
-        logger.error(`error in getting google user: ${error}`);
+        logger.error(`Error in getting google user: ${error}`);
         throw new Error(error.message);
     }
 }
@@ -98,10 +97,12 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     handler.onError = (err: any) => {
         return res.redirect(
             `${process.env.STORE_URL}/account/profile?verify=false&error=true`
+            //`${process.env.STORE_URL}/account/oauth-landing?success=false&error=true`
         );
     };
 
     await handler.handle(async () => {
+        //get the cookies 
         logger.debug(`google oauth cookies: ${JSON.stringify(req.cookies)}`);
         let decoded: any = jwt.decode(req.cookies['_medusa_jwt']);
         logger.debug(
@@ -109,21 +110,27 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         );
         logger.debug(`google oauth req.params: ${JSON.stringify(req.params)}`);
 
+        //throw error if anything wrong with the cookie
         if (!decoded) throw new Error('unable to get the _medusa_jwt cookie');
 
+        //get google oauth data 
         let tokens = await getGoogleOAuthTokens({
             code: req.query.code.toString(),
             logger,
         });
 
+        logger.debug(`Google OAUTH tokens: ${JSON.stringify(tokens)}`);
+
+        //get google user data 
         let user = await getGoogleUser({
             id_token: tokens.id_token,
             access_token: tokens.access_token,
             logger,
         });
 
-        let eventBus_: EventBusService = req.scope.resolve('eventBusService');
+        logger.debug(`Google OAUTH user: ${JSON.stringify(user)}`);
 
+        //update the user record if all good
         await CustomerRepository.update(
             { id: decoded.customer_id },
             {
@@ -134,6 +141,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             }
         );
 
+        //emit an event 
+        let eventBus_: EventBusService = req.scope.resolve('eventBusService');
         await eventBus_.emit([
             {
                 data: { email: user.email, id: decoded.customer_id },
@@ -141,6 +150,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             },
         ]);
 
+        //redirect 
         return res.redirect(`${process.env.STORE_URL}/account?verify=true`);
+        //return res.redirect(`${process.env.STORE_URL}/account/oauth-landing?success=true`);
     });
 };

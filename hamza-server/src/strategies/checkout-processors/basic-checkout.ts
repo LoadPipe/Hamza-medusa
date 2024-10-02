@@ -2,11 +2,11 @@ import {
     Cart,
     CartCompletionResponse,
     IdempotencyKeyService,
-    ProductService,
-    CartService,
     Logger,
 } from '@medusajs/medusa';
 import OrderService from '../../services/order';
+import CartService from '../../services/cart';
+import ProductService from '../../services/product';
 import { PaymentService } from '@medusajs/medusa/dist/services';
 import { Payment } from '../../models/payment';
 import { Order } from '../../models/order';
@@ -346,8 +346,11 @@ export class BasicCheckoutProcessor {
             );
             payment.order_id = order.id;
             payment.cart_id = order.cart_id;
-            payment.receiver_address =
-                fullOrder.store?.owner?.wallet_address ?? 'NA';
+
+            if (payment.blockchain_data) {
+                payment.blockchain_data.receiver_address =
+                    fullOrder.store?.owner?.wallet_address ?? 'NA';
+            }
             return await this.paymentRepository.save(payment);
         };
 

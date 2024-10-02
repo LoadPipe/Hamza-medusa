@@ -1,33 +1,25 @@
 import { Metadata } from 'next';
 
 import OrderOverview from '@modules/account/components/order-overview';
-import { getHamzaCustomer, listCustomerOrders } from '@lib/data';
+import { getHamzaCustomer, getOrderBucket } from '@lib/data';
 import { notFound } from 'next/navigation';
-import { Box, Text } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 export const metadata: Metadata = {
     title: 'Orders',
     description: 'Overview of your previous orders.',
 };
 
 export default async function Orders() {
-    const orders = await listCustomerOrders();
     const customer = await getHamzaCustomer();
+    const ordersExist = await getOrderBucket(customer.id, true);
 
-    if (!orders) {
+    if (!customer) {
         notFound();
     }
-    // 121212
     return (
         <Box width="full" bg="#121212" color="white" rounded={'lg'}>
             <Box display="flex" flexDirection="column">
-                {/*<Text fontWeight={'bold'} fontSize="lg">*/}
-                {/*    Orders*/}
-                {/*</Text>*/}
-                {/*<p className="text-base-regular">*/}
-                {/*    View your previous orders and their status. You can also*/}
-                {/*    create returns or exchanges for your orders if needed.*/}
-                {/*</p>*/}
-                <OrderOverview customer={customer} />
+                <OrderOverview customer={customer} ordersExist={ordersExist} />
             </Box>
         </Box>
     );

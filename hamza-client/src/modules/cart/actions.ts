@@ -77,18 +77,15 @@ export async function addToCart({
     variantId,
     quantity,
     countryCode,
-    currencyCode,
 }: {
     variantId: string;
     quantity: number;
     countryCode: string;
-    currencyCode: string;
 }) {
     console.log('addToCart function called with parameters:');
     console.log('variantId:', variantId);
     console.log('quantity:', quantity);
     console.log('countryCode:', countryCode);
-    console.log('currencyCode:', currencyCode);
 
     if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY) {
         countryCode = 'us';
@@ -114,15 +111,13 @@ export async function addToCart({
         console.log('Attempting to add item to cart:', {
             cartId: cart.id,
             variantId,
-            quantity,
-            currencyCode,
+            quantity
         });
 
         await addItem({
             cartId: cart.id,
             variantId,
-            quantity,
-            currencyCode,
+            quantity
         });
 
         console.log('Item added to cart successfully');
@@ -194,9 +189,9 @@ export async function enrichLineItems(
     regionId: string
 ): Promise<
     | Omit<
-          ExtendedLineItem,
-          'beforeInsert' | 'beforeUpdate' | 'afterUpdateOrLoad'
-      >[]
+        ExtendedLineItem,
+        'beforeInsert' | 'beforeUpdate' | 'afterUpdateOrLoad'
+    >[]
     | undefined
 > {
     // Prepare query parameters

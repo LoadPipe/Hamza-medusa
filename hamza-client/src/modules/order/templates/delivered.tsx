@@ -1,34 +1,77 @@
-import React, { useEffect, useState } from 'react';
 import { getSingleBucket } from '@lib/data';
-import { Box } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
+import Spinner from '@modules/common/icons/spinner';
 
 import DeliveredCard from '@modules/account/components/delivered-card';
 import EmptyState from '@modules/order/components/empty-state';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import { useQuery } from '@tanstack/react-query';
+import React, { useEffect, useState } from 'react';
+import { debounce } from 'lodash';
 
 const Delivered = ({
     customer,
+    chainEnabled,
+    onSuccess,
     isEmpty,
 }: {
     customer: string;
+    chainEnabled?: boolean;
+    onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
-    const [customerOrder, setCustomerOrder] = useState<any[]>([]);
-    const [customerId, setCustomerId] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [shouldFetch, setShouldFetch] = useState(false);
+    console.log(`chainEnabled Delivered ${chainEnabled}`);
 
-    // console.log(`ORDERS ARE ${JSON.stringify(orders)}`);
-    useEffect(() => {
-        // console.log('Orders received in Cancelled:', orders);
-        if (customer && customer.length > 0) {
-            const customer_id = customer;
-            // console.log(
-            //     `Running fetchAllOrders with customerID ${customer_id}`
-            // );
-            fetchAllOrders(customer_id);
-            setCustomerId(customer_id);
+    const debouncedOnSuccess = debounce(() => {
+        onSuccess && onSuccess();
+    }, 5000);
+
+    const {
+        data: deliveredOrder,
+        isLoading,
+        isError,
+        isFetching,
+        failureCount,
+        isStale,
+        isSuccess,
+        refetch,
+    } = useQuery(
+        ['fetchDeliveredOrder', customer],
+        () => getSingleBucket(customer, 3),
+        {
+            enabled: !!customer && chainEnabled, // Ensure query only runs when enabled is true
+            staleTime: 5 * 60 * 1000, // 5 minutes
+            retry: 5, // Retry 5 times
+            retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
+            refetchOnWindowFocus: false,
         }
-    }, [customer]);
+    );
+
+    // manually trigger a refetch if its stale
+    useEffect(() => {
+        if (isStale && chainEnabled && deliveredOrder == undefined) {
+            refetch();
+        }
+    }, [isStale]);
+
+    useEffect(() => {
+        if (isSuccess && deliveredOrder && deliveredOrder.length > 0) {
+            console.log(`TRIGGER`);
+            debouncedOnSuccess();
+        }
+    }, [isSuccess, chainEnabled]);
+
+    // Log the queries for delivered state and data
+    console.log({
+        template: 'DELIVERED',
+        isLoading,
+        isError,
+        isFetching,
+        failureCount,
+        deliveredOrder,
+        isStale,
+    });
 
     const getAmount = (
         amount?: number | null,
@@ -41,70 +84,75 @@ const Delivered = ({
         return formatCryptoPrice(amount, currency_code || 'USDC');
     };
 
-    const fetchAllOrders = async (customerId: string) => {
-        setIsLoading(true);
-        try {
-            const bucket = await getSingleBucket(customerId, 3);
+    if (isLoading) {
+        return (
+            <Box
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                textAlign="center"
+                py={5}
+            >
+                <Text color="white" fontSize="lg" mb={8}>
+                    Loading Delivered orders...
+                </Text>
+                <Spinner size={80} />
+            </Box>
+        );
+    }
 
-            if (bucket === undefined || bucket === null) {
-                console.error('Bucket is undefined or null');
-                setCustomerOrder([]); // Set empty state
-                setIsLoading(false);
-                return;
-            }
+    if (isError) {
+        return (
+            <Box
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+                alignItems="center"
+                textAlign="center"
+                py={5}
+            >
+                <Text color="red.500" fontSize="lg" mb={8}>
+                    Error fetching delivered orders.
+                </Text>
+            </Box>
+        );
+    }
 
-            if (Array.isArray(bucket)) {
-                setCustomerOrder(bucket);
-            } else {
-                console.error('Expected an array but got:', bucket);
-                setCustomerOrder([]);
-            }
-        } catch (error) {
-            console.error('Error fetching processing orders:', error);
-            setCustomerOrder([]);
-        }
-        setIsLoading(false);
-    };
-
-    if (isEmpty && customerOrder && customerOrder?.length == 0) {
+    if (isEmpty && deliveredOrder && deliveredOrder?.length == 0) {
         return <EmptyState />;
     }
 
     return (
         <div>
-            {/* Processing-specific content */}
-            {customerOrder && customerOrder.length > 0 ? (
+            {deliveredOrder && deliveredOrder.length > 0 ? (
                 <>
                     <h1>Delivered Orders</h1>
 
-                    {customerOrder.map((order) => (
+                    {deliveredOrder.map((order: any) => (
                         <div
                             key={order.id} // Changed from cart_id to id since it's more reliable and unique
                             className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
                         >
-                            {order.items?.map(
-                                (
-                                    item: any // Adjusting the map to the correct path
-                                ) => (
-                                    <Box
+                            {order.items?.map((item: any) => (
+                                <Box
+                                    key={item.id}
+                                    bg="rgba(39, 39, 39, 0.3)"
+                                    p={4}
+                                    m={2}
+                                    rounded="lg"
+                                >
+                                    <DeliveredCard
                                         key={item.id}
-                                        bg="rgba(39, 39, 39, 0.3)"
-                                        p={4}
-                                        m={2}
-                                        rounded="lg"
-                                    >
-                                        {/*item: {item.id} <br />*/}
-                                        <DeliveredCard
-                                            key={item.id}
-                                            order={item}
-                                            handle={
-                                                item.variant?.product?.handle ||
-                                                'N/A'
-                                            }
-                                        />
-                                    </Box>
-                                )
-                            )}
+                                        order={item}
+                                        vendorName={order.store.name}
+                                        handle={
+                                            item.variant?.product?.handle ||
+                                            'N/A'
+                                        }
+                                    />
+                                </Box>
+                            ))}
                         </div>
                     ))}
                 </>

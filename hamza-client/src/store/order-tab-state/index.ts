@@ -6,9 +6,8 @@ interface OrderTabState {
 }
 
 export const useOrderTabStore = create<OrderTabState>((set) => {
-    console.log('Initializing store with ALL');
     return {
-        orderActiveTab: 'ALL', // Default tab
+        orderActiveTab: 'All Orders', // Default tab, matching TABS.ALL value
         setOrderActiveTab: (tab: any) => set({ orderActiveTab: tab }),
     };
 });

@@ -1,12 +1,14 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-
-import Review from '@modules/account/components/reviews';
-import { Text, Box } from '@chakra-ui/react';
-import { getHamzaCustomer } from '@lib/data';
-
-import { getRegion } from 'app/actions';
-import { headers } from 'next/headers';
+import Error from '../../../../../error';
+import { Text, Flex } from '@chakra-ui/react';
+import {
+    getHamzaCustomer,
+    listRegions,
+    getVerificationStatus,
+} from '@lib/data';
+import ReviewPage from 'modules/account/components/reviews';
+import React from 'react';
 
 export const metadata: Metadata = {
     title: 'Reviews',
@@ -14,29 +16,36 @@ export const metadata: Metadata = {
 };
 
 export default async function Reviews() {
-    const nextHeaders = headers();
-    const countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY
-        ? 'us'
-        : nextHeaders.get('next-url')?.split('/')[1] || '';
     const customer = await getHamzaCustomer();
-    const region = await getRegion(countryCode);
+    const regions = await listRegions();
 
-    if (!customer || !region) {
+    if (!customer || !regions) {
         notFound();
     }
 
+    // if customer is found, check if the customer is verified
+    const verificationStatus = await getVerificationStatus(customer.id);
+    if (!verificationStatus.data) {
+        return <Error error={'Verify your email to access this page.'} />;
+    }
+
     return (
-        <Box>
-            <Box dir={'col'} mb={'8'} gap={'4'}>
-                <Text
-                    mb={'4'}
-                    className="text-2xl-semi"
-                    color={'primary.indigo.900'}
-                >
-                    My Reviews
-                </Text>
-                <Review customer={customer} region={region} />
-            </Box>
-        </Box>
+        <Flex
+            maxW={'927px'}
+            width="100%"
+            backgroundColor={'#121212'}
+            flexDirection={'column'}
+            borderRadius={'12px'}
+            p={'1.5rem'}
+        >
+            <Text
+                mb={'4'}
+                className="text-2xl-semi"
+                color={'primary.indigo.900'}
+            >
+                My Reviews
+            </Text>
+            <ReviewPage customer={customer} />
+        </Flex>
     );
 }

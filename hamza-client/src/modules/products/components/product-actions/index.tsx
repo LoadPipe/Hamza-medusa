@@ -41,8 +41,6 @@ export default function ProductActions({
     const [options, setOptions] = useState<Record<string, string>>({});
     const [isAdding, setIsAdding] = useState(false);
     const [buyNowLoader, setBuyNowLoader] = useState(false);
-    const { addWishlistItemMutation, removeWishlistItemMutation } =
-        useWishlistMutations();
     const [inventoryCount, setInventoryCount] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -155,7 +153,6 @@ export default function ProductActions({
             variantId: variant.id,
             quantity: 1,
             countryCode: countryCode,
-            currencyCode: 'eth', //variant.prices[0].currency_code,
         });
         setIsAdding(false);
     };
@@ -170,30 +167,9 @@ export default function ProductActions({
             variantId: variant.id,
             quantity: 1,
             countryCode: countryCode,
-            currencyCode: 'eth', //variant.prices[0].currency_code,
         });
         setBuyNowLoader(false);
     };
-
-    // add product to wishlist-dropdown
-    // const toggleWishlist = async () => {
-    //     // console.log('toggle wishlist-dropdown item', product);
-    //     wishlist.products.find((a) => a.id == product.id)
-    //         ? removeWishlistItemMutation.mutate({
-    //               id: product.id!,
-    //               description: product.description!,
-    //               handle: product.handle!,
-    //               thumbnail: product.thumbnail!,
-    //               title: product.title!,
-    //           })
-    //         : addWishlistItemMutation.mutate({
-    //               id: product.id!,
-    //               description: product.description!,
-    //               handle: product.handle!,
-    //               thumbnail: product.thumbnail!,
-    //               title: product.title!,
-    //           });
-    // };
 
     const whitelistedProductHandler = async () => {
         //TODO: MOVE TO INDEX.TS

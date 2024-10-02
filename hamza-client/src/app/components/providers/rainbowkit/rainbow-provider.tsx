@@ -7,16 +7,23 @@ import {
     RainbowKitProvider,
     AuthenticationStatus,
 } from '@rainbow-me/rainbowkit';
-import { WagmiConfig } from 'wagmi';
+import { useWalletClient, WagmiConfig } from 'wagmi';
 import {
     chains,
     config,
     darkThemeConfig,
+    SwitchNetwork,
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 const queryClient = new QueryClient();
 import { SiweMessage } from 'siwe';
-import { getCustomer, getToken } from '@lib/data';
+import {
+    clearAuthCookie,
+    getCustomer,
+    getHamzaCustomer,
+    getToken,
+    recoverCart,
+} from '@lib/data';
 import { signOut } from '@modules/account/actions';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import axios from 'axios';
@@ -26,26 +33,43 @@ import useWishlistStore from '@store/wishlist/wishlist-store';
 
 const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
-const VERIFY_MSG = `${MEDUSA_SERVER_URL}/custom/verify`;
-const GET_NONCE = `${MEDUSA_SERVER_URL}/custom/nonce`;
+const VERIFY_MSG_URL = `${MEDUSA_SERVER_URL}/custom/verify`;
+const GET_NONCE_URL = `${MEDUSA_SERVER_URL}/custom/nonce`;
 
 async function sendVerifyRequest(message: any, signature: any) {
-    return await axios({
-        method: 'post',
-        data: {
+    return await axios.post(
+        VERIFY_MSG_URL,
+        {
             message,
             signature,
         },
-        url: `${VERIFY_MSG}`,
+        {
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-control': 'no-cache, no-store',
+                Accept: 'application/json',
+            },
+        }
+    );
+}
+
+async function getNonce() {
+    //const response = await fetch(GET_NONCE_URL);
+    //const data = await response.json();
+    const output = await axios.get(GET_NONCE_URL, {
         headers: {
             'Content-Type': 'application/json',
+            'Cache-control': 'no-cache, no-store',
             Accept: 'application/json',
         },
     });
+
+    return output?.data?.nonce ?? '';
 }
 
 export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     const {
+        walletAddress,
         authData,
         setCustomerAuthData,
         setCustomerPreferredCurrency,
@@ -55,6 +79,8 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     const [customer_id, setCustomerId] = useState('');
     const { loadWishlist } = useWishlistStore((state) => state);
 
+    let clientWallet = walletAddress;
+
     useEffect(() => {
         if (authData.status === 'authenticated' && customer_id) {
             loadWishlist(customer_id);
@@ -63,29 +89,35 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     }, [authData.status, customer_id]); // Dependency array includes any state variables that trigger a reload
 
     useEffect(() => {
-        getCustomer().then((customer) => {
-            console.log('CUSTOMER: ', customer);
-            if (!customer) {
-                console.log('setting auth to unauthenticated');
-                setCustomerAuthData({
-                    customer_id: '',
-                    is_verified: false,
-                    status: 'unauthenticated',
-                    token: '',
-                    wallet_address: '',
-                });
-                return;
-            }
+        console.log('Saved wallet address', clientWallet);
+        getHamzaCustomer().then((hamzaCustomer) => {
+            console.log('Hamza Customer: ', hamzaCustomer);
+            getCustomer().then((customer) => {
+                console.log('Medusa Customer: ', customer);
+                if (
+                    !customer ||
+                    !hamzaCustomer ||
+                    customer?.id !== hamzaCustomer?.id
+                ) {
+                    console.log('setting auth to unauthenticated');
+                    setCustomerAuthData({
+                        customer_id: '',
+                        is_verified: false,
+                        status: 'unauthenticated',
+                        token: '',
+                        wallet_address: '',
+                    });
+                    clearAuthCookie();
+                }
+            });
         });
+        console.log(authData.wallet_address);
     }, [authData.wallet_address]);
 
     const walletSignature = createAuthenticationAdapter({
         getNonce: async () => {
-            console.log('FETCHING NONCE.....');
-            const response = await fetch(GET_NONCE);
-            const data = await response.json();
-            console.log('NONCE DATA: ', data.nonce);
-            return data?.nonce ?? '';
+            const nonce = await getNonce();
+            return nonce ?? '';
         },
 
         createMessage: ({ nonce, address, chainId }) => {
@@ -106,9 +138,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         },
 
         getMessageBody: ({ message }) => {
-            console.log('Preparing message:', message);
             const preparedMessage = message.prepareMessage();
-            console.log('Message prepared:', preparedMessage);
             return preparedMessage;
         },
 
@@ -128,40 +158,68 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         message,
                         signature
                     );
-                    data = authResponse.data;
+                    data = authResponse.data
                 }
 
                 if (data.status == true) {
                     const tokenResponse = await getToken({
                         wallet_address: message.address,
-                        email: data.data.email,
+                        email: data.data?.email?.trim()?.toLowerCase(),
                         password: '',
                     });
-                    setCustomerId(data.data.customer_id);
-                    console.log('token response is ', tokenResponse);
-                    Cookies.set('_medusa_jwt', tokenResponse);
-                    //localStorage.setItem('_medusa_jwt', tokenResponse);
 
-                    setCustomerAuthData({
-                        token: tokenResponse,
-                        wallet_address: message.address,
-                        customer_id: data.data.customer_id,
-                        is_verified: data.data.is_verified,
-                        status: 'authenticated',
-                    });
-                    setCustomerPreferredCurrency(
-                        data.data.preferred_currency.code
-                    );
+                    //check that customer data and wallet address match
+                    if (
+                        data.data.wallet_address.trim().toLowerCase() ===
+                        clientWallet?.trim()?.toLowerCase()
+                    ) {
+                        const customerId = data.data.customer_id;
+                        setCustomerId(customerId);
+                        Cookies.set('_medusa_jwt', tokenResponse);
+                        //localStorage.setItem('_medusa_jwt', tokenResponse);
 
-                    setWhitelistConfig(data.data.whitelist_config);
+                        setCustomerAuthData({
+                            token: tokenResponse,
+                            wallet_address: message?.address,
+                            customer_id: data.data?.customer_id,
+                            is_verified: data.data?.is_verified,
+                            status: 'authenticated',
+                        });
 
-                    return true;
+                        setCustomerPreferredCurrency(
+                            data.data?.preferred_currency?.code
+                        );
+
+                        setWhitelistConfig(data.data?.whitelist_config);
+
+                        try {
+                            console.log('recovering cart');
+                            recoverCart(customerId);
+                        } catch (e) {
+                            console.log('Error recovering cart');
+                            console.error(e);
+                        }
+
+                        return true;
+                    } else {
+                        console.log('Wallet address mismatch on login');
+                        console.log(data.data?.wallet_address);
+                        console.log(clientWallet);
+                        console.log(message?.address);
+                        setCustomerAuthData({
+                            ...authData,
+                            status: 'unauthenticated',
+                        });
+                        clearAuthCookie();
+                        return false;
+                    }
                 } else {
                     console.log('running verify unauthenticated');
                     setCustomerAuthData({
                         ...authData,
                         status: 'unauthenticated',
                     });
+                    clearAuthCookie();
                     throw new Error(data.message);
                 }
 

@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import Footer from '@modules/layout/templates/footer';
-import Nav from 'modules/layout/templates/nav-4';
+import Nav from '@modules/layout/templates/nav';
 import { Box } from '@chakra-ui/react';
 
 const MEDUSA_CLIENT_URL =
@@ -24,5 +24,3 @@ export default async function PageLayout(props: { children: React.ReactNode }) {
         </div>
     );
 }
-
-//60vh for store page

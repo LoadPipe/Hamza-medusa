@@ -13,6 +13,7 @@ import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import ShippingOptionRepository from '@medusajs/medusa/dist/repositories/shipping-option';
 import { CartEmailRepository } from 'src/repositories/cart-email';
+import { IsNull } from 'typeorm';
 
 export default class CartService extends MedusaCartService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
@@ -38,30 +39,45 @@ export default class CartService extends MedusaCartService {
     }
 
     async retrieve(cartId: string, options?: FindConfig<Cart>, totalsConfig?: { force_taxes?: boolean; }): Promise<Cart> {
+        //add items & variant prices, and store (for default currency)
+        if (options?.relations) {
+            if (!options.relations.includes('items.variant.prices'))
+                options.relations.push('items.variant.prices');
+            if (!options.relations.includes('items.variant.product.store'))
+                options.relations.push('items.variant.product.store');
+        }
+        else {
+            if (!options) options = {};
+            options.relations = ['items.variant.prices', 'items.variant.product.store'];
+        }
         const cart = await super.retrieve(cartId, options, totalsConfig);
 
         if (cart?.items) {
 
-            let currencyCode = 'usdc';
+            //get customer preferred currency
+            let userPreferredCurrency = 'usdc';
             if (cart.customer_id) {
                 if (cart.customer_id && !cart.customer)
                     cart.customer = await this.customerRepository_.findOne({ where: { id: cart.customer_id } });
 
-                currencyCode = cart.customer?.preferred_currency_id ?? currencyCode;
+                userPreferredCurrency = cart.customer?.preferred_currency_id ?? userPreferredCurrency;
             }
 
+            //adjust price for each line item, convert if necessary
             const itemsToSave: LineItem[] = [];
             for (let item of cart.items) {
-                if (item.currency_code != currencyCode) {
-                    this.logger.info(`cart item with currency ${item.currency_code} amount ${item.unit_price} changing to ${currencyCode}`)
+                let storeCurrency = item.variant.product.store?.default_currency_code;
+                item.currency_code = storeCurrency;
+                item.unit_price = item.variant.prices.find(p => p.currency_code === storeCurrency).amount;
+                if (storeCurrency != userPreferredCurrency) {
+                    this.logger.info(`cart item with currency ${storeCurrency} amount ${item.unit_price} changing to ${userPreferredCurrency}`)
 
                     const newPrice = await this.priceConverter.getPrice(
-                        { baseAmount: item.unit_price, baseCurrency: item.currency_code, toCurrency: currencyCode }
+                        { baseAmount: item.unit_price, baseCurrency: storeCurrency, toCurrency: userPreferredCurrency }
                     );
                     item.unit_price = newPrice;
-                    item.currency_code = currencyCode;
+                    item.currency_code = userPreferredCurrency;
 
-                    this.logger.info(`cart item with currency ${item.currency_code} amount ${item.unit_price} changed to ${currencyCode} with new price ${item.unit_price}`)
                     itemsToSave.push(item);
                 }
             }
@@ -76,6 +92,24 @@ export default class CartService extends MedusaCartService {
         const cartEmail = await this.cartEmailRepository_.findOne({ where: { id: cartId } });
         if (cartEmail)
             cart.email = cartEmail.email_address;
+
+        return cart;
+    }
+
+    async recover(customerId: string): Promise<Cart> {
+        //get last three carts 
+        const carts = await this.cartRepository_.find({
+            where: { customer_id: customerId },
+            order: { updated_at: "DESC" },
+            take: 1
+        });
+
+        //only return if the most recent one is not completed
+        let cart = null;
+        if (carts.length > 0) {
+            if (!carts[0].completed_at)
+                cart = carts[0];
+        }
 
         return cart;
     }
@@ -138,15 +172,13 @@ export default class CartService extends MedusaCartService {
             { relations: ['prices'] }
         );
 
-        //find either the preferred currency price, or just the first
+        //find the preferred currency price, or default
         let price: MoneyAmount = null;
-        if (preferredCurrency) {
-            price = variant.prices.find(
-                (p) => p.currency_code == preferredCurrency
-            );
-        }
+        price = variant.prices.find(
+            (p) => p.currency_code === (preferredCurrency ?? 'usdc')
+        );
 
         //if no preferred, return the first
-        return price?.currency_code ?? variant.prices[0].currency_code;
+        return price?.currency_code ?? 'usdc';
     }
 }

@@ -1,4 +1,9 @@
-import { type MedusaRequest, type MedusaResponse, type Logger, generateEntityId } from '@medusajs/medusa';
+import {
+    type MedusaRequest,
+    type MedusaResponse,
+    type Logger,
+    generateEntityId,
+} from '@medusajs/medusa';
 import { readRequestBody } from '../utils/request-body';
 import jwt from 'jsonwebtoken';
 import { createLogger, ILogger } from '../utils/logging/logger';
@@ -17,7 +22,7 @@ export class RouteHandler {
     response: MedusaResponse;
     jwtToken: any;
     customerId: string;
-    onError: (err: any) => void = null;
+    onError: (err: any) => any = null;
 
     constructor(
         req: MedusaRequest,
@@ -26,7 +31,6 @@ export class RouteHandler {
         route: string,
         inputFieldNames: string[] = []
     ) {
-
         this.method = method;
         this.route = route;
         this.request = req;
@@ -52,14 +56,18 @@ export class RouteHandler {
 
         //create the logger
         const logger: Logger = req.scope.resolve('logger');
-        const appLogRepository: typeof AppLogRepository = req.scope.resolve('appLogRepository');
+        const appLogRepository: typeof AppLogRepository =
+            req.scope.resolve('appLogRepository');
 
         const loggerContext: any = {
             logger,
-            appLogRepository
-        }
+            appLogRepository,
+        };
 
-        this.logger = createLogger(loggerContext, `${this.method} ${this.route}`);
+        this.logger = createLogger(
+            loggerContext,
+            `${this.method} ${this.route}`
+        );
     }
 
     async handle(fn: (_this?: RouteHandler) => any) {
@@ -70,20 +78,24 @@ export class RouteHandler {
             const response: any = await fn(this);
         } catch (err: any) {
             const errorInfo = `ERROR ${JSON.stringify(err)} ${err}`;
-            this.returnStatusWithMessage(500, errorInfo);
-            if (this.onError) this.onError(err);
+            if (this.onError) {
+                if (!this.onError(err))
+                    this.returnStatusWithMessage(500, errorInfo);
+            } else {
+                this.returnStatusWithMessage(500, errorInfo);
+            }
         }
     }
 
     returnStatus(status: number, payload: any, truncateToMax: number = 0) {
+        console.log('RETURNING STATUS ', status)
         let payloadString = JSON.stringify(payload);
         if (truncateToMax > 0)
             payloadString = payloadString.substring(0, truncateToMax) + '...';
 
         if (status == 500)
             this.logger.error(`Returning ${status} with ${payloadString}`);
-        else
-            this.logger.info(`Returning ${status} with ${payloadString}`);
+        else this.logger.info(`Returning ${status} with ${payloadString}`);
         return this.response.status(status).json(payload);
     }
 
@@ -133,7 +145,9 @@ export class RouteHandler {
             }
 
             if (missingParams.length) {
-                this.logger?.warn(`Call rejected for missing params: ${JSON.stringify(missingParams)}`)
+                this.logger?.warn(
+                    `Call rejected for missing params: ${JSON.stringify(missingParams)}`
+                );
                 const message = `missing required param(s): ${missingParams.join()}`;
                 this.response.status(400).json({ message });
                 return false;

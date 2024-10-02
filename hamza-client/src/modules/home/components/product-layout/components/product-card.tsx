@@ -60,8 +60,6 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
     //Auth states
     const { authData, whitelist_config, setWhitelistConfig } =
         useCustomerAuthStore();
-    const { addWishlistItemMutation, removeWishlistItemMutation } =
-        useWishlistMutations();
 
     //Wishlist store
     const { wishlist } = useWishlistStore();
@@ -76,8 +74,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
         await addToCart({
             variantId: variantID ?? '',
             quantity: 1,
-            countryCode: countryCode ?? '',
-            currencyCode: 'eth',
+            countryCode: countryCode ?? ''
         });
         setLoadingAddToCard(false);
     };
@@ -89,8 +86,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
         await addToCart({
             variantId: variantID ?? '',
             quantity: 1,
-            countryCode: countryCode ?? '',
-            currencyCode: 'eth',
+            countryCode: countryCode ?? ''
         });
         setLoadingBuy(false);
     };

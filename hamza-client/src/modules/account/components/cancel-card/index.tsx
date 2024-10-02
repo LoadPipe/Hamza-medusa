@@ -1,9 +1,20 @@
 import { formatAmount } from '@lib/util/prices';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
+import {
+    Box,
+    Flex,
+    Text,
+    Button,
+    Image,
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    useDisclosure,
+} from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
-import React, { useEffect, useState } from 'react';
-import { getStore } from '@lib/data';
 import Link from 'next/link';
 
 type OrderDetails = {
@@ -31,20 +42,29 @@ type Order = {
         id: string;
         name: string;
     };
+    metadata: {
+        cancel_reason?: string;
+    };
 };
 
 type OrderCardProps = {
     order: Order;
     handle: any;
+    cancel_reason: string;
+    cancelled_date: string;
+    vendorName: string;
 };
 
-const CancelCard = ({ order, handle }: OrderCardProps) => {
-    const [vendor, setVendor] = useState('');
+const CancelCard = ({
+    order,
+    handle,
+    cancel_reason,
+    cancelled_date,
+    vendorName,
+}: OrderCardProps) => {
     const orderString = typeof order.currency_code;
-    // console.log(
-    //     `Order Card details ${JSON.stringify(order.variant.product_id)}`
-    // );
-    // console.log(`Product details ${JSON.stringify(handle)} `);
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    console.log('Order Metadata:', cancel_reason, 'on date', cancelled_date);
 
     const getAmount = (amount?: number | null) => {
         if (amount === null || amount === undefined) {
@@ -53,21 +73,6 @@ const CancelCard = ({ order, handle }: OrderCardProps) => {
 
         return formatCryptoPrice(amount, order.currency_code || 'USDC');
     };
-
-    useEffect(() => {
-        // Fetch Vendor Name from product.id
-        const fetchVendor = async () => {
-            try {
-                const data = await getStore(order.variant.product_id as string);
-                // console.log(`Vendor: ${data}`);
-                setVendor(data.name);
-            } catch (error) {
-                console.error('Error fetching vendor: ', error);
-            }
-        };
-
-        fetchVendor();
-    }, [order]);
 
     if (!order) {
         return <div>Loading...</div>; // Display loading message if order is undefined
@@ -89,7 +94,7 @@ const CancelCard = ({ order, handle }: OrderCardProps) => {
                     fontWeight="bold"
                     noOfLines={1}
                 >
-                    {vendor}
+                    {vendorName}
                 </Text>
                 <Flex
                     display={{ base: 'none', md: 'flex' }}
@@ -177,6 +182,7 @@ const CancelCard = ({ order, handle }: OrderCardProps) => {
                     variant="outline"
                     colorScheme="white"
                     borderRadius={'37px'}
+                    onClick={onOpen}
                 >
                     View Cancellation Details
                 </Button>
@@ -189,6 +195,38 @@ const CancelCard = ({ order, handle }: OrderCardProps) => {
                     Contact Seller
                 </Button>
             </Flex>
+            <Modal isOpen={isOpen} onClose={onClose}>
+                <ModalOverlay />
+                <ModalContent>
+                    <ModalHeader textAlign="center">
+                        Cancellation Details
+                    </ModalHeader>
+                    <ModalBody>
+                        <Text fontSize="lg" fontWeight="bold" mb={2}>
+                            Reason for Cancellation:
+                        </Text>
+                        <Text mb={4}>{cancel_reason}</Text>
+                        <Text fontSize="lg" fontWeight="bold" mb={2}>
+                            Cancellation Date:
+                        </Text>
+                        <Text>
+                            {new Date(cancelled_date).toLocaleDateString(
+                                undefined,
+                                {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                }
+                            )}
+                        </Text>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button colorScheme="blue" onClick={onClose}>
+                            Close
+                        </Button>
+                    </ModalFooter>
+                </ModalContent>
+            </Modal>
         </Box>
     );
 };
