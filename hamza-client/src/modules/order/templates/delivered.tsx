@@ -25,7 +25,7 @@ const Delivered = ({
 
     const debouncedOnSuccess = debounce(() => {
         onSuccess && onSuccess();
-    }, 5000);
+    }, 3000);
 
     const {
         data: deliveredOrder,
@@ -56,7 +56,7 @@ const Delivered = ({
     }, [isStale]);
 
     useEffect(() => {
-        if (isSuccess && deliveredOrder && deliveredOrder.length > 0) {
+        if (isSuccess && deliveredOrder) {
             console.log(`TRIGGER`);
             debouncedOnSuccess();
         }

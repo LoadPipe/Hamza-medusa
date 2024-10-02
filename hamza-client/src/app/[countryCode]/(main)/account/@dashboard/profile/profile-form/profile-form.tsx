@@ -79,8 +79,8 @@ const ProfileForm: React.FC<any> = ({ customer }) => {
     }, [customerId, setIsVerified, authData.is_verified]);
 
     const handleSubmit = async () => {
-        if (firstNameValue === '' || lastNameValue === '') {
-            toast.error('Field can not be empty');
+        if (firstNameValue.trim() === '' || lastNameValue.trim() === '') {
+            toast.error('First Name and Last Name cannot be empty');
             return;
         }
         try {
@@ -150,10 +150,21 @@ const ProfileForm: React.FC<any> = ({ customer }) => {
                 flexDirection={{ base: 'column', md: 'row' }}
                 gap={'15px'}
             >
-                <ProfileCurrency
-                    preferred_currency_code={preferred_currency_code}
-                    setCustomerPreferredCurrency={setCustomerPreferredCurrency}
-                />
+                <Flex
+                    flexDirection={'column'}
+                    width={
+                        emailValue?.length > 0
+                            ? { base: '100%', md: '50%' }
+                            : '100%'
+                    }
+                >
+                    <ProfileCurrency
+                        preferred_currency_code={preferred_currency_code}
+                        setCustomerPreferredCurrency={
+                            setCustomerPreferredCurrency
+                        }
+                    />
+                </Flex>
                 {emailValue?.length > 0 && (
                     <Flex
                         flexDirection={'column'}

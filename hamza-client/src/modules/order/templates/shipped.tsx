@@ -39,7 +39,7 @@ const Shipped = ({
 
     const debouncedOnSuccess = debounce(() => {
         onSuccess && onSuccess();
-    }, 5000);
+    }, 3000);
 
     const toggleCourierInfo = (orderId: any) => {
         setCourierInfo(courierInfo === orderId ? null : orderId);
@@ -74,7 +74,7 @@ const Shipped = ({
     }, [isStale, chainEnabled]);
 
     useEffect(() => {
-        if (isSuccess && shippedOrder && shippedOrder.length > 0) {
+        if (isSuccess && shippedOrder) {
             console.log(`TRIGGER`);
             debouncedOnSuccess();
         }
