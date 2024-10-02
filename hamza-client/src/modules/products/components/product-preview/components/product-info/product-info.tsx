@@ -8,7 +8,7 @@ import {
     Skeleton,
     SkeletonText,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import useProductPreview from '@store/product-preview/product-preview';
 import { BiHeart, BiSolidHeart } from 'react-icons/bi';
 import useWishlistStore, {
@@ -25,6 +25,7 @@ import {
     TiStarHalfOutline,
     TiStarOutline,
 } from 'react-icons/ti';
+import ProductDescription from '../product-description';
 
 const ProductInfo = () => {
     // Zustand
@@ -51,6 +52,8 @@ const ProductInfo = () => {
         }
         return output;
     };
+
+    // Memoize the selected variant to avoid recalculating on every render
 
     useEffect(() => {
         if (productData && productData.variants) {
@@ -102,6 +105,7 @@ const ProductInfo = () => {
             </div>
         );
     };
+
     // Get product ratings
     const [averageRating, setAverageRating] = useState<number>(0);
     const [reviewCount, setReviewCount] = useState<number>(0);
@@ -292,13 +296,7 @@ const ProductInfo = () => {
                 >
                     About this item
                 </Heading>
-                <Box fontSize={{ base: '14px', md: '16px' }} color="white">
-                    <div
-                        dangerouslySetInnerHTML={{
-                            __html: productData.description,
-                        }}
-                    />
-                </Box>
+                <ProductDescription description={productData.description} />
             </Flex>
         </Flex>
     );
