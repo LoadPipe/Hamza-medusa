@@ -8,7 +8,7 @@ import {
     Skeleton,
     SkeletonText,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import useProductPreview from '@store/product-preview/product-preview';
 import { BiHeart, BiSolidHeart } from 'react-icons/bi';
 import useWishlistStore, {
@@ -25,6 +25,7 @@ import {
     TiStarHalfOutline,
     TiStarOutline,
 } from 'react-icons/ti';
+import ProductDescription from '../product-description';
 
 const ProductInfo = () => {
     // Zustand
@@ -52,8 +53,10 @@ const ProductInfo = () => {
         return output;
     };
 
+    // Memoize the selected variant to avoid recalculating on every render
+
     useEffect(() => {
-        if (productData && productData.variants) {
+        if (productData?.variants) {
             variantId = variantId ?? productData?.variants[0]?.id;
             setVariantId(variantId ?? '');
 
@@ -102,15 +105,16 @@ const ProductInfo = () => {
             </div>
         );
     };
+
     // Get product ratings
     const [averageRating, setAverageRating] = useState<number>(0);
     const [reviewCount, setReviewCount] = useState<number>(0);
     useEffect(() => {
         const fetchProductReview = async () => {
             const averageRatingResponse = await getAverageRatings(
-                productData.id
+                productData?.id ?? ''
             );
-            const reviewCountResponse = await getReviewCount(productData.id);
+            const reviewCountResponse = await getReviewCount(productData?.id ?? '');
 
             setAverageRating(averageRatingResponse);
             setReviewCount(reviewCountResponse);
@@ -154,7 +158,7 @@ const ProductInfo = () => {
                         fontSize={'32px'}
                         color="white"
                     >
-                        {productData.title}
+                        {productData?.title ?? ''}
                     </Heading>
 
                     {authData.status == 'authenticated' && (
@@ -164,18 +168,18 @@ const ProductInfo = () => {
                             mt="0.7rem"
                         >
                             {wishlist.products.find(
-                                (a) => a.id == productData.id
+                                (a) => a.id == productData?.id
                             ) ? (
                                 <BiSolidHeart
                                     size={'26px'}
                                     onClick={() => {
                                         removeWishlistItemMutation.mutate({
-                                            id: productData.id,
+                                            id: productData?.id ?? '',
                                             description:
-                                                productData.description,
-                                            handle: productData.handle,
-                                            thumbnail: productData.thumbnail,
-                                            title: productData.title,
+                                                productData?.description ?? '',
+                                            handle: productData?.handle ?? '',
+                                            thumbnail: productData?.thumbnail ?? '',
+                                            title: productData?.title ?? '',
                                             price: convertToPriceDictionary(
                                                 selectedVariant
                                             ),
@@ -189,12 +193,12 @@ const ProductInfo = () => {
                                     size={26}
                                     onClick={() => {
                                         addWishlistItemMutation.mutate({
-                                            id: productData.id,
+                                            id: productData?.id,
                                             description:
-                                                productData.description,
-                                            handle: productData.handle,
-                                            thumbnail: productData.thumbnail,
-                                            title: productData.title,
+                                                productData?.description ?? '',
+                                            handle: productData?.handle ?? '',
+                                            thumbnail: productData?.thumbnail ?? '',
+                                            title: productData?.title ?? '',
                                             price: convertToPriceDictionary(
                                                 selectedVariant
                                             ),
@@ -272,34 +276,10 @@ const ProductInfo = () => {
                 )}
             </Flex>
 
-            <Flex flexDirection={'column'}>
-                <Heading
-                    as="h2"
-                    fontSize={{ base: '16px', md: '24px' }}
-                    color="primary.green.900"
-                >
-                    Product Info
-                </Heading>
-                <Text fontSize={{ base: '14px', md: '16px' }} color="white">
-                    {productData.subtitle}
-                </Text>
-            </Flex>
-            <Flex flexDirection={'column'}>
-                <Heading
-                    as="h2"
-                    fontSize={{ base: '16px', md: '24px' }}
-                    color="primary.green.900"
-                >
-                    About this item
-                </Heading>
-                <Box fontSize={{ base: '14px', md: '16px' }} color="white">
-                    <div
-                        dangerouslySetInnerHTML={{
-                            __html: productData.description,
-                        }}
-                    />
-                </Box>
-            </Flex>
+            <ProductDescription
+                description={productData?.description ?? ''}
+                subtitle={productData?.subtitle ?? ''}
+            />
         </Flex>
     );
 };
