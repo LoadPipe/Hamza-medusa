@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Image, Flex, Avatar } from '@chakra-ui/react';
 
-const ProfileImage = ({ customerId }: { customerId: string | null }) => {
+const ProfileImage = ({ customerId }: { customerId?: string | null }) => {
     const [imageError, setImageError] = useState(false);
 
     const handleImageError = () => {
