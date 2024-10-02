@@ -1,5 +1,5 @@
-import React from 'react'; // Required for React.memo
-import { Box } from '@chakra-ui/react'; // Required for Box from Chakra UI
+import React from 'react';
+import { Box } from '@chakra-ui/react';
 
 type ProductDescriptionProps = {
     description: string; // Expecting a string with HTML content
@@ -9,10 +9,9 @@ const ProductDescription: React.FC<ProductDescriptionProps> = React.memo(
     ({ description }) => {
         return (
             <Box fontSize={{ base: '14px', md: '16px' }} color="white">
-                {/* Render dynamic HTML with responsive video scaling */}
                 <div
                     dangerouslySetInnerHTML={{ __html: description }}
-                    style={{ maxWidth: '100%', overflow: 'hidden' }} // Optional: max-width to prevent overflow
+                    style={{ maxWidth: '100%', overflow: 'hidden' }}
                 />
                 <style jsx>{`
                     iframe {
