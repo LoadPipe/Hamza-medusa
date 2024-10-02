@@ -1,5 +1,5 @@
 async function main() {
-    const port = 9000;
+    const port = 9001;
     try {
         const authResponse = await fetch(`http://localhost:${port}/admin/auth`, {
             method: 'POST',
@@ -22,7 +22,7 @@ async function main() {
             }
         );
 
-        console.log(buckyResponse);
+        console.log(await buckyResponse.json());
     } catch (e) {
         console.error(e);
     }
