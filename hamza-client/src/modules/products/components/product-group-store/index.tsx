@@ -113,7 +113,8 @@ const ProductCardGroup = ({ storeName }: Props) => {
                     const productPricing =
                         variant?.prices?.find(
                             (price: any) =>
-                                price.currency_code === (preferred_currency_code ?? 'usdc')
+                                price.currency_code ===
+                                (preferred_currency_code ?? 'usdc')
                         )?.amount ||
                         variant?.prices?.[0]?.amount ||
                         0;
@@ -133,8 +134,6 @@ const ProductCardGroup = ({ storeName }: Props) => {
                             <ProductCardHome
                                 key={index}
                                 productHandle={product.handle}
-                                reviewCount={0}
-                                totalRating={0}
                                 variantID={'0'}
                                 countryCode={product.countryCode}
                                 productName={product.title}
