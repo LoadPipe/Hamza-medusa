@@ -20,7 +20,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             return;
         }
 
-        const order = await this.orderRepository_.find({
+        let order = await this.orderRepository_.find({
             where: { id: handler.inputParams.order_id },
             relations: ['payments'],
         });
