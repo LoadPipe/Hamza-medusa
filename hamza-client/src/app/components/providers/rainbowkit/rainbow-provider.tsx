@@ -15,6 +15,7 @@ import {
     SwitchNetwork,
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 const queryClient = new QueryClient();
 import { SiweMessage } from 'siwe';
 import {
@@ -264,6 +265,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                             {children}
                         </RainbowKitProvider>
                     </RainbowKitAuthenticationProvider>
+                    <ReactQueryDevtools initialIsOpen={false} />
                 </QueryClientProvider>
             </WagmiConfig>
         </div>
