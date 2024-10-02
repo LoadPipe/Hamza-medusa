@@ -60,4 +60,10 @@ export class CoinGeckoController {
             );
         }
     }
+
+    @Get('/health')
+    async getHealthCheck(
+    ): Promise<{ status: string }> {
+        return { status: 'ok' };
+    }
 }
