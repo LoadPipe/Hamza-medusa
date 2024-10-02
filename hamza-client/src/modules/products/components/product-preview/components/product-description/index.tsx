@@ -2,7 +2,7 @@ import React from 'react';
 import { Box } from '@chakra-ui/react';
 
 type ProductDescriptionProps = {
-    description: string; // Expecting a string with HTML content
+    description: string;
 };
 
 const ProductDescription: React.FC<ProductDescriptionProps> = React.memo(
