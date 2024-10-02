@@ -58,7 +58,7 @@ export class DatabaseLogger implements ILogger {
                 request_id: sessionStorage.requestId,
                 log_level,
                 content,
-                timestamp: 1,
+                timestamp: Math.floor(Date.now() / 1000),
                 id: generateEntityId()
             }
 
