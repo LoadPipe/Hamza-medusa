@@ -271,7 +271,7 @@ class ProductReviewService extends TransactionBaseService {
 
         existingReview.content = review_updates;
 
-        return await productReviewRepository.save(existingReview);
+        return productReviewRepository.save(existingReview);
     }
 
     // async updateProduct(
@@ -361,7 +361,7 @@ class ProductReviewService extends TransactionBaseService {
         existingReview.rating = rating;
         existingReview.content = review;
 
-        return await productReviewRepository.save(existingReview);
+        return productReviewRepository.save(existingReview);
     }
 
     // TODO: lock to not allow multiple reviews for this item...

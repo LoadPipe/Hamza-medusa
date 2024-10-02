@@ -20,7 +20,7 @@ export default class WhiteListService extends TransactionBaseService {
 
     async create(storeId: string, walletAddress: string) {
         if (!(await this.getByWalletAddress(storeId, walletAddress))?.length) {
-            return await this.whitelistRepository_.save({
+            return this.whitelistRepository_.save({
                 id: generateEntityId(null, 'whitelist'),
                 store_id: storeId,
                 wallet_address: walletAddress?.trim()?.toLowerCase()
@@ -41,7 +41,7 @@ export default class WhiteListService extends TransactionBaseService {
         const customer = await this.customerRepository_.findOne({ where: { id: customerId }, relations: ['walletAddresses'] })
 
         if (customer && customer.walletAddresses) {
-            return await this.whitelistRepository_.find({
+            return this.whitelistRepository_.find({
                 where: {
                     store_id: storeId,
                     wallet_address: In(customer.walletAddresses.map(w => w.wallet_address?.trim()?.toLowerCase() ?? ''))
@@ -54,7 +54,7 @@ export default class WhiteListService extends TransactionBaseService {
     }
 
     async getByWalletAddress(storeId: string, walletAddress: string): Promise<WhiteList[]> {
-        return await this.whitelistRepository_.find({
+        return this.whitelistRepository_.find({
             where: {
                 store_id: storeId,
                 wallet_address: walletAddress?.trim()?.toLowerCase()
