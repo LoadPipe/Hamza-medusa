@@ -142,7 +142,7 @@ const ProductCardGroup = ({ storeName }: Props) => {
                             <ProductCardHome
                                 key={index}
                                 reviewCount={reviewCounter}
-                                totalRating={avgRating}
+                                totalRating={roundedAvgRating}
                                 productHandle={product.handle}
                                 variantID={'0'}
                                 countryCode={product.countryCode}
