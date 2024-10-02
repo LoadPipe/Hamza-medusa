@@ -2,11 +2,24 @@ import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import { RouteHandler } from '../../../route-handler';
 import { AppLogRepository } from '../../../../repositories/app-log';
 
-export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
+/**
+ * DELETE /admin/custom/logs
+ *
+ * Purge old logs (older than a specific number of seconds) from the app_logs table. 
+ *
+ * Query Parameters:
+ * - `seconds` (number): Optional number of seconds - any logs older than this number of seconds from the 
+ * current date are to be purged
+ *
+ * Response:
+ * - Returns a 200 on success
+ * - Returns 500 on failure of any kind
+ */
+export const DELETE = async (req: MedusaRequest, res: MedusaResponse) => {
     const appLogRepository: typeof AppLogRepository = req.scope.resolve('appLogRepository');
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'POST', '/admin/custom/logs'
+        req, res, 'DELETE', '/admin/custom/logs'
     );
 
     const getUnixTimestamp = () => {
