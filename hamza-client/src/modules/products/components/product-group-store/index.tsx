@@ -123,6 +123,14 @@ const ProductCardGroup = ({ storeName }: Props) => {
                         (preferred_currency_code ?? 'usdc') as string
                     );
 
+                    const reviewCounter = product.reviews.length;
+                    const totalRating = product.reviews.reduce(
+                        (acc: number, review: any) => acc + review.rating,
+                        0
+                    );
+                    const avgRating = totalRating / reviewCounter;
+                    const roundedAvgRating = parseFloat(avgRating.toFixed(2));
+
                     return (
                         <GridItem
                             key={index}
@@ -133,6 +141,8 @@ const ProductCardGroup = ({ storeName }: Props) => {
                         >
                             <ProductCardHome
                                 key={index}
+                                reviewCount={reviewCounter}
+                                totalRating={avgRating}
                                 productHandle={product.handle}
                                 variantID={'0'}
                                 countryCode={product.countryCode}

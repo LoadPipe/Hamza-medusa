@@ -27,6 +27,8 @@ interface ProductCardProps {
     inventory: number;
     storeId: string;
     productId: string;
+    reviewCount: number;
+    totalRating: number;
 }
 
 const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
@@ -43,35 +45,12 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
     allow_backorder,
     inventory,
     storeId,
+    reviewCount,
+    totalRating,
 }) => {
     const [imageLoaded, setImageLoaded] = useState(false);
 
     const objectFit = getObjectFit(productHandle);
-
-    // Get product ratings
-    const [averageRating, setAverageRating] = useState<number>(0);
-    const [reviewCount, setReviewCount] = useState<number>(0);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchProductReview = async () => {
-            setLoading(true);
-            try {
-                const averageRatingResponse =
-                    await getAverageRatings(productId);
-                const reviewCountResponse = await getReviewCount(productId);
-
-                setAverageRating(averageRatingResponse);
-                setReviewCount(reviewCountResponse);
-            } catch (error) {
-                console.error('Error fetching product reviews:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchProductReview();
-    }, [productId]);
 
     return (
         <LocalizedClientLink href={`/products/${productHandle}`}>
@@ -136,20 +115,7 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
                             mb={{ base: '2.5px', md: '0' }}
                         >
                             <IoStar style={{ color: '#FEC84B' }} />
-                            {loading ? (
-                                <>
-                                    <Skeleton
-                                        height="14px"
-                                        width="20px"
-                                        ml="2"
-                                    />
-                                    <Skeleton
-                                        height="14px"
-                                        width="40px"
-                                        ml="2"
-                                    />
-                                </>
-                            ) : reviewCount > 0 ? (
+                            {reviewCount > 0 ? (
                                 <>
                                     <Text
                                         color={'white'}
@@ -158,7 +124,7 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
                                         fontSize={{ base: '14px', md: '14px' }}
                                         ml={{ base: '1.5', md: '2' }}
                                     >
-                                        {averageRating}
+                                        {totalRating}
                                     </Text>
                                     <Text
                                         alignSelf={'center'}
