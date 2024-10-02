@@ -34,7 +34,7 @@ export default function Login() {
                 padding={2}
             >
                 Attach thy purse to yon network, that thou mayst enter thine own
-                account's chamber. Attach thy purse I say!
+                account's chamber.
             </Text>
         </Flex>
     );
