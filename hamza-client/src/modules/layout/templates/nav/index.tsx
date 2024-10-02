@@ -36,13 +36,13 @@ const fetchCart = async () => {
 };
 
 export default async function Nav() {
-    // Get the current URL from headers
-    const headersList = headers();
-    const referer = headersList.get('referer') || ''; // Fallback if there's no referer
-    const url = new URL(referer); // Create a URL object to parse the path
-    const pathname = url.pathname; // Get the path from the referer
+    // // Get the current URL from headers
+    // const headersList = headers();
+    // const referer = headersList.get('referer') || ''; // Fallback if there's no referer
+    // const url = new URL(referer); // Create a URL object to parse the path
+    // const pathname = url.pathname; // Get the path from the referer
     // Check if the route includes '/products'
-    const isProductRoute = pathname.includes('/products');
+    // const isProductRoute = pathname.includes('/products');
 
     const cart = await fetchCart();
 
@@ -61,7 +61,7 @@ export default async function Nav() {
             justifyContent={'center'}
             alignItems={'center'}
             backgroundColor={'#020202'}
-            display={{ base: isProductRoute ? 'none' : 'flex', md: 'flex' }}
+            // display={{ base: isProductRoute ? 'none' : 'flex', md: 'flex' }}
         >
             <MobileNav />
 
