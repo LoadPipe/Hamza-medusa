@@ -11,13 +11,12 @@ import { IoStar } from 'react-icons/io5';
 import Image from 'next/image';
 import { getObjectFit } from '@modules/get-object-fit';
 import currencyIcons from '../../../../public/images/currencies/crypto-currencies';
+import { getAverageRatings, getReviewCount } from '@lib/data';
 
 interface ProductCardProps {
     variantID: string;
     countryCode: string;
     productName: string;
-    reviewCount: number;
-    totalRating: number;
     productPrice: number | string;
     currencyCode: string;
     imageSrc: string;
@@ -27,14 +26,13 @@ interface ProductCardProps {
     allow_backorder: boolean;
     inventory: number;
     storeId: string;
+    productId: string;
 }
 
 const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
     variantID,
     countryCode,
     productName,
-    reviewCount,
-    totalRating,
     productPrice,
     currencyCode,
     imageSrc,
@@ -49,6 +47,31 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
     const [imageLoaded, setImageLoaded] = useState(false);
 
     const objectFit = getObjectFit(productHandle);
+
+    // Get product ratings
+    const [averageRating, setAverageRating] = useState<number>(0);
+    const [reviewCount, setReviewCount] = useState<number>(0);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchProductReview = async () => {
+            setLoading(true);
+            try {
+                const averageRatingResponse =
+                    await getAverageRatings(productId);
+                const reviewCountResponse = await getReviewCount(productId);
+
+                setAverageRating(averageRatingResponse);
+                setReviewCount(reviewCountResponse);
+            } catch (error) {
+                console.error('Error fetching product reviews:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProductReview();
+    }, [productId]);
 
     return (
         <LocalizedClientLink href={`/products/${productHandle}`}>
@@ -67,7 +90,7 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
                     justifyContent="center"
                     backgroundColor={objectFit === 'cover' ? 'black' : 'white'}
                     alignItems="center"
-                    onClick={() => { }}
+                    onClick={() => {}}
                     style={{ cursor: 'pointer' }}
                 >
                     {!imageLoaded && <Skeleton height="240px" width="100%" />}
@@ -113,35 +136,53 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
                             mb={{ base: '2.5px', md: '0' }}
                         >
                             <IoStar style={{ color: '#FEC84B' }} />
-                            {(reviewCount ?? 0) > 0 ? (
+                            {loading ? (
+                                <>
+                                    <Skeleton
+                                        height="14px"
+                                        width="20px"
+                                        ml="2"
+                                    />
+                                    <Skeleton
+                                        height="14px"
+                                        width="40px"
+                                        ml="2"
+                                    />
+                                </>
+                            ) : reviewCount > 0 ? (
                                 <>
                                     <Text
                                         color={'white'}
                                         alignSelf={'center'}
                                         fontWeight="700"
                                         fontSize={{ base: '14px', md: '14px' }}
-                                        ml="1"
+                                        ml={{ base: '1.5', md: '2' }}
                                     >
-                                        {totalRating}
+                                        {averageRating}
                                     </Text>
                                     <Text
                                         alignSelf={'center'}
                                         fontWeight="700"
                                         fontSize={{ base: '14px', md: '16px' }}
                                         color="#555555"
-                                        ml="1"
+                                        ml="2"
                                     >
-                                        ({reviewCount} reviews)
+                                        ({reviewCount}{' '}
+                                        {reviewCount === 1
+                                            ? 'review'
+                                            : 'reviews'}
+                                        )
                                     </Text>
                                 </>
                             ) : (
                                 <Text
                                     alignSelf={'center'}
-                                    ml={{ base: '1.5', md: '2' }}
+                                    fontWeight="700"
                                     fontSize={{ base: '14px', md: '16px' }}
-                                    color={'white'}
+                                    color="#555555"
+                                    ml="2"
                                 >
-                                    no reviews yet
+                                    ({0} {'reviews'})
                                 </Text>
                             )}
                         </Flex>

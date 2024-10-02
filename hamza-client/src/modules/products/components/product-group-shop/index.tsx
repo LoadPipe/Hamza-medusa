@@ -14,7 +14,7 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import ProductCardStore from '@modules/shop/components/product-card';
+import ProductCard from '@modules/shop/components/product-card';
 import useStorePage from '@store/store-page/store-page';
 
 const ProductCardGroup = () => {
@@ -131,11 +131,9 @@ const ProductCardGroup = () => {
                                 height={{ base: '100%', md: '399px' }}
                                 width="100%"
                             >
-                                <ProductCardStore
+                                <ProductCard
                                     key={index}
                                     productHandle={product?.handle ?? ''}
-                                    reviewCount={product?.review}
-                                    totalRating={10}
                                     variantID={variant?.id ?? ''}
                                     countryCode={product?.origin_country ?? ''}
                                     productName={product?.title ?? ''}

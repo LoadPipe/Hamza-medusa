@@ -88,7 +88,7 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                 }}
             >
                 <Box
-                    height={{ base: '134.73', md: '238px' }}
+                    height={{ base: '134.73px', md: '238px' }}
                     display="flex"
                     justifyContent="center"
                     backgroundColor={objectFit === 'cover' ? 'black' : 'white'}

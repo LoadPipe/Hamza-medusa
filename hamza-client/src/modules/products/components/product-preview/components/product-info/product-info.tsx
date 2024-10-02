@@ -233,9 +233,8 @@ const ProductInfo = () => {
                                 ml="2"
                                 as="h4"
                                 fontWeight="600"
-                                fontSize={'16px'}
+                                fontSize={'14px'}
                                 color={'white'}
-                                alignSelf={'center'}
                                 mt="2px"
                             >
                                 ({reviewCount}{' '}
@@ -258,9 +257,8 @@ const ProductInfo = () => {
                                 ml="2"
                                 as="h4"
                                 fontWeight="600"
-                                fontSize={'16px'}
+                                fontSize={'14px'}
                                 color={'white'}
-                                alignSelf={'center'}
                                 mt="2px"
                             >
                                 ({reviewCount}{' '}
