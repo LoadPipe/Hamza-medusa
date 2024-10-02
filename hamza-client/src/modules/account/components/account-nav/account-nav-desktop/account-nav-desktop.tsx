@@ -26,6 +26,7 @@ import NavLink from '../components/nav-link';
 import NavLinkOrders from '../components/nav-link-desktop-orders';
 import { TABS } from 'modules/order-tab-management';
 import { RiShoppingBasket2Line } from 'react-icons/ri';
+import { LogoutDesktop } from '../components/logout-desktop';
 
 const AccountNavDesktop = ({
     customer,
@@ -39,23 +40,18 @@ const AccountNavDesktop = ({
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
     const [isOrdersOpen, setIsOrdersOpen] = useState(false);
-    const [logout, setLogout] = useState(false);
 
     const handleLogout = async () => {
-        if (logout === false) {
-        } else {
-            setCustomerAuthData({
-                customer_id: '',
-                is_verified: false,
-                token: '',
-                wallet_address: '',
-                status: 'unauthenticated',
-            });
-            Cookies.remove('_medusa_jwt');
-            Cookies.remove('_medusa_cart_id');
-            router.replace('/');
-            setLogout(false);
-        }
+        setCustomerAuthData({
+            customer_id: '',
+            is_verified: false,
+            token: '',
+            wallet_address: '',
+            status: 'unauthenticated',
+        });
+        Cookies.remove('_medusa_jwt');
+        Cookies.remove('_medusa_cart_id');
+        router.replace('/');
     };
 
     const toggleCollapse = () => setIsOpen(!isOpen);
@@ -305,35 +301,7 @@ const AccountNavDesktop = ({
                 />
             )}
 
-            <Box
-                as="button"
-                borderRadius={'8px'}
-                height={'56px'}
-                padding="16px"
-                bg="transparent"
-                color="white"
-                _active={{
-                    bg: 'primary.green.900',
-                    color: 'black',
-                    transform: 'scale(0.98)',
-                    borderColor: '#bec3c9',
-                }}
-                onClick={handleLogout}
-            >
-                <Flex>
-                    <Flex width={'26px'} height={'26px'}>
-                        <CiLogout
-                            color="white"
-                            size={'24px'}
-                            style={{ alignSelf: 'center', margin: '0 auto' }}
-                        />
-                    </Flex>
-
-                    <Text ml={2} my="auto" fontSize={'18px'} fontWeight={600}>
-                        Logout
-                    </Text>
-                </Flex>
-            </Box>
+            <LogoutDesktop />
         </Flex>
     );
 };

@@ -44,6 +44,7 @@ import Cookies from 'js-cookie';
 import NavLink from '../components/nav-link';
 import NavLinkMobile from '../components/nav-link-mobile';
 import NavLinkMobileOrders from '../components/nav-link-mobile-orders';
+import { LogoutMobile } from '../components/logout-mobile';
 
 import { TABS } from 'modules/order-tab-management';
 const AccountNavMobile = ({
@@ -410,30 +411,7 @@ const AccountNavMobile = ({
                             />
                         </MenuItem>
                     )}
-                    <MenuItem backgroundColor={'transparent'} color="white">
-                        <Box onClick={handleLogout}>
-                            <Flex>
-                                <Flex width={'22px'} height={'22px'}>
-                                    <CiLogout
-                                        size={'20px'}
-                                        style={{
-                                            alignSelf: 'center',
-                                            margin: '0 auto',
-                                        }}
-                                    />
-                                </Flex>
-
-                                <Text
-                                    ml={2}
-                                    my="auto"
-                                    fontSize={'16px'}
-                                    fontWeight={600}
-                                >
-                                    Logout
-                                </Text>
-                            </Flex>
-                        </Box>
-                    </MenuItem>
+                    <LogoutMobile />
                 </MenuList>
             </Menu>
         </Flex>
