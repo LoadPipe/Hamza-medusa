@@ -26,7 +26,7 @@ const Refund = ({
 
     const debouncedOnSuccess = debounce(() => {
         onSuccess && onSuccess();
-    }, 5000);
+    }, 3000);
 
     const {
         data: refundOrder,
@@ -57,7 +57,7 @@ const Refund = ({
     }, [isStale]);
 
     useEffect(() => {
-        if (isSuccess && refundOrder && refundOrder.length > 0) {
+        if (isSuccess && refundOrder) {
             console.log(`TRIGGER`);
             debouncedOnSuccess();
         }

@@ -24,7 +24,7 @@ const Cancelled = ({
 
     const debouncedOnSuccess = debounce(() => {
         onSuccess && onSuccess();
-    }, 5000);
+    }, 3000);
 
     const {
         data: canceledOrder,
@@ -53,7 +53,7 @@ const Cancelled = ({
     }, [isStale]);
 
     useEffect(() => {
-        if (isSuccess && canceledOrder && canceledOrder.length > 0) {
+        if (isSuccess && canceledOrder) {
             console.log(`TRIGGER`);
             debouncedOnSuccess();
         }

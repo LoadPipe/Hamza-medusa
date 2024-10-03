@@ -134,7 +134,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         await CustomerRepository.update(
             { id: decoded.customer_id },
             {
-                email: user.email,
+                email: user.email?.trim()?.toLowerCase(),
                 is_verified: true,
                 first_name: user.given_name,
                 last_name: user.family_name,

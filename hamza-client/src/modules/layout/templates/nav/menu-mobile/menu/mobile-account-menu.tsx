@@ -20,6 +20,7 @@ import { AiFillSetting } from 'react-icons/ai';
 import { AuthorizedAccount } from '../../menu-desktop/components/authorized-account';
 import useWishlistStore from '@store/wishlist/wishlist-store';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import ProfileImage from '@/components/customer-icon/profile-image';
 
 const MobileAccountMenu = () => {
     const { authData } = useCustomerAuthStore();
@@ -52,14 +53,7 @@ const MobileAccountMenu = () => {
                     transition: 'border-color 0.3s ease-in-out',
                 }}
             >
-                <Image
-                    src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${authData.customer_id ?? ''}`}
-                    width={'100%'}
-                    height={'100%'}
-                    borderRadius={'full'}
-                    objectFit="cover"
-                    alt="Profile Icon"
-                />
+                <ProfileImage />
                 {totalItems > 0 && (
                     <Flex
                         position="absolute"

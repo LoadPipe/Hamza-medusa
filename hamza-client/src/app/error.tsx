@@ -65,8 +65,9 @@ export default function Error({ error, reset }: ErrorPageProps) {
                     </Flex>
 
                     <Flex flexDir={'column'}>
-                        <Heading fontSize={'24px'}>What can you do?</Heading>
-                        <Text>{error ? error : 'Something went wrong'}</Text>
+                        <Text fontSize={'32px'} fontWeight="bold">
+                            {error ? error : 'Something went wrong'}
+                        </Text>
                     </Flex>
 
                     <Flex maxW={'413px'} width="100%">

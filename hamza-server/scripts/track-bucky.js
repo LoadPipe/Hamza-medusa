@@ -1,5 +1,5 @@
 async function main() {
-    const port = 9000;
+    const port = 9001;
     try {
         const authResponse = await fetch(`http://localhost:${port}/admin/auth`, {
             method: 'POST',
@@ -13,7 +13,7 @@ async function main() {
         const authCookie = authResponse.headers.get('set-cookie');
 
         const buckyResponse = await fetch(
-            `http://localhost:${port}/admin/custom/bucky/track?order_id=${process.argv[0]}`,
+            `http://localhost:${port}/admin/custom/bucky/track?order_id=${process.argv[2]}`,
             {
                 method: 'GET',
                 headers: {
@@ -22,7 +22,7 @@ async function main() {
             }
         );
 
-        console.log(buckyResponse);
+        console.log(await buckyResponse.json());
     } catch (e) {
         console.error(e);
     }

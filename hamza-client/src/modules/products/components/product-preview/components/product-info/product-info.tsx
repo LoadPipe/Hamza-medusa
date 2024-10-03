@@ -8,7 +8,7 @@ import {
     Skeleton,
     SkeletonText,
 } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import useProductPreview from '@store/product-preview/product-preview';
 import { BiHeart, BiSolidHeart } from 'react-icons/bi';
 import useWishlistStore, {
@@ -25,6 +25,7 @@ import {
     TiStarHalfOutline,
     TiStarOutline,
 } from 'react-icons/ti';
+import ProductDescription from '../product-description';
 
 const ProductInfo = () => {
     // Zustand
@@ -52,8 +53,10 @@ const ProductInfo = () => {
         return output;
     };
 
+    // Memoize the selected variant to avoid recalculating on every render
+
     useEffect(() => {
-        if (productData && productData.variants) {
+        if (productData?.variants) {
             variantId = variantId ?? productData?.variants[0]?.id;
             setVariantId(variantId ?? '');
 
@@ -74,7 +77,7 @@ const ProductInfo = () => {
 
     // Star Feature
     const renderStars = (rating: any) => {
-        const fullStars = Math.floor(rating);
+        const fullStars = rating ? Math.floor(rating) : 0;
         const halfStar = rating % 1 >= 0.5;
         const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
 
@@ -85,32 +88,33 @@ const ProductInfo = () => {
                     .map((_, index) => (
                         <TiStarFullOutline
                             key={`full-${index}`}
-                            className="text-yellow-500 w-['20px'] h-['20px]"
+                            className="text-yellow-500 text-2xl  w-['20px'] h-['20px]"
                         />
                     ))}
                 {halfStar && (
-                    <TiStarHalfOutline className="text-yellow-500 text-2xl" />
+                    <TiStarHalfOutline className="text-yellow-500 text-2xl w-['20px'] h-['20px]" />
                 )}
                 {Array(emptyStars)
                     .fill(null)
                     .map((_, index) => (
                         <TiStarOutline
                             key={`empty-${index}`}
-                            className="text-yellow-500 text-2xl"
+                            className="text-yellow-500 text-2xl w-['20px'] h-['20px]"
                         />
                     ))}
             </div>
         );
     };
+
     // Get product ratings
     const [averageRating, setAverageRating] = useState<number>(0);
     const [reviewCount, setReviewCount] = useState<number>(0);
     useEffect(() => {
         const fetchProductReview = async () => {
             const averageRatingResponse = await getAverageRatings(
-                productData.id
+                productData?.id ?? ''
             );
-            const reviewCountResponse = await getReviewCount(productData.id);
+            const reviewCountResponse = await getReviewCount(productData?.id ?? '');
 
             setAverageRating(averageRatingResponse);
             setReviewCount(reviewCountResponse);
@@ -154,7 +158,7 @@ const ProductInfo = () => {
                         fontSize={'32px'}
                         color="white"
                     >
-                        {productData.title}
+                        {productData?.title ?? ''}
                     </Heading>
 
                     {authData.status == 'authenticated' && (
@@ -164,18 +168,18 @@ const ProductInfo = () => {
                             mt="0.7rem"
                         >
                             {wishlist.products.find(
-                                (a) => a.id == productData.id
+                                (a) => a.id == productData?.id
                             ) ? (
                                 <BiSolidHeart
                                     size={'26px'}
                                     onClick={() => {
                                         removeWishlistItemMutation.mutate({
-                                            id: productData.id,
+                                            id: productData?.id ?? '',
                                             description:
-                                                productData.description,
-                                            handle: productData.handle,
-                                            thumbnail: productData.thumbnail,
-                                            title: productData.title,
+                                                productData?.description ?? '',
+                                            handle: productData?.handle ?? '',
+                                            thumbnail: productData?.thumbnail ?? '',
+                                            title: productData?.title ?? '',
                                             price: convertToPriceDictionary(
                                                 selectedVariant
                                             ),
@@ -189,12 +193,12 @@ const ProductInfo = () => {
                                     size={26}
                                     onClick={() => {
                                         addWishlistItemMutation.mutate({
-                                            id: productData.id,
+                                            id: productData?.id,
                                             description:
-                                                productData.description,
-                                            handle: productData.handle,
-                                            thumbnail: productData.thumbnail,
-                                            title: productData.title,
+                                                productData?.description ?? '',
+                                            handle: productData?.handle ?? '',
+                                            thumbnail: productData?.thumbnail ?? '',
+                                            title: productData?.title ?? '',
                                             price: convertToPriceDictionary(
                                                 selectedVariant
                                             ),
@@ -215,20 +219,31 @@ const ProductInfo = () => {
                         height="20px"
                     >
                         <Flex flexDirection={'row'}>
-                            <Flex flexDirection={'row'}>
+                            <Flex flexDirection={'row'} alignSelf={'center'}>
                                 {renderStars(averageRating)}
                             </Flex>
-                            <Heading
-                                ml="4px"
+                            <Text
+                                ml="2"
                                 as="h4"
-                                variant="semibold"
-                                fontSize={'16px'}
-                                color={'#555555'}
+                                fontWeight="600"
+                                fontSize={'20px'}
+                                color={'white'}
                                 alignSelf={'center'}
                                 mt="2px"
                             >
-                                ({reviewCount} Reviews)
-                            </Heading>
+                                {averageRating}
+                            </Text>
+                            <Text
+                                ml="2"
+                                as="h4"
+                                fontWeight="600"
+                                fontSize={'14px'}
+                                color={'white'}
+                                mt="2px"
+                            >
+                                ({reviewCount}{' '}
+                                {reviewCount === 1 ? 'review' : 'reviews'})
+                            </Text>
                         </Flex>
                     </Flex>
                 ) : (
@@ -238,68 +253,30 @@ const ProductInfo = () => {
                         height="20px"
                     >
                         <Flex flexDirection={'row'}>
-                            <Image src={ReviewStar} alt={'star'} />
-                            <Image src={ReviewStar} alt={'star'} />
-                            <Image src={ReviewStar} alt={'star'} />
-                            <Image src={ReviewStar} alt={'star'} />
-                            <Image src={ReviewStar} alt={'star'} />
-                        </Flex>
+                            <Flex flexDirection={'row'} alignSelf={'center'}>
+                                {renderStars(averageRating)}
+                            </Flex>
 
-                        <Flex flexDirection={'row'}>
-                            <Heading
+                            <Text
+                                ml="2"
                                 as="h4"
-                                variant="semibold"
-                                fontSize={'16px'}
+                                fontWeight="600"
+                                fontSize={'14px'}
                                 color={'white'}
-                                alignSelf={'center'}
                                 mt="2px"
                             >
-                                4.97
-                            </Heading>
-                            <Heading
-                                ml="4px"
-                                as="h4"
-                                variant="semibold"
-                                fontSize={'16px'}
-                                color={'#555555'}
-                                alignSelf={'center'}
-                                mt="2px"
-                            >
-                                (0 Reviews)
-                            </Heading>
+                                ({reviewCount}{' '}
+                                {reviewCount === 1 ? 'review' : 'reviews'})
+                            </Text>
                         </Flex>
                     </Flex>
                 )}
             </Flex>
 
-            <Flex flexDirection={'column'}>
-                <Heading
-                    as="h2"
-                    fontSize={{ base: '16px', md: '24px' }}
-                    color="primary.green.900"
-                >
-                    Product Info
-                </Heading>
-                <Text fontSize={{ base: '14px', md: '16px' }} color="white">
-                    {productData.subtitle}
-                </Text>
-            </Flex>
-            <Flex flexDirection={'column'}>
-                <Heading
-                    as="h2"
-                    fontSize={{ base: '16px', md: '24px' }}
-                    color="primary.green.900"
-                >
-                    About this item
-                </Heading>
-                <Box fontSize={{ base: '14px', md: '16px' }} color="white">
-                    <div
-                        dangerouslySetInnerHTML={{
-                            __html: productData.description,
-                        }}
-                    />
-                </Box>
-            </Flex>
+            <ProductDescription
+                description={productData?.description ?? ''}
+                subtitle={productData?.subtitle ?? ''}
+            />
         </Flex>
     );
 };

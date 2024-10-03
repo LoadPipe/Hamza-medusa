@@ -157,7 +157,7 @@ export async function GET(
         await customerRepository.update(
             { id: decoded.customer_id },
             {
-                email: `${first_name}@${last_name}.com`, //twitterUser?.email,
+                email: `${first_name}@${last_name}.com`?.trim()?.toLowerCase(), //twitterUser?.email,
                 is_verified: true,
                 first_name,
                 last_name,
