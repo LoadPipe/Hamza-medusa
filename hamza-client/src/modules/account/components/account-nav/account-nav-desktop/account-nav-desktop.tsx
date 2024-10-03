@@ -23,7 +23,6 @@ import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import NavLink from '../components/nav-link';
-import NavLinkOrders from '../components/nav-link-desktop-orders';
 import { TABS } from 'modules/order-tab-management';
 import { RiShoppingBasket2Line } from 'react-icons/ri';
 import { LogoutDesktop } from '../components/logout-desktop';
