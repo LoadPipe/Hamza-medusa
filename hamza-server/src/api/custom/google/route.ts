@@ -8,6 +8,7 @@ import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import CustomerRepository from '../../../repositories/customer';
 import { RouteHandler } from '../../route-handler';
+import { redirectToOauthLandingPage } from 'src/utils/oauth';
 
 interface GoogleTokensResult {
     access_token: string;
@@ -100,10 +101,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     handler.onError = (err: any) => {
-        return res.redirect(
-            `${process.env.STORE_URL}/account/profile?verify=false&error=true`
-            //`${process.env.STORE_URL}/account/oauth-landing?success=false&error=true`
-        );
+        redirectToOauthLandingPage(res, 'google', false, 'An unknown error has occurred');
     };
 
     await handler.handle(async () => {
@@ -117,7 +115,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         logger.debug(`google oauth req.params: ${JSON.stringify(req.params)}`);
 
         //throw error if anything wrong with the cookie
-        if (!decoded) throw new Error('unable to get the _medusa_jwt cookie');
+        if (!decoded)
+            return redirectToOauthLandingPage(res, 'google', false, 'Unable to get the JWT cookie');
 
         //get google oauth data
         let tokens = await getGoogleOAuthTokens({
@@ -125,7 +124,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             logger,
         });
 
-        logger.debug(`Google OAUTH tokens: ${JSON.stringify(tokens)}`);
+        if (!tokens)
+            return redirectToOauthLandingPage(res, 'google', false, 'Unable to get the Google OAuth token');
+        logger.debug(`Google OAuth tokens: ${JSON.stringify(tokens)}`);
 
         //get google user data
         let user = await getGoogleUser({
@@ -134,7 +135,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             logger,
         });
 
-        logger.debug(`Google OAUTH user: ${JSON.stringify(user)}`);
+        if (!user)
+            return redirectToOauthLandingPage(res, 'google', false, 'Unable to get the Google OAuth user');
+        logger.debug(`Google OAuth user: ${JSON.stringify(user)}`);
 
         //update the user record if all good
         await CustomerRepository.update(
@@ -157,7 +160,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         ]);
 
         //redirect
-        return res.redirect(`${process.env.STORE_URL}/account?verify=true`);
-        //return res.redirect(`${process.env.STORE_URL}/account/oauth-landing?success=true`);
+        return redirectToOauthLandingPage(res, 'google');
     });
 };

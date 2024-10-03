@@ -8,6 +8,7 @@ import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import CustomerRepository from '../../../repositories/customer';
 import { RouteHandler } from '../../route-handler';
+import { redirectToOauthLandingPage } from 'src/utils/oauth';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     let eventBus_: EventBusService = req.scope.resolve('eventBusService');
@@ -17,8 +18,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     handler.onError = (err: any) => {
-        res.redirect(
-            `${process.env.STORE_URL}/account?verify=false&error=true`);
+        redirectToOauthLandingPage(res, 'discord', false, 'An unknown error has occurred');
     }
 
     await handler.handle(async () => {
@@ -28,6 +28,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             `discord oauth decoded _medusa_jwt: ${JSON.stringify(decoded)}`
         );
         handler.logger.debug(`discord oauth req.params: ${JSON.stringify(req.params)}`);
+
+        if (!decoded)
+            return redirectToOauthLandingPage(res, 'discord', false, 'Unable to get the medusa_jwt token');
 
         const tokenResponse = await axios.post(
             'https://discord.com/api/oauth2/token',
@@ -45,6 +48,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             }
         );
 
+        if (!tokenResponse)
+            return redirectToOauthLandingPage(res, 'discord', false, 'Unable to get discord OAuth token');
+
         const userResponse = await axios.get(
             'https://discord.com/api/users/@me',
             {
@@ -54,6 +60,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             }
         );
 
+        if (!userResponse)
+            return redirectToOauthLandingPage(res, 'discord', false, 'Unable to get the Discord user');
         handler.logger.debug(`user response: ${userResponse.data}`);
 
         if (userResponse.data.email) {
@@ -76,7 +84,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                     eventName: 'customer.verified',
                 },
             ]);
-            return res.redirect(`${process.env.STORE_URL}/account?verify=true`);
+
+            return redirectToOauthLandingPage(res, 'discord');
         }
 
         handler.logger.debug('Failed to retrieve email from discord');

@@ -4,6 +4,7 @@ import { RouteHandler } from '../../route-handler';
 import CustomerRepository from '../../../repositories/customer';
 import { ILogger } from '../../../utils/logging/logger';
 import jwt from 'jsonwebtoken';
+import { redirectToOauthLandingPage } from 'src/utils/oauth';
 
 // add your client id and secret here:
 const TWITTER_OAUTH_CLIENT_ID = process.env.TWITTER_ACCESS_KEY!;
@@ -104,9 +105,7 @@ export async function GET(
     const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/twitter');
 
     handler.onError = (err: any) => {
-        return res.redirect(
-            `${process.env.STORE_URL}/account/profile?verify=false&error=true`
-        );
+        redirectToOauthLandingPage(res, 'twitter', false, 'An unknown error has occurred');
     };
 
     await handler.handle(async () => {
@@ -119,11 +118,15 @@ export async function GET(
         );
         handler.logger.debug(`twitter oauth req.params: ${JSON.stringify(req.params)}`);
 
+        //throw error if anything wrong with the cookie
+        if (!decoded)
+            return redirectToOauthLandingPage(res, 'twitter', false, 'Unable to get the JWT cookie');
+
         // 1. get the access token with the code
         const twitterOAuthToken = await getTwitterOAuthToken(code, handler.logger);
         if (!twitterOAuthToken) {
             // redirect if no auth token
-            return res.redirect(process.env.STORE_URL);
+            return redirectToOauthLandingPage(res, 'twitter', false, 'Unable to get the X OAUTH token');
         }
 
         // 2. get the twitter user using the access token
@@ -134,10 +137,9 @@ export async function GET(
 
         handler.logger.debug(`Twitter user: ${JSON.stringify(twitterUser)}`);
 
-        if (!twitterUser) {
-            // redirect if no twitter user
-            return res.redirect(process.env.STORE_URL);
-        }
+        // redirect if no twitter user
+        if (!twitterUser)
+            return redirectToOauthLandingPage(res, 'twitter', false, 'Unable to get the X OAUTH user');
 
         //split firstname/lastname 
         let first_name = '';
@@ -151,9 +153,7 @@ export async function GET(
         }
 
         //redirect if no email address available
-        return res.redirect(
-            `${process.env.STORE_URL}/account/profile?verify=false&error=true`
-        );
+        return redirectToOauthLandingPage(res, 'twitter', false, 'Unable to retrieve email address');
 
         //update the user record if all good
         await customerRepository.update(
@@ -167,6 +167,6 @@ export async function GET(
         );
 
         // 5. finally redirect to the client
-        return res.redirect(`${process.env.STORE_URL}/account?verify=true`);
+        return redirectToOauthLandingPage(res, 'twitter');
     });
 }
