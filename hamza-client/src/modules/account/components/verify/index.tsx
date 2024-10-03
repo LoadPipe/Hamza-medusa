@@ -38,13 +38,13 @@ const VerifyAccount = () => {
     useEffect(() => {
         const verify = searchParams.get('verify');
         const error = searchParams.get('error');
-        const reason = searchParams.get('reason');
+        const message = searchParams.get('message');
         const type = searchParams.get('type');
 
         if (verify === 'true') {
             setStatus('success');
-        } else if (error === 'true' && reason && type) {
-            setErrorReason(decodeURIComponent(reason)); // Decode URL-encoded reason
+        } else if (error === 'true' && message && type) {
+            setErrorReason(decodeURIComponent(message)); // Decode URL-encoded reason
 
             switch (type) {
                 case 'google':
