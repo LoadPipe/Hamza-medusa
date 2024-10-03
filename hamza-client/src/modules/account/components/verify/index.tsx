@@ -151,6 +151,7 @@ const VerifyEmail = () => {
                 </a>
 
                 {/* Twitter Auth */}
+                {/* 
                 <a href={getTwitterOauthUrl(authParams)}>
                     <Button
                         leftIcon={<FaXTwitter size={24} />}
@@ -167,7 +168,7 @@ const VerifyEmail = () => {
                             <Text mr="auto">Verify with X</Text>
                         </Flex>
                     </Button>
-                </a>
+                </a>*/}
 
                 {/* Discord Auth */}
                 <a
