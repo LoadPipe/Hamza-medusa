@@ -23,7 +23,6 @@ import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import NavLink from '../components/nav-link';
-import NavLinkOrders from '../components/nav-link-desktop-orders';
 import { TABS } from 'modules/order-tab-management';
 import { RiShoppingBasket2Line } from 'react-icons/ri';
 import { LogoutDesktop } from '../components/logout-desktop';
@@ -64,21 +63,22 @@ const AccountNavDesktop = ({
         // navigate to OrderOverview or update the URL to reflect the active tab
     };
 
-    useEffect(() => {
-        if (searchParams.get('verify') === 'true') {
-            setCustomerAuthData({
-                ...authData,
-                is_verified: true,
-            });
-        } else {
-            if (
-                searchParams.get('verify') === 'false' &&
-                searchParams.get('error') === 'true'
-            ) {
-                router.push(`/${countryCode}/verify-email?auth_error=true`);
-            }
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (searchParams.get('verify') === 'true') {
+    //         setCustomerAuthData({
+    //             ...authData,
+    //             is_verified: true,
+    //         });
+    //     } else {
+    //         if (
+    //             searchParams.get('verify') === 'false' &&
+    //             searchParams.get('error') === 'true'
+    //         ) {
+    //             router.push(`/${countryCode}/verify-email?auth_error=true`);
+    //         }
+    //     }
+    // }, []);
+
     useEffect(() => {
         if (
             route == `/${countryCode}/account` &&
@@ -174,8 +174,6 @@ const AccountNavDesktop = ({
                     />
                 </Flex>
                 <Flex
-                    as={NextLink}
-                    href="/account/orders"
                     alignItems="center"
                     justifyContent="space-between"
                     width="100%"
@@ -212,42 +210,42 @@ const AccountNavDesktop = ({
             {/* Collapsible Panel for Orders */}
             <Collapse in={isOrdersOpen} animateOpacity>
                 <Box mt={2} pl={2}>
-                    <NavLinkOrders
+                    <NavLink
                         href={'/account/orders'}
                         route={route!}
                         title="All Orders"
                         tab={'All Orders'}
                         handleTabChange={() => handleTabChange(TABS.ALL)}
                     />
-                    <NavLinkOrders
+                    <NavLink
                         href={'/account/orders'}
                         route={route!}
                         title="Processing"
                         tab={'Processing'}
                         handleTabChange={() => handleTabChange(TABS.PROCESSING)}
                     />
-                    <NavLinkOrders
+                    <NavLink
                         href={'/account/orders'}
                         route={route!}
                         title="Shipped"
                         tab={'Shipped'}
                         handleTabChange={() => handleTabChange(TABS.SHIPPED)}
                     />
-                    <NavLinkOrders
+                    <NavLink
                         href={'/account/orders'}
                         route={route!}
                         title="Delivered"
                         tab={'Delivered'}
                         handleTabChange={() => handleTabChange(TABS.DELIVERED)}
                     />
-                    <NavLinkOrders
+                    <NavLink
                         href={'/account/orders'}
                         route={route!}
                         title="Cancelled"
                         tab={'Cancelled'}
                         handleTabChange={() => handleTabChange(TABS.CANCELLED)}
                     />
-                    <NavLinkOrders
+                    <NavLink
                         href={'/account/orders'}
                         route={route!}
                         title="Refund"

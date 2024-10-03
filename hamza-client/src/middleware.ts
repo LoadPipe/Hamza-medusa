@@ -96,17 +96,33 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    let response = NextResponse.redirect(request.nextUrl, 307);
+    // Construct the redirect URL and append search params if necessary
+    let newUrl = new URL(request.nextUrl);
+    searchParams.forEach((value, key) => {
+        newUrl.searchParams.append(key, value);
+    });
+
+    let response = NextResponse.redirect(newUrl.toString(), 307);
 
     // If no country code is set, we redirect to the relevant region.
     if (!urlHasCountryCode && countryCode) {
         const redirectPath =
             request.nextUrl.pathname === '/' ? '' : request.nextUrl.pathname;
 
+<<<<<<< HEAD
         response = NextResponse.redirect(
             `${request.nextUrl.origin}/${'eth'}${redirectPath}`,
             307
+=======
+        newUrl = new URL(
+            `${request.nextUrl.origin}/${countryCode}${redirectPath}`
+>>>>>>> staging
         );
+        searchParams.forEach((value, key) => {
+            newUrl.searchParams.append(key, value);
+        });
+
+        response = NextResponse.redirect(newUrl.toString(), 307);
     }
 
     // Set a cookie to indicate that we're onboarding. This is used to show the onboarding flow.
