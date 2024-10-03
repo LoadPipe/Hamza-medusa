@@ -174,8 +174,6 @@ const AccountNavDesktop = ({
                     />
                 </Flex>
                 <Flex
-                    as={NextLink}
-                    href="/account/orders"
                     alignItems="center"
                     justifyContent="space-between"
                     width="100%"
@@ -212,42 +210,42 @@ const AccountNavDesktop = ({
             {/* Collapsible Panel for Orders */}
             <Collapse in={isOrdersOpen} animateOpacity>
                 <Box mt={2} pl={2}>
-                    <NavLinkOrders
+                    <NavLink
                         href={'/account/orders'}
                         route={route!}
                         title="All Orders"
                         tab={'All Orders'}
                         handleTabChange={() => handleTabChange(TABS.ALL)}
                     />
-                    <NavLinkOrders
+                    <NavLink
                         href={'/account/orders'}
                         route={route!}
                         title="Processing"
                         tab={'Processing'}
                         handleTabChange={() => handleTabChange(TABS.PROCESSING)}
                     />
-                    <NavLinkOrders
+                    <NavLink
                         href={'/account/orders'}
                         route={route!}
                         title="Shipped"
                         tab={'Shipped'}
                         handleTabChange={() => handleTabChange(TABS.SHIPPED)}
                     />
-                    <NavLinkOrders
+                    <NavLink
                         href={'/account/orders'}
                         route={route!}
                         title="Delivered"
                         tab={'Delivered'}
                         handleTabChange={() => handleTabChange(TABS.DELIVERED)}
                     />
-                    <NavLinkOrders
+                    <NavLink
                         href={'/account/orders'}
                         route={route!}
                         title="Cancelled"
                         tab={'Cancelled'}
                         handleTabChange={() => handleTabChange(TABS.CANCELLED)}
                     />
-                    <NavLinkOrders
+                    <NavLink
                         href={'/account/orders'}
                         route={route!}
                         title="Refund"
