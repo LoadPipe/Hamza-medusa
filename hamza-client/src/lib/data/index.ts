@@ -516,7 +516,7 @@ export async function setCartEmail(cart_id: string, email_address: string) {
 }
 
 export async function recoverCart(customer_id: string) {
-    const output = getSecure('/custom/cart/recover', { customer_id });
+    const output = await getSecure('/custom/cart/recover', { customer_id });
     if (output?.cart) {
         cookies().set('_medusa_cart_id', output.cart.id);
     }
