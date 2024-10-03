@@ -9,22 +9,21 @@ import { debounce } from 'lodash';
 
 const Cancelled = ({
     customer,
-    chainEnabled,
-    onSuccess,
+    // chainEnabled,
+    // onSuccess,
     isEmpty,
 }: {
     customer: string;
-    chainEnabled?: boolean;
-    onSuccess?: () => void;
+    // chainEnabled?: boolean;
+    // onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
     // Fetch canceled orders with useQuery
     const [shouldFetch, setShouldFetch] = useState(false);
-    console.log(`chainEnabled Cancelled ${chainEnabled}`);
 
-    const debouncedOnSuccess = debounce(() => {
-        onSuccess && onSuccess();
-    }, 1000);
+    // const debouncedOnSuccess = debounce(() => {
+    //     onSuccess && onSuccess();
+    // }, 1000);
 
     const queryClient = useQueryClient();
 
@@ -41,24 +40,24 @@ const Cancelled = ({
         ['fetchCanceledOrder', customer],
         () => getSingleBucket(customer, 4),
         {
-            enabled: !!customer && chainEnabled, // Ensure query only runs when enabled is true
-            retry: 5,
+            enabled: !!customer,
+            retry: true,
         }
     );
 
     // manually trigger a refetch if its stale
     useEffect(() => {
-        if (isStale && chainEnabled && canceledOrder == undefined) {
+        if (isStale && canceledOrder == undefined) {
             queryClient.resetQueries(['fetchCanceledOrder']);
         }
     }, [isStale]);
 
-    useEffect(() => {
-        if (isSuccess && canceledOrder) {
-            console.log(`TRIGGER`);
-            debouncedOnSuccess();
-        }
-    }, [isSuccess, chainEnabled]);
+    // useEffect(() => {
+    //     if (isSuccess && canceledOrder) {
+    //         console.log(`TRIGGER`);
+    //         debouncedOnSuccess();
+    //     }
+    // }, [isSuccess, chainEnabled]);
 
     // Log the queries for cancelled state and data
     console.log({

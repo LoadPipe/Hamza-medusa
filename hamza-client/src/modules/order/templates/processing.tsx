@@ -71,11 +71,11 @@ import { debounce } from 'lodash';
 
 const Processing = ({
     customer,
-    onSuccess,
+    // onSuccess,
     isEmpty,
 }: {
     customer: string;
-    onSuccess?: () => void;
+    // onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
     const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
@@ -85,9 +85,9 @@ const Processing = ({
     const [expandViewOrder, setExpandViewOrder] = useState(false);
     const [shouldFetch, setShouldFetch] = useState(false);
 
-    const debouncedOnSuccess = debounce(() => {
-        onSuccess && onSuccess(); // Call the parent onSuccess after debounce delay
-    }, 1000); // 1000ms (1 second) delay
+    // const debouncedOnSuccess = debounce(() => {
+    //     onSuccess && onSuccess(); // Call the parent onSuccess after debounce delay
+    // }, 1000); // 1000ms (1 second) delay
 
     const queryClient = useQueryClient();
 
@@ -104,8 +104,8 @@ const Processing = ({
         ['fetchProcessingOrder', customer],
         () => getSingleBucket(customer, 1),
         {
-            enabled: !!customer, // Ensure query only runs when enabled is true
-            retry: 5, // Retry 5 times
+            enabled: !!customer,
+            retry: true,
         }
     );
 
@@ -116,12 +116,12 @@ const Processing = ({
         }
     }, [isStale]);
 
-    useEffect(() => {
-        if (isSuccess && processingOrder && processingOrder.length > 0) {
-            console.log(`TRIGGER`);
-            debouncedOnSuccess();
-        }
-    }, [isSuccess]);
+    // useEffect(() => {
+    //     if (isSuccess && processingOrder && processingOrder.length > 0) {
+    //         console.log(`TRIGGER`);
+    //         debouncedOnSuccess();
+    //     }
+    // }, [isSuccess]);
 
     // Log the queries for processing state and data
     console.log({

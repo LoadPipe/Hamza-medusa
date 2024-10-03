@@ -26,34 +26,34 @@ const All = ({
                     <Box mt={4} mb={2}>
                         <Processing
                             customer={customer}
-                            onSuccess={() => setProcessingFetched(true)}
+                            // onSuccess={() => setProcessingFetched(true)}
                         />
                     </Box>
                     <Box mt={4} mb={2}>
                         <Shipped
                             customer={customer}
-                            chainEnabled={processingFetched}
-                            onSuccess={() => setShippedFetched(true)}
+                            // chainEnabled={processingFetched}
+                            // onSuccess={() => setShippedFetched(true)}
                         />
                     </Box>
                     <Box mt={4} mb={2}>
                         <Delivered
                             customer={customer}
-                            chainEnabled={shippedFetched}
-                            onSuccess={() => setDeliveredFetched(true)}
+                            // chainEnabled={shippedFetched}
+                            // onSuccess={() => setDeliveredFetched(true)}
                         />
                     </Box>
                     <Box mt={4} mb={2}>
                         <Cancelled
                             customer={customer}
-                            chainEnabled={deliveredFetched}
-                            onSuccess={() => setCancelledFetched(true)}
+                            // chainEnabled={deliveredFetched}
+                            // onSuccess={() => setCancelledFetched(true)}
                         />
                     </Box>
                     <Box mt={4} mb={2}>
                         <Refund
                             customer={customer}
-                            chainEnabled={cancelledFetched}
+                            // chainEnabled={cancelledFetched}
                         />
                     </Box>
                 </Box>

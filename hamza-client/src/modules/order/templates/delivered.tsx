@@ -11,21 +11,20 @@ import { debounce } from 'lodash';
 
 const Delivered = ({
     customer,
-    chainEnabled,
-    onSuccess,
+    // chainEnabled,
+    // onSuccess,
     isEmpty,
 }: {
     customer: string;
-    chainEnabled?: boolean;
-    onSuccess?: () => void;
+    // chainEnabled?: boolean;
+    // onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
     const [shouldFetch, setShouldFetch] = useState(false);
-    console.log(`chainEnabled Delivered ${chainEnabled}`);
 
-    const debouncedOnSuccess = debounce(() => {
-        onSuccess && onSuccess();
-    }, 1000);
+    // const debouncedOnSuccess = debounce(() => {
+    //     onSuccess && onSuccess();
+    // }, 1000);
 
     const queryClient = useQueryClient();
 
@@ -42,24 +41,24 @@ const Delivered = ({
         ['fetchDeliveredOrder', customer],
         () => getSingleBucket(customer, 3),
         {
-            enabled: !!customer && chainEnabled, // Ensure query only runs when enabled is true
-            retry: 5, // Retry 5 times
+            enabled: !!customer,
+            retry: true,
         }
     );
 
     // manually trigger a refetch if its stale
     useEffect(() => {
-        if (isStale && chainEnabled && deliveredOrder == undefined) {
+        if (isStale && deliveredOrder == undefined) {
             queryClient.resetQueries(['fetchDeliveredOrder']);
         }
     }, [isStale]);
 
-    useEffect(() => {
-        if (isSuccess && deliveredOrder) {
-            console.log(`TRIGGER`);
-            debouncedOnSuccess();
-        }
-    }, [isSuccess, chainEnabled]);
+    // useEffect(() => {
+    //     if (isSuccess && deliveredOrder) {
+    //         console.log(`TRIGGER`);
+    //         debouncedOnSuccess();
+    //     }
+    // }, [isSuccess, chainEnabled]);
 
     // Log the queries for delivered state and data
     console.log({
