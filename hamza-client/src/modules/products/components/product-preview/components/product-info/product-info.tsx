@@ -18,7 +18,6 @@ import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutatio
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { Variant } from 'types/medusa';
 import Image from 'next/image';
-import { getAverageRatings, getReviewCount } from '@lib/data';
 import ReviewStar from '../../../../../../../public/images/products/review-star.svg';
 import {
     TiStarFullOutline,
@@ -29,8 +28,14 @@ import ProductDescription from '../product-description';
 
 const ProductInfo = () => {
     // Zustand
-    let { productData, variantId, quantity, setVariantId } =
-        useProductPreview();
+    let {
+        productData,
+        variantId,
+        quantity,
+        setVariantId,
+        ratingAverage,
+        ratingCounter,
+    } = useProductPreview();
     const { wishlist } = useWishlistStore();
     const { addWishlistItemMutation, removeWishlistItemMutation } =
         useWishlistMutations();
@@ -106,24 +111,10 @@ const ProductInfo = () => {
         );
     };
 
-    // Get product ratings
-    const [averageRating, setAverageRating] = useState<number>(0);
-    const [reviewCount, setReviewCount] = useState<number>(0);
-    useEffect(() => {
-        const fetchProductReview = async () => {
-            const averageRatingResponse = await getAverageRatings(
-                productData?.id ?? ''
-            );
-            const reviewCountResponse = await getReviewCount(productData?.id ?? '');
-
-            setAverageRating(averageRatingResponse);
-            setReviewCount(reviewCountResponse);
-        };
-
-        fetchProductReview();
-    }, [productData]);
-
     const isLoading = !productData || Object.keys(productData).length === 0;
+
+    console.log('ratinggggg ccc', ratingCounter);
+    console.log('ratinggggg ccc', ratingAverage);
 
     if (isLoading) {
         return (
@@ -178,7 +169,8 @@ const ProductInfo = () => {
                                             description:
                                                 productData?.description ?? '',
                                             handle: productData?.handle ?? '',
-                                            thumbnail: productData?.thumbnail ?? '',
+                                            thumbnail:
+                                                productData?.thumbnail ?? '',
                                             title: productData?.title ?? '',
                                             price: convertToPriceDictionary(
                                                 selectedVariant
@@ -197,7 +189,8 @@ const ProductInfo = () => {
                                             description:
                                                 productData?.description ?? '',
                                             handle: productData?.handle ?? '',
-                                            thumbnail: productData?.thumbnail ?? '',
+                                            thumbnail:
+                                                productData?.thumbnail ?? '',
                                             title: productData?.title ?? '',
                                             price: convertToPriceDictionary(
                                                 selectedVariant
@@ -212,7 +205,7 @@ const ProductInfo = () => {
                     )}
                 </Flex>
 
-                {reviewCount > 0 ? (
+                {ratingCounter > 0 ? (
                     <Flex
                         display={{ base: 'none', md: 'flex' }}
                         gap="5px"
@@ -220,7 +213,7 @@ const ProductInfo = () => {
                     >
                         <Flex flexDirection={'row'}>
                             <Flex flexDirection={'row'} alignSelf={'center'}>
-                                {renderStars(averageRating)}
+                                {renderStars(ratingAverage)}
                             </Flex>
                             <Text
                                 ml="2"
@@ -231,7 +224,7 @@ const ProductInfo = () => {
                                 alignSelf={'center'}
                                 mt="2px"
                             >
-                                {averageRating}
+                                {ratingAverage}
                             </Text>
                             <Text
                                 ml="2"
@@ -241,8 +234,8 @@ const ProductInfo = () => {
                                 color={'white'}
                                 mt="2px"
                             >
-                                ({reviewCount}{' '}
-                                {reviewCount === 1 ? 'review' : 'reviews'})
+                                ({ratingCounter}{' '}
+                                {ratingCounter === 1 ? 'review' : 'reviews'})
                             </Text>
                         </Flex>
                     </Flex>
@@ -254,7 +247,7 @@ const ProductInfo = () => {
                     >
                         <Flex flexDirection={'row'}>
                             <Flex flexDirection={'row'} alignSelf={'center'}>
-                                {renderStars(averageRating)}
+                                {renderStars(ratingAverage)}
                             </Flex>
 
                             <Text
@@ -265,8 +258,8 @@ const ProductInfo = () => {
                                 color={'white'}
                                 mt="2px"
                             >
-                                ({reviewCount}{' '}
-                                {reviewCount === 1 ? 'review' : 'reviews'})
+                                ({ratingCounter}{' '}
+                                {ratingCounter === 1 ? 'review' : 'reviews'})
                             </Text>
                         </Flex>
                     </Flex>
