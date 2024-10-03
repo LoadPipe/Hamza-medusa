@@ -33,11 +33,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         } else {
             const errorReason =
                 'We couldn’t verify your Google account. Please check the verification link and try again, or request a new link below.';
-            const redirectUrl = `${process.env.STORE_URL}account/verify?verify=false&error=true&reason=${encodeURIComponent(errorReason)}`;
+            const redirectUrl = `${process.env.STORE_URL}/account/verify?verify=false&error=true&reason=${encodeURIComponent(errorReason)}`;
 
             logger.info(`Redirecting to URL: ${redirectUrl}`);
 
-            // Redirect with the error reason
             return res.redirect(redirectUrl);
         }
     });
