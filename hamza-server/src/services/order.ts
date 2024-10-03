@@ -555,6 +555,18 @@ export default class OrderService extends MedusaOrderService {
         });
     }
 
+    async sendShippedEmail(order: Order): Promise<void> {
+
+    }
+
+    async sendDeliveredEmail(order: Order): Promise<void> {
+
+    }
+
+    async sendCancelledEmail(order: Order): Promise<void> {
+
+    }
+
     private async updatePaymentAfterTransaction(
         paymentId: string,
         update: Partial<Payment>
