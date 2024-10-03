@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import CustomerRepository from '../../../repositories/customer';
 import { RouteHandler } from '../../route-handler';
-import { redirectToOauthLandingPage } from 'src/utils/oauth';
+import { redirectToOauthLandingPage } from '../../../utils/oauth';
 
 interface GoogleTokensResult {
     access_token: string;

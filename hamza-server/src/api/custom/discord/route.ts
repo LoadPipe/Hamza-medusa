@@ -8,7 +8,7 @@ import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import CustomerRepository from '../../../repositories/customer';
 import { RouteHandler } from '../../route-handler';
-import { redirectToOauthLandingPage } from 'src/utils/oauth';
+import { redirectToOauthLandingPage } from '../../../utils/oauth';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     let eventBus_: EventBusService = req.scope.resolve('eventBusService');
