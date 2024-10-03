@@ -92,7 +92,12 @@ async function getGoogleUser({
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const logger = req.scope.resolve('logger') as Logger;
 
-    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/google');
+    const handler: RouteHandler = new RouteHandler(
+        req,
+        res,
+        'GET',
+        '/custom/google'
+    );
 
     handler.onError = (err: any) => {
         return res.redirect(
@@ -102,7 +107,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     };
 
     await handler.handle(async () => {
-        //get the cookies 
+        //get the cookies
+
         logger.debug(`google oauth cookies: ${JSON.stringify(req.cookies)}`);
         let decoded: any = jwt.decode(req.cookies['_medusa_jwt']);
         logger.debug(
@@ -113,7 +119,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         //throw error if anything wrong with the cookie
         if (!decoded) throw new Error('unable to get the _medusa_jwt cookie');
 
-        //get google oauth data 
+        //get google oauth data
         let tokens = await getGoogleOAuthTokens({
             code: req.query.code.toString(),
             logger,
@@ -121,7 +127,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         logger.debug(`Google OAUTH tokens: ${JSON.stringify(tokens)}`);
 
-        //get google user data 
+        //get google user data
         let user = await getGoogleUser({
             id_token: tokens.id_token,
             access_token: tokens.access_token,
@@ -141,7 +147,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             }
         );
 
-        //emit an event 
+        //emit an event
         let eventBus_: EventBusService = req.scope.resolve('eventBusService');
         await eventBus_.emit([
             {
@@ -150,7 +156,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             },
         ]);
 
-        //redirect 
+        //redirect
         return res.redirect(`${process.env.STORE_URL}/account?verify=true`);
         //return res.redirect(`${process.env.STORE_URL}/account/oauth-landing?success=true`);
     });
