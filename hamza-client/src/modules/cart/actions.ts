@@ -87,9 +87,8 @@ export async function addToCart({
     console.log('quantity:', quantity);
     console.log('countryCode:', countryCode);
 
-    if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY) {
-        countryCode = 'us';
-        console.log('Country code forced to US:', countryCode);
+    if (process.env.NEXT_PUBLIC_FORCE_COUNTRY) {
+        countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY;
     }
 
     const cart = await getOrSetCart(countryCode).then((cart) => {

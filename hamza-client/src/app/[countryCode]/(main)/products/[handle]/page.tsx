@@ -21,7 +21,7 @@ export async function generateStaticParams() {
     //const countryCodes = await listRegions().then((regions) =>
     //    regions?.map((r) => r.countries.map((c) => c.iso_2)).flat()
     //);
-    const countryCodes = ['us'];
+    const countryCodes = ['eth'];
 
 
     const products = await Promise.all(

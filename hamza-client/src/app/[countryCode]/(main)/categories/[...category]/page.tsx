@@ -20,7 +20,7 @@ export async function generateStaticParams() {
         return [];
     }
 
-    const countryCodes = ['us'];
+    const countryCodes = ['eth'];
 
     const categoryHandles = product_categories.map(
         (category) => category.handle

@@ -16,8 +16,8 @@ export const metadata: Metadata = {
 
 export default async function Notifications() {
     const nextHeaders = headers();
-    const countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY
-        ? 'us'
+    const countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY
+        ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
         : nextHeaders.get('next-url')?.split('/')[1] || '';
     const customer = await getHamzaCustomer();
     const region = await getRegion(countryCode);

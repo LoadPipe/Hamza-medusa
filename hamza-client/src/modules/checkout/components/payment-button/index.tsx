@@ -229,8 +229,8 @@ const CryptoPaymentButton = ({
                     // TODO: examine response
 
                     // Country code needed for redirect (get before clearing the cart)
-                    const countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY
-                        ? 'us'
+                    const countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY
+                        ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
                         : cart.shipping_address?.country_code?.toLowerCase();
 
                     // Clear cart

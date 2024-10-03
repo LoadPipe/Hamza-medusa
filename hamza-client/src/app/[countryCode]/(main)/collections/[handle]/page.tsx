@@ -28,7 +28,7 @@ export async function generateStaticParams() {
         return [];
     }
 
-    const countryCodes = ['us'];
+    const countryCodes = ['eth'];
 
     const collectionHandles = collections.map(
         (collection) => collection.handle

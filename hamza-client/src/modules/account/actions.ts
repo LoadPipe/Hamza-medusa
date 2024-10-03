@@ -304,8 +304,8 @@ export async function signOut() {
     } catch (e) {
         console.error(e);
     }
-    const countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY
-        ? 'us'
+    const countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY
+        ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
         : headers().get('next-url')?.split('/')[1] || '';
     revalidateTag('auth');
     revalidateTag('customer');
