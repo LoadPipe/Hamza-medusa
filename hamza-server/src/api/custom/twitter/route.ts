@@ -4,7 +4,7 @@ import { RouteHandler } from '../../route-handler';
 import CustomerRepository from '../../../repositories/customer';
 import { ILogger } from '../../../utils/logging/logger';
 import jwt from 'jsonwebtoken';
-import { redirectToOauthLandingPage } from 'src/utils/oauth';
+import { redirectToOauthLandingPage } from '../../../utils/oauth';
 
 // add your client id and secret here:
 const TWITTER_OAUTH_CLIENT_ID = process.env.TWITTER_ACCESS_KEY!;
