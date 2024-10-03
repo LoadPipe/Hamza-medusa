@@ -109,14 +109,8 @@ export async function middleware(request: NextRequest) {
         const redirectPath =
             request.nextUrl.pathname === '/' ? '' : request.nextUrl.pathname;
 
-<<<<<<< HEAD
-        response = NextResponse.redirect(
-            `${request.nextUrl.origin}/${'eth'}${redirectPath}`,
-            307
-=======
         newUrl = new URL(
             `${request.nextUrl.origin}/${countryCode}${redirectPath}`
->>>>>>> staging
         );
         searchParams.forEach((value, key) => {
             newUrl.searchParams.append(key, value);
