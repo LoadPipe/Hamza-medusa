@@ -105,18 +105,14 @@ const Processing = ({
         () => getSingleBucket(customer, 1),
         {
             enabled: !!customer, // Ensure query only runs when enabled is true
-            staleTime: 5 * 60 * 1000, // 5 minutes
-            cacheTime: 5 * 60 * 1000, // 5 minutes
             retry: 5, // Retry 5 times
-            retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
-            refetchOnWindowFocus: false,
         }
     );
 
     // manually trigger a refetch if its stale
     useEffect(() => {
         if (isStale && processingOrder == undefined) {
-            refetch();
+            queryClient.resetQueries(['fetchProcessingOrder']);
         }
     }, [isStale]);
 
