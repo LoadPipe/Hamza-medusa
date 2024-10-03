@@ -42,6 +42,7 @@ const VerifyAccount = () => {
 
         if (verify === 'true') {
             setStatus('success');
+            setErrorReason(null);
         } else if (verify === 'false' && message && type) {
             setErrorReason(decodeURIComponent(message)); // Decode URL-encoded reason
 
@@ -62,6 +63,8 @@ const VerifyAccount = () => {
             }
             setVerificationType(getGoogleOAuthURL(authParams));
             setStatus('error');
+        } else {
+            setStatus('default');
         }
     }, [searchParams]);
 
