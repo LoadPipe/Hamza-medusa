@@ -1,10 +1,7 @@
 'use client';
 
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-// import Input from '@modules/common/components/input';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { Toast } from '@medusajs/ui';
 import { useRouter, useSearchParams } from 'next/navigation';
 import getGoogleOAuthURL from '@lib/util/google-url';
 import getTwitterOauthUrl from '@lib/util/twitter-url';
@@ -12,16 +9,7 @@ import toast from 'react-hot-toast';
 import { IoLogoGoogle } from 'react-icons/io5';
 import { FaXTwitter } from 'react-icons/fa6';
 import { BsDiscord } from 'react-icons/bs';
-
-import {
-    Flex,
-    Text,
-    Input,
-    Heading,
-    Box,
-    Divider,
-    Button,
-} from '@chakra-ui/react';
+import { Flex, Text, Input, Divider, Button } from '@chakra-ui/react';
 import { verifyEmail } from '@lib/data/index';
 import VerifyFail from './components/verify-fail';
 import VerifySuccess from './components/verify-success';
@@ -39,33 +27,41 @@ const VerifyAccount = () => {
     const router = useRouter();
     const authParams = `customer_id=${authData.customer_id}`;
 
-    const [status, setStatus] = useState<'default' | 'error'>('error');
-
+    // Verification status, type and reason
+    const [status, setStatus] = useState<'default' | 'error' | 'success'>(
+        'default'
+    );
+    const [verificationType, setVerificationType] = useState('');
     const [errorReason, setErrorReason] = useState<string | null>(null);
 
+    // Check url information for verification status
     useEffect(() => {
-        // Capture URL params
-        const currentUrl = window.location.href;
-        console.log('Current URL:', currentUrl);
-
         const verify = searchParams.get('verify');
         const error = searchParams.get('error');
         const reason = searchParams.get('reason');
-
-        console.log('Verify:', verify);
-        console.log('Error:', error);
-        console.log('Reason:', reason);
+        const type = searchParams.get('type');
 
         if (verify === 'true') {
-            setStatus('default');
-            console.log('Verify:', verify);
-            console.log('Error:', error);
-            console.log('Reason:', reason);
-        } else if (error === 'true' && reason) {
-            console.log('Verify:', verify);
-            console.log('Error:', error);
-            console.log('Reason:', reason);
+            setStatus('success');
+        } else if (error === 'true' && reason && type) {
             setErrorReason(decodeURIComponent(reason)); // Decode URL-encoded reason
+
+            switch (type) {
+                case 'google':
+                    setVerificationType(getGoogleOAuthURL(authParams));
+                    break;
+                case 'twitter':
+                    setVerificationType(getTwitterOauthUrl(authParams));
+                    break;
+                case 'discord':
+                    setVerificationType(
+                        `https://discord.com/oauth2/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_DISCORD_ACCESS_KEY}&scope=identify+email&state=123456&redirect_uri=${process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URL}&prompt=consent`
+                    );
+                    break;
+                default:
+                    setVerificationType(getGoogleOAuthURL(authParams));
+            }
+            setVerificationType(getGoogleOAuthURL(authParams));
             setStatus('error');
         }
     }, [searchParams]);
@@ -118,11 +114,20 @@ const VerifyAccount = () => {
             alignItems={'center'}
             gap={{ base: 3, md: 6 }}
         >
+            {status === 'success' && (
+                <VerifySuccess
+                    title="Verification Failed"
+                    message={errorReason}
+                    resendLink={verificationType}
+                    onCancel={() => setStatus('default')}
+                />
+            )}
+
             {status === 'error' && (
                 <VerifyFail
                     title="Verification Failed"
                     message={errorReason}
-                    resendLink={getTwitterOauthUrl(authParams)}
+                    resendLink={verificationType}
                     onCancel={() => setStatus('default')}
                 />
             )}

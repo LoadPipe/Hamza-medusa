@@ -7,7 +7,7 @@ import {
     Link as ChakraLink,
 } from '@chakra-ui/react';
 import React from 'react';
-import { MdErrorOutline } from 'react-icons/md';
+import { FaRegCheckCircle } from 'react-icons/fa';
 
 interface VerifyFailProps {
     title: string;
@@ -34,9 +34,9 @@ const VerifySuccess: React.FC<VerifyFailProps> = ({
             color="white"
         >
             <Flex gap={'32px'} flexDir={'column'}>
-                <MdErrorOutline
+                <FaRegCheckCircle
                     size={72}
-                    color="#E23636"
+                    color="green"
                     style={{ margin: '0 auto' }}
                 />
 
@@ -47,28 +47,16 @@ const VerifySuccess: React.FC<VerifyFailProps> = ({
                     variant="semi-bold"
                     fontSize={'24px'}
                 >
-                    {title}
+                    Account Verified
                 </Heading>
 
                 <Text textAlign={'center'}>
-                    We couldn’t verify your email address. Please check the
-                    verification link and try again, or request a new link
-                    below.
+                    Congratulations your account has now been verified.
                 </Text>
 
                 <Flex flexDirection={'row'} gap={'16px'}>
-                    <Button
-                        flex="1 1 auto"
-                        borderColor={'primary.green.900'}
-                        color={'primary.green.900'}
-                        borderWidth={'1px'}
-                        backgroundColor={'transparent'}
-                        borderRadius={'full'}
-                    >
-                        Cancel
-                    </Button>
                     <ChakraLink
-                        href={resendLink}
+                        href={'/account/profile'}
                         flex="1 1 auto"
                         _hover={{ textDecoration: 'none' }}
                     >
@@ -77,7 +65,7 @@ const VerifySuccess: React.FC<VerifyFailProps> = ({
                             borderRadius={'full'}
                             width="100%"
                         >
-                            Resend
+                            Explore
                         </Button>
                     </ChakraLink>
                 </Flex>

@@ -76,7 +76,7 @@ const VerifyFail: React.FC<VerifyFailProps> = ({
                             borderRadius={'full'}
                             width="100%"
                         >
-                            Resend
+                            Retry
                         </Button>
                     </ChakraLink>
                 </Flex>

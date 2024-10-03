@@ -64,21 +64,22 @@ const AccountNavDesktop = ({
         // navigate to OrderOverview or update the URL to reflect the active tab
     };
 
-    useEffect(() => {
-        if (searchParams.get('verify') === 'true') {
-            setCustomerAuthData({
-                ...authData,
-                is_verified: true,
-            });
-        } else {
-            if (
-                searchParams.get('verify') === 'false' &&
-                searchParams.get('error') === 'true'
-            ) {
-                router.push(`/${countryCode}/verify-email?auth_error=true`);
-            }
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (searchParams.get('verify') === 'true') {
+    //         setCustomerAuthData({
+    //             ...authData,
+    //             is_verified: true,
+    //         });
+    //     } else {
+    //         if (
+    //             searchParams.get('verify') === 'false' &&
+    //             searchParams.get('error') === 'true'
+    //         ) {
+    //             router.push(`/${countryCode}/verify-email?auth_error=true`);
+    //         }
+    //     }
+    // }, []);
+
     useEffect(() => {
         if (
             route == `/${countryCode}/account` &&

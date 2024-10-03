@@ -149,7 +149,7 @@ export const config: MiddlewaresConfig = {
                     origin: [STORE_CORS],
                     credentials: true,
                 }),
-                registerLoggedInCustomer
+                registerLoggedInCustomer,
             ],
         },
         {

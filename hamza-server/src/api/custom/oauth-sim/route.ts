@@ -29,11 +29,13 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             );
 
             //redirect
-            return res.redirect(`${process.env.STORE_URL}/account?verify=true`);
+            return res.redirect(
+                `${process.env.STORE_URL}/account/verify?verify=true`
+            );
         } else {
             const errorReason =
-                'We couldn’t verify your Google account. Please check the verification link and try again, or request a new link below.';
-            const redirectUrl = `${process.env.STORE_URL}/account/verify?verify=false&error=true&reason=${encodeURIComponent(errorReason)}`;
+                'We couldn’t verify your Google account. Please try again.';
+            const redirectUrl = `${process.env.STORE_URL}/account/verify?verify=false&error=true&type=google&reason=${encodeURIComponent(errorReason)}`;
 
             logger.info(`Redirecting to URL: ${redirectUrl}`);
 
