@@ -43,13 +43,19 @@ const Delivered = ({
         {
             enabled: !!customer,
             retry: true,
+            refetchOnWindowFocus: true,
         }
     );
 
     // manually trigger a refetch if its stale
     useEffect(() => {
         if (isStale && deliveredOrder == undefined) {
-            queryClient.resetQueries(['fetchDeliveredOrder']);
+            for (let i = 0; i < 3; i++) {
+                if (deliveredOrder == undefined) {
+                    queryClient.resetQueries(['fetchDeliveredOrder']);
+                    queryClient.invalidateQueries(['fetchDeliveredOrder']);
+                }
+            }
         }
     }, [isStale]);
 

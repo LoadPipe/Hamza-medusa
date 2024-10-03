@@ -60,13 +60,19 @@ const Shipped = ({
         {
             enabled: !!customer,
             retry: true,
+            refetchOnWindowFocus: true,
         }
     );
 
     // manually trigger a refetch if its stale
     useEffect(() => {
         if (isStale && shippedOrder == undefined) {
-            queryClient.resetQueries(['fetchShippedOrder']);
+            for (let i = 0; i < 3; i++) {
+                if (shippedOrder == undefined) {
+                    queryClient.resetQueries(['fetchShippedOrder']);
+                    queryClient.invalidateQueries(['fetchShippedOrder']);
+                }
+            }
         }
     }, [isStale]);
 

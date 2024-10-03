@@ -106,13 +106,19 @@ const Processing = ({
         {
             enabled: !!customer,
             retry: true,
+            refetchOnWindowFocus: true,
         }
     );
 
     // manually trigger a refetch if its stale
     useEffect(() => {
         if (isStale && processingOrder == undefined) {
-            queryClient.resetQueries(['fetchProcessingOrder']);
+            for (let i = 0; i < 3; i++) {
+                if (processingOrder == undefined) {
+                    queryClient.resetQueries(['fetchProcessingOrder']);
+                    queryClient.invalidateQueries(['fetchProcessingOrder']);
+                }
+            }
         }
     }, [isStale]);
 

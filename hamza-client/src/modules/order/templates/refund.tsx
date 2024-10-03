@@ -44,13 +44,19 @@ const Refund = ({
         {
             enabled: !!customer,
             retry: true,
+            refetchOnWindowFocus: true,
         }
     );
 
     // manually trigger a refetch if its stale
     useEffect(() => {
         if (isStale && refundOrder == undefined) {
-            queryClient.resetQueries(['fetchRefundOrder']);
+            for (let i = 0; i < 3; i++) {
+                if (refundOrder == undefined) {
+                    queryClient.resetQueries(['fetchRefundOrder']);
+                    queryClient.invalidateQueries(['fetchRefundOrder']);
+                }
+            }
         }
     }, [isStale]);
 

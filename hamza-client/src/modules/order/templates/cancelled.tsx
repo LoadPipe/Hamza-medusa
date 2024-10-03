@@ -42,13 +42,19 @@ const Cancelled = ({
         {
             enabled: !!customer,
             retry: true,
+            refetchOnWindowFocus: true,
         }
     );
 
     // manually trigger a refetch if its stale
     useEffect(() => {
         if (isStale && canceledOrder == undefined) {
-            queryClient.resetQueries(['fetchCanceledOrder']);
+            for (let i = 0; i < 3; i++) {
+                if (canceledOrder == undefined) {
+                    queryClient.resetQueries(['fetchCanceledOrder']);
+                    queryClient.invalidateQueries(['fetchCanceledOrder']);
+                }
+            }
         }
     }, [isStale]);
 
