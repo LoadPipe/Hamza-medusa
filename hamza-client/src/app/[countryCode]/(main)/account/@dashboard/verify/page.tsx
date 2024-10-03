@@ -2,7 +2,7 @@ import { getHamzaCustomer, listRegions, updateCustomer } from '@lib/data';
 import { notFound } from 'next/navigation';
 import { Flex, Button, Text, Box } from '@chakra-ui/react';
 import { Metadata } from 'next';
-import VerifyEmail from '@modules/account/components/verify';
+import VerifyAccount from '@modules/account/components/verify';
 
 export const metadata: Metadata = {
     title: 'Verify',
@@ -31,7 +31,7 @@ export default async function Verify() {
             minH={'561px'}
             width={'100%'}
         >
-            <VerifyEmail />
+            <VerifyAccount />
         </Flex>
     );
 }
