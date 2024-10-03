@@ -83,13 +83,13 @@ const AccountLayout: React.FC<AccountLayoutProps> = ({
                     </div>
                     {/* <AccountNav customer={customer} /> */}
                     {customer?.id ? (
-                        <Flex
+                        <Box
                             ml={{ base: 0, md: 'auto' }}
                             maxWidth={'927px'}
                             width={'100%'}
                         >
                             {children}
-                        </Flex>
+                        </Box>
                     ) : (
                         // Shows Login Page
                         <Flex mt="4rem" justifyContent="center" h={'50vh'}>
