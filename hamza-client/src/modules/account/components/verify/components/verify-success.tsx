@@ -1,5 +1,4 @@
 import {
-    Box,
     Flex,
     Text,
     Heading,
@@ -9,14 +8,7 @@ import {
 import React from 'react';
 import { FaRegCheckCircle } from 'react-icons/fa';
 
-interface VerifyFailProps {
-    title: string;
-    message: string;
-    resendMessage: string;
-    resendLink: string;
-}
-
-const VerifySuccess: React.FC<VerifyFailProps> = ({}) => {
+const VerifySuccess = () => {
     return (
         <Flex
             maxW={'496px'}

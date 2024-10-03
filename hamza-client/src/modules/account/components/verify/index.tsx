@@ -114,12 +114,7 @@ const VerifyAccount = () => {
             alignItems={'center'}
             gap={{ base: 3, md: 6 }}
         >
-            {status === 'success' && (
-                <VerifySuccess
-                    title="Verification Failed"
-                    resendLink={verificationType}
-                />
-            )}
+            {status === 'success' && <VerifySuccess />}
 
             {status === 'error' && (
                 <VerifyFail
