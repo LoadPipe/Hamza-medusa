@@ -122,7 +122,7 @@ export default class OrderService extends MedusaOrderService {
     }
 
     async getOrdersForCheckout(cartId: string): Promise<Order[]> {
-        return await this.orderRepository_.find({
+        return this.orderRepository_.find({
             where: { cart_id: cartId, status: OrderStatus.REQUIRES_ACTION },
             relations: ['store.owner', 'payments'],
             skip: 0,
@@ -132,14 +132,14 @@ export default class OrderService extends MedusaOrderService {
     }
 
     async getOrderWithStore(orderId: string): Promise<Order> {
-        return await this.orderRepository_.findOne({
+        return this.orderRepository_.findOne({
             where: { id: orderId },
             relations: ['store.owner'],
         });
     }
 
     async getOrderWithStoreAndItems(orderId: string): Promise<Order> {
-        return await this.orderRepository_.findOne({
+        return this.orderRepository_.findOne({
             where: { id: orderId },
             relations: ['store.owner', 'items'],
         });
@@ -301,7 +301,7 @@ export default class OrderService extends MedusaOrderService {
     }
 
     async getCustomerOrders(customerId: string): Promise<Order[]> {
-        return await this.orderRepository_.find({
+        return this.orderRepository_.find({
             where: {
                 customer_id: customerId,
                 status: Not(
@@ -355,26 +355,26 @@ export default class OrderService extends MedusaOrderService {
     ): Promise<Order[]> {
         switch (bucketType) {
             case OrderBucketType.PROCESSING:
-                return await this.getCustomerOrdersByStatus(customerId, {
+                return this.getCustomerOrdersByStatus(customerId, {
                     fulfillmentStatus: FulfillmentStatus.NOT_FULFILLED,
                     orderStatus: OrderStatus.PENDING
                 });
             case OrderBucketType.SHIPPED:
-                return await this.getCustomerOrdersByStatus(customerId, {
+                return this.getCustomerOrdersByStatus(customerId, {
                     paymentStatus: PaymentStatus.AWAITING,
                     fulfillmentStatus: FulfillmentStatus.SHIPPED,
                 });
             case OrderBucketType.DELIVERED:
-                return await this.getCustomerOrdersByStatus(customerId, {
+                return this.getCustomerOrdersByStatus(customerId, {
                     orderStatus: OrderStatus.COMPLETED,
                     fulfillmentStatus: FulfillmentStatus.FULFILLED,
                 });
             case OrderBucketType.CANCELLED:
-                return await this.getCustomerOrdersByStatus(customerId, {
+                return this.getCustomerOrdersByStatus(customerId, {
                     orderStatus: OrderStatus.CANCELED,
                 });
             case OrderBucketType.REFUNDED:
-                return await this.getCustomerOrdersByStatus(customerId, {
+                return this.getCustomerOrdersByStatus(customerId, {
                     paymentStatus: PaymentStatus.REFUNDED,
                 });
         }
@@ -549,7 +549,7 @@ export default class OrderService extends MedusaOrderService {
     }
 
     async getOrdersWithUnverifiedPayments() {
-        return await this.orderRepository_.find({
+        return this.orderRepository_.find({
             where: { payment_status: PaymentStatus.AWAITING },
             relations: ['payments'],
         });

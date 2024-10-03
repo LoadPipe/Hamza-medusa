@@ -115,7 +115,7 @@ export class BuckyClient {
 
     // Method to get product details
     async getProductDetails(productLink: string): Promise<any> {
-        return await this.post('product/query', {
+        return this.post('product/query', {
             goodsLink: productLink,
         });
     }
@@ -148,85 +148,51 @@ export class BuckyClient {
         const sign = this.generateSignature(params, timestamp);
 
         //TODO: get correct url for this
-        return await this.post('', params);
+        return this.post('', params);
     }
-
-    /*
-    async listProductCategories(): Promise<any> {
-
-        const params = ''; // Assuming no body is required
-        const timestamp = Date.now();
-        const sign = this.generateSignature(params, timestamp);
-
-        const logRecord = await this.saveLogInput(
-            `product/category/list-tree`,
-            params,
-            null,
-            null
-        );
-
-        //TODO: add more detailed parameters
-        const output = await this.client
-            .get(
-                //TODO: use adapt/adaptation url here
-                ``
-                //`/api/rest/v2/adapt/openapi/product/category/list-tree?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}?lang=en`
-                //`/api/rest/v2/adapt/openapi/product/category/list-tree?appCode=${APP_CODE}&timestamp=${timestamp}&sign=${sign}`
-            )
-            .then((response) => response.data)
-            .catch((error) => {
-                throw error;
-            });
-        if (logRecord) {
-            logRecord.output = output;
-            this.saveLogOutput(logRecord);
-        }
-        return output;
-    }
-    */
 
     async createOrder(
         createOrderParams: ICreateBuckyOrderParams
     ): Promise<any> {
-        return await this.post('/order/shop-order/create', createOrderParams);
+        return this.post('/order/shop-order/create', createOrderParams);
     }
 
     async cancelShopOrder(
         shopOrderNo: string,
         partnerOrderNo?: string
     ): Promise<any> {
-        return await this.post('/order/shop-order/cancel', {
+        return this.post('/order/shop-order/cancel', {
             shopOrderNo,
             partnerOrderNo,
         });
     }
 
     async cancelPurchaseOrder(orderCode: string): Promise<any> {
-        return await this.post('/order/po-cancel', { orderCode });
+        return this.post('/order/po-cancel', { orderCode });
     }
 
     async getOrderDetails(
         shopOrderNo: string,
         partnerOrderNo?: string
     ): Promise<any> {
-        return await this.post('/order/detail', {
+        return this.post('/order/detail', {
             shopOrderNo,
             partnerOrderNo,
         });
     }
 
     async getLogisticsInfo(packageCode: string): Promise<any> {
-        return await this.post('/logistics/query-info', { packageCode });
+        return this.post('/logistics/query-info', { packageCode });
     }
 
     async getParcelDetails(packageCode: string): Promise<any> {
-        return await this.post('/pkg/detail', { packageCode });
+        return this.post('/pkg/detail', { packageCode });
     }
 
     async getShippingCostEstimate(
         item: IBuckyShippingCostRequest
     ): Promise<any> {
-        return await this.post('/logistics/channel-carriage-list', { size: 10, item });
+        return this.post('/logistics/channel-carriage-list', { size: 10, item });
     }
 
 

@@ -38,13 +38,13 @@ export default class ProductCollectionService extends MedusaProductCollectionSer
     ): Promise<ProductCollection> {
         const result: UpdateResult =
             await this.productCollectionRepository_.update(id, input);
-        return await this.productCollectionRepository_.findOne({
+        return this.productCollectionRepository_.findOne({
             where: { id },
         });
     }
 
     async create(input: CreateProductCollection): Promise<ProductCollection> {
-        return await this.productCollectionRepository_.save(input);
+        return this.productCollectionRepository_.save(input);
     }
 
     async addProducts(
@@ -68,7 +68,7 @@ export default class ProductCollectionService extends MedusaProductCollectionSer
         await super.addProducts(collection_id, product_ids);
 
         //return the array of products
-        return await this.productCollectionRepository_.findOne({
+        return this.productCollectionRepository_.findOne({
             where: { id: collection_id },
         });
     }

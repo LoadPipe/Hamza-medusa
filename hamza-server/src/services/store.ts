@@ -61,7 +61,7 @@ class StoreService extends MedusaStoreService {
     }
 
     async getStores() {
-        return await this.storeRepository_.find({ where: { owner_id: Not(IsNull()) } });
+        return this.storeRepository_.find({ where: { owner_id: Not(IsNull()) } });
     }
 
     async getStoreNames() {
@@ -73,7 +73,7 @@ class StoreService extends MedusaStoreService {
     }
 
     async update(data: UpdateStoreInput) {
-        return await super.update(data);
+        return super.update(data);
     }
 
     // TODO: Should I pull this out of the store service? -G

@@ -300,7 +300,7 @@ class ProductService extends MedusaProductService {
     }
 
     async getProductsFromStoreWithPrices(storeId: string): Promise<Product[]> {
-        return await this.convertProductPrices(
+        return this.convertProductPrices(
             (
                 await this.productRepository_.find({
                     where: {
@@ -437,7 +437,7 @@ class ProductService extends MedusaProductService {
     async getStoreProductsByCategory(storeId: string, categoryName: string) {
         try {
             if (categoryName.toLowerCase() === 'all') {
-                return await this.getProductsFromStoreWithPrices(storeId);
+                return this.getProductsFromStoreWithPrices(storeId);
             }
             // Query to get all products for the given store ID
             const categories = await this.productCategoryRepository_.find({
