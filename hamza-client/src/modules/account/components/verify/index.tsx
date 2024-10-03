@@ -37,13 +37,12 @@ const VerifyAccount = () => {
     // Check url information for verification status
     useEffect(() => {
         const verify = searchParams.get('verify');
-        const error = searchParams.get('error');
         const message = searchParams.get('message');
         const type = searchParams.get('type');
 
         if (verify === 'true') {
             setStatus('success');
-        } else if (error === 'true' && message && type) {
+        } else if (verify === 'false' && message && type) {
             setErrorReason(decodeURIComponent(message)); // Decode URL-encoded reason
 
             switch (type) {
