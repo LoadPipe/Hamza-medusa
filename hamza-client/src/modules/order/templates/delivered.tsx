@@ -5,7 +5,7 @@ import Spinner from '@modules/common/icons/spinner';
 import DeliveredCard from '@modules/account/components/delivered-card';
 import EmptyState from '@modules/order/components/empty-state';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { debounce } from 'lodash';
 
@@ -25,7 +25,9 @@ const Delivered = ({
 
     const debouncedOnSuccess = debounce(() => {
         onSuccess && onSuccess();
-    }, 3000);
+    }, 1000);
+
+    const queryClient = useQueryClient();
 
     const {
         data: deliveredOrder,
@@ -41,17 +43,14 @@ const Delivered = ({
         () => getSingleBucket(customer, 3),
         {
             enabled: !!customer && chainEnabled, // Ensure query only runs when enabled is true
-            staleTime: 5 * 60 * 1000, // 5 minutes
             retry: 5, // Retry 5 times
-            retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
-            refetchOnWindowFocus: false,
         }
     );
 
     // manually trigger a refetch if its stale
     useEffect(() => {
         if (isStale && chainEnabled && deliveredOrder == undefined) {
-            refetch();
+            queryClient.resetQueries(['fetchDeliveredOrder']);
         }
     }, [isStale]);
 

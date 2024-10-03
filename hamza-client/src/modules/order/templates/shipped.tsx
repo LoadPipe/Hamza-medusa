@@ -17,7 +17,7 @@ import {
 import { BsCircleFill } from 'react-icons/bs';
 import ShippedCard from '@modules/account/components/shipped-card';
 import EmptyState from '@modules/order/components/empty-state';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
 import { debounce } from 'lodash';
 
@@ -39,11 +39,13 @@ const Shipped = ({
 
     const debouncedOnSuccess = debounce(() => {
         onSuccess && onSuccess();
-    }, 3000);
+    }, 1000);
 
     const toggleCourierInfo = (orderId: any) => {
         setCourierInfo(courierInfo === orderId ? null : orderId);
     };
+
+    const queryClient = useQueryClient();
 
     const {
         data: shippedOrder,
@@ -59,17 +61,14 @@ const Shipped = ({
         () => getSingleBucket(customer, 2), // Fetching shipped orders (bucket 2)
         {
             enabled: !!customer && chainEnabled, // Ensure query only runs when enabled is true
-            staleTime: 5 * 60 * 1000, // 5 minutes
             retry: 5, // Retry 5 times
-            retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
-            refetchOnWindowFocus: false,
         }
     );
 
     // manually trigger a refetch if its stale
     useEffect(() => {
         if (isStale && chainEnabled && shippedOrder == undefined) {
-            refetch();
+            queryClient.resetQueries(['fetchShippedOrder']);
         }
     }, [isStale, chainEnabled]);
 

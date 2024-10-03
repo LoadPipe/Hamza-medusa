@@ -2,7 +2,7 @@ import { getSingleBucket } from '@lib/data';
 import { Box, Text } from '@chakra-ui/react';
 import CancelCard from '@modules/account/components/cancel-card';
 import EmptyState from '@modules/order/components/empty-state';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
 import React, { useEffect, useState } from 'react';
 import { debounce } from 'lodash';
@@ -24,7 +24,9 @@ const Cancelled = ({
 
     const debouncedOnSuccess = debounce(() => {
         onSuccess && onSuccess();
-    }, 3000);
+    }, 1000);
+
+    const queryClient = useQueryClient();
 
     const {
         data: canceledOrder,
@@ -40,15 +42,14 @@ const Cancelled = ({
         () => getSingleBucket(customer, 4),
         {
             enabled: !!customer && chainEnabled, // Ensure query only runs when enabled is true
-            staleTime: 5 * 60 * 1000, // 5 minutes
-            retry: false,
+            retry: 5,
         }
     );
 
     // manually trigger a refetch if its stale
     useEffect(() => {
         if (isStale && chainEnabled && canceledOrder == undefined) {
-            refetch();
+            queryClient.resetQueries(['fetchCanceledOrder']);
         }
     }, [isStale]);
 

@@ -6,7 +6,7 @@ import RefundCard from '@modules/account/components/refund-card';
 import EmptyState from '@modules/order/components/empty-state';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import Spinner from '@modules/common/icons/spinner';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { debounce } from 'lodash';
 
 const Refund = ({
@@ -26,7 +26,9 @@ const Refund = ({
 
     const debouncedOnSuccess = debounce(() => {
         onSuccess && onSuccess();
-    }, 3000);
+    }, 1000);
+
+    const queryClient = useQueryClient();
 
     const {
         data: refundOrder,
@@ -42,17 +44,14 @@ const Refund = ({
         () => getSingleBucket(customer, 5),
         {
             enabled: !!customer && chainEnabled, // Ensure query only runs when enabled is true
-            staleTime: 5 * 60 * 1000, // 5 minutes
             retry: 5, // Retry 5 times
-            retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
-            refetchOnWindowFocus: false,
         }
     );
 
     // manually trigger a refetch if its stale
     useEffect(() => {
         if (isStale && chainEnabled && refundOrder == undefined) {
-            refetch();
+            queryClient.resetQueries(['fetchRefundOrder']);
         }
     }, [isStale]);
 
