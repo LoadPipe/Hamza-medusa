@@ -13,6 +13,8 @@ export function redirectToOauthLandingPage(
 
     if (errorMessage?.length)
         redirectUrl += `&error=true&message=${errorMessage}`;
+    else if (!verify)
+        redirectUrl += '&error=true';
 
     return res.redirect(redirectUrl);
 }
