@@ -117,16 +117,17 @@ const VerifyAccount = () => {
             {status === 'success' && (
                 <VerifySuccess
                     title="Verification Failed"
-                    message={errorReason}
                     resendLink={verificationType}
-                    onCancel={() => setStatus('default')}
                 />
             )}
 
             {status === 'error' && (
                 <VerifyFail
                     title="Verification Failed"
-                    message={errorReason}
+                    message={
+                        errorReason ||
+                        'An unknown error occurred. Please try again.'
+                    }
                     resendLink={verificationType}
                     onCancel={() => setStatus('default')}
                 />

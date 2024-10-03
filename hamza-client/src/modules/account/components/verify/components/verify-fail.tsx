@@ -12,7 +12,6 @@ import { MdErrorOutline } from 'react-icons/md';
 interface VerifyFailProps {
     title: string;
     message: string;
-    resendMessage: string;
     resendLink: string;
     onCancel: () => void;
 }
@@ -20,7 +19,6 @@ interface VerifyFailProps {
 const VerifyFail: React.FC<VerifyFailProps> = ({
     title = 'Verification Failed',
     message = ' We couldn’t verify your email address. Please check the verification link and try again, or request a new link below.',
-    resendMessage,
     resendLink,
     onCancel,
 }) => {
