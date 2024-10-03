@@ -9,9 +9,11 @@ import axios from 'axios';
 import CustomerRepository from '../../../repositories/customer';
 import { RouteHandler } from '../../route-handler';
 import { redirectToOauthLandingPage } from '../../../utils/oauth';
+import { Not } from 'typeorm';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
-    let eventBus_: EventBusService = req.scope.resolve('eventBusService');
+    const eventBus_: EventBusService = req.scope.resolve('eventBusService');
+    const customerRepository: typeof CustomerRepository = req.scope.resolve('customerRepository');
 
     const handler: RouteHandler = new RouteHandler(
         req, res, 'GET', '/custom/discord'
@@ -65,16 +67,30 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         handler.logger.debug(`user response: ${userResponse.data}`);
 
         if (userResponse.data.email) {
-            await CustomerRepository.update(
-                { id: decoded.customer_id },
+
+            const customerId = decoded.customer_id;
+            const email = userResponse.data?.email?.trim()?.toLowerCase();
+
+            //check that email isn't already taken
+            const existingCustomer = await customerRepository.findOne({
+                where: { id: Not(decoded.customer_id), email: email }
+            });
+            if (existingCustomer) {
+                return redirectToOauthLandingPage(res, 'google', false, `The email address ${email} is already taken by another account.`);
+            }
+
+            //update the user record if all good
+            await customerRepository.update(
+                { id: customerId },
                 {
-                    email: userResponse.data?.email?.trim()?.toLowerCase(),
+                    email: email,
                     is_verified: true,
                     first_name: userResponse.data.global_name.split(' ')[0],
                     last_name:
                         userResponse.data.global_name.split(' ')[1] || '',
                 }
             );
+
             await eventBus_.emit([
                 {
                     data: {
