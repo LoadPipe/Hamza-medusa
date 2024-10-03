@@ -25,6 +25,7 @@ import ProductRepository from '@medusajs/medusa/dist/repositories/product';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import SmtpMailService from './smtp-mail';
 import CustomerNotificationService from './customer-notification';
+import { formatCryptoPrice } from 'src/utils/price-formatter';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
 // In medusa we have these 5 DEFAULT order.STATUS's {PENDING, COMPLETED, ARCHIVED, CANCELED, REQUIRES_ACTION}
@@ -569,7 +570,17 @@ export default class OrderService extends MedusaOrderService {
                 this.smtpMailService.sendMail({
                     from: process.env.SMTP_HAMZA_FROM ?? 'support@hamzamarket.com',
                     mailData: {
-                        order_id: order.id
+                        orderId: order.id,
+                        orderAmount: formatCryptoPrice(order.total, order.currency_code),
+                        orderDate: order.created_at,
+                        items: order.items.map(i => {
+                            return {
+                                title: i.title,
+                                unit_price: formatCryptoPrice(i.unit_price, i.currency_code),
+                                quantity: i.quantity,
+                                thumbnail: i.thumbnail
+                            }
+                        })
                     },
                     to: customer.email,
                     templateName: 'order-shopped',
@@ -591,7 +602,17 @@ export default class OrderService extends MedusaOrderService {
                 this.smtpMailService.sendMail({
                     from: process.env.SMTP_HAMZA_FROM ?? 'support@hamzamarket.com',
                     mailData: {
-                        order_id: order.id
+                        orderId: order.id,
+                        orderAmount: formatCryptoPrice(order.total, order.currency_code),
+                        orderDate: order.created_at,
+                        items: order.items.map(i => {
+                            return {
+                                title: i.title,
+                                unit_price: formatCryptoPrice(i.unit_price, i.currency_code),
+                                quantity: i.quantity,
+                                thumbnail: i.thumbnail
+                            }
+                        })
                     },
                     to: customer.email,
                     templateName: 'order-delivered',
