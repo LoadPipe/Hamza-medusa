@@ -258,8 +258,7 @@ const ProductInfo = () => {
                                 color={'white'}
                                 mt="2px"
                             >
-                                ({ratingCounter}{' '}
-                                {ratingCounter === 1 ? 'review' : 'reviews'})
+                                no reviews yet
                             </Text>
                         </Flex>
                     </Flex>
