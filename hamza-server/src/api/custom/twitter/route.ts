@@ -78,7 +78,7 @@ export async function getTwitterUser(
     try {
         // request GET https://api.twitter.com/2/users/me
         const res = await axios.get<{ data: TwitterUser }>(
-            'https://api.twitter.com/2/users/me?user.fields=username,name,id,entities',
+            'https://api.twitter.com/2/users/me?user.fields=username,name,id,email',
             {
                 headers: {
                     'Content-type': 'application/json',
