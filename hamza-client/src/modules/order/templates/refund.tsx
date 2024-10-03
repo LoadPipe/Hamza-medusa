@@ -50,14 +50,20 @@ const Refund = ({
 
     // manually trigger a refetch if its stale
     useEffect(() => {
-        if (isStale && refundOrder == undefined) {
-            for (let i = 0; i < 3; i++) {
-                if (refundOrder == undefined) {
-                    queryClient.resetQueries(['fetchRefundOrder']);
-                    queryClient.invalidateQueries(['fetchRefundOrder']);
+        const retryFetch = async () => {
+            if (isStale && refundOrder == undefined) {
+                for (let i = 0; i < 3; i++) {
+                    if (refundOrder == undefined) {
+                        queryClient.resetQueries(['fetchRefundOrder']);
+                        queryClient.invalidateQueries(['fetchRefundOrder']);
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, 100)
+                        );
+                    }
                 }
             }
-        }
+        };
+        retryFetch();
     }, [isStale]);
 
     // useEffect(() => {

@@ -110,16 +110,21 @@ const Processing = ({
         }
     );
 
-    // manually trigger a refetch if its stale
     useEffect(() => {
-        if (isStale && processingOrder == undefined) {
-            for (let i = 0; i < 3; i++) {
-                if (processingOrder == undefined) {
-                    queryClient.resetQueries(['fetchProcessingOrder']);
-                    queryClient.invalidateQueries(['fetchProcessingOrder']);
+        const retryFetch = async () => {
+            if (isStale && processingOrder == undefined) {
+                for (let i = 0; i < 5; i++) {
+                    if (processingOrder == undefined) {
+                        queryClient.resetQueries(['fetchProcessingOrder']);
+                        queryClient.invalidateQueries(['fetchProcessingOrder']);
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, 100)
+                        );
+                    }
                 }
             }
-        }
+        };
+        retryFetch();
     }, [isStale]);
 
     // useEffect(() => {

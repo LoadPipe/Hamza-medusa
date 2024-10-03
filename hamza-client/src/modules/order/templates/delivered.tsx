@@ -49,14 +49,20 @@ const Delivered = ({
 
     // manually trigger a refetch if its stale
     useEffect(() => {
-        if (isStale && deliveredOrder == undefined) {
-            for (let i = 0; i < 3; i++) {
-                if (deliveredOrder == undefined) {
-                    queryClient.resetQueries(['fetchDeliveredOrder']);
-                    queryClient.invalidateQueries(['fetchDeliveredOrder']);
+        const retryFetch = async () => {
+            if (isStale && deliveredOrder == undefined) {
+                for (let i = 0; i < 3; i++) {
+                    if (deliveredOrder == undefined) {
+                        queryClient.resetQueries(['fetchDeliveredOrder']);
+                        queryClient.invalidateQueries(['fetchDeliveredOrder']);
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, 100)
+                        );
+                    }
                 }
             }
-        }
+        };
+        retryFetch();
     }, [isStale]);
 
     // useEffect(() => {

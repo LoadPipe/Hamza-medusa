@@ -48,14 +48,20 @@ const Cancelled = ({
 
     // manually trigger a refetch if its stale
     useEffect(() => {
-        if (isStale && canceledOrder == undefined) {
-            for (let i = 0; i < 3; i++) {
-                if (canceledOrder == undefined) {
-                    queryClient.resetQueries(['fetchCanceledOrder']);
-                    queryClient.invalidateQueries(['fetchCanceledOrder']);
+        const retryFetch = async () => {
+            if (isStale && canceledOrder == undefined) {
+                for (let i = 0; i < 5; i++) {
+                    if (canceledOrder == undefined) {
+                        queryClient.resetQueries(['fetchCanceledOrder']);
+                        queryClient.invalidateQueries(['fetchCanceledOrder']);
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, 100)
+                        );
+                    }
                 }
             }
-        }
+        };
+        retryFetch();
     }, [isStale]);
 
     // useEffect(() => {
