@@ -78,7 +78,7 @@ export async function getTwitterUser(
     try {
         // request GET https://api.twitter.com/2/users/me
         const res = await axios.get<{ data: TwitterUser }>(
-            'https://api.twitter.com/2/users/me',
+            'https://api.twitter.com/2/users/me?user.fields=username,name,id,email',
             {
                 headers: {
                     'Content-type': 'application/json',
@@ -112,12 +112,12 @@ export async function GET(
     await handler.handle(async () => {
         const code = req.query.code;
 
-        handler.logger.debug(`discord oauth cookies: ${JSON.stringify(req.cookies)}`);
+        handler.logger.debug(`twitter oauth cookies: ${JSON.stringify(req.cookies)}`);
         let decoded: any = jwt.decode(req.cookies['_medusa_jwt']);
         handler.logger.debug(
-            `discord oauth decoded _medusa_jwt: ${JSON.stringify(decoded)}`
+            `twitter oauth decoded _medusa_jwt: ${JSON.stringify(decoded)}`
         );
-        handler.logger.debug(`discord oauth req.params: ${JSON.stringify(req.params)}`);
+        handler.logger.debug(`twitter oauth req.params: ${JSON.stringify(req.params)}`);
 
         // 1. get the access token with the code
         const twitterOAuthToken = await getTwitterOAuthToken(code, handler.logger);
@@ -131,6 +131,8 @@ export async function GET(
             twitterOAuthToken.access_token,
             handler.logger
         );
+
+        handler.logger.debug(`Twitter user: ${JSON.stringify(twitterUser)}`);
 
         if (!twitterUser) {
             // redirect if no twitter user

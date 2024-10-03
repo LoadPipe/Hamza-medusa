@@ -11,22 +11,21 @@ import { debounce } from 'lodash';
 
 const Refund = ({
     customer,
-    chainEnabled,
-    onSuccess,
+    // chainEnabled,
+    // onSuccess,
     isEmpty,
 }: {
     customer: string;
-    chainEnabled?: boolean;
-    onSuccess?: () => void;
+    // chainEnabled?: boolean;
+    // onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
     const [courierInfo, setCourierInfo] = useState(false);
     const [shouldFetch, setShouldFetch] = useState(false);
-    console.log(`chainEnabled Refund ${chainEnabled}`);
 
-    const debouncedOnSuccess = debounce(() => {
-        onSuccess && onSuccess();
-    }, 1000);
+    // const debouncedOnSuccess = debounce(() => {
+    //     onSuccess && onSuccess();
+    // }, 1000);
 
     const queryClient = useQueryClient();
 
@@ -43,24 +42,36 @@ const Refund = ({
         ['fetchRefundOrder', customer],
         () => getSingleBucket(customer, 5),
         {
-            enabled: !!customer && chainEnabled, // Ensure query only runs when enabled is true
-            retry: 5, // Retry 5 times
+            enabled: !!customer,
+            retry: true,
+            refetchOnWindowFocus: true,
         }
     );
 
     // manually trigger a refetch if its stale
     useEffect(() => {
-        if (isStale && chainEnabled && refundOrder == undefined) {
-            queryClient.resetQueries(['fetchRefundOrder']);
-        }
+        const retryFetch = async () => {
+            if (isStale && refundOrder == undefined) {
+                for (let i = 0; i < 3; i++) {
+                    if (refundOrder == undefined) {
+                        queryClient.resetQueries(['fetchRefundOrder']);
+                        queryClient.invalidateQueries(['fetchRefundOrder']);
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, 100)
+                        );
+                    }
+                }
+            }
+        };
+        retryFetch();
     }, [isStale]);
 
-    useEffect(() => {
-        if (isSuccess && refundOrder) {
-            console.log(`TRIGGER`);
-            debouncedOnSuccess();
-        }
-    }, [isSuccess, chainEnabled]);
+    // useEffect(() => {
+    //     if (isSuccess && refundOrder) {
+    //         console.log(`TRIGGER`);
+    //         debouncedOnSuccess();
+    //     }
+    // }, [isSuccess, chainEnabled]);
 
     // Log the queries for refunded state and data
     console.log({
