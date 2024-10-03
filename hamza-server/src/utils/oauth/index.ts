@@ -7,9 +7,7 @@ export function redirectToOauthLandingPage(
     errorMessage?: string
 ): any {
     let redirectUrl =
-        `${process.env.OAUTH_LANDING_PAGE}
-        ?type=${type}
-        ?verify=${verify ? 'true' : 'false'}`;
+        `${process.env.STORE_URL}${process.env.OAUTH_LANDING_PAGE}?type=${type}&verify=${verify ? 'true' : 'false'}`;
 
     if (errorMessage?.length)
         redirectUrl += `&error=true&message=${errorMessage}`;
@@ -18,3 +16,4 @@ export function redirectToOauthLandingPage(
 
     return res.redirect(redirectUrl);
 }
+
