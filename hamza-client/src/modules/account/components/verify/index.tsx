@@ -59,9 +59,10 @@ const VerifyAccount = () => {
                     );
                     break;
                 default:
-                    setVerificationType(getGoogleOAuthURL(authParams));
+                    setErrorReason('Invalid verification type.');
+                    setStatus('error');
+                    return;
             }
-            setVerificationType(getGoogleOAuthURL(authParams));
             setStatus('error');
         } else {
             setStatus('default');
