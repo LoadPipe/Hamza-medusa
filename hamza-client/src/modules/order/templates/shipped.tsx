@@ -165,6 +165,7 @@ const Shipped = ({
                                             key={item.id}
                                             order={item}
                                             vendorName={order.store.name}
+                                            address={order.shipping_address}
                                             handle={
                                                 item.variant?.product?.handle ||
                                                 'N/A'

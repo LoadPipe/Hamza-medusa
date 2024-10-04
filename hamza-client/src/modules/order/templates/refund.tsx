@@ -7,7 +7,7 @@ import EmptyState from '@modules/order/components/empty-state';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import Spinner from '@modules/common/icons/spinner';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { debounce } from 'lodash';
+import { debounce, upperCase } from 'lodash';
 
 const Refund = ({
     customer,
@@ -192,10 +192,10 @@ const Refund = ({
                                                 fontWeight="semibold"
                                             >
                                                 {getAmount(
-                                                    order.unit_price,
-                                                    order.currency_code
+                                                    item?.unit_price,
+                                                    item?.currency_code
                                                 )}{' '}
-                                                {order.currency_code}
+                                                {upperCase(item?.currency_code)}
                                             </Text>
                                             <HStack
                                                 align="start"
