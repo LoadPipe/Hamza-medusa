@@ -5,6 +5,7 @@ import CustomerRepository from '../../../repositories/customer';
 import { ILogger } from '../../../utils/logging/logger';
 import jwt from 'jsonwebtoken';
 import { redirectToOauthLandingPage } from '../../../utils/oauth';
+import { Not } from 'typeorm';
 
 // add your client id and secret here:
 const TWITTER_OAUTH_CLIENT_ID = process.env.TWITTER_ACCESS_KEY!;
@@ -155,11 +156,22 @@ export async function GET(
         //redirect if no email address available
         return redirectToOauthLandingPage(res, 'twitter', false, 'Unable to retrieve email address');
 
+        const customerId = decoded.customer_id;
+        const email = ''; //no way to get twitter email
+
+        //check that email isn't already taken
+        const existingCustomer = await customerRepository.findOne({
+            where: { id: Not(decoded.customer_id), email: email }
+        });
+        if (existingCustomer) {
+            return redirectToOauthLandingPage(res, 'google', false, `The email address ${email} is already taken by another account.`);
+        }
+
         //update the user record if all good
         await customerRepository.update(
-            { id: decoded.customer_id },
+            { id: customerId },
             {
-                email: `${first_name}@${last_name}.com`?.trim()?.toLowerCase(), //twitterUser?.email,
+                email: email,
                 is_verified: true,
                 first_name,
                 last_name,

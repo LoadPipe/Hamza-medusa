@@ -9,6 +9,7 @@ import axios from 'axios';
 import CustomerRepository from '../../../repositories/customer';
 import { RouteHandler } from '../../route-handler';
 import { redirectToOauthLandingPage } from '../../../utils/oauth';
+import { Not } from 'typeorm';
 
 interface GoogleTokensResult {
     access_token: string;
@@ -92,6 +93,7 @@ async function getGoogleUser({
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const logger = req.scope.resolve('logger') as Logger;
+    const customerRepository: typeof CustomerRepository = req.scope.resolve('customerRepository');
 
     const handler: RouteHandler = new RouteHandler(
         req,
@@ -139,11 +141,22 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             return redirectToOauthLandingPage(res, 'google', false, 'Unable to get the Google OAuth user');
         logger.debug(`Google OAuth user: ${JSON.stringify(user)}`);
 
+        const customerId = decoded.customer_id;
+        const email = user.email?.trim()?.toLowerCase();
+
+        //check that email isn't already taken
+        const existingCustomer = await customerRepository.findOne({
+            where: { id: Not(decoded.customer_id), email: email }
+        });
+        if (existingCustomer) {
+            return redirectToOauthLandingPage(res, 'google', false, `The email address ${email} is already taken by another account.`);
+        }
+
         //update the user record if all good
-        await CustomerRepository.update(
-            { id: decoded.customer_id },
+        await customerRepository.update(
+            { id: customerId },
             {
-                email: user.email?.trim()?.toLowerCase(),
+                email: email,
                 is_verified: true,
                 first_name: user.given_name,
                 last_name: user.family_name,
