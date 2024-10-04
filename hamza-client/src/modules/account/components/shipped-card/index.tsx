@@ -34,7 +34,7 @@ type Order = {
 
 type OrderCardProps = {
     order: Order;
-    handle: any;
+    handle: string;
     vendorName: string;
     address: any;
 };
@@ -97,7 +97,11 @@ const ShippedCard = ({
                         <Image
                             borderRadius="lg"
                             width={{ base: '60px', md: '120px' }}
-                            src={order.thumbnail}
+                            src={
+                                order.variant?.metadata?.imgUrl ??
+                                order.thumbnail ??
+                                ''
+                            }
                             alt={`Thumbnail of ${order.title}`}
                             mr={4}
                         />

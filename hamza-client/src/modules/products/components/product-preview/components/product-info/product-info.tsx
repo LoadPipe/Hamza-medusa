@@ -266,8 +266,8 @@ const ProductInfo = () => {
             </Flex>
 
             <ProductDescription
-                description={productData?.description ?? ''}
-                subtitle={productData?.subtitle ?? ''}
+                description={productData.description ?? ''}
+                subtitle={productData.subtitle ?? ''}
             />
         </Flex>
     );

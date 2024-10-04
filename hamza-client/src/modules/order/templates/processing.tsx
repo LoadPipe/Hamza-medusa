@@ -736,28 +736,28 @@ const Processing = ({
                                                                             <Text fontWeight="bold">
                                                                                 {
                                                                                     order
-                                                                                        .shipping_address
-                                                                                        .address_1
+                                                                                        ?.shipping_address
+                                                                                        ?.address_1
                                                                                 }{' '}
                                                                                 {
                                                                                     order
-                                                                                        .shipping_address
-                                                                                        .city
+                                                                                        ?.shipping_address
+                                                                                        ?.city
                                                                                 }{' '}
                                                                                 {
                                                                                     order
-                                                                                        .shipping_address
-                                                                                        .province
+                                                                                        ?.shipping_address
+                                                                                        ?.province
                                                                                 }{' '}
                                                                                 {
                                                                                     order
-                                                                                        .shipping_address
-                                                                                        .postal_code
+                                                                                        ?.shipping_address
+                                                                                        ?.postal_code
                                                                                 }{' '}
                                                                                 {
                                                                                     order
-                                                                                        .shipping_address
-                                                                                        .country_code
+                                                                                        ?.shipping_address
+                                                                                        ?.country_code
                                                                                 }
                                                                             </Text>
                                                                         </Box>
@@ -772,30 +772,30 @@ const Processing = ({
                                                                             <Text fontWeight="bold">
                                                                                 {
                                                                                     order
-                                                                                        .shipping_address
-                                                                                        .first_name
+                                                                                        ?.shipping_address
+                                                                                        ?.first_name
                                                                                 }{' '}
                                                                                 {
                                                                                     order
-                                                                                        .shipping_address
-                                                                                        .last_name
+                                                                                        ?.shipping_address
+                                                                                        ?.last_name
                                                                                 }
                                                                             </Text>
                                                                             <Text fontWeight="bold">
                                                                                 {
                                                                                     order
-                                                                                        .shipping_address
-                                                                                        .phone
+                                                                                        ?.shipping_address
+                                                                                        ?.phone
                                                                                 }
                                                                             </Text>
                                                                             <Text fontWeight="bold">
-                                                                                {order.customer.email.endsWith(
+                                                                                {order.customer?.email?.endsWith(
                                                                                     '@evm.blockchain'
                                                                                 )
                                                                                     ? ''
                                                                                     : order
-                                                                                          .customer
-                                                                                          .email}
+                                                                                          ?.customer
+                                                                                          ?.email}
                                                                             </Text>
                                                                         </Box>
                                                                     </VStack>
