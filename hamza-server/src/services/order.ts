@@ -70,7 +70,8 @@ export default class OrderService extends MedusaOrderService {
         this.paymentRepository_ = container.paymentRepository;
         this.productRepository_ = container.productRepository;
         this.productVariantRepository_ = container.productVariantRepository;
-        this.customerNotificationService_ = container.customerNotificationService;
+        this.customerNotificationService_ =
+            container.customerNotificationService;
         this.logger = createLogger(container, 'OrderService');
         this.buckyLogRepository = container.buckyLogRepository;
         this.buckyClient = new BuckyClient(container.buckyLogRepository);
@@ -363,7 +364,7 @@ export default class OrderService extends MedusaOrderService {
             case OrderBucketType.PROCESSING:
                 return this.getCustomerOrdersByStatus(customerId, {
                     fulfillmentStatus: FulfillmentStatus.NOT_FULFILLED,
-                    orderStatus: OrderStatus.PENDING
+                    orderStatus: OrderStatus.PENDING,
                 });
             case OrderBucketType.SHIPPED:
                 return this.getCustomerOrdersByStatus(customerId, {
@@ -548,9 +549,9 @@ export default class OrderService extends MedusaOrderService {
 
         return relevantItems?.length
             ? {
-                variants: relevantItems.map((i) => i.variant),
-                quantities: relevantItems.map((i) => i.quantity),
-            }
+                  variants: relevantItems.map((i) => i.variant),
+                  quantities: relevantItems.map((i) => i.quantity),
+              }
             : { variants: [], quantities: [] };
     }
 
@@ -563,71 +564,98 @@ export default class OrderService extends MedusaOrderService {
 
     async sendShippedEmail(order: Order): Promise<void> {
         try {
-            const notificationTypes = await this.customerNotificationService_.getNotificationTypes(order.customer_id);
-            const customer = await this.customerService_.retrieve(order.customer_id);
+            const notificationTypes =
+                await this.customerNotificationService_.getNotificationTypes(
+                    order.customer_id
+                );
+            const customer = await this.customerService_.retrieve(
+                order.customer_id
+            );
 
             if (notificationTypes.includes('order_shipped')) {
                 this.smtpMailService.sendMail({
-                    from: process.env.SMTP_HAMZA_FROM ?? 'support@hamzamarket.com',
+                    from:
+                        process.env.SMTP_HAMZA_FROM ??
+                        'support@hamzamarket.com',
                     mailData: {
                         orderId: order.id,
-                        orderAmount: formatCryptoPrice(order.total, order.currency_code),
+                        orderAmount: formatCryptoPrice(
+                            order.total,
+                            order.currency_code
+                        ),
                         orderDate: order.created_at,
-                        items: order.items.map(i => {
+                        items: order.items.map((i) => {
                             return {
                                 title: i.title,
-                                unit_price: formatCryptoPrice(i.unit_price, i.currency_code),
+                                unit_price: formatCryptoPrice(
+                                    i.unit_price,
+                                    i.currency_code
+                                ),
                                 quantity: i.quantity,
-                                thumbnail: i.thumbnail
-                            }
-                        })
+                                thumbnail: i.thumbnail,
+                            };
+                        }),
                     },
                     to: customer.email,
                     templateName: 'order-shopped',
-                    subject: 'Your order has shipped from Hamza.market'
+                    subject: 'Your order has shipped from Hamza.market',
                 });
             }
-        }
-        catch (e: any) {
-            this.logger.error(`Error sending order-shipped email for order ${order.id}`);
+        } catch (e: any) {
+            this.logger.error(
+                `Error sending order-shipped email for order ${order.id}`
+            );
         }
     }
 
     async sendDeliveredEmail(order: Order): Promise<void> {
         try {
-            const notificationTypes = await this.customerNotificationService_.getNotificationTypes(order.customer_id);
-            const customer = await this.customerService_.retrieve(order.customer_id);
+            const notificationTypes =
+                await this.customerNotificationService_.getNotificationTypes(
+                    order.customer_id
+                );
+            const customer = await this.customerService_.retrieve(
+                order.customer_id
+            );
 
-            if (notificationTypes.includes('order_shipped')) { //TODO: add notification
+            if (notificationTypes.includes('order_shipped')) {
+                //TODO: add notification
                 this.smtpMailService.sendMail({
-                    from: process.env.SMTP_HAMZA_FROM ?? 'support@hamzamarket.com',
+                    from:
+                        process.env.SMTP_HAMZA_FROM ??
+                        'support@hamzamarket.com',
                     mailData: {
                         orderId: order.id,
-                        orderAmount: formatCryptoPrice(order.total, order.currency_code),
+                        orderAmount: formatCryptoPrice(
+                            order.total,
+                            order.currency_code
+                        ),
                         orderDate: order.created_at,
-                        items: order.items.map(i => {
+                        items: order.items.map((i) => {
                             return {
                                 title: i.title,
-                                unit_price: formatCryptoPrice(i.unit_price, i.currency_code),
+                                unit_price: formatCryptoPrice(
+                                    i.unit_price,
+                                    i.currency_code
+                                ),
                                 quantity: i.quantity,
-                                thumbnail: i.thumbnail
-                            }
-                        })
+                                thumbnail: i.thumbnail,
+                            };
+                        }),
                     },
                     to: customer.email,
                     templateName: 'order-delivered',
-                    subject: 'Your order has been delivered from Hamza.market'
+                    subject: 'Your order has been delivered from Hamza.market',
                 });
             }
-        }
-        catch (e: any) {
-            this.logger.error(`Error sending order-shipped email for order ${order.id}`);
+        } catch (e: any) {
+            this.logger.error(
+                `Error sending order-shipped email for order ${order.id}`
+            );
         }
     }
 
-    async sendCancelledEmail(order: Order): Promise<void> {
-
-    }
+    async sendCancelledEmail(order: Order): Promise<void> {}
 
     private async updatePaymentAfterTransaction(
         paymentId: string,
@@ -701,7 +729,7 @@ export default class OrderService extends MedusaOrderService {
                 'customer',
                 'items.variant.product',
             ],
-            order: { created_at: "DESC" }
+            order: { created_at: 'DESC' },
         });
 
         if (orders) orders = orders.filter((o) => o.items?.length > 0);

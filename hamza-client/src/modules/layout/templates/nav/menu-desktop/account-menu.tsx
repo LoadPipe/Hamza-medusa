@@ -19,7 +19,7 @@ import { AiFillSetting } from 'react-icons/ai';
 import { AuthorizedAccount } from './components/authorized-account';
 import useWishlistStore from '@store/wishlist/wishlist-store';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import ProfileImage from '@/components/customer-icon/profile-image';
+import ProfileImage from '@/account/@dashboard/profile/profile-form/components/customer-icon/profile-image';
 
 const AccountMenu = () => {
     const { authData } = useCustomerAuthStore();
