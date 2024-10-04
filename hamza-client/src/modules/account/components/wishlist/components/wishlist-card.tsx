@@ -38,6 +38,7 @@ interface WishlistCardProps {
     productDescription: string;
     productPrice: PriceDictionary;
     productImage: string;
+    productVariantImage: string | null;
     productId: string;
     productVariantId: string | null;
     countryCode: string;
@@ -69,11 +70,12 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
     productPrice,
     productId,
     productImage,
+    productVariantImage,
     productVariantId,
     countryCode,
 }) => {
     const { data, error, isLoading, isFetching } = useQuery(
-        ['products', productVariantId], // Use the variant ID directly as part of the query key
+        ['wishlist', productVariantId], // Use the variant ID directly as part of the query key
         async () => {
             const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/inventory?variant_id=${productVariantId}`;
             const response = await axios.get(url);
@@ -84,6 +86,8 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
         }
     );
 
+    console.log(`VARIANT THUMB ${productVariantImage}`);
+
     // Shot in the dark, I can't even simulate this...
     const queryClient = useQueryClient();
     useEffect(() => {
@@ -92,7 +96,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
 
     const resetCard = async () => {
         if (productVariantId !== null && isFetching)
-            await queryClient.resetQueries(['products']);
+            await queryClient.resetQueries(['wishlist']);
     };
 
     // Get inventory data
@@ -260,7 +264,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                             href={`/products/${productData.handle}`}
                         >
                             <ChakraImage
-                                src={productImage}
+                                src={productVariantImage ?? productImage}
                                 alt={productImage}
                                 maxWidth={'75px'}
                                 width={'75px'}
@@ -399,6 +403,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                 description: productData.description,
                                 handle: productData.handle,
                                 thumbnail: productData.thumbnail,
+                                variantThumbnail: productData.variantThumbnail,
                                 title: productData.title,
                                 price: productPrice,
                                 productVariantId: productVariantId,

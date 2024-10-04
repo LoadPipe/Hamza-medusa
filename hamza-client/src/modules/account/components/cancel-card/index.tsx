@@ -38,6 +38,9 @@ type Order = {
     description: string;
     variant: {
         product_id: string;
+        metadata: {
+            imgUrl?: string;
+        };
     };
     region: {
         id: string;
@@ -118,6 +121,7 @@ const CancelCard = ({
                             borderRadius="lg"
                             width={{ base: '60px', md: '120px' }}
                             src={
+                                order?.variant?.metadata?.imgUrl ??
                                 order.thumbnail ??
                                 ''
                             }

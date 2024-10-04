@@ -62,6 +62,7 @@ const AccountWishList: React.FC<AccountWishListProps> = ({ countryCode }) => {
                             productId={product.id}
                             productVariantId={product.productVariantId}
                             productImage={product.thumbnail}
+                            productVariantImage={product.variantThumbnail}
                             productDescription={product.title}
                             productPrice={convertPrice(
                                 product.price,
