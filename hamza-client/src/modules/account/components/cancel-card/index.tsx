@@ -49,7 +49,7 @@ type Order = {
 
 type OrderCardProps = {
     order: Order;
-    handle: any;
+    handle: string;
     cancel_reason: string;
     cancelled_date: string;
     vendorName: string;
@@ -116,7 +116,11 @@ const CancelCard = ({
                         <Image
                             borderRadius="lg"
                             width={{ base: '60px', md: '120px' }}
-                            src={order.thumbnail}
+                            src={
+                                order.variant?.metadata?.imgUrl ??
+                                order.thumbnail ??
+                                ''
+                            }
                             alt={`Thumbnail of ${order.title}`}
                             mr={4}
                         />
