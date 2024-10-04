@@ -280,8 +280,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                             noOfLines={2}
                             maxWidth={{ base: '100%', md: '50%' }}
                         >
-                            {productDescription} adsfasdfsadfasdf aDAsd aSD
-                            sdaSDAsdaSD a sadå
+                            {productDescription}
                         </Text>
 
                         {/* Currency Icon and Price */}
