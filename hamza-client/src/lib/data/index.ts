@@ -825,6 +825,16 @@ export async function clearAuthCookie() {
     }
 }
 
+export async function clearCartCookie() {
+    try {
+        cookies().set('_medusa_cart_id', '', {
+            maxAge: -1,
+        });
+    } catch (e) {
+        console.error(e);
+    }
+}
+
 // Customer actions
 export async function getCustomer() {
     const headers = getMedusaHeaders(['customer']);
