@@ -598,7 +598,7 @@ export default class OrderService extends MedusaOrderService {
             const notificationTypes = await this.customerNotificationService_.getNotificationTypes(order.customer_id);
             const customer = await this.customerService_.retrieve(order.customer_id);
 
-            if (notificationTypes.includes('order_delivered')) { //TODO: add notification
+            if (notificationTypes.includes('order_shipped')) { //TODO: add notification
                 this.smtpMailService.sendMail({
                     from: process.env.SMTP_HAMZA_FROM ?? 'support@hamzamarket.com',
                     mailData: {
