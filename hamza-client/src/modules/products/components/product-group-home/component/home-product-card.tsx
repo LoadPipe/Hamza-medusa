@@ -199,7 +199,7 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                                     textTransform: 'uppercase',
                                 }}
                             >
-                                {preferred_currency_code || 'usdc'}
+                                {preferred_currency_code?.toUpperCase() || 'USDC'}
                             </Text>
                         </Text>
                     </Flex>
