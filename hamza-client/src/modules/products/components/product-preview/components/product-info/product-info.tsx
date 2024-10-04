@@ -47,6 +47,9 @@ const ProductInfo = () => {
     const [selectedVariant, setSelectedVariant] = useState<null | Variant>(
         null
     );
+    const [selectedVariantImage, setSelectedVariantImage] = useState<
+        null | string
+    >(null);
 
     const convertToPriceDictionary = (selectedVariant: Variant | null) => {
         const output: { [key: string]: number } = {};
@@ -70,6 +73,17 @@ const ProductInfo = () => {
             );
 
             setSelectedVariant(selectedProductVariant);
+
+            if (
+                selectedProductVariant?.metadata &&
+                typeof selectedProductVariant.metadata.imgUrl === 'string'
+            ) {
+                setSelectedVariantImage(selectedProductVariant.metadata.imgUrl);
+            } else {
+                setSelectedVariantImage(null); // Reset to null if no imgUrl is found
+            }
+
+            // variantThumbnail = setSelectedVariant(selectedProductVariant);
             const price =
                 selectedProductVariant &&
                 selectedProductVariant.prices.find(
@@ -113,8 +127,10 @@ const ProductInfo = () => {
 
     const isLoading = !productData || Object.keys(productData).length === 0;
 
-    console.log('ratinggggg ccc', ratingCounter);
-    console.log('ratinggggg ccc', ratingAverage);
+    // console.log(`PRODUCT ${JSON.stringify(productData)}`);
+
+    // console.log('ratinggggg ccc', ratingCounter);
+    // console.log('ratinggggg ccc', ratingAverage);
 
     if (isLoading) {
         return (
@@ -171,6 +187,8 @@ const ProductInfo = () => {
                                             handle: productData?.handle ?? '',
                                             thumbnail:
                                                 productData?.thumbnail ?? '',
+                                            variantThumbnail:
+                                                selectedVariantImage,
                                             title: productData?.title ?? '',
                                             price: convertToPriceDictionary(
                                                 selectedVariant
@@ -191,6 +209,8 @@ const ProductInfo = () => {
                                             handle: productData?.handle ?? '',
                                             thumbnail:
                                                 productData?.thumbnail ?? '',
+                                            variantThumbnail:
+                                                selectedVariantImage,
                                             title: productData?.title ?? '',
                                             price: convertToPriceDictionary(
                                                 selectedVariant
@@ -266,8 +286,8 @@ const ProductInfo = () => {
             </Flex>
 
             <ProductDescription
-                description={productData.description ?? ''}
-                subtitle={productData.subtitle ?? ''}
+                description={productData?.description ?? ''}
+                subtitle={productData?.subtitle ?? ''}
             />
         </Flex>
     );

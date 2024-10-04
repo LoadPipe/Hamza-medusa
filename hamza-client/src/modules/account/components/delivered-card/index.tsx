@@ -29,6 +29,9 @@ type Order = {
     description: string;
     variant: {
         product_id: string;
+        metadata: {
+            imgUrl?: string;
+        };
     };
     region: {
         id: string;
@@ -46,7 +49,8 @@ const DeliveredCard = ({ order, handle, vendorName }: OrderCardProps) => {
     const orderString = typeof order.currency_code;
     const router = useRouter();
     let countryCode = useParams().countryCode as string;
-    if (process.env.NEXT_PUBLIC_FORCE_COUNTRY) countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY;
+    if (process.env.NEXT_PUBLIC_FORCE_COUNTRY)
+        countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY;
 
     const getAmount = (amount?: number | null) => {
         if (amount === null || amount === undefined) {

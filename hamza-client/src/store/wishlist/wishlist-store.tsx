@@ -11,6 +11,7 @@ export type PriceDictionary = {
 export type WishlistProduct = {
     id: string;
     thumbnail: string;
+    variantThumbnail: string | null;
     title: string;
     handle: string;
     description: string;
@@ -63,10 +64,7 @@ const useWishlistStore = create<WishlistType>()(
                 }));
             },
             removeWishlistProduct: async (productId) => {
-                console.log(
-                    'Attempting to remove product with ID:',
-                    productId
-                );
+                console.log('Attempting to remove product with ID:', productId);
                 const { wishlist } = get();
                 set((state) => {
                     const filteredItems = wishlist.products.filter(
@@ -102,6 +100,7 @@ const useWishlistStore = create<WishlistType>()(
                         return {
                             id: item.variant.product.id,
                             thumbnail: item.variant.product.thumbnail,
+                            variantThumbnail: item.variant?.metadata?.imgUrl,
                             title: item.variant.product.title,
                             handle: item.variant.product.handle,
                             description: item.variant.product.description,
