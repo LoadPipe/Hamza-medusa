@@ -198,7 +198,7 @@ const VerifyAccount = () => {
                             </Button>
                         </a>
 
-                        {/* Twitter Auth */}
+                        {/* Twitter Auth 
                         <a href={getTwitterOauthUrl(authParams)}>
                             <Button
                                 leftIcon={<FaXTwitter size={24} />}
@@ -215,7 +215,7 @@ const VerifyAccount = () => {
                                     <Text mr="auto">Verify with X</Text>
                                 </Flex>
                             </Button>
-                        </a>
+                        </a>*/}
 
                         {/* Discord Auth */}
                         <a
