@@ -142,14 +142,14 @@ const OrderCard = ({ order, handle }: OrderCardProps) => {
                 >
                     Buy Again
                 </Button>
-                <Button
-                    ml={2}
-                    variant="outline"
-                    colorScheme="white"
-                    borderRadius={'37px'}
-                >
-                    Contact Seller
-                </Button>
+                {/*<Button*/}
+                {/*    ml={2}*/}
+                {/*    variant="outline"*/}
+                {/*    colorScheme="white"*/}
+                {/*    borderRadius={'37px'}*/}
+                {/*>*/}
+                {/*    Contact Seller*/}
+                {/*</Button>*/}
             </Flex>
         </Box>
     );

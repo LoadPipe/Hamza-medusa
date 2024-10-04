@@ -90,7 +90,7 @@ class SmtpNotificationService extends AbstractNotificationService {
                 ) {
                     await this.smtpMailService.sendMail({
                         from: process.env.SMTP_FROM,
-                        subject: 'Order Placed',
+                        subject: 'Order Placed on Hamza.market',
                         mailData: parsedOrdersData,
                         to:
                             ordersData[0].customer &&

@@ -9,7 +9,7 @@ const ProfileImage = ({ customerId }: { customerId?: string | null }) => {
     const handleImageError = () => {
         setImageError(true); // Set error state when the image fails to load
     };
-    const imageUrl = `https://api.dicebear.com/9.x/bottts/svg?seed=${customerId ?? ''}`;
+    const imageUrl = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${customerId ?? ''}`;
 
     return (
         <Flex maxW={'858px'} width={'100%'}>

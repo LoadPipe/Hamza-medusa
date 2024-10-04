@@ -16,6 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
 import Link from 'next/link';
+import { upperCase } from 'lodash';
 
 type OrderDetails = {
     thumbnail: string;
@@ -177,7 +178,8 @@ const CancelCard = ({
                     maxWidth="300px"
                 >
                     <Text fontSize="24px" fontWeight="semibold">
-                        {getAmount(order.unit_price)} {order.currency_code}
+                        {getAmount(order.unit_price)}{' '}
+                        {upperCase(order.currency_code)}
                     </Text>
                 </Flex>
             </Flex>
@@ -190,14 +192,14 @@ const CancelCard = ({
                 >
                     View Cancellation Details
                 </Button>
-                <Button
-                    ml={2}
-                    variant="outline"
-                    colorScheme="white"
-                    borderRadius={'37px'}
-                >
-                    Contact Seller
-                </Button>
+                {/*<Button*/}
+                {/*    ml={2}*/}
+                {/*    variant="outline"*/}
+                {/*    colorScheme="white"*/}
+                {/*    borderRadius={'37px'}*/}
+                {/*>*/}
+                {/*    Contact Seller*/}
+                {/*</Button>*/}
             </Flex>
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />

@@ -23,6 +23,9 @@ import { In, Not } from 'typeorm';
 import { BuckyClient } from '../buckydrop/bucky-client';
 import ProductRepository from '@medusajs/medusa/dist/repositories/product';
 import { createLogger, ILogger } from '../utils/logging/logger';
+import SmtpMailService from './smtp-mail';
+import CustomerNotificationService from './customer-notification';
+import { formatCryptoPrice } from 'src/utils/price-formatter';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
 // In medusa we have these 5 DEFAULT order.STATUS's {PENDING, COMPLETED, ARCHIVED, CANCELED, REQUIRES_ACTION}
@@ -56,6 +59,8 @@ export default class OrderService extends MedusaOrderService {
     protected readonly logger: ILogger;
     protected buckyClient: BuckyClient;
     protected readonly buckyLogRepository: typeof BuckyLogRepository;
+    protected customerNotificationService_: CustomerNotificationService;
+    protected smtpMailService: SmtpMailService = new SmtpMailService();
 
     constructor(container) {
         super(container);
@@ -65,6 +70,7 @@ export default class OrderService extends MedusaOrderService {
         this.paymentRepository_ = container.paymentRepository;
         this.productRepository_ = container.productRepository;
         this.productVariantRepository_ = container.productVariantRepository;
+        this.customerNotificationService_ = container.customerNotificationService;
         this.logger = createLogger(container, 'OrderService');
         this.buckyLogRepository = container.buckyLogRepository;
         this.buckyClient = new BuckyClient(container.buckyLogRepository);
@@ -553,6 +559,74 @@ export default class OrderService extends MedusaOrderService {
             where: { payment_status: PaymentStatus.AWAITING },
             relations: ['payments'],
         });
+    }
+
+    async sendShippedEmail(order: Order): Promise<void> {
+        try {
+            const notificationTypes = await this.customerNotificationService_.getNotificationTypes(order.customer_id);
+            const customer = await this.customerService_.retrieve(order.customer_id);
+
+            if (notificationTypes.includes('order_shipped')) {
+                this.smtpMailService.sendMail({
+                    from: process.env.SMTP_HAMZA_FROM ?? 'support@hamzamarket.com',
+                    mailData: {
+                        orderId: order.id,
+                        orderAmount: formatCryptoPrice(order.total, order.currency_code),
+                        orderDate: order.created_at,
+                        items: order.items.map(i => {
+                            return {
+                                title: i.title,
+                                unit_price: formatCryptoPrice(i.unit_price, i.currency_code),
+                                quantity: i.quantity,
+                                thumbnail: i.thumbnail
+                            }
+                        })
+                    },
+                    to: customer.email,
+                    templateName: 'order-shopped',
+                    subject: 'Your order has shipped from Hamza.market'
+                });
+            }
+        }
+        catch (e: any) {
+            this.logger.error(`Error sending order-shipped email for order ${order.id}`);
+        }
+    }
+
+    async sendDeliveredEmail(order: Order): Promise<void> {
+        try {
+            const notificationTypes = await this.customerNotificationService_.getNotificationTypes(order.customer_id);
+            const customer = await this.customerService_.retrieve(order.customer_id);
+
+            if (notificationTypes.includes('order_shipped')) { //TODO: add notification
+                this.smtpMailService.sendMail({
+                    from: process.env.SMTP_HAMZA_FROM ?? 'support@hamzamarket.com',
+                    mailData: {
+                        orderId: order.id,
+                        orderAmount: formatCryptoPrice(order.total, order.currency_code),
+                        orderDate: order.created_at,
+                        items: order.items.map(i => {
+                            return {
+                                title: i.title,
+                                unit_price: formatCryptoPrice(i.unit_price, i.currency_code),
+                                quantity: i.quantity,
+                                thumbnail: i.thumbnail
+                            }
+                        })
+                    },
+                    to: customer.email,
+                    templateName: 'order-delivered',
+                    subject: 'Your order has been delivered from Hamza.market'
+                });
+            }
+        }
+        catch (e: any) {
+            this.logger.error(`Error sending order-shipped email for order ${order.id}`);
+        }
+    }
+
+    async sendCancelledEmail(order: Order): Promise<void> {
+
     }
 
     private async updatePaymentAfterTransaction(

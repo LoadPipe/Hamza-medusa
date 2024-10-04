@@ -145,23 +145,24 @@ const ProcessingOrderCard = ({
                     minWidth="200px"
                     maxWidth="300px"
                 >
-                    <Box mb={4}>
-                        <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
-                            Courier
-                        </Text>
-                        <Text color={'white'} fontSize="16px">
-                            DHL Express
-                        </Text>
-                    </Box>
+                    {/*<Box mb={4}>*/}
+                    {/*    <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">*/}
+                    {/*        Courier*/}
+                    {/*    </Text>*/}
+                    {/*    <Text color={'white'} fontSize="16px">*/}
+                    {/*        DHL Express*/}
+                    {/*    </Text>*/}
+                    {/*</Box>*/}
 
                     <Box>
                         <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
                             Address
                         </Text>
                         <Text color={'white'} fontSize="16px">
-                            {address?.address_1} {address?.address_2}{' '}
-                            {address?.city} {address?.province}{' '}
-                            {address?.postal_code}
+                            {address?.address_1 || 'N/A'}{' '}
+                            {address?.address_2 || ''} {address?.city || 'N/A'}{' '}
+                            {address?.province || 'N/A'}{' '}
+                            {address?.postal_code || 'N/A'}
                         </Text>
                     </Box>
                 </Flex>

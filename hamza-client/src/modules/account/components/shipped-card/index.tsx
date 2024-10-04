@@ -36,9 +36,15 @@ type OrderCardProps = {
     order: Order;
     handle: string;
     vendorName: string;
+    address: any;
 };
 
-const ShippedCard = ({ order, handle, vendorName }: OrderCardProps) => {
+const ShippedCard = ({
+    order,
+    handle,
+    vendorName,
+    address,
+}: OrderCardProps) => {
     const orderString = typeof order.currency_code;
 
     const getAmount = (amount?: number | null) => {
@@ -151,22 +157,27 @@ const ShippedCard = ({ order, handle, vendorName }: OrderCardProps) => {
                     minWidth="200px"
                     maxWidth="300px"
                 >
-                    <Box mb={4}>
-                        <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
-                            Courier
-                        </Text>
-                        <Text color={'white'} fontSize="16px">
-                            DHL Express
-                        </Text>
-                    </Box>
+                    {/*<Box mb={4}>*/}
+                    {/*    <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">*/}
+                    {/*        Courier*/}
+                    {/*    </Text>*/}
+                    {/*    <Text color={'white'} fontSize="16px">*/}
+                    {/*        DHL Express*/}
+                    {/*    </Text>*/}
+                    {/*</Box>*/}
 
                     <Box>
                         <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
                             Address
                         </Text>
                         <Text color={'white'} fontSize="16px">
-                            Rock Rocks Pa Daet Sub-district, 50100, Chiang Mai
-                            CA
+                            <Text color="white" fontSize="16px">
+                                {address?.address_1 || 'N/A'}{' '}
+                                {address?.address_2 || ''}{' '}
+                                {address?.city || 'N/A'}{' '}
+                                {address?.province || 'N/A'}{' '}
+                                {address?.postal_code || 'N/A'}
+                            </Text>
                         </Text>
                     </Box>
                 </Flex>
