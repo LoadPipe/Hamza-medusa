@@ -187,10 +187,11 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
                                 }}
                                 style={{
                                     fontSize: '12px',
-                                    color: '#555555',
+                                    color: 'white',
+                                    textTransform: 'uppercase',
                                 }}
                             >
-                                {productPrice}
+                                {currencyCode || 'usdc'}
                             </Text>
                         </Text>
                     </Flex>
