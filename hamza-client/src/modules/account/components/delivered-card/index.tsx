@@ -111,7 +111,6 @@ const DeliveredCard = ({ order, handle, vendorName }: OrderCardProps) => {
                         borderRadius="lg"
                         width={{ base: '60px', md: '120px' }}
                         src={
-                            order.variant?.metadata?.imgUrl ??
                             order.thumbnail ??
                             ''
                         }

@@ -1,12 +1,6 @@
 import React from 'react';
 import { Text, Flex, Heading, Box } from '@chakra-ui/react';
-import Image from 'next/image';
-import ReviewStar from '../../../../../../public/images/products/review-star.svg';
-import {
-    TiStarFullOutline,
-    TiStarHalfOutline,
-    TiStarOutline,
-} from 'react-icons/ti';
+import { renderStars } from '../../review-stars';
 
 interface ReviewCardProps {
     name: string;
@@ -14,36 +8,6 @@ interface ReviewCardProps {
     review: string;
     stars: number;
 }
-
-export const renderStars = (rating: any) => {
-    const fullStars = Math.floor(rating);
-    const halfStar = rating % 1 >= 0.5;
-    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-
-    return (
-        <div className="flex">
-            {Array(fullStars)
-                .fill(null)
-                .map((_, index) => (
-                    <TiStarFullOutline
-                        key={`full-${index}`}
-                        className="text-yellow-500 text-2xl"
-                    />
-                ))}
-            {halfStar && (
-                <TiStarHalfOutline className="text-yellow-500 text-2xl" />
-            )}
-            {Array(emptyStars)
-                .fill(null)
-                .map((_, index) => (
-                    <TiStarOutline
-                        key={`empty-${index}`}
-                        className="text-yellow-500 text-2xl"
-                    />
-                ))}
-        </div>
-    );
-};
 
 const ReviewCard: React.FC<ReviewCardProps> = ({
     name,
