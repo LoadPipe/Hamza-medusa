@@ -18,6 +18,7 @@
     "baseUrl": "./src",
     "paths": {
       "@/*": ["/*"],
+      "@/account/*": ["app/[countryCode]/(main)/account/*"],
       "@/components/*": ["app/components/*"],
       "@lib/*": ["lib/*"],
       "@modules/*": ["modules/*"],

@@ -2,14 +2,16 @@
 
 import { useState } from 'react';
 import { Image, Flex, Avatar } from '@chakra-ui/react';
+import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 
-const ProfileImage = ({ customerId }: { customerId?: string | null }) => {
+const ProfileImage = () => {
     const [imageError, setImageError] = useState(false);
+    const { authData } = useCustomerAuthStore();
 
     const handleImageError = () => {
         setImageError(true); // Set error state when the image fails to load
     };
-    const imageUrl = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${customerId ?? ''}`;
+    const imageUrl = `https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${authData?.wallet_address ?? ''}`;
 
     return (
         <Flex maxW={'858px'} width={'100%'}>
@@ -20,7 +22,7 @@ const ProfileImage = ({ customerId }: { customerId?: string | null }) => {
                     borderRadius={'full'}
                     objectFit="cover"
                     alt="Profile Icon"
-                    onError={handleImageError} // If image fails, trigger error
+                    onError={handleImageError}
                 />
             ) : (
                 <Avatar
