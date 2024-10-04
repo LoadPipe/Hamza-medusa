@@ -28,7 +28,7 @@ export async function generateStaticParams() {
         return [];
     }
 
-    const countryCodes = ['eth'];
+    const countryCodes = [process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'];
 
     const collectionHandles = collections.map(
         (collection) => collection.handle

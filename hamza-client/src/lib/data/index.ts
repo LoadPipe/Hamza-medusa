@@ -957,7 +957,7 @@ export const getRegion = cache(async function (countryCode: string) {
 
         const region = countryCode
             ? regionMap.get(countryCode)
-            : regionMap.get('eth');
+            : regionMap.get('en');
 
         return region;
     } catch (e: any) {
