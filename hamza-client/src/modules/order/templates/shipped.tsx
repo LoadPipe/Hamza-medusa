@@ -19,7 +19,8 @@ import ShippedCard from '@modules/account/components/shipped-card';
 import EmptyState from '@modules/order/components/empty-state';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
-import { debounce } from 'lodash';
+import { debounce, upperCase } from 'lodash';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
 
 const Shipped = ({
     customer,
@@ -52,8 +53,6 @@ const Shipped = ({
         isFetching,
         failureCount,
         isStale,
-        isSuccess,
-        refetch,
     } = useQuery(
         ['fetchShippedOrder', customer],
         () => getSingleBucket(customer, 2), // Fetching shipped orders (bucket 2)
@@ -350,18 +349,16 @@ const Shipped = ({
                                                                         <strong>
                                                                             Price:
                                                                         </strong>{' '}
-                                                                        ¥
-                                                                        {order
-                                                                            .bucky_metadata
-                                                                            ?.data
-                                                                            ?.productList[0]
-                                                                            ?.productPrice ||
-                                                                            'N/A'}{' '}
-                                                                        {order
-                                                                            .bucky_metadata
-                                                                            ?.data
-                                                                            .currency ||
-                                                                            'N/A'}
+                                                                        {formatCryptoPrice(
+                                                                            Number(
+                                                                                item.unit_price
+                                                                            ),
+                                                                            item.currency_code ??
+                                                                                'usdc'
+                                                                        )}{' '}
+                                                                        {upperCase(
+                                                                            item.currency_code
+                                                                        )}
                                                                     </Text>
                                                                     <Text fontSize="md">
                                                                         <strong>
