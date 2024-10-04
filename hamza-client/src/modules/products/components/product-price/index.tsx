@@ -12,7 +12,7 @@ import {
 import { RegionInfo } from 'types/global';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { getAverageRatings, getReviewCount, getStore } from '@lib/data';
-import { renderStars1 } from '../review-stars';
+import { renderStars } from '../review-stars';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -92,7 +92,7 @@ export default function ProductPrice({
                 <h3>Product Reviews: {reviewCount} Ratings</h3>
                 {averageRating > 0 && (
                     <p className="text-white self-center">
-                        Average Rating: {renderStars1(averageRating)}
+                        Average Rating: {renderStars(averageRating)}
                     </p>
                 )}
                 <h3

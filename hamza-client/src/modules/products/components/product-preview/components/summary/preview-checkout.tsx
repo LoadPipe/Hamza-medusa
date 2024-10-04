@@ -19,7 +19,7 @@ import { getAverageRatings, getStore, getReviewCount } from '@lib/data';
 import currencyIcons from '../../../../../../../public/images/currencies/crypto-currencies';
 import Spinner from '@modules/common/icons/spinner';
 import TermsOfService from '../terms-of-service/product-details-tos';
-import { renderStars1 } from '@modules/products/components/review-stars';
+import { renderStars } from '@modules/products/components/review-stars';
 
 interface PreviewCheckoutProps {
     productId: string;
@@ -326,7 +326,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     >
                         <Flex flexDirection={'row'}>
                             <Flex flexDirection={'row'}>
-                                {renderStars1(averageRating)}
+                                {renderStars(averageRating)}
                             </Flex>
                             <Heading
                                 ml="4px"

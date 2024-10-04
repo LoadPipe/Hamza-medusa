@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, Flex, Heading, Box } from '@chakra-ui/react';
-import { renderStars1 } from '../../review-stars';
+import { renderStars } from '../../review-stars';
 
 interface ReviewCardProps {
     name: string;
@@ -31,7 +31,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({
                     </Flex>
                 </Flex>
 
-                <Flex mt="1rem">{renderStars1(stars)}</Flex>
+                <Flex mt="1rem">{renderStars(stars)}</Flex>
                 <Text
                     mt="1.5rem"
                     color="white"

@@ -1,6 +1,6 @@
 import { TiStarFullOutline, TiStarHalfOutline, TiStarOutline } from "react-icons/ti";
 
-export const renderStars1 = (rating: any) => {
+export const renderStars = (rating: any) => {
     const fullStars = rating ? Math.floor(rating) : 0;
     const halfStar = rating % 1 >= 0.5;
     const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
@@ -30,7 +30,8 @@ export const renderStars1 = (rating: any) => {
     );
 };
 
-export const renderStars2 = (rating: any) => {
+//TODO: consolidate these two
+export const renderStars20px = (rating: any) => {
     const fullStars = rating ? Math.floor(rating) : 0;
     const halfStar = rating % 1 >= 0.5;
     const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);

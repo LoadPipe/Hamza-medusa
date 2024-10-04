@@ -4,7 +4,7 @@ import { GoArrowLeft, GoArrowRight } from 'react-icons/go';
 import ReviewCard from './review-card';
 
 import { allReviews } from '@lib/data';
-import { renderStars1 } from '../../review-stars';
+import { renderStars } from '../../review-stars';
 
 const ProductReview = ({ productId }: { productId: string }) => {
     const [startIndex, setStartIndex] = useState(0);
@@ -90,7 +90,7 @@ const ProductReview = ({ productId }: { productId: string }) => {
                     <Text fontSize={'32px'} fontWeight={'bold'} color="white">
                         {reviews.length > 0 && (
                             <>
-                                {renderStars1(
+                                {renderStars(
                                     reviews.reduce(
                                         (a: any, b: any) => a + b.stars,
                                         0

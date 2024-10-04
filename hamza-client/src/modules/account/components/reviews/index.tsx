@@ -43,7 +43,7 @@ const commonButtonStyles = {
     },
 };
 import Link from 'next/link';
-import { renderStars1 } from '@modules/products/components/review-stars';
+import { renderStars } from '@modules/products/components/review-stars';
 /**
  * The ReviewPage component is responsible for displaying both pending reviews and previously submitted reviews for a customer.
  * It allows users to see which products they have purchased but have yet to review, and provides a way to edit or submit reviews for those products.
@@ -261,7 +261,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                 }}
                                                 maxWidth="100%"
                                             >
-                                                {renderStars1(review.rating)}
+                                                {renderStars(review.rating)}
                                             </Text>
                                             <Text
                                                 rounded="lg"

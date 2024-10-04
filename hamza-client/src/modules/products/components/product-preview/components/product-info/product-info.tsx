@@ -25,7 +25,7 @@ import {
     TiStarOutline,
 } from 'react-icons/ti';
 import ProductDescription from '../product-description';
-import { renderStars2 } from '@modules/products/components/review-stars';
+import { renderStars20px } from '@modules/products/components/review-stars';
 
 const ProductInfo = () => {
     // Zustand
@@ -183,7 +183,7 @@ const ProductInfo = () => {
                     >
                         <Flex flexDirection={'row'}>
                             <Flex flexDirection={'row'} alignSelf={'center'}>
-                                {renderStars2(ratingAverage)}
+                                {renderStars20px(ratingAverage)}
                             </Flex>
                             <Text
                                 ml="2"
@@ -217,7 +217,7 @@ const ProductInfo = () => {
                     >
                         <Flex flexDirection={'row'}>
                             <Flex flexDirection={'row'} alignSelf={'center'}>
-                                {renderStars2(ratingAverage)}
+                                {renderStars20px(ratingAverage)}
                             </Flex>
 
                             <Text
