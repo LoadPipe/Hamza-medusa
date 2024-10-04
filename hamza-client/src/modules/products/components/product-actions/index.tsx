@@ -45,8 +45,8 @@ export default function ProductActions({
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     let countryCode = useParams().countryCode as string;
-    if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY)
-        countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY;
+    if (process.env.NEXT_PUBLIC_FORCE_COUNTRY)
+        countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY;
     const { whitelist_config, authData } = useCustomerAuthStore();
     const [isWhitelisted, setIsWhitelisted] = useState(false);
     const { wishlist } = useWishlistStore();

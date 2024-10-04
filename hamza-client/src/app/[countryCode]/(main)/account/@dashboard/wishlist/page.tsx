@@ -27,8 +27,8 @@ export default async function Wishlist() {
     }
 
     const nextHeaders = headers();
-    const countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY
-        ? 'us'
+    const countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY
+        ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
         : nextHeaders.get('next-url')?.split('/')[1] || '';
 
     return (
