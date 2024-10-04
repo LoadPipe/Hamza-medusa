@@ -2,6 +2,7 @@ import {
     Box,
     Button,
     Flex,
+    Link as ChakraLink,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -11,8 +12,9 @@ import {
     ModalOverlay,
     Text,
 } from '@chakra-ui/react';
-import { CheckCircleIcon } from '@chakra-ui/icons';
-import React from 'react';
+import React, { useState } from 'react';
+import NextLink from 'next/link';
+import { FaRegCheckCircle } from 'react-icons/fa';
 
 type Props = {
     open: boolean;
@@ -21,6 +23,12 @@ type Props = {
 };
 
 function CartPopup({ closeModal, open, description }: Props) {
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleCheckoutClick = () => {
+        setIsLoading(true);
+    };
+
     return (
         <Modal isCentered isOpen={open} onClose={closeModal}>
             <ModalOverlay />
@@ -31,8 +39,9 @@ function CartPopup({ closeModal, open, description }: Props) {
                 justifyContent={'center'}
                 alignItems={'center'}
                 color="white"
-                textAlign="center"
                 gap={2}
+                maxW={'496px'} // Corrected calc syntax
+                width={'100%'}
             >
                 <ModalCloseButton color="white" />
                 <ModalBody
@@ -41,17 +50,31 @@ function CartPopup({ closeModal, open, description }: Props) {
                     alignItems={'center'}
                     flexDir={'column'}
                 >
-                    <CheckCircleIcon boxSize={12} color="#94D42A" />
+                    <FaRegCheckCircle size={72} color="#94D42A" />
 
-                    <ModalHeader fontSize="24px" fontWeight="bold">
+                    <ModalHeader
+                        fontSize="24px"
+                        fontWeight="bold"
+                        textAlign={'center'}
+                    >
                         Added to Cart
                     </ModalHeader>
-                    <Text fontSize="16px" maxW={'332px'} width={'100%'}>
+                    <Text
+                        fontSize="16px"
+                        maxW={'332px'}
+                        width={'100%'}
+                        textAlign={'center'}
+                    >
                         {description}
                     </Text>
                 </ModalBody>
-                <ModalFooter width={'100%'} flex={1}>
-                    <Flex gap="16px" width={'100%'}>
+                <ModalFooter width={'100%'}>
+                    <Flex
+                        gap="16px"
+                        width={'100%'}
+                        flexDir={{ base: 'column', md: 'row' }}
+                        justifyContent="center"
+                    >
                         <Button
                             borderRadius={'full'}
                             height={'52px'}
@@ -60,19 +83,30 @@ function CartPopup({ closeModal, open, description }: Props) {
                             borderWidth={'1px'}
                             backgroundColor={'transparent'}
                             color={'primary.indigo.900'}
-                            flex="1"
+                            onClick={closeModal}
+                            minWidth={{ base: '100%', md: '200px' }}
+                            flexShrink={0}
                         >
-                            Shop
+                            Continue Shopping
                         </Button>
-                        <Button
-                            borderRadius={'full'}
-                            height={'52px'}
-                            p="16px"
-                            backgroundColor={'primary.indigo.900'}
-                            flex="1"
+                        <ChakraLink
+                            as={NextLink}
+                            href="/checkout?step=payment"
+                            style={{ textDecoration: 'none' }}
+                            onClick={handleCheckoutClick}
                         >
-                            Checkout
-                        </Button>
+                            <Button
+                                borderRadius={'full'}
+                                height={'52px'}
+                                p="16px"
+                                backgroundColor={'primary.indigo.900'}
+                                minWidth={{ base: '100%', md: '200px' }}
+                                flexShrink={0}
+                                isLoading={isLoading}
+                            >
+                                Go To Checkout
+                            </Button>
+                        </ChakraLink>
                     </Flex>
                 </ModalFooter>
             </ModalContent>

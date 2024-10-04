@@ -198,9 +198,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
             if (showPopup) {
                 setCartModalOpen(true);
-                setTimeout(() => {
-                    setCartModalOpen(false);
-                }, 3000);
             }
         } catch (error) {
             console.error('Error adding to cart:', error);
@@ -556,7 +553,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 />
 
                 <CartPopup
-                    open={true}
+                    open={cartModalOpen}
                     description={productData.title}
                     closeModal={() => {
                         setCartModalOpen(false);
