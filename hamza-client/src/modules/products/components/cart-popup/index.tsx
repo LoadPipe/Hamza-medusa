@@ -18,7 +18,7 @@ import { FaRegCheckCircle } from 'react-icons/fa';
 
 type Props = {
     open: boolean;
-    description: string;
+    productName: string;
     closeModal: () => void;
 };
 
@@ -65,7 +65,7 @@ function CartPopup({ closeModal, open, description }: Props) {
                         width={'100%'}
                         textAlign={'center'}
                     >
-                        {description}
+                        {productName}
                     </Text>
                 </ModalBody>
                 <ModalFooter width={'100%'}>
