@@ -556,7 +556,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 />
 
                 <CartPopup
-                    open={cartModalOpen}
+                    open={true}
+                    description={productData.title}
                     closeModal={() => {
                         setCartModalOpen(false);
                     }}

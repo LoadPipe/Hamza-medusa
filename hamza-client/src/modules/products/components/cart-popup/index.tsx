@@ -1,6 +1,7 @@
 import {
     Box,
     Button,
+    Flex,
     Modal,
     ModalBody,
     ModalCloseButton,
@@ -15,32 +16,65 @@ import React from 'react';
 
 type Props = {
     open: boolean;
+    description: string;
     closeModal: () => void;
 };
 
-function CartPopup({ closeModal, open }: Props) {
+function CartPopup({ closeModal, open, description }: Props) {
     return (
         <Modal isCentered isOpen={open} onClose={closeModal}>
             <ModalOverlay />
             <ModalContent
-                bg="blackAlpha.900"
-                paddingTop={10}
-                paddingBottom={10}
+                bg="#121212"
+                p="40px"
+                borderRadius={'16px'}
+                justifyContent={'center'}
+                alignItems={'center'}
                 color="white"
                 textAlign="center"
+                gap={2}
             >
-                <Box mt={6}>
-                    <CheckCircleIcon boxSize={12} color="green.400" />
-                </Box>
-                <ModalHeader fontSize="2xl" fontWeight="bold" mt={4}>
-                    Added to cart successfully!
-                </ModalHeader>
                 <ModalCloseButton color="white" />
-                <ModalBody mt={-5}>
-                    <Text fontSize="lg">
-                        Item has been added to your shopping cart.
+                <ModalBody
+                    display="flex"
+                    justifyContent={'center'}
+                    alignItems={'center'}
+                    flexDir={'column'}
+                >
+                    <CheckCircleIcon boxSize={12} color="#94D42A" />
+
+                    <ModalHeader fontSize="24px" fontWeight="bold">
+                        Added to Cart
+                    </ModalHeader>
+                    <Text fontSize="16px" maxW={'332px'} width={'100%'}>
+                        {description}
                     </Text>
                 </ModalBody>
+                <ModalFooter width={'100%'} flex={1}>
+                    <Flex gap="16px" width={'100%'}>
+                        <Button
+                            borderRadius={'full'}
+                            height={'52px'}
+                            p="16px"
+                            borderColor={'primary.indigo.900'}
+                            borderWidth={'1px'}
+                            backgroundColor={'transparent'}
+                            color={'primary.indigo.900'}
+                            flex="1"
+                        >
+                            Shop
+                        </Button>
+                        <Button
+                            borderRadius={'full'}
+                            height={'52px'}
+                            p="16px"
+                            backgroundColor={'primary.indigo.900'}
+                            flex="1"
+                        >
+                            Checkout
+                        </Button>
+                    </Flex>
+                </ModalFooter>
             </ModalContent>
         </Modal>
     );
