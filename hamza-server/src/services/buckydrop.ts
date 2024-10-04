@@ -365,6 +365,17 @@ export default class BuckydropService extends TransactionBaseService {
                     buckyData.data.shopOrderNo ?? buckyData.shopOrderNo
                 );
 
+                const setOrderStatus = (status: OrderStatus, fulfillmentStatus: FulfillmentStatus) => {
+                    if (order.status != status || order.fulfillment_status != fulfillmentStatus) {
+
+                        order.status = status;
+                        order.fulfillment_status = fulfillmentStatus;
+                    }
+                    return false;
+                };
+
+                let changed: boolean = false;
+
                 //get the order status
                 if (orderDetail) {
                     const status =
@@ -373,70 +384,55 @@ export default class BuckydropService extends TransactionBaseService {
                         //translate the status
                         switch (parseInt(status)) {
                             case 0:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.NOT_FULFILLED;
+                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED);
                                 break;
                             case 1:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.NOT_FULFILLED;
+                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED);
                                 break;
                             case 2:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.NOT_FULFILLED;
+                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED);
                                 break;
                             case 3:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.NOT_FULFILLED;
+                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED);
                                 break;
                             case 4:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.NOT_FULFILLED;
+                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED);
                                 break;
                             case 5:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.NOT_FULFILLED;
+                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED);
                                 break;
                             case 6:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.SHIPPED;
+                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.SHIPPED);
                                 break;
                             case 7:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.SHIPPED;
+                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.SHIPPED);
                                 break;
                             case 8:
-                                order.status = OrderStatus.CANCELED;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.CANCELED;
+                                changed = setOrderStatus(OrderStatus.CANCELED, FulfillmentStatus.CANCELED);
                                 break;
                             case 9:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.SHIPPED;
+                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.SHIPPED);
                                 break;
                             case 10:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.SHIPPED;
+                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.SHIPPED);
                                 break;
                             case 11:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.SHIPPED;
+                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.SHIPPED);
                                 break;
                             case 10:
-                                order.status = OrderStatus.COMPLETED;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.FULFILLED;
+                                changed = setOrderStatus(OrderStatus.COMPLETED, FulfillmentStatus.FULFILLED);
                                 break;
+                        }
+                    }
+
+                    //send emails
+                    //TODO: this should follow medusa events 
+                    if (changed) {
+                        if (order.fulfillment_status == FulfillmentStatus.SHIPPED) {
+                            this.orderService_.sendShippedEmail(order);
+                        }
+                        if (order.fulfillment_status == FulfillmentStatus.FULFILLED) {
+                            this.orderService_.sendDeliveredEmail(order);
                         }
                     }
 
