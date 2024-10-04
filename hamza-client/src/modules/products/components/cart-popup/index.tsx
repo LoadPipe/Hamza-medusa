@@ -22,7 +22,7 @@ type Props = {
     closeModal: () => void;
 };
 
-function CartPopup({ closeModal, open, description }: Props) {
+function CartPopup({ closeModal, open, productName }: Props) {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleCheckoutClick = () => {
