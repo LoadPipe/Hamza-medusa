@@ -1,10 +1,10 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { GoArrowLeft, GoArrowRight } from 'react-icons/go';
-import ReviewCard, { renderStars } from './review-card';
-import ReviewCardMobile from './review-card-mobile';
+import ReviewCard from './review-card';
 
 import { allReviews } from '@lib/data';
+import { renderStars1 } from '../../review-stars';
 
 const ProductReview = ({ productId }: { productId: string }) => {
     const [startIndex, setStartIndex] = useState(0);
@@ -90,7 +90,7 @@ const ProductReview = ({ productId }: { productId: string }) => {
                     <Text fontSize={'32px'} fontWeight={'bold'} color="white">
                         {reviews.length > 0 && (
                             <>
-                                {renderStars(
+                                {renderStars1(
                                     reviews.reduce(
                                         (a: any, b: any) => a + b.stars,
                                         0

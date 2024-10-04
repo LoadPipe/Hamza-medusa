@@ -25,6 +25,7 @@ import {
     TiStarOutline,
 } from 'react-icons/ti';
 import ProductDescription from '../product-description';
+import { renderStars2 } from '@modules/products/components/review-stars';
 
 const ProductInfo = () => {
     // Zustand
@@ -79,37 +80,6 @@ const ProductInfo = () => {
             setSelectedPrice(price?.amount ?? 0);
         }
     }, [productData, variantId]);
-
-    // Star Feature
-    const renderStars = (rating: any) => {
-        const fullStars = rating ? Math.floor(rating) : 0;
-        const halfStar = rating % 1 >= 0.5;
-        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-
-        return (
-            <div className="flex">
-                {Array(fullStars)
-                    .fill(null)
-                    .map((_, index) => (
-                        <TiStarFullOutline
-                            key={`full-${index}`}
-                            className="text-yellow-500 text-2xl  w-['20px'] h-['20px]"
-                        />
-                    ))}
-                {halfStar && (
-                    <TiStarHalfOutline className="text-yellow-500 text-2xl w-['20px'] h-['20px]" />
-                )}
-                {Array(emptyStars)
-                    .fill(null)
-                    .map((_, index) => (
-                        <TiStarOutline
-                            key={`empty-${index}`}
-                            className="text-yellow-500 text-2xl w-['20px'] h-['20px]"
-                        />
-                    ))}
-            </div>
-        );
-    };
 
     const isLoading = !productData || Object.keys(productData).length === 0;
 
@@ -213,7 +183,7 @@ const ProductInfo = () => {
                     >
                         <Flex flexDirection={'row'}>
                             <Flex flexDirection={'row'} alignSelf={'center'}>
-                                {renderStars(ratingAverage)}
+                                {renderStars2(ratingAverage)}
                             </Flex>
                             <Text
                                 ml="2"
@@ -247,7 +217,7 @@ const ProductInfo = () => {
                     >
                         <Flex flexDirection={'row'}>
                             <Flex flexDirection={'row'} alignSelf={'center'}>
-                                {renderStars(ratingAverage)}
+                                {renderStars2(ratingAverage)}
                             </Flex>
 
                             <Text

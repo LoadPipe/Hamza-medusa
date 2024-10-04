@@ -14,16 +14,12 @@ import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import toast from 'react-hot-toast';
 import OptionSelect from '../../../option-select';
 import { isEqual } from 'lodash';
-import {
-    TiStarFullOutline,
-    TiStarHalfOutline,
-    TiStarOutline,
-} from 'react-icons/ti';
 import CartPopup from '../../../cart-popup';
 import { getAverageRatings, getStore, getReviewCount } from '@lib/data';
 import currencyIcons from '../../../../../../../public/images/currencies/crypto-currencies';
 import Spinner from '@modules/common/icons/spinner';
 import TermsOfService from '../terms-of-service/product-details-tos';
+import { renderStars1 } from '@modules/products/components/review-stars';
 
 interface PreviewCheckoutProps {
     productId: string;
@@ -239,37 +235,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         }
     }, [authData.status, productData, selectedVariant]);
 
-    // Star Feature
-    const renderStars = (rating: any) => {
-        const fullStars = Math.floor(rating);
-        const halfStar = rating % 1 >= 0.5;
-        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-
-        return (
-            <div className="flex">
-                {Array(fullStars)
-                    .fill(null)
-                    .map((_, index) => (
-                        <TiStarFullOutline
-                            key={`full-${index}`}
-                            className="text-yellow-500 text-2xl"
-                        />
-                    ))}
-                {halfStar && (
-                    <TiStarHalfOutline className="text-yellow-500 text-2xl" />
-                )}
-                {Array(emptyStars)
-                    .fill(null)
-                    .map((_, index) => (
-                        <TiStarOutline
-                            key={`empty-${index}`}
-                            className="text-yellow-500 text-2xl"
-                        />
-                    ))}
-            </div>
-        );
-    };
-
     // hook runs once when the component mounts and anytime productData changes
     // it sets the initial options to the first value of each option
     useEffect(() => {
@@ -361,7 +326,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     >
                         <Flex flexDirection={'row'}>
                             <Flex flexDirection={'row'}>
-                                {renderStars(averageRating)}
+                                {renderStars1(averageRating)}
                             </Flex>
                             <Heading
                                 ml="4px"
