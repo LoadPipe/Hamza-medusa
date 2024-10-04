@@ -6,7 +6,7 @@ import {
     MassmarketWalletPaymentHandler,
     LiteSwitchWalletPaymentHandler,
     DirectWalletPaymentHandler,
-    CheckoutData
+    CheckoutData,
 } from './payment-handlers';
 import { Button } from '@chakra-ui/react';
 import React, { useState, useEffect, useRef } from 'react';
@@ -22,6 +22,7 @@ import { clearCart, finalizeCheckout, getCheckoutData } from '@lib/data';
 import toast from 'react-hot-toast';
 import { getServerConfig } from '@lib/data/index';
 import { getClientCookie } from '@lib/util/get-client-cookies';
+import HamzaLogoLoader from '@/components/loaders/hamza-logo-loader';
 
 //TODO: we need a global common function to replace this
 const MEDUSA_SERVER_URL =
@@ -41,10 +42,10 @@ declare global {
 const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
     const notReady =
         !cart ||
-            !cart.shipping_address ||
-            !cart.billing_address ||
-            !cart.email ||
-            cart.shipping_methods.length < 1
+        !cart.shipping_address ||
+        !cart.billing_address ||
+        !cart.email ||
+        cart.shipping_methods.length < 1
             ? true
             : false;
 
@@ -61,6 +62,7 @@ const CryptoPaymentButton = ({
 }) => {
     const [submitting, setSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [loaderVisible, setLoaderVisible] = useState(false);
     const completeCart = useCompleteCart(cart.id);
     const updateCart = useUpdateCart(cart.id);
     const { openConnectModal } = useConnectModal();
@@ -276,8 +278,10 @@ const CryptoPaymentButton = ({
                     },
                 }
             );
+            setLoaderVisible(false);
             return response;
         } catch (e) {
+            setLoaderVisible(false);
             console.log('error in cancelling order ', e);
             return;
         }
@@ -293,12 +297,13 @@ const CryptoPaymentButton = ({
         } else {
             try {
                 setSubmitting(true);
+                setLoaderVisible(true);
                 setErrorMessage('');
 
                 updateCart.mutate(
                     { context: {} },
                     {
-                        onSuccess: ({ }) => {
+                        onSuccess: ({}) => {
                             //this calls the CartCompletion routine
                             completeCart.mutate(void 0, {
                                 onSuccess: async ({ data, type }) => {
@@ -309,6 +314,7 @@ const CryptoPaymentButton = ({
                                     } catch (e) {
                                         console.error(e);
                                         setSubmitting(false);
+                                        setLoaderVisible(false);
                                         displayError(
                                             'Checkout was not completed'
                                         );
@@ -317,6 +323,7 @@ const CryptoPaymentButton = ({
                                 },
                                 onError: async (e) => {
                                     setSubmitting(false);
+                                    setLoaderVisible(false);
                                     console.error(e);
                                     if (
                                         e.message?.indexOf('status code 401') >=
@@ -343,6 +350,7 @@ const CryptoPaymentButton = ({
             } catch (e) {
                 console.error(e);
                 setSubmitting(false);
+                setLoaderVisible(false);
                 displayError('Checkout was not completed');
                 await cancelOrderFromCart();
             }
@@ -351,6 +359,7 @@ const CryptoPaymentButton = ({
 
     return (
         <>
+            {loaderVisible && <HamzaLogoLoader />}
             <Button
                 height="52px"
                 color="white"

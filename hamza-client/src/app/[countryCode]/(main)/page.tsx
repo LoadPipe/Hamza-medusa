@@ -6,7 +6,7 @@ import { ProductCollectionWithPreviews } from 'types/global';
 import SearchAndFilterPanel from '@modules/home/components/search-and-filter-panel';
 import { Box } from '@chakra-ui/react';
 import HeroBanner from '@modules/home/components/hero-banner';
-import AnimatedLoader from './animated-loader';
+import HamzaLogoLoader from '../../components/loaders/hamza-logo-loader';
 
 export const metadata: Metadata = {
     title: 'Hamza Store',
@@ -69,9 +69,8 @@ export default async function Home({
 
     return (
         <Box backgroundColor={'transparent'}>
-            <AnimatedLoader />
-            {/* <HeroBanner />
-            <SearchAndFilterPanel /> */}
+            <HeroBanner />
+            <SearchAndFilterPanel />
         </Box>
     );
 }

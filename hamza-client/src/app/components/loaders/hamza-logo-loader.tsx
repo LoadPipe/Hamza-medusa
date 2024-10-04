@@ -3,7 +3,7 @@
 import { Box, keyframes } from '@chakra-ui/react';
 import Image from 'next/image';
 import React from 'react';
-import HamzaLogoLoader from '../../../../public/images/logo/hamza-logo-black.svg'; // Ensure this is a transparent image
+import HamzaLogoBlack from '../../../../public/images/logo/hamza-logo-black.svg'; // Ensure this is a transparent image
 
 // Define the keyframes for the gradient animation (top to bottom)
 const moveGradient = keyframes`
@@ -15,16 +15,21 @@ const moveGradient = keyframes`
   }
 `;
 
-const AnimatedLoader = () => {
+const HamzaLogoLoader = () => {
     // Create an animation based on the keyframes with a faster speed
     const gradientAnimation = `${moveGradient} 0.75s ease-in-out infinite`;
 
     return (
         <Box
+            position="fixed"
+            top="0"
+            left="0"
+            width="100vw"
+            height="100vh"
+            zIndex="9999"
             display="flex"
             justifyContent="center"
             alignItems="center"
-            height="100vh"
             backgroundColor="#040404"
         >
             <Box
@@ -52,7 +57,7 @@ const AnimatedLoader = () => {
 
                 {/* Image container */}
                 <Image
-                    src={HamzaLogoLoader}
+                    src={HamzaLogoBlack}
                     alt="H"
                     width={50}
                     height={50} // Set a fixed width and height
@@ -63,4 +68,4 @@ const AnimatedLoader = () => {
     );
 };
 
-export default AnimatedLoader;
+export default HamzaLogoLoader;
