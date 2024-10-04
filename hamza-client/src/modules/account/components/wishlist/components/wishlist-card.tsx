@@ -144,9 +144,6 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
             });
             if (showPopup) {
                 setCartModalOpen(true);
-                setTimeout(() => {
-                    setCartModalOpen(false);
-                }, 3000);
             }
         } catch (error) {
             console.error('Error adding to cart:', error);
@@ -421,6 +418,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
             <Divider mt="1rem" borderColor={'#555555'} />
             <CartPopup
                 open={cartModalOpen}
+                productName={productData.title}
                 closeModal={() => {
                     setCartModalOpen(false);
                 }}
