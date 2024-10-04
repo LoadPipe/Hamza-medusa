@@ -237,8 +237,8 @@ const Shipping: React.FC<ShippingProps> = ({
                                         : ' '}{' '}
                                     (
                                     {
-                                        cart?.shipping_methods[0]?.shipping_option
-                                            .amount
+                                        cart?.shipping_methods[0]
+                                            ?.shipping_option.amount
                                     }
                                     )
                                 </Text>
