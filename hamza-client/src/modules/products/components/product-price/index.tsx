@@ -6,9 +6,7 @@ import {
 import { clx } from '@medusajs/ui';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-    formatCryptoPrice,
-} from '@lib/util/get-product-price';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { RegionInfo } from 'types/global';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { getAverageRatings, getReviewCount, getStore } from '@lib/data';

@@ -211,14 +211,10 @@ const RecommendedItems = () => {
                     <Button
                         fontWeight="italic"
                         bg={
-                            STORE_NAMES.medusa === storeName
-                                ? 'white'
-                                : 'black'
+                            STORE_NAMES.medusa === storeName ? 'white' : 'black'
                         }
                         color={
-                            STORE_NAMES.medusa === storeName
-                                ? 'black'
-                                : 'white'
+                            STORE_NAMES.medusa === storeName ? 'black' : 'white'
                         }
                         size="lg"
                         name={'Medusa Merch'}

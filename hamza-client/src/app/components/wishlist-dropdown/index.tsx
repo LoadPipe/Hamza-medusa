@@ -120,7 +120,7 @@ const WishlistDropdown: React.FC<WishlistPopoverItemProps> = () => {
                                                         key={product.id}
                                                     >
                                                         <Popover.Button>
-                                                            {({ }) =>
+                                                            {({}) =>
                                                                 product ? ( // Check if the product exists
                                                                     <LocalizedClientLink
                                                                         href={`/products/${product.handle}`}

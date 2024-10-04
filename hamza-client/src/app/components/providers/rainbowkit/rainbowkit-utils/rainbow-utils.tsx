@@ -161,7 +161,7 @@ export function getBlockchainNetworkName(chainId: number | string) {
     //ensure number
     try {
         chainId = chainId ? parseInt(chainId.toString()) : 10;
-    } catch { }
+    } catch {}
 
     switch (chainId) {
         case 10:
@@ -216,7 +216,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
 
     console.log('pendingChainID;', pendingChainId);
 
-    const voidFunction = () => { };
+    const voidFunction = () => {};
 
     const setSwitchNetwork = () => {
         if (EXTRA_LOGGING) console.log('RB: setSwitchNetwork');
@@ -257,7 +257,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     }, [walletClient]);
 
     return (
-        <Modal isOpen={enabled} onClose={() => { }} isCentered>
+        <Modal isOpen={enabled} onClose={() => {}} isCentered>
             <ModalOverlay />
             <ModalContent
                 justifyContent={'center'}

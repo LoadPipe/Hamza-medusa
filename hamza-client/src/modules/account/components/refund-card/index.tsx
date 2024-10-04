@@ -86,10 +86,7 @@ const RefundCard = ({ order, handle, vendorName }: OrderCardProps) => {
                         <Image
                             borderRadius="lg"
                             width={{ base: '60px', md: '120px' }}
-                            src={
-                                order.thumbnail ??
-                                ''
-                            }
+                            src={order.thumbnail ?? ''}
                             alt={`Thumbnail of ${order.title}`}
                             mr={4}
                         />

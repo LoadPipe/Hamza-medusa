@@ -179,7 +179,7 @@ export default function ProductActions({
         if (data.status == true) {
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                    whitelist_config.whitelisted_stores.includes(data.data)
+                whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -248,10 +248,10 @@ export default function ProductActions({
                     {!variant
                         ? 'Select variant'
                         : !inStock && isWhitelisted
+                          ? 'Add to Cart'
+                          : inStock
                             ? 'Add to Cart'
-                            : inStock
-                                ? 'Add to Cart'
-                                : 'Out of Stock'}
+                            : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs">

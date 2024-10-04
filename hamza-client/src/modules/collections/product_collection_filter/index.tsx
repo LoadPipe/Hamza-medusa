@@ -83,8 +83,8 @@ const ProductCollections = ({ storeName }: Props) => {
 
                                                 {authData.status ==
                                                     'authenticated' &&
-                                                    preferred_currency_code &&
-                                                    preferredPrice ? (
+                                                preferred_currency_code &&
+                                                preferredPrice ? (
                                                     <>
                                                         {' '}
                                                         {formatCryptoPrice(

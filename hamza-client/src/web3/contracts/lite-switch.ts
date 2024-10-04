@@ -61,9 +61,13 @@ export class LiteSwitchClient {
         const nativeTotal: BigNumberish = this.getNativeTotal(inputs);
         console.log('native amount:', nativeTotal);
 
-        const tx: any = await this.switchClient.placeMultiPayments(inputs, immediateSweep, {
-            value: nativeTotal,
-        });
+        const tx: any = await this.switchClient.placeMultiPayments(
+            inputs,
+            immediateSweep,
+            {
+                value: nativeTotal,
+            }
+        );
 
         const transaction_id = tx.hash;
         const receipt = await tx.wait();

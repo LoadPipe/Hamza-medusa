@@ -23,7 +23,6 @@ export async function generateStaticParams() {
     //);
     const countryCodes = [process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'];
 
-
     const products = await Promise.all(
         countryCodes.map((countryCode) => {
             return getProductsList({ countryCode });

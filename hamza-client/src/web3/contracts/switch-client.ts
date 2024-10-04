@@ -3,7 +3,7 @@ import { switchAbi } from '../abi/switch-abi';
 import { IPaymentInput, IMultiPaymentInput, ITransactionOutput } from '..';
 import { getCurrencyAddress } from '../../currency.config';
 
-//DEPRECATED 
+//DEPRECATED
 
 /**
  * Client-side Switch contract client; allows for payments to be made.

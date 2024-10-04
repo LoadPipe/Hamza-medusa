@@ -46,9 +46,9 @@ const Addresses = ({
         useToggleState(
             cart?.shipping_address && cart?.billing_address
                 ? compareAddresses(
-                    cart?.shipping_address,
-                    cart?.billing_address
-                )
+                      cart?.shipping_address,
+                      cart?.billing_address
+                  )
                 : true
         );
 

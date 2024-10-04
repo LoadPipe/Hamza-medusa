@@ -26,9 +26,7 @@ export default function Health() {
                 <Text color={'primary.green.900'} fontSize={'40px'}>
                     A Health to ye Laddie
                 </Text>
-                <Text textAlign={'center'}>
-                    A Health to ye Laddie
-                </Text>
+                <Text textAlign={'center'}>A Health to ye Laddie</Text>
                 <Flex
                     mt="1rem"
                     width={'190px'}

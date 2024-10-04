@@ -5,7 +5,6 @@ import { IMultiPaymentInput, ITransactionOutput } from '..';
 import { getCurrencyAddress } from '../../currency.config';
 import { HexString } from 'ethers/lib.commonjs/utils/data';
 
-
 interface IPaymentRequest {
     chainId: number;
     ttl: number; //block timestamp from cartFinalized event

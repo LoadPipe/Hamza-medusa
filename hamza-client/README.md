@@ -1,7 +1,7 @@
-# Hamza Client 
+# Hamza Client
 
 ### Setup Quick Start
 
-- yarn install 
-- yarn import-currencies
-- yarn dev
+-   yarn install
+-   yarn import-currencies
+-   yarn dev

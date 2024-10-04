@@ -1,4 +1,8 @@
-import { TiStarFullOutline, TiStarHalfOutline, TiStarOutline } from "react-icons/ti";
+import {
+    TiStarFullOutline,
+    TiStarHalfOutline,
+    TiStarOutline,
+} from 'react-icons/ti';
 
 export const renderStars = (rating: any) => {
     const fullStars = rating ? Math.floor(rating) : 0;

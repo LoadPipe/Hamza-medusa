@@ -1,409 +1,381 @@
 export const liteSwitchAbi = [
     {
-        "type": "constructor",
-        "inputs": [
+        type: 'constructor',
+        inputs: [
             {
-                "name": "securityContext",
-                "type": "address",
-                "internalType": "contract ISecurityContext"
+                name: 'securityContext',
+                type: 'address',
+                internalType: 'contract ISecurityContext',
             },
             {
-                "name": "vault",
-                "type": "address",
-                "internalType": "address"
-            }
+                name: 'vault',
+                type: 'address',
+                internalType: 'address',
+            },
         ],
-        "stateMutability": "nonpayable"
+        stateMutability: 'nonpayable',
     },
     {
-        "type": "receive",
-        "stateMutability": "payable"
+        type: 'receive',
+        stateMutability: 'payable',
     },
     {
-        "type": "function",
-        "name": "ADMIN_ROLE",
-        "inputs": [
-
-        ],
-        "outputs": [
+        type: 'function',
+        name: 'ADMIN_ROLE',
+        inputs: [],
+        outputs: [
             {
-                "name": "",
-                "type": "bytes32",
-                "internalType": "bytes32"
-            }
+                name: '',
+                type: 'bytes32',
+                internalType: 'bytes32',
+            },
         ],
-        "stateMutability": "view"
+        stateMutability: 'view',
     },
     {
-        "type": "function",
-        "name": "APPROVER_ROLE",
-        "inputs": [
-
-        ],
-        "outputs": [
+        type: 'function',
+        name: 'APPROVER_ROLE',
+        inputs: [],
+        outputs: [
             {
-                "name": "",
-                "type": "bytes32",
-                "internalType": "bytes32"
-            }
+                name: '',
+                type: 'bytes32',
+                internalType: 'bytes32',
+            },
         ],
-        "stateMutability": "view"
+        stateMutability: 'view',
     },
     {
-        "type": "function",
-        "name": "DAO_ROLE",
-        "inputs": [
-
-        ],
-        "outputs": [
+        type: 'function',
+        name: 'DAO_ROLE',
+        inputs: [],
+        outputs: [
             {
-                "name": "",
-                "type": "bytes32",
-                "internalType": "bytes32"
-            }
+                name: '',
+                type: 'bytes32',
+                internalType: 'bytes32',
+            },
         ],
-        "stateMutability": "view"
+        stateMutability: 'view',
     },
     {
-        "type": "function",
-        "name": "PAUSER_ROLE",
-        "inputs": [
-
-        ],
-        "outputs": [
+        type: 'function',
+        name: 'PAUSER_ROLE',
+        inputs: [],
+        outputs: [
             {
-                "name": "",
-                "type": "bytes32",
-                "internalType": "bytes32"
-            }
+                name: '',
+                type: 'bytes32',
+                internalType: 'bytes32',
+            },
         ],
-        "stateMutability": "view"
+        stateMutability: 'view',
     },
     {
-        "type": "function",
-        "name": "REFUNDER_ROLE",
-        "inputs": [
-
-        ],
-        "outputs": [
+        type: 'function',
+        name: 'REFUNDER_ROLE',
+        inputs: [],
+        outputs: [
             {
-                "name": "",
-                "type": "bytes32",
-                "internalType": "bytes32"
-            }
+                name: '',
+                type: 'bytes32',
+                internalType: 'bytes32',
+            },
         ],
-        "stateMutability": "view"
+        stateMutability: 'view',
     },
     {
-        "type": "function",
-        "name": "SYSTEM_ROLE",
-        "inputs": [
-
-        ],
-        "outputs": [
+        type: 'function',
+        name: 'SYSTEM_ROLE',
+        inputs: [],
+        outputs: [
             {
-                "name": "",
-                "type": "bytes32",
-                "internalType": "bytes32"
-            }
+                name: '',
+                type: 'bytes32',
+                internalType: 'bytes32',
+            },
         ],
-        "stateMutability": "view"
+        stateMutability: 'view',
     },
     {
-        "type": "function",
-        "name": "UPGRADER_ROLE",
-        "inputs": [
-
-        ],
-        "outputs": [
+        type: 'function',
+        name: 'UPGRADER_ROLE',
+        inputs: [],
+        outputs: [
             {
-                "name": "",
-                "type": "bytes32",
-                "internalType": "bytes32"
-            }
+                name: '',
+                type: 'bytes32',
+                internalType: 'bytes32',
+            },
         ],
-        "stateMutability": "view"
+        stateMutability: 'view',
     },
     {
-        "type": "function",
-        "name": "placeMultiPayments",
-        "inputs": [
+        type: 'function',
+        name: 'placeMultiPayments',
+        inputs: [
             {
-                "name": "multiPayments",
-                "type": "tuple[]",
-                "internalType": "struct MultiPaymentInput[]",
-                "components": [
+                name: 'multiPayments',
+                type: 'tuple[]',
+                internalType: 'struct MultiPaymentInput[]',
+                components: [
                     {
-                        "name": "currency",
-                        "type": "address",
-                        "internalType": "address"
+                        name: 'currency',
+                        type: 'address',
+                        internalType: 'address',
                     },
                     {
-                        "name": "payments",
-                        "type": "tuple[]",
-                        "internalType": "struct PaymentInput[]",
-                        "components": [
+                        name: 'payments',
+                        type: 'tuple[]',
+                        internalType: 'struct PaymentInput[]',
+                        components: [
                             {
-                                "name": "id",
-                                "type": "uint256",
-                                "internalType": "uint256"
+                                name: 'id',
+                                type: 'uint256',
+                                internalType: 'uint256',
                             },
                             {
-                                "name": "orderId",
-                                "type": "string",
-                                "internalType": "string"
+                                name: 'orderId',
+                                type: 'string',
+                                internalType: 'string',
                             },
                             {
-                                "name": "receiver",
-                                "type": "address",
-                                "internalType": "address"
+                                name: 'receiver',
+                                type: 'address',
+                                internalType: 'address',
                             },
                             {
-                                "name": "payer",
-                                "type": "address",
-                                "internalType": "address"
+                                name: 'payer',
+                                type: 'address',
+                                internalType: 'address',
                             },
                             {
-                                "name": "amount",
-                                "type": "uint256",
-                                "internalType": "uint256"
-                            }
-                        ]
-                    }
-                ]
+                                name: 'amount',
+                                type: 'uint256',
+                                internalType: 'uint256',
+                            },
+                        ],
+                    },
+                ],
             },
             {
-                "name": "immediateSweep",
-                "type": "bool",
-                "internalType": "bool"
-            }
+                name: 'immediateSweep',
+                type: 'bool',
+                internalType: 'bool',
+            },
         ],
-        "outputs": [
-
-        ],
-        "stateMutability": "payable"
+        outputs: [],
+        stateMutability: 'payable',
     },
     {
-        "type": "function",
-        "name": "securityContext",
-        "inputs": [
-
-        ],
-        "outputs": [
+        type: 'function',
+        name: 'securityContext',
+        inputs: [],
+        outputs: [
             {
-                "name": "",
-                "type": "address",
-                "internalType": "contract ISecurityContext"
-            }
+                name: '',
+                type: 'address',
+                internalType: 'contract ISecurityContext',
+            },
         ],
-        "stateMutability": "view"
+        stateMutability: 'view',
     },
     {
-        "type": "function",
-        "name": "setSecurityContext",
-        "inputs": [
+        type: 'function',
+        name: 'setSecurityContext',
+        inputs: [
             {
-                "name": "_securityContext",
-                "type": "address",
-                "internalType": "contract ISecurityContext"
-            }
+                name: '_securityContext',
+                type: 'address',
+                internalType: 'contract ISecurityContext',
+            },
         ],
-        "outputs": [
-
-        ],
-        "stateMutability": "nonpayable"
+        outputs: [],
+        stateMutability: 'nonpayable',
     },
     {
-        "type": "function",
-        "name": "setVaultAddress",
-        "inputs": [
+        type: 'function',
+        name: 'setVaultAddress',
+        inputs: [
             {
-                "name": "_vaultAddress",
-                "type": "address",
-                "internalType": "address"
-            }
+                name: '_vaultAddress',
+                type: 'address',
+                internalType: 'address',
+            },
         ],
-        "outputs": [
-
-        ],
-        "stateMutability": "nonpayable"
+        outputs: [],
+        stateMutability: 'nonpayable',
     },
     {
-        "type": "function",
-        "name": "sweep",
-        "inputs": [
+        type: 'function',
+        name: 'sweep',
+        inputs: [
             {
-                "name": "tokenAddressOrZero",
-                "type": "address",
-                "internalType": "address"
-            }
+                name: 'tokenAddressOrZero',
+                type: 'address',
+                internalType: 'address',
+            },
         ],
-        "outputs": [
-
-        ],
-        "stateMutability": "nonpayable"
+        outputs: [],
+        stateMutability: 'nonpayable',
     },
     {
-        "type": "function",
-        "name": "vaultAddress",
-        "inputs": [
-
-        ],
-        "outputs": [
+        type: 'function',
+        name: 'vaultAddress',
+        inputs: [],
+        outputs: [
             {
-                "name": "",
-                "type": "address",
-                "internalType": "address"
-            }
+                name: '',
+                type: 'address',
+                internalType: 'address',
+            },
         ],
-        "stateMutability": "view"
+        stateMutability: 'view',
     },
     {
-        "type": "event",
-        "name": "PaymentReceived",
-        "inputs": [
+        type: 'event',
+        name: 'PaymentReceived',
+        inputs: [
             {
-                "name": "orderId",
-                "type": "string",
-                "indexed": true,
-                "internalType": "string"
+                name: 'orderId',
+                type: 'string',
+                indexed: true,
+                internalType: 'string',
             },
             {
-                "name": "to",
-                "type": "address",
-                "indexed": true,
-                "internalType": "address"
+                name: 'to',
+                type: 'address',
+                indexed: true,
+                internalType: 'address',
             },
             {
-                "name": "from",
-                "type": "address",
-                "indexed": false,
-                "internalType": "address"
+                name: 'from',
+                type: 'address',
+                indexed: false,
+                internalType: 'address',
             },
             {
-                "name": "currency",
-                "type": "address",
-                "indexed": false,
-                "internalType": "address"
+                name: 'currency',
+                type: 'address',
+                indexed: false,
+                internalType: 'address',
             },
             {
-                "name": "amount",
-                "type": "uint256",
-                "indexed": false,
-                "internalType": "uint256"
-            }
+                name: 'amount',
+                type: 'uint256',
+                indexed: false,
+                internalType: 'uint256',
+            },
         ],
-        "anonymous": false
+        anonymous: false,
     },
     {
-        "type": "event",
-        "name": "PaymentSweepFailed",
-        "inputs": [
+        type: 'event',
+        name: 'PaymentSweepFailed',
+        inputs: [
             {
-                "name": "from",
-                "type": "address",
-                "indexed": false,
-                "internalType": "address"
+                name: 'from',
+                type: 'address',
+                indexed: false,
+                internalType: 'address',
             },
             {
-                "name": "currency",
-                "type": "address",
-                "indexed": false,
-                "internalType": "address"
+                name: 'currency',
+                type: 'address',
+                indexed: false,
+                internalType: 'address',
             },
             {
-                "name": "amount",
-                "type": "uint256",
-                "indexed": false,
-                "internalType": "uint256"
-            }
+                name: 'amount',
+                type: 'uint256',
+                indexed: false,
+                internalType: 'uint256',
+            },
         ],
-        "anonymous": false
+        anonymous: false,
     },
     {
-        "type": "event",
-        "name": "PaymentSwept",
-        "inputs": [
+        type: 'event',
+        name: 'PaymentSwept',
+        inputs: [
             {
-                "name": "from",
-                "type": "address",
-                "indexed": false,
-                "internalType": "address"
+                name: 'from',
+                type: 'address',
+                indexed: false,
+                internalType: 'address',
             },
             {
-                "name": "currency",
-                "type": "address",
-                "indexed": false,
-                "internalType": "address"
+                name: 'currency',
+                type: 'address',
+                indexed: false,
+                internalType: 'address',
             },
             {
-                "name": "amount",
-                "type": "uint256",
-                "indexed": false,
-                "internalType": "uint256"
-            }
+                name: 'amount',
+                type: 'uint256',
+                indexed: false,
+                internalType: 'uint256',
+            },
         ],
-        "anonymous": false
+        anonymous: false,
     },
     {
-        "type": "event",
-        "name": "SecurityContextSet",
-        "inputs": [
+        type: 'event',
+        name: 'SecurityContextSet',
+        inputs: [
             {
-                "name": "caller",
-                "type": "address",
-                "indexed": false,
-                "internalType": "address"
+                name: 'caller',
+                type: 'address',
+                indexed: false,
+                internalType: 'address',
             },
             {
-                "name": "securityContext",
-                "type": "address",
-                "indexed": false,
-                "internalType": "address"
-            }
+                name: 'securityContext',
+                type: 'address',
+                indexed: false,
+                internalType: 'address',
+            },
         ],
-        "anonymous": false
+        anonymous: false,
     },
     {
-        "type": "event",
-        "name": "VaultAddressChanged",
-        "inputs": [
+        type: 'event',
+        name: 'VaultAddressChanged',
+        inputs: [
             {
-                "name": "newAddress",
-                "type": "address",
-                "indexed": false,
-                "internalType": "address"
+                name: 'newAddress',
+                type: 'address',
+                indexed: false,
+                internalType: 'address',
             },
             {
-                "name": "changedBy",
-                "type": "address",
-                "indexed": false,
-                "internalType": "address"
-            }
+                name: 'changedBy',
+                type: 'address',
+                indexed: false,
+                internalType: 'address',
+            },
         ],
-        "anonymous": false
+        anonymous: false,
     },
     {
-        "type": "error",
-        "name": "UnauthorizedAccess",
-        "inputs": [
+        type: 'error',
+        name: 'UnauthorizedAccess',
+        inputs: [
             {
-                "name": "roleId",
-                "type": "bytes32",
-                "internalType": "bytes32"
+                name: 'roleId',
+                type: 'bytes32',
+                internalType: 'bytes32',
             },
             {
-                "name": "addr",
-                "type": "address",
-                "internalType": "address"
-            }
-        ]
+                name: 'addr',
+                type: 'address',
+                internalType: 'address',
+            },
+        ],
     },
     {
-        "type": "error",
-        "name": "ZeroAddressArgument",
-        "inputs": [
-
-        ]
-    }
+        type: 'error',
+        name: 'ZeroAddressArgument',
+        inputs: [],
+    },
 ];

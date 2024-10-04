@@ -192,7 +192,10 @@ const MainMenu = () => {
                         </MenuItem>
                     </a>
 
-                    <a target="_blank" href="https://support.hamza.market/hc/1568263160">
+                    <a
+                        target="_blank"
+                        href="https://support.hamza.market/hc/1568263160"
+                    >
                         <MenuItem
                             fontWeight={'600'}
                             pl="1rem"

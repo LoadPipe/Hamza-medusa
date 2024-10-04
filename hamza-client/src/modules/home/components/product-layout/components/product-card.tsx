@@ -74,7 +74,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
         await addToCart({
             variantId: variantID ?? '',
             quantity: 1,
-            countryCode: countryCode ?? ''
+            countryCode: countryCode ?? '',
         });
         setLoadingAddToCard(false);
     };
@@ -86,7 +86,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
         await addToCart({
             variantId: variantID ?? '',
             quantity: 1,
-            countryCode: countryCode ?? ''
+            countryCode: countryCode ?? '',
         });
         setLoadingBuy(false);
     };
@@ -95,7 +95,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
     const whitelistedProductHandler = async () => {
         const whitelistedProduct =
             whitelist_config.is_whitelisted &&
-                whitelist_config.whitelisted_stores.includes(storeId)
+            whitelist_config.whitelisted_stores.includes(storeId)
                 ? true
                 : false;
 
@@ -119,7 +119,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
         >
             <LocalizedClientLink href={`/products/${productHandle}`}>
                 <Box
-                    onClick={() => { }}
+                    onClick={() => {}}
                     h="240px"
                     width="100%"
                     display="flex"

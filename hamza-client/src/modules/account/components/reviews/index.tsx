@@ -137,7 +137,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                     }}
                     {...commonButtonStyles}
                     isActive={activeButton === 'pending'}
-                // isLoading={pendingLoading}
+                    // isLoading={pendingLoading}
                 >
                     Pending Reviews
                 </Button>
@@ -149,7 +149,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                     }}
                     {...commonButtonStyles}
                     isActive={activeButton === 'reviews'}
-                // isLoading={reviewsLoading}
+                    // isLoading={reviewsLoading}
                 >
                     Review Archives
                 </Button>

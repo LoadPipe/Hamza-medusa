@@ -61,10 +61,9 @@ export default function Page({ params }: { params: { slug: string } }) {
     const router = useRouter();
 
     useEffect(() => {
-        getVendorPage().then(r => {
+        getVendorPage().then((r) => {
             console.log(r);
-            if (r?.length)
-                router.push(r);
+            if (r?.length) router.push(r);
         });
     }, [params.slug]);
 

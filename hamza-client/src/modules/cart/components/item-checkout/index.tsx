@@ -72,7 +72,13 @@ const Item = ({ item, region, currencyCode }: ItemProps) => {
                         width={{ base: '60px', md: '110px' }}
                         height={{ base: '60px', md: '110px' }}
                     >
-                        <Thumbnail thumbnail={item?.variant?.metadata?.imgUrl ?? item?.thumbnail} size="square" />
+                        <Thumbnail
+                            thumbnail={
+                                item?.variant?.metadata?.imgUrl ??
+                                item?.thumbnail
+                            }
+                            size="square"
+                        />
                     </Flex>
                 </LocalizedClientLink>
 

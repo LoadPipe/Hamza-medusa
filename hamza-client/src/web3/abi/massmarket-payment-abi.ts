@@ -1,578 +1,578 @@
 export const massMarketPaymentAbi = [
     {
-        "type": "constructor",
-        "inputs": [
+        type: 'constructor',
+        inputs: [
             {
-                "name": "_permit2",
-                "type": "address",
-                "internalType": "contract IPermit2"
-            }
+                name: '_permit2',
+                type: 'address',
+                internalType: 'contract IPermit2',
+            },
         ],
-        "stateMutability": "nonpayable"
+        stateMutability: 'nonpayable',
     },
     {
-        "type": "function",
-        "name": "getPaymentId",
-        "inputs": [
+        type: 'function',
+        name: 'getPaymentId',
+        inputs: [
             {
-                "name": "payment",
-                "type": "tuple",
-                "internalType": "struct PaymentRequest",
-                "components": [
+                name: 'payment',
+                type: 'tuple',
+                internalType: 'struct PaymentRequest',
+                components: [
                     {
-                        "name": "chainId",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'chainId',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "ttl",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'ttl',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "order",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
+                        name: 'order',
+                        type: 'bytes32',
+                        internalType: 'bytes32',
                     },
                     {
-                        "name": "currency",
-                        "type": "address",
-                        "internalType": "address"
+                        name: 'currency',
+                        type: 'address',
+                        internalType: 'address',
                     },
                     {
-                        "name": "amount",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'amount',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "payeeAddress",
-                        "type": "address",
-                        "internalType": "address"
+                        name: 'payeeAddress',
+                        type: 'address',
+                        internalType: 'address',
                     },
                     {
-                        "name": "isPaymentEndpoint",
-                        "type": "bool",
-                        "internalType": "bool"
+                        name: 'isPaymentEndpoint',
+                        type: 'bool',
+                        internalType: 'bool',
                     },
                     {
-                        "name": "shopId",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'shopId',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "shopSignature",
-                        "type": "bytes",
-                        "internalType": "bytes"
-                    }
-                ]
-            }
+                        name: 'shopSignature',
+                        type: 'bytes',
+                        internalType: 'bytes',
+                    },
+                ],
+            },
         ],
-        "outputs": [
+        outputs: [
             {
-                "name": "",
-                "type": "uint256",
-                "internalType": "uint256"
-            }
+                name: '',
+                type: 'uint256',
+                internalType: 'uint256',
+            },
         ],
-        "stateMutability": "pure"
+        stateMutability: 'pure',
     },
     {
-        "type": "function",
-        "name": "hasPaymentBeenMade",
-        "inputs": [
+        type: 'function',
+        name: 'hasPaymentBeenMade',
+        inputs: [
             {
-                "name": "from",
-                "type": "address",
-                "internalType": "address"
+                name: 'from',
+                type: 'address',
+                internalType: 'address',
             },
             {
-                "name": "payment",
-                "type": "tuple",
-                "internalType": "struct PaymentRequest",
-                "components": [
+                name: 'payment',
+                type: 'tuple',
+                internalType: 'struct PaymentRequest',
+                components: [
                     {
-                        "name": "chainId",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'chainId',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "ttl",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'ttl',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "order",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
+                        name: 'order',
+                        type: 'bytes32',
+                        internalType: 'bytes32',
                     },
                     {
-                        "name": "currency",
-                        "type": "address",
-                        "internalType": "address"
+                        name: 'currency',
+                        type: 'address',
+                        internalType: 'address',
                     },
                     {
-                        "name": "amount",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'amount',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "payeeAddress",
-                        "type": "address",
-                        "internalType": "address"
+                        name: 'payeeAddress',
+                        type: 'address',
+                        internalType: 'address',
                     },
                     {
-                        "name": "isPaymentEndpoint",
-                        "type": "bool",
-                        "internalType": "bool"
+                        name: 'isPaymentEndpoint',
+                        type: 'bool',
+                        internalType: 'bool',
                     },
                     {
-                        "name": "shopId",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'shopId',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "shopSignature",
-                        "type": "bytes",
-                        "internalType": "bytes"
-                    }
-                ]
-            }
+                        name: 'shopSignature',
+                        type: 'bytes',
+                        internalType: 'bytes',
+                    },
+                ],
+            },
         ],
-        "outputs": [
+        outputs: [
             {
-                "name": "",
-                "type": "bool",
-                "internalType": "bool"
-            }
+                name: '',
+                type: 'bool',
+                internalType: 'bool',
+            },
         ],
-        "stateMutability": "view"
+        stateMutability: 'view',
     },
     {
-        "type": "function",
-        "name": "multiPay",
-        "inputs": [
+        type: 'function',
+        name: 'multiPay',
+        inputs: [
             {
-                "name": "payments",
-                "type": "tuple[]",
-                "internalType": "struct PaymentRequest[]",
-                "components": [
+                name: 'payments',
+                type: 'tuple[]',
+                internalType: 'struct PaymentRequest[]',
+                components: [
                     {
-                        "name": "chainId",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'chainId',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "ttl",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'ttl',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "order",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
+                        name: 'order',
+                        type: 'bytes32',
+                        internalType: 'bytes32',
                     },
                     {
-                        "name": "currency",
-                        "type": "address",
-                        "internalType": "address"
+                        name: 'currency',
+                        type: 'address',
+                        internalType: 'address',
                     },
                     {
-                        "name": "amount",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'amount',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "payeeAddress",
-                        "type": "address",
-                        "internalType": "address"
+                        name: 'payeeAddress',
+                        type: 'address',
+                        internalType: 'address',
                     },
                     {
-                        "name": "isPaymentEndpoint",
-                        "type": "bool",
-                        "internalType": "bool"
+                        name: 'isPaymentEndpoint',
+                        type: 'bool',
+                        internalType: 'bool',
                     },
                     {
-                        "name": "shopId",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'shopId',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "shopSignature",
-                        "type": "bytes",
-                        "internalType": "bytes"
-                    }
-                ]
+                        name: 'shopSignature',
+                        type: 'bytes',
+                        internalType: 'bytes',
+                    },
+                ],
             },
             {
-                "name": "permit2Sigs",
-                "type": "bytes[]",
-                "internalType": "bytes[]"
-            }
+                name: 'permit2Sigs',
+                type: 'bytes[]',
+                internalType: 'bytes[]',
+            },
         ],
-        "outputs": [],
-        "stateMutability": "payable"
+        outputs: [],
+        stateMutability: 'payable',
     },
     {
-        "type": "function",
-        "name": "pay",
-        "inputs": [
+        type: 'function',
+        name: 'pay',
+        inputs: [
             {
-                "name": "payment",
-                "type": "tuple",
-                "internalType": "struct PaymentRequest",
-                "components": [
+                name: 'payment',
+                type: 'tuple',
+                internalType: 'struct PaymentRequest',
+                components: [
                     {
-                        "name": "chainId",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'chainId',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "ttl",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'ttl',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "order",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
+                        name: 'order',
+                        type: 'bytes32',
+                        internalType: 'bytes32',
                     },
                     {
-                        "name": "currency",
-                        "type": "address",
-                        "internalType": "address"
+                        name: 'currency',
+                        type: 'address',
+                        internalType: 'address',
                     },
                     {
-                        "name": "amount",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'amount',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "payeeAddress",
-                        "type": "address",
-                        "internalType": "address"
+                        name: 'payeeAddress',
+                        type: 'address',
+                        internalType: 'address',
                     },
                     {
-                        "name": "isPaymentEndpoint",
-                        "type": "bool",
-                        "internalType": "bool"
+                        name: 'isPaymentEndpoint',
+                        type: 'bool',
+                        internalType: 'bool',
                     },
                     {
-                        "name": "shopId",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'shopId',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "shopSignature",
-                        "type": "bytes",
-                        "internalType": "bytes"
-                    }
-                ]
-            }
+                        name: 'shopSignature',
+                        type: 'bytes',
+                        internalType: 'bytes',
+                    },
+                ],
+            },
         ],
-        "outputs": [],
-        "stateMutability": "payable"
+        outputs: [],
+        stateMutability: 'payable',
     },
     {
-        "type": "function",
-        "name": "payNative",
-        "inputs": [
+        type: 'function',
+        name: 'payNative',
+        inputs: [
             {
-                "name": "payment",
-                "type": "tuple",
-                "internalType": "struct PaymentRequest",
-                "components": [
+                name: 'payment',
+                type: 'tuple',
+                internalType: 'struct PaymentRequest',
+                components: [
                     {
-                        "name": "chainId",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'chainId',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "ttl",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'ttl',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "order",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
+                        name: 'order',
+                        type: 'bytes32',
+                        internalType: 'bytes32',
                     },
                     {
-                        "name": "currency",
-                        "type": "address",
-                        "internalType": "address"
+                        name: 'currency',
+                        type: 'address',
+                        internalType: 'address',
                     },
                     {
-                        "name": "amount",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'amount',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "payeeAddress",
-                        "type": "address",
-                        "internalType": "address"
+                        name: 'payeeAddress',
+                        type: 'address',
+                        internalType: 'address',
                     },
                     {
-                        "name": "isPaymentEndpoint",
-                        "type": "bool",
-                        "internalType": "bool"
+                        name: 'isPaymentEndpoint',
+                        type: 'bool',
+                        internalType: 'bool',
                     },
                     {
-                        "name": "shopId",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'shopId',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "shopSignature",
-                        "type": "bytes",
-                        "internalType": "bytes"
-                    }
-                ]
-            }
+                        name: 'shopSignature',
+                        type: 'bytes',
+                        internalType: 'bytes',
+                    },
+                ],
+            },
         ],
-        "outputs": [],
-        "stateMutability": "payable"
+        outputs: [],
+        stateMutability: 'payable',
     },
     {
-        "type": "function",
-        "name": "payToken",
-        "inputs": [
+        type: 'function',
+        name: 'payToken',
+        inputs: [
             {
-                "name": "payment",
-                "type": "tuple",
-                "internalType": "struct PaymentRequest",
-                "components": [
+                name: 'payment',
+                type: 'tuple',
+                internalType: 'struct PaymentRequest',
+                components: [
                     {
-                        "name": "chainId",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'chainId',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "ttl",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'ttl',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "order",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
+                        name: 'order',
+                        type: 'bytes32',
+                        internalType: 'bytes32',
                     },
                     {
-                        "name": "currency",
-                        "type": "address",
-                        "internalType": "address"
+                        name: 'currency',
+                        type: 'address',
+                        internalType: 'address',
                     },
                     {
-                        "name": "amount",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'amount',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "payeeAddress",
-                        "type": "address",
-                        "internalType": "address"
+                        name: 'payeeAddress',
+                        type: 'address',
+                        internalType: 'address',
                     },
                     {
-                        "name": "isPaymentEndpoint",
-                        "type": "bool",
-                        "internalType": "bool"
+                        name: 'isPaymentEndpoint',
+                        type: 'bool',
+                        internalType: 'bool',
                     },
                     {
-                        "name": "shopId",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'shopId',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "shopSignature",
-                        "type": "bytes",
-                        "internalType": "bytes"
-                    }
-                ]
+                        name: 'shopSignature',
+                        type: 'bytes',
+                        internalType: 'bytes',
+                    },
+                ],
             },
             {
-                "name": "permit2signature",
-                "type": "bytes",
-                "internalType": "bytes"
-            }
+                name: 'permit2signature',
+                type: 'bytes',
+                internalType: 'bytes',
+            },
         ],
-        "outputs": [],
-        "stateMutability": "nonpayable"
+        outputs: [],
+        stateMutability: 'nonpayable',
     },
     {
-        "type": "function",
-        "name": "payTokenPreApproved",
-        "inputs": [
+        type: 'function',
+        name: 'payTokenPreApproved',
+        inputs: [
             {
-                "name": "payment",
-                "type": "tuple",
-                "internalType": "struct PaymentRequest",
-                "components": [
+                name: 'payment',
+                type: 'tuple',
+                internalType: 'struct PaymentRequest',
+                components: [
                     {
-                        "name": "chainId",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'chainId',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "ttl",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'ttl',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "order",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
+                        name: 'order',
+                        type: 'bytes32',
+                        internalType: 'bytes32',
                     },
                     {
-                        "name": "currency",
-                        "type": "address",
-                        "internalType": "address"
+                        name: 'currency',
+                        type: 'address',
+                        internalType: 'address',
                     },
                     {
-                        "name": "amount",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'amount',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "payeeAddress",
-                        "type": "address",
-                        "internalType": "address"
+                        name: 'payeeAddress',
+                        type: 'address',
+                        internalType: 'address',
                     },
                     {
-                        "name": "isPaymentEndpoint",
-                        "type": "bool",
-                        "internalType": "bool"
+                        name: 'isPaymentEndpoint',
+                        type: 'bool',
+                        internalType: 'bool',
                     },
                     {
-                        "name": "shopId",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'shopId',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "shopSignature",
-                        "type": "bytes",
-                        "internalType": "bytes"
-                    }
-                ]
-            }
+                        name: 'shopSignature',
+                        type: 'bytes',
+                        internalType: 'bytes',
+                    },
+                ],
+            },
         ],
-        "outputs": [],
-        "stateMutability": "nonpayable"
+        outputs: [],
+        stateMutability: 'nonpayable',
     },
     {
-        "type": "function",
-        "name": "revertPayment",
-        "inputs": [
+        type: 'function',
+        name: 'revertPayment',
+        inputs: [
             {
-                "name": "from",
-                "type": "address",
-                "internalType": "address"
+                name: 'from',
+                type: 'address',
+                internalType: 'address',
             },
             {
-                "name": "payment",
-                "type": "tuple",
-                "internalType": "struct PaymentRequest",
-                "components": [
+                name: 'payment',
+                type: 'tuple',
+                internalType: 'struct PaymentRequest',
+                components: [
                     {
-                        "name": "chainId",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'chainId',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "ttl",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'ttl',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "order",
-                        "type": "bytes32",
-                        "internalType": "bytes32"
+                        name: 'order',
+                        type: 'bytes32',
+                        internalType: 'bytes32',
                     },
                     {
-                        "name": "currency",
-                        "type": "address",
-                        "internalType": "address"
+                        name: 'currency',
+                        type: 'address',
+                        internalType: 'address',
                     },
                     {
-                        "name": "amount",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'amount',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "payeeAddress",
-                        "type": "address",
-                        "internalType": "address"
+                        name: 'payeeAddress',
+                        type: 'address',
+                        internalType: 'address',
                     },
                     {
-                        "name": "isPaymentEndpoint",
-                        "type": "bool",
-                        "internalType": "bool"
+                        name: 'isPaymentEndpoint',
+                        type: 'bool',
+                        internalType: 'bool',
                     },
                     {
-                        "name": "shopId",
-                        "type": "uint256",
-                        "internalType": "uint256"
+                        name: 'shopId',
+                        type: 'uint256',
+                        internalType: 'uint256',
                     },
                     {
-                        "name": "shopSignature",
-                        "type": "bytes",
-                        "internalType": "bytes"
-                    }
-                ]
-            }
+                        name: 'shopSignature',
+                        type: 'bytes',
+                        internalType: 'bytes',
+                    },
+                ],
+            },
         ],
-        "outputs": [],
-        "stateMutability": "nonpayable"
+        outputs: [],
+        stateMutability: 'nonpayable',
     },
     {
-        "type": "event",
-        "name": "PaymentMade",
-        "inputs": [
+        type: 'event',
+        name: 'PaymentMade',
+        inputs: [
             {
-                "name": "paymentId",
-                "type": "uint256",
-                "indexed": true,
-                "internalType": "uint256"
-            }
+                name: 'paymentId',
+                type: 'uint256',
+                indexed: true,
+                internalType: 'uint256',
+            },
         ],
-        "anonymous": false
+        anonymous: false,
     },
     {
-        "type": "error",
-        "name": "InvalidPaymentAmount",
-        "inputs": []
+        type: 'error',
+        name: 'InvalidPaymentAmount',
+        inputs: [],
     },
     {
-        "type": "error",
-        "name": "InvalidPaymentToken",
-        "inputs": []
+        type: 'error',
+        name: 'InvalidPaymentToken',
+        inputs: [],
     },
     {
-        "type": "error",
-        "name": "NotPayee",
-        "inputs": []
+        type: 'error',
+        name: 'NotPayee',
+        inputs: [],
     },
     {
-        "type": "error",
-        "name": "PayeeRefusedPayment",
-        "inputs": []
+        type: 'error',
+        name: 'PayeeRefusedPayment',
+        inputs: [],
     },
     {
-        "type": "error",
-        "name": "PaymentAlreadyMade",
-        "inputs": []
+        type: 'error',
+        name: 'PaymentAlreadyMade',
+        inputs: [],
     },
     {
-        "type": "error",
-        "name": "PaymentExpired",
-        "inputs": []
+        type: 'error',
+        name: 'PaymentExpired',
+        inputs: [],
     },
     {
-        "type": "error",
-        "name": "PaymentNotMade",
-        "inputs": []
+        type: 'error',
+        name: 'PaymentNotMade',
+        inputs: [],
     },
     {
-        "type": "error",
-        "name": "WrongChain",
-        "inputs": []
-    }
-]
+        type: 'error',
+        name: 'WrongChain',
+        inputs: [],
+    },
+];

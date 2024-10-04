@@ -20,11 +20,10 @@ const coverProds = [
     'hoodie',
     'longsleeve',
     't-shirt',
-    'hyper-x-mouse'
+    'hyper-x-mouse',
 ];
 
 export function getObjectFit(prodHandle: string | undefined) {
-    if (coverProds.find(p => p === prodHandle))
-        return 'cover';
+    if (coverProds.find((p) => p === prodHandle)) return 'cover';
     return 'contain';
 }

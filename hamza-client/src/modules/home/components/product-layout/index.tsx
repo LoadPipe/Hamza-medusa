@@ -64,7 +64,9 @@ const ProductCardGroup = ({ vendorName, category }: Props) => {
                             (acc: number, review: any) => acc + review.rating,
                             0
                         );
-                        const avgRating = reviewCounter ? totalRating / reviewCounter : 0;
+                        const avgRating = reviewCounter
+                            ? totalRating / reviewCounter
+                            : 0;
                         const productPricing = formatCryptoPrice(
                             variantPrices.find(
                                 (p: any) =>

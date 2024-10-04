@@ -4,7 +4,7 @@ import { erc20abi } from '../abi/erc20-abi';
 import { IMultiPaymentInput, ITransactionOutput } from '..';
 import { getCurrencyAddress } from '../../currency.config';
 
-//DEPRECATED 
+//DEPRECATED
 
 /**
  * Client-side Switch contract client; allows for payments to be made.
