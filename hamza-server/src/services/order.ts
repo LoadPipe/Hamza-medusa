@@ -25,7 +25,7 @@ import ProductRepository from '@medusajs/medusa/dist/repositories/product';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import SmtpMailService from './smtp-mail';
 import CustomerNotificationService from './customer-notification';
-import { formatCryptoPrice } from 'src/utils/price-formatter';
+import { formatCryptoPrice } from '../utils/price-formatter';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
 // In medusa we have these 5 DEFAULT order.STATUS's {PENDING, COMPLETED, ARCHIVED, CANCELED, REQUIRES_ACTION}
