@@ -116,7 +116,7 @@ const CancelCard = ({
                     justifyContent="space-between"
                     flex="1"
                 >
-                    <Link href={`/us/products/${handle}`}>
+                    <Link href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}>
                         <Image
                             borderRadius="lg"
                             width={{ base: '60px', md: '120px' }}
