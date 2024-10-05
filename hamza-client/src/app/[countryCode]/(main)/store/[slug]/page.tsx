@@ -316,24 +316,26 @@ export default function Page({ params }: { params: { slug: string } }) {
                             gap="16px"
                             justifyContent={'center'}
                         >
-                            <Flex
-                                display={{ base: 'none', md: 'flex' }}
-                                height={{ base: '33px', md: '47px' }}
-                                width={{ base: '120px', md: '190px' }}
-                                borderColor={'primary.indigo.900'}
-                                borderWidth={'1px'}
-                                borderRadius={'37px'}
-                                justifyContent={'center'}
-                                cursor={'pointer'}
-                                fontSize={{ base: '12px', md: '16px' }}
-                            >
-                                <Text
-                                    alignSelf={'center'}
-                                    color="primary.indigo.900"
+                            <a href='https://blog.hamza.market/contact/' target='_blank'>
+                                <Flex
+                                    display={{ base: 'none', md: 'flex' }}
+                                    height={{ base: '33px', md: '47px' }}
+                                    width={{ base: '120px', md: '190px' }}
+                                    borderColor={'primary.indigo.900'}
+                                    borderWidth={'1px'}
+                                    borderRadius={'37px'}
+                                    justifyContent={'center'}
+                                    cursor={'pointer'}
+                                    fontSize={{ base: '12px', md: '16px' }}
                                 >
-                                    Chat with them
-                                </Text>
-                            </Flex>
+                                    <Text
+                                        alignSelf={'center'}
+                                        color="primary.indigo.900"
+                                    >
+                                        Chat with them
+                                    </Text>
+                                </Flex>
+                            </a>
 
                             {/*<Flex*/}
                             {/*    display={{ base: 'none', md: 'flex' }}*/}

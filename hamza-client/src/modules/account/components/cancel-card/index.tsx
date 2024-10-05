@@ -195,14 +195,16 @@ const CancelCard = ({
                 >
                     View Cancellation Details
                 </Button>
-                {/*<Button*/}
-                {/*    ml={2}*/}
-                {/*    variant="outline"*/}
-                {/*    colorScheme="white"*/}
-                {/*    borderRadius={'37px'}*/}
-                {/*>*/}
-                {/*    Contact Seller*/}
-                {/*</Button>*/}
+                <a href='https://blog.hamza.market/contact/' target='_blank'>
+                    <Button
+                        ml={2}
+                        variant="outline"
+                        colorScheme="white"
+                        borderRadius={'37px'}
+                    >
+                        Contact Seller
+                    </Button>
+                </a>
             </Flex>
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
@@ -236,7 +238,7 @@ const CancelCard = ({
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </Box>
+        </Box >
     );
 };
 
