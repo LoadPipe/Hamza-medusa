@@ -79,7 +79,7 @@ const nextConfig = withStoreConfig({
                 permanent: true, // Use a 301 redirect for SEO
             },
         ]
-    },
+    }
 });
 
 console.log('next.config.js', JSON.stringify(module.exports, null, 2));
