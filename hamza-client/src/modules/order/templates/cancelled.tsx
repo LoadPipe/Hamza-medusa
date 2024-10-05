@@ -115,7 +115,7 @@ const Cancelled = ({
                 py={5}
             >
                 <Text color="red.500" fontSize="lg">
-                    Error fetching reviews.
+                    Error fetching cancelled orders.
                 </Text>
             </Box>
         );
