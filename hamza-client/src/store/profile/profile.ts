@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 
 // Define the state and associated actions in an interface
 interface ProfileState {

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
 
 type State = {
     first_name: string | null;
@@ -26,31 +27,34 @@ type Actions = {
 };
 
 export const useCustomerProfileStore = create<State & Actions>()(
-    persist(
-        (set, get) => ({
-            first_name: null,
-            last_name: null,
-            address: null,
-            company: null,
-            postal_code: null,
-            province: null,
-            email: null,
-            phone: null,
-            perferredCurrency: null,
-            setFirstName: (first_name: string) => set({ first_name }),
-            setLastName: (last_name: string) => set({ last_name }),
-            setAddress: (address: string) => set({ address }),
-            setCompany: (company: string) => set({ company }),
-            setPostalCode: (postal_code: string) => set({ postal_code }),
-            setProvince: (province: string) => set({ province }),
-            setEmail: (email: string) => set({ email }),
-            setPhone: (phone: string) => set({ phone }),
-            setCurrencyCode: (perferredCurrency: string) =>
-                set({ perferredCurrency }),
-        }),
-        {
-            name: '__hamza_profile',
-            storage: createJSONStorage(() => localStorage),
-        }
+    devtools(
+        persist(
+            (set, get) => ({
+                first_name: null,
+                last_name: null,
+                address: null,
+                company: null,
+                postal_code: null,
+                province: null,
+                email: null,
+                phone: null,
+                perferredCurrency: null,
+                setFirstName: (first_name: string) => set({ first_name }),
+                setLastName: (last_name: string) => set({ last_name }),
+                setAddress: (address: string) => set({ address }),
+                setCompany: (company: string) => set({ company }),
+                setPostalCode: (postal_code: string) => set({ postal_code }),
+                setProvince: (province: string) => set({ province }),
+                setEmail: (email: string) => set({ email }),
+                setPhone: (phone: string) => set({ phone }),
+                setCurrencyCode: (perferredCurrency: string) =>
+                    set({ perferredCurrency }),
+            }),
+            {
+                name: '__hamza_profile',
+                storage: createJSONStorage(() => localStorage),
+            }
+        ),
+        { name: 'CustomerProfile' }
     )
 );

@@ -1,5 +1,6 @@
 import { AuthenticationStatus } from '@rainbow-me/rainbowkit';
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 type State = {
@@ -27,62 +28,65 @@ type Actions = {
 };
 
 export const useCustomerAuthStore = create<State & Actions>()(
-    persist(
-        (set, get) => ({
-            walletAddress: '',
-            authData: {
-                customer_id: '',
-                is_verified: false,
-                status: 'unauthenticated' as AuthenticationStatus, // Make sure to cast if needed
-                token: '',
-                wallet_address: '',
-            },
-            preferred_currency_code: null,
-            whitelist_config: {
-                is_whitelisted: false,
-                whitelisted_stores: [],
-            },
+    devtools(
+        persist(
+            (set, get) => ({
+                walletAddress: '',
+                authData: {
+                    customer_id: '',
+                    is_verified: false,
+                    status: 'unauthenticated' as AuthenticationStatus, // Make sure to cast if needed
+                    token: '',
+                    wallet_address: '',
+                },
+                preferred_currency_code: null,
+                whitelist_config: {
+                    is_whitelisted: false,
+                    whitelisted_stores: [],
+                },
 
-            // Correctly define setWalletAddress
-            setWalletAddress: (walletAddress: string) => {
-                set({
-                    walletAddress,
-                });
-            },
+                // Correctly define setWalletAddress
+                setWalletAddress: (walletAddress: string) => {
+                    set({
+                        walletAddress,
+                    });
+                },
 
-            // Define setCustomerAuthData
-            setCustomerAuthData: (authData) => {
-                set({
-                    authData: authData,
-                });
-            },
+                // Define setCustomerAuthData
+                setCustomerAuthData: (authData) => {
+                    set({
+                        authData: authData,
+                    });
+                },
 
-            // Define setCustomerPreferredCurrency
-            setCustomerPreferredCurrency: (currency) => {
-                set({ preferred_currency_code: currency });
-            },
+                // Define setCustomerPreferredCurrency
+                setCustomerPreferredCurrency: (currency) => {
+                    set({ preferred_currency_code: currency });
+                },
 
-            // Define setWhitelistConfig
-            setWhitelistConfig: (configData) => {
-                set({
-                    whitelist_config: configData,
-                });
-            },
+                // Define setWhitelistConfig
+                setWhitelistConfig: (configData) => {
+                    set({
+                        whitelist_config: configData,
+                    });
+                },
 
-            // Define setIsVerified
-            setIsVerified: (isVerified: boolean) => {
-                set((state) => ({
-                    authData: {
-                        ...state.authData,
-                        is_verified: isVerified,
-                    },
-                }));
-            },
-        }),
+                // Define setIsVerified
+                setIsVerified: (isVerified: boolean) => {
+                    set((state) => ({
+                        authData: {
+                            ...state.authData,
+                            is_verified: isVerified,
+                        },
+                    }));
+                },
+            }),
 
-        {
-            name: '__hamza_customer', // name of the item in the storage (must be unique)
-            storage: createJSONStorage(() => localStorage), // Use localStorage by default
-        }
+            {
+                name: '__hamza_customer', // name of the item in the storage (must be unique)
+                storage: createJSONStorage(() => localStorage), // Use localStorage by default
+            }
+        ),
+        { name: 'CustomerAuth' }
     )
 );
