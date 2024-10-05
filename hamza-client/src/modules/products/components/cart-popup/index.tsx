@@ -91,7 +91,7 @@ function CartPopup({ closeModal, open, productName }: Props) {
                         </Button>
                         <ChakraLink
                             as={NextLink}
-                            href="/checkout?step=payment"
+                            href="/checkout?step=address"
                             style={{ textDecoration: 'none' }}
                             onClick={handleCheckoutClick}
                         >
@@ -104,7 +104,7 @@ function CartPopup({ closeModal, open, productName }: Props) {
                                 flexShrink={0}
                                 isLoading={isLoading}
                             >
-                                Go To Checkout
+                                Go to Checkout
                             </Button>
                         </ChakraLink>
                     </Flex>
