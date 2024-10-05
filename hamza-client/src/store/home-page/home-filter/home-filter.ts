@@ -18,34 +18,29 @@ interface ModalFilterState {
 }
 
 // Create the Zustand store
-const useHomeModalFilter = create<ModalFilterState>((set) =>
-    devtools(
-        {
-            homeModalFilterSelected: false,
-            homeModalCategoryFilterSelect: [],
-            homeModalCategoryTypeFilterSelect: [],
+const useHomeModalFilter = create<ModalFilterState>((set) => ({
+    homeModalFilterSelected: false,
+    homeModalCategoryFilterSelect: [],
+    homeModalCategoryTypeFilterSelect: [],
 
-            homeModalReviewFilterSelect: null,
-            homeModalLowerPriceFilterSelect: 0,
-            homeModalUpperPriceFilterSelect: 10000,
+    homeModalReviewFilterSelect: null,
+    homeModalLowerPriceFilterSelect: 0,
+    homeModalUpperPriceFilterSelect: 10000,
 
-            setHomeModalCategoryFilterSelect: (items: string[]) =>
-                set({ homeModalCategoryFilterSelect: items }),
+    setHomeModalCategoryFilterSelect: (items: string[]) =>
+        set({ homeModalCategoryFilterSelect: items }),
 
-            setHomeModalReviewFilterSelect: (stars: string | null) =>
-                set({ homeModalReviewFilterSelect: stars }),
+    setHomeModalReviewFilterSelect: (stars: string | null) =>
+        set({ homeModalReviewFilterSelect: stars }),
 
-            setHomeModalFilterSelected: (selected: boolean) =>
-                set({ homeModalFilterSelected: selected }),
+    setHomeModalFilterSelected: (selected: boolean) =>
+        set({ homeModalFilterSelected: selected }),
 
-            setHomeModalLowerPriceFilterSelect: (price: number) =>
-                set({ homeModalLowerPriceFilterSelect: price }),
+    setHomeModalLowerPriceFilterSelect: (price: number) =>
+        set({ homeModalLowerPriceFilterSelect: price }),
 
-            setHomeModalUpperPriceFilterSelect: (price: number) =>
-                set({ homeModalUpperPriceFilterSelect: price }),
-        },
-        { name: 'homeFilter' }
-    )
-);
+    setHomeModalUpperPriceFilterSelect: (price: number) =>
+        set({ homeModalUpperPriceFilterSelect: price }),
+}));
 
 export default useHomeModalFilter;
