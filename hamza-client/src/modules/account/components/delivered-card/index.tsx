@@ -106,7 +106,7 @@ const DeliveredCard = ({ order, handle, vendorName }: OrderCardProps) => {
                 </Flex>
             </Flex>
             <Flex alignItems="center" justifyContent="space-between">
-                <Link href={`/us/products/${handle}`}>
+                <Link href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}>
                     <Image
                         borderRadius="lg"
                         width={{ base: '60px', md: '120px' }}

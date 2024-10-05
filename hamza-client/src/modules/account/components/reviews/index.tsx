@@ -211,7 +211,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                             </Box>
                                             <Flex alignItems="center" gap={2}>
                                                 <Link
-                                                    href={`/us/products/${review.product.handle}`}
+                                                    href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${review.product.handle}`}
                                                 >
                                                     <Image
                                                         rounded="lg"
@@ -372,7 +372,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                     gap={2}
                                                 >
                                                     <Link
-                                                        href={`/us/products/${item.variant.product.handle}`}
+                                                        href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${item.variant.product.handle}`}
                                                     >
                                                         <Image
                                                             rounded="lg"
