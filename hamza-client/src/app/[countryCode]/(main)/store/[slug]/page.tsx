@@ -283,29 +283,31 @@ export default function Page({ params }: { params: { slug: string } }) {
                                 </Flex>
                             </Flex>
 
-                            <Flex
-                                alignSelf={'center'}
-                                flexDir={{ base: 'row', md: 'column' }}
-                                justifyContent={{ base: 'end', md: 'normal' }}
-                                width={{ base: '100px', md: '166px' }}
-                            >
-                                <Text
-                                    mr={{ base: '5px', md: '0' }}
-                                    as="h1"
-                                    fontSize={{ base: '9px', md: '32px' }}
-                                    color="primary.green.900"
-                                    textAlign={'center'}
+
+                            {/*    <Flex
+                                    alignSelf={'center'}
+                                    flexDir={{ base: 'row', md: 'column' }}
+                                    justifyContent={{ base: 'end', md: 'normal' }}
+                                    width={{ base: '100px', md: '166px' }}
                                 >
-                                    {reviewStats.numberOfFollowers}
-                                </Text>
-                                <Text
-                                    mt={{ base: '0', md: '0.75rem' }}
-                                    fontSize={{ base: '9px', md: '16px' }}
-                                    textAlign={'center'}
-                                >
-                                    Total Followers
-                                </Text>
-                            </Flex>
+                                    <Text
+                                        mr={{ base: '5px', md: '0' }}
+                                        as="h1"
+                                        fontSize={{ base: '9px', md: '32px' }}
+                                        color="primary.green.900"
+                                        textAlign={'center'}
+                                    >
+                                        {reviewStats.numberOfFollowers}
+                                    </Text>
+                                    <Text
+                                        mt={{ base: '0', md: '0.75rem' }}
+                                        fontSize={{ base: '9px', md: '16px' }}
+                                        textAlign={'center'}
+                                    >
+                                        Total Followers
+                                    </Text>
+                                </Flex>
+                                */}
                         </Flex>
                         {/*End of Stats*/}
 
@@ -489,7 +491,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </Box>
+        </Box >
     );
 }
 
