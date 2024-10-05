@@ -305,7 +305,7 @@ const TermsOfService = () => {
                         cursor={'pointer'}
                         fontSize={{ base: '14px', md: '16px' }}
                     >
-                        <li>Allow 7-16 days for delivery, in most cases</li>
+                        <li>Allow 7-16 business days for delivery</li>
                     </Text>
                 </Flex>
             </Flex>
