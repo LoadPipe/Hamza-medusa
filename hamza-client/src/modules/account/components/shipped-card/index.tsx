@@ -3,6 +3,7 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
 import Link from 'next/link';
+import React from 'react';
 
 type OrderDetails = {
     thumbnail: string;
@@ -24,6 +25,9 @@ type Order = {
     description: string;
     variant: {
         product_id: string;
+        metadata: {
+            imgUrl?: string;
+        };
     };
     region: {
         id: string;
@@ -33,11 +37,17 @@ type Order = {
 
 type OrderCardProps = {
     order: Order;
-    handle: any;
+    handle: string;
     vendorName: string;
+    address: any;
 };
 
-const ShippedCard = ({ order, handle, vendorName }: OrderCardProps) => {
+const ShippedCard = ({
+    order,
+    handle,
+    vendorName,
+    address,
+}: OrderCardProps) => {
     const orderString = typeof order.currency_code;
 
     const getAmount = (amount?: number | null) => {
@@ -86,11 +96,14 @@ const ShippedCard = ({ order, handle, vendorName }: OrderCardProps) => {
                     justifyContent="space-between"
                     flex="1"
                 >
-                    <Link href={`/us/products/${handle}`}>
+                    <Link href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}>
                         <Image
                             borderRadius="lg"
                             width={{ base: '60px', md: '120px' }}
-                            src={order.thumbnail}
+                            src={
+                                order.thumbnail ??
+                                ''
+                            }
                             alt={`Thumbnail of ${order.title}`}
                             mr={4}
                         />
@@ -146,22 +159,27 @@ const ShippedCard = ({ order, handle, vendorName }: OrderCardProps) => {
                     minWidth="200px"
                     maxWidth="300px"
                 >
-                    <Box mb={4}>
-                        <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
-                            Courier
-                        </Text>
-                        <Text color={'white'} fontSize="16px">
-                            DHL Express
-                        </Text>
-                    </Box>
+                    {/*<Box mb={4}>*/}
+                    {/*    <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">*/}
+                    {/*        Courier*/}
+                    {/*    </Text>*/}
+                    {/*    <Text color={'white'} fontSize="16px">*/}
+                    {/*        DHL Express*/}
+                    {/*    </Text>*/}
+                    {/*</Box>*/}
 
                     <Box>
                         <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
                             Address
                         </Text>
                         <Text color={'white'} fontSize="16px">
-                            Rock Rocks Pa Daet Sub-district, 50100, Chiang Mai
-                            CA
+                            <Text color="white" fontSize="16px">
+                                {address?.address_1 || 'N/A'}{' '}
+                                {address?.address_2 || ''}{' '}
+                                {address?.city || 'N/A'}{' '}
+                                {address?.province || 'N/A'}{' '}
+                                {address?.postal_code || 'N/A'}
+                            </Text>
                         </Text>
                     </Box>
                 </Flex>

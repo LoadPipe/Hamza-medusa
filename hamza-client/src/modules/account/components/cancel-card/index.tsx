@@ -16,6 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
 import Link from 'next/link';
+import { upperCase } from 'lodash';
 
 type OrderDetails = {
     thumbnail: string;
@@ -37,6 +38,9 @@ type Order = {
     description: string;
     variant: {
         product_id: string;
+        metadata: {
+            imgUrl?: string;
+        };
     };
     region: {
         id: string;
@@ -49,7 +53,7 @@ type Order = {
 
 type OrderCardProps = {
     order: Order;
-    handle: any;
+    handle: string;
     cancel_reason: string;
     cancelled_date: string;
     vendorName: string;
@@ -112,11 +116,15 @@ const CancelCard = ({
                     justifyContent="space-between"
                     flex="1"
                 >
-                    <Link href={`/us/products/${handle}`}>
+                    <Link href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}>
                         <Image
                             borderRadius="lg"
                             width={{ base: '60px', md: '120px' }}
-                            src={order.thumbnail}
+                            src={
+                                order?.variant?.metadata?.imgUrl ??
+                                order.thumbnail ??
+                                ''
+                            }
                             alt={`Thumbnail of ${order.title}`}
                             mr={4}
                         />
@@ -173,7 +181,8 @@ const CancelCard = ({
                     maxWidth="300px"
                 >
                     <Text fontSize="24px" fontWeight="semibold">
-                        {getAmount(order.unit_price)} {order.currency_code}
+                        {getAmount(order.unit_price)}{' '}
+                        {upperCase(order.currency_code)}
                     </Text>
                 </Flex>
             </Flex>
@@ -186,14 +195,16 @@ const CancelCard = ({
                 >
                     View Cancellation Details
                 </Button>
-                <Button
-                    ml={2}
-                    variant="outline"
-                    colorScheme="white"
-                    borderRadius={'37px'}
-                >
-                    Contact Seller
-                </Button>
+                <a href='https://blog.hamza.market/contact/' target='_blank'>
+                    <Button
+                        ml={2}
+                        variant="outline"
+                        colorScheme="white"
+                        borderRadius={'37px'}
+                    >
+                        Contact Seller
+                    </Button>
+                </a>
             </Flex>
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
@@ -227,7 +238,7 @@ const CancelCard = ({
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </Box>
+        </Box >
     );
 };
 

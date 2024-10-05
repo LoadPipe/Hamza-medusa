@@ -15,10 +15,12 @@ import {
     SwitchNetwork,
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 const queryClient = new QueryClient();
 import { SiweMessage } from 'siwe';
 import {
     clearAuthCookie,
+    clearCartCookie,
     getCustomer,
     getHamzaCustomer,
     getToken,
@@ -88,29 +90,35 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         }
     }, [authData.status, customer_id]); // Dependency array includes any state variables that trigger a reload
 
+    const clearLogin = () => {
+        console.log('CLEARING LOGIN');
+        setCustomerAuthData({
+            customer_id: '',
+            is_verified: false,
+            status: 'unauthenticated',
+            token: '',
+            wallet_address: '',
+        });
+        clearAuthCookie();
+    };
+
     useEffect(() => {
         console.log('Saved wallet address', clientWallet);
-        getHamzaCustomer().then((hamzaCustomer) => {
-            console.log('Hamza Customer: ', hamzaCustomer);
-            getCustomer().then((customer) => {
-                console.log('Medusa Customer: ', customer);
-                if (
-                    !customer ||
-                    !hamzaCustomer ||
-                    customer?.id !== hamzaCustomer?.id
-                ) {
-                    console.log('setting auth to unauthenticated');
-                    setCustomerAuthData({
-                        customer_id: '',
-                        is_verified: false,
-                        status: 'unauthenticated',
-                        token: '',
-                        wallet_address: '',
-                    });
-                    clearAuthCookie();
-                }
+        if (clientWallet?.length) {
+            getHamzaCustomer().then((hamzaCustomer) => {
+                console.log('Hamza Customer: ', hamzaCustomer);
+                getCustomer().then((customer) => {
+                    console.log('Medusa Customer: ', customer);
+                    if (
+                        !customer ||
+                        !hamzaCustomer ||
+                        customer?.id !== hamzaCustomer?.id
+                    ) {
+                        clearLogin();
+                    }
+                });
             });
-        });
+        }
         console.log(authData.wallet_address);
     }, [authData.wallet_address]);
 
@@ -158,7 +166,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         message,
                         signature
                     );
-                    data = authResponse.data
+                    data = authResponse.data;
                 }
 
                 if (data.status == true) {
@@ -206,20 +214,13 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         console.log(data.data?.wallet_address);
                         console.log(clientWallet);
                         console.log(message?.address);
-                        setCustomerAuthData({
-                            ...authData,
-                            status: 'unauthenticated',
-                        });
-                        clearAuthCookie();
+                        clearLogin();
+                        clearCartCookie();
                         return false;
                     }
                 } else {
                     console.log('running verify unauthenticated');
-                    setCustomerAuthData({
-                        ...authData,
-                        status: 'unauthenticated',
-                    });
-                    clearAuthCookie();
+                    clearLogin();
                     throw new Error(data.message);
                 }
 
@@ -261,6 +262,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                             {children}
                         </RainbowKitProvider>
                     </RainbowKitAuthenticationProvider>
+                    <ReactQueryDevtools initialIsOpen={false} />
                 </QueryClientProvider>
             </WagmiConfig>
         </div>

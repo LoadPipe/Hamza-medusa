@@ -71,11 +71,11 @@ import { debounce } from 'lodash';
 
 const Processing = ({
     customer,
-    onSuccess,
+    // onSuccess,
     isEmpty,
 }: {
     customer: string;
-    onSuccess?: () => void;
+    // onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
     const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
@@ -85,9 +85,9 @@ const Processing = ({
     const [expandViewOrder, setExpandViewOrder] = useState(false);
     const [shouldFetch, setShouldFetch] = useState(false);
 
-    const debouncedOnSuccess = debounce(() => {
-        onSuccess && onSuccess(); // Call the parent onSuccess after debounce delay
-    }, 1000); // 1000ms (1 second) delay
+    // const debouncedOnSuccess = debounce(() => {
+    //     onSuccess && onSuccess(); // Call the parent onSuccess after debounce delay
+    // }, 1000); // 1000ms (1 second) delay
 
     const queryClient = useQueryClient();
 
@@ -104,28 +104,35 @@ const Processing = ({
         ['fetchProcessingOrder', customer],
         () => getSingleBucket(customer, 1),
         {
-            enabled: !!customer, // Ensure query only runs when enabled is true
-            staleTime: 5 * 60 * 1000, // 5 minutes
-            cacheTime: 5 * 60 * 1000, // 5 minutes
-            retry: 5, // Retry 5 times
-            retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
-            refetchOnWindowFocus: false,
+            enabled: !!customer,
+            retry: true,
+            refetchOnWindowFocus: true,
         }
     );
 
-    // manually trigger a refetch if its stale
     useEffect(() => {
-        if (isStale && processingOrder == undefined) {
-            refetch();
-        }
+        const retryFetch = async () => {
+            if (isStale && processingOrder == undefined) {
+                for (let i = 0; i < 5; i++) {
+                    if (processingOrder == undefined) {
+                        queryClient.resetQueries(['fetchProcessingOrder']);
+                        queryClient.invalidateQueries(['fetchProcessingOrder']);
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, 100)
+                        );
+                    }
+                }
+            }
+        };
+        retryFetch();
     }, [isStale]);
 
-    useEffect(() => {
-        if (isSuccess && processingOrder && processingOrder.length > 0) {
-            console.log(`TRIGGER`);
-            debouncedOnSuccess();
-        }
-    }, [isSuccess]);
+    // useEffect(() => {
+    //     if (isSuccess && processingOrder && processingOrder.length > 0) {
+    //         console.log(`TRIGGER`);
+    //         debouncedOnSuccess();
+    //     }
+    // }, [isSuccess]);
 
     // Log the queries for processing state and data
     console.log({
@@ -154,6 +161,8 @@ const Processing = ({
                         'fetchAllOrders',
                         customer,
                     ]);
+                    refetch();
+
                     setIsModalOpen(false);
                     setSelectedOrderId(null);
                 } catch (error) {
@@ -727,28 +736,28 @@ const Processing = ({
                                                                             <Text fontWeight="bold">
                                                                                 {
                                                                                     order
-                                                                                        .shipping_address
-                                                                                        .address_1
+                                                                                        ?.shipping_address
+                                                                                        ?.address_1
                                                                                 }{' '}
                                                                                 {
                                                                                     order
-                                                                                        .shipping_address
-                                                                                        .city
+                                                                                        ?.shipping_address
+                                                                                        ?.city
                                                                                 }{' '}
                                                                                 {
                                                                                     order
-                                                                                        .shipping_address
-                                                                                        .province
+                                                                                        ?.shipping_address
+                                                                                        ?.province
                                                                                 }{' '}
                                                                                 {
                                                                                     order
-                                                                                        .shipping_address
-                                                                                        .postal_code
+                                                                                        ?.shipping_address
+                                                                                        ?.postal_code
                                                                                 }{' '}
                                                                                 {
                                                                                     order
-                                                                                        .shipping_address
-                                                                                        .country_code
+                                                                                        ?.shipping_address
+                                                                                        ?.country_code
                                                                                 }
                                                                             </Text>
                                                                         </Box>
@@ -763,30 +772,30 @@ const Processing = ({
                                                                             <Text fontWeight="bold">
                                                                                 {
                                                                                     order
-                                                                                        .shipping_address
-                                                                                        .first_name
+                                                                                        ?.shipping_address
+                                                                                        ?.first_name
                                                                                 }{' '}
                                                                                 {
                                                                                     order
-                                                                                        .shipping_address
-                                                                                        .last_name
+                                                                                        ?.shipping_address
+                                                                                        ?.last_name
                                                                                 }
                                                                             </Text>
                                                                             <Text fontWeight="bold">
                                                                                 {
                                                                                     order
-                                                                                        .shipping_address
-                                                                                        .phone
+                                                                                        ?.shipping_address
+                                                                                        ?.phone
                                                                                 }
                                                                             </Text>
                                                                             <Text fontWeight="bold">
-                                                                                {order.customer.email.endsWith(
+                                                                                {order.customer?.email?.endsWith(
                                                                                     '@evm.blockchain'
                                                                                 )
                                                                                     ? ''
                                                                                     : order
-                                                                                          .customer
-                                                                                          .email}
+                                                                                          ?.customer
+                                                                                          ?.email}
                                                                             </Text>
                                                                         </Box>
                                                                     </VStack>

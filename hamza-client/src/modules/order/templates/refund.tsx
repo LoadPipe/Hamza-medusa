@@ -6,27 +6,28 @@ import RefundCard from '@modules/account/components/refund-card';
 import EmptyState from '@modules/order/components/empty-state';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import Spinner from '@modules/common/icons/spinner';
-import { useQuery } from '@tanstack/react-query';
-import { debounce } from 'lodash';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { debounce, upperCase } from 'lodash';
 
 const Refund = ({
     customer,
-    chainEnabled,
-    onSuccess,
+    // chainEnabled,
+    // onSuccess,
     isEmpty,
 }: {
     customer: string;
-    chainEnabled?: boolean;
-    onSuccess?: () => void;
+    // chainEnabled?: boolean;
+    // onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
     const [courierInfo, setCourierInfo] = useState(false);
     const [shouldFetch, setShouldFetch] = useState(false);
-    console.log(`chainEnabled Refund ${chainEnabled}`);
 
-    const debouncedOnSuccess = debounce(() => {
-        onSuccess && onSuccess();
-    }, 5000);
+    // const debouncedOnSuccess = debounce(() => {
+    //     onSuccess && onSuccess();
+    // }, 1000);
+
+    const queryClient = useQueryClient();
 
     const {
         data: refundOrder,
@@ -41,27 +42,36 @@ const Refund = ({
         ['fetchRefundOrder', customer],
         () => getSingleBucket(customer, 5),
         {
-            enabled: !!customer && chainEnabled, // Ensure query only runs when enabled is true
-            staleTime: 5 * 60 * 1000, // 5 minutes
-            retry: 5, // Retry 5 times
-            retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
-            refetchOnWindowFocus: false,
+            enabled: !!customer,
+            retry: true,
+            refetchOnWindowFocus: true,
         }
     );
 
     // manually trigger a refetch if its stale
     useEffect(() => {
-        if (isStale && chainEnabled && refundOrder == undefined) {
-            refetch();
-        }
+        const retryFetch = async () => {
+            if (isStale && refundOrder == undefined) {
+                for (let i = 0; i < 3; i++) {
+                    if (refundOrder == undefined) {
+                        queryClient.resetQueries(['fetchRefundOrder']);
+                        queryClient.invalidateQueries(['fetchRefundOrder']);
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, 100)
+                        );
+                    }
+                }
+            }
+        };
+        retryFetch();
     }, [isStale]);
 
-    useEffect(() => {
-        if (isSuccess && refundOrder && refundOrder.length > 0) {
-            console.log(`TRIGGER`);
-            debouncedOnSuccess();
-        }
-    }, [isSuccess, chainEnabled]);
+    // useEffect(() => {
+    //     if (isSuccess && refundOrder) {
+    //         console.log(`TRIGGER`);
+    //         debouncedOnSuccess();
+    //     }
+    // }, [isSuccess, chainEnabled]);
 
     // Log the queries for refunded state and data
     console.log({
@@ -182,10 +192,10 @@ const Refund = ({
                                                 fontWeight="semibold"
                                             >
                                                 {getAmount(
-                                                    order.unit_price,
-                                                    order.currency_code
+                                                    item?.unit_price,
+                                                    item?.currency_code
                                                 )}{' '}
-                                                {order.currency_code}
+                                                {upperCase(item?.currency_code)}
                                             </Text>
                                             <HStack
                                                 align="start"

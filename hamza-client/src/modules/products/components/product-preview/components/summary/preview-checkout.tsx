@@ -14,16 +14,12 @@ import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import toast from 'react-hot-toast';
 import OptionSelect from '../../../option-select';
 import { isEqual } from 'lodash';
-import {
-    TiStarFullOutline,
-    TiStarHalfOutline,
-    TiStarOutline,
-} from 'react-icons/ti';
 import CartPopup from '../../../cart-popup';
 import { getAverageRatings, getStore, getReviewCount } from '@lib/data';
 import currencyIcons from '../../../../../../../public/images/currencies/crypto-currencies';
 import Spinner from '@modules/common/icons/spinner';
 import TermsOfService from '../terms-of-service/product-details-tos';
+import { renderStars } from '@modules/products/components/review-stars';
 
 interface PreviewCheckoutProps {
     productId: string;
@@ -47,8 +43,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         setOptions({ ...options, ...update });
     };
     let countryCode = useParams().countryCode as string;
-    if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY)
-        countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY;
+    if (process.env.NEXT_PUBLIC_FORCE_COUNTRY)
+        countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY;
 
     const [isWhitelisted, setIsWhitelisted] = useState(false);
 
@@ -198,9 +194,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
             if (showPopup) {
                 setCartModalOpen(true);
-                setTimeout(() => {
-                    setCartModalOpen(false);
-                }, 3000);
             }
         } catch (error) {
             console.error('Error adding to cart:', error);
@@ -215,7 +208,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             console.log('white list config ', whitelist_config);
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                whitelist_config.whitelisted_stores.includes(data.data)
+                    whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -241,37 +234,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             whitelistedProductHandler();
         }
     }, [authData.status, productData, selectedVariant]);
-
-    // Star Feature
-    const renderStars = (rating: any) => {
-        const fullStars = Math.floor(rating);
-        const halfStar = rating % 1 >= 0.5;
-        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-
-        return (
-            <div className="flex">
-                {Array(fullStars)
-                    .fill(null)
-                    .map((_, index) => (
-                        <TiStarFullOutline
-                            key={`full-${index}`}
-                            className="text-yellow-500 text-2xl"
-                        />
-                    ))}
-                {halfStar && (
-                    <TiStarHalfOutline className="text-yellow-500 text-2xl" />
-                )}
-                {Array(emptyStars)
-                    .fill(null)
-                    .map((_, index) => (
-                        <TiStarOutline
-                            key={`empty-${index}`}
-                            className="text-yellow-500 text-2xl"
-                        />
-                    ))}
-            </div>
-        );
-    };
 
     // hook runs once when the component mounts and anytime productData changes
     // it sets the initial options to the first value of each option
@@ -540,8 +502,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     {!inStock && isWhitelisted
                         ? 'Add to cart'
                         : inStock
-                          ? 'Add to Cart'
-                          : 'Out of Stock'}
+                            ? 'Add to Cart'
+                            : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs text-white px-4 py-2">
@@ -557,6 +519,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
                 <CartPopup
                     open={cartModalOpen}
+                    productName={productData.title}
                     closeModal={() => {
                         setCartModalOpen(false);
                     }}

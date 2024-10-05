@@ -5,27 +5,28 @@ import Spinner from '@modules/common/icons/spinner';
 import DeliveredCard from '@modules/account/components/delivered-card';
 import EmptyState from '@modules/order/components/empty-state';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { debounce } from 'lodash';
 
 const Delivered = ({
     customer,
-    chainEnabled,
-    onSuccess,
+    // chainEnabled,
+    // onSuccess,
     isEmpty,
 }: {
     customer: string;
-    chainEnabled?: boolean;
-    onSuccess?: () => void;
+    // chainEnabled?: boolean;
+    // onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
     const [shouldFetch, setShouldFetch] = useState(false);
-    console.log(`chainEnabled Delivered ${chainEnabled}`);
 
-    const debouncedOnSuccess = debounce(() => {
-        onSuccess && onSuccess();
-    }, 5000);
+    // const debouncedOnSuccess = debounce(() => {
+    //     onSuccess && onSuccess();
+    // }, 1000);
+
+    const queryClient = useQueryClient();
 
     const {
         data: deliveredOrder,
@@ -40,27 +41,36 @@ const Delivered = ({
         ['fetchDeliveredOrder', customer],
         () => getSingleBucket(customer, 3),
         {
-            enabled: !!customer && chainEnabled, // Ensure query only runs when enabled is true
-            staleTime: 5 * 60 * 1000, // 5 minutes
-            retry: 5, // Retry 5 times
-            retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
-            refetchOnWindowFocus: false,
+            enabled: !!customer,
+            retry: true,
+            refetchOnWindowFocus: true,
         }
     );
 
     // manually trigger a refetch if its stale
     useEffect(() => {
-        if (isStale && chainEnabled && deliveredOrder == undefined) {
-            refetch();
-        }
+        const retryFetch = async () => {
+            if (isStale && deliveredOrder == undefined) {
+                for (let i = 0; i < 3; i++) {
+                    if (deliveredOrder == undefined) {
+                        queryClient.resetQueries(['fetchDeliveredOrder']);
+                        queryClient.invalidateQueries(['fetchDeliveredOrder']);
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, 100)
+                        );
+                    }
+                }
+            }
+        };
+        retryFetch();
     }, [isStale]);
 
-    useEffect(() => {
-        if (isSuccess && deliveredOrder && deliveredOrder.length > 0) {
-            console.log(`TRIGGER`);
-            debouncedOnSuccess();
-        }
-    }, [isSuccess, chainEnabled]);
+    // useEffect(() => {
+    //     if (isSuccess && deliveredOrder) {
+    //         console.log(`TRIGGER`);
+    //         debouncedOnSuccess();
+    //     }
+    // }, [isSuccess, chainEnabled]);
 
     // Log the queries for delivered state and data
     console.log({

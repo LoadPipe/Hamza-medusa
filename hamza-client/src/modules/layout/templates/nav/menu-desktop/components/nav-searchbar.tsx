@@ -20,7 +20,7 @@ const NavSearchBar = () => {
     const [searchOpened, setSearchOpened] = useState(false);
     const pathname = usePathname();
     //Todo: get country code
-    const isHomePage = pathname === '/us';
+    const isHomePage = pathname === `/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}`;
 
     useEffect(() => {
         window.addEventListener('keydown', (event) => {

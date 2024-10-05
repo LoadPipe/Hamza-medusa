@@ -20,7 +20,7 @@ export async function generateStaticParams() {
         return [];
     }
 
-    const countryCodes = ['us'];
+    const countryCodes = [process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'];
 
     const categoryHandles = product_categories.map(
         (category) => category.handle

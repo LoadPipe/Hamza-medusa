@@ -84,25 +84,27 @@ const StoreBanner = (props: StoreProps) => {
                 flexDirection={'column'}
                 gap={'16px'}
             >
-                <Flex
-                    display={{ base: 'none', md: 'flex' }}
-                    height={{ base: '33px', md: '47px' }}
-                    width={{ base: '120px', md: '190px' }}
-                    borderColor={'primary.green.900'}
-                    borderWidth={'1px'}
-                    borderRadius={'37px'}
-                    justifyContent={'center'}
-                    cursor={'pointer'}
-                    fontSize={{ base: '12px', md: '16px' }}
-                >
-                    <Text
-                        alignSelf={'center'}
-                        color="primary.green.900"
-                        fontWeight={700}
+                <a href='https://blog.hamza.market/contact/' target='_blank'>
+                    <Flex
+                        display={{ base: 'none', md: 'flex' }}
+                        height={{ base: '33px', md: '47px' }}
+                        width={{ base: '120px', md: '190px' }}
+                        borderColor={'primary.green.900'}
+                        borderWidth={'1px'}
+                        borderRadius={'37px'}
+                        justifyContent={'center'}
+                        cursor={'pointer'}
+                        fontSize={{ base: '12px', md: '16px' }}
                     >
-                        Chat with them
-                    </Text>
-                </Flex>
+                        <Text
+                            alignSelf={'center'}
+                            color="primary.green.900"
+                            fontWeight={700}
+                        >
+                            Chat with them
+                        </Text>
+                    </Flex>
+                </a>
                 <Flex
                     onClick={navigateToVendor}
                     height={{ base: '33px', md: '47px' }}

@@ -2,7 +2,7 @@ import { Region } from '@medusajs/medusa';
 import { NextRequest, NextResponse } from 'next/server';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
-const DEFAULT_REGION = process.env.NEXT_PUBLIC_DEFAULT_REGION || 'us';
+const DEFAULT_REGION = process.env.NEXT_PUBLIC_DEFAULT_REGION || 'na';
 
 /**
  * Fetches regions from Medusa and sets the region cookie.
@@ -83,8 +83,8 @@ export async function middleware(request: NextRequest) {
 
     const regionMap = await listCountries();
 
-    const countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY
-        ? 'us'
+    const countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY
+        ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
         : regionMap && (await getCountryCode(request, regionMap));
 
     const urlHasCountryCode =
@@ -96,17 +96,27 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    let response = NextResponse.redirect(request.nextUrl, 307);
+    // Construct the redirect URL and append search params if necessary
+    let newUrl = new URL(request.nextUrl);
+    searchParams.forEach((value, key) => {
+        newUrl.searchParams.append(key, value);
+    });
+
+    let response = NextResponse.redirect(newUrl.toString(), 307);
 
     // If no country code is set, we redirect to the relevant region.
     if (!urlHasCountryCode && countryCode) {
         const redirectPath =
             request.nextUrl.pathname === '/' ? '' : request.nextUrl.pathname;
 
-        response = NextResponse.redirect(
-            `${request.nextUrl.origin}/${countryCode}${redirectPath}`,
-            307
+        newUrl = new URL(
+            `${request.nextUrl.origin}/${countryCode}${redirectPath}`
         );
+        searchParams.forEach((value, key) => {
+            newUrl.searchParams.append(key, value);
+        });
+
+        response = NextResponse.redirect(newUrl.toString(), 307);
     }
 
     // Set a cookie to indicate that we're onboarding. This is used to show the onboarding flow.

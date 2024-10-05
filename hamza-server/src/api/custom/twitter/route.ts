@@ -4,6 +4,8 @@ import { RouteHandler } from '../../route-handler';
 import CustomerRepository from '../../../repositories/customer';
 import { ILogger } from '../../../utils/logging/logger';
 import jwt from 'jsonwebtoken';
+import { redirectToOauthLandingPage } from '../../../utils/oauth';
+import { Not } from 'typeorm';
 
 // add your client id and secret here:
 const TWITTER_OAUTH_CLIENT_ID = process.env.TWITTER_ACCESS_KEY!;
@@ -78,7 +80,7 @@ export async function getTwitterUser(
     try {
         // request GET https://api.twitter.com/2/users/me
         const res = await axios.get<{ data: TwitterUser }>(
-            'https://api.twitter.com/2/users/me',
+            'https://api.twitter.com/2/users/me?user.fields=username,name,id,email',
             {
                 headers: {
                     'Content-type': 'application/json',
@@ -104,26 +106,28 @@ export async function GET(
     const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/twitter');
 
     handler.onError = (err: any) => {
-        return res.redirect(
-            `${process.env.STORE_URL}/account/profile?verify=false&error=true`
-        );
+        redirectToOauthLandingPage(res, 'twitter', false, 'An unknown error has occurred');
     };
 
     await handler.handle(async () => {
         const code = req.query.code;
 
-        handler.logger.debug(`discord oauth cookies: ${JSON.stringify(req.cookies)}`);
+        handler.logger.debug(`twitter oauth cookies: ${JSON.stringify(req.cookies)}`);
         let decoded: any = jwt.decode(req.cookies['_medusa_jwt']);
         handler.logger.debug(
-            `discord oauth decoded _medusa_jwt: ${JSON.stringify(decoded)}`
+            `twitter oauth decoded _medusa_jwt: ${JSON.stringify(decoded)}`
         );
-        handler.logger.debug(`discord oauth req.params: ${JSON.stringify(req.params)}`);
+        handler.logger.debug(`twitter oauth req.params: ${JSON.stringify(req.params)}`);
+
+        //throw error if anything wrong with the cookie
+        if (!decoded)
+            return redirectToOauthLandingPage(res, 'twitter', false, 'Unable to get the JWT cookie');
 
         // 1. get the access token with the code
         const twitterOAuthToken = await getTwitterOAuthToken(code, handler.logger);
         if (!twitterOAuthToken) {
             // redirect if no auth token
-            return res.redirect(process.env.STORE_URL);
+            return redirectToOauthLandingPage(res, 'twitter', false, 'Unable to get the X OAUTH token');
         }
 
         // 2. get the twitter user using the access token
@@ -132,10 +136,11 @@ export async function GET(
             handler.logger
         );
 
-        if (!twitterUser) {
-            // redirect if no twitter user
-            return res.redirect(process.env.STORE_URL);
-        }
+        handler.logger.debug(`Twitter user: ${JSON.stringify(twitterUser)}`);
+
+        // redirect if no twitter user
+        if (!twitterUser)
+            return redirectToOauthLandingPage(res, 'twitter', false, 'Unable to get the X OAUTH user');
 
         //split firstname/lastname 
         let first_name = '';
@@ -149,15 +154,24 @@ export async function GET(
         }
 
         //redirect if no email address available
-        return res.redirect(
-            `${process.env.STORE_URL}/account/profile?verify=false&error=true`
-        );
+        return redirectToOauthLandingPage(res, 'twitter', false, 'Unable to retrieve email address');
+
+        const customerId = decoded.customer_id;
+        const email = ''; //no way to get twitter email
+
+        //check that email isn't already taken
+        const existingCustomer = await customerRepository.findOne({
+            where: { id: Not(decoded.customer_id), email: email }
+        });
+        if (existingCustomer) {
+            return redirectToOauthLandingPage(res, 'google', false, `The email address ${email} is already taken by another account.`);
+        }
 
         //update the user record if all good
         await customerRepository.update(
-            { id: decoded.customer_id },
+            { id: customerId },
             {
-                email: `${first_name}@${last_name}.com`, //twitterUser?.email,
+                email: email,
                 is_verified: true,
                 first_name,
                 last_name,
@@ -165,6 +179,6 @@ export async function GET(
         );
 
         // 5. finally redirect to the client
-        return res.redirect(`${process.env.STORE_URL}/account?verify=true`);
+        return redirectToOauthLandingPage(res, 'twitter');
     });
 }

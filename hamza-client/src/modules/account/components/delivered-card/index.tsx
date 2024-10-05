@@ -29,6 +29,9 @@ type Order = {
     description: string;
     variant: {
         product_id: string;
+        metadata: {
+            imgUrl?: string;
+        };
     };
     region: {
         id: string;
@@ -38,7 +41,7 @@ type Order = {
 
 type OrderCardProps = {
     order: Order;
-    handle: any;
+    handle: string;
     vendorName: string;
 };
 
@@ -46,7 +49,8 @@ const DeliveredCard = ({ order, handle, vendorName }: OrderCardProps) => {
     const orderString = typeof order.currency_code;
     const router = useRouter();
     let countryCode = useParams().countryCode as string;
-    if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY) countryCode = 'us';
+    if (process.env.NEXT_PUBLIC_FORCE_COUNTRY)
+        countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY;
 
     const getAmount = (amount?: number | null) => {
         if (amount === null || amount === undefined) {
@@ -102,11 +106,14 @@ const DeliveredCard = ({ order, handle, vendorName }: OrderCardProps) => {
                 </Flex>
             </Flex>
             <Flex alignItems="center" justifyContent="space-between">
-                <Link href={`/us/products/${handle}`}>
+                <Link href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}>
                     <Image
                         borderRadius="lg"
                         width={{ base: '60px', md: '120px' }}
-                        src={order.thumbnail}
+                        src={
+                            order.thumbnail ??
+                            ''
+                        }
                         alt={`Thumbnail of ${order.title}`}
                         mr={4}
                     />

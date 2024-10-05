@@ -254,7 +254,7 @@ export class BasicCheckoutProcessor {
     protected async getStore(): Promise<Store> {
         const storeId = this.cart.items[0]?.variant?.product?.store?.id;
         if (storeId) {
-            return await this.storeRepository.findOne({ where: { id: storeId }, relations: ['owner'] })
+            return this.storeRepository.findOne({ where: { id: storeId }, relations: ['owner'] })
         }
         return null;
     }

@@ -5,6 +5,7 @@ import { Heading, Text, clx } from '@medusajs/ui';
 import PaymentButton from '../payment-button';
 import { useSearchParams } from 'next/navigation';
 import { Cart } from '@medusajs/medusa';
+import HamzaLogoLoader from '@/components/loaders/hamza-logo-loader';
 
 const Review = ({
     cart,
@@ -49,6 +50,7 @@ const Review = ({
                             </Text>
                         </div>
                     </div>
+
                     <PaymentButton cart={cart} />
                 </>
             )}

@@ -122,7 +122,7 @@ async function get(
     requiresSecurity: boolean = false,
     returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('get', url, params, requiresSecurity, returnRaw);
+    return axiosCall('get', url, params, requiresSecurity, returnRaw);
 }
 
 async function post(
@@ -131,7 +131,7 @@ async function post(
     requiresSecurity: boolean = false,
     returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('post', url, payload, requiresSecurity, returnRaw);
+    return axiosCall('post', url, payload, requiresSecurity, returnRaw);
 }
 
 async function put(
@@ -140,7 +140,7 @@ async function put(
     requiresSecurity: boolean = false,
     returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('put', url, payload, requiresSecurity, returnRaw);
+    return axiosCall('put', url, payload, requiresSecurity, returnRaw);
 }
 
 async function del(
@@ -149,7 +149,7 @@ async function del(
     requiresSecurity: boolean = false,
     returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('delete', url, payload, requiresSecurity, returnRaw);
+    return axiosCall('delete', url, payload, requiresSecurity, returnRaw);
 }
 
 async function patch(
@@ -158,11 +158,11 @@ async function patch(
     requiresSecurity: boolean = false,
     returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('patch', url, payload, requiresSecurity, returnRaw);
+    return axiosCall('patch', url, payload, requiresSecurity, returnRaw);
 }
 
 async function getSecure(url: string, params: any, returnRaw: boolean = false) {
-    return await get(url, params, true, returnRaw);
+    return get(url, params, true, returnRaw);
 }
 
 async function postSecure(
@@ -170,7 +170,7 @@ async function postSecure(
     payload: any,
     returnRaw: boolean = false
 ) {
-    return await post(url, payload, true, returnRaw);
+    return post(url, payload, true, returnRaw);
 }
 
 async function putSecure(
@@ -178,7 +178,7 @@ async function putSecure(
     payload: any,
     returnRaw: boolean = false
 ) {
-    return await put(url, payload, true, returnRaw);
+    return put(url, payload, true, returnRaw);
 }
 
 async function delSecure(
@@ -186,7 +186,7 @@ async function delSecure(
     payload: any,
     returnRaw: boolean = false
 ) {
-    return await del(url, payload, true, returnRaw);
+    return del(url, payload, true, returnRaw);
 }
 
 async function patchSecure(
@@ -194,7 +194,7 @@ async function patchSecure(
     payload: any,
     returnRaw: boolean = false
 ) {
-    return await patch(url, payload, true, returnRaw);
+    return patch(url, payload, true, returnRaw);
 }
 
 /**
@@ -223,12 +223,12 @@ const getMedusaHeaders = (tags: string[] = []) => {
 
 // Get Vendors
 export async function getStores() {
-    return await get('/custom/store');
+    return get('/custom/store');
 }
 
 // Get Vendor Store by slug
 export async function getVendorStoreBySlug(store_name: string) {
-    return await get('/custom/store', {
+    return get('/custom/store', {
         store_name,
     });
 }
@@ -237,12 +237,12 @@ export async function getVendorStoreBySlug(store_name: string) {
 
 // Set a review
 export async function createReview(data: any) {
-    return await postSecure('/custom/review', data);
+    return postSecure('/custom/review', data);
 }
 
 // Get Wishlist
 export async function getWishlist(customer_id: string) {
-    return await getSecure('/custom/wishlist', {
+    return getSecure('/custom/wishlist', {
         customer_id,
     });
 }
@@ -252,7 +252,7 @@ export async function deleteWishlistItem(
     customer_id: string,
     product_id: string
 ) {
-    return await delSecure('/custom/wishlist/item', {
+    return delSecure('/custom/wishlist/item', {
         customer_id,
         product_id,
     });
@@ -260,61 +260,61 @@ export async function deleteWishlistItem(
 
 // Get Vendor Products
 export async function getProductsByStoreName(storeName: string) {
-    return await get('/custom/store/products', {
+    return get('/custom/store/products', {
         store_name: storeName,
     });
 }
 
 // Get All Vendor Products
 export async function getAllVendorProducts() {
-    return await get('/store/products');
+    return get('/store/products');
 }
 
 // Get All Store Names
 export async function getAllStoreNames() {
-    return await get('/custom/store/name');
+    return get('/custom/store/name');
 }
 
 // Get All Product reviews
+// TODO: There's no reason to await getSecure, we're returning a promise anyways and we're adding more things
+// to the event loop for no reason
 export async function getAllProductReviews(customer_id: string) {
-    return await getSecure('/custom/review', {
-        customer_id: customer_id,
-    });
+    return getSecure('/custom/review', { customer_id });
 }
 
 export async function checkReviewsExistence(order_id: string) {
-    return await get('/custom/review', { order_id: order_id });
+    return get('/custom/review', { order_id: order_id });
 }
 
 export async function checkCustomerReviewExistence(
     order_id: string,
     variant_id: string
 ) {
-    return await getSecure('/custom/review/existing', {
+    return getSecure('/custom/review/existing', {
         order_id: order_id,
         variant_id: variant_id,
     });
 }
 
 export async function getStoreCategories(store_name: string) {
-    return await get('/custom/store/categories', { store_name });
+    return get('/custom/store/categories', { store_name });
 }
 
 export async function verifyToken(token: string) {
-    return await getSecure('/custom/confirmation-token/verify', { token });
+    return getSecure('/custom/confirmation-token/verify', { token });
 }
 
 //TODO: rename? cause it's not really clear what this does
 export async function getOrderSummary(cart_id: string) {
-    return await get('/custom/order/order-summary', { cart_id });
+    return get('/custom/order/order-summary', { cart_id });
 }
 
 export async function getNotReviewed(customer_id: string) {
-    return await getSecure('/custom/review/not-reviewed', { customer_id });
+    return getSecure('/custom/review/not-reviewed', { customer_id });
 }
 
 export async function allReviews(product_id: string) {
-    return await getSecure('/custom/review', { product_id });
+    return getSecure('/custom/review', { product_id });
 }
 
 export async function getNotifications(customer_id: string) {
@@ -325,18 +325,18 @@ export async function getNotifications(customer_id: string) {
 }
 
 export async function getServerConfig() {
-    return await get('/custom/config');
+    return get('/custom/config');
 }
 
 export async function deleteNotifications(customer_id: string) {
-    return await delSecure('/custom/customer/notification', {
+    return delSecure('/custom/customer/notification', {
         customer_id: customer_id,
         notification_type: 'none',
     });
 }
 
 export async function cancelOrderCart(cart_id: string) {
-    return await postSecure('/custom/cart/cancel', { cart_id });
+    return postSecure('/custom/cart/cancel', { cart_id });
 }
 
 export async function verifyEmail(
@@ -344,7 +344,7 @@ export async function verifyEmail(
     email: string,
     returnRaw: boolean = false
 ) {
-    return await postSecure(
+    return postSecure(
         '/custom/confirmation-token/generate',
         {
             customer_id,
@@ -358,14 +358,14 @@ export async function addNotifications(
     customer_id: string,
     notification_type: string
 ) {
-    return await postSecure('/custom/customer/notification', {
+    return postSecure('/custom/customer/notification', {
         customer_id: customer_id,
         notification_type: notification_type,
     });
 }
 
 export async function getOrderInformation(cart_id: string) {
-    return await getSecure('/custom/order', {
+    return getSecure('/custom/order', {
         cart_id,
     });
 }
@@ -402,33 +402,33 @@ export async function getSingleBucket(customer_id: string, bucket: number) {
 }
 
 export async function getNotReviewedOrders(customer_id: string) {
-    return await getSecure('/custom/review/not-reviewed', {
+    return getSecure('/custom/review/not-reviewed', {
         customer_id,
     });
 }
 
 export async function getOrderStatus(order_id: string) {
-    return await getSecure('/custom/order/status', {
+    return getSecure('/custom/order/status', {
         order_id: order_id,
     });
 }
 
 export async function cancelOrder(order_id: string, cancel_reason: string) {
-    return await putSecure('/custom/order/cancel', { order_id, cancel_reason });
+    return putSecure('/custom/order/cancel', { order_id, cancel_reason });
 }
 
 export async function getVerificationStatus(customer_id: string) {
-    return await getSecure('/custom/customer/verification-status', {
+    return getSecure('/custom/customer/verification-status', {
         customer_id,
     });
 }
 
 export async function getAverageRatings(product_id: string) {
-    return await get('/custom/review/average', { product_id });
+    return get('/custom/review/average', { product_id });
 }
 
 export async function getReviewCount(product_id: string) {
-    return await get('/custom/review/count', { product_id });
+    return get('/custom/review/count', { product_id });
 }
 
 export async function updateProductReview(
@@ -438,7 +438,7 @@ export async function updateProductReview(
     customer_id: string,
     order_id: string
 ) {
-    return await putSecure('/custom/review', {
+    return putSecure('/custom/review', {
         product_id: product_id,
         review_updates: review,
         rating_updates: rating,
@@ -448,11 +448,11 @@ export async function updateProductReview(
 }
 
 export async function getInventoryCount(variant_id: string) {
-    return await get('/custom/variant/count', { variant_id });
+    return get('/custom/variant/count', { variant_id });
 }
 
 export async function getStore(product_id: string) {
-    return await getSecure('/custom/store', { product_id });
+    return getSecure('/custom/store', { product_id });
 }
 
 export async function getStoreIdByName(store_name: string) {
@@ -464,26 +464,26 @@ export async function setCurrency(
     preferred_currency: string,
     customer_id: string
 ) {
-    return await putSecure('/custom/customer/preferred-currency', {
+    return putSecure('/custom/customer/preferred-currency', {
         customer_id,
         preferred_currency,
     });
 }
 
 export async function getStoreProducts(store_id: string) {
-    return await get('/custom/store/products', {
+    return get('/custom/store/products', {
         store_id,
     });
 }
 
 export async function getStoreReviews(store_id: string) {
-    return await get('/custom/store/reviews', {
+    return get('/custom/store/reviews', {
         store_id,
     });
 }
 
 export async function getCheckoutData(cart_id: string) {
-    return await getSecure('/custom/checkout', {
+    return getSecure('/custom/checkout', {
         cart_id,
     });
 }
@@ -497,7 +497,7 @@ export async function finalizeCheckout(
     chain_id: number
     //cart_products: any
 ) {
-    return await postSecure('/custom/checkout', {
+    return postSecure('/custom/checkout', {
         cart_id,
         transaction_id,
         payer_address,
@@ -508,11 +508,11 @@ export async function finalizeCheckout(
 }
 
 export async function getCartEmail(cart_id: string) {
-    return await getSecure('/custom/cart/email', { cart_id });
+    return getSecure('/custom/cart/email', { cart_id });
 }
 
 export async function setCartEmail(cart_id: string, email_address: string) {
-    return await putSecure('/custom/cart/email', { cart_id, email_address });
+    return putSecure('/custom/cart/email', { cart_id, email_address });
 }
 
 export async function recoverCart(customer_id: string) {
@@ -634,7 +634,7 @@ export async function updatePaymentSession(
     providerId: string
 ) {
     if (paymentSessionId) {
-        return await putSecure('/custom/payment-session', {
+        return putSecure('/custom/payment-session', {
             cart_id: cartId,
             payment_session_id: paymentSessionId,
         });
@@ -642,7 +642,7 @@ export async function updatePaymentSession(
 }
 
 export async function addDefaultShippingMethod(cart_id: string) {
-    return await putSecure('/custom/cart/shipping', {
+    return putSecure('/custom/cart/shipping', {
         cart_id,
     });
 }
@@ -809,7 +809,7 @@ export async function getNonSecureCustomer(includedAddresses: boolean = true) {
         customer_id: '',
     };
     const customer_id: string = token?.customer_id ?? '';
-    return await get('/custom/customer', {
+    return get('/custom/customer', {
         customer_id,
         include_addresses: includedAddresses ? 'true' : 'false',
     });
@@ -818,6 +818,16 @@ export async function getNonSecureCustomer(includedAddresses: boolean = true) {
 export async function clearAuthCookie() {
     try {
         cookies().set('_medusa_jwt', '', {
+            maxAge: -1,
+        });
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+export async function clearCartCookie() {
+    try {
+        cookies().set('_medusa_cart_id', '', {
             maxAge: -1,
         });
     } catch (e) {
@@ -957,7 +967,7 @@ export const getRegion = cache(async function (countryCode: string) {
 
         const region = countryCode
             ? regionMap.get(countryCode)
-            : regionMap.get('us');
+            : regionMap.get('en');
 
         return region;
     } catch (e: any) {

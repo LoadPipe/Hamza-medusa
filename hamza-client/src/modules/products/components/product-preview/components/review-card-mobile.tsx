@@ -1,9 +1,6 @@
 import React from 'react';
 import { Text, Box, Flex, Heading } from '@chakra-ui/react';
-import Image from 'next/image';
-import ReviewStar from '../../../../../../public/images/products/review-star.svg';
-import { TiStarFullOutline } from 'react-icons/ti';
-import { renderStars } from './review-card';
+import { renderStars } from '../../review-stars';
 
 interface ReviewCardProps {
     name: string;

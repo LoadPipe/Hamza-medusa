@@ -17,33 +17,34 @@ import {
 import { BsCircleFill } from 'react-icons/bs';
 import ShippedCard from '@modules/account/components/shipped-card';
 import EmptyState from '@modules/order/components/empty-state';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
-import { debounce } from 'lodash';
+import { debounce, upperCase } from 'lodash';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
 
 const Shipped = ({
     customer,
-    chainEnabled,
-    onSuccess,
+    // chainEnabled,
+    // onSuccess,
     isEmpty,
 }: {
     customer: string;
-    chainEnabled?: boolean;
-    onSuccess?: () => void;
+    // chainEnabled?: boolean;
+    // onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
     const [courierInfo, setCourierInfo] = useState(false);
     const [shouldFetch, setShouldFetch] = useState(false);
 
-    console.log(`chainEnabled Shipped ${chainEnabled}`);
-
-    const debouncedOnSuccess = debounce(() => {
-        onSuccess && onSuccess();
-    }, 5000);
+    // const debouncedOnSuccess = debounce(() => {
+    //     onSuccess && onSuccess();
+    // }, 1000);
 
     const toggleCourierInfo = (orderId: any) => {
         setCourierInfo(courierInfo === orderId ? null : orderId);
     };
+
+    const queryClient = useQueryClient();
 
     const {
         data: shippedOrder,
@@ -52,33 +53,40 @@ const Shipped = ({
         isFetching,
         failureCount,
         isStale,
-        isSuccess,
-        refetch,
     } = useQuery(
         ['fetchShippedOrder', customer],
         () => getSingleBucket(customer, 2), // Fetching shipped orders (bucket 2)
         {
-            enabled: !!customer && chainEnabled, // Ensure query only runs when enabled is true
-            staleTime: 5 * 60 * 1000, // 5 minutes
-            retry: 5, // Retry 5 times
-            retryDelay: (attempt) => Math.min(2000 * 2 ** attempt, 20000), // Exponential backoff with max delay of 20 seconds
-            refetchOnWindowFocus: false,
+            enabled: !!customer,
+            retry: true,
+            refetchOnWindowFocus: true,
         }
     );
 
     // manually trigger a refetch if its stale
     useEffect(() => {
-        if (isStale && chainEnabled && shippedOrder == undefined) {
-            refetch();
-        }
-    }, [isStale, chainEnabled]);
+        const retryFetch = async () => {
+            if (isStale && shippedOrder == undefined) {
+                for (let i = 0; i < 5; i++) {
+                    if (shippedOrder == undefined) {
+                        queryClient.resetQueries(['fetchShippedOrder']);
+                        queryClient.invalidateQueries(['fetchShippedOrder']);
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, 100)
+                        );
+                    }
+                }
+            }
+        };
+        retryFetch();
+    }, [isStale]);
 
-    useEffect(() => {
-        if (isSuccess && shippedOrder && shippedOrder.length > 0) {
-            console.log(`TRIGGER`);
-            debouncedOnSuccess();
-        }
-    }, [isSuccess, chainEnabled]);
+    // useEffect(() => {
+    //     if (isSuccess && shippedOrder) {
+    //         console.log(`TRIGGER`);
+    //         debouncedOnSuccess();
+    //     }
+    // }, [isSuccess, chainEnabled]);
 
     console.log({
         template: 'SHIPPED',
@@ -157,6 +165,7 @@ const Shipped = ({
                                             key={item.id}
                                             order={item}
                                             vendorName={order.store.name}
+                                            address={order.shipping_address}
                                             handle={
                                                 item.variant?.product?.handle ||
                                                 'N/A'
@@ -341,18 +350,16 @@ const Shipped = ({
                                                                         <strong>
                                                                             Price:
                                                                         </strong>{' '}
-                                                                        ¥
-                                                                        {order
-                                                                            .bucky_metadata
-                                                                            ?.data
-                                                                            ?.productList[0]
-                                                                            ?.productPrice ||
-                                                                            'N/A'}{' '}
-                                                                        {order
-                                                                            .bucky_metadata
-                                                                            ?.data
-                                                                            .currency ||
-                                                                            'N/A'}
+                                                                        {formatCryptoPrice(
+                                                                            Number(
+                                                                                item.unit_price
+                                                                            ),
+                                                                            item.currency_code ??
+                                                                                'usdc'
+                                                                        )}{' '}
+                                                                        {upperCase(
+                                                                            item.currency_code
+                                                                        )}
                                                                     </Text>
                                                                     <Text fontSize="md">
                                                                         <strong>

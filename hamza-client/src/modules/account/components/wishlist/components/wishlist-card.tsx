@@ -22,9 +22,10 @@ import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutatio
 import { WishlistProduct } from '@store/wishlist/wishlist-store';
 import { Spinner, Trash } from '@medusajs/icons';
 import axios from 'axios';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { LuBadgeCheck } from 'react-icons/lu';
+import { string } from 'zod';
 
 type PriceDictionary = {
     eth?: string;
@@ -37,6 +38,7 @@ interface WishlistCardProps {
     productDescription: string;
     productPrice: PriceDictionary;
     productImage: string;
+    productVariantImage: string | null;
     productId: string;
     productVariantId: string | null;
     countryCode: string;
@@ -68,11 +70,12 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
     productPrice,
     productId,
     productImage,
+    productVariantImage,
     productVariantId,
     countryCode,
 }) => {
-    const { data, error, isLoading } = useQuery(
-        ['products', productVariantId], // Use the variant ID directly as part of the query key
+    const { data, error, isLoading, isFetching } = useQuery(
+        ['wishlist', productVariantId], // Use the variant ID directly as part of the query key
         async () => {
             const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/inventory?variant_id=${productVariantId}`;
             const response = await axios.get(url);
@@ -82,6 +85,19 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
             enabled: !!productVariantId, // Ensure the query only runs if productVarientId is defined
         }
     );
+
+    console.log(`VARIANT THUMB ${productVariantImage}`);
+
+    // Shot in the dark, I can't even simulate this...
+    const queryClient = useQueryClient();
+    useEffect(() => {
+        resetCard();
+    }, [productVariantId]);
+
+    const resetCard = async () => {
+        if (productVariantId !== null && isFetching)
+            await queryClient.resetQueries(['wishlist']);
+    };
 
     // Get inventory data
     const productInventory = data?.data ?? 0;
@@ -128,9 +144,6 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
             });
             if (showPopup) {
                 setCartModalOpen(true);
-                setTimeout(() => {
-                    setCartModalOpen(false);
-                }, 3000);
             }
         } catch (error) {
             console.error('Error adding to cart:', error);
@@ -251,7 +264,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                             href={`/products/${productData.handle}`}
                         >
                             <ChakraImage
-                                src={productImage}
+                                src={productVariantImage ?? productImage}
                                 alt={productImage}
                                 maxWidth={'75px'}
                                 width={'75px'}
@@ -271,8 +284,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                             noOfLines={2}
                             maxWidth={{ base: '100%', md: '50%' }}
                         >
-                            {productDescription} adsfasdfsadfasdf aDAsd aSD
-                            sdaSDAsdaSD a sadå
+                            {productDescription}
                         </Text>
 
                         {/* Currency Icon and Price */}
@@ -391,6 +403,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                 description: productData.description,
                                 handle: productData.handle,
                                 thumbnail: productData.thumbnail,
+                                variantThumbnail: productData.variantThumbnail,
                                 title: productData.title,
                                 price: productPrice,
                                 productVariantId: productVariantId,
@@ -405,6 +418,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
             <Divider mt="1rem" borderColor={'#555555'} />
             <CartPopup
                 open={cartModalOpen}
+                productName={productData.title}
                 closeModal={() => {
                     setCartModalOpen(false);
                 }}

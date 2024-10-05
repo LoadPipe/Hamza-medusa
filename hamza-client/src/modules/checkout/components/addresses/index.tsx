@@ -34,8 +34,8 @@ const Addresses = ({
     const pathname = usePathname();
     const params = useParams();
 
-    const countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY
-        ? 'us'
+    const countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY
+        ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
         : (params.countryCode as string);
 
     const isOpen =
@@ -46,9 +46,9 @@ const Addresses = ({
         useToggleState(
             cart?.shipping_address && cart?.billing_address
                 ? compareAddresses(
-                      cart?.shipping_address,
-                      cart?.billing_address
-                  )
+                    cart?.shipping_address,
+                    cart?.billing_address
+                )
                 : true
         );
 

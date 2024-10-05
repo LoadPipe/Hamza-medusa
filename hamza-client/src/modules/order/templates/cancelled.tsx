@@ -2,29 +2,30 @@ import { getSingleBucket } from '@lib/data';
 import { Box, Text } from '@chakra-ui/react';
 import CancelCard from '@modules/account/components/cancel-card';
 import EmptyState from '@modules/order/components/empty-state';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
 import React, { useEffect, useState } from 'react';
 import { debounce } from 'lodash';
 
 const Cancelled = ({
     customer,
-    chainEnabled,
-    onSuccess,
+    // chainEnabled,
+    // onSuccess,
     isEmpty,
 }: {
     customer: string;
-    chainEnabled?: boolean;
-    onSuccess?: () => void;
+    // chainEnabled?: boolean;
+    // onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
     // Fetch canceled orders with useQuery
     const [shouldFetch, setShouldFetch] = useState(false);
-    console.log(`chainEnabled Cancelled ${chainEnabled}`);
 
-    const debouncedOnSuccess = debounce(() => {
-        onSuccess && onSuccess();
-    }, 5000);
+    // const debouncedOnSuccess = debounce(() => {
+    //     onSuccess && onSuccess();
+    // }, 1000);
+
+    const queryClient = useQueryClient();
 
     const {
         data: canceledOrder,
@@ -39,25 +40,36 @@ const Cancelled = ({
         ['fetchCanceledOrder', customer],
         () => getSingleBucket(customer, 4),
         {
-            enabled: !!customer && chainEnabled, // Ensure query only runs when enabled is true
-            staleTime: 5 * 60 * 1000, // 5 minutes
-            retry: false,
+            enabled: !!customer,
+            retry: true,
+            refetchOnWindowFocus: true,
         }
     );
 
     // manually trigger a refetch if its stale
     useEffect(() => {
-        if (isStale && chainEnabled && canceledOrder == undefined) {
-            refetch();
-        }
+        const retryFetch = async () => {
+            if (isStale && canceledOrder == undefined) {
+                for (let i = 0; i < 5; i++) {
+                    if (canceledOrder == undefined) {
+                        queryClient.resetQueries(['fetchCanceledOrder']);
+                        queryClient.invalidateQueries(['fetchCanceledOrder']);
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, 100)
+                        );
+                    }
+                }
+            }
+        };
+        retryFetch();
     }, [isStale]);
 
-    useEffect(() => {
-        if (isSuccess && canceledOrder && canceledOrder.length > 0) {
-            console.log(`TRIGGER`);
-            debouncedOnSuccess();
-        }
-    }, [isSuccess, chainEnabled]);
+    // useEffect(() => {
+    //     if (isSuccess && canceledOrder) {
+    //         console.log(`TRIGGER`);
+    //         debouncedOnSuccess();
+    //     }
+    // }, [isSuccess, chainEnabled]);
 
     // Log the queries for cancelled state and data
     console.log({
