@@ -100,7 +100,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
             wallet_address: '',
         });
         clearAuthCookie();
-        clearCartCookie();
     };
 
     useEffect(() => {
@@ -216,6 +215,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         console.log(clientWallet);
                         console.log(message?.address);
                         clearLogin();
+                        clearCartCookie();
                         return false;
                     }
                 } else {
