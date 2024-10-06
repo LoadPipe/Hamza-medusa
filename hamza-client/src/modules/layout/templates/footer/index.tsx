@@ -7,9 +7,10 @@ import { FaDiscord } from 'react-icons/fa6';
 import Link from 'next/link';
 import Image from 'next/image';
 import Reputation from '@modules/home/components/reputation';
-import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
+//import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
+//import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
+import HamzaLogo from '../../../../../public/images/logo/hamza-beta.png';
 import React from 'react';
-import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
 
 const fetchCollections = async () => {
     const { collections } = await getCollectionsList();
@@ -189,6 +190,7 @@ export default async function Footer() {
                     <Flex justifyContent={'center'} alignItems="center">
                         <LocalizedClientLink href="/">
                             <Flex width={'190px'} flexShrink={0}>
+                                {/*
                                 <Image
                                     src={HamzaLogo}
                                     style={{ width: '100%', height: '67px' }}
@@ -203,6 +205,15 @@ export default async function Footer() {
                                         alignSelf: 'center',
                                         marginLeft: '1rem',
                                     }}
+                                    alt="Hamza"
+                                />
+                                */}
+
+                                <Image
+                                    style={{
+                                        alignSelf: 'left',
+                                    }}
+                                    src={HamzaLogo}
                                     alt="Hamza"
                                 />
                             </Flex>
