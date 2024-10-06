@@ -23,7 +23,7 @@ const HeroBanner = () => {
                     alignItems="center"
                     style={{ opacity: 1, transition: 'opacity 0.5s ease-out' }}
                 >
-                    <Link href="https://blog.hamza.biz/alpha-ship" isExternal>
+                    <Link href="https://blog.hamza.market/alpha-ship" isExternal>
                         <Text
                             fontSize={{ base: '12px', md: '16px' }}
                             textAlign={'center'}
@@ -36,7 +36,7 @@ const HeroBanner = () => {
                                 color="cyan.300"
                                 textDecoration="underline"
                             >
-                                https://blog.hamza.biz/alpha-ship
+                                https://blog.hamza.market/alpha-ship
                             </Text>
                         </Text>
                     </Link>

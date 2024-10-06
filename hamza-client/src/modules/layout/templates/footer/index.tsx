@@ -63,7 +63,7 @@ export default async function Footer() {
                             </Text>
                         </Link>
 
-                        <a href="https://blog.hamza.biz/about/" target="_blank">
+                        <a href="https://blog.hamza.market/about/" target="_blank">
                             <Text
                                 fontSize={{ base: '14px', md: '16px' }}
                                 className="text-base font-bold"
@@ -72,7 +72,7 @@ export default async function Footer() {
                             </Text>
                         </a>
 
-                        <a href="https://blog.hamza.biz/blog/" target="_blank">
+                        <a href="https://blog.hamza.market/blog/" target="_blank">
                             <Text
                                 fontSize={{ base: '14px', md: '16px' }}
                                 className="text-base font-bold"
@@ -82,7 +82,7 @@ export default async function Footer() {
                         </a>
 
                         <a
-                            href="https://blog.hamza.biz/contact"
+                            href="https://blog.hamza.market/contact"
                             target="_blank"
                         >
                             <Text
@@ -101,7 +101,7 @@ export default async function Footer() {
 
                     <Flex flexDir={'column'} color={'white'} gap={'8px'}>
                         <a
-                            href="https://blog.hamza.biz/affiliate/"
+                            href="https://blog.hamza.market/affiliate/"
                             target="_blank"
                         >
                             <Text
@@ -113,7 +113,7 @@ export default async function Footer() {
                         </a>
 
                         <a
-                            href="https://blog.hamza.biz/ambassador/"
+                            href="https://blog.hamza.market/ambassador/"
                             target="_blank"
                         >
                             <Text
@@ -125,7 +125,7 @@ export default async function Footer() {
                         </a>
 
                         <a
-                            href="https://blog.hamza.biz/careers/"
+                            href="https://blog.hamza.market/careers/"
                             target="_blank"
                         >
                             <Text
@@ -139,7 +139,7 @@ export default async function Footer() {
 
                     <Flex flexDir={'column'} color={'white'} gap={'8px'}>
                         <a
-                            href="https://blog.hamza.biz/merchant/"
+                            href="https://blog.hamza.market/merchant/"
                             target="_blank"
                         >
                             <Text
