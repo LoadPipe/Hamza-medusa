@@ -241,7 +241,10 @@ const Processing = ({
 
                     {processingOrder.map((order: any) => (
                         <>
-                            <div key={order.id}>
+                            <div
+                                key={order.id}
+                                className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
+                            >
                                 {order.items?.map((item: any) => (
                                     <Box
                                         key={item.id}
@@ -262,7 +265,7 @@ const Processing = ({
                                             }
                                         />
 
-                                        <div className="flex justify-end pr-4">
+                                        <div className="flex justify-end pr-4 mt-4">
                                             <Box
                                                 color={'primary.green.900'}
                                                 cursor="pointer"
@@ -317,6 +320,7 @@ const Processing = ({
                                                             <VStack
                                                                 align="start"
                                                                 spacing={4}
+                                                                flexWrap="wrap"
                                                                 p={4}
                                                                 borderRadius="lg"
                                                                 w="100%"
@@ -600,11 +604,13 @@ const Processing = ({
                                                                                 Item
                                                                                 ID:
                                                                             </Text>
-                                                                            <Text fontWeight="bold">
-                                                                                {
-                                                                                    item.id
-                                                                                }
-                                                                            </Text>
+                                                                            <Flex flexWrap="wrap">
+                                                                                <Text fontWeight="bold">
+                                                                                    {
+                                                                                        item.id
+                                                                                    }
+                                                                                </Text>
+                                                                            </Flex>
                                                                         </Box>
                                                                         <Box>
                                                                             <Text
@@ -614,11 +620,13 @@ const Processing = ({
                                                                                 Order
                                                                                 ID:
                                                                             </Text>
-                                                                            <Text fontWeight="bold">
-                                                                                {
-                                                                                    order.id
-                                                                                }
-                                                                            </Text>
+                                                                            <Flex flexWrap="wrap">
+                                                                                <Text fontWeight="bold">
+                                                                                    {
+                                                                                        order.id
+                                                                                    }
+                                                                                </Text>
+                                                                            </Flex>
                                                                         </Box>
                                                                         <Box>
                                                                             <Text
@@ -881,12 +889,19 @@ const Processing = ({
                                 </FormControl>
                             </ModalBody>
                             <ModalFooter>
-                                <Button variant="ghost" onClick={closeModal}>
+                                <Button
+                                    variant="solid"
+                                    borderColor={'primary.indigo.900'}
+                                    color={'primary.indigo.900'}
+                                    width={'180px'}
+                                    height={'47px'}
+                                    borderRadius={'37px'}
+                                    onClick={closeModal}
+                                >
                                     Cancel
                                 </Button>
                                 <Box
                                     as="button"
-                                    mt={4}
                                     borderRadius={'37px'}
                                     backgroundColor={
                                         cancelReason.trim().length < 50

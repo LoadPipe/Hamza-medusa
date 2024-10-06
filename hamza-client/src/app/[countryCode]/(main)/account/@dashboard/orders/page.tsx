@@ -17,7 +17,14 @@ export default async function Orders() {
         notFound();
     }
     return (
-        <Box width="full" bg="#121212" color="white" rounded={'lg'}>
+        <Box
+            maxW={'927px'}
+            width="100%"
+            backgroundColor={'#121212'}
+            flexDirection={'column'}
+            color="white"
+            rounded={'lg'}
+        >
             <Box display="flex" flexDirection="column">
                 <OrderOverview customer={customer} ordersExist={ordersExist} />
             </Box>

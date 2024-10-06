@@ -168,7 +168,7 @@ const Refund = ({
                                             'N/A'
                                         }
                                     />
-                                    <div className="flex justify-end pr-4">
+                                    <div className="flex justify-end pr-4 mt-4">
                                         <Box
                                             color={'primary.green.900'}
                                             cursor="pointer"

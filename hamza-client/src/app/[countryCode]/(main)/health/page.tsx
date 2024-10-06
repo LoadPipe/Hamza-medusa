@@ -26,22 +26,23 @@ export default function Health() {
                 <Text color={'primary.green.900'} fontSize={'40px'}>
                     A Health to ye Laddie
                 </Text>
-                <Text textAlign={'center'}>
-                    A Health to ye Laddie
-                </Text>
-                <Flex
-                    mt="1rem"
-                    width={'190px'}
-                    height={'50px'}
-                    backgroundColor={'primary.indigo.900'}
-                    justifyContent={'center'}
-                    alignItems={'center'}
-                    borderRadius={'full'}
+                <Text textAlign={'center'}>A Health to ye Laddie</Text>
+                <a
+                    href="/"
+                    style={{ textDecoration: 'none', color: 'inherit' }}
                 >
-                    <a href="/">
+                    <Flex
+                        mt="1rem"
+                        width={'190px'}
+                        height={'50px'}
+                        backgroundColor={'primary.indigo.900'}
+                        justifyContent={'center'}
+                        alignItems={'center'}
+                        borderRadius={'full'}
+                    >
                         <Text>Go Home</Text>
-                    </a>
-                </Flex>
+                    </Flex>
+                </a>
             </Flex>
         </Flex>
     );
