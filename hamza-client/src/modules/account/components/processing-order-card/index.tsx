@@ -62,7 +62,7 @@ const ProcessingOrderCard = ({
         >
             <Flex alignItems="center" mb={2}>
                 <Text
-                    fontSize={{ base: '14px', md: '24px' }}
+                    fontSize={{ base: '22px', md: '24px' }}
                     fontWeight="bold"
                     noOfLines={1}
                 >
