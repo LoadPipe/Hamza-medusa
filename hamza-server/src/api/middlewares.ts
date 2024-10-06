@@ -84,6 +84,21 @@ const restrictCustomerOrders = async (
     }
 };
 
+const restrictCustomerCarts = async (
+    req: MedusaRequest,
+    res: MedusaResponse,
+    next: MedusaNextFunction
+) => {
+    let authorized = false;
+    if (req.headers.authorization) {
+        const jwtToken: any = jwt.decode(req.headers.authorization.replace('Bearer ', ''));
+        const customerId = jwtToken?.customer_id;
+        console.log('customer id in store/carts route is: ', customerId);
+        authorized = true;
+    }
+    next();
+};
+
 export const permissions = async (
     req: MedusaRequest,
     res: MedusaResponse,
@@ -197,6 +212,16 @@ export const config: MiddlewaresConfig = {
                     credentials: true,
                 }),
                 restrictCustomerOrders
+            ],
+        },
+        {
+            matcher: '/store/carts',
+            middlewares: [
+                cors({
+                    origin: [STORE_CORS],
+                    credentials: true,
+                }),
+                restrictCustomerCarts
             ],
         },
 
