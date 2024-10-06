@@ -56,7 +56,7 @@ export default function MobileMainMenu() {
                 backgroundColor={'#121212'}
                 width={`calc(100vw - 2rem)`}
             >
-                <Link href={`https://blog.hamza.biz/merchant/`} target="_blank">
+                <Link href={`https://blog.hamza.market/merchant/`} target="_blank">
                     <MenuItem
                         fontWeight={'600'}
                         mt="1rem"
@@ -76,7 +76,7 @@ export default function MobileMainMenu() {
                     </MenuItem>
                 </Link>
                 <Link
-                    href={`https://blog.hamza.biz/affiliate/`}
+                    href={`https://blog.hamza.market/affiliate/`}
                     target="_blank"
                 >
                     <MenuItem
@@ -158,7 +158,7 @@ export default function MobileMainMenu() {
                     </MenuItem>
                 </a>
 
-                <a target="_blank" href="https://blog.hamza.biz/about/">
+                <a target="_blank" href="https://blog.hamza.market/about/">
                     <MenuItem
                         fontWeight={'600'}
                         px="2rem"
