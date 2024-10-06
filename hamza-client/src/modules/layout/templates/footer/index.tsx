@@ -255,7 +255,6 @@ export default async function Footer() {
                             display={{ base: 'none', md: 'block' }}
                             className="text-base font-bold"
                         >
-                            Certificate of Authenticity
                         </Text>
                     </Flex>
                 </Flex>
