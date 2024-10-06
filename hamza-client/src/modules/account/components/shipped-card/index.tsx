@@ -80,26 +80,28 @@ const ShippedCard = ({
                 >
                     {vendorName}
                 </Text>
-                <Flex
-                    display={{ base: 'none', md: 'flex' }}
-                    ml={2}
-                    alignItems="center"
-                >
+                <Flex display={{ base: 'flex' }} ml={2} alignItems="center">
                     <FaCheckCircle color="#3196DF" />
                 </Flex>
             </Flex>
 
-            <Flex justifyContent="space-between">
+            <Flex
+                justifyContent="space-between"
+                flexDirection={{ base: 'column', md: 'row' }}
+                gap={{ base: 4, md: 0 }}
+            >
                 {/* Left Side: Existing Content */}
                 <Flex
-                    alignItems="center"
+                    direction={{ base: 'column', md: 'row' }}
+                    alignItems={{ base: 'flex-start', md: 'center' }}
                     justifyContent="space-between"
-                    flex="1"
                 >
-                    <Link href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}>
+                    <Link
+                        href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}
+                    >
                         <Image
                             borderRadius="lg"
-                            width={{ base: '60px', md: '120px' }}
+                            width={{ base: '120px', md: '180px' }}
                             src={
                                 order?.variant?.metadata?.imgUrl ??
                                 order.thumbnail ??
@@ -154,12 +156,7 @@ const ShippedCard = ({
                 </Flex>
 
                 {/* Right Side: Courier and Address */}
-                <Flex
-                    direction="column"
-                    ml={4}
-                    minWidth="200px"
-                    maxWidth="300px"
-                >
+                <Flex direction="column" minWidth="200px" maxWidth="300px">
                     {/*<Box mb={4}>*/}
                     {/*    <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">*/}
                     {/*        Courier*/}
@@ -169,20 +166,25 @@ const ShippedCard = ({
                     {/*    </Text>*/}
                     {/*</Box>*/}
 
-                    <Box>
-                        <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
-                            Address
-                        </Text>
-                        <Text color={'white'} fontSize="16px">
-                            <Text color="white" fontSize="16px">
-                                {address?.address_1 || 'N/A'}{' '}
-                                {address?.address_2 || ''}{' '}
-                                {address?.city || 'N/A'}{' '}
-                                {address?.province || 'N/A'}{' '}
-                                {address?.postal_code || 'N/A'}
+                    <Flex direction={{ base: 'column', md: 'row' }} gap={4}>
+                        <Box>
+                            <Text
+                                color={'rgba(85, 85, 85, 1.0)'}
+                                fontSize="16px"
+                            >
+                                Address
                             </Text>
-                        </Text>
-                    </Box>
+                            <Text color={'white'} fontSize="16px">
+                                <Text color="white" fontSize="16px">
+                                    {address?.address_1 || 'N/A'}{' '}
+                                    {address?.address_2 || ''}{' '}
+                                    {address?.city || 'N/A'}{' '}
+                                    {address?.province || 'N/A'}{' '}
+                                    {address?.postal_code || 'N/A'}
+                                </Text>
+                            </Text>
+                        </Box>
+                    </Flex>
                 </Flex>
             </Flex>
         </Box>

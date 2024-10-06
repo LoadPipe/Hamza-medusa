@@ -97,16 +97,14 @@ const DeliveredCard = ({ order, handle, vendorName }: OrderCardProps) => {
                 >
                     {vendorName}
                 </Text>
-                <Flex
-                    display={{ base: 'none', md: 'flex' }}
-                    ml={2}
-                    alignItems="center"
-                >
+                <Flex display={{ base: 'flex' }} ml={2} alignItems="center">
                     <FaCheckCircle color="#3196DF" />
                 </Flex>
             </Flex>
             <Flex alignItems="center" justifyContent="space-between">
-                <Link href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}>
+                <Link
+                    href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}
+                >
                     <Image
                         borderRadius="lg"
                         width={{ base: '60px', md: '120px' }}

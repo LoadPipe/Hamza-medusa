@@ -3,6 +3,7 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
 import { FaCheckCircle } from 'react-icons/fa';
 import Link from 'next/link';
+import React from 'react';
 
 type OrderDetails = {
     thumbnail: string;
@@ -75,24 +76,32 @@ const RefundCard = ({ order, handle, vendorName }: OrderCardProps) => {
                 </Flex>
             </Flex>
 
-            <Flex justifyContent="space-between">
+            <Flex
+                justifyContent="space-between"
+                flexDirection={{ base: 'column', md: 'row' }}
+                gap={{ base: 4, md: 0 }}
+            >
+                {' '}
                 {/* Left Side: Existing Content */}
                 <Flex
-                    alignItems="center"
+                    direction={{ base: 'column', md: 'row' }}
+                    alignItems={{ base: 'flex-start', md: 'center' }}
                     justifyContent="space-between"
-                    flex="1"
                 >
-                    <Link href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}>
+                    <Link
+                        href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}
+                    >
                         <Image
                             borderRadius="lg"
-                            width={{ base: '60px', md: '120px' }}
+                            width={{ base: '120px', md: '180px' }}
                             src={
                                 order?.variant?.metadata?.imgUrl ??
                                 order.thumbnail ??
                                 ''
                             }
                             alt={`Thumbnail of ${order.title}`}
-                            mr={4}
+                            mr={{ base: 1, md: 4 }}
+                            mb={{ base: 4, md: 0 }}
                         />
                     </Link>
 
@@ -138,14 +147,8 @@ const RefundCard = ({ order, handle, vendorName }: OrderCardProps) => {
                         </Flex>
                     </Box>
                 </Flex>
-
                 {/* Right Side: Courier and Address */}
-                <Flex
-                    direction="column"
-                    ml={4}
-                    minWidth="200px"
-                    maxWidth="300px"
-                >
+                <Flex direction="column" minWidth="200px" maxWidth="300px">
                     <Box mb={4}>
                         <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
                             Status
