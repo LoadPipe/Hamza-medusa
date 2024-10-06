@@ -550,13 +550,25 @@ export async function updateCart(cartId: string, data: StorePostCartsCartReq) {
 export async function getCart(cartId: string) {
     const headers = getMedusaHeaders(['cart']);
 
-    return medusaClient.carts
+    const cart = await medusaClient.carts
         .retrieve(cartId, headers)
         .then(({ cart }) => cart)
         .catch((err) => {
             console.log(err);
             return null;
         });
+
+
+    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? {
+        customer_id: '',
+    };
+    const customer_id: string = token?.customer_id ?? '';
+    console.log('************* cart customer id:', cart?.customer_id);
+    console.log('************* customer id:', customer_id);
+    if (cart?.customer_id != customer_id)
+        return null;
+
+    return cart;
 }
 
 export async function addItem({
@@ -798,23 +810,15 @@ export async function getHamzaCustomer(includeAddresses: boolean = true) {
     };
     const customer_id: string = token?.customer_id ?? '';
 
-    const response = await getSecure('/custom/customer', {
-        customer_id,
-        include_addresses: includeAddresses ? 'true' : 'false',
-    });
+    let response = null;
+    if (customer_id?.length) {
+        response = await getSecure('/custom/customer', {
+            customer_id,
+            include_addresses: includeAddresses ? 'true' : 'false',
+        });
+    }
 
     return response ?? {};
-}
-
-export async function getNonSecureCustomer(includedAddresses: boolean = true) {
-    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? {
-        customer_id: '',
-    };
-    const customer_id: string = token?.customer_id ?? '';
-    return get('/custom/customer', {
-        customer_id,
-        include_addresses: includedAddresses ? 'true' : 'false',
-    });
 }
 
 export async function clearAuthCookie() {
