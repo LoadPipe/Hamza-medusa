@@ -217,6 +217,8 @@ const getMedusaHeaders = (tags: string[] = []) => {
     if (token) {
         headers.authorization = `Bearer ${token}`;
     }
+    headers.cache = false;
+    headers['Cache-Control'] = 'no-cache, no-store';
 
     return headers;
 };
