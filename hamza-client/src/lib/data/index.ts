@@ -525,6 +525,14 @@ export async function recoverCart(customer_id: string) {
     return output?.cart;
 }
 
+export async function createAnonymousCart() {
+    const output = await postSecure('/custom/cart/create', {});
+    if (output?.cart) {
+        cookies().set('_medusa_cart_id', output.cart.id);
+    }
+    return output?.cart;
+}
+
 // Cart actions
 export async function createCart(data = {}) {
     const headers = getMedusaHeaders(['cart']);
@@ -550,7 +558,7 @@ export async function updateCart(cartId: string, data: StorePostCartsCartReq) {
 export async function getCart(cartId: string) {
     const headers = getMedusaHeaders(['cart']);
 
-    const cart = await medusaClient.carts
+    let cart = await medusaClient.carts
         .retrieve(cartId, headers)
         .then(({ cart }) => cart)
         .catch((err) => {
@@ -565,8 +573,11 @@ export async function getCart(cartId: string) {
     const customer_id: string = token?.customer_id ?? '';
     console.log('************* cart customer id:', cart?.customer_id);
     console.log('************* customer id:', customer_id);
-    if (cart?.customer_id != customer_id)
-        return null;
+    if (cart?.customer_id ?? '' != customer_id) {
+        if (customer_id == '') {
+            cart = await createAnonymousCart();
+        }
+    }
 
     return cart;
 }
