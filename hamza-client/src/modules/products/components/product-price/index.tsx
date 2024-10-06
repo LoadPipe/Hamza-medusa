@@ -74,7 +74,7 @@ export default function ProductPrice({
     }, [product.id]);
 
     const navigateToVendor = () => {
-        router.push(`/us/vendor/${storeName}`);
+        router.push(`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/vendor/${storeName}`);
     };
 
     let preferredPrice =

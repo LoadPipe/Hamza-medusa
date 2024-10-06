@@ -283,29 +283,31 @@ export default function Page({ params }: { params: { slug: string } }) {
                                 </Flex>
                             </Flex>
 
-                            <Flex
-                                alignSelf={'center'}
-                                flexDir={{ base: 'row', md: 'column' }}
-                                justifyContent={{ base: 'end', md: 'normal' }}
-                                width={{ base: '100px', md: '166px' }}
-                            >
-                                <Text
-                                    mr={{ base: '5px', md: '0' }}
-                                    as="h1"
-                                    fontSize={{ base: '9px', md: '32px' }}
-                                    color="primary.green.900"
-                                    textAlign={'center'}
+
+                            {/*    <Flex
+                                    alignSelf={'center'}
+                                    flexDir={{ base: 'row', md: 'column' }}
+                                    justifyContent={{ base: 'end', md: 'normal' }}
+                                    width={{ base: '100px', md: '166px' }}
                                 >
-                                    {reviewStats.numberOfFollowers}
-                                </Text>
-                                <Text
-                                    mt={{ base: '0', md: '0.75rem' }}
-                                    fontSize={{ base: '9px', md: '16px' }}
-                                    textAlign={'center'}
-                                >
-                                    Total Followers
-                                </Text>
-                            </Flex>
+                                    <Text
+                                        mr={{ base: '5px', md: '0' }}
+                                        as="h1"
+                                        fontSize={{ base: '9px', md: '32px' }}
+                                        color="primary.green.900"
+                                        textAlign={'center'}
+                                    >
+                                        {reviewStats.numberOfFollowers}
+                                    </Text>
+                                    <Text
+                                        mt={{ base: '0', md: '0.75rem' }}
+                                        fontSize={{ base: '9px', md: '16px' }}
+                                        textAlign={'center'}
+                                    >
+                                        Total Followers
+                                    </Text>
+                                </Flex>
+                                */}
                         </Flex>
                         {/*End of Stats*/}
 
@@ -316,24 +318,26 @@ export default function Page({ params }: { params: { slug: string } }) {
                             gap="16px"
                             justifyContent={'center'}
                         >
-                            <Flex
-                                display={{ base: 'none', md: 'flex' }}
-                                height={{ base: '33px', md: '47px' }}
-                                width={{ base: '120px', md: '190px' }}
-                                borderColor={'primary.indigo.900'}
-                                borderWidth={'1px'}
-                                borderRadius={'37px'}
-                                justifyContent={'center'}
-                                cursor={'pointer'}
-                                fontSize={{ base: '12px', md: '16px' }}
-                            >
-                                <Text
-                                    alignSelf={'center'}
-                                    color="primary.indigo.900"
+                            <a href='https://blog.hamza.market/contact/' target='_blank'>
+                                <Flex
+                                    display={{ base: 'none', md: 'flex' }}
+                                    height={{ base: '33px', md: '47px' }}
+                                    width={{ base: '120px', md: '190px' }}
+                                    borderColor={'primary.indigo.900'}
+                                    borderWidth={'1px'}
+                                    borderRadius={'37px'}
+                                    justifyContent={'center'}
+                                    cursor={'pointer'}
+                                    fontSize={{ base: '12px', md: '16px' }}
                                 >
-                                    Chat with them
-                                </Text>
-                            </Flex>
+                                    <Text
+                                        alignSelf={'center'}
+                                        color="primary.indigo.900"
+                                    >
+                                        Chat with them
+                                    </Text>
+                                </Flex>
+                            </a>
 
                             {/*<Flex*/}
                             {/*    display={{ base: 'none', md: 'flex' }}*/}
@@ -487,7 +491,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </Box>
+        </Box >
     );
 }
 

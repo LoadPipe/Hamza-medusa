@@ -32,7 +32,7 @@ export async function getRegion(countryCode: string) {
 
         const region = countryCode
             ? regionMap.get(countryCode)
-            : regionMap.get(process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'us');
+            : regionMap.get(process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en');
 
         return region;
     } catch (e: any) {
