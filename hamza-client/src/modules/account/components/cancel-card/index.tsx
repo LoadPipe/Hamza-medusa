@@ -136,12 +136,6 @@ const CancelCard = ({
                     <Box flex="1">
                         <Flex justifyContent="space-between" direction="row">
                             <Flex direction="column" mt={4}>
-                                <Text
-                                    color={'rgba(85, 85, 85, 1.0)'}
-                                    fontSize="16px"
-                                >
-                                    Item Name
-                                </Text>
                                 <Text fontWeight="bold" fontSize="18px">
                                     {order.title}
                                 </Text>
