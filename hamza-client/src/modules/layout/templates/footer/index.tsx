@@ -150,7 +150,7 @@ export default async function Footer() {
                             </Text>
                         </a>
 
-                        <a href="https://support.hamza.biz/" target="_blank">
+                        <a href="https://support.hamza.market/" target="_blank">
                             <Text
                                 fontSize={{ base: '14px', md: '16px' }}
                                 className="text-base font-bold"
@@ -160,7 +160,7 @@ export default async function Footer() {
                         </a>
 
                         <a
-                            href="https://support.hamza.biz/help/1568263160"
+                            href="https://support.hamza.market/help/1568263160"
                             target="_blank"
                         >
                             <Text
