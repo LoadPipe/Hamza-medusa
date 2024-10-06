@@ -35,7 +35,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 ),
                 userService.create(
                     {
-                        email: 'support@hamza.biz',
+                        email: 'support@hamzamarket.com',
                         first_name: 'Hamza',
                         last_name: 'Official Shop',
                         wallet_address:
