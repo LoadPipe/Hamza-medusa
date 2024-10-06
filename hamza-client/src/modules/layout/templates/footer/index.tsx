@@ -231,13 +231,13 @@ export default async function Footer() {
                             Follow us on:{' '}
                         </Text>
                         <Link
-                            href="https://x.com/loadpipe?t=mrR1xycvffxf-4MoBAhFJA&s=09"
+                            href="https://x.com/hamzadecom?t=mrR1xycvffxf-4MoBAhFJA&s=09"
                             target="_blank"
                         >
                             <FaTwitter size={24} />
                         </Link>
                         <Link
-                            href="https://discord.gg/kNGx38WZ"
+                            href="https://discord.gg/W7qu9gb3Yz"
                             target="_blank"
                         >
                             <FaDiscord size={24} />
