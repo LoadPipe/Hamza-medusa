@@ -84,12 +84,10 @@ const OrderOverview = ({
 
     return (
         <Box
-            display="flex"
             flexDirection="column"
             gap="4"
-            width="full"
             color="white"
-            p="8"
+            p={{ base: '3', lg: '4' }}
         >
             {isMobile ? (
                 <Menu>

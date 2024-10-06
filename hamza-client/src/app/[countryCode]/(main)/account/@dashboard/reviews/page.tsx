@@ -35,8 +35,7 @@ export default async function Reviews() {
             width="100%"
             backgroundColor={'#121212'}
             flexDirection={'column'}
-            borderRadius={'12px'}
-            p={'1.5rem'}
+            rounded={'lg'}
         >
             <Text
                 mb={'4'}

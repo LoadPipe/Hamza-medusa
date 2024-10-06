@@ -122,7 +122,6 @@ const ReviewPage = ({ customer }: { customer: any }) => {
             maxWidth={{ base: '100%', md: '700px', lg: '900px' }}
             mx="auto"
             bg="rgba(18, 18, 18, 0.9)"
-            p={{ base: 4, md: 8 }}
             textColor="white"
         >
             <ButtonGroup
@@ -137,7 +136,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                     }}
                     {...commonButtonStyles}
                     isActive={activeButton === 'pending'}
-                // isLoading={pendingLoading}
+                    // isLoading={pendingLoading}
                 >
                     Pending Reviews
                 </Button>
@@ -149,7 +148,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                     }}
                     {...commonButtonStyles}
                     isActive={activeButton === 'reviews'}
-                // isLoading={reviewsLoading}
+                    // isLoading={reviewsLoading}
                 >
                     Review Archives
                 </Button>
