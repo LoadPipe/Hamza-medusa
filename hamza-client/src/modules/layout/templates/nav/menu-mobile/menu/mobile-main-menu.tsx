@@ -139,7 +139,7 @@ export default function MobileMainMenu() {
                     </MenuItem>
                 </NavLink>
 
-                <a target="_blank" href="https://blog.hamza.biz/blog/">
+                <a target="_blank" href="https://blog.hamza.market/blog/">
                     <MenuItem
                         fontWeight={'600'}
                         px="2rem"
