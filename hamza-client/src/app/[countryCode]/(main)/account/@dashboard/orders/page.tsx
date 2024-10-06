@@ -24,6 +24,8 @@ export default async function Orders() {
             flexDirection={'column'}
             color="white"
             rounded={'lg'}
+            justifyContent="center"
+            alignItems="center"
         >
             <Box display="flex" flexDirection="column">
                 <OrderOverview customer={customer} ordersExist={ordersExist} />

@@ -84,8 +84,12 @@ const OrderOverview = ({
 
     return (
         <Box
+            display="flex"
             flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
             gap="4"
+            mt={4}
             color="white"
             p={{ base: '3', lg: '4' }}
         >
