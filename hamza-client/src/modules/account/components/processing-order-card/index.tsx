@@ -102,20 +102,17 @@ const ProcessingOrderCard = ({
 
                     <Box flex="1">
                         <Flex justifyContent="space-between" direction="row">
-                            <Flex direction="column">
-                                <Text
-                                    color={'rgba(85, 85, 85, 1.0)'}
-                                    fontSize="16px"
-                                >
-                                    Item Name
-                                </Text>
+                            <Flex direction="column" mt={2}>
                                 <Text
                                     fontSize={{ base: '16px', md: '18px' }}
                                     fontWeight="bold"
                                 >
                                     {order.title}
                                 </Text>
-                                <Flex direction="column" mt={2}>
+                                <Flex
+                                    direction={{ base: 'column', md: 'row' }}
+                                    mt={2}
+                                >
                                     <Text
                                         fontSize={{ base: '14px', md: '16px' }}
                                         color={'rgba(85, 85, 85, 1.0)'}

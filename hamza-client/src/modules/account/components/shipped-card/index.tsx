@@ -112,24 +112,17 @@ const ShippedCard = ({
 
                     <Box flex="1">
                         <Flex justifyContent="space-between" direction="row">
-                            <Flex direction="column" mt={2}>
-                                <Text
-                                    color={'rgba(85, 85, 85, 1.0)'}
-                                    fontSize="16px"
-                                >
-                                    Item Name
-                                </Text>
+                            <Flex direction="column" mt={4}>
                                 <Text fontWeight="bold" fontSize="18px">
                                     {order.title}
                                 </Text>
                                 <Flex
-                                    direction="row"
-                                    alignItems="center"
+                                    direction={{ base: 'column', md: 'row' }}
                                     mt={2}
                                 >
                                     <Text
+                                        fontSize={{ base: '14px', md: '16px' }}
                                         color={'rgba(85, 85, 85, 1.0)'}
-                                        fontSize="16px"
                                         mr={1} // Add some space between "Variation:" and the description
                                     >
                                         Variation:
@@ -137,7 +130,7 @@ const ShippedCard = ({
                                     <Text fontSize="14px">
                                         {order.description}
                                     </Text>
-                                </Flex>{' '}
+                                </Flex>
                             </Flex>
                         </Flex>
 

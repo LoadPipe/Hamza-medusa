@@ -17,6 +17,7 @@ import {
 import { FaCheckCircle } from 'react-icons/fa';
 import Link from 'next/link';
 import { upperCase } from 'lodash';
+import React from 'react';
 
 type OrderDetails = {
     thumbnail: string;
@@ -145,13 +146,12 @@ const CancelCard = ({
                                     {order.title}
                                 </Text>
                                 <Flex
-                                    direction="row"
-                                    alignItems="center"
+                                    direction={{ base: 'column', md: 'row' }}
                                     mt={2}
                                 >
                                     <Text
-                                        color={'rgba(85, 85, 85, 1.0)'}
                                         fontSize={{ base: '14px', md: '16px' }}
+                                        color={'rgba(85, 85, 85, 1.0)'}
                                         mr={1} // Add some space between "Variation:" and the description
                                     >
                                         Variation:

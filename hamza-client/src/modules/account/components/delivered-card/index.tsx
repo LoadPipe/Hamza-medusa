@@ -125,7 +125,16 @@ const DeliveredCard = ({ order, handle, vendorName }: OrderCardProps) => {
                         <Text fontWeight="bold" fontSize="18px">
                             {order.title}
                         </Text>
-                        <Text fontSize="14px">{order.description}</Text>
+                        <Flex direction={{ base: 'column', md: 'row' }} mt={2}>
+                            <Text
+                                color={'rgba(85, 85, 85, 1.0)'}
+                                fontSize="16px"
+                                mr={1} // Add some space between "Variation:" and the description
+                            >
+                                Variation:
+                            </Text>
+                            <Text fontSize="14px">{order.description}</Text>
+                        </Flex>{' '}
                         <Text fontSize="24px" fontWeight="semibold">
                             {getAmount(order.unit_price)}{' '}
                             {order.currency_code.toUpperCase()}

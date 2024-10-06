@@ -115,10 +115,13 @@ const RefundCard = ({ order, handle, vendorName }: OrderCardProps) => {
                                 <Text fontWeight="bold" fontSize="18px">
                                     {order.title}
                                 </Text>
-                                <Flex direction="row" alignItems="center">
+                                <Flex
+                                    direction={{ base: 'column', md: 'row' }}
+                                    mt={2}
+                                >
                                     <Text
+                                        fontSize={{ base: '14px', md: '16px' }}
                                         color={'rgba(85, 85, 85, 1.0)'}
-                                        fontSize="16px"
                                         mr={1} // Add some space between "Variation:" and the description
                                     >
                                         Variation:
