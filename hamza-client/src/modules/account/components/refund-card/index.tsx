@@ -56,12 +56,10 @@ const RefundCard = ({ order, handle, vendorName }: OrderCardProps) => {
             rounded="lg"
             shadow="base"
             maxWidth="1000px"
-            m="auto"
-            mt={2}
         >
-            <Flex alignItems="center" mb={2}>
+            <Flex alignItems="center" mb={4}>
                 <Text
-                    fontSize={{ base: '22px', md: '24px' }}
+                    fontSize={{ base: '18px', md: '24px' }}
                     fontWeight="bold"
                     noOfLines={1}
                 >
