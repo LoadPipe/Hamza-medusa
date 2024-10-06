@@ -134,7 +134,7 @@ const CancelCard = ({
 
                     <Box flex="1">
                         <Flex justifyContent="space-between" direction="row">
-                            <Flex direction="column">
+                            <Flex direction="column" mt={4}>
                                 <Text
                                     color={'rgba(85, 85, 85, 1.0)'}
                                     fontSize="16px"
@@ -144,7 +144,11 @@ const CancelCard = ({
                                 <Text fontWeight="bold" fontSize="18px">
                                     {order.title}
                                 </Text>
-                                <Flex direction="row" alignItems="center">
+                                <Flex
+                                    direction="row"
+                                    alignItems="center"
+                                    mt={2}
+                                >
                                     <Text
                                         color={'rgba(85, 85, 85, 1.0)'}
                                         fontSize={{ base: '14px', md: '16px' }}
@@ -159,7 +163,7 @@ const CancelCard = ({
                             </Flex>
                         </Flex>
 
-                        <Flex direction="column" mt={2}>
+                        <Flex direction="column" mt={4}>
                             <Text
                                 color={'rgba(85, 85, 85, 1.0)'}
                                 fontSize="16px"
@@ -175,7 +179,12 @@ const CancelCard = ({
                     </Box>
                 </Flex>
                 {/* Right Side: Courier and Address */}
-                <Flex direction="column" minWidth="200px" maxWidth="300px">
+                <Flex
+                    direction="column"
+                    minWidth="200px"
+                    maxWidth="300px"
+                    mt={2}
+                >
                     <Text fontSize="24px" fontWeight="semibold">
                         {getAmount(order.unit_price)}{' '}
                         {upperCase(order.currency_code)}

@@ -112,7 +112,7 @@ const ShippedCard = ({
 
                     <Box flex="1">
                         <Flex justifyContent="space-between" direction="row">
-                            <Flex direction="column">
+                            <Flex direction="column" mt={2}>
                                 <Text
                                     color={'rgba(85, 85, 85, 1.0)'}
                                     fontSize="16px"
@@ -122,7 +122,11 @@ const ShippedCard = ({
                                 <Text fontWeight="bold" fontSize="18px">
                                     {order.title}
                                 </Text>
-                                <Flex direction="row" alignItems="center">
+                                <Flex
+                                    direction="row"
+                                    alignItems="center"
+                                    mt={2}
+                                >
                                     <Text
                                         color={'rgba(85, 85, 85, 1.0)'}
                                         fontSize="16px"

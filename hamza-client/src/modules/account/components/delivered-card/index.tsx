@@ -99,7 +99,11 @@ const DeliveredCard = ({ order, handle, vendorName }: OrderCardProps) => {
                     <FaCheckCircle color="#3196DF" />
                 </Flex>
             </Flex>
-            <Flex alignItems="center" justifyContent="space-between">
+            <Flex
+                direction={{ base: 'column', md: 'row' }}
+                alignItems={{ base: 'flex-start', md: 'center' }}
+                justifyContent="space-between"
+            >
                 <Link
                     href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}
                 >
@@ -116,32 +120,27 @@ const DeliveredCard = ({ order, handle, vendorName }: OrderCardProps) => {
                         mb={{ base: 4, md: 0 }}
                     />
                 </Link>
-
-                <Box flex="1">
-                    <Flex justifyContent="space-between">
-                        <Flex direction="column">
-                            <Text fontWeight="bold" fontSize="18px">
-                                {order.title}
-                            </Text>
-                            <Text fontSize="14px">{order.description}</Text>
-                        </Flex>
+                <Flex justifyContent="space-between">
+                    <Flex direction="column">
+                        <Text fontWeight="bold" fontSize="18px">
+                            {order.title}
+                        </Text>
+                        <Text fontSize="14px">{order.description}</Text>
                         <Text fontSize="24px" fontWeight="semibold">
                             {getAmount(order.unit_price)}{' '}
                             {order.currency_code.toUpperCase()}
                         </Text>
                     </Flex>
+                </Flex>
 
-                    <Flex
-                        justifyContent="space-between"
-                        alignItems="center"
-                        mt={2}
-                    >
-                        <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
-                            {new Date(order.created_at).toLocaleDateString()}
-                        </Text>
-                        <Text fontSize="sm">{order.quantity} item(s)</Text>
-                    </Flex>
-                </Box>
+                <Flex justifyContent="space-between" direction="column" mt={2}>
+                    <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
+                        {new Date(order.created_at).toLocaleDateString()}
+                    </Text>
+                    <Text fontSize="16px" my={2}>
+                        {order.quantity} item(s)
+                    </Text>
+                </Flex>
             </Flex>
 
             <Flex justifyContent="flex-end" mt={2} gap={'4'}>

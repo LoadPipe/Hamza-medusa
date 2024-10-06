@@ -115,7 +115,7 @@ const ProcessingOrderCard = ({
                                 >
                                     {order.title}
                                 </Text>
-                                <Flex direction="column">
+                                <Flex direction="column" mt={2}>
                                     <Text
                                         fontSize={{ base: '14px', md: '16px' }}
                                         color={'rgba(85, 85, 85, 1.0)'}
