@@ -37,13 +37,6 @@ export default async function Reviews() {
             flexDirection={'column'}
             rounded={'lg'}
         >
-            <Text
-                mb={'4'}
-                className="text-2xl-semi"
-                color={'primary.indigo.900'}
-            >
-                My Reviews
-            </Text>
             <ReviewPage customer={customer} />
         </Flex>
     );

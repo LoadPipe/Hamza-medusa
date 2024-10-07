@@ -66,7 +66,7 @@ const MainMenu = () => {
                     width={{ base: '100vw', md: '321px' }}
                 >
                     <Link
-                        href={`https://blog.hamza.biz/merchant/`}
+                        href={`https://blog.hamza.market/merchant/`}
                         target="_blank"
                     >
                         <MenuItem
@@ -88,7 +88,7 @@ const MainMenu = () => {
                         </MenuItem>
                     </Link>
                     <Link
-                        href={`https://blog.hamza.biz/affiliate/`}
+                        href={`https://blog.hamza.market/affiliate/`}
                         target="_blank"
                     >
                         <MenuItem
@@ -154,7 +154,7 @@ const MainMenu = () => {
                         </MenuItem>
                     </NavLink>
 
-                    <a target="_blank" href="https://blog.hamza.biz/blog/">
+                    <a target="_blank" href="https://blog.hamza.market/blog/">
                         <MenuItem
                             fontWeight={'600'}
                             pl="1rem"
@@ -173,7 +173,7 @@ const MainMenu = () => {
                         </MenuItem>
                     </a>
 
-                    <a target="_blank" href="https://blog.hamza.biz/about/">
+                    <a target="_blank" href="https://blog.hamza.market/about/">
                         <MenuItem
                             fontWeight={'600'}
                             pl="1rem"

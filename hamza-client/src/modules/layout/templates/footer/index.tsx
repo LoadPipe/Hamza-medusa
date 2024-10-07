@@ -7,9 +7,10 @@ import { FaDiscord } from 'react-icons/fa6';
 import Link from 'next/link';
 import Image from 'next/image';
 import Reputation from '@modules/home/components/reputation';
-import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
+//import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
+//import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
+import HamzaLogo from '../../../../../public/images/logo/hamza-beta.png';
 import React from 'react';
-import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
 
 const fetchCollections = async () => {
     const { collections } = await getCollectionsList();
@@ -62,7 +63,7 @@ export default async function Footer() {
                             </Text>
                         </Link>
 
-                        <a href="https://blog.hamza.biz/about/" target="_blank">
+                        <a href="https://blog.hamza.market/about/" target="_blank">
                             <Text
                                 fontSize={{ base: '14px', md: '16px' }}
                                 className="text-base font-bold"
@@ -71,7 +72,7 @@ export default async function Footer() {
                             </Text>
                         </a>
 
-                        <a href="https://blog.hamza.biz/blog/" target="_blank">
+                        <a href="https://blog.hamza.market/blog/" target="_blank">
                             <Text
                                 fontSize={{ base: '14px', md: '16px' }}
                                 className="text-base font-bold"
@@ -81,7 +82,7 @@ export default async function Footer() {
                         </a>
 
                         <a
-                            href="https://blog.hamza.biz/contact"
+                            href="https://blog.hamza.market/contact"
                             target="_blank"
                         >
                             <Text
@@ -100,7 +101,7 @@ export default async function Footer() {
 
                     <Flex flexDir={'column'} color={'white'} gap={'8px'}>
                         <a
-                            href="https://blog.hamza.biz/affiliate/"
+                            href="https://blog.hamza.market/affiliate/"
                             target="_blank"
                         >
                             <Text
@@ -112,7 +113,7 @@ export default async function Footer() {
                         </a>
 
                         <a
-                            href="https://blog.hamza.biz/ambassador/"
+                            href="https://blog.hamza.market/ambassador/"
                             target="_blank"
                         >
                             <Text
@@ -124,7 +125,7 @@ export default async function Footer() {
                         </a>
 
                         <a
-                            href="https://blog.hamza.biz/careers/"
+                            href="https://blog.hamza.market/careers/"
                             target="_blank"
                         >
                             <Text
@@ -138,7 +139,7 @@ export default async function Footer() {
 
                     <Flex flexDir={'column'} color={'white'} gap={'8px'}>
                         <a
-                            href="https://blog.hamza.biz/merchant/"
+                            href="https://blog.hamza.market/merchant/"
                             target="_blank"
                         >
                             <Text
@@ -149,7 +150,7 @@ export default async function Footer() {
                             </Text>
                         </a>
 
-                        <a href="https://support.hamza.biz/" target="_blank">
+                        <a href="https://support.hamza.market/" target="_blank">
                             <Text
                                 fontSize={{ base: '14px', md: '16px' }}
                                 className="text-base font-bold"
@@ -159,7 +160,7 @@ export default async function Footer() {
                         </a>
 
                         <a
-                            href="https://support.hamza.biz/help/1568263160"
+                            href="https://support.hamza.market/help/1568263160"
                             target="_blank"
                         >
                             <Text
@@ -189,6 +190,7 @@ export default async function Footer() {
                     <Flex justifyContent={'center'} alignItems="center">
                         <LocalizedClientLink href="/">
                             <Flex width={'190px'} flexShrink={0}>
+                                {/*
                                 <Image
                                     src={HamzaLogo}
                                     style={{ width: '100%', height: '67px' }}
@@ -203,6 +205,15 @@ export default async function Footer() {
                                         alignSelf: 'center',
                                         marginLeft: '1rem',
                                     }}
+                                    alt="Hamza"
+                                />
+                                */}
+
+                                <Image
+                                    style={{
+                                        alignSelf: 'left',
+                                    }}
+                                    src={HamzaLogo}
                                     alt="Hamza"
                                 />
                             </Flex>
@@ -220,13 +231,13 @@ export default async function Footer() {
                             Follow us on:{' '}
                         </Text>
                         <Link
-                            href="https://x.com/loadpipe?t=mrR1xycvffxf-4MoBAhFJA&s=09"
+                            href="https://x.com/hamzadecom?t=mrR1xycvffxf-4MoBAhFJA&s=09"
                             target="_blank"
                         >
                             <FaTwitter size={24} />
                         </Link>
                         <Link
-                            href="https://discord.gg/kNGx38WZ"
+                            href="https://discord.gg/W7qu9gb3Yz"
                             target="_blank"
                         >
                             <FaDiscord size={24} />
@@ -244,7 +255,6 @@ export default async function Footer() {
                             display={{ base: 'none', md: 'block' }}
                             className="text-base font-bold"
                         >
-                            Certificate of Authenticity
                         </Text>
                     </Flex>
                 </Flex>

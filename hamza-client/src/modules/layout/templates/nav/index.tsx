@@ -5,9 +5,10 @@ import LocalizedClientLink from '@modules/common/components/localized-client-lin
 import { Flex, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 // Images
-import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
-import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
-import HamzaTitle2 from '../../../../../public/images/logo/nav-logo.svg';
+//import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
+//import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
+//import HamzaTitle2 from '../../../../../public/images/logo/nav-logo.svg';
+import HamzaLogo from '../../../../../public/images/logo/hamza-beta.png';
 //  Components
 
 import NavSearchBar from './menu-desktop/components/nav-searchbar';
@@ -70,7 +71,7 @@ export default async function Nav() {
                     justifyContent={'center'}
                     alignItems="center"
                 >
-                    <a href="/">
+                    {/* <a href="/">
                         <Flex width={'190px'} marginLeft="auto" flexShrink={0}>
                             <Image
                                 className="w-[22.92px] h-[33px] md:w-[49px] md:h-[71px]"
@@ -87,6 +88,18 @@ export default async function Nav() {
                                 style={{
                                     alignSelf: 'center',
                                 }}
+                                alt="Hamza"
+                            />
+                        </Flex>
+                    </a> */}
+
+                    <a href="/">
+                        <Flex width={'190px'} marginLeft="auto" flexShrink={0}>
+                            <Image
+                                style={{
+                                    alignSelf: 'left',
+                                }}
+                                src={HamzaLogo}
                                 alt="Hamza"
                             />
                         </Flex>
