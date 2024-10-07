@@ -61,11 +61,6 @@ async function axiosCall(
             config.headers.authorization = cookies().get('_medusa_jwt')?.value;
         }
 
-        //caching false by default
-        if (payload && !payload.cache) {
-            payload.cache = false;
-        }
-
         let response = { data: undefined };
         switch (verb) {
             case 'get':
@@ -217,7 +212,7 @@ const getMedusaHeaders = (tags: string[] = []) => {
     if (token) {
         headers.authorization = `Bearer ${token}`;
     }
-    headers.cache = false;
+    //headers.cache = false;
     headers['Cache-Control'] = 'no-cache, no-store';
 
     return headers;
@@ -529,13 +524,21 @@ export async function recoverCart(customer_id: string) {
 export async function createCart(data = {}) {
     const headers = getMedusaHeaders(['cart']);
 
-    return medusaClient.carts
+    return postSecure('/custom/cart', { data });
+
+    /*
+    const output = await medusaClient.carts
         .create(data, headers)
         .then(({ cart }) => cart)
         .catch((err) => {
             console.log(err);
             return null;
         });
+
+    console.log('CART 1', cart1);
+    console.log('CART 2', output);
+    return output;
+    */
 }
 
 export async function updateCart(cartId: string, data: StorePostCartsCartReq) {
@@ -547,16 +550,24 @@ export async function updateCart(cartId: string, data: StorePostCartsCartReq) {
         .catch((error) => medusaError(error));
 }
 
-export async function getCart(cartId: string) {
+export async function getCart(cart_id: string) {
+    return getSecure('/custom/cart', { cart_id });
+
+    /*
     const headers = getMedusaHeaders(['cart']);
 
-    return medusaClient.carts
-        .retrieve(cartId, headers)
+    const cart2 = await medusaClient.carts
+        .retrieve(cart_id, headers)
         .then(({ cart }) => cart)
         .catch((err) => {
             console.log(err);
             return null;
         });
+
+    //console.log('CART 1', cart1);
+    //console.log('CART 2', cart2);
+    //return cart1;
+    */
 }
 
 export async function addItem({
@@ -797,11 +808,14 @@ export async function getHamzaCustomer(includeAddresses: boolean = true) {
         customer_id: '',
     };
     const customer_id: string = token?.customer_id ?? '';
+    let response = null;
 
-    const response = await getSecure('/custom/customer', {
-        customer_id,
-        include_addresses: includeAddresses ? 'true' : 'false',
-    });
+    if (customer_id?.length) {
+        response = await getSecure('/custom/customer', {
+            customer_id,
+            include_addresses: includeAddresses ? 'true' : 'false',
+        });
+    }
 
     return response ?? {};
 }
