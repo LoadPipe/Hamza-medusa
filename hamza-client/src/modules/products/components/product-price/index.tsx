@@ -26,7 +26,7 @@ export default function ProductPrice({
     region: RegionInfo;
 }) {
     const { preferred_currency_code, authData } = useCustomerAuthStore();
-    console.log('user preferred currency code: ', preferred_currency_code);
+    //console.log('user preferred currency code: ', preferred_currency_code);
 
     const selectedPrices = variant
         ? variant.prices

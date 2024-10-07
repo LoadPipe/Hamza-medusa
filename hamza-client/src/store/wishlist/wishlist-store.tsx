@@ -70,6 +70,7 @@ const useWishlistStore = create<WishlistType>()(
                     const filteredItems = wishlist.products.filter(
                         (p) => p.id !== productId
                     );
+                    console.log('All items:', wishlist.products);
                     console.log('Filtered items:', filteredItems);
                     return {
                         wishlist: {

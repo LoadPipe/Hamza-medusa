@@ -36,7 +36,7 @@ const Shipping: React.FC<ShippingProps> = ({
     const router = useRouter();
     const pathname = usePathname();
     const { authData, preferred_currency_code } = useCustomerAuthStore();
-    console.log('user preferred currency code: ', preferred_currency_code);
+    //console.log('user preferred currency code: ', preferred_currency_code);
 
     const isOpen = searchParams.get('step') === 'delivery';
     const cartId = isOpen ? searchParams.get('cart') : cart?.id;
@@ -140,7 +140,7 @@ const Shipping: React.FC<ShippingProps> = ({
                             value={
                                 cart?.shipping_methods?.length
                                     ? cart?.shipping_methods[0]
-                                          ?.shipping_option_id
+                                        ?.shipping_option_id
                                     : ''
                             }
                             onChange={(value: string) => handleChange(value)}
@@ -159,8 +159,8 @@ const Shipping: React.FC<ShippingProps> = ({
                                                         (cart?.shipping_methods
                                                             ?.length
                                                             ? cart
-                                                                  ?.shipping_methods[0]
-                                                                  ?.shipping_option_id
+                                                                ?.shipping_methods[0]
+                                                                ?.shipping_option_id
                                                             : ''),
                                                 }
                                             )}
@@ -173,8 +173,8 @@ const Shipping: React.FC<ShippingProps> = ({
                                                         (cart?.shipping_methods
                                                             ?.length
                                                             ? cart
-                                                                  ?.shipping_methods[0]
-                                                                  ?.shipping_option_id
+                                                                ?.shipping_methods[0]
+                                                                ?.shipping_option_id
                                                             : '')
                                                     }
                                                 />
@@ -186,7 +186,7 @@ const Shipping: React.FC<ShippingProps> = ({
                                                 {formatCryptoPrice(
                                                     option.amount ?? 0,
                                                     preferred_currency_code ??
-                                                        'usdc'
+                                                    'usdc'
                                                 )}{' '}
                                                 {preferred_currency_code?.toUpperCase()}
                                             </span>
@@ -233,7 +233,7 @@ const Shipping: React.FC<ShippingProps> = ({
                                 <Text className="txt-medium text-white">
                                     {cart?.shipping_methods?.length
                                         ? cart?.shipping_methods[0]
-                                              .shipping_option?.name
+                                            .shipping_option?.name
                                         : ' '}{' '}
                                     (
                                     {
