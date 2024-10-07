@@ -20,15 +20,22 @@ import currencyIcons from '../../../../../../../public/images/currencies/crypto-
 import Spinner from '@modules/common/icons/spinner';
 import TermsOfService from '../terms-of-service/product-details-tos';
 import { renderStars } from '@modules/products/components/review-stars';
+import { BiHeart, BiSolidHeart } from 'react-icons/bi';
+import useWishlistStore, {
+    WishlistProduct,
+} from '@store/wishlist/wishlist-store';
+import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
 
 interface PreviewCheckoutProps {
     productId: string;
+    selectedVariantImage: string;
     setSelectedVariantImage: (imageUrl: string) => void;
 }
 
 // TODO: REFACTOR THIS COMPONENT, POST DEMO - GN
 const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     productId,
+    selectedVariantImage,
     setSelectedVariantImage,
 }) => {
     const currencies = ['eth', 'usdc', 'usdt'];
@@ -64,6 +71,10 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     const { whitelist_config, setWhitelistConfig, authData } =
         useCustomerAuthStore();
     const router = useRouter();
+
+    const { wishlist } = useWishlistStore();
+    const { addWishlistItemMutation, removeWishlistItemMutation } =
+        useWishlistMutations();
 
     // console.log(typeof productId, productId);
 
@@ -208,7 +219,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             console.log('white list config ', whitelist_config);
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                    whitelist_config.whitelisted_stores.includes(data.data)
+                whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -258,6 +269,16 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         }
     }, [productData]);
 
+    const convertToPriceDictionary = (selectedVariant: Variant | null) => {
+        const output: { [key: string]: number } = {};
+        if (selectedVariant) {
+            for (let price of selectedVariant.prices) {
+                output[price.currency_code] = price.amount;
+            }
+        }
+        return output;
+    };
+
     return (
         <Flex
             padding={{ base: '0', md: '2rem' }}
@@ -293,11 +314,68 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         alt={preferred_currency_code?.toUpperCase() ?? 'USDC'}
                     />
                     <Heading
+                        alignSelf={'center'}
                         fontSize={{ base: '18px', md: '32px' }}
                         color="white"
                     >
                         {`${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} `}
                     </Heading>
+
+                    {authData.status == 'authenticated' && (
+                        <Box
+                            display={{ base: 'flex', md: 'none' }}
+                            alignSelf={'center'}
+                            ml="auto"
+                        >
+                            {wishlist.products.find(
+                                (a) => a.id == productData?.id
+                            ) ? (
+                                <BiSolidHeart
+                                    size={'22px'}
+                                    onClick={() => {
+                                        removeWishlistItemMutation.mutate({
+                                            id: productData?.id ?? '',
+                                            description:
+                                                productData?.description ?? '',
+                                            handle: productData?.handle ?? '',
+                                            thumbnail:
+                                                productData?.thumbnail ?? '',
+                                            variantThumbnail:
+                                                selectedVariantImage,
+                                            title: productData?.title ?? '',
+                                            price: convertToPriceDictionary(
+                                                selectedVariant
+                                            ),
+                                            productVariantId: variantId || null,
+                                        });
+                                    }}
+                                    className="text-white  cursor-pointer"
+                                />
+                            ) : (
+                                <BiHeart
+                                    size={'22px'}
+                                    onClick={() => {
+                                        addWishlistItemMutation.mutate({
+                                            id: productData?.id,
+                                            description:
+                                                productData?.description ?? '',
+                                            handle: productData?.handle ?? '',
+                                            thumbnail:
+                                                productData?.thumbnail ?? '',
+                                            variantThumbnail:
+                                                selectedVariantImage,
+                                            title: productData?.title ?? '',
+                                            price: convertToPriceDictionary(
+                                                selectedVariant
+                                            ),
+                                            productVariantId: variantId || null,
+                                        });
+                                    }}
+                                    className="text-white cursor-pointer"
+                                />
+                            )}
+                        </Box>
+                    )}
                     {/*<Text*/}
                     {/*    style={{ textDecoration: 'line-through' }}*/}
                     {/*    alignSelf={'center'}*/}
@@ -502,8 +580,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     {!inStock && isWhitelisted
                         ? 'Add to cart'
                         : inStock
-                            ? 'Add to Cart'
-                            : 'Out of Stock'}
+                          ? 'Add to Cart'
+                          : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs text-white px-4 py-2">

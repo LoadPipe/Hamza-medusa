@@ -15,6 +15,8 @@ import {
     TabPanels,
     Tab,
     TabPanel,
+    UnorderedList,
+    ListItem,
 } from '@chakra-ui/react';
 import React from 'react';
 import ShippingpPolicy from './policies/shipping-policy';
@@ -48,7 +50,11 @@ const TermsOfService = () => {
                     gap={{ base: 2, md: 0 }}
                 >
                     <Flex maxW={'133px'} width={'100%'} flexDir={'row'} gap={2}>
-                        <Flex width={'22px'} height={'22px'} alignSelf={'center'}>
+                        <Flex
+                            width={'22px'}
+                            height={'22px'}
+                            alignSelf={'center'}
+                        >
                             <Flex
                                 width={'18px'}
                                 height={'18px'}
@@ -139,7 +145,11 @@ const TermsOfService = () => {
                     gap={{ base: 2, md: 0 }}
                 >
                     <Flex maxW={'133px'} width={'100%'} flexDir={'row'} gap={2}>
-                        <Flex width={'22px'} height={'22px'} alignSelf={'center'}>
+                        <Flex
+                            width={'22px'}
+                            height={'22px'}
+                            alignSelf={'center'}
+                        >
                             <CiBitcoin
                                 color="white"
                                 style={{
@@ -165,6 +175,15 @@ const TermsOfService = () => {
                         See payment method policy
                     </Text>
                 </Flex>
+
+                <UnorderedList color={'white'}>
+                    <ListItem fontSize={{ base: '14px', md: '16px' }}>
+                        Ships from Shenzhen, China
+                    </ListItem>
+                    <ListItem mt="1rem" fontSize={{ base: '14px', md: '16px' }}>
+                        Allow 7-16 business days for delivery
+                    </ListItem>
+                </UnorderedList>
 
                 {/* Modal with Three Options */}
                 <Modal isOpen={isOpen} onClose={closeModal} size="lg">
@@ -204,7 +223,9 @@ const TermsOfService = () => {
                                             selectedTab === 0 ? '12px' : '0px'
                                         }
                                         color={
-                                            selectedTab === 0 ? 'black' : 'white'
+                                            selectedTab === 0
+                                                ? 'black'
+                                                : 'white'
                                         }
                                         flex={1}
                                     >
@@ -223,7 +244,9 @@ const TermsOfService = () => {
                                             selectedTab === 1 ? '12px' : '0px'
                                         }
                                         color={
-                                            selectedTab === 1 ? 'black' : 'white'
+                                            selectedTab === 1
+                                                ? 'black'
+                                                : 'white'
                                         }
                                         flex={1}
                                     >
@@ -243,7 +266,9 @@ const TermsOfService = () => {
                                         }
                                         borderRightRadius={'12px'}
                                         color={
-                                            selectedTab === 2 ? 'black' : 'white'
+                                            selectedTab === 2
+                                                ? 'black'
+                                                : 'white'
                                         }
                                         flex={1}
                                         noOfLines={0}
@@ -277,37 +302,6 @@ const TermsOfService = () => {
                         </ModalFooter>
                     </ModalContent>
                 </Modal>
-            </Flex>
-
-            <Flex mt="1rem" flexDir={'column'} gap={{ base: 2, md: 5 }}>
-                <br />
-            </Flex>
-
-            <Flex mt="1rem" flexDir={'column'} gap={{ base: 2, md: 5 }}>
-                <Flex
-                    flexDir={{ base: 'column', md: 'row' }}
-                    gap={{ base: 2, md: 0 }}
-                >
-                    <Text
-                        color={'white'}
-                        cursor={'pointer'}
-                        fontSize={{ base: '14px', md: '16px' }}
-                    >
-                        <li>Ships from Shenzhen, China</li>
-                    </Text>
-                </Flex>
-                <Flex
-                    flexDir={{ base: 'column', md: 'row' }}
-                    gap={{ base: 2, md: 0 }}
-                >
-                    <Text
-                        color={'white'}
-                        cursor={'pointer'}
-                        fontSize={{ base: '14px', md: '16px' }}
-                    >
-                        <li>Allow 7-16 business days for delivery</li>
-                    </Text>
-                </Flex>
             </Flex>
         </>
     );
