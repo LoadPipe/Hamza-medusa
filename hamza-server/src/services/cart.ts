@@ -53,12 +53,12 @@ export default class CartService extends MedusaCartService {
         const cart = await super.retrieve(cartId, options, totalsConfig);
 
         if (cart?.items) {
-            console.log('cart id is', cart.id);
+            this.logger.debug(`cart id is ${cart.id}`);
 
             //get customer preferred currency
             let userPreferredCurrency = 'usdc';
             if (cart.customer_id) {
-                console.log('customer id is', cart.customer_id);
+                this.logger.debug(`customer id is ${cart.customer_id}`);
                 if (cart.customer_id && !cart.customer)
                     cart.customer = await this.customerRepository_.findOne({ where: { id: cart.customer_id } });
 

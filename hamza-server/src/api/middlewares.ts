@@ -62,15 +62,16 @@ const restrictCustomerOrders = async (
 ) => {
     let authorized = false;
     if (req.headers.authorization) {
+        const logger = req.scope.resolve('logger');
         const jwtToken: any = jwt.decode(req.headers.authorization.replace('Bearer ', ''));
         const customerId = jwtToken?.customer_id;
-        console.log('customer id in store/orders route is: ', customerId);
+        logger.debug(`customer id in store/orders route is ${customerId}`);
 
         const orderId = req.url.replace('/', '');
         if (orderId && orderId.startsWith('order_') && customerId?.length) {
             const orderService = req.scope.resolve('orderService');
             const order = await orderService.retrieve(orderId);
-            console.log('order customer id in store/orders route is', order?.customer_id);
+            logger.debug(`order customer id in store/orders route is ${order?.customer_id}`);
             if (order?.customer_id === customerId) {
                 next();
                 authorized = true;
