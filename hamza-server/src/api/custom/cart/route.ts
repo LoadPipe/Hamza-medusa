@@ -17,6 +17,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             discounts: []
         };
         const cart = await cartService.create(input);
+        if (cart && !cart.items) {
+            cart.items = [];
+        }
 
         return handler.returnStatus(200, { cart });
     });
