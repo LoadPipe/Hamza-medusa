@@ -207,7 +207,6 @@ const ProductInfo = () => {
                             </Flex>
                             <Text
                                 ml="2"
-                                as="h4"
                                 fontWeight="600"
                                 fontSize={'20px'}
                                 color={'white'}
@@ -218,7 +217,6 @@ const ProductInfo = () => {
                             </Text>
                             <Text
                                 ml="2"
-                                as="h4"
                                 fontWeight="600"
                                 fontSize={'14px'}
                                 color={'white'}

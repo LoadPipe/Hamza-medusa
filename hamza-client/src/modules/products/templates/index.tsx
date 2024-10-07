@@ -181,6 +181,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                         alignSelf="flex-start"
                     >
                         <PreviewCheckout
+                            selectedVariantImage={selectedVariantImage}
                             setSelectedVariantImage={setSelectedVariantImage}
                             productId={product.id as string}
                         />
