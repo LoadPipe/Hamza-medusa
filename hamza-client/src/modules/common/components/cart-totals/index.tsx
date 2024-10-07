@@ -1,16 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import { formatAmount } from '@lib/util/prices';
-import { InformationCircleSolid } from '@medusajs/icons';
 import { Cart, Order, LineItem } from '@medusajs/medusa';
-import { Tooltip } from '@medusajs/ui';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import React from 'react';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { Flex, Text, Divider } from '@chakra-ui/react';
-import { getCurrencyIcon } from '@lib/util/get-currency-icon';
-import ethImage from '../../../../../public/images/currency-icons/eth.svg';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 
 type CartTotalsProps = {
@@ -70,6 +65,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
     const shippingCost = shipping_total ?? 0;
     const taxTotal = tax_total ?? 0;
     const grandTotal = (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
+    const displayCurrency = finalSubtotal?.currency?.length ? finalSubtotal.currency : preferred_currency_code ?? 'usdc';
 
     console.log(grandTotal);
     return (
@@ -99,7 +95,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                         >
                             {formatCryptoPrice(
                                 finalSubtotal.amount,
-                                finalSubtotal.currency ?? preferred_currency_code ?? 'usdc'
+                                displayCurrency
                             )}
                         </Text>
                     </Flex>
@@ -130,7 +126,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                     >
                         {formatCryptoPrice(
                             shippingCost!,
-                            finalSubtotal.currency ?? preferred_currency_code ?? 'usdc'
+                            displayCurrency
                         ).toString()}
                     </Text>
                 </Flex>
@@ -148,7 +144,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                         fontSize={{ base: '14px', md: '16px' }}
                         alignSelf="center"
                     >
-                        {formatCryptoPrice(taxTotal, finalSubtotal.currency ?? preferred_currency_code ?? 'usdc').toString()}
+                        {formatCryptoPrice(taxTotal, displayCurrency).toString()}
                     </Text>
                 </Flex>
             </Flex>
@@ -162,7 +158,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                     marginBottom: '1rem',
                 }}
             />
-            {finalSubtotal && (
+            {finalSubtotal?.currency && (
                 <Flex
                     color={'white'}
                     justifyContent={'space-between'}
@@ -178,8 +174,8 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                         <Flex alignItems={'center'}>
                             <Image
                                 className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
-                                src={currencyIcons[finalSubtotal.currency ?? preferred_currency_code ?? 'usdc']}
-                                alt={finalSubtotal.currency ?? preferred_currency_code ?? 'usdc'}
+                                src={currencyIcons[displayCurrency]}
+                                alt={displayCurrency}
                             />
                         </Flex>
                         <Text
@@ -190,7 +186,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                             position="relative" // Allows for slight adjustments with top
                             top="1px" // Adjust to fine-tune alignment
                         >
-                            {formatCryptoPrice(grandTotal, finalSubtotal.currency ?? preferred_currency_code ?? 'usdc')}
+                            {formatCryptoPrice(grandTotal, displayCurrency)}
                         </Text>
                     </Flex>
                 </Flex>
