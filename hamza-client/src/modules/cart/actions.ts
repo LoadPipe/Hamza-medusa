@@ -7,6 +7,7 @@ import { cookies } from 'next/headers';
 
 import {
     addItem,
+    createAnonymousCart,
     createCart,
     createPaymentSessions,
     getCart,
@@ -16,6 +17,7 @@ import {
     updateItem,
 } from '@lib/data';
 import { getRegion } from 'app/actions';
+import { decode } from 'punycode';
 
 /**
  * Retrieves the cart based on the cartId cookie
@@ -41,7 +43,15 @@ export async function getOrSetCart(countryCode: string) {
     const region_id = region.id;
 
     if (!cart) {
-        cart = await createCart({ region_id }).then((res) => res);
+        const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? {
+            customer_id: '',
+        };
+        const customer_id: string = token?.customer_id ?? '';
+        if (!customer_id?.length) {
+            cart = await createAnonymousCart();
+        } else {
+            cart = await createCart({ region_id }).then((res) => res);
+        }
         cart && cookies().set('_medusa_cart_id', cart.id);
         revalidateTag('cart');
         if (cart) await createPaymentSessions(cart?.id);
