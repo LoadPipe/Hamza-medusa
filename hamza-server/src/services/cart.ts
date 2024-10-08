@@ -82,11 +82,7 @@ export default class CartService extends MedusaCartService {
                 }
             }
 
-            if (itemsToSave.length) {
-                Promise.all(
-                    itemsToSave.map(i => this.lineItemRepository_.save(i))
-                );
-            }
+            this.lineItemRepository_.save(itemsToSave);
         }
 
         const cartEmail = await this.cartEmailRepository_.findOne({ where: { id: cartId } });
