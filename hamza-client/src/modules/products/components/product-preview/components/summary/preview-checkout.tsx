@@ -66,7 +66,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     const [reviewCount, setReviewCount] = useState<number>(0);
 
     const { preferred_currency_code } = useCustomerAuthStore();
-    console.log('user preferred currency code: ', preferred_currency_code);
+    //console.log('user preferred currency code: ', preferred_currency_code);
 
     const { whitelist_config, setWhitelistConfig, authData } =
         useCustomerAuthStore();
@@ -126,7 +126,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         }
     }, [productData, variantId]);
 
-    console.log(`Variant ID ${variantId}`);
+    //console.log(`Variant ID ${variantId}`);
     // console.log(
     //     `Product Data ${JSON.stringify(productData)} ${productData.variant}`
     // );
@@ -219,7 +219,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             console.log('white list config ', whitelist_config);
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                whitelist_config.whitelisted_stores.includes(data.data)
+                    whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -580,8 +580,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     {!inStock && isWhitelisted
                         ? 'Add to cart'
                         : inStock
-                          ? 'Add to Cart'
-                          : 'Out of Stock'}
+                            ? 'Add to Cart'
+                            : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs text-white px-4 py-2">
