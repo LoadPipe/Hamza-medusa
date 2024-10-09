@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, keyframes } from '@chakra-ui/react';
+import { Box, keyframes, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 import React from 'react';
 import HamzaLogoBlack from '../../../../public/images/logo/hamza-logo-black.svg'; // Ensure this is a transparent image
@@ -31,6 +31,7 @@ const HamzaLogoLoader = () => {
             justifyContent="center"
             alignItems="center"
             backgroundColor="#040404"
+            flexDirection={'column'}
         >
             <Box
                 position="relative"
@@ -64,6 +65,10 @@ const HamzaLogoLoader = () => {
                     style={{ zIndex: 2, position: 'relative' }} // Ensure image is above the gradient
                 />
             </Box>
+            <Text color="white" mt={2}>
+                Processing Order
+                <Box as="span">...</Box>
+            </Text>
         </Box>
     );
 };
