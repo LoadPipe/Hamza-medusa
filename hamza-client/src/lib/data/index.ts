@@ -551,23 +551,22 @@ export async function updateCart(cartId: string, data: StorePostCartsCartReq) {
 }
 
 export async function getCart(cart_id: string) {
+    const token = cookies().get('_medusa_jwt')?.value;
+
+    //if we have a token, it's safe to get the possibly-cached cart 
+    if (token?.length) {
+        const headers = getMedusaHeaders(['cart']);
+        return medusaClient.carts
+            .retrieve(cart_id, headers)
+            .then(({ cart }) => cart)
+            .catch((err) => {
+                console.log(err);
+                return null;
+            });
+    }
+
+    //otherwise, play it safe and get the definitely non-cached
     return getSecure('/custom/cart', { cart_id });
-
-    /*
-    const headers = getMedusaHeaders(['cart']);
-
-    const cart2 = await medusaClient.carts
-        .retrieve(cart_id, headers)
-        .then(({ cart }) => cart)
-        .catch((err) => {
-            console.log(err);
-            return null;
-        });
-
-    //console.log('CART 1', cart1);
-    //console.log('CART 2', cart2);
-    //return cart1;
-    */
 }
 
 export async function addItem({
