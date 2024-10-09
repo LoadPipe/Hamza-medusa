@@ -29,7 +29,7 @@ const HeroBanner = () => {
                             textAlign={'center'}
                             fontWeight="bold"
                         >
-                            Hamza Beta Ship - Setting Sail. Join Us In The Journey to Decentralize Ecommerce
+                            Hamza Beta Ship - Setting Sail. Join Us In The Journey to Decentralize Ecommerce{' '}
                             <Text
                                 as="span"
                                 color="cyan.300"
