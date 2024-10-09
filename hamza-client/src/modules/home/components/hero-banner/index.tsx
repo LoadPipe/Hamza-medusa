@@ -23,20 +23,19 @@ const HeroBanner = () => {
                     alignItems="center"
                     style={{ opacity: 1, transition: 'opacity 0.5s ease-out' }}
                 >
-                    <Link href="https://blog.hamza.market/alpha-ship" isExternal>
+                    <Link href="https://blog.hamza.market/beta" isExternal>
                         <Text
                             fontSize={{ base: '12px', md: '16px' }}
                             textAlign={'center'}
                             fontWeight="bold"
                         >
-                            Alpha Ship! Join our Ambassador Program To Join
-                            Apply Here:{' '}
+                            Hamza Beta Ship - Setting Sail. Join Us In The Journey to Decentralize Ecommerce
                             <Text
                                 as="span"
                                 color="cyan.300"
                                 textDecoration="underline"
                             >
-                                https://blog.hamza.market/alpha-ship
+                                (read more)
                             </Text>
                         </Text>
                     </Link>
