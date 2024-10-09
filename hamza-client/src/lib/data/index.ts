@@ -525,20 +525,6 @@ export async function createCart(data = {}) {
     const headers = getMedusaHeaders(['cart']);
 
     return postSecure('/custom/cart', { data });
-
-    /*
-    const output = await medusaClient.carts
-        .create(data, headers)
-        .then(({ cart }) => cart)
-        .catch((err) => {
-            console.log(err);
-            return null;
-        });
-
-    console.log('CART 1', cart1);
-    console.log('CART 2', output);
-    return output;
-    */
 }
 
 export async function updateCart(cartId: string, data: StorePostCartsCartReq) {
