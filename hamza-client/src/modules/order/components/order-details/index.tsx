@@ -63,7 +63,6 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
                             minute: '2-digit',
                             second: '2-digit',
                             timeZoneName: 'short',
-                            timeZone: 'Asia/Bangkok',
                         })}
                     </Text>
                 </Flex>
