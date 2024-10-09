@@ -54,17 +54,17 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
                         Transaction Date
                     </Text>
                     <Text fontSize={{ base: '14px', md: '16px' }}>
-                        {new Date(order.created_at).toLocaleDateString(
-                            'en-US',
-                            {
-                                weekday: 'long',
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                timeZoneName: 'short',
-                                timeZone: 'Asia/Bangkok',
-                            }
-                        )}
+                        {new Date(order.created_at).toLocaleString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            timeZoneName: 'short',
+                            timeZone: 'Asia/Bangkok',
+                        })}
                     </Text>
                 </Flex>
                 <Flex
