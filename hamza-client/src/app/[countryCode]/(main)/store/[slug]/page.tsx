@@ -318,7 +318,7 @@ export default function Page({ params }: { params: { slug: string } }) {
                             gap="16px"
                             justifyContent={'center'}
                         >
-                            <a href='https://blog.hamza.market/contact/' target='_blank'>
+                            <a href={process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK ?? 'https://support.hamza.market/help/1568263160'} target='_blank'>
                                 <Flex
                                     display={{ base: 'none', md: 'flex' }}
                                     height={{ base: '33px', md: '47px' }}

@@ -88,14 +88,13 @@ export class RouteHandler {
     }
 
     returnStatus(status: number, payload: any, truncateToMax: number = 0) {
-        console.log('RETURNING STATUS ', status)
         let payloadString = JSON.stringify(payload);
         if (truncateToMax > 0)
             payloadString = payloadString.substring(0, truncateToMax) + '...';
 
         if (status == 500)
-            this.logger.error(`Returning ${status} with ${payloadString}`);
-        else this.logger.info(`Returning ${status} with ${payloadString}`);
+            this.logger.error(`${this.method} ${this.route} Returning ${status} with ${payloadString}`);
+        else this.logger.info(`${this.method} ${this.route} Returning ${status} with ${payloadString}`);
         return this.response.status(status).json(payload);
     }
 
