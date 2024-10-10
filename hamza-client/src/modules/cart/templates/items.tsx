@@ -29,7 +29,7 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
     return (
         <Flex
             flexDir={'column'}
-            maxW={'830px'}
+            maxW={items && items.length > 0 ? '830px' : '100%'}
             width={'100%'}
             height={'auto'}
             alignSelf={'self-start'}
@@ -66,14 +66,18 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
                             );
                         })
                 ) : (
-                    <Flex width={'100%'} flexDir={'column'}>
+                    <Flex
+                        width={'100%'}
+                        flexDir={'column'}
+                        justifyContent={'center'}
+                        alignItems={'center'}
+                    >
                         <Divider borderColor="#3E3E3E" borderWidth={'1px'} />
                         <Flex
-                            mt={{ base: '0', md: '1.5rem' }}
+                            mt={{ base: '0', md: '3.5rem' }}
                             maxW={'329px'}
                             height={{ base: '170px', md: '273px' }}
                             width={'100%'}
-                            mx="auto"
                             flexDir={'column'}
                             gap={{ base: 3, md: 30 }}
                             justifyContent={'center'}

@@ -68,7 +68,9 @@ const CartTemplate = ({
                     {/* <CartShippingAddress customer={customer} /> */}
                 </Flex>
 
-                {cart && cart.region && <Summary cart={cart} />}
+                {cart?.items?.length !== 0 && cart?.region && (
+                    <Summary cart={cart} />
+                )}
             </Flex>
         </Flex>
     );
