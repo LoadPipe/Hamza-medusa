@@ -12,23 +12,7 @@ import Reputation from '@modules/home/components/reputation';
 import HamzaLogo from '../../../../../public/images/logo/hamza-beta.png';
 import React from 'react';
 
-const fetchCollections = async () => {
-    const { collections } = await getCollectionsList();
-    return collections;
-};
-
-const fetchCategories = async () => {
-    const { product_categories } = await getCategoriesList();
-    return product_categories;
-};
-
 export default async function Footer() {
-    const productCollections = await fetchCollections().then(
-        (collections) => collections
-    );
-    const productCategories = await fetchCategories().then(
-        (categories) => categories
-    );
     return (
         <Flex
             width="full"
@@ -258,6 +242,10 @@ export default async function Footer() {
                         </Text>
                     </Flex>
                 </Flex>
+
+                <Flex dangerouslySetInnerHTML={{
+                    __html: '`<script>var FreeScoutW = { s: { "color": "#5ab334", "position": "br", "require": ["email"], "id": 12888309 } };(function (d, e, s) {if (d.getElementById("freescout-w")) return;a = d.createElement(e);m = d.getElementsByTagName(e)[0];a.async = 1;a.id = "freescout-w";a.src = s;m.parentNode.insertBefore(a, m)})(document, "script", "https://support.hamza.market/modules/chat/js/widget.js?v=4239");</script>` '
+                }}></Flex>
             </Flex>
         </Flex>
     );
