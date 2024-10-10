@@ -12,23 +12,7 @@ import Reputation from '@modules/home/components/reputation';
 import HamzaLogo from '../../../../../public/images/logo/hamza-beta.png';
 import React from 'react';
 
-const fetchCollections = async () => {
-    const { collections } = await getCollectionsList();
-    return collections;
-};
-
-const fetchCategories = async () => {
-    const { product_categories } = await getCategoriesList();
-    return product_categories;
-};
-
 export default async function Footer() {
-    const productCollections = await fetchCollections().then(
-        (collections) => collections
-    );
-    const productCategories = await fetchCategories().then(
-        (categories) => categories
-    );
     return (
         <Flex
             width="full"
