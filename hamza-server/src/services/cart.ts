@@ -67,6 +67,7 @@ export default class CartService extends MedusaCartService {
             const itemsToSave: LineItem[] = [];
             for (let item of cart.items) {
                 let storeCurrency = item.variant.product.store?.default_currency_code;
+                const currencyChanged: boolean = item.currency_code != storeCurrency;
                 item.currency_code = storeCurrency;
                 item.unit_price = item.variant.prices.find(p => p.currency_code === storeCurrency).amount;
                 if (storeCurrency != userPreferredCurrency) {
@@ -75,14 +76,23 @@ export default class CartService extends MedusaCartService {
                     const newPrice = await this.priceConverter.getPrice(
                         { baseAmount: item.unit_price, baseCurrency: storeCurrency, toCurrency: userPreferredCurrency }
                     );
-                    item.unit_price = newPrice;
-                    item.currency_code = userPreferredCurrency;
+                    if (item.unit_price != newPrice || currencyChanged) {
+                        item.unit_price = newPrice;
+                        item.currency_code = userPreferredCurrency;
 
-                    itemsToSave.push(item);
+                        itemsToSave.push(item);
+                    }
                 }
             }
 
-            this.lineItemRepository_.save(itemsToSave);
+            try {
+                if (itemsToSave?.length) {
+                    console.log('************************************** DSAVING LINE ITEMS ****************************************888')
+                    this.lineItemRepository_.save(itemsToSave);
+                }
+            } catch (error) {
+                this.logger.error(`Line items save has errored for cart ${cart.id}`, error);
+            }
         }
 
         const cartEmail = await this.cartEmailRepository_.findOne({ where: { id: cartId } });
@@ -151,12 +161,17 @@ export default class CartService extends MedusaCartService {
             lineItems[n].currency_code = results[n];
         }
 
-        //call super
-        await super.addOrUpdateLineItems(
-            cartId,
-            lineItems.length === 1 ? lineItems[0] : lineItems,
-            config
-        );
+        try {
+            //call super
+            await super.addOrUpdateLineItems(
+                cartId,
+                lineItems.length === 1 ? lineItems[0] : lineItems,
+                config
+            );
+        }
+        catch (error: any) {
+            this.logger.error(`Error adding ${lineItems.length} line items to cart ${cartId}`, error);
+        }
     }
 
     private async getCurrencyForLineItem(
