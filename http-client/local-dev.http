@@ -444,5 +444,5 @@ GET http://localhost:9000/custom/product/category/products?category_name=fashion
 Content-Type: application/json
 
 ### GET multi-category products inclusive
-GET http://localhost:9000/custom/product/filter?category_name=gaming,fashion&price_hi=0&price_lo=0
+GET http://localhost:9000/custom/product/filter?category_name=all&price_hi=0&price_lo=0
 Content-Type: application/json

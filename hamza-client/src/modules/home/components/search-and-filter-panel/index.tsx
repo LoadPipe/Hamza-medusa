@@ -7,7 +7,7 @@ import SearchBar from './components/SearchBar';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import FilterBar from './components/filter-bar/FilterBar';
 
-const SearchAndFilterPanel = () => {
+const SearchAndFilterPanel = ({ products }: { products: any[] }) => {
     return (
         <Flex
             mx={'auto'}
@@ -19,7 +19,7 @@ const SearchAndFilterPanel = () => {
         >
             <SearchBar />
             <FilterBar />
-            <ProductCardGroup />
+            <ProductCardGroup products={products} />
         </Flex>
     );
 };

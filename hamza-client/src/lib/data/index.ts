@@ -24,6 +24,7 @@ import medusaError from '@lib/util/medusa-error';
 import axios from 'axios';
 
 import { cookies } from 'next/headers';
+import { next } from 'sucrase/dist/types/parser/tokenizer';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -241,6 +242,26 @@ export async function createReview(data: any) {
 export async function getWishlist(customer_id: string) {
     return getSecure('/custom/wishlist', {
         customer_id,
+    });
+}
+
+// Get all home products by default
+export async function getAllProducts(
+    categorySelect: string[] | null = ['all'],
+    priceHigh: number = 5000000,
+    priceLow: number = 0
+) {
+    const categoryString =
+        categorySelect && categorySelect.length > 0
+            ? categorySelect.length === 1
+                ? categorySelect[0]
+                : categorySelect.join(',')
+            : '';
+
+    return getSecure('/custom/product/filter', {
+        category_name: categoryString,
+        price_hi: priceHigh,
+        price_lo: priceLow,
     });
 }
 
