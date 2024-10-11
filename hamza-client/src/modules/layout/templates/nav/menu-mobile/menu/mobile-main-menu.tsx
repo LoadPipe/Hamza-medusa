@@ -56,51 +56,6 @@ export default function MobileMainMenu() {
                 backgroundColor={'#121212'}
                 width={`calc(100vw - 2rem)`}
             >
-                <Link href={`https://blog.hamza.market/merchant/`} target="_blank">
-                    <MenuItem
-                        fontWeight={'600'}
-                        mt="1rem"
-                        px="2rem"
-                        color={'white'}
-                        backgroundColor={'transparent'}
-                        _hover={{ color: 'primary.green.900' }}
-                    >
-                        <Flex
-                            w="30px"
-                            justifyContent={'center'}
-                            alignItems={'center'}
-                        >
-                            <MdOutlineStorefront size={28} />
-                        </Flex>
-                        <Text ml="0.5rem">Sell on Hamza</Text>
-                    </MenuItem>
-                </Link>
-                <Link
-                    href={`https://blog.hamza.market/affiliate/`}
-                    target="_blank"
-                >
-                    <MenuItem
-                        fontWeight={'600'}
-                        mb="1rem"
-                        px="2rem"
-                        color={'white'}
-                        backgroundColor={'transparent'}
-                        _hover={{ color: 'primary.green.900' }}
-                    >
-                        <Flex
-                            w="30px"
-                            justifyContent={'center'}
-                            alignItems={'center'}
-                        >
-                            <MdOutlinePeople size={30} />
-                        </Flex>
-                        <Text ml="0.5rem">Be an affiliate</Text>
-                    </MenuItem>
-                </Link>
-                <Box>
-                    <MenuDivider opacity={'0.5'} borderColor={'white'} />
-                </Box>
-
                 <NavLink href={`/`}>
                     <MenuItem
                         fontWeight={'600'}
@@ -177,7 +132,10 @@ export default function MobileMainMenu() {
                     </MenuItem>
                 </a>
 
-                <a target="_blank" href="https://support.hamza.market/hc/1568263160">
+                <a
+                    target="_blank"
+                    href="https://support.hamza.market/hc/1568263160"
+                >
                     <MenuItem
                         fontWeight={'600'}
                         px="2rem"
@@ -197,12 +155,53 @@ export default function MobileMainMenu() {
                     </MenuItem>
                 </a>
 
-                <MenuDivider
-                    display={{ base: 'none', md: 'flex' }}
-                    mb="0"
-                    opacity={'1'}
-                    borderColor={'white'}
-                />
+                <Box>
+                    <MenuDivider opacity={'0.5'} borderColor={'white'} />
+                </Box>
+                <Link
+                    href={`https://blog.hamza.market/merchant/`}
+                    target="_blank"
+                >
+                    <MenuItem
+                        fontWeight={'600'}
+                        mt="1rem"
+                        px="2rem"
+                        color={'white'}
+                        backgroundColor={'transparent'}
+                        _hover={{ color: 'primary.green.900' }}
+                    >
+                        <Flex
+                            w="30px"
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                        >
+                            <MdOutlineStorefront size={28} />
+                        </Flex>
+                        <Text ml="0.5rem">Sell on Hamza</Text>
+                    </MenuItem>
+                </Link>
+                <Link
+                    href={`https://blog.hamza.market/affiliate/`}
+                    target="_blank"
+                >
+                    <MenuItem
+                        fontWeight={'600'}
+                        mb="1rem"
+                        px="2rem"
+                        color={'white'}
+                        backgroundColor={'transparent'}
+                        _hover={{ color: 'primary.green.900' }}
+                    >
+                        <Flex
+                            w="30px"
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                        >
+                            <MdOutlinePeople size={30} />
+                        </Flex>
+                        <Text ml="0.5rem">Be an affiliate</Text>
+                    </MenuItem>
+                </Link>
             </MenuList>
         </Menu>
     );
