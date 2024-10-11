@@ -38,7 +38,12 @@ export default class CartService extends MedusaCartService {
         );
     }
 
-    async retrieve(cartId: string, options?: FindConfig<Cart>, totalsConfig?: { force_taxes?: boolean; }): Promise<Cart> {
+    async retrieve(
+        cartId: string,
+        options?: FindConfig<Cart>,
+        totalsConfig?: { force_taxes?: boolean; },
+        saveLineItems: boolean = false
+    ): Promise<Cart> {
         //add items & variant prices, and store (for default currency)
         if (options?.relations) {
             if (!options.relations.includes('items.variant.prices'))
@@ -107,7 +112,7 @@ export default class CartService extends MedusaCartService {
 
             //if any items to update, update them asynchronously
             try {
-                if (itemsToSave?.length) {
+                if (saveLineItems && itemsToSave?.length) {
                     await this.lineItemRepository_.save(itemsToSave);
                 }
             } catch (error) {
