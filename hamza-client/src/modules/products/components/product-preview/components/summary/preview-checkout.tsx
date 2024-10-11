@@ -219,7 +219,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             console.log('white list config ', whitelist_config);
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                    whitelist_config.whitelisted_stores.includes(data.data)
+                whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -346,7 +346,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                             price: convertToPriceDictionary(
                                                 selectedVariant
                                             ),
-                                            productVariantId: variantId || null,
+                                            productVariantId:
+                                                wishlist.products.find(
+                                                    (i) =>
+                                                        i.id == productData?.id
+                                                )?.productVariantId || null,
                                         });
                                     }}
                                     className="text-white  cursor-pointer"
@@ -580,8 +584,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     {!inStock && isWhitelisted
                         ? 'Add to cart'
                         : inStock
-                            ? 'Add to Cart'
-                            : 'Out of Stock'}
+                          ? 'Add to Cart'
+                          : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs text-white px-4 py-2">
