@@ -1058,7 +1058,7 @@ export async function getProductsList({
                 // region_id: region.id,
                 ...queryParams,
             },
-            { next: { tags: ['products'] } }
+            { next: { revalidate: 300, tags: ['products'] } }
         )
         .then((res) => res)
         .catch((err) => {
@@ -1176,7 +1176,10 @@ export async function getCollectionsList(
     limit: number = 100
 ): Promise<{ collections: ProductCollection[]; count: number }> {
     const collections = await medusaClient.collections
-        .list({ limit, offset }, { next: { tags: ['collections'] } })
+        .list(
+            { limit, offset },
+            { next: { revalidate: 300, tags: ['collections'] } }
+        )
         .then(({ collections }) => collections)
         .catch((err) => {
             throw err;
