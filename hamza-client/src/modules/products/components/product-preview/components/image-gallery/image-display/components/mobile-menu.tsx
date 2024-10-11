@@ -72,8 +72,8 @@ export default function ProductDetailsMobileMenu() {
                             _hover={{ color: 'primary.green.900' }}
                         >
                             <FaHome size={25} />
-                        </Flex>
-                        <Text ml="0.5rem">Home</Text>
+                            <Text ml="0.5rem">Home</Text>
+                        </MenuItem>
                     </MenuItem>
                 </NavLink>
                 <NavLink href={`/shop`}>
@@ -94,8 +94,8 @@ export default function ProductDetailsMobileMenu() {
                             _hover={{ color: 'primary.green.900' }}
                         >
                             <MdOutlineSell size={25} />
-                        </Flex>
-                        <Text ml="0.5rem">Shop</Text>
+                            <Text ml="0.5rem">Shop</Text>
+                        </MenuItem>
                     </MenuItem>
                 </NavLink>
 
@@ -204,12 +204,11 @@ export default function ProductDetailsMobileMenu() {
                             _hover={{ color: 'primary.green.900' }}
                         >
                             <MdOutlinePeople size={30} />
-                        </Flex>
-                        <Text ml="0.5rem">Be an affiliate</Text>
+                            <Text ml="0.5rem">Be an affiliate</Text>
+                        </MenuItem>
                     </MenuItem>
                 </Link>
             </MenuList>
-
         </Menu>
     );
 }
