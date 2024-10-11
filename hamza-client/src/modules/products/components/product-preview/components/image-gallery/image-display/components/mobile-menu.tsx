@@ -8,6 +8,7 @@ import {
     MenuList,
     MenuItem,
     MenuDivider,
+    Portal,
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import NavLink from '@modules/layout/templates/nav/components/nav-link';
@@ -26,7 +27,7 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 
 export default function ProductDetailsMobileMenu() {
     return (
-        <Menu>
+        <Menu placement="top-end">
             <MenuButton
                 borderRadius={'full'}
                 borderColor={'transparent'}
@@ -60,11 +61,15 @@ export default function ProductDetailsMobileMenu() {
                         color={'white'}
                         backgroundColor={'transparent'}
                         _hover={{ color: 'primary.green.900' }}
+
                     >
-                        <Flex
-                            w="30px"
-                            justifyContent={'center'}
-                            alignItems={'center'}
+                        <MenuItem
+                            fontWeight={'600'}
+                            mt="1rem"
+                            px="2rem"
+                            color={'white'}
+                            backgroundColor={'transparent'}
+                            _hover={{ color: 'primary.green.900' }}
                         >
                             <FaHome size={25} />
                         </Flex>
@@ -78,11 +83,15 @@ export default function ProductDetailsMobileMenu() {
                         color={'white'}
                         backgroundColor={'transparent'}
                         _hover={{ color: 'primary.green.900' }}
+
                     >
-                        <Flex
-                            w="30px"
-                            justifyContent={'center'}
-                            alignItems={'center'}
+                        <MenuItem
+                            fontWeight={'600'}
+                            mb="1rem"
+                            px="2rem"
+                            color={'white'}
+                            backgroundColor={'transparent'}
+                            _hover={{ color: 'primary.green.900' }}
                         >
                             <MdOutlineSell size={25} />
                         </Flex>
@@ -184,11 +193,15 @@ export default function ProductDetailsMobileMenu() {
                         color={'white'}
                         backgroundColor={'transparent'}
                         _hover={{ color: 'primary.green.900' }}
+
                     >
-                        <Flex
-                            w="30px"
-                            justifyContent={'center'}
-                            alignItems={'center'}
+                        <MenuItem
+                            fontWeight={'600'}
+                            px="2rem"
+                            mb="1.5rem"
+                            color={'white'}
+                            backgroundColor={'transparent'}
+                            _hover={{ color: 'primary.green.900' }}
                         >
                             <MdOutlinePeople size={30} />
                         </Flex>
@@ -196,6 +209,7 @@ export default function ProductDetailsMobileMenu() {
                     </MenuItem>
                 </Link>
             </MenuList>
+
         </Menu>
     );
 }

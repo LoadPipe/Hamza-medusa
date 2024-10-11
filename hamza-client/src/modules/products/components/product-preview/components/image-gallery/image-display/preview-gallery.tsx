@@ -96,7 +96,7 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
             >
                 {/* Main Square Image on the top (mobile) or left (desktop) */}
                 <GridItem position="relative">
-                    <Box position="relative">
+                    <Box position="relative" overflow="hidden">
                         <AspectRatio
                             ratio={1}
                             width={{ base: '100%', md: '100%' }} // Use full width on mobile, fixed on desktop
@@ -119,6 +119,7 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
 
                         {/* Back Button (Top Left) */}
                         <IconButton
+                            as="button"
                             display={{ base: 'flex', md: 'none' }}
                             icon={<FaChevronLeft />}
                             position="absolute"
@@ -135,6 +136,7 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
 
                         {/* 3-Dot Menu Button (Top Right) */}
                         <IconButton
+                            as="button"
                             display={{ base: 'flex', md: 'none' }}
                             icon={<ProductDetailsMobileMenu />}
                             position="absolute"
