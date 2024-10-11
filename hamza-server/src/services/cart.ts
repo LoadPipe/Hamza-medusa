@@ -52,6 +52,7 @@ export default class CartService extends MedusaCartService {
         }
         const cart = await super.retrieve(cartId, options, totalsConfig);
 
+        //handle items - mainly currency conversion
         if (cart?.items) {
 
             //get customer preferred currency
@@ -66,17 +67,30 @@ export default class CartService extends MedusaCartService {
             //adjust price for each line item, convert if necessary
             const itemsToSave: LineItem[] = [];
             for (let item of cart.items) {
+                //detect if currency has changed in line item
                 let storeCurrency = item.variant.product.store?.default_currency_code;
-                const currencyChanged: boolean = item.currency_code != storeCurrency;
+                const itemOriginalCurrency = item.currency_code;
+                const currencyChanged: boolean = itemOriginalCurrency != storeCurrency;
                 item.currency_code = storeCurrency;
+
+                //now detect if price has changed
                 item.unit_price = item.variant.prices.find(p => p.currency_code === storeCurrency).amount;
+
                 if (storeCurrency != userPreferredCurrency) {
-                    this.logger.info(`cart item with currency ${storeCurrency} amount ${item.unit_price} changing to ${userPreferredCurrency}`)
+                    this.logger.info(`cart item with currency ${itemOriginalCurrency} amount ${item.unit_price} changing to ${userPreferredCurrency}`)
 
                     const newPrice = await this.priceConverter.getPrice(
                         { baseAmount: item.unit_price, baseCurrency: storeCurrency, toCurrency: userPreferredCurrency }
                     );
+
+                    //if EITHER currency OR price has changed, the item will beupdated 
+                    const priceChanged = item.unit_price != newPrice;
                     if (item.unit_price != newPrice || currencyChanged) {
+                        const reason = priceChanged ?
+                            (currencyChanged ? 'Price and currency have both changed' :
+                                'Price has changed') :
+                            'Currency has changed';
+                        this.logger.debug(`${reason}, updating line item in cart ${cart.id}`);
                         item.unit_price = newPrice;
                         item.currency_code = userPreferredCurrency;
 
@@ -85,9 +99,9 @@ export default class CartService extends MedusaCartService {
                 }
             }
 
+            //if any items to update, update them asynchronously
             try {
                 if (itemsToSave?.length) {
-                    console.log('************************************** DSAVING LINE ITEMS ****************************************888')
                     this.lineItemRepository_.save(itemsToSave);
                 }
             } catch (error) {
@@ -95,6 +109,7 @@ export default class CartService extends MedusaCartService {
             }
         }
 
+        //get cart email
         const cartEmail = await this.cartEmailRepository_.findOne({ where: { id: cartId } });
         if (cartEmail)
             cart.email = cartEmail.email_address;
