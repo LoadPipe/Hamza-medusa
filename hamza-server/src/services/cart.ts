@@ -69,40 +69,46 @@ export default class CartService extends MedusaCartService {
             for (let item of cart.items) {
                 //detect if currency has changed in line item
                 let storeCurrency = item.variant.product.store?.default_currency_code;
-                const itemOriginalCurrency = item.currency_code;
-                const currencyChanged: boolean = itemOriginalCurrency != storeCurrency;
+                const originalCurrency = item.currency_code;
+                let originalPrice = item.unit_price;
+
                 item.currency_code = storeCurrency;
 
                 //now detect if price has changed
-                item.unit_price = item.variant.prices.find(p => p.currency_code === storeCurrency).amount;
+                let newPrice = item.variant.prices.find(p => p.currency_code === storeCurrency).amount;
+                item.unit_price = newPrice;
 
                 if (storeCurrency != userPreferredCurrency) {
-                    this.logger.info(`cart item with currency ${itemOriginalCurrency} amount ${item.unit_price} changing to ${userPreferredCurrency}`)
-
-                    const newPrice = await this.priceConverter.getPrice(
+                    newPrice = await this.priceConverter.getPrice(
                         { baseAmount: item.unit_price, baseCurrency: storeCurrency, toCurrency: userPreferredCurrency }
                     );
+                }
+                item.unit_price = newPrice;
+                item.currency_code = userPreferredCurrency;
 
-                    //if EITHER currency OR price has changed, the item will beupdated 
-                    const priceChanged = item.unit_price != newPrice;
-                    if (item.unit_price != newPrice || currencyChanged) {
-                        const reason = priceChanged ?
-                            (currencyChanged ? 'Price and currency have both changed' :
-                                'Price has changed') :
-                            'Currency has changed';
-                        this.logger.debug(`${reason}, updating line item in cart ${cart.id}`);
-                        item.unit_price = newPrice;
-                        item.currency_code = userPreferredCurrency;
+                //if EITHER currency OR price has changed, the item will beupdated 
+                const priceChanged = originalPrice != item.unit_price;
+                const currencyChanged = originalCurrency != item.currency_code;
 
-                        itemsToSave.push(item);
-                    }
+                if (priceChanged || currencyChanged) {
+                    const reason = priceChanged ?
+                        (currencyChanged ? 'Price and currency have both changed' :
+                            'Price has changed') :
+                        'Currency has changed';
+
+                    //console.log('***************************** STARTETH *************************************')
+                    this.logger.info(`cart item with currency ${originalCurrency} price ${originalPrice} changing to ${item.currency_code} ${item.unit_price}`);
+                    this.logger.debug(`${reason}, updating line item in cart ${cart.id}`);
+                    //console.log('****************************** ENDETH ************************************')
+
+                    itemsToSave.push(item);
                 }
             }
 
             //if any items to update, update them asynchronously
             try {
                 if (itemsToSave?.length) {
-                    this.lineItemRepository_.save(itemsToSave);
+                    await this.lineItemRepository_.save(itemsToSave);
                 }
             } catch (error) {
                 this.logger.error(`Line items save has errored for cart ${cart.id}`, error);
