@@ -215,7 +215,7 @@ class ProductReviewService extends TransactionBaseService {
 
         console.log(`reviews: ${JSON.stringify(reviews)}`);
 
-        if (!reviews.length) {
+        if (!reviews) {
             throw new Error('No reviews found');
         }
 
