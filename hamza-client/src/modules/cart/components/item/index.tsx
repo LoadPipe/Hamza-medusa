@@ -1,17 +1,16 @@
 'use client';
 
 import { LineItem, Region } from '@medusajs/medusa';
-import { Table, clx } from '@medusajs/ui';
 import CartItemSelect from '@modules/cart/components/cart-item-select';
 import DeleteButton from '@modules/common/components/delete-button';
 import LineItemOptions from '@modules/common/components/line-item-options';
 import LineItemPrice from '@modules/common/components/line-item-price';
-import LineItemUnitPrice from '@modules/common/components/line-item-unit-price';
 import Thumbnail from '@modules/products/components/thumbnail';
 import { updateLineItem } from '@modules/cart/actions';
 import { useState } from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import { Flex, Text, Divider } from '@chakra-ui/react';
+import { Flex, Text, Divider, Heading } from '@chakra-ui/react';
+import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -65,7 +64,13 @@ const Item = ({ item, region }: ItemProps) => {
                         width={{ base: '60px', md: '110px' }}
                         height={{ base: '60px', md: '110px' }}
                     >
-                        <Thumbnail thumbnail={item?.variant?.metadata?.imgUrl ?? item?.thumbnail} size="square" />
+                        <Thumbnail
+                            thumbnail={
+                                item?.variant?.metadata?.imgUrl ??
+                                item?.thumbnail
+                            }
+                            size="square"
+                        />
                     </Flex>
                 </LocalizedClientLink>
 
@@ -96,27 +101,18 @@ const Item = ({ item, region }: ItemProps) => {
                         </Flex>
                         <CartItemSelect
                             value={item.quantity}
-                            onChange={(value) =>
-                                changeQuantity(parseInt(value.target.value))
+                            onChange={(valueAsNumber) =>
+                                changeQuantity(Number(valueAsNumber))
                             }
-                            className="w-12 h-8 md:w-14 md:h-10 mt-auto"
-                        >
-                            {Array.from(
-                                {
-                                    length: Math.min(
-                                        item.variant.inventory_quantity > 0
-                                            ? item.variant.inventory_quantity
-                                            : 10,
-                                        10
-                                    ),
-                                },
-                                (_, i) => (
-                                    <option value={i + 1} key={i}>
-                                        {i + 1}
-                                    </option>
-                                )
+                            min={1}
+                            max={Math.min(
+                                item.variant.inventory_quantity > 0
+                                    ? item.variant.inventory_quantity
+                                    : 100,
+                                100
                             )}
-                        </CartItemSelect>
+                            className="w-12 h-8 md:w-14 md:h-10 mt-auto"
+                        ></CartItemSelect>
                     </Flex>
                 </Flex>
             </Flex>
