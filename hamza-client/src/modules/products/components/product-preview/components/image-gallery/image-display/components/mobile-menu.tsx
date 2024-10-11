@@ -8,6 +8,7 @@ import {
     MenuList,
     MenuItem,
     MenuDivider,
+    Portal,
 } from '@chakra-ui/react';
 import Link from 'next/link';
 import NavLink from '@modules/layout/templates/nav/components/nav-link';
@@ -26,7 +27,7 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 
 export default function ProductDetailsMobileMenu() {
     return (
-        <Menu>
+        <Menu placement="top-end">
             <MenuButton
                 borderRadius={'full'}
                 borderColor={'transparent'}
@@ -45,164 +46,169 @@ export default function ProductDetailsMobileMenu() {
                 </Flex>
             </MenuButton>
 
-            <MenuList
-                mt="1rem"
-                borderRadius={'16px'}
-                borderColor={'#555555'}
-                borderWidth={'1px'}
-                backgroundColor={'#121212'}
-            >
-                <Link href={`https://blog.hamza.biz/merchant/`} target="_blank">
-                    <MenuItem
-                        fontWeight={'600'}
-                        mt="1rem"
-                        px="2rem"
-                        color={'white'}
-                        backgroundColor={'transparent'}
-                        _hover={{ color: 'primary.green.900' }}
-                    >
-                        <Flex
-                            w="30px"
-                            justifyContent={'center'}
-                            alignItems={'center'}
-                        >
-                            <MdOutlineStorefront size={28} />
-                        </Flex>
-                        <Text ml="0.5rem">Sell on Hamza</Text>
-                    </MenuItem>
-                </Link>
-                <Link
-                    href={`https://blog.hamza.biz/affiliate/`}
-                    target="_blank"
+            <Portal>
+                <MenuList
+                    mt="1rem"
+                    borderRadius={'16px'}
+                    borderColor={'#555555'}
+                    borderWidth={'1px'}
+                    backgroundColor={'#121212'}
                 >
-                    <MenuItem
-                        fontWeight={'600'}
-                        mb="1rem"
-                        px="2rem"
-                        color={'white'}
-                        backgroundColor={'transparent'}
-                        _hover={{ color: 'primary.green.900' }}
+                    <Link
+                        href={`https://blog.hamza.biz/merchant/`}
+                        target="_blank"
                     >
-                        <Flex
-                            w="30px"
-                            justifyContent={'center'}
-                            alignItems={'center'}
+                        <MenuItem
+                            fontWeight={'600'}
+                            mt="1rem"
+                            px="2rem"
+                            color={'white'}
+                            backgroundColor={'transparent'}
+                            _hover={{ color: 'primary.green.900' }}
                         >
-                            <MdOutlinePeople size={30} />
-                        </Flex>
-                        <Text ml="0.5rem">Be an affiliate</Text>
-                    </MenuItem>
-                </Link>
-                <Box>
-                    <MenuDivider opacity={'0.5'} borderColor={'white'} />
-                </Box>
+                            <Flex
+                                w="30px"
+                                justifyContent={'center'}
+                                alignItems={'center'}
+                            >
+                                <MdOutlineStorefront size={28} />
+                            </Flex>
+                            <Text ml="0.5rem">Sell on Hamza</Text>
+                        </MenuItem>
+                    </Link>
+                    <Link
+                        href={`https://blog.hamza.biz/affiliate/`}
+                        target="_blank"
+                    >
+                        <MenuItem
+                            fontWeight={'600'}
+                            mb="1rem"
+                            px="2rem"
+                            color={'white'}
+                            backgroundColor={'transparent'}
+                            _hover={{ color: 'primary.green.900' }}
+                        >
+                            <Flex
+                                w="30px"
+                                justifyContent={'center'}
+                                alignItems={'center'}
+                            >
+                                <MdOutlinePeople size={30} />
+                            </Flex>
+                            <Text ml="0.5rem">Be an affiliate</Text>
+                        </MenuItem>
+                    </Link>
+                    <Box>
+                        <MenuDivider opacity={'0.5'} borderColor={'white'} />
+                    </Box>
 
-                <NavLink href={`/`}>
-                    <MenuItem
-                        fontWeight={'600'}
-                        mt="1rem"
-                        px="2rem"
-                        color={'white'}
-                        backgroundColor={'transparent'}
-                        _hover={{ color: 'primary.green.900' }}
-                    >
-                        <Flex
-                            w="30px"
-                            justifyContent={'center'}
-                            alignItems={'center'}
+                    <NavLink href={`/`}>
+                        <MenuItem
+                            fontWeight={'600'}
+                            mt="1rem"
+                            px="2rem"
+                            color={'white'}
+                            backgroundColor={'transparent'}
+                            _hover={{ color: 'primary.green.900' }}
                         >
-                            <FaHome size={25} />
-                        </Flex>
-                        <Text ml="0.5rem">Home</Text>
-                    </MenuItem>
-                </NavLink>
-                <NavLink href={`/shop`}>
-                    <MenuItem
-                        fontWeight={'600'}
-                        px="2rem"
-                        color={'white'}
-                        backgroundColor={'transparent'}
-                        _hover={{ color: 'primary.green.900' }}
-                    >
-                        <Flex
-                            w="30px"
-                            justifyContent={'center'}
-                            alignItems={'center'}
+                            <Flex
+                                w="30px"
+                                justifyContent={'center'}
+                                alignItems={'center'}
+                            >
+                                <FaHome size={25} />
+                            </Flex>
+                            <Text ml="0.5rem">Home</Text>
+                        </MenuItem>
+                    </NavLink>
+                    <NavLink href={`/shop`}>
+                        <MenuItem
+                            fontWeight={'600'}
+                            px="2rem"
+                            color={'white'}
+                            backgroundColor={'transparent'}
+                            _hover={{ color: 'primary.green.900' }}
                         >
-                            <MdOutlineSell size={25} />
-                        </Flex>
-                        <Text ml="0.5rem">Shop</Text>
-                    </MenuItem>
-                </NavLink>
+                            <Flex
+                                w="30px"
+                                justifyContent={'center'}
+                                alignItems={'center'}
+                            >
+                                <MdOutlineSell size={25} />
+                            </Flex>
+                            <Text ml="0.5rem">Shop</Text>
+                        </MenuItem>
+                    </NavLink>
 
-                <a target="_blank" href="https://blog.hamza.biz/blog/">
-                    <MenuItem
-                        fontWeight={'600'}
-                        px="2rem"
-                        color={'white'}
-                        backgroundColor={'transparent'}
-                        _hover={{ color: 'primary.green.900' }}
-                    >
-                        <Flex
-                            w="30px"
-                            justifyContent={'center'}
-                            alignItems={'center'}
+                    <a target="_blank" href="https://blog.hamza.biz/blog/">
+                        <MenuItem
+                            fontWeight={'600'}
+                            px="2rem"
+                            color={'white'}
+                            backgroundColor={'transparent'}
+                            _hover={{ color: 'primary.green.900' }}
                         >
-                            <MdOutlineLibraryBooks size={28} />
-                        </Flex>
-                        <Text ml="0.5rem">Blog</Text>
-                    </MenuItem>
-                </a>
+                            <Flex
+                                w="30px"
+                                justifyContent={'center'}
+                                alignItems={'center'}
+                            >
+                                <MdOutlineLibraryBooks size={28} />
+                            </Flex>
+                            <Text ml="0.5rem">Blog</Text>
+                        </MenuItem>
+                    </a>
 
-                <a target="_blank" href="https://blog.hamza.biz/about/">
-                    <MenuItem
-                        fontWeight={'600'}
-                        px="2rem"
-                        color={'white'}
-                        backgroundColor={'transparent'}
-                        _hover={{ color: 'primary.green.900' }}
-                    >
-                        <Flex
-                            w="30px"
-                            justifyContent={'center'}
-                            alignItems={'center'}
+                    <a target="_blank" href="https://blog.hamza.biz/about/">
+                        <MenuItem
+                            fontWeight={'600'}
+                            px="2rem"
+                            color={'white'}
+                            backgroundColor={'transparent'}
+                            _hover={{ color: 'primary.green.900' }}
                         >
-                            <MdOutlineFiberSmartRecord size={28} />
-                        </Flex>
-                        <Text ml="0.5rem">About Us</Text>
-                    </MenuItem>
-                </a>
+                            <Flex
+                                w="30px"
+                                justifyContent={'center'}
+                                alignItems={'center'}
+                            >
+                                <MdOutlineFiberSmartRecord size={28} />
+                            </Flex>
+                            <Text ml="0.5rem">About Us</Text>
+                        </MenuItem>
+                    </a>
 
-                <a
-                    target="_blank"
-                    href="https://support.hamza.market/hc/1568263160"
-                >
-                    <MenuItem
-                        fontWeight={'600'}
-                        px="2rem"
-                        mb="1.5rem"
-                        color={'white'}
-                        backgroundColor={'transparent'}
-                        _hover={{ color: 'primary.green.900' }}
+                    <a
+                        target="_blank"
+                        href="https://support.hamza.market/hc/1568263160"
                     >
-                        <Flex
-                            w="30px"
-                            justifyContent={'center'}
-                            alignItems={'center'}
+                        <MenuItem
+                            fontWeight={'600'}
+                            px="2rem"
+                            mb="1.5rem"
+                            color={'white'}
+                            backgroundColor={'transparent'}
+                            _hover={{ color: 'primary.green.900' }}
                         >
-                            <MdOutlineHelpCenter size={28} />
-                        </Flex>
-                        <Text ml="0.5rem">Help Center</Text>
-                    </MenuItem>
-                </a>
+                            <Flex
+                                w="30px"
+                                justifyContent={'center'}
+                                alignItems={'center'}
+                            >
+                                <MdOutlineHelpCenter size={28} />
+                            </Flex>
+                            <Text ml="0.5rem">Help Center</Text>
+                        </MenuItem>
+                    </a>
 
-                <MenuDivider
-                    display={{ base: 'none', md: 'flex' }}
-                    mb="0"
-                    opacity={'1'}
-                    borderColor={'white'}
-                />
-            </MenuList>
+                    <MenuDivider
+                        display={{ base: 'none', md: 'flex' }}
+                        mb="0"
+                        opacity={'1'}
+                        borderColor={'white'}
+                    />
+                </MenuList>
+            </Portal>
         </Menu>
     );
 }
