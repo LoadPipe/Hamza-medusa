@@ -195,7 +195,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                     display={{ base: 'block', md: 'none' }}
                     mt="2rem"
                 />
-                <ProductReview productId={product.id as string} />
+                <ProductReview />
             </Flex>
         </Flex>
     );
