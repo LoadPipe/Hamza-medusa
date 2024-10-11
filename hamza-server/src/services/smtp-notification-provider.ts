@@ -49,7 +49,7 @@ class SmtpNotificationService extends AbstractNotificationService {
                     return;
                 }
 
-                this.logger.info(`sending email to ${data}`);
+                this.logger.info(`sending email to ${JSON.stringify(data)}`);
 
                 let ordersData = await Promise.all(
                     data.orderIds.map(async (orderId: string) => {
@@ -91,6 +91,7 @@ class SmtpNotificationService extends AbstractNotificationService {
                 const cart = await this.cartService_.retrieve(ordersData[0]?.cart_id);
 
                 const toEmail = customer?.is_verified ? customer.email : cart?.email;
+                this.logger.info(`sending email to recipient ${toEmail}`);
 
                 if (
                     toEmail
