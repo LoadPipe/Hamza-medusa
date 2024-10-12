@@ -1,5 +1,4 @@
 import { generateEntityId, Logger } from '@medusajs/medusa';
-import { AppLog } from 'src/models/app-log';
 import { AppLogRepository } from 'src/repositories/app-log';
 import { sessionStorage } from '../context';
 
@@ -51,18 +50,21 @@ export class DatabaseLogger implements ILogger {
 
     private saveEntry(text: string, log_level: string, content?: any) {
         if (process.env.LOG_TO_DATABASE) {
-            const entry = {
-                text,
-                session_id: sessionStorage.sessionId,
-                customer_id: sessionStorage.customerId,
-                request_id: sessionStorage.requestId,
-                log_level,
-                content,
-                timestamp: Math.floor(Date.now() / 1000),
-                id: generateEntityId()
-            }
+            const logTypes = process.env.LOG_TO_DATABASE.split(',');
+            if (logTypes.includes(log_level)) {
+                const entry = {
+                    text,
+                    session_id: sessionStorage.sessionId,
+                    customer_id: sessionStorage.customerId,
+                    request_id: sessionStorage.requestId,
+                    log_level,
+                    content,
+                    timestamp: Math.floor(Date.now() / 1000),
+                    id: generateEntityId()
+                }
 
-            this.repository?.save(entry);
+                this.repository?.save(entry);
+            }
         }
     }
 }
