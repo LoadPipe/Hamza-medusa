@@ -6,11 +6,11 @@ import DeleteButton from '@modules/common/components/delete-button';
 import LineItemOptions from '@modules/common/components/line-item-options';
 import LineItemPrice from '@modules/common/components/line-item-price';
 import Thumbnail from '@modules/products/components/thumbnail';
-import { updateLineItem } from '@modules/cart/actions';
-import { useState } from 'react';
+import { updateLineItem, deleteLineItem } from '@modules/cart/actions';
+import { useEffect, useState } from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import { Flex, Text, Divider, Heading } from '@chakra-ui/react';
-import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
+import { Flex, Text, Divider } from '@chakra-ui/react';
+import toast from 'react-hot-toast';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -28,6 +28,13 @@ const Item = ({ item, region }: ItemProps) => {
     const [error, setError] = useState<string | null>(null);
 
     const { handle } = item.variant.product;
+
+    useEffect(() => {
+        if (item.variant.inventory_quantity === 0) {
+            toast.error(`Item not available at this time`);
+            deleteLineItem(item.id);
+        }
+    }, [item.variant.inventory_quantity]);
 
     const changeQuantity = async (quantity: number) => {
         setError(null);
