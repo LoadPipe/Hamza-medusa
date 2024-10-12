@@ -127,6 +127,8 @@ async function main() {
                 },
             ])
         });
+
+        console.log(response);
         return;
 
         const createIndex = await fetch('http://localhost:7700/indexes', {
