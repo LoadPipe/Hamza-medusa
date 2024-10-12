@@ -537,7 +537,7 @@ export async function updateCart(cartId: string, data: StorePostCartsCartReq) {
 }
 
 export async function getCart(cart_id: string) {
-    /*const token = cookies().get('_medusa_jwt')?.value;
+    const token = cookies().get('_medusa_jwt')?.value;
 
     //if we have a token, it's safe to get the possibly-cached cart 
     if (token?.length) {
@@ -549,7 +549,7 @@ export async function getCart(cart_id: string) {
                 console.log(err);
                 return null;
             });
-    }*/
+    }
 
     //otherwise, play it safe and get the definitely non-cached
     return getSecure('/custom/cart', { cart_id });
