@@ -7,7 +7,7 @@ import LineItemOptions from '@modules/common/components/line-item-options';
 import LineItemPrice from '@modules/common/components/line-item-price';
 import Thumbnail from '@modules/products/components/thumbnail';
 import { updateLineItem, deleteLineItem } from '@modules/cart/actions';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { Flex, Text, Divider } from '@chakra-ui/react';
 import toast from 'react-hot-toast';
@@ -24,42 +24,72 @@ type ItemProps = {
     currencyCode?: string;
 };
 
+const debouncedChangeQuantity = debounce(
+    async (quantity: number, updateLineItemFn: Function) => {
+        await updateLineItemFn(quantity);
+        console.log('Server update triggered');
+    },
+    5000
+);
+
 const Item = ({ item, region }: ItemProps) => {
+    const [quantity, setQuantity] = useState(item.quantity);
     const [updating, setUpdating] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const { handle } = item.variant.product;
 
     useEffect(() => {
+        console.log('RUNNING');
         if (item.variant.inventory_quantity === 0) {
+            console.log('WTF');
+
+            // Item is no longer available
             toast.error(`Item not available at this time`);
-            deleteLineItem(item.id);
+            deleteLineItem(item.id); // Trigger delete
         } else if (
             item.quantity > item.variant.inventory_quantity &&
             item.variant.inventory_quantity > 0
         ) {
-            toast.error(`Quantity Selected is unavailable, resetting`);
-            updateLineItem({ lineId: item.id, quantity: 1 });
+            // Only reset the quantity if it's larger than available stock
+            // and the API hasn't already reset it
+            if (item.quantity !== 1) {
+                console.log('WTF');
+                toast.error(`Quantity Selected is unavailable, resetting`);
+                updateLineItem({ lineId: item.id, quantity: 1 });
+            }
         }
-    }, [item.variant.inventory_quantity]);
+    }, [item.variant.inventory_quantity, item.quantity]); // Track quantity and stock
 
-    const changeQuantity = async (quantity: number) => {
-        setError(null);
+    const handleUpdateLineItem = async (qty: number) => {
         setUpdating(true);
-
         const message = await updateLineItem({
             lineId: item.id,
-            quantity,
+            quantity: qty,
         })
             .catch((err) => {
-                return err.message;
+                setError(err.message);
+                setQuantity(item.quantity); // Reset to original quantity if error
             })
             .finally(() => {
                 setUpdating(false);
             });
 
-        message && setError(message);
+        if (message) {
+            setError(message);
+        }
     };
+
+    const changeQuantity = (newQuantity: number) => {
+        if (newQuantity !== quantity) {
+            setQuantity(newQuantity);
+            debouncedChangeQuantity(newQuantity, handleUpdateLineItem);
+        }
+    };
+
+    useEffect(() => {
+        console.log('changeQuantity called');
+    }, [changeQuantity]);
 
     return (
         <Flex
@@ -114,10 +144,10 @@ const Item = ({ item, region }: ItemProps) => {
                             <DeleteButton id={item.id} />
                         </Flex>
                         <CartItemSelect
-                            value={item.quantity}
+                            value={quantity} // Visual update
                             onChange={(valueAsNumber) =>
                                 changeQuantity(Number(valueAsNumber))
-                            }
+                            } // Debounced server update
                             min={1}
                             max={Math.min(
                                 item.variant.inventory_quantity > 0
@@ -126,7 +156,7 @@ const Item = ({ item, region }: ItemProps) => {
                                 100
                             )}
                             className="w-12 h-8 md:w-14 md:h-10 mt-auto"
-                        ></CartItemSelect>
+                        />
                     </Flex>
                 </Flex>
             </Flex>

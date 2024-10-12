@@ -38,12 +38,6 @@ const CartItemSelect = forwardRef<HTMLInputElement, NativeSelectProps>(
             () => innerRef.current
         );
 
-        const debouncedOnChange = debounce((valueAsString, valueAsNumber) => {
-            if (onChange) {
-                onChange(valueAsString, valueAsNumber);
-            }
-        }, 250);
-
         useEffect(() => {
             if (innerRef.current && innerRef.current.value === '') {
                 setIsPlaceholder(true);
@@ -72,9 +66,12 @@ const CartItemSelect = forwardRef<HTMLInputElement, NativeSelectProps>(
                     value={value}
                     min={min}
                     max={max}
-                    onChange={(valueAsString, valueAsNumber) =>
-                        debouncedOnChange(valueAsString, valueAsNumber)
-                    }
+                    onChange={(valueAsString, valueAsNumber) => {
+                        // Only trigger onChange if the new value is greater than or equal to the minimum
+                        if (onChange) {
+                            onChange(valueAsString, valueAsNumber);
+                        }
+                    }}
                 >
                     <NumberInputField
                         readOnly
