@@ -706,7 +706,7 @@ class ProductService extends MedusaProductService {
  */
 class CategoryCache extends SeamlessCache {
     constructor() {
-        super(parseInt(process.env.CATEGORY_CACHE_EXPIRATION_SECONDS ?? '30'));
+        super(parseInt(process.env.CATEGORY_CACHE_EXPIRATION_SECONDS ?? '300'));
     }
 
     async retrieve(params?: any): Promise<ProductCategory[]> {
@@ -750,7 +750,7 @@ class CategoryCache extends SeamlessCache {
  */
 class ProductFilterCache extends SeamlessCache {
     constructor() {
-        super(parseInt(process.env.PRODUCT_CACHE_EXPIRATION_SECONDS ?? '30'));
+        super(parseInt(process.env.PRODUCT_CACHE_EXPIRATION_SECONDS ?? '300'));
     }
 
     async retrieveWithKey(key?: string, params?: any): Promise<Product[]> {
