@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { Flex, Text, Divider } from '@chakra-ui/react';
 import toast from 'react-hot-toast';
+import { debounce } from 'lodash';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -33,6 +34,12 @@ const Item = ({ item, region }: ItemProps) => {
         if (item.variant.inventory_quantity === 0) {
             toast.error(`Item not available at this time`);
             deleteLineItem(item.id);
+        } else if (
+            item.quantity > item.variant.inventory_quantity &&
+            item.variant.inventory_quantity > 0
+        ) {
+            toast.error(`Quantity Selected is unavailable, resetting`);
+            updateLineItem({ lineId: item.id, quantity: 1 });
         }
     }, [item.variant.inventory_quantity]);
 
