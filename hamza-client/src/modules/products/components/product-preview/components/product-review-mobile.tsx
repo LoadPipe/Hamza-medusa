@@ -84,10 +84,14 @@ const ProductReviewMobile = ({ productId }: { productId: string }) => {
                 </Flex>
             </Flex>
         </Flex>
-    ) : (<div><br />
-        <Text color='white'>
-            This product has no reviews or ratings
-        </Text><br /><br /></div>);
+    ) : (
+        <div>
+            <br />
+            <Text color="white">This product has no reviews or ratings</Text>
+            <br />
+            <br />
+        </div>
+    );
 };
 
 export default ProductReviewMobile;

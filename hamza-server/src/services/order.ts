@@ -15,8 +15,10 @@ import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 import PaymentRepository from '@medusajs/medusa/dist/repositories/payment';
 import { ProductVariantRepository } from '../repositories/product-variant';
 import StoreRepository from '../repositories/store';
+import CustomerRepository from '../repositories/customer';
 import { LineItemService } from '@medusajs/medusa';
 import { Order } from '../models/order';
+import { Customer } from '../models/customer';
 import { Payment } from '../models/payment';
 import { Lifetime } from 'awilix';
 import { In, Not } from 'typeorm';
@@ -50,6 +52,7 @@ export default class OrderService extends MedusaOrderService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
 
     protected lineItemService: LineItemService;
+    protected customerRepository_: typeof CustomerRepository;
     protected orderRepository_: typeof OrderRepository;
     protected lineItemRepository_: typeof LineItemRepository;
     protected productRepository_: typeof ProductRepository;
@@ -65,6 +68,7 @@ export default class OrderService extends MedusaOrderService {
     constructor(container) {
         super(container);
         this.orderRepository_ = container.orderRepository;
+        this.customerRepository_ = container.customerRepository;
         this.storeRepository_ = container.storeRepository;
         this.lineItemRepository_ = container.lineItemRepository;
         this.paymentRepository_ = container.paymentRepository;
@@ -549,9 +553,9 @@ export default class OrderService extends MedusaOrderService {
 
         return relevantItems?.length
             ? {
-                  variants: relevantItems.map((i) => i.variant),
-                  quantities: relevantItems.map((i) => i.quantity),
-              }
+                variants: relevantItems.map((i) => i.variant),
+                quantities: relevantItems.map((i) => i.quantity),
+            }
             : { variants: [], quantities: [] };
     }
 
@@ -563,63 +567,35 @@ export default class OrderService extends MedusaOrderService {
     }
 
     async sendShippedEmail(order: Order): Promise<void> {
-        try {
-            const notificationTypes =
-                await this.customerNotificationService_.getNotificationTypes(
-                    order.customer_id
-                );
-            const customer = await this.customerService_.retrieve(
-                order.customer_id
-            );
-
-            if (notificationTypes.includes('order_shipped')) {
-                this.smtpMailService.sendMail({
-                    from:
-                        process.env.SMTP_HAMZA_FROM ??
-                        'support@hamzamarket.com',
-                    mailData: {
-                        orderId: order.id,
-                        orderAmount: formatCryptoPrice(
-                            order.total,
-                            order.currency_code
-                        ),
-                        orderDate: order.created_at,
-                        items: order.items.map((i) => {
-                            return {
-                                title: i.title,
-                                unit_price: formatCryptoPrice(
-                                    i.unit_price,
-                                    i.currency_code
-                                ),
-                                quantity: i.quantity,
-                                thumbnail: i.thumbnail,
-                            };
-                        }),
-                    },
-                    to: customer.email,
-                    templateName: 'order-shopped',
-                    subject: 'Your order has shipped from Hamza.market',
-                });
-            }
-        } catch (e: any) {
-            this.logger.error(
-                `Error sending order-shipped email for order ${order.id}`
-            );
-        }
+        return this.sendOrderEmail(order, 'order_shipped', 'order-shipped', 'shipped');
     }
 
     async sendDeliveredEmail(order: Order): Promise<void> {
+        return this.sendOrderEmail(order, 'order_shipped', 'order-delivered', 'delivered');
+    }
+
+    async sendCancelledEmail(order: Order): Promise<void> {
+        return this.sendOrderEmail(order, 'order_cancelled', 'order-cancelled', 'cancelled');
+    }
+
+    private async sendOrderEmail(
+        order: Order,
+        requiredNotification: string,
+        templateName: string,
+        emailType: string
+    ): Promise<void> {
         try {
             const notificationTypes =
                 await this.customerNotificationService_.getNotificationTypes(
                     order.customer_id
                 );
-            const customer = await this.customerService_.retrieve(
-                order.customer_id
+            const customer: Customer = await this.customerRepository_.findOne(
+                { where: { id: order.customer_id } }
             );
+            const cart: Cart = await this.cartService_.retrieve(order.cart_id);
 
-            if (notificationTypes.includes('order_shipped')) {
-                //TODO: add notification
+            if (notificationTypes.includes(requiredNotification)) {
+
                 this.smtpMailService.sendMail({
                     from:
                         process.env.SMTP_HAMZA_FROM ??
@@ -643,19 +619,17 @@ export default class OrderService extends MedusaOrderService {
                             };
                         }),
                     },
-                    to: customer.email,
-                    templateName: 'order-delivered',
-                    subject: 'Your order has been delivered from Hamza.market',
+                    to: customer.is_verified ? customer.email : cart.email,
+                    templateName,
+                    subject: `Your order has been from Hamza.market ${emailType}`,
                 });
             }
         } catch (e: any) {
             this.logger.error(
-                `Error sending order-shipped email for order ${order.id}`
+                `Error sending ${emailType} email for order ${order.id}`
             );
         }
     }
-
-    async sendCancelledEmail(order: Order): Promise<void> {}
 
     private async updatePaymentAfterTransaction(
         paymentId: string,

@@ -151,7 +151,7 @@ export class BasicCheckoutProcessor {
                 'items.variant.prices', //TODO: we need prices?
                 'customer'
             ],
-        });
+        }, null, true);
     }
 
     /**

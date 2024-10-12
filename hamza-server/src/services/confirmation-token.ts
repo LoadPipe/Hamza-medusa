@@ -66,8 +66,9 @@ export default class ConfirmationTokenService extends TransactionBaseService {
             subject: 'Email Verification',
             templateName: 'verify-email',
             to: email,
+            //TODO: note that the 'en' here is hard-coded
             mailData: {
-                url: `${process.env.STORE_URL}/verify-confirmation-token/${token}`,
+                url: `${process.env.STORE_URL}/en/verify-confirmation-token/${token}`,
             },
         });
 

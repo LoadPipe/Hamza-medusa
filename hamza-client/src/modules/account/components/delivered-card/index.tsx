@@ -86,64 +86,70 @@ const DeliveredCard = ({ order, handle, vendorName }: OrderCardProps) => {
             rounded="lg"
             shadow="base"
             maxWidth="1000px"
-            m="auto"
-            mt={2}
         >
-            <Flex alignItems="center" mb={2}>
+            <Flex alignItems="center" mb={4}>
                 <Text
-                    fontSize={{ base: '14px', md: '24px' }}
+                    fontSize={{ base: '18px', md: '24px' }}
                     fontWeight="bold"
                     noOfLines={1}
                 >
                     {vendorName}
                 </Text>
-                <Flex
-                    display={{ base: 'none', md: 'flex' }}
-                    ml={2}
-                    alignItems="center"
-                >
+                <Flex display={{ base: 'flex' }} ml={2} alignItems="center">
                     <FaCheckCircle color="#3196DF" />
                 </Flex>
             </Flex>
-            <Flex alignItems="center" justifyContent="space-between">
-                <Link href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}>
+            <Flex
+                direction={{ base: 'column', md: 'row' }}
+                alignItems={{ base: 'flex-start', md: 'center' }}
+                justifyContent="space-between"
+            >
+                <Link
+                    href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}
+                >
                     <Image
                         borderRadius="lg"
-                        width={{ base: '60px', md: '120px' }}
+                        width={{ base: '120px', md: '180px' }}
                         src={
+                            order?.variant?.metadata?.imgUrl ??
                             order.thumbnail ??
                             ''
                         }
                         alt={`Thumbnail of ${order.title}`}
-                        mr={4}
+                        mr={{ base: 1, md: 4 }}
+                        mb={{ base: 4, md: 0 }}
                     />
                 </Link>
-
-                <Box flex="1">
-                    <Flex justifyContent="space-between">
-                        <Flex direction="column">
-                            <Text fontWeight="bold" fontSize="18px">
-                                {order.title}
+                <Flex justifyContent="space-between">
+                    <Flex direction="column">
+                        <Text fontWeight="bold" fontSize="18px">
+                            {order.title}
+                        </Text>
+                        <Flex direction={{ base: 'column', md: 'row' }} mt={2}>
+                            <Text
+                                color={'rgba(85, 85, 85, 1.0)'}
+                                fontSize="16px"
+                                mr={1} // Add some space between "Variation:" and the description
+                            >
+                                Variation:
                             </Text>
                             <Text fontSize="14px">{order.description}</Text>
-                        </Flex>
+                        </Flex>{' '}
                         <Text fontSize="24px" fontWeight="semibold">
                             {getAmount(order.unit_price)}{' '}
                             {order.currency_code.toUpperCase()}
                         </Text>
                     </Flex>
+                </Flex>
 
-                    <Flex
-                        justifyContent="space-between"
-                        alignItems="center"
-                        mt={2}
-                    >
-                        <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
-                            {new Date(order.created_at).toLocaleDateString()}
-                        </Text>
-                        <Text fontSize="sm">{order.quantity} item(s)</Text>
-                    </Flex>
-                </Box>
+                <Flex justifyContent="space-between" direction="column" mt={2}>
+                    <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
+                        {new Date(order.created_at).toLocaleDateString()}
+                    </Text>
+                    <Text fontSize="16px" my={2}>
+                        {order.quantity} item(s)
+                    </Text>
+                </Flex>
             </Flex>
 
             <Flex justifyContent="flex-end" mt={2} gap={'4'}>

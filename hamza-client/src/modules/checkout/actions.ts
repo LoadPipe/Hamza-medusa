@@ -147,8 +147,6 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
     }
 
     try {
-        //const cart = await getCart(cartId);
-        //await setShippingMethod(cart?.shipping_methods[0]?.shipping_option_id);
         await addDefaultShippingMethod(cartId);
     } catch (error: any) {
         return error.toString();

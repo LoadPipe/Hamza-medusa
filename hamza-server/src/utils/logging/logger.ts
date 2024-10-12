@@ -1,5 +1,4 @@
 import { generateEntityId, Logger } from '@medusajs/medusa';
-import { AppLog } from 'src/models/app-log';
 import { AppLogRepository } from 'src/repositories/app-log';
 import { sessionStorage } from '../context';
 
@@ -14,43 +13,48 @@ export class DatabaseLogger implements ILogger {
     private readonly logger: Logger;
     private readonly repository: typeof AppLogRepository;
     private readonly prefix: string;
+    private readonly logTypesDb: string[];
+    private readonly logTypesConsole: string[];
 
     constructor(container: any, prefix?: string) {
         this.logger = container.logger;
         this.repository = container.appLogRepository;
         this.prefix = prefix ?? '';
+
+        this.logTypesDb = process.env.LOG_TO_DATABASE ? process.env.LOG_TO_DATABASE.split(',') : [];
+        this.logTypesConsole = process.env.LOG_TO_CONSOLE ? process.env.LOG_TO_CONSOLE.split(',') : [];
     }
 
     debug(text: any) {
         text = this.prefix?.length ? `${this.prefix}: ${text}` : text;
         this.saveEntry(text, 'debug');
-        if (process.env.LOG_TO_CONSOLE)
+        if (process.env.LOG_TO_CONSOLE && this.logTypesConsole.includes('debug'))
             this.logger?.debug(text);
     }
 
     info(text: any) {
         text = this.prefix?.length ? `${this.prefix}: ${text}` : text;
         this.saveEntry(text, 'info');
-        if (process.env.LOG_TO_CONSOLE)
+        if (process.env.LOG_TO_CONSOLE && this.logTypesConsole.includes('info'))
             this.logger?.info(text);
     }
 
     warn(text: any) {
         text = this.prefix?.length ? `${this.prefix}: ${text}` : text;
         this.saveEntry(text, 'warn');
-        if (process.env.LOG_TO_CONSOLE)
+        if (process.env.LOG_TO_CONSOLE && this.logTypesConsole.includes('warn'))
             this.logger?.warn(text);
     }
 
     error(text: any, error?: any) {
         text = this.prefix?.length ? `${this.prefix}: ${text}` : text;
         this.saveEntry(text, 'error', error);
-        if (process.env.LOG_TO_CONSOLE)
+        if (process.env.LOG_TO_CONSOLE && this.logTypesConsole.includes('error'))
             this.logger?.error(text, error);
     }
 
     private saveEntry(text: string, log_level: string, content?: any) {
-        if (process.env.LOG_TO_DATABASE) {
+        if (this.logTypesDb.includes(log_level)) {
             const entry = {
                 text,
                 session_id: sessionStorage.sessionId,

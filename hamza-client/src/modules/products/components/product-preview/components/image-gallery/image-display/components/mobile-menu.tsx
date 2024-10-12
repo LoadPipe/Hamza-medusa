@@ -8,9 +8,10 @@ import {
     MenuList,
     MenuItem,
     MenuDivider,
+    Portal,
 } from '@chakra-ui/react';
 import Link from 'next/link';
-import NavLink from '../../components/nav-link';
+import NavLink from '@modules/layout/templates/nav/components/nav-link';
 
 import { GiHamburgerMenu } from 'react-icons/gi';
 import {
@@ -22,20 +23,17 @@ import {
     MdOutlineLibraryBooks,
 } from 'react-icons/md';
 import { FaHome } from 'react-icons/fa';
+import { BsThreeDotsVertical } from 'react-icons/bs';
 
-export default function MobileMainMenu() {
+export default function ProductDetailsMobileMenu() {
     return (
-        <Menu>
+        <Menu placement="top-end">
             <MenuButton
-                ml={'1rem'}
-                width={'24px'}
-                height={'24px'}
                 borderRadius={'full'}
-                borderColor={'white'}
+                borderColor={'transparent'}
                 borderWidth={'1px'}
-                justifyContent={'center'}
-                alignItems={'center'}
-                backgroundColor={'transparent'}
+                width={'100%'}
+                height={'100%'}
                 cursor={'pointer'}
             >
                 <Flex
@@ -44,7 +42,7 @@ export default function MobileMainMenu() {
                     justifyContent={'center'}
                     color={'white'}
                 >
-                    <GiHamburgerMenu size={12} />
+                    <BsThreeDotsVertical size={16} />
                 </Flex>
             </MenuButton>
 
@@ -54,7 +52,6 @@ export default function MobileMainMenu() {
                 borderColor={'#555555'}
                 borderWidth={'1px'}
                 backgroundColor={'#121212'}
-                width={`calc(100vw - 2rem)`}
             >
                 <NavLink href={`/`}>
                     <MenuItem
@@ -64,15 +61,19 @@ export default function MobileMainMenu() {
                         color={'white'}
                         backgroundColor={'transparent'}
                         _hover={{ color: 'primary.green.900' }}
+
                     >
-                        <Flex
-                            w="30px"
-                            justifyContent={'center'}
-                            alignItems={'center'}
+                        <MenuItem
+                            fontWeight={'600'}
+                            mt="1rem"
+                            px="2rem"
+                            color={'white'}
+                            backgroundColor={'transparent'}
+                            _hover={{ color: 'primary.green.900' }}
                         >
                             <FaHome size={25} />
-                        </Flex>
-                        <Text ml="0.5rem">Home</Text>
+                            <Text ml="0.5rem">Home</Text>
+                        </MenuItem>
                     </MenuItem>
                 </NavLink>
                 <NavLink href={`/shop`}>
@@ -82,19 +83,23 @@ export default function MobileMainMenu() {
                         color={'white'}
                         backgroundColor={'transparent'}
                         _hover={{ color: 'primary.green.900' }}
+
                     >
-                        <Flex
-                            w="30px"
-                            justifyContent={'center'}
-                            alignItems={'center'}
+                        <MenuItem
+                            fontWeight={'600'}
+                            mb="1rem"
+                            px="2rem"
+                            color={'white'}
+                            backgroundColor={'transparent'}
+                            _hover={{ color: 'primary.green.900' }}
                         >
                             <MdOutlineSell size={25} />
-                        </Flex>
-                        <Text ml="0.5rem">Shop</Text>
+                            <Text ml="0.5rem">Shop</Text>
+                        </MenuItem>
                     </MenuItem>
                 </NavLink>
 
-                <a target="_blank" href="https://blog.hamza.market/blog/">
+                <a target="_blank" href="https://blog.hamza.biz/blog/">
                     <MenuItem
                         fontWeight={'600'}
                         px="2rem"
@@ -113,7 +118,7 @@ export default function MobileMainMenu() {
                     </MenuItem>
                 </a>
 
-                <a target="_blank" href="https://blog.hamza.market/about/">
+                <a target="_blank" href="https://blog.hamza.biz/about/">
                     <MenuItem
                         fontWeight={'600'}
                         px="2rem"
@@ -158,10 +163,7 @@ export default function MobileMainMenu() {
                 <Box>
                     <MenuDivider opacity={'0.5'} borderColor={'white'} />
                 </Box>
-                <Link
-                    href={`https://blog.hamza.market/merchant/`}
-                    target="_blank"
-                >
+                <Link href={`https://blog.hamza.biz/merchant/`} target="_blank">
                     <MenuItem
                         fontWeight={'600'}
                         mt="1rem"
@@ -181,7 +183,7 @@ export default function MobileMainMenu() {
                     </MenuItem>
                 </Link>
                 <Link
-                    href={`https://blog.hamza.market/affiliate/`}
+                    href={`https://blog.hamza.biz/affiliate/`}
                     target="_blank"
                 >
                     <MenuItem
@@ -191,15 +193,19 @@ export default function MobileMainMenu() {
                         color={'white'}
                         backgroundColor={'transparent'}
                         _hover={{ color: 'primary.green.900' }}
+
                     >
-                        <Flex
-                            w="30px"
-                            justifyContent={'center'}
-                            alignItems={'center'}
+                        <MenuItem
+                            fontWeight={'600'}
+                            px="2rem"
+                            mb="1.5rem"
+                            color={'white'}
+                            backgroundColor={'transparent'}
+                            _hover={{ color: 'primary.green.900' }}
                         >
                             <MdOutlinePeople size={30} />
-                        </Flex>
-                        <Text ml="0.5rem">Be an affiliate</Text>
+                            <Text ml="0.5rem">Be an affiliate</Text>
+                        </MenuItem>
                     </MenuItem>
                 </Link>
             </MenuList>

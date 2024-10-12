@@ -5,9 +5,10 @@ import LocalizedClientLink from '@modules/common/components/localized-client-lin
 import { Flex, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 // Images
-import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
-import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
-import HamzaTitle2 from '../../../../../public/images/logo/nav-logo.svg';
+//import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
+//import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
+//import HamzaTitle2 from '../../../../../public/images/logo/nav-logo.svg';
+import HamzaLogo from '../../../../../public/images/logo/hamza-beta.png';
 //  Components
 
 import NavSearchBar from './menu-desktop/components/nav-searchbar';
@@ -36,14 +37,6 @@ const fetchCart = async () => {
 };
 
 export default async function Nav() {
-    // // Get the current URL from headers
-    // const headersList = headers();
-    // const referer = headersList.get('referer') || ''; // Fallback if there's no referer
-    // const url = new URL(referer); // Create a URL object to parse the path
-    // const pathname = url.pathname; // Get the path from the referer
-    // Check if the route includes '/products'
-    // const isProductRoute = pathname.includes('/products');
-
     const cart = await fetchCart();
 
     const totalItems =
@@ -61,7 +54,6 @@ export default async function Nav() {
             justifyContent={'center'}
             alignItems={'center'}
             backgroundColor={'#020202'}
-            // display={{ base: isProductRoute ? 'none' : 'flex', md: 'flex' }}
         >
             <MobileNav />
 
@@ -79,7 +71,7 @@ export default async function Nav() {
                     justifyContent={'center'}
                     alignItems="center"
                 >
-                    <a href="/">
+                    {/* <a href="/">
                         <Flex width={'190px'} marginLeft="auto" flexShrink={0}>
                             <Image
                                 className="w-[22.92px] h-[33px] md:w-[49px] md:h-[71px]"
@@ -96,6 +88,18 @@ export default async function Nav() {
                                 style={{
                                     alignSelf: 'center',
                                 }}
+                                alt="Hamza"
+                            />
+                        </Flex>
+                    </a> */}
+
+                    <a href="/">
+                        <Flex width={'190px'} marginLeft="auto" flexShrink={0}>
+                            <Image
+                                style={{
+                                    alignSelf: 'left',
+                                }}
+                                src={HamzaLogo}
                                 alt="Hamza"
                             />
                         </Flex>

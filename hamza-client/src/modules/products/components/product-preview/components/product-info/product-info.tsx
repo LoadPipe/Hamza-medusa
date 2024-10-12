@@ -42,7 +42,7 @@ const ProductInfo = () => {
         useWishlistMutations();
     const { authData } = useCustomerAuthStore();
     const { preferred_currency_code } = useCustomerAuthStore();
-    console.log('user preferred currency code: ', preferred_currency_code);
+    //console.log('user preferred currency code: ', preferred_currency_code);
 
     const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
     const [selectedVariant, setSelectedVariant] = useState<null | Variant>(
@@ -163,7 +163,11 @@ const ProductInfo = () => {
                                             price: convertToPriceDictionary(
                                                 selectedVariant
                                             ),
-                                            productVariantId: variantId || null,
+                                            productVariantId:
+                                                wishlist.products.find(
+                                                    (i) =>
+                                                        i.id == productData?.id
+                                                )?.productVariantId || null,
                                         });
                                     }}
                                     className="text-white  cursor-pointer"
@@ -207,7 +211,6 @@ const ProductInfo = () => {
                             </Flex>
                             <Text
                                 ml="2"
-                                as="h4"
                                 fontWeight="600"
                                 fontSize={'20px'}
                                 color={'white'}
@@ -218,7 +221,6 @@ const ProductInfo = () => {
                             </Text>
                             <Text
                                 ml="2"
-                                as="h4"
                                 fontWeight="600"
                                 fontSize={'14px'}
                                 color={'white'}

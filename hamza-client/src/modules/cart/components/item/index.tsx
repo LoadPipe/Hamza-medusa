@@ -1,17 +1,17 @@
 'use client';
-
+import { useCartStore } from '@store/cart-store/cart-store'; // Import Zustand store
 import { LineItem, Region } from '@medusajs/medusa';
-import { Table, clx } from '@medusajs/ui';
 import CartItemSelect from '@modules/cart/components/cart-item-select';
 import DeleteButton from '@modules/common/components/delete-button';
 import LineItemOptions from '@modules/common/components/line-item-options';
 import LineItemPrice from '@modules/common/components/line-item-price';
-import LineItemUnitPrice from '@modules/common/components/line-item-unit-price';
 import Thumbnail from '@modules/products/components/thumbnail';
-import { updateLineItem } from '@modules/cart/actions';
-import { useState } from 'react';
+import { updateLineItem, deleteLineItem } from '@modules/cart/actions';
+import { useCallback, useEffect, useState } from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { Flex, Text, Divider } from '@chakra-ui/react';
+import toast from 'react-hot-toast';
+import { debounce } from 'lodash';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -24,29 +24,66 @@ type ItemProps = {
     currencyCode?: string;
 };
 
+const debouncedChangeQuantity = debounce(
+    async (quantity: number, updateLineItemFn: Function) => {
+        await updateLineItemFn(quantity);
+        console.log('Server update triggered');
+    },
+    2000
+);
+
 const Item = ({ item, region }: ItemProps) => {
-    const [updating, setUpdating] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [quantity, setQuantity] = useState(item.quantity);
+    const setIsUpdating = useCartStore((state) => state.setIsUpdating);
 
     const { handle } = item.variant.product;
 
-    const changeQuantity = async (quantity: number) => {
-        setError(null);
-        setUpdating(true);
+    useEffect(() => {
+        if (item.variant.inventory_quantity === 0) {
+            toast.error(`Item not available at this time`);
+            deleteLineItem(item.id); // Trigger delete
+        } else if (
+            item.quantity > item.variant.inventory_quantity &&
+            item.variant.inventory_quantity > 0
+        ) {
+            // Only reset the quantity if it's larger than available stock
+            // and the API hasn't already reset it
+            if (item.quantity !== 1) {
+                toast.error(`Quantity Selected is unavailable, resetting`);
+                updateLineItem({ lineId: item.id, quantity: 1 });
+            }
+        }
+    }, [item.variant.inventory_quantity, item.quantity]); // Track quantity and stock
 
+    const handleUpdateLineItem = async (qty: number) => {
         const message = await updateLineItem({
             lineId: item.id,
-            quantity,
+            quantity: qty,
         })
             .catch((err) => {
-                return err.message;
+                toast.error('We ran into an issue, resetting');
+                setQuantity(item.quantity); // Reset to original quantity if error
             })
             .finally(() => {
-                setUpdating(false);
+                setIsUpdating(false);
             });
 
-        message && setError(message);
+        if (message) {
+            toast.error(message);
+        }
     };
+
+    const changeQuantity = (newQuantity: number) => {
+        if (newQuantity !== quantity) {
+            setIsUpdating(true); // Update global loading state
+            setQuantity(newQuantity);
+            debouncedChangeQuantity(newQuantity, handleUpdateLineItem);
+        }
+    };
+
+    useEffect(() => {
+        console.log('changeQuantity called');
+    }, [changeQuantity]);
 
     return (
         <Flex
@@ -65,7 +102,13 @@ const Item = ({ item, region }: ItemProps) => {
                         width={{ base: '60px', md: '110px' }}
                         height={{ base: '60px', md: '110px' }}
                     >
-                        <Thumbnail thumbnail={item?.variant?.metadata?.imgUrl ?? item?.thumbnail} size="square" />
+                        <Thumbnail
+                            thumbnail={
+                                item?.variant?.metadata?.imgUrl ??
+                                item?.thumbnail
+                            }
+                            size="square"
+                        />
                     </Flex>
                 </LocalizedClientLink>
 
@@ -95,28 +138,19 @@ const Item = ({ item, region }: ItemProps) => {
                             <DeleteButton id={item.id} />
                         </Flex>
                         <CartItemSelect
-                            value={item.quantity}
-                            onChange={(value) =>
-                                changeQuantity(parseInt(value.target.value))
-                            }
-                            className="w-12 h-8 md:w-14 md:h-10 mt-auto"
-                        >
-                            {Array.from(
-                                {
-                                    length: Math.min(
-                                        item.variant.inventory_quantity > 0
-                                            ? item.variant.inventory_quantity
-                                            : 10,
-                                        10
-                                    ),
-                                },
-                                (_, i) => (
-                                    <option value={i + 1} key={i}>
-                                        {i + 1}
-                                    </option>
-                                )
+                            value={quantity} // Visual update
+                            onChange={(valueAsNumber) =>
+                                changeQuantity(Number(valueAsNumber))
+                            } // Debounced server update
+                            min={1}
+                            max={Math.min(
+                                item.variant.inventory_quantity > 0
+                                    ? item.variant.inventory_quantity
+                                    : 100,
+                                100
                             )}
-                        </CartItemSelect>
+                            className="w-12 h-8 md:w-14 md:h-10 mt-auto"
+                        />
                     </Flex>
                 </Flex>
             </Flex>

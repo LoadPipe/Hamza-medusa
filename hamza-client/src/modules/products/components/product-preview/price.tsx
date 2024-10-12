@@ -10,7 +10,7 @@ export default function PreviewPrice({
     prices: { currency_code: string; amount: number }[];
 }) {
     const { preferred_currency_code, authData } = useCustomerAuthStore();
-    console.log('user preferred currency code: ', preferred_currency_code);
+    //console.log('user preferred currency code: ', preferred_currency_code);
 
     let preferredPrice =
         (authData.status == 'authenticated' &&

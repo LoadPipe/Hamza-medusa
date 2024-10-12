@@ -11,6 +11,7 @@ import ProductVariantRepository from '@medusajs/medusa/dist/repositories/product
 import { In } from 'typeorm';
 import { ILogger } from '../utils/logging/logger';
 import { PriceConverter } from '../utils/price-conversion';
+import { SeamlessCache } from '../utils/cache/seamless-cache';
 
 type InjectedDependencies = {
     customerService: CustomerService;
@@ -101,11 +102,12 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
         );
 
         //get the variant objects
-        const variants: ProductVariant[] =
-            await this.productVariantRepository_.find({
-                where: { id: In(variantIds) },
-                relations: ['product', 'prices', 'product.store'],
-            });
+        const variants: ProductVariant[] = await variantPriceCache.retrieve(
+            {
+                ids: variantIds,
+                productVariantRepository: this.productVariantRepository_
+            }
+        );
 
         //get the store
         const store: Store = variants[0].product.store;
@@ -155,5 +157,44 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
     }
 }
 
+class VariantPriceCache extends SeamlessCache {
+    constructor() {
+        super(parseInt(process.env.VARIANT_PRICE_CACHE_EXPIRATION_SECONDS ?? '300'));
+    }
+
+    async retrieve(params?: any): Promise<ProductVariant[]> {
+        let variants: ProductVariant[] = await super.retrieve(params);
+
+        //choose a way of filtering that best fits the array lengths
+        if (variants && params.ids) {
+            if (variants.length > params.ids.length) {
+
+                //if short id list, this might be faster 
+                const outputVariants: ProductVariant[] = [];
+                for (let id of params.ids) {
+                    const variant = variants.find(v => v.id === id);
+                    if (variant)
+                        outputVariants.push(variant);
+                }
+                variants = outputVariants;
+            }
+            else {
+
+                //if short variants list, this might be better
+                variants = variants.filter(v => params.ids.includes(v.id));
+            }
+        }
+
+        return variants;
+    }
+
+    protected async getData(params: any): Promise<any> {
+        return await params.productVariantRepository.find({
+            relations: ['product', 'prices', 'product.store'],
+        });
+    }
+}
 
 
+// GLOBAL CACHES
+const variantPriceCache: VariantPriceCache = new VariantPriceCache();

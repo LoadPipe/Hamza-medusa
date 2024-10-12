@@ -38,7 +38,12 @@ export default class CartService extends MedusaCartService {
         );
     }
 
-    async retrieve(cartId: string, options?: FindConfig<Cart>, totalsConfig?: { force_taxes?: boolean; }): Promise<Cart> {
+    async retrieve(
+        cartId: string,
+        options?: FindConfig<Cart>,
+        totalsConfig?: { force_taxes?: boolean; },
+        saveLineItems: boolean = false
+    ): Promise<Cart> {
         //add items & variant prices, and store (for default currency)
         if (options?.relations) {
             if (!options.relations.includes('items.variant.prices'))
@@ -52,6 +57,7 @@ export default class CartService extends MedusaCartService {
         }
         const cart = await super.retrieve(cartId, options, totalsConfig);
 
+        //handle items - mainly currency conversion
         if (cart?.items) {
 
             //get customer preferred currency
@@ -66,29 +72,55 @@ export default class CartService extends MedusaCartService {
             //adjust price for each line item, convert if necessary
             const itemsToSave: LineItem[] = [];
             for (let item of cart.items) {
+                //detect if currency has changed in line item
                 let storeCurrency = item.variant.product.store?.default_currency_code;
-                item.currency_code = storeCurrency;
-                item.unit_price = item.variant.prices.find(p => p.currency_code === storeCurrency).amount;
-                if (storeCurrency != userPreferredCurrency) {
-                    this.logger.info(`cart item with currency ${storeCurrency} amount ${item.unit_price} changing to ${userPreferredCurrency}`)
+                const originalCurrency = item.currency_code;
+                let originalPrice = item.unit_price;
 
-                    const newPrice = await this.priceConverter.getPrice(
+                item.currency_code = storeCurrency;
+
+                //now detect if price has changed
+                let newPrice = item.variant.prices.find(p => p.currency_code === storeCurrency).amount;
+                item.unit_price = newPrice;
+
+                if (storeCurrency != userPreferredCurrency) {
+                    newPrice = await this.priceConverter.getPrice(
                         { baseAmount: item.unit_price, baseCurrency: storeCurrency, toCurrency: userPreferredCurrency }
                     );
-                    item.unit_price = newPrice;
-                    item.currency_code = userPreferredCurrency;
+                }
+                item.unit_price = newPrice;
+                item.currency_code = userPreferredCurrency;
+
+                //if EITHER currency OR price has changed, the item will beupdated 
+                const priceChanged = originalPrice != item.unit_price;
+                const currencyChanged = originalCurrency != item.currency_code;
+
+                if (priceChanged || currencyChanged) {
+                    const reason = priceChanged ?
+                        (currencyChanged ? 'Price and currency have both changed' :
+                            'Price has changed') :
+                        'Currency has changed';
+
+                    //console.log('***************************** STARTETH *************************************')
+                    this.logger.info(`cart item with currency ${originalCurrency} price ${originalPrice} changing to ${item.currency_code} ${item.unit_price}`);
+                    this.logger.debug(`${reason}, updating line item in cart ${cart.id}`);
+                    //console.log('****************************** ENDETH ************************************')
 
                     itemsToSave.push(item);
                 }
             }
 
-            if (itemsToSave.length) {
-                Promise.all(
-                    itemsToSave.map(i => this.lineItemRepository_.save(i))
-                );
+            //if any items to update, update them asynchronously
+            try {
+                if (saveLineItems && itemsToSave?.length) {
+                    await this.lineItemRepository_.save(itemsToSave);
+                }
+            } catch (error) {
+                this.logger.error(`Line items save has errored for cart ${cart.id}`, error);
             }
         }
 
+        //get cart email
         const cartEmail = await this.cartEmailRepository_.findOne({ where: { id: cartId } });
         if (cartEmail)
             cart.email = cartEmail.email_address;
@@ -155,12 +187,17 @@ export default class CartService extends MedusaCartService {
             lineItems[n].currency_code = results[n];
         }
 
-        //call super
-        await super.addOrUpdateLineItems(
-            cartId,
-            lineItems.length === 1 ? lineItems[0] : lineItems,
-            config
-        );
+        try {
+            //call super
+            await super.addOrUpdateLineItems(
+                cartId,
+                lineItems.length === 1 ? lineItems[0] : lineItems,
+                config
+            );
+        }
+        catch (error: any) {
+            this.logger.error(`Error adding ${lineItems.length} line items to cart ${cartId}`, error);
+        }
     }
 
     private async getCurrencyForLineItem(

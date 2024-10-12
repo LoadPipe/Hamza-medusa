@@ -7,11 +7,16 @@ import {
     useDisclosure,
     useBreakpointValue,
     AspectRatio,
+    IconButton,
 } from '@chakra-ui/react';
 import { getObjectFit } from '@modules/get-object-fit';
 import useProductPreview from '@store/product-preview/product-preview';
 import React, { useEffect, useState } from 'react';
 import ImageGalleryModal from '../gallery-modal';
+import { FaChevronLeft } from 'react-icons/fa';
+import { HamburgerIcon } from '@chakra-ui/icons';
+import { useParams, useRouter } from 'next/navigation';
+import ProductDetailsMobileMenu from './components/mobile-menu';
 
 interface PreviewGalleryProps {
     selectedVariantImage: string;
@@ -51,6 +56,26 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
         onOpen();
     };
 
+    const { countryCode } = useParams();
+    const router = useRouter();
+    const baseURL =
+        process.env.NEXT_PUBLIC_MEDUSA_CLIENT_URL || 'http://localhost:8000';
+    // Default fallback path to homepage if there is no history to go back to
+    const fallbackPath = countryCode ? `${baseURL}/${countryCode}` : baseURL;
+
+    const handleClick = (
+        e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    ) => {
+        e.preventDefault(); // Prevent default button behavior
+
+        // Go back one step in history if possible, otherwise redirect to fallback
+        if (window.history.length > 1) {
+            router.back(); // Go back in history
+        } else {
+            router.push(fallbackPath); // Navigate to fallback path if no history exists
+        }
+    };
+
     // Responsive layout adjustment for the grid
     const gridTemplateColumns = useBreakpointValue({
         base: '1fr', // On mobile, only 1 column
@@ -70,26 +95,61 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                 gap={2}
             >
                 {/* Main Square Image on the top (mobile) or left (desktop) */}
-                <GridItem>
-                    <AspectRatio
-                        ratio={1}
-                        width={{ base: '100%', md: '100%' }} // Use full width on mobile, fixed on desktop
-                        maxH="600px"
-                        minH="312px"
-                        height="100%"
-                        overflow="hidden"
-                        onClick={() => openGallery(0)}
-                        cursor="pointer"
-                        borderRadius={{ base: '16px', md: '16px 0 0 16px' }}
-                    >
-                        <Image
-                            src={images[0]}
-                            width={'100%'}
-                            height={'100%'}
-                            alt="Main Image"
-                            objectFit="cover"
+                <GridItem position="relative">
+                    <Box position="relative" overflow="hidden">
+                        <AspectRatio
+                            ratio={1}
+                            width={{ base: '100%', md: '100%' }} // Use full width on mobile, fixed on desktop
+                            maxH="600px"
+                            minH="312px"
+                            height="100%"
+                            overflow="hidden"
+                            borderRadius={{ base: '16px', md: '16px 0 0 16px' }}
+                            onClick={() => openGallery(0)}
+                            cursor="pointer"
+                        >
+                            <Image
+                                src={images[0]}
+                                width={'100%'}
+                                height={'100%'}
+                                alt="Main Image"
+                                objectFit="cover"
+                            />
+                        </AspectRatio>
+
+                        {/* Back Button (Top Left) */}
+                        <IconButton
+                            as="button"
+                            display={{ base: 'flex', md: 'none' }}
+                            icon={<FaChevronLeft />}
+                            position="absolute"
+                            top="10px"
+                            left="10px"
+                            size="sm"
+                            aria-label="Go Back"
+                            onClick={handleClick} // Replace with actual back logic
+                            backgroundColor="rgba(0, 0, 0, 0.5)"
+                            color="white"
+                            borderRadius="full"
+                            zIndex="1" // Ensure button is on top of the image
                         />
-                    </AspectRatio>
+
+                        {/* 3-Dot Menu Button (Top Right) */}
+                        <IconButton
+                            as="button"
+                            display={{ base: 'flex', md: 'none' }}
+                            icon={<ProductDetailsMobileMenu />}
+                            position="absolute"
+                            top="10px"
+                            right="10px"
+                            size="sm"
+                            aria-label="Open Menu"
+                            onClick={() => console.log('Menu Button Clicked')} // Replace with menu logic
+                            backgroundColor="rgba(0, 0, 0, 0.5)"
+                            color="white"
+                            borderRadius="full"
+                        />
+                    </Box>
                 </GridItem>
 
                 {/* 4 Square Images below (mobile) or to the right (desktop) */}

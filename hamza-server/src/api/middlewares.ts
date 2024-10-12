@@ -56,6 +56,36 @@ const registerLoggedInCustomer = async (
     });
 };
 
+const restrictCustomerOrders = async (
+    req: MedusaRequest,
+    res: MedusaResponse,
+    next: MedusaNextFunction
+) => {
+    let authorized = false;
+    if (req.headers.authorization) {
+        const logger = req.scope.resolve('logger');
+        const jwtToken: any = jwt.decode(req.headers.authorization.replace('Bearer ', ''));
+        const customerId = jwtToken?.customer_id;
+        logger.debug(`customer id in store/orders route is ${customerId}`);
+
+        const orderId = req.url.replace('/', '');
+        if (orderId && orderId.startsWith('order_') && customerId?.length) {
+            const orderService = req.scope.resolve('orderService');
+            const order = await orderService.retrieve(orderId);
+            logger.debug(`order customer id in store/orders route is ${order?.customer_id}`);
+            if (order?.customer_id === customerId) {
+                next();
+                authorized = true;
+            }
+        }
+    }
+
+    if (!authorized) {
+        res.status(401).json({ status: false })
+        return;
+    }
+};
+
 export const permissions = async (
     req: MedusaRequest,
     res: MedusaResponse,
@@ -159,6 +189,16 @@ export const config: MiddlewaresConfig = {
                     origin: '*',
                     credentials: true,
                 }),
+            ],
+        },
+        {
+            matcher: '/store/orders',
+            middlewares: [
+                cors({
+                    origin: [STORE_CORS],
+                    credentials: true,
+                }),
+                restrictCustomerOrders
             ],
         },
 

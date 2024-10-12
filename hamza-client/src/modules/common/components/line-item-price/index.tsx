@@ -29,6 +29,8 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
         undefined
     );
 
+    console.log("CART ITEM IS", item);
+
     useEffect(() => {
         const fetchCustomerPreferredCurrency = async () => {
             try {
@@ -59,7 +61,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
 
     useEffect(() => {
         const originalTotal = item.original_total ?? null;
-        const totalItemAmount = item.subtotal ?? null;
+        const totalItemAmount = item.subtotal ?? (item.unit_price * item.quantity);
         const discountTotal = item.discount_total ?? null;
         setPrice(totalItemAmount);
         setReducedPrice(reducedPrice);

@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Error from '../../../../../error';
-import { Text, Flex } from '@chakra-ui/react';
+import { Text, Flex, Box } from '@chakra-ui/react';
 import {
     getHamzaCustomer,
     listRegions,
@@ -30,22 +30,19 @@ export default async function Reviews() {
     }
 
     return (
-        <Flex
+        <Box
             maxW={'927px'}
             width="100%"
             backgroundColor={'#121212'}
             flexDirection={'column'}
-            borderRadius={'12px'}
-            p={'1.5rem'}
+            color="white"
+            rounded={'lg'}
+            justifyContent="center"
+            alignItems="center"
         >
-            <Text
-                mb={'4'}
-                className="text-2xl-semi"
-                color={'primary.indigo.900'}
-            >
-                My Reviews
-            </Text>
-            <ReviewPage customer={customer} />
-        </Flex>
+            <Box display="flex" flexDirection="column">
+                <ReviewPage customer={customer} />
+            </Box>
+        </Box>
     );
 }

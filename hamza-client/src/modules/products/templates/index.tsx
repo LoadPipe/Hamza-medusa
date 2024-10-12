@@ -107,11 +107,12 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                 flexDirection="column"
             >
                 <Flex
-                    mt="1rem"
+                    mt={{ base: '0', md: '1rem' }}
                     mb="-1rem"
                     height={'52px'}
                     width="100%"
                     flexDirection={'row'}
+                    display={{ base: 'none', md: 'flex' }}
                 >
                     <LocalizedClientLink
                         style={{
@@ -126,7 +127,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                             borderRadius: '16px',
                             height: '52px',
                         }}
-                        className="ml-auto "
+                        className="ml-auto"
                     >
                         <Flex width={'30px'} height={'40px'}>
                             <Flex
@@ -145,10 +146,11 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                         </Flex>
                         <Text>Back to results</Text>
                     </LocalizedClientLink>
-
-                    {/* <SearchBar /> */}
                 </Flex>
-                <Flex mt="2rem" mb={{ base: '-1rem', md: '0' }}>
+                <Flex
+                    mt={{ base: '1rem', md: '2rem' }}
+                    mb={{ base: '-1rem', md: '0' }}
+                >
                     <PreviewGallery
                         selectedVariantImage={selectedVariantImage}
                     />
@@ -181,6 +183,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                         alignSelf="flex-start"
                     >
                         <PreviewCheckout
+                            selectedVariantImage={selectedVariantImage}
                             setSelectedVariantImage={setSelectedVariantImage}
                             productId={product.id as string}
                         />
@@ -192,46 +195,10 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                     display={{ base: 'block', md: 'none' }}
                     mt="2rem"
                 />
-                <ProductReview productId={product.id as string} />
+                <ProductReview />
             </Flex>
         </Flex>
     );
 };
 
 export default ProductTemplate;
-
-{
-    /* <div className="content-container flex flex-col small:flex-row small:items-start py-6 relative bg-black">
-<div className="flex flex-col small:sticky small:top-48 small:py-0 small:max-w-[300px] w-full py-8 gap-y-6">
-    <ProductInfo product={product} />
-    <ProductTabs product={product} />
-</div>
-<div className="block w-full relative">
-    <ImageGallery images={product?.images || []} />
-</div>
-<div className="flex flex-col small:sticky small:top-48 small:py-0 small:max-w-[300px] w-full py-8 gap-y-12">
-    <ProductOnboardingCta />
-    <Suspense
-        fallback={
-            <ProductActions product={product} region={region} />
-        }
-    >
-        <ProductActionsWrapper
-            id={product.id}
-            region={region}
-        />
-    </Suspense>
-</div>
-</div>
-<div className="content-container py-16 small:py-32 bg-black">
-<ProductReview product={product} countryCode={countryCode} />
-</div>
-<div className="content-container py-16 small:py-32 bg-black">
-<Suspense fallback={<SkeletonRelatedProducts />}>
-    <RelatedProducts
-        product={product}
-        countryCode={countryCode}
-    />
-</Suspense>
-</div> */
-}

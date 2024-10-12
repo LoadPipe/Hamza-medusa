@@ -61,11 +61,6 @@ async function axiosCall(
             config.headers.authorization = cookies().get('_medusa_jwt')?.value;
         }
 
-        //caching false by default
-        if (payload && !payload.cache) {
-            payload.cache = false;
-        }
-
         let response = { data: undefined };
         switch (verb) {
             case 'get':
@@ -217,6 +212,8 @@ const getMedusaHeaders = (tags: string[] = []) => {
     if (token) {
         headers.authorization = `Bearer ${token}`;
     }
+    //headers.cache = false;
+    headers['Cache-Control'] = 'no-cache, no-store';
 
     return headers;
 };
@@ -527,13 +524,7 @@ export async function recoverCart(customer_id: string) {
 export async function createCart(data = {}) {
     const headers = getMedusaHeaders(['cart']);
 
-    return medusaClient.carts
-        .create(data, headers)
-        .then(({ cart }) => cart)
-        .catch((err) => {
-            console.log(err);
-            return null;
-        });
+    return postSecure('/custom/cart', { data });
 }
 
 export async function updateCart(cartId: string, data: StorePostCartsCartReq) {
@@ -545,16 +536,23 @@ export async function updateCart(cartId: string, data: StorePostCartsCartReq) {
         .catch((error) => medusaError(error));
 }
 
-export async function getCart(cartId: string) {
-    const headers = getMedusaHeaders(['cart']);
+export async function getCart(cart_id: string) {
+    const token = cookies().get('_medusa_jwt')?.value;
 
-    return medusaClient.carts
-        .retrieve(cartId, headers)
-        .then(({ cart }) => cart)
-        .catch((err) => {
-            console.log(err);
-            return null;
-        });
+    //if we have a token, it's safe to get the possibly-cached cart 
+    if (token?.length) {
+        const headers = getMedusaHeaders(['cart']);
+        return medusaClient.carts
+            .retrieve(cart_id, headers)
+            .then(({ cart }) => cart)
+            .catch((err) => {
+                console.log(err);
+                return null;
+            });
+    }
+
+    //otherwise, play it safe and get the definitely non-cached
+    return getSecure('/custom/cart', { cart_id });
 }
 
 export async function addItem({
@@ -795,11 +793,14 @@ export async function getHamzaCustomer(includeAddresses: boolean = true) {
         customer_id: '',
     };
     const customer_id: string = token?.customer_id ?? '';
+    let response = null;
 
-    const response = await getSecure('/custom/customer', {
-        customer_id,
-        include_addresses: includeAddresses ? 'true' : 'false',
-    });
+    if (customer_id?.length) {
+        response = await getSecure('/custom/customer', {
+            customer_id,
+            include_addresses: includeAddresses ? 'true' : 'false',
+        });
+    }
 
     return response ?? {};
 }
@@ -1057,7 +1058,7 @@ export async function getProductsList({
                 // region_id: region.id,
                 ...queryParams,
             },
-            { next: { tags: ['products'] } }
+            { next: { revalidate: 300, tags: ['products'] } }
         )
         .then((res) => res)
         .catch((err) => {
@@ -1175,7 +1176,10 @@ export async function getCollectionsList(
     limit: number = 100
 ): Promise<{ collections: ProductCollection[]; count: number }> {
     const collections = await medusaClient.collections
-        .list({ limit, offset }, { next: { tags: ['collections'] } })
+        .list(
+            { limit, offset },
+            { next: { revalidate: 300, tags: ['collections'] } }
+        )
         .then(({ collections }) => collections)
         .catch((err) => {
             throw err;

@@ -17,6 +17,7 @@ import {
 import { FaCheckCircle } from 'react-icons/fa';
 import Link from 'next/link';
 import { upperCase } from 'lodash';
+import React from 'react';
 
 type OrderDetails = {
     thumbnail: string;
@@ -89,37 +90,39 @@ const CancelCard = ({
             rounded="lg"
             shadow="base"
             maxWidth="1000px"
-            m="auto"
-            mt={2}
         >
-            <Flex alignItems="center" mb={2}>
+            <Flex alignItems="center" mb={4}>
                 <Text
-                    fontSize={{ base: '14px', md: '24px' }}
+                    fontSize={{ base: '18px', md: '24px' }}
                     fontWeight="bold"
                     noOfLines={1}
                 >
                     {vendorName}
                 </Text>
-                <Flex
-                    display={{ base: 'none', md: 'flex' }}
-                    ml={2}
-                    alignItems="center"
-                >
+                <Flex display={{ base: 'flex' }} ml={2} alignItems="center">
                     <FaCheckCircle color="#3196DF" />
                 </Flex>
             </Flex>
 
-            <Flex justifyContent="space-between">
+            <Flex
+                direction={{ base: 'column', md: 'row' }}
+                alignItems={{ base: 'flex-start', md: 'center' }}
+                justifyContent="space-between"
+            >
+                {' '}
                 {/* Left Side: Existing Content */}
                 <Flex
-                    alignItems="center"
+                    direction={{ base: 'column', md: 'row' }} // Ensure column layout on mobile
+                    alignItems={{ base: 'flex-start', md: 'center' }}
                     justifyContent="space-between"
                     flex="1"
                 >
-                    <Link href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}>
+                    <Link
+                        href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}
+                    >
                         <Image
                             borderRadius="lg"
-                            width={{ base: '60px', md: '120px' }}
+                            width={{ base: '120px', md: '180px' }}
                             src={
                                 order?.variant?.metadata?.imgUrl ??
                                 order.thumbnail ??
@@ -132,20 +135,17 @@ const CancelCard = ({
 
                     <Box flex="1">
                         <Flex justifyContent="space-between" direction="row">
-                            <Flex direction="column">
-                                <Text
-                                    color={'rgba(85, 85, 85, 1.0)'}
-                                    fontSize="16px"
-                                >
-                                    Item Name
-                                </Text>
+                            <Flex direction="column" mt={4}>
                                 <Text fontWeight="bold" fontSize="18px">
                                     {order.title}
                                 </Text>
-                                <Flex direction="row" alignItems="center">
+                                <Flex
+                                    direction={{ base: 'column', md: 'row' }}
+                                    mt={2}
+                                >
                                     <Text
+                                        fontSize={{ base: '14px', md: '16px' }}
                                         color={'rgba(85, 85, 85, 1.0)'}
-                                        fontSize="16px"
                                         mr={1} // Add some space between "Variation:" and the description
                                     >
                                         Variation:
@@ -157,7 +157,7 @@ const CancelCard = ({
                             </Flex>
                         </Flex>
 
-                        <Flex direction="column" mt={2}>
+                        <Flex direction="column" mt={4}>
                             <Text
                                 color={'rgba(85, 85, 85, 1.0)'}
                                 fontSize="16px"
@@ -172,13 +172,12 @@ const CancelCard = ({
                         </Flex>
                     </Box>
                 </Flex>
-
                 {/* Right Side: Courier and Address */}
                 <Flex
                     direction="column"
-                    ml={4}
                     minWidth="200px"
                     maxWidth="300px"
+                    mt={2}
                 >
                     <Text fontSize="24px" fontWeight="semibold">
                         {getAmount(order.unit_price)}{' '}
@@ -186,21 +185,24 @@ const CancelCard = ({
                     </Text>
                 </Flex>
             </Flex>
-            <Flex justifyContent="flex-end" mt={2}>
+            <Flex direction={{ base: 'column', md: 'row' }} mt={4} gap={2}>
                 <Button
                     variant="outline"
                     colorScheme="white"
                     borderRadius={'37px'}
                     onClick={onOpen}
+                    width={{ base: '100%', md: 'auto' }}
                 >
                     View Cancellation Details
                 </Button>
-                <a href='https://blog.hamza.market/contact/' target='_blank'>
+                <a href="https://blog.hamza.market/contact/" target="_blank">
                     <Button
-                        ml={2}
+                        ml={{ base: 0, md: 2 }}
+                        mt={{ base: 2, md: 0 }}
                         variant="outline"
                         colorScheme="white"
                         borderRadius={'37px'}
+                        width={{ base: '100%', md: 'auto' }}
                     >
                         Contact Seller
                     </Button>
@@ -238,7 +240,7 @@ const CancelCard = ({
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </Box >
+        </Box>
     );
 };
 
