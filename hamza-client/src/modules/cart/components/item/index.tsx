@@ -40,11 +40,7 @@ const Item = ({ item, region }: ItemProps) => {
     const { handle } = item.variant.product;
 
     useEffect(() => {
-        console.log('RUNNING');
         if (item.variant.inventory_quantity === 0) {
-            console.log('WTF');
-
-            // Item is no longer available
             toast.error(`Item not available at this time`);
             deleteLineItem(item.id); // Trigger delete
         } else if (
@@ -54,7 +50,6 @@ const Item = ({ item, region }: ItemProps) => {
             // Only reset the quantity if it's larger than available stock
             // and the API hasn't already reset it
             if (item.quantity !== 1) {
-                console.log('WTF');
                 toast.error(`Quantity Selected is unavailable, resetting`);
                 updateLineItem({ lineId: item.id, quantity: 1 });
             }
