@@ -165,8 +165,24 @@ class VariantPriceCache extends SeamlessCache {
     async retrieve(params?: any): Promise<ProductVariant[]> {
         let variants: ProductVariant[] = await super.retrieve(params);
 
+        //choose a way of filtering that best fits the array lengths
         if (variants && params.ids) {
-            variants = variants.filter(v => params.ids.includes(v.id));
+            if (variants.length > params.ids.length) {
+
+                //if short id list, this might be faster 
+                const outputVariants: ProductVariant[] = [];
+                for (let id of params.ids) {
+                    const variant = variants.find(v => v.id === id);
+                    if (variant)
+                        outputVariants.push(variant);
+                }
+                variants = outputVariants;
+            }
+            else {
+
+                //if short variants list, this might be better
+                variants = variants.filter(v => params.ids.includes(v.id));
+            }
         }
 
         return variants;
