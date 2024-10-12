@@ -8,17 +8,16 @@ async function main() {
                         Authorization: 'Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj',
                     },
                 });
-        
-        
-                const deleteProductIndex = await fetch('http://localhost:7700/indexes/products/documents', {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-type': 'application/json; charset=UTF-8',
-                        Authorization: 'Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj',
-                    },
-                })
-                console.log(deleteProductIndex);
         */
+
+        const deleteProductIndex = await fetch('http://localhost:7700/indexes/products/documents', {
+            method: 'DELETE',
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+                Authorization: 'Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj',
+            },
+        })
+        console.log(deleteProductIndex);
 
 
         const response = await fetch('http://localhost:7700/indexes/products/documents?primaryKey=id', {
@@ -28,7 +27,6 @@ async function main() {
                 Authorization: 'Bearer Pybr4pq4eFjrKVQ79sSUJfp7O8tXNWJj',
             },
             body: JSON.stringify([
-                /*
                 {
                     "id": "prod_01J831AS9B4R9PPSGV1NSZ4T1K",
                     "handle": "mechanical-keyboard-rapoo-v700",
@@ -105,7 +103,7 @@ async function main() {
                     "title": "Micro SD card for Cameras - Durability: Waterproof, temperature-proof - Full HD Video Support",
                     "description": "Micro SD card for Cameras - Durability: Waterproof, temperature-proof - Full HD Video Support",
                     "thumbnail": "https://static.snapchum.com/SC002/main-plain.png"
-                }
+                },
                 {
                     "id": "prod_01J7ZZRKEQSQW3HBRQQ1DMC5FS",
                     "handle": "glass-screen-protector",
@@ -120,7 +118,6 @@ async function main() {
                     "description": "Universal power strip",
                     "thumbnail": "https://static.snapchum.com/SC010/main-plain.png"
                 },
-                */
                 {
                     "id": "prod_01J9DWM19VNE7Z8FH8VXP32GNS",
                     "handle": "multi-charging-cable",
@@ -189,8 +186,9 @@ async function main() {
         })
         console.log(deleteDraft);
 
-
     } catch (e) {
         console.error(e);
     }
 }
+
+main();
