@@ -1,5 +1,5 @@
 'use client';
-
+import { useCartStore } from '@store/cart-store/cart-store'; // Import Zustand store
 import { LineItem, Region } from '@medusajs/medusa';
 import CartItemSelect from '@modules/cart/components/cart-item-select';
 import DeleteButton from '@modules/common/components/delete-button';
@@ -29,13 +29,12 @@ const debouncedChangeQuantity = debounce(
         await updateLineItemFn(quantity);
         console.log('Server update triggered');
     },
-    5000
+    2000
 );
 
 const Item = ({ item, region }: ItemProps) => {
     const [quantity, setQuantity] = useState(item.quantity);
-    const [updating, setUpdating] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const setIsUpdating = useCartStore((state) => state.setIsUpdating);
 
     const { handle } = item.variant.product;
 
@@ -57,26 +56,26 @@ const Item = ({ item, region }: ItemProps) => {
     }, [item.variant.inventory_quantity, item.quantity]); // Track quantity and stock
 
     const handleUpdateLineItem = async (qty: number) => {
-        setUpdating(true);
         const message = await updateLineItem({
             lineId: item.id,
             quantity: qty,
         })
             .catch((err) => {
-                setError(err.message);
+                toast.error('We ran into an issue, resetting');
                 setQuantity(item.quantity); // Reset to original quantity if error
             })
             .finally(() => {
-                setUpdating(false);
+                setIsUpdating(false);
             });
 
         if (message) {
-            setError(message);
+            toast.error(message);
         }
     };
 
     const changeQuantity = (newQuantity: number) => {
         if (newQuantity !== quantity) {
+            setIsUpdating(true); // Update global loading state
             setQuantity(newQuantity);
             debouncedChangeQuantity(newQuantity, handleUpdateLineItem);
         }
