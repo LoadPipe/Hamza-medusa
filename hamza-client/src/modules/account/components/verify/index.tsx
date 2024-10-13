@@ -180,7 +180,7 @@ const VerifyAccount = () => {
                         </Flex>
 
                         {/* Google Auth */}
-                        {/* <a href={getGoogleOAuthURL(authParams)}>
+                        <a href={getGoogleOAuthURL(authParams)}>
                             <Button
                                 leftIcon={<IoLogoGoogle size={24} />}
                                 borderWidth={'1px'}
@@ -198,7 +198,7 @@ const VerifyAccount = () => {
                             </Button>
                         </a>
 
-                        Twitter Auth
+                        {/* Twitter Auth
                         <a href={getTwitterOauthUrl(authParams)}>
                             <Button
                                 leftIcon={<FaXTwitter size={24} />}
