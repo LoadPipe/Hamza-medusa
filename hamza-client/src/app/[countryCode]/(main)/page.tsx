@@ -5,6 +5,13 @@ import SearchAndFilterPanel from '@modules/home/components/search-and-filter-pan
 import { Box } from '@chakra-ui/react';
 import HeroBanner from '@modules/home/components/hero-banner';
 import HamzaLogoLoader from '../../components/loaders/hamza-logo-loader';
+import getQueryClient from '@/app/getQueryClient';
+import { dehydrate } from '@tanstack/react-query';
+
+// Author; Garo Nazarian
+// First working version of hydration, this one is a bit tricky with
+// tanstack v4
+// https://tanstack.com/query/v4/docs/framework/react/guides/ssr
 
 export const metadata: Metadata = {
     title: 'Hamza Store',
@@ -17,16 +24,24 @@ export default async function Home({
     params: { countryCode: string };
 }) {
     const region = await getRegion(countryCode);
-    const products = await getAllProducts();
 
-    if (!region || !products) {
+    const queryClient = new getQueryClient();
+
+    await queryClient.prefetchQuery({
+        queryKey: ['homeProducts'],
+        queryFn: getAllProducts,
+    });
+
+    const dehydratedHomeProducts = dehydrate(queryClient);
+
+    if (!region) {
         return null;
     }
 
     return (
         <Box backgroundColor={'transparent'}>
             <HeroBanner />
-            <SearchAndFilterPanel products={products} />
+            <SearchAndFilterPanel dehydratedState={dehydratedHomeProducts} />
         </Box>
     );
 }

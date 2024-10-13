@@ -8,6 +8,7 @@ import {
     Grid,
     GridItem,
     Flex,
+    Text,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
@@ -17,7 +18,7 @@ import useHomeProductsPage from '@store/home-page/product-layout/product-layout'
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
 import { getAllProducts } from '@lib/data';
 
-const ProductCardGroup = ({ products }: { products: any[] }) => {
+const ProductCardGroup = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const { categorySelect } = useHomeProductsPage();
     const { homeModalLowerPriceFilterSelect, homeModalUpperPriceFilterSelect } =
@@ -40,9 +41,11 @@ const ProductCardGroup = ({ products }: { products: any[] }) => {
     // Determine which URL to use based on whether the filter is active
     // const fetchUrl = isFilterActive ? filterUrl : defaultUrl;
 
+    console.log(categorySelect);
+    // Fetch products independently, will use cached data from hydration...
     const { data, error, isLoading } = useQuery(
         [
-            'categories',
+            'homeProducts',
             categorySelect,
             homeModalLowerPriceFilterSelect,
             homeModalUpperPriceFilterSelect,
@@ -52,13 +55,14 @@ const ProductCardGroup = ({ products }: { products: any[] }) => {
                 categorySelect,
                 homeModalUpperPriceFilterSelect,
                 homeModalLowerPriceFilterSelect
-            ), // Call getAllProducts directly
+            ),
         {
-            enabled: homeModalLowerPriceFilterSelect !== null, // Fetch only if filters are active
+            staleTime: 60 * 1000,
+            cacheTime: 2 * 60 * 1000,
         }
     );
 
-    const productsAll = products?.products ?? data?.products ?? [];
+    const productsAll = data?.products ?? [];
 
     if (isLoading) {
         return (

@@ -6,8 +6,13 @@ import { Flex } from '@chakra-ui/react';
 import SearchBar from './components/SearchBar';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import FilterBar from './components/filter-bar/FilterBar';
+import { Hydrate } from '@tanstack/react-query';
 
-const SearchAndFilterPanel = ({ products }: { products: any[] }) => {
+const SearchAndFilterPanel = ({
+    dehydratedState,
+}: {
+    dehydratedState: any;
+}) => {
     return (
         <Flex
             mx={'auto'}
@@ -19,7 +24,9 @@ const SearchAndFilterPanel = ({ products }: { products: any[] }) => {
         >
             <SearchBar />
             <FilterBar />
-            <ProductCardGroup products={products} />
+            <Hydrate state={dehydratedState}>
+                <ProductCardGroup />
+            </Hydrate>
         </Flex>
     );
 };
