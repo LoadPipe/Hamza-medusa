@@ -5,7 +5,7 @@ import SearchAndFilterPanel from '@modules/home/components/search-and-filter-pan
 import { Box } from '@chakra-ui/react';
 import HeroBanner from '@modules/home/components/hero-banner';
 import HamzaLogoLoader from '../../components/loaders/hamza-logo-loader';
-import getQueryClient from '@/app/getQueryClient';
+import getQueryClient from '@/getQueryClient';
 import { dehydrate } from '@tanstack/react-query';
 
 /**
@@ -46,11 +46,12 @@ export default async function Home({
 }) {
     const region = await getRegion(countryCode);
 
-    const queryClient = new getQueryClient();
-
+    const queryClient = getQueryClient();
     await queryClient.prefetchQuery({
         queryKey: ['homeProducts'],
-        queryFn: getAllProducts,
+        queryFn: () => {
+            return getAllProducts();
+        },
     });
 
     const dehydratedHomeProducts = dehydrate(queryClient);
