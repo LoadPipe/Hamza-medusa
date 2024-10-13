@@ -163,6 +163,25 @@ export default function ProductDetailsMobileMenu() {
                 <Box>
                     <MenuDivider opacity={'0.5'} borderColor={'white'} />
                 </Box>
+                <Link href={`https://blog.hamza.market/request-product/`} target="_blank">
+                    <MenuItem
+                        fontWeight={'600'}
+                        mt="1rem"
+                        px="2rem"
+                        color={'white'}
+                        backgroundColor={'transparent'}
+                        _hover={{ color: 'primary.green.900' }}
+                    >
+                        <Flex
+                            w="30px"
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                        >
+                            <MdOutlineStorefront size={28} />
+                        </Flex>
+                        <Text ml="0.5rem">Request a Product</Text>
+                    </MenuItem>
+                </Link>
                 <Link href={`https://blog.hamza.biz/merchant/`} target="_blank">
                     <MenuItem
                         fontWeight={'600'}

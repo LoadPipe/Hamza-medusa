@@ -171,6 +171,28 @@ const MainMenu = () => {
                         />
                     </Box>
                     <Link
+                        href={`https://blog.hamza.market/request-product/`}
+                        target="_blank"
+                    >
+                        <MenuItem
+                            fontWeight={'600'}
+                            mt="0.5rem"
+                            pl="1rem"
+                            color={'white'}
+                            backgroundColor={'black'}
+                            _hover={{ color: 'primary.green.900' }}
+                        >
+                            <Flex
+                                w="30px"
+                                justifyContent={'center'}
+                                alignItems={'center'}
+                            >
+                                <MdOutlineStorefront size={28} />
+                            </Flex>
+                            <Text ml="0.5rem">Request a Product</Text>
+                        </MenuItem>
+                    </Link>
+                    <Link
                         href={`https://blog.hamza.market/merchant/`}
                         target="_blank"
                     >
