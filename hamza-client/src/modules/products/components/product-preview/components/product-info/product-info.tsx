@@ -163,7 +163,11 @@ const ProductInfo = () => {
                                             price: convertToPriceDictionary(
                                                 selectedVariant
                                             ),
-                                            productVariantId: wishlist.products.find(i => i.id == productData?.id)?.productVariantId || null,
+                                            productVariantId:
+                                                wishlist.products.find(
+                                                    (i) =>
+                                                        i.id == productData?.id
+                                                )?.productVariantId || null,
                                         });
                                     }}
                                     className="text-white  cursor-pointer"

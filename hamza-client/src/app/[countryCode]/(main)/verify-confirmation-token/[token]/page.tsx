@@ -19,7 +19,6 @@ const VerifyEmail = () => {
         const confirmationTokenHandler = async () => {
             if (status !== 'ok') {
                 let res: any = await verifyToken(token as string);
-                console.log('this is the status', res.status);
                 if (res.status) {
                     console.log('this is status', res.status);
                     toast.success('Email verified successfully!');
