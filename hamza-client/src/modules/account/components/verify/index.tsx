@@ -73,25 +73,25 @@ const VerifyAccount = () => {
                 oAuthCalled.current = true;
 
                 setLoading(true);
-                // try {
-                //     const response = await putDiscord(code, type);
+                try {
+                    const response = await putOAuth(code, type);
 
-                //     if (response.success === true) {
-                //         setStatus('success');
-                //         console.log('Discord auth successful:', response.data);
-                //     } else {
-                //         setStatus('error');
-                //         console.error(
-                //             'Discord OAuth failed with status:',
-                //             response.status
-                //         );
-                //     }
-                // } catch (error) {
-                //     setStatus('error');
-                //     console.error('Discord auth error:', error);
-                // } finally {
-                //     setLoading(false);
-                // }
+                    if (response.success === true) {
+                        setStatus('success');
+                        console.log('Discord auth successful:', response.data);
+                    } else {
+                        setStatus('error');
+                        console.error(
+                            'Discord auth failed with status:',
+                            response.status
+                        );
+                    }
+                } catch (error) {
+                    setStatus('error');
+                    console.error('Discord auth error:', error);
+                } finally {
+                    setLoading(false);
+                }
             }
         };
 
