@@ -38,8 +38,6 @@ const VerifyAccount = () => {
 
     // Check url information for verification status
     useEffect(() => {
-        const verify = searchParams.get('verify');
-        const message = searchParams.get('message');
         const type = searchParams.get('type');
         const code = searchParams.get('code');
 
