@@ -1,7 +1,7 @@
 'use client';
 
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import getGoogleOAuthURL from '@lib/util/google-url';
 import getTwitterOauthUrl from '@lib/util/twitter-url';
@@ -23,6 +23,7 @@ const VerifyAccount = () => {
     // Email input hook
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
+    const oAuthCalled = useRef(false);
 
     // Routing
     const router = useRouter();
@@ -43,12 +44,15 @@ const VerifyAccount = () => {
         const code = searchParams.get('code');
 
         const handleOAuth = async () => {
-            if (type === 'google' && code) {
+            if (type === 'google' && code && !oAuthCalled.current) {
+                // Set the ref to true to prevent further calls
+                oAuthCalled.current = true;
+
                 setLoading(true);
                 try {
                     const response = await putOAuth(code, type);
 
-                    if (response.status === 200) {
+                    if (response.success === true) {
                         setStatus('success');
                         console.log('OAuth successful:', response.data);
                     } else {
@@ -68,34 +72,6 @@ const VerifyAccount = () => {
         };
 
         handleOAuth();
-
-        // if (verify === 'true') {
-        //     setStatus('success');
-        //     setErrorReason(null);
-        // } else if (verify === 'false' && message && type) {
-        //     setErrorReason(decodeURIComponent(message)); // Decode URL-encoded reason
-
-        //     switch (type) {
-        //         case 'google':
-        //             setVerificationType(getGoogleOAuthURL(authParams));
-        //             break;
-        //         case 'twitter':
-        //             setVerificationType(getTwitterOauthUrl(authParams));
-        //             break;
-        //         case 'discord':
-        //             setVerificationType(
-        //                 `https://discord.com/oauth2/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_DISCORD_ACCESS_KEY}&scope=identify+email&state=123456&redirect_uri=${process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URL}&prompt=consent`
-        //             );
-        //             break;
-        //         default:
-        //             setErrorReason('Invalid verification type.');
-        //             setStatus('error');
-        //             return;
-        //     }
-        //     setStatus('error');
-        // } else {
-        //     setStatus('default');
-        // }
     }, [searchParams]);
 
     // Email validation
