@@ -147,7 +147,7 @@ const VerifyAccount = () => {
             gap={{ base: 3, md: 6 }}
         >
             {loading && (
-                <HamzaLogoLoader message="Processing Google Authorization" />
+                <HamzaLogoLoader message="Processing Account Verification" />
             )}
 
             {status === 'success' && <VerifySuccess />}
