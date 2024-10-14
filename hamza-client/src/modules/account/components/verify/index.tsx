@@ -43,7 +43,7 @@ const VerifyAccount = () => {
 
         const handleOAuth = async () => {
             if (
-                (type === 'google' || type === 'discord') &&
+                (type?.length) &&
                 code &&
                 !oAuthCalled.current
             ) {
@@ -81,7 +81,6 @@ const VerifyAccount = () => {
     // Email validation
     const emailVerificationHandler = async () => {
         setLoading(true);
-        console.log('hello');
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (email.trim() === '') {
@@ -97,7 +96,6 @@ const VerifyAccount = () => {
         }
 
         try {
-            console.log('response lets go');
             let res: any = await verifyEmail(authData.customer_id, email);
 
             if (res.message.includes('409')) {
@@ -253,7 +251,6 @@ const VerifyAccount = () => {
                     <Button
                         isLoading={loading}
                         onClick={() => {
-                            console.log('Button Clicked!');
                             emailVerificationHandler();
                         }}
                         mt="auto"

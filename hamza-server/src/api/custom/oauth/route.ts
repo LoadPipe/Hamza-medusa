@@ -66,23 +66,18 @@ async function handleGoogle(
     customerRepository: typeof CustomerRepository,
     eventBusService: EventBusService
 ) {
-    console.log('*****handle google******');
     //get google oauth data
     let tokens = await getGoogleOAuthTokens({
         code: handler.inputParams.code,
     });
 
-    console.log('*****Getting Tokens******');
-
     if (!tokens) {
-        console.log('*****nO Tokens******');
         return handler.returnStatus(200, {
             success: false,
             message: 'Did not recieve oauth token',
         });
     }
 
-    console.log('*****Got Tokens******');
     handler.logger.debug(`Google OAuth tokens: ${JSON.stringify(tokens)}`);
     //get google user data
     let user = await getGoogleUser({
@@ -105,8 +100,6 @@ async function handleGoogle(
     const existingCustomer = await customerRepository.findOne({
         where: { id: Not(handler.customerId), email: email },
     });
-
-    console.log('*****Get User******');
 
     if (existingCustomer) {
         return handler.returnStatus(200, {
@@ -246,7 +239,6 @@ async function getGoogleOAuthTokens({
 }: {
     code: string;
 }): Promise<GoogleTokensResult> {
-    console.log('****RUNNING GOAUTH****');
     const url = 'https://oauth2.googleapis.com/token';
 
     const values = {
@@ -256,7 +248,6 @@ async function getGoogleOAuthTokens({
         redirect_uri: process.env.GOOGLE_REDIRECT_URL,
         grant_type: 'authorization_code',
     };
-    console.log('*****VALUES*****', values);
 
     try {
         const res = await axios.post<GoogleTokensResult>(
@@ -268,10 +259,8 @@ async function getGoogleOAuthTokens({
                 },
             }
         );
-        console.log('response data', res.data);
         return res.data;
     } catch (error: any) {
-        console.log('****Error here ****', error);
         throw new Error(error.message);
     }
 }
