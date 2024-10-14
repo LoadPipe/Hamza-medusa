@@ -58,6 +58,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     const { productData, variantId, quantity, setVariantId } =
         useProductPreview();
     const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
+    const [usdPrice, setUsdPrice] = useState<string | null>(null);
     const [selectedVariant, setSelectedVariant] = useState<null | Variant>(
         null
     );
@@ -173,6 +174,17 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     setSelectedVariant(selectedProductVariant);
 
                     // Find the price for the selected currency or default to the first price available
+                    if (preferred_currency_code === 'eth') {
+                        let price;
+                        try {
+                            price = selectedProductVariant.prices.find(
+                                (p: any) => p.currency_code === 'usdc'
+                            );
+                        } catch (e) {
+                            console.log(e);
+                        }
+                        setUsdPrice(price?.amount ?? 0);
+                    }
                     const price = selectedProductVariant.prices.find(
                         (p: any) =>
                             p.currency_code ===
@@ -318,7 +330,10 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         fontSize={{ base: '18px', md: '32px' }}
                         color="white"
                     >
-                        {`${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} `}
+                        {formatCryptoPrice(
+                            parseFloat(selectedPrice!),
+                            preferred_currency_code ?? 'usdc'
+                        )}
                     </Heading>
 
                     {authData.status == 'authenticated' && (
@@ -398,7 +413,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     fontSize={'18px'}
                     color="white"
                 >
-                    {`${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} ${preferred_currency_code?.toUpperCase() ?? 'USDC'}`}
+                    {preferred_currency_code === 'eth'
+                        ? `$${formatCryptoPrice(parseFloat(usdPrice!), 'usdc')} USD`
+                        : `${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} ${preferred_currency_code?.toUpperCase() ?? 'USDC'}`}
                 </Heading>
                 {reviewCount > 0 ? (
                     <Flex
