@@ -41,13 +41,10 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
             const variantPrice = item.variant.prices.find(
                 (p: any) => p.currency_code == itemCurrencyCode
             );
-            const itemPrice = variantPrice
-                ? variantPrice.amount
-                : item.unit_price;
+            const itemPrice = variantPrice.amount;
 
             console.log(
-                `preferred_currency_code ${preferred_currency_code} item.currency_code ${item.currency_code} itemCurrencyCode ${itemCurrencyCode}
-                item Price: ${itemPrice}`
+                `itemCurrencyCode ${itemCurrencyCode} item Price: ${itemPrice}`
             );
             if (itemCurrencyCode?.length) {
                 if (!subtotals[itemCurrencyCode]) {

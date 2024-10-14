@@ -4,8 +4,9 @@ import ItemsPreviewTemplate from '@modules/cart/templates/preview';
 import DiscountCode from '@modules/checkout/components/discount-code';
 import CartTotals from '@modules/common/components/cart-totals';
 import Divider from '@modules/common/components/divider';
-import { retrieveCart } from '@modules/cart/actions';
+import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { LineItem } from '@medusajs/medusa';
 
 const CheckoutSummary = async (params: any) => {
     const cartId = params.cartId;
@@ -14,6 +15,14 @@ const CheckoutSummary = async (params: any) => {
     if (!cart) {
         console.log('cart not found');
         return null;
+    }
+
+    if (cart?.items.length) {
+        const enrichedItems = await enrichLineItems(
+            cart?.items,
+            cart?.region_id
+        );
+        cart.items = enrichedItems as LineItem[];
     }
 
     return (
