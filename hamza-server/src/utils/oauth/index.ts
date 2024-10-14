@@ -1,4 +1,4 @@
-import { MedusaResponse } from "@medusajs/medusa";
+import { MedusaResponse } from '@medusajs/medusa';
 
 export function redirectToOauthLandingPage(
     res: MedusaResponse,
@@ -6,12 +6,9 @@ export function redirectToOauthLandingPage(
     verify: boolean = true,
     errorMessage?: string
 ): any {
-    let redirectUrl =
-        `${process.env.STORE_URL}${process.env.OAUTH_LANDING_PAGE}?type=${type}&verify=${verify ? 'true' : 'false'}`;
+    let redirectUrl = `http://localhost:8000/account/verify?type=${type}&verify=${verify ? 'true' : 'false'}`;
 
-    if (errorMessage?.length)
-        redirectUrl += `&message=${errorMessage}`;
+    if (errorMessage?.length) redirectUrl += `&message=${errorMessage}`;
 
     return res.redirect(redirectUrl);
 }
-

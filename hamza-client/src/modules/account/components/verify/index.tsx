@@ -10,9 +10,10 @@ import { IoLogoGoogle } from 'react-icons/io5';
 import { FaXTwitter } from 'react-icons/fa6';
 import { BsDiscord } from 'react-icons/bs';
 import { Flex, Text, Input, Divider, Button } from '@chakra-ui/react';
-import { verifyEmail } from '@lib/data/index';
+import { putOAuth, verifyEmail } from '@lib/data/index';
 import VerifyFail from './components/verify-fail';
 import VerifySuccess from './components/verify-success';
+import HamzaLogoLoader from '@/components/loaders/hamza-logo-loader';
 
 const VerifyAccount = () => {
     // Customer Authentication
@@ -39,34 +40,62 @@ const VerifyAccount = () => {
         const verify = searchParams.get('verify');
         const message = searchParams.get('message');
         const type = searchParams.get('type');
+        const code = searchParams.get('code');
 
-        if (verify === 'true') {
-            setStatus('success');
-            setErrorReason(null);
-        } else if (verify === 'false' && message && type) {
-            setErrorReason(decodeURIComponent(message)); // Decode URL-encoded reason
+        const handleOAuth = async () => {
+            if (type === 'google' && code) {
+                setLoading(true);
+                try {
+                    const response = await putOAuth(code, type);
 
-            switch (type) {
-                case 'google':
-                    setVerificationType(getGoogleOAuthURL(authParams));
-                    break;
-                case 'twitter':
-                    setVerificationType(getTwitterOauthUrl(authParams));
-                    break;
-                case 'discord':
-                    setVerificationType(
-                        `https://discord.com/oauth2/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_DISCORD_ACCESS_KEY}&scope=identify+email&state=123456&redirect_uri=${process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URL}&prompt=consent`
-                    );
-                    break;
-                default:
-                    setErrorReason('Invalid verification type.');
+                    if (response.status === 200) {
+                        setStatus('success');
+                        console.log('OAuth successful:', response.data);
+                    } else {
+                        setStatus('error');
+                        console.error(
+                            'OAuth failed with status:',
+                            response.status
+                        );
+                    }
+                } catch (error) {
                     setStatus('error');
-                    return;
+                    console.error('OAuth error:', error);
+                } finally {
+                    setLoading(false);
+                }
             }
-            setStatus('error');
-        } else {
-            setStatus('default');
-        }
+        };
+
+        handleOAuth();
+
+        // if (verify === 'true') {
+        //     setStatus('success');
+        //     setErrorReason(null);
+        // } else if (verify === 'false' && message && type) {
+        //     setErrorReason(decodeURIComponent(message)); // Decode URL-encoded reason
+
+        //     switch (type) {
+        //         case 'google':
+        //             setVerificationType(getGoogleOAuthURL(authParams));
+        //             break;
+        //         case 'twitter':
+        //             setVerificationType(getTwitterOauthUrl(authParams));
+        //             break;
+        //         case 'discord':
+        //             setVerificationType(
+        //                 `https://discord.com/oauth2/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_DISCORD_ACCESS_KEY}&scope=identify+email&state=123456&redirect_uri=${process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URL}&prompt=consent`
+        //             );
+        //             break;
+        //         default:
+        //             setErrorReason('Invalid verification type.');
+        //             setStatus('error');
+        //             return;
+        //     }
+        //     setStatus('error');
+        // } else {
+        //     setStatus('default');
+        // }
     }, [searchParams]);
 
     // Email validation
@@ -117,6 +146,10 @@ const VerifyAccount = () => {
             alignItems={'center'}
             gap={{ base: 3, md: 6 }}
         >
+            {loading && (
+                <HamzaLogoLoader message="Processing Google Authorization" />
+            )}
+
             {status === 'success' && <VerifySuccess />}
 
             {status === 'error' && (
