@@ -78,7 +78,7 @@ const VerifyAccount = () => {
 
                     if (response.success === true) {
                         setStatus('success');
-                        console.log('Discord auth successful:', response.data);
+                        console.log('Discord OAuth successful:', response.data);
                     } else {
                         setStatus('error');
                         console.error(
@@ -88,7 +88,7 @@ const VerifyAccount = () => {
                     }
                 } catch (error) {
                     setStatus('error');
-                    console.error('Discord auth error:', error);
+                    console.error('Discord OAuth error:', error);
                 } finally {
                     setLoading(false);
                 }
