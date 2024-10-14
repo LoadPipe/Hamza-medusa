@@ -64,10 +64,12 @@ const VerifyFail: React.FC<VerifyFailProps> = ({
                     >
                         Cancel
                     </Button>
+
                     <ChakraLink
-                        href={resendLink}
+                        // href={resendLink}
                         flex="1 1 auto"
                         _hover={{ textDecoration: 'none' }}
+                        onClick={onCancel}
                     >
                         <Button
                             backgroundColor={'primary.green.900'}
