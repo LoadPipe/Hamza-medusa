@@ -50,7 +50,7 @@ async function main() {
                 },
                 {
                     "id": "prod_01J7XNT93Y86ZRPJ1C4JNN3502",
-                    "handle": "drone-mavic",
+                    "handle": "dji-neo",
                     "title": "DJ Drone Mavic for Superior Aerial Photography",
                     "description": "DJ Drone Mavic for Superior Aerial Photography",
                     "thumbnail": "https://static.snapchum.com/SC014/main-plain.png"
