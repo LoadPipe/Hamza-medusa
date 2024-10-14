@@ -42,8 +42,11 @@ const VerifyAccount = () => {
         const code = searchParams.get('code');
 
         const handleOAuth = async () => {
-            // Handle Google OAuth
-            if (type === 'google' && code && !oAuthCalled.current) {
+            if (
+                (type === 'google' || type === 'discord') &&
+                code &&
+                !oAuthCalled.current
+            ) {
                 oAuthCalled.current = true;
 
                 setLoading(true);
@@ -52,43 +55,20 @@ const VerifyAccount = () => {
 
                     if (response.success === true) {
                         setStatus('success');
-                        console.log('Google OAuth successful:', response.data);
+                        console.log(
+                            `${type.toUpperCase()} OAuth successful:`,
+                            response.data
+                        );
                     } else {
                         setStatus('error');
                         console.error(
-                            'Google OAuth failed with status:',
+                            `${type.toUpperCase()} OAuth failed with status:`,
                             response.status
                         );
                     }
                 } catch (error) {
                     setStatus('error');
-                    console.error('Google OAuth error:', error);
-                } finally {
-                    setLoading(false);
-                }
-            }
-
-            // Handle Discord OAuth
-            if (type === 'discord' && code && !oAuthCalled.current) {
-                oAuthCalled.current = true;
-
-                setLoading(true);
-                try {
-                    const response = await putOAuth(code, type);
-
-                    if (response.success === true) {
-                        setStatus('success');
-                        console.log('Discord OAuth successful:', response.data);
-                    } else {
-                        setStatus('error');
-                        console.error(
-                            'Discord auth failed with status:',
-                            response.status
-                        );
-                    }
-                } catch (error) {
-                    setStatus('error');
-                    console.error('Discord OAuth error:', error);
+                    console.error(`${type.toUpperCase()} OAuth error:`, error);
                 } finally {
                     setLoading(false);
                 }
