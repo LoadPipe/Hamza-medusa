@@ -10,8 +10,10 @@ import { redirectToOauthLandingPage } from '../../../utils/oauth';
 import { Not } from 'typeorm';
 
 export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
-    const customerRepository: typeof CustomerRepository = req.scope.resolve('customerRepository');
-    const eventBusService: EventBusService = req.scope.resolve('eventBusService');
+    const customerRepository: typeof CustomerRepository =
+        req.scope.resolve('customerRepository');
+    const eventBusService: EventBusService =
+        req.scope.resolve('eventBusService');
 
     const handler: RouteHandler = new RouteHandler(
         req,
@@ -21,54 +23,79 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
         ['type', 'code']
     );
 
-    handler.onError = (err: any) => {
-        redirectToOauthLandingPage(res, 'google', false, 'An unknown error has occurred');
-    };
+    // handler.onError = (err: any) => {
+    //     redirectToOauthLandingPage(
+    //         res,
+    //         'google',
+    //         false,
+    //         'An unknown error has occurred'
+    //     );
+    // };
 
     await handler.handle(async () => {
-
-        //validate 
-        if (!handler.requireParams(['code, type']))
-            return;
+        //validate
+        if (!handler.requireParams(['code', 'type'])) return;
 
         //enforce security
         if (!handler.customerId?.length)
             return handler.returnStatusWithMessage(401, 'JWT not provided');
 
         if (handler.inputParams.type === 'google')
-            return await handleGoogle(handler, customerRepository, eventBusService);
+            return await handleGoogle(
+                handler,
+                customerRepository,
+                eventBusService
+            );
 
         if (handler.inputParams.type === 'discord')
-            return await handleDiscord(handler, customerRepository, eventBusService);
+            return await handleDiscord(
+                handler,
+                customerRepository,
+                eventBusService
+            );
 
-        return handler.returnStatus(200, { success: false, message: 'Unrecognized OAuth type' });
+        return handler.returnStatus(200, {
+            success: false,
+            message: 'Unrecognized OAuth type',
+        });
     });
 };
-
 
 async function handleGoogle(
     handler: RouteHandler,
     customerRepository: typeof CustomerRepository,
     eventBusService: EventBusService
 ) {
-
+    console.log('*****handle google******');
     //get google oauth data
     let tokens = await getGoogleOAuthTokens({
-        code: handler.inputParams.code
+        code: handler.inputParams.code,
     });
 
-    if (!tokens)
-        return handler.returnStatus(200, { success: false, message: 'Did not recieve oauth token' });
-    handler.logger.debug(`Google OAuth tokens: ${JSON.stringify(tokens)}`);
+    console.log('*****Getting Tokens******');
 
+    if (!tokens) {
+        console.log('*****nO Tokens******');
+        return handler.returnStatus(200, {
+            success: false,
+            message: 'Did not recieve oauth token',
+        });
+    }
+
+    console.log('*****Got Tokens******');
+    handler.logger.debug(`Google OAuth tokens: ${JSON.stringify(tokens)}`);
     //get google user data
     let user = await getGoogleUser({
         id_token: tokens.id_token,
-        access_token: tokens.access_token
+        access_token: tokens.access_token,
     });
 
     if (!user)
-        return handler.returnStatus(200, { success: false, message: 'Did not recieve oauth user' });
+        return handler.returnStatus(200, {
+            success: false,
+            message: 'Did not recieve oauth user',
+        });
+
     handler.logger.debug(`Google OAuth user: ${JSON.stringify(user)}`);
 
     const customerId = handler.customerId;
@@ -76,12 +103,15 @@ async function handleGoogle(
 
     //check that email isn't already taken
     const existingCustomer = await customerRepository.findOne({
-        where: { id: Not(handler.customerId), email: email }
+        where: { id: Not(handler.customerId), email: email },
     });
+
+    console.log('*****Get User******');
 
     if (existingCustomer) {
         return handler.returnStatus(200, {
-            success: false, message: `The email address ${email} is already taken by another account.`
+            success: false,
+            message: `The email address ${email} is already taken by another account.`,
         });
     }
 
@@ -130,34 +160,41 @@ async function handleDiscord(
     );
 
     if (!tokenResponse)
-        return handler.returnStatus(200, { success: false, message: 'Did not recieve oauth token' });
+        return handler.returnStatus(200, {
+            success: false,
+            message: 'Did not recieve oauth token',
+        });
 
-    const userResponse = await axios.get(
-        'https://discord.com/api/users/@me',
-        {
-            headers: {
-                Authorization: `Bearer ${tokenResponse.data.access_token}`,
-            },
-        }
-    );
+    const userResponse = await axios.get('https://discord.com/api/users/@me', {
+        headers: {
+            Authorization: `Bearer ${tokenResponse.data.access_token}`,
+        },
+    });
 
     if (!userResponse)
-        return handler.returnStatus(200, { success: false, message: 'Did not recieve oauth user' });
+        return handler.returnStatus(200, {
+            success: false,
+            message: 'Did not recieve oauth user',
+        });
     handler.logger.debug(`user response: ${userResponse.data}`);
 
     if (!userResponse.data.email) {
-        return handler.returnStatus(200, { success: false, message: 'Did not recieve oauth user email' });
+        return handler.returnStatus(200, {
+            success: false,
+            message: 'Did not recieve oauth user email',
+        });
     }
 
     const email = userResponse.data?.email?.trim()?.toLowerCase();
 
     //check that email isn't already taken
     const existingCustomer = await customerRepository.findOne({
-        where: { id: Not(handler.customerId), email: email }
+        where: { id: Not(handler.customerId), email: email },
     });
     if (existingCustomer) {
         return handler.returnStatus(200, {
-            success: false, message: `The email address ${email} is already taken by another account.`
+            success: false,
+            message: `The email address ${email} is already taken by another account.`,
         });
     }
 
@@ -168,8 +205,7 @@ async function handleDiscord(
             email: email,
             is_verified: true,
             first_name: userResponse.data.global_name.split(' ')[0],
-            last_name:
-                userResponse.data.global_name.split(' ')[1] || '',
+            last_name: userResponse.data.global_name.split(' ')[1] || '',
         }
     );
 
@@ -185,7 +221,6 @@ async function handleDiscord(
 
     return handler.returnStatus(200, { success: true });
 }
-
 
 interface GoogleTokensResult {
     access_token: string;
@@ -211,6 +246,7 @@ async function getGoogleOAuthTokens({
 }: {
     code: string;
 }): Promise<GoogleTokensResult> {
+    console.log('****RUNNING GOAUTH****');
     const url = 'https://oauth2.googleapis.com/token';
 
     const values = {
@@ -220,6 +256,7 @@ async function getGoogleOAuthTokens({
         redirect_uri: process.env.GOOGLE_REDIRECT_URL,
         grant_type: 'authorization_code',
     };
+    console.log('*****VALUES*****', values);
 
     try {
         const res = await axios.post<GoogleTokensResult>(
@@ -231,15 +268,17 @@ async function getGoogleOAuthTokens({
                 },
             }
         );
+        console.log('response data', res.data);
         return res.data;
     } catch (error: any) {
+        console.log('****Error here ****', error);
         throw new Error(error.message);
     }
 }
 
 async function getGoogleUser({
     id_token,
-    access_token
+    access_token,
 }: {
     id_token: string;
     access_token: string;

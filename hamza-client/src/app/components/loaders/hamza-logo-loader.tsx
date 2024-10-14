@@ -15,7 +15,13 @@ const moveGradient = keyframes`
   }
 `;
 
-const HamzaLogoLoader = () => {
+interface HamzaLogoLoaderProps {
+    message?: string; // Optional message prop
+}
+
+const HamzaLogoLoader: React.FC<HamzaLogoLoaderProps> = ({
+    message = 'Processing Order',
+}) => {
     // Create an animation based on the keyframes with a faster speed
     const gradientAnimation = `${moveGradient} 0.75s ease-in-out infinite`;
 
@@ -66,7 +72,7 @@ const HamzaLogoLoader = () => {
                 />
             </Box>
             <Text color="white" mt={2}>
-                Processing Order
+                {message}
                 <Box as="span">...</Box>
             </Text>
         </Box>
