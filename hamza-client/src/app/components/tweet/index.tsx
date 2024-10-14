@@ -17,8 +17,8 @@ const Tweet: React.FC<TweetProps> = ({
     useEffect(() => {
         const product_url = `${process.env.NEXT_PUBLIC_MEDUSA_CLIENT_URL}/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${productHandle}`;
         const tweetHref = isPurchased
-            ? `https://twitter.com/intent/tweet?text=I bought this cool thing at Hamza.biz! ${encodeURIComponent(product_url)} Buy and sell products with Crypto at Hamza - the world’s first decom marketplace.`
-            : `https://twitter.com/intent/tweet?text=Check out this cool product at Hamza.biz! ${encodeURIComponent(product_url)} Buy and sell products with Crypto at Hamza - the world’s first decom marketplace.`;
+            ? `https://twitter.com/intent/tweet?text=I bought this cool thing at Hamza.market! ${encodeURIComponent(product_url)} Buy and sell products with Crypto at Hamza - the world’s first decom marketplace.`
+            : `https://twitter.com/intent/tweet?text=Check out this cool product at Hamza.market! ${encodeURIComponent(product_url)} Buy and sell products with Crypto at Hamza - the world’s first decom marketplace.`;
         document
             .getElementById('tweet-button')
             ?.setAttribute('href', tweetHref);

@@ -139,6 +139,9 @@ export default class BuckydropService extends TransactionBaseService {
             [salesChannelId]
         );
 
+        console.log(input);
+        return [];
+
         //import if mapped
         return input
             ? await this.productService_.bulkImportProducts(storeId, [input])
@@ -530,6 +533,8 @@ export default class BuckydropService extends TransactionBaseService {
         const options: FindManyOptions<Order> = {
             where: {
                 status: OrderStatus.PENDING,
+                payment_status: PaymentStatus.AWAITING,
+                fulfillment_status: FulfillmentStatus.NOT_FULFILLED,
                 bucky_metadata: Not(IsNull()),
             },
         };

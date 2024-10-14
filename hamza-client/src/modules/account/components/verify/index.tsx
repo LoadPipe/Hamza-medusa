@@ -1,7 +1,7 @@
 'use client';
 
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import getGoogleOAuthURL from '@lib/util/google-url';
 import getTwitterOauthUrl from '@lib/util/twitter-url';
@@ -10,9 +10,10 @@ import { IoLogoGoogle } from 'react-icons/io5';
 import { FaXTwitter } from 'react-icons/fa6';
 import { BsDiscord } from 'react-icons/bs';
 import { Flex, Text, Input, Divider, Button } from '@chakra-ui/react';
-import { verifyEmail } from '@lib/data/index';
+import { putOAuth, verifyEmail } from '@lib/data/index';
 import VerifyFail from './components/verify-fail';
 import VerifySuccess from './components/verify-success';
+import HamzaLogoLoader from '@/components/loaders/hamza-logo-loader';
 
 const VerifyAccount = () => {
     // Customer Authentication
@@ -22,6 +23,7 @@ const VerifyAccount = () => {
     // Email input hook
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
+    const oAuthCalled = useRef(false);
 
     // Routing
     const router = useRouter();
@@ -36,43 +38,49 @@ const VerifyAccount = () => {
 
     // Check url information for verification status
     useEffect(() => {
-        const verify = searchParams.get('verify');
-        const message = searchParams.get('message');
         const type = searchParams.get('type');
+        const code = searchParams.get('code');
 
-        if (verify === 'true') {
-            setStatus('success');
-            setErrorReason(null);
-        } else if (verify === 'false' && message && type) {
-            setErrorReason(decodeURIComponent(message)); // Decode URL-encoded reason
+        const handleOAuth = async () => {
+            if (
+                (type?.length) &&
+                code &&
+                !oAuthCalled.current
+            ) {
+                oAuthCalled.current = true;
 
-            switch (type) {
-                case 'google':
-                    setVerificationType(getGoogleOAuthURL(authParams));
-                    break;
-                case 'twitter':
-                    setVerificationType(getTwitterOauthUrl(authParams));
-                    break;
-                case 'discord':
-                    setVerificationType(
-                        `https://discord.com/oauth2/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_DISCORD_ACCESS_KEY}&scope=identify+email&state=123456&redirect_uri=${process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URL}&prompt=consent`
-                    );
-                    break;
-                default:
-                    setErrorReason('Invalid verification type.');
+                setLoading(true);
+                try {
+                    const response = await putOAuth(code, type);
+
+                    if (response.success === true) {
+                        setStatus('success');
+                        console.log(
+                            `${type.toUpperCase()} OAuth successful:`,
+                            response.data
+                        );
+                    } else {
+                        setStatus('error');
+                        console.error(
+                            `${type.toUpperCase()} OAuth failed with status:`,
+                            response.status
+                        );
+                    }
+                } catch (error) {
                     setStatus('error');
-                    return;
+                    console.error(`${type.toUpperCase()} OAuth error:`, error);
+                } finally {
+                    setLoading(false);
+                }
             }
-            setStatus('error');
-        } else {
-            setStatus('default');
-        }
+        };
+
+        handleOAuth();
     }, [searchParams]);
 
     // Email validation
     const emailVerificationHandler = async () => {
         setLoading(true);
-        console.log('hello');
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         if (email.trim() === '') {
@@ -88,7 +96,6 @@ const VerifyAccount = () => {
         }
 
         try {
-            console.log('response lets go');
             let res: any = await verifyEmail(authData.customer_id, email);
 
             if (res.message.includes('409')) {
@@ -117,6 +124,10 @@ const VerifyAccount = () => {
             alignItems={'center'}
             gap={{ base: 3, md: 6 }}
         >
+            {loading && (
+                <HamzaLogoLoader message="Processing Account Verification" />
+            )}
+
             {status === 'success' && <VerifySuccess />}
 
             {status === 'error' && (
@@ -198,7 +209,7 @@ const VerifyAccount = () => {
                             </Button>
                         </a>
 
-                        {/* Twitter Auth 
+                        {/* Twitter Auth
                         <a href={getTwitterOauthUrl(authParams)}>
                             <Button
                                 leftIcon={<FaXTwitter size={24} />}
@@ -240,7 +251,6 @@ const VerifyAccount = () => {
                     <Button
                         isLoading={loading}
                         onClick={() => {
-                            console.log('Button Clicked!');
                             emailVerificationHandler();
                         }}
                         mt="auto"

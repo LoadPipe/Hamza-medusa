@@ -99,7 +99,7 @@ export default function ProductDetailsMobileMenu() {
                     </MenuItem>
                 </NavLink>
 
-                <a target="_blank" href="https://blog.hamza.biz/blog/">
+                <a target="_blank" href="https://blog.hamza.market/blog/">
                     <MenuItem
                         fontWeight={'600'}
                         px="2rem"
@@ -118,7 +118,7 @@ export default function ProductDetailsMobileMenu() {
                     </MenuItem>
                 </a>
 
-                <a target="_blank" href="https://blog.hamza.biz/about/">
+                <a target="_blank" href="https://blog.hamza.market/about/">
                     <MenuItem
                         fontWeight={'600'}
                         px="2rem"
@@ -163,7 +163,26 @@ export default function ProductDetailsMobileMenu() {
                 <Box>
                     <MenuDivider opacity={'0.5'} borderColor={'white'} />
                 </Box>
-                <Link href={`https://blog.hamza.biz/merchant/`} target="_blank">
+                <Link href={`https://blog.hamza.market/request-product/`} target="_blank">
+                    <MenuItem
+                        fontWeight={'600'}
+                        mt="1rem"
+                        px="2rem"
+                        color={'white'}
+                        backgroundColor={'transparent'}
+                        _hover={{ color: 'primary.green.900' }}
+                    >
+                        <Flex
+                            w="30px"
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                        >
+                            <MdOutlineStorefront size={28} />
+                        </Flex>
+                        <Text ml="0.5rem">Request a Product</Text>
+                    </MenuItem>
+                </Link>
+                <Link href={`https://blog.hamza.market/merchant/`} target="_blank">
                     <MenuItem
                         fontWeight={'600'}
                         mt="1rem"
@@ -183,7 +202,7 @@ export default function ProductDetailsMobileMenu() {
                     </MenuItem>
                 </Link>
                 <Link
-                    href={`https://blog.hamza.biz/affiliate/`}
+                    href={`https://blog.hamza.market/affiliate/`}
                     target="_blank"
                 >
                     <MenuItem

@@ -414,6 +414,10 @@ export async function cancelOrder(order_id: string, cancel_reason: string) {
     return putSecure('/custom/order/cancel', { order_id, cancel_reason });
 }
 
+export async function putOAuth(code: string, type: string) {
+    return putSecure('/custom/oauth', { code, type });
+}
+
 export async function getVerificationStatus(customer_id: string) {
     return getSecure('/custom/customer/verification-status', {
         customer_id,
@@ -539,7 +543,7 @@ export async function updateCart(cartId: string, data: StorePostCartsCartReq) {
 export async function getCart(cart_id: string) {
     const token = cookies().get('_medusa_jwt')?.value;
 
-    //if we have a token, it's safe to get the possibly-cached cart 
+    //if we have a token, it's safe to get the possibly-cached cart
     if (token?.length) {
         const headers = getMedusaHeaders(['cart']);
         return medusaClient.carts

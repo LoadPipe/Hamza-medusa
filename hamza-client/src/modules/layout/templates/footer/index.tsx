@@ -154,6 +154,18 @@ export default async function Footer() {
                                 Submit a Ticket
                             </Text>
                         </a>
+
+                        <a
+                            href="https://blog.hamza.market/request-product/"
+                            target="_blank"
+                        >
+                            <Text
+                                fontSize={{ base: '14px', md: '16px' }}
+                                className="text-base font-bold"
+                            >
+                                Request a Product
+                            </Text>
+                        </a>
                     </Flex>
                 </Flex>
 
