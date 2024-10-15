@@ -1,5 +1,6 @@
-import { Flex, Text, Divider } from '@chakra-ui/react';
+import { Flex, Text, Divider, Box } from '@chakra-ui/react';
 import React from 'react';
+import { BiPencil } from 'react-icons/bi';
 
 const CheckoutDetails = () => {
     return (
@@ -20,22 +21,46 @@ const CheckoutDetails = () => {
             >
                 Checkout Details
             </Text>
-            <Text
-                mt="2rem"
-                color={'primary.green.900'}
-                fontSize={'18px'}
-                fontWeight={600}
-            >
-                Shipping To:
-            </Text>
+
+            <Flex mt="2rem" width={'100%'} flexDir={'row'}>
+                <Text
+                    color={'primary.green.900'}
+                    fontSize={'18px'}
+                    fontWeight={600}
+                >
+                    Shipping To:
+                </Text>
+                <Box
+                    cursor={'pointer'}
+                    ml="auto"
+                    alignSelf={'center'}
+                    color="white"
+                    _hover={{ color: 'primary.green.900' }}
+                >
+                    <BiPencil size={23} />
+                </Box>
+            </Flex>
+
             <Divider borderWidth={'1px'} borderColor={'#3E3E3E'} my="2rem" />
-            <Text
-                color={'primary.green.900'}
-                fontSize={'18px'}
-                fontWeight={600}
-            >
-                Payment Method:
-            </Text>
+
+            <Flex width={'100%'} flexDir={'row'}>
+                <Text
+                    color={'primary.green.900'}
+                    fontSize={'18px'}
+                    fontWeight={600}
+                >
+                    Payment Method:
+                </Text>
+                <Box
+                    cursor={'pointer'}
+                    ml="auto"
+                    alignSelf={'center'}
+                    color="white"
+                    _hover={{ color: 'primary.green.900' }}
+                >
+                    <BiPencil size={23} />
+                </Box>
+            </Flex>
         </Flex>
     );
 };
