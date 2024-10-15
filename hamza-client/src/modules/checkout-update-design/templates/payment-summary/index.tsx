@@ -5,7 +5,7 @@ const PaymentSummary = () => {
     return (
         <Flex
             bgColor={'#121212'}
-            maxW={'401px'}
+            maxW={{ base: '100%', md: '401px' }}
             width={'100%'}
             height={'425px'}
             flexDir={'column'}
