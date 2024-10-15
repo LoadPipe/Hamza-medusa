@@ -20,6 +20,7 @@
       "@/*": ["/*"],
       "@/account/*": ["app/[countryCode]/(main)/account/*"],
       "@/components/*": ["app/components/*"],
+      "@/getQueryClient": ["app/getQueryClient"],
       "@lib/*": ["lib/*"],
       "@modules/*": ["modules/*"],
       "@pages/*": ["pages/*"],

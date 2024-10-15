@@ -8,15 +8,15 @@ import {
     Grid,
     GridItem,
     Flex,
+    Text,
 } from '@chakra-ui/react';
-import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import ProductCardHome from './component/home-product-card';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
-import { getAverageRatings, getReviewCount } from '@lib/data';
+import { getAllProducts } from '@lib/data';
 
 const ProductCardGroup = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
@@ -31,38 +31,38 @@ const ProductCardGroup = () => {
     const [lowerPrice, setLowerPrice] = useState(0); // Lower price filter
     const [category, setCategory] = useState(['']); // Filter by category
 
-    // URL for default product fetching by category
-    const defaultUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/category/products?category_name=${['Home', 'Fashion'].join(',').toLowerCase()}`;
-
-    // URL for filtered product fetching
-    const filterUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?categories=${category}&price_lo=${lowerPrice}&price_hi=${upperPrice}`;
-
-    // URL for multi category
-    const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${5000000}&price_lo=${homeModalLowerPriceFilterSelect}`;
-    // Yo can we assume we can make the category state an array?
+    // TODO: Please review the code, whatever I commented out below should I assume be removed.... @Jonny
+    // // URL for default product fetching by category
+    // const defaultUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/category/products?category_name=${['Home', 'Fashion'].join(',').toLowerCase()}`;
+    //
+    // // URL for filtered product fetching
+    // const filterUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?categories=${category}&price_lo=${lowerPrice}&price_hi=${upperPrice}`;
 
     // Determine which URL to use based on whether the filter is active
-    const fetchUrl = isFilterActive ? filterUrl : defaultUrl;
+    // const fetchUrl = isFilterActive ? filterUrl : defaultUrl;
 
-    //TODO: MOVE TO INDEX.TS
-    // Get products from vendor
+    console.log(categorySelect);
+    // Fetch products independently, will use cached data from hydration...
     const { data, error, isLoading } = useQuery(
         [
-            'categories',
+            'homeProducts',
             categorySelect,
-            isFilterActive,
-            lowerPrice,
-            upperPrice,
             homeModalLowerPriceFilterSelect,
             homeModalUpperPriceFilterSelect,
-        ], // Use a unique key here to identify the query
-        async () => {
-            const response = await axios.get(multiUrl);
-            return response.data; // Return the data from the response
+        ],
+        () =>
+            getAllProducts(
+                categorySelect,
+                homeModalUpperPriceFilterSelect,
+                homeModalLowerPriceFilterSelect
+            ),
+        {
+            staleTime: 60 * 1000,
+            cacheTime: 2 * 60 * 1000,
         }
     );
 
-    const productsAll = data?.products || [];
+    const productsAll = data?.products ?? [];
 
     if (isLoading) {
         return (

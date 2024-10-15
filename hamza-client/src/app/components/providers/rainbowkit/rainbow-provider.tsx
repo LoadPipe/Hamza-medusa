@@ -15,8 +15,8 @@ import {
     SwitchNetwork,
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-const queryClient = new QueryClient();
 import { SiweMessage } from 'siwe';
 import {
     clearAuthCookie,
@@ -245,6 +245,20 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
             return;
         },
     });
+
+    // Set default staleTime to avoid refetching immediately on the client
+    // Ensures ensures that data is not shared between different users and requests
+    // https://tanstack.com/query/v4/docs/framework/react/guides/ssr#using-hydration
+    const [queryClient] = useState(
+        () =>
+            new QueryClient({
+                defaultOptions: {
+                    queries: {
+                        staleTime: 60 * 1000,
+                    },
+                },
+            })
+    );
 
     return (
         <div>
