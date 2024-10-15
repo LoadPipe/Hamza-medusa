@@ -40,9 +40,17 @@ const PaymentSummary = () => {
                 >
                     Confirm Order
                 </Button>
-                <Text textAlign="center" fontSize={'12px'}>
-                    By clicking on confirm order, you agree to these Terms and
-                    Conditions.
+                <Text
+                    textAlign="center"
+                    fontSize={'12px'}
+                    maxW={'236px'}
+                    mx="auto"
+                >
+                    By clicking on confirm order, you agree to these{' '}
+                    <Text as="span" color="primary.indigo.900">
+                        {' '}
+                        Terms and Conditions.
+                    </Text>
                 </Text>
             </Flex>
         </Flex>
