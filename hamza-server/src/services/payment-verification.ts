@@ -92,6 +92,8 @@ export default class PaymentVerificationService extends TransactionBaseService {
             order.payment_status = paymentStatus;
             await this.orderRepository_.save(order);
 
+            //TODO: set the payments status to captured
+
             for (let p of order.payments) {
                 output.push({ order: order, payment: p });
             }
