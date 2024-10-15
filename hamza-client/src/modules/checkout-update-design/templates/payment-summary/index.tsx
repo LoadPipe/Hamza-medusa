@@ -35,6 +35,7 @@ const PaymentSummary = () => {
                     borderRadius={'full'}
                     height={'58px'}
                     opacity={1}
+                    color={'white'}
                     _hover={{ opacity: 0.5 }}
                     backgroundColor={'primary.indigo.900'}
                 >
@@ -47,7 +48,13 @@ const PaymentSummary = () => {
                     mx="auto"
                 >
                     By clicking on confirm order, you agree to these{' '}
-                    <Text as="span" color="primary.indigo.900">
+                    <Text
+                        as="span"
+                        color="primary.indigo.900"
+                        cursor={'pointer'}
+                        opacity={1}
+                        _hover={{ opacity: 0.7 }}
+                    >
                         {' '}
                         Terms and Conditions.
                     </Text>
