@@ -25,7 +25,7 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
     const handler: RouteHandler = new RouteHandler(
         req,
         res,
-        'GET',
+        'PUT',
         '/admin/custom/bucky/orders',
         ['order']
     );

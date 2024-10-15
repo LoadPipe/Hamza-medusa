@@ -16,11 +16,21 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        if (!handler.requireParam('order_id'))
-            return;
-        const orderId = handler.inputParams.order_id;
+        let output = { count: 0, orders: [] };
+        let orders = [];
 
-        const output = await buckyService.reconcileOrderStatus(orderId);
+        if (handler.hasParam('order_id')) {
+            output.count = 1;
+            output.orders.push(await buckyService.reconcileOrderStatus(handler.inputParams.order_id));
+        }
+        else {
+            orders = await buckyService.getOutstandingBuckydropOrders();
+
+            output.count = orders.length;
+            for (let order of orders) {
+                output.orders.push(await buckyService.reconcileOrderStatus(handler.inputParams.order_id));
+            }
+        }
 
         return handler.returnStatus(201, { output });
     });

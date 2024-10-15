@@ -22,11 +22,15 @@ import {
 import { CreateProductProductVariantInput, CreateProductInput as MedusaCreateProductInput, ProductOptionInput } from '@medusajs/medusa/dist/types/product';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import { createLogger, ILogger } from '../utils/logging/logger';
-import { IsNull, Not, FindManyOptions } from 'typeorm';
+import { IsNull, Not, FindManyOptions, FindOptionsWhere as TypeormFindOptionsWhere, In } from 'typeorm';
 
 type CreateProductInput = MedusaCreateProductInput & {
     store_id: string;
     bucky_metadata?: Record<string, unknown>;
+};
+
+type FindOptionsWhere<Order> = TypeormFindOptionsWhere<Order> & {
+    bucky_metadata?: any;
 };
 
 const SHIPPING_COST_MIN: number = parseInt(
@@ -455,6 +459,23 @@ export default class BuckydropService extends TransactionBaseService {
                 e
             );
         }
+    }
+
+    async getOutstandingBuckydropOrders(): Promise<Order[]> {
+        const where: FindOptionsWhere<Order> = {
+            bucky_metadata: Not(null),
+            status: OrderStatus.PENDING,
+            payment_status: PaymentStatus.CAPTURED,
+            fulfillment_status: Not(In([
+                FulfillmentStatus.CANCELED,
+                FulfillmentStatus.FULFILLED,
+                FulfillmentStatus.RETURNED,
+            ]))
+        };
+
+        return this.orderRepository_.find({
+            where: where
+        })
     }
 
     async cancelOrder(orderId: string): Promise<Order> {
