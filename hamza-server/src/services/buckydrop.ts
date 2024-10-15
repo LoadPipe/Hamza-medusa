@@ -463,7 +463,7 @@ export default class BuckydropService extends TransactionBaseService {
 
     async getOutstandingBuckydropOrders(): Promise<Order[]> {
         const where: FindOptionsWhere<Order> = {
-            bucky_metadata: Not(null),
+            bucky_metadata: Not(IsNull()),
             status: OrderStatus.PENDING,
             payment_status: PaymentStatus.CAPTURED,
             fulfillment_status: Not(In([

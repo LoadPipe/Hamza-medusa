@@ -26,13 +26,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             orderPayments = await paymentVerificationService.verifyPayments();
         }
 
-        //if orders are bucky orders, we gotta do something
-        for (let item of orderPayments) {
-            if (item.order.bucky_metadata && item.order.bucky_metadata.status === 'pending') {
-                item.order = await buckydropService.processPendingOrder(item.order.id);
-            }
-        }
-
         return handler.returnStatus(200, {
             verified: orderPayments.map(item => {
                 return {
