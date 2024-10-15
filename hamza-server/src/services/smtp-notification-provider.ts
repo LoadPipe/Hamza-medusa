@@ -23,7 +23,8 @@ class SmtpNotificationService extends AbstractNotificationService {
     constructor(container) {
         super(container);
         this.notificationDataService = new NotificationDataService(container);
-        this.customerNotificationService_ = container.customerNotificationService;
+        this.customerNotificationService_ =
+            container.customerNotificationService;
         this.cartService_ = container.cartService;
         this.smtpMailService = new SmtpMailService();
         this.logger = createLogger(container, 'SmtpNotificationService');
@@ -42,9 +43,11 @@ class SmtpNotificationService extends AbstractNotificationService {
         switch (event) {
             case 'order.placed':
                 const customerId = data.customerId;
-                if (!this.customerNotificationService_.hasNotifications(
-                    customerId,
-                    ['email', 'orderStatusChanged'])
+                if (
+                    !this.customerNotificationService_.hasNotifications(
+                        customerId,
+                        ['email', 'orderStatusChanged']
+                    )
                 ) {
                     return;
                 }
@@ -88,14 +91,16 @@ class SmtpNotificationService extends AbstractNotificationService {
 
                 let parsedOrdersData = ordersDataParser(ordersData);
                 const customer = ordersData[0]?.customer;
-                const cart = await this.cartService_.retrieve(ordersData[0]?.cart_id);
+                const cart = await this.cartService_.retrieve(
+                    ordersData[0]?.cart_id
+                );
 
-                const toEmail = customer?.is_verified ? customer.email : cart?.email;
+                const toEmail = customer?.is_verified
+                    ? customer.email
+                    : cart?.email;
                 this.logger.info(`sending email to recipient ${toEmail}`);
 
-                if (
-                    toEmail
-                ) {
+                if (toEmail) {
                     await this.smtpMailService.sendMail({
                         from: process.env.SMTP_FROM,
                         subject: 'Order Placed on Hamza.market',

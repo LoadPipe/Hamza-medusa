@@ -411,6 +411,7 @@ export default class OrderService extends MedusaOrderService {
         const products = [];
         let cart: Cart = null;
 
+        console.log('***** ORDER ******', orders);
         orders.forEach((order) => {
             cart = order.cart;
             order.cart.items.forEach((item) => {
@@ -553,9 +554,9 @@ export default class OrderService extends MedusaOrderService {
 
         return relevantItems?.length
             ? {
-                variants: relevantItems.map((i) => i.variant),
-                quantities: relevantItems.map((i) => i.quantity),
-            }
+                  variants: relevantItems.map((i) => i.variant),
+                  quantities: relevantItems.map((i) => i.quantity),
+              }
             : { variants: [], quantities: [] };
     }
 
@@ -567,15 +568,30 @@ export default class OrderService extends MedusaOrderService {
     }
 
     async sendShippedEmail(order: Order): Promise<void> {
-        return this.sendOrderEmail(order, 'order_shipped', 'order-shipped', 'shipped');
+        return this.sendOrderEmail(
+            order,
+            'order_shipped',
+            'order-shipped',
+            'shipped'
+        );
     }
 
     async sendDeliveredEmail(order: Order): Promise<void> {
-        return this.sendOrderEmail(order, 'order_shipped', 'order-delivered', 'delivered');
+        return this.sendOrderEmail(
+            order,
+            'order_shipped',
+            'order-delivered',
+            'delivered'
+        );
     }
 
     async sendCancelledEmail(order: Order): Promise<void> {
-        return this.sendOrderEmail(order, 'order_cancelled', 'order-cancelled', 'cancelled');
+        return this.sendOrderEmail(
+            order,
+            'order_cancelled',
+            'order-cancelled',
+            'cancelled'
+        );
     }
 
     private async sendOrderEmail(
@@ -589,13 +605,12 @@ export default class OrderService extends MedusaOrderService {
                 await this.customerNotificationService_.getNotificationTypes(
                     order.customer_id
                 );
-            const customer: Customer = await this.customerRepository_.findOne(
-                { where: { id: order.customer_id } }
-            );
+            const customer: Customer = await this.customerRepository_.findOne({
+                where: { id: order.customer_id },
+            });
             const cart: Cart = await this.cartService_.retrieve(order.cart_id);
 
             if (notificationTypes.includes(requiredNotification)) {
-
                 this.smtpMailService.sendMail({
                     from:
                         process.env.SMTP_HAMZA_FROM ??
