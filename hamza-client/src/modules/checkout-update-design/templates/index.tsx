@@ -3,8 +3,15 @@ import OrderSummary from './order-summary';
 import PaymentSummary from './payment-summary';
 import CheckoutDetails from './checkout-details';
 import { Flex } from '@chakra-ui/react';
+import { Cart, Customer } from '@medusajs/medusa';
 
-const CheckoutTemplate = () => {
+const CheckoutTemplate = ({
+    cart,
+    customer,
+}: {
+    cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | null;
+    customer: Omit<Customer, 'password_hash'> | null;
+}) => {
     return (
         <Flex
             maxW={'1258px'}

@@ -46,6 +46,7 @@ const AddressModal: React.FC<AddressModalProps> = ({ isOpen, onClose }) => {
                                     fontSize={'14px'}
                                     bgColor={'#040404'}
                                     borderWidth={0}
+                                    borderRadius={'12px'}
                                 />
                             </FormControl>
                             <FormControl isRequired>
@@ -55,6 +56,7 @@ const AddressModal: React.FC<AddressModalProps> = ({ isOpen, onClose }) => {
                                     fontSize={'14px'}
                                     bgColor={'#040404'}
                                     borderWidth={0}
+                                    borderRadius={'12px'}
                                 />
                             </FormControl>
                         </Flex>
@@ -67,6 +69,7 @@ const AddressModal: React.FC<AddressModalProps> = ({ isOpen, onClose }) => {
                                 fontSize={'14px'}
                                 bgColor={'#040404'}
                                 borderWidth={0}
+                                borderRadius={'12px'}
                             />
                         </FormControl>
                         <FormControl>
@@ -76,6 +79,7 @@ const AddressModal: React.FC<AddressModalProps> = ({ isOpen, onClose }) => {
                                 fontSize={'14px'}
                                 bgColor={'#040404'}
                                 borderWidth={0}
+                                borderRadius={'12px'}
                             />
                         </FormControl>
 
@@ -88,15 +92,17 @@ const AddressModal: React.FC<AddressModalProps> = ({ isOpen, onClose }) => {
                                     height={'50px'}
                                     fontSize={'14px'}
                                     borderWidth={0}
+                                    borderRadius={'12px'}
                                 />
                             </FormControl>
                             <FormControl isRequired>
                                 <Input
-                                    placeholder="State"
+                                    placeholder="State / Province"
                                     height={'50px'}
                                     fontSize={'14px'}
                                     bgColor={'#040404'}
                                     borderWidth={0}
+                                    borderRadius={'12px'}
                                 />
                             </FormControl>
                         </Flex>
@@ -109,6 +115,7 @@ const AddressModal: React.FC<AddressModalProps> = ({ isOpen, onClose }) => {
                                     height={'50px'}
                                     fontSize={'14px'}
                                     borderWidth={0}
+                                    borderRadius={'12px'}
                                 />
                             </FormControl>
                             <FormControl isRequired>
@@ -118,6 +125,7 @@ const AddressModal: React.FC<AddressModalProps> = ({ isOpen, onClose }) => {
                                     fontSize={'14px'}
                                     bgColor={'#040404'}
                                     borderWidth={0}
+                                    borderRadius={'12px'}
                                 />
                             </FormControl>
                         </Flex>
