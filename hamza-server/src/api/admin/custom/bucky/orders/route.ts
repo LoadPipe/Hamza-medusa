@@ -27,13 +27,13 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
         res,
         'PUT',
         '/admin/custom/bucky/orders',
-        ['order']
+        ['order_id']
     );
 
     await handler.handle(async () => {
         let orderId: string;
-        if (handler.hasParam('order'))
-            orderId = handler.inputParams.order;
+        if (handler.hasParam('order_id'))
+            orderId = handler.inputParams.order_id;
 
         let orders = await buckydropService.getOrdersToProcess();
         if (orderId) {
