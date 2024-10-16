@@ -1,5 +1,5 @@
 import { getSingleBucket } from '@lib/data';
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Divider, Text, Flex } from '@chakra-ui/react';
 import Spinner from '@modules/common/icons/spinner';
 
 import DeliveredCard from '@modules/account/components/delivered-card';
@@ -136,22 +136,22 @@ const Delivered = ({
     return (
         <div>
             {deliveredOrder && deliveredOrder.length > 0 ? (
-                <>
-                    <h1>Delivered Orders</h1>
+                <Flex width={'100%'} flexDirection="column">
+                    <Text
+                        fontSize={'16px'}
+                        color={'primary.green.900'}
+                        fontWeight="bold"
+                        ml={'auto'}
+                    >
+                        Delivered
+                    </Text>
 
                     {deliveredOrder.map((order: any) => (
-                        <div
+                        <React.Fragment
                             key={order.id} // Changed from cart_id to id since it's more reliable and unique
-                            className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
                         >
                             {order.items?.map((item: any) => (
-                                <Box
-                                    key={item.id}
-                                    bg="rgba(39, 39, 39, 0.3)"
-                                    p={4}
-                                    m={2}
-                                    rounded="lg"
-                                >
+                                <Flex key={item.id}>
                                     <DeliveredCard
                                         key={item.id}
                                         order={item}
@@ -161,11 +161,22 @@ const Delivered = ({
                                             'N/A'
                                         }
                                     />
-                                </Box>
+                                </Flex>
                             ))}
-                        </div>
+                            <Divider
+                                width="90%" // Line takes up 80% of the screen width
+                                borderBottom="0.2px solid"
+                                borderColor="#D9D9D9"
+                                pr={'1rem'}
+                                _last={{
+                                    // pb: 0,
+                                    // borderBottom: 'none',
+                                    mb: 8,
+                                }}
+                            />
+                        </React.Fragment>
                     ))}
-                </>
+                </Flex>
             ) : null}
         </div>
     );

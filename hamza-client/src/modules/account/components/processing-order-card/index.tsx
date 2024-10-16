@@ -50,129 +50,105 @@ const ProcessingOrderCard = ({
     }
 
     return (
-        <Box
-            // bg={'#272727'}
+        <Flex
+            my={4}
             color={'white'}
-            p={4}
-            rounded="lg"
-            shadow="base"
-            maxWidth="1000px"
+            justifyContent="space-between"
+            maxWidth="100%"
+            flexDirection={{ sm: 'column', md: 'row' }}
         >
-            <Flex alignItems="center" mb={4}>
-                <Text
-                    fontSize={{ base: '18px', md: '24px' }}
-                    fontWeight="bold"
-                    noOfLines={1}
-                >
-                    {vendorName}
-                </Text>
-                <Flex display={{ base: 'flex' }} ml={2} alignItems="center">
-                    <FaCheckCircle color="#3196DF" />
-                </Flex>
-            </Flex>
-
             <Flex
                 justifyContent="space-between"
-                flexDirection={{ base: 'column', md: 'row' }}
+                flexDirection={{ base: 'column' }}
                 gap={{ base: 4, md: 0 }}
             >
-                {' '}
+                <Flex mb={2} display={{ base: 'flex' }} alignItems="center">
+                    <Text
+                        fontSize={{ base: '18px', md: '24px' }}
+                        fontWeight="bold"
+                        noOfLines={1}
+                        mr={2}
+                    >
+                        {vendorName}
+                    </Text>
+                    <FaCheckCircle color="#3196DF" />
+                </Flex>
+
                 {/* Left Side: Existing Content */}
                 <Flex
-                    direction={{ base: 'column', md: 'row' }}
+                    direction={{ base: 'column', lg: 'row' }}
                     alignItems={{ base: 'flex-start', md: 'center' }}
                     justifyContent="space-between"
+                    flex="1"
                 >
                     <Link
                         href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}
                     >
                         <Image
+                            minWidth="80px"
                             borderRadius="lg"
-                            width={{ base: '120px', md: '180px' }}
+                            width={{ base: '75px', md: '100px' }}
+                            height={{ base: '75px', md: '100px' }}
                             src={
                                 order?.variant?.metadata?.imgUrl ??
                                 order.thumbnail ??
                                 ''
                             }
                             alt={`Thumbnail of ${order.title}`}
-                            mr={{ base: 1, md: 4 }}
+                            mr={{ base: 2, md: 4 }}
                             mb={{ base: 4, md: 0 }}
                         />
                     </Link>
 
-                    <Box flex="1">
-                        <Flex justifyContent="space-between" direction="row">
-                            <Flex direction="column" mt={2}>
+                    <Flex justifyContent="space-between" direction="row" mr="2">
+                        <Flex direction="column">
+                            <Text
+                                maxWidth="600px"
+                                minWidth="200px"
+                                noOfLines={4}
+                                fontSize={{ base: '16px', md: '18px' }}
+                                fontWeight="bold"
+                            >
+                                {order.title}
+                            </Text>
+                            <Flex
+                                direction={{ base: 'column', md: 'row' }}
+                                color={'rgba(85, 85, 85, 1.0)'}
+                                alignItems={'center'}
+                            >
                                 <Text
-                                    fontSize={{ base: '16px', md: '18px' }}
-                                    fontWeight="bold"
+                                    fontSize={{ base: '16px' }}
+                                    mr={1} // Add some space between "Variation:" and the description
                                 >
-                                    {order.title}
+                                    Variation:
                                 </Text>
-                                <Flex
-                                    direction={{ base: 'column', md: 'row' }}
-                                    mt={2}
-                                >
-                                    <Text
-                                        fontSize={{ base: '14px', md: '16px' }}
-                                        color={'rgba(85, 85, 85, 1.0)'}
-                                        mr={1} // Add some space between "Variation:" and the description
-                                    >
-                                        Variation:
-                                    </Text>
-                                    <Text fontSize="14px">
-                                        {order.description}
-                                    </Text>
-                                </Flex>
+                                <Text fontSize="16px">{order.description}</Text>
                             </Flex>
                         </Flex>
-
-                        <Flex direction="column" mt={2}>
-                            <Text
-                                color={'rgba(85, 85, 85, 1.0)'}
-                                fontSize="16px"
-                            >
-                                Order Date
-                            </Text>
-                            <Text color={'white'} fontSize="16px">
-                                {new Date(
-                                    order.created_at
-                                ).toLocaleDateString()}
-                            </Text>
-                        </Flex>
-                    </Box>
-                </Flex>
-                {/* Right Side: Courier and Address */}
-                <Flex direction="column" minWidth="200px" maxWidth="300px">
-                    {/*<Box mb={4}>*/}
-                    {/*    <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">*/}
-                    {/*        Courier*/}
-                    {/*    </Text>*/}
-                    {/*    <Text color={'white'} fontSize="16px">*/}
-                    {/*        DHL Express*/}
-                    {/*    </Text>*/}
-                    {/*</Box>*/}
-
-                    <Flex direction={{ base: 'column', md: 'row' }} gap={4}>
-                        <Box>
-                            <Text
-                                color={'rgba(85, 85, 85, 1.0)'}
-                                fontSize="16px"
-                            >
-                                Address
-                            </Text>
-                            <Text color={'white'} fontSize="16px">
-                                {address?.address_1 || 'N/A'}{' '}
-                                {address?.address_2 || ''}{' '}
-                                {address?.city || 'N/A'}{' '}
-                                {address?.province || 'N/A'}{' '}
-                                {address?.postal_code || 'N/A'}
-                            </Text>
-                        </Box>
                     </Flex>
                 </Flex>
             </Flex>
-        </Box>
+
+            {/* Right Side: Address */}
+            <Flex direction={{ base: 'row', md: 'row' }} ml="auto" pl={2}>
+                <Box>
+                    <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
+                        Address
+                    </Text>
+                    <Text
+                        minWidth="200px"
+                        maxWidth="300px"
+                        noOfLines={3}
+                        color={'white'}
+                        fontSize="16px"
+                    >
+                        {address?.address_1 || 'N/A'} {address?.address_2 || ''}{' '}
+                        {address?.city || 'N/A'} {address?.province || 'N/A'}{' '}
+                        {address?.postal_code || 'N/A'}
+                    </Text>
+                </Box>
+            </Flex>
+        </Flex>
     );
 };
 
