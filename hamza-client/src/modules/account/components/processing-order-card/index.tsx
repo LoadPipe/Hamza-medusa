@@ -9,6 +9,7 @@ type OrderDetails = {
 };
 import Link from 'next/link';
 import OrderLeftColumn from '@modules/order/templates/order-left-column';
+import OrderRightAddress from '@modules/order/templates/order-right-address';
 
 type Order = {
     id: string;
@@ -59,6 +60,8 @@ const ProcessingOrderCard = ({
             maxWidth="100%"
             flexDirection={{ sm: 'column', md: 'row' }}
         >
+            {/* Left Side: Default  */}
+
             <OrderLeftColumn
                 order={order}
                 handle={handle}
@@ -67,24 +70,7 @@ const ProcessingOrderCard = ({
             />
 
             {/* Right Side: Address */}
-            <Flex direction={{ base: 'row', md: 'row' }} ml="auto" pl={2}>
-                <Box>
-                    <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
-                        Address
-                    </Text>
-                    <Text
-                        minWidth="200px"
-                        maxWidth="300px"
-                        noOfLines={3}
-                        color={'white'}
-                        fontSize="16px"
-                    >
-                        {address?.address_1 || 'N/A'} {address?.address_2 || ''}{' '}
-                        {address?.city || 'N/A'} {address?.province || 'N/A'}{' '}
-                        {address?.postal_code || 'N/A'}
-                    </Text>
-                </Box>
-            </Flex>
+            <OrderRightAddress address={address} />
         </Flex>
     );
 };
