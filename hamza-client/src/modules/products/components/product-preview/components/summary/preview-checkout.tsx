@@ -85,6 +85,18 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     // console.log(typeof productId, productId);
 
     useEffect(() => {
+        // Clear variantId to avoid referencing a stale ID from the previous product.
+        setVariantId('');
+        setSelectedVariant(null);
+        setSelectedVariantImage('');
+    }, [productData]);
+
+    useEffect(() => {
+        console.log('Product Data:', productData);
+        console.log('Current Variant ID:', variantId);
+    }, [productData, variantId]);
+
+    useEffect(() => {
         console.log('New productId detected:', productId);
 
         const fetchProductReview = async () => {
