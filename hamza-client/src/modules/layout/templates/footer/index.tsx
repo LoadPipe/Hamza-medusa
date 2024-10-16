@@ -261,9 +261,11 @@ export default async function Footer() {
                 }}></Flex>
 
                 {/* google analytics */}
-                <Flex dangerouslySetInnerHTML={{
-                    __html: '<!-- Google tag (gtag.js) --><script async src="[https://www.googletagmanager.com/gtag/js?id=G-EL9E6JGL7S">](https://www.googletagmanager.com/gtag/js?id=G-EL9E6JGL7S%22%3E)</script><script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag("js", new Date());gtag("config", "G-EL9E6JGL7S");</script>` '
-                }}></Flex>
+                {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TAG === 'true' &&
+                    <Flex dangerouslySetInnerHTML={{
+                        __html: '<!-- Google tag (gtag.js) --><script async src="[https://www.googletagmanager.com/gtag/js?id=G-EL9E6JGL7S">](https://www.googletagmanager.com/gtag/js?id=G-EL9E6JGL7S%22%3E)</script><script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag("js", new Date());gtag("config", "G-EL9E6JGL7S");</script>` '
+                    }}></Flex>
+                }
             </Flex>
         </Flex>
     );
