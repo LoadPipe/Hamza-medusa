@@ -2,7 +2,7 @@ import { MedusaRequest, MedusaResponse, OrderService } from '@medusajs/medusa';
 import { RouteHandler } from '../../../../route-handler';
 import BuckydropService from 'src/services/buckydrop';
 
-export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
+export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
     const orderService: OrderService = req.scope.resolve('orderService');
     const buckyService: BuckydropService =
         req.scope.resolve('buckydropService');
@@ -10,9 +10,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const handler: RouteHandler = new RouteHandler(
         req,
         res,
-        'GET',
+        'PUT',
         '/admin/custom/bucky/track',
-        ['order']
+        ['order_id']
     );
 
     await handler.handle(async () => {
@@ -24,7 +24,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             output.orders.push(await buckyService.reconcileOrderStatus(handler.inputParams.order_id));
         }
         else {
-            orders = await buckyService.getOutstandingBuckydropOrders();
+            orders = await buckyService.getOrdersToTrack();
 
             output.count = orders.length;
             for (let order of orders) {
