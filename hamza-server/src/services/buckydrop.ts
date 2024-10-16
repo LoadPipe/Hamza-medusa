@@ -584,7 +584,10 @@ export default class BuckydropService extends TransactionBaseService {
             where: {
                 status: OrderStatus.PENDING,
                 payment_status: PaymentStatus.CAPTURED,
-                fulfillment_status: FulfillmentStatus.NOT_FULFILLED,
+                fulfillment_status: Not(In([
+                    FulfillmentStatus.CANCELED,
+                    FulfillmentStatus.RETURNED
+                ])),
                 bucky_metadata: Not(IsNull()),
             },
         };
