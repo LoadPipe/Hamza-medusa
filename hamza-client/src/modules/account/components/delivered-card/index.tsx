@@ -2,6 +2,8 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { Flex, Text } from '@chakra-ui/react';
 import React from 'react';
 import OrderLeftColumn from '@modules/order/templates/order-left-column';
+import currencyIcons from '@/images/currencies/crypto-currencies';
+import Image from 'next/image';
 
 type OrderDetails = {
     thumbnail: string;
@@ -71,16 +73,19 @@ const DeliveredCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
             />
 
             <Flex
-                justifyContent="flex-end"
-                direction={{ base: 'row', md: 'column' }}
-                ml={'auto'}
+                justifyContent={'center'}
+                direction={{ base: 'column', md: 'column' }}
+                gap={2}
             >
                 <Flex direction={'row'}></Flex>
-                <Flex direction={'row'}>
+                <Flex direction={'row'} mr={'2rem'} gap={2}>
                     <Text fontSize="16px" fontWeight="semibold">
                         {getAmount(order.unit_price)}{' '}
-                        {order.currency_code.toUpperCase()}
                     </Text>
+                    <Image
+                        src={currencyIcons[order.currency_code ?? 'usdc']}
+                        alt={order.currency_code?.toUpperCase() ?? 'USDC'}
+                    />
                 </Flex>
             </Flex>
         </Flex>
