@@ -38,6 +38,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     selectedVariantImage,
     setSelectedVariantImage,
 }) => {
+    console.log(
+        'PreviewCheckout component rendered with productId:',
+        productId
+    );
+
     const currencies = ['eth', 'usdc', 'usdt'];
 
     const [options, setOptions] = useState<Record<string, string>>({});

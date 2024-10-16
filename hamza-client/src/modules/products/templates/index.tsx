@@ -49,12 +49,15 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
     // Only update product data when `product` changes
     useEffect(() => {
         if (product && product.id) {
+            console.log('Setting product data:', product);
+            console.log('Setting product ID:', product.id);
             setProductData(product);
             setProductId(product.id);
             setRegionId(region.id);
             setCountryCode(countryCode);
             setQuantity(1);
         } else {
+            console.error('Product not found or missing ID:', product);
             notFound();
         }
     }, [
