@@ -43,10 +43,11 @@ type Order = {
 type OrderCardProps = {
     order: Order;
     handle: string;
-    vendorName: string;
+    storeName: string;
+    icon: string;
 };
 
-const DeliveredCard = ({ order, handle, vendorName }: OrderCardProps) => {
+const DeliveredCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
     const orderString = typeof order.currency_code;
     const router = useRouter();
     let countryCode = useParams().countryCode as string;
@@ -91,7 +92,8 @@ const DeliveredCard = ({ order, handle, vendorName }: OrderCardProps) => {
             <OrderLeftColumn
                 order={order}
                 handle={handle}
-                vendorName={vendorName}
+                storeName={storeName}
+                icon={icon}
                 showDate={false}
             />
 

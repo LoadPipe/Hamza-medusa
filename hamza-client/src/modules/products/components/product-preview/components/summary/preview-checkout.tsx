@@ -16,7 +16,7 @@ import OptionSelect from '../../../option-select';
 import { isEqual } from 'lodash';
 import CartPopup from '../../../cart-popup';
 import { getAverageRatings, getStore, getReviewCount } from '@lib/data';
-import currencyIcons from '../../../../../../../public/images/currencies/crypto-currencies';
+import currencyIcons from '@/images/currencies/crypto-currencies';
 import Spinner from '@modules/common/icons/spinner';
 import TermsOfService from '../terms-of-service/product-details-tos';
 import { renderStars } from '@modules/products/components/review-stars';

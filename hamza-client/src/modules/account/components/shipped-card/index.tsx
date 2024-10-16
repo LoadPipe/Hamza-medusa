@@ -36,15 +36,17 @@ type Order = {
 
 type OrderCardProps = {
     order: Order;
+    icon: string;
     handle: string;
-    vendorName: string;
+    storeName: string;
     address: any;
 };
 
 const ShippedCard = ({
     order,
+    icon,
     handle,
-    vendorName,
+    storeName,
     address,
 }: OrderCardProps) => {
     const orderString = typeof order.currency_code;
@@ -72,7 +74,8 @@ const ShippedCard = ({
             <OrderLeftColumn
                 order={order}
                 handle={handle}
-                vendorName={vendorName}
+                storeName={storeName}
+                icon={icon}
                 showDate={false}
             />
 

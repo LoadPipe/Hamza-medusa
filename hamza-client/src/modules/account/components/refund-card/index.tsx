@@ -39,10 +39,11 @@ type Order = {
 type OrderCardProps = {
     order: Order;
     handle: string;
-    vendorName: string;
+    storeName: string;
+    icon: string;
 };
 
-const RefundCard = ({ order, handle, vendorName }: OrderCardProps) => {
+const RefundCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
     const orderString = typeof order.currency_code;
 
     if (!order) {
@@ -62,7 +63,8 @@ const RefundCard = ({ order, handle, vendorName }: OrderCardProps) => {
             <OrderLeftColumn
                 order={order}
                 handle={handle}
-                vendorName={vendorName}
+                storeName={storeName}
+                icon={icon}
                 showDate={true}
             />
 

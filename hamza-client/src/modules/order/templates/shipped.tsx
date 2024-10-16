@@ -165,7 +165,8 @@ const Shipped = ({
                                         <ShippedCard
                                             key={item.id}
                                             order={item}
-                                            vendorName={order.store.name}
+                                            storeName={order.store.name}
+                                            icon={order.store.icon}
                                             address={order.shipping_address}
                                             handle={
                                                 item.variant?.product?.handle ||

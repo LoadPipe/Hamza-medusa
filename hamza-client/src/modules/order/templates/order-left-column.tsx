@@ -32,12 +32,14 @@ type Order = {
 type OrderCardProps = {
     order: Order;
     handle: string;
-    vendorName: string;
+    storeName: string;
+    icon?: string;
     showDate: boolean;
 };
 
 const OrderLeftColumn = ({
-    vendorName,
+    storeName,
+    icon,
     handle,
     order,
     showDate = false,
@@ -48,14 +50,25 @@ const OrderLeftColumn = ({
             flexDirection={{ base: 'column' }}
             gap={{ base: 4, md: 0 }}
         >
-            <Flex mb={2} display={{ base: 'flex' }} alignItems="center">
+            <Flex mb={'20px'} display={{ base: 'flex' }} alignItems="center">
+                <Link
+                    href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/store/${storeName}`}
+                >
+                    <Image
+                        src={icon}
+                        alt="Light Logo"
+                        boxSize={{ base: '32px' }}
+                        borderRadius="full"
+                        mr={'12px'}
+                    />
+                </Link>
                 <Text
                     fontSize={{ base: '18px', md: '24px' }}
                     fontWeight="bold"
                     noOfLines={1}
                     mr={2}
                 >
-                    {vendorName}
+                    {storeName}
                 </Text>
                 <FaCheckCircle color="#3196DF" />
             </Flex>

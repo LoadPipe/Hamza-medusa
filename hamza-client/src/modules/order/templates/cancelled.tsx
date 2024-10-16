@@ -146,7 +146,8 @@ const Cancelled = ({
                                         <CancelCard
                                             key={item.id}
                                             order={item}
-                                            vendorName={order.store.name}
+                                            storeName={order.store.name}
+                                            icon={order.store.icon}
                                             cancel_reason={
                                                 order.metadata?.cancel_reason ||
                                                 'No cancellation details were provided.'

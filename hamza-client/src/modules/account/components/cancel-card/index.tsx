@@ -58,7 +58,8 @@ type OrderCardProps = {
     handle: string;
     cancel_reason: string;
     cancelled_date: string;
-    vendorName: string;
+    storeName: string;
+    icon: string;
 };
 
 const CancelCard = ({
@@ -66,7 +67,8 @@ const CancelCard = ({
     handle,
     cancel_reason,
     cancelled_date,
-    vendorName,
+    storeName,
+    icon,
 }: OrderCardProps) => {
     const orderString = typeof order.currency_code;
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -93,7 +95,8 @@ const CancelCard = ({
             <OrderLeftColumn
                 order={order}
                 handle={handle}
-                vendorName={vendorName}
+                storeName={storeName}
+                icon={icon}
                 showDate={false}
             />
 

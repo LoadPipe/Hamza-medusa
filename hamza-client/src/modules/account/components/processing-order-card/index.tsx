@@ -36,14 +36,16 @@ type Order = {
 type OrderCardProps = {
     order: Order;
     handle: string;
-    vendorName: string;
+    storeName: string;
+    icon: string;
     address: any;
 };
 
 const ProcessingOrderCard = ({
     order,
     handle,
-    vendorName,
+    storeName,
+    icon,
     address,
 }: OrderCardProps) => {
     if (!order) {
@@ -52,7 +54,7 @@ const ProcessingOrderCard = ({
 
     return (
         <Flex
-            my={4}
+            mb={4}
             color={'white'}
             justifyContent="space-between"
             maxWidth="100%"
@@ -63,7 +65,8 @@ const ProcessingOrderCard = ({
             <OrderLeftColumn
                 order={order}
                 handle={handle}
-                vendorName={vendorName}
+                storeName={storeName}
+                icon={icon}
                 showDate={false}
             />
 

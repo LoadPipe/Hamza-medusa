@@ -30,10 +30,12 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import EmptyState from '@modules/order/components/empty-state';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
+import currencyIcons from '@/images/currencies/crypto-currencies';
 
 import ProcessingOrderCard from '@modules/account/components/processing-order-card';
 import { BsCircleFill } from 'react-icons/bs';
-import { debounce } from 'lodash';
+import Image from 'next/image';
+import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 
 /**
  * The Processing component displays and manages the customer's processing orders, allowing users to view order details,
@@ -217,6 +219,9 @@ const Processing = ({
     if (isEmpty && processingOrder?.length === 0) {
         return <EmptyState />;
     }
+    const capitalizeFirstLetter = (word: string) => {
+        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    };
 
     return (
         <div>
@@ -237,26 +242,31 @@ const Processing = ({
                 <Text>Error fetching processing orders</Text>
             ) : processingOrder && processingOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
-                    <Text
-                        fontSize={'16px'}
-                        color={'primary.green.900'}
-                        fontWeight="bold"
-                        ml={'auto'}
-                    >
-                        Processing
-                    </Text>
-
-                    {processingOrder.map((order: any) => (
-                        <>
+                    {processingOrder.map((order: any) => {
+                        const totalPrice = order.items.reduce(
+                            (acc: number, item: any) =>
+                                acc + item.unit_price * item.quantity,
+                            0
+                        );
+                        return (
                             <div key={order.id}>
                                 {order.items?.map(
                                     (item: any, index: number) => (
                                         <div key={item.id}>
+                                            {index === 0 ? (
+                                                <DynamicOrderStatus
+                                                    paymentStatus={
+                                                        order.payment_status
+                                                    }
+                                                    paymentType={'Processing'}
+                                                />
+                                            ) : null}
                                             {/*item: {item.id} <br />*/}
                                             <ProcessingOrderCard
                                                 key={item.id}
                                                 order={item}
-                                                vendorName={order.store.name}
+                                                storeName={order.store.name}
+                                                icon={order.store.icon}
                                                 address={order.shipping_address}
                                                 handle={
                                                     item.variant?.product
@@ -264,52 +274,97 @@ const Processing = ({
                                                 }
                                             />
                                             <Flex
-                                                direction={'row'}
-                                                justifyContent="flex-end"
+                                                direction="row"
+                                                justifyContent="space-between"
+                                                alignItems="center"
                                                 mb={5}
-                                                gap={2}
                                             >
-                                                <Button
-                                                    variant="outline"
-                                                    colorScheme="white"
-                                                    borderRadius={'37px'}
-                                                    cursor="pointer"
-                                                    _hover={{
-                                                        textDecoration:
-                                                            'underline',
-                                                    }}
-                                                    onClick={() =>
-                                                        toggleViewOrder(item.id)
-                                                    }
-                                                >
-                                                    View Order
-                                                </Button>
-                                                {index ===
-                                                order.items.length - 1 ? (
-                                                    order.status ===
-                                                    'canceled' ? (
-                                                        <Button
-                                                            colorScheme="red"
-                                                            isDisabled
-                                                        >
-                                                            Cancellation
-                                                            Requested
-                                                        </Button>
-                                                    ) : (
-                                                        <Button
-                                                            variant="outline"
-                                                            colorScheme="white"
-                                                            borderRadius="37px"
-                                                            onClick={() =>
-                                                                openModal(
-                                                                    order.id
-                                                                )
-                                                            }
-                                                        >
-                                                            Request Cancellation
-                                                        </Button>
-                                                    )
-                                                ) : null}
+                                                {/* Left-aligned text */}
+                                                <Flex direction={'row'} gap={2}>
+                                                    {index ===
+                                                    order.items.length - 1 ? (
+                                                        <>
+                                                            <Text
+                                                                fontSize={
+                                                                    '18px'
+                                                                }
+                                                            >
+                                                                Order total:
+                                                            </Text>
+                                                            <Image
+                                                                className="h-[14px] w-[14px] md:h-[24px!important] md:w-[24px!important] self-center"
+                                                                src={
+                                                                    currencyIcons[
+                                                                        item.currency_code ??
+                                                                            'usdc'
+                                                                    ]
+                                                                }
+                                                                alt={
+                                                                    item.currency_code?.toUpperCase() ??
+                                                                    'USDC'
+                                                                }
+                                                            />
+                                                            <Text
+                                                                fontSize={
+                                                                    '18px'
+                                                                }
+                                                            >
+                                                                {getAmount(
+                                                                    totalPrice,
+                                                                    item.currency_code
+                                                                )}
+                                                            </Text>
+                                                        </>
+                                                    ) : null}
+                                                </Flex>
+
+                                                {/* Right-aligned buttons */}
+                                                <Flex gap={2}>
+                                                    <Button
+                                                        variant="outline"
+                                                        colorScheme="white"
+                                                        borderRadius="37px"
+                                                        cursor="pointer"
+                                                        _hover={{
+                                                            textDecoration:
+                                                                'underline',
+                                                        }}
+                                                        onClick={() =>
+                                                            toggleViewOrder(
+                                                                item.id
+                                                            )
+                                                        }
+                                                    >
+                                                        View Order
+                                                    </Button>
+                                                    {index ===
+                                                    order.items.length - 1 ? (
+                                                        order.status ===
+                                                        'canceled' ? (
+                                                            <Button
+                                                                colorScheme="red"
+                                                                isDisabled
+                                                            >
+                                                                Cancellation
+                                                                Requested
+                                                            </Button>
+                                                        ) : (
+                                                            <Button
+                                                                variant="outline"
+                                                                colorScheme="white"
+                                                                borderRadius="37px"
+                                                                onClick={() =>
+                                                                    openModal(
+                                                                        order.id
+                                                                    )
+                                                                }
+                                                            >
+                                                                Request
+                                                                Cancellation
+                                                            </Button>
+                                                        )
+                                                    ) : null}
+                                                </Flex>
                                             </Flex>
 
                                             {/* Collapsible Section */}
@@ -852,22 +907,19 @@ const Processing = ({
                                         </div>
                                     )
                                 )}
-                            </div>
-                            {order.items && order.items.last > 0 && <></>}
 
-                            <Divider
-                                width="90%" // Line takes up 80% of the screen width
-                                borderBottom="0.2px solid"
-                                borderColor="#D9D9D9"
-                                pr={'1rem'}
-                                _last={{
-                                    // pb: 0,
-                                    // borderBottom: 'none',
-                                    mb: 8,
-                                }}
-                            />
-                        </>
-                    ))}
+                                <Divider
+                                    width="90%" // Line takes up 90% of the screen width
+                                    borderBottom="0.2px solid"
+                                    borderColor="#D9D9D9"
+                                    pr={'1rem'}
+                                    _last={{
+                                        mb: 8,
+                                    }}
+                                />
+                            </div>
+                        );
+                    })}
                     <Modal isOpen={isModalOpen} onClose={closeModal}>
                         <ModalOverlay />
                         <ModalContent>
