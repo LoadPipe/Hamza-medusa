@@ -10,8 +10,8 @@ const OrderSummary = () => {
             height={'406px'}
             flexDir={'column'}
             borderRadius={'16px'}
-            px="60px"
-            py="40px"
+            px={{ base: '16px', md: '60px' }}
+            py={{ base: '16px', md: '40px' }}
         >
             <Text
                 color={'primary.green.900'}

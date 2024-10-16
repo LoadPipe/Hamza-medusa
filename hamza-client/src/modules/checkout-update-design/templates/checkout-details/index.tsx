@@ -11,12 +11,13 @@ const CheckoutDetails = () => {
             height={'406px'}
             flexDir={'column'}
             borderRadius={'16px'}
-            px="60px"
-            py="40px"
+            px={{ base: '16px', md: '60px' }}
+            py={{ base: '16px', md: '40px' }}
         >
             <Text
                 color={'primary.green.900'}
                 fontSize={'18px'}
+                textAlign={{ base: 'center', md: 'unset' }}
                 fontWeight={600}
             >
                 Checkout Details
@@ -25,7 +26,7 @@ const CheckoutDetails = () => {
             <Flex mt="2rem" width={'100%'} flexDir={'row'}>
                 <Text
                     color={'primary.green.900'}
-                    fontSize={'18px'}
+                    fontSize={{ base: '16px', md: '18px' }}
                     fontWeight={600}
                 >
                     Shipping To:
@@ -41,7 +42,7 @@ const CheckoutDetails = () => {
                 </Box>
             </Flex>
 
-            <Divider borderWidth={'1px'} borderColor={'#3E3E3E'} my="2rem" />
+            {/* <Divider borderWidth={'1px'} borderColor={'#3E3E3E'} my="2rem" />
 
             <Flex width={'100%'} flexDir={'row'}>
                 <Text
@@ -60,7 +61,7 @@ const CheckoutDetails = () => {
                 >
                     <BiPencil size={23} />
                 </Box>
-            </Flex>
+            </Flex> */}
         </Flex>
     );
 };

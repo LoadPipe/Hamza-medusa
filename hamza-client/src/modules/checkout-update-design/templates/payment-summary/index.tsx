@@ -8,10 +8,10 @@ const PaymentSummary = () => {
             color={'white'}
             maxW={{ base: '100%', md: '401px' }}
             width={'100%'}
-            height="480px"
+            height={{ base: 'auto', md: '480px' }}
             flexDir={'column'}
             borderRadius={'16px'}
-            p="40px"
+            p={{ base: '16px', md: '40px' }}
         >
             <Text
                 color={'primary.green.900'}
@@ -21,19 +21,25 @@ const PaymentSummary = () => {
                 Payment Summary
             </Text>
 
-            <Flex my="2rem" flexDir="column" gap={4}>
-                <Text>Subtotal</Text>
-                <Text>Discount</Text>
-                <Text>Shipping Fee</Text>
-                <Text>Vat (5%)</Text>
-                <Divider borderWidth={'1px'} borderColor={'#3E3E3E'} />
-                <Text>Total</Text>
+            <Flex my="2rem" flexDir="column" gap={{ base: 2, md: 4 }}>
+                <Text fontSize={{ base: '14px', md: '16px' }}>Subtotal</Text>
+                <Text fontSize={{ base: '14px', md: '16px' }}>Discount</Text>
+                <Text fontSize={{ base: '14px', md: '16px' }}>
+                    Shipping Fee
+                </Text>
+                <Text fontSize={{ base: '14px', md: '16px' }}>Vat (5%)</Text>
+                <Divider
+                    my={{ base: '1rem', md: '0' }}
+                    borderWidth={'1px'}
+                    borderColor={'#3E3E3E'}
+                />
+                <Text fontSize={{ base: '14px', md: '16px' }}>Total</Text>
             </Flex>
 
             <Flex mt="auto" flexDir={'column'} gap={5}>
                 <Button
                     borderRadius={'full'}
-                    height={'58px'}
+                    height={{ base: '42px', md: '58px' }}
                     opacity={1}
                     color={'white'}
                     _hover={{ opacity: 0.5 }}
@@ -43,7 +49,7 @@ const PaymentSummary = () => {
                 </Button>
                 <Text
                     textAlign="center"
-                    fontSize={'12px'}
+                    fontSize={{ base: '10px', md: '12px' }}
                     maxW={'236px'}
                     mx="auto"
                 >
