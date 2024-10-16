@@ -27,7 +27,7 @@ const CheckoutTemplate = ({
                 gap={{ base: 3, md: '41px' }}
             >
                 <CheckoutDetails />
-                <OrderSummary />
+                <OrderSummary cart={cart} />
             </Flex>
             <PaymentSummary />
         </Flex>

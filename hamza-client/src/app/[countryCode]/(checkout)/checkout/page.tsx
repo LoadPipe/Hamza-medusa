@@ -59,7 +59,7 @@ export default async function Checkout(params: any) {
 
             <CheckoutSummary cartId={cartId} /> */}
 
-            <CheckoutTemplate />
+            <CheckoutTemplate cart={cart} />
         </Flex>
     );
 }
