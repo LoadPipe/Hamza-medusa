@@ -533,6 +533,29 @@ export default class BuckydropService extends TransactionBaseService {
         }
     }
 
+    async getOrdersToVerify(): Promise<Order[]> {
+        const where: FindOptionsWhere<Order> = {
+            bucky_metadata: Not(IsNull()),
+            status: OrderStatus.PENDING,
+            payment_status: PaymentStatus.AWAITING,
+            fulfillment_status: FulfillmentStatus.NOT_FULFILLED,
+        };
+
+        let orders = await this.orderRepository_.find({
+            where: where
+        });
+
+        orders = orders.filter(o => {
+            const tzOffset = o.created_at.getTimezoneOffset();
+            const localDate = new Date(o.created_at.getTime() - tzOffset * 60000);
+
+            //order must be at least two hours old
+            return Math.floor(localDate.getTime() / 1000) > (Math.floor(Date.now() / 1000) - 60 * 120);
+        });
+
+        return orders;
+    }
+
     async getOrdersToProcess(): Promise<Order[]> {
         const options: FindManyOptions<Order> = {
             where: {
@@ -548,17 +571,19 @@ export default class BuckydropService extends TransactionBaseService {
         );
     }
 
-    async getOrdersToVerify(): Promise<Order[]> {
-        const where: FindOptionsWhere<Order> = {
-            bucky_metadata: Not(IsNull()),
-            status: OrderStatus.PENDING,
-            payment_status: PaymentStatus.AWAITING,
-            fulfillment_status: FulfillmentStatus.NOT_FULFILLED,
+    async getOrdersToTrack(): Promise<Order[]> {
+        const options: FindManyOptions<Order> = {
+            where: {
+                status: OrderStatus.PENDING,
+                payment_status: PaymentStatus.CAPTURED,
+                fulfillment_status: FulfillmentStatus.NOT_FULFILLED,
+                bucky_metadata: Not(IsNull()),
+            },
         };
-
-        return this.orderRepository_.find({
-            where: where
-        })
+        const orders: Order[] = await this.orderRepository_.find(options);
+        return (
+            orders?.filter((o) => o.bucky_metadata?.status !== 'pending') ?? []
+        );
     }
 
     private async mapBuckyDataToProductInput(
