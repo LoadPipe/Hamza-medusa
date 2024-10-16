@@ -9,7 +9,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const paymentVerificationService: PaymentVerificationService = req.scope.resolve('paymentVerificationService');
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'POST', '/admin/custom/bucky/verify', ['products']
+        req, res, 'GET', '/admin/custom/bucky/verify', ['products']
     );
 
     await handler.handle(async () => {

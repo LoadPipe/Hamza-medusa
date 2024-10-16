@@ -24,7 +24,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             output.orders.push(await buckyService.reconcileOrderStatus(handler.inputParams.order_id));
         }
         else {
-            orders = await buckyService.getOutstandingBuckydropOrders();
+            orders = await buckyService.getOrdersToVerify();
 
             output.count = orders.length;
             for (let order of orders) {
