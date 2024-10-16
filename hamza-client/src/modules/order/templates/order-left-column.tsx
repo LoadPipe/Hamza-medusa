@@ -46,11 +46,16 @@ const OrderLeftColumn = ({
 }: OrderCardProps) => {
     return (
         <Flex
-            // justifyContent="space-between"
+            justifyContent={{ md: 'space-between' }}
             flexDirection={{ base: 'column' }}
             width={'100%'}
         >
-            <Flex mb={'20px'} display={{ base: 'flex' }} alignItems="center">
+            <Flex
+                mx={{ base: 'auto', md: 0 }}
+                mb={'20px'}
+                display={{ base: 'flex' }}
+                alignItems="center"
+            >
                 <Link
                     href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/store/${storeName}`}
                 >
@@ -66,17 +71,14 @@ const OrderLeftColumn = ({
                     fontSize={{ base: '18px', md: '24px' }}
                     fontWeight="bold"
                     noOfLines={1}
-                    mr={'10px'}
+                    mr={{ sm: '5px', md: '10px' }}
                 >
                     {storeName}
                 </Text>
                 <FaCheckCircle color="#3196DF" />
             </Flex>
 
-            <Flex
-                direction={{ base: 'column', lg: 'row' }}
-                alignItems={{ base: 'flex-start', md: 'center' }}
-            >
+            <Flex direction={{ base: 'column', lg: 'row' }}>
                 <Link
                     href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}
                 >
@@ -90,13 +92,19 @@ const OrderLeftColumn = ({
                             ''
                         }
                         alt={`Thumbnail of ${order.title}`}
-                        mr={{ base: 2, md: 4 }}
+                        mr={{ base: 0, md: 4 }}
                         mb={{ base: 4, md: 0 }}
+                        mx={{ base: 'auto', md: 0 }}
                     />
                 </Link>
 
-                <Flex justifyContent="space-between" direction="row" mr="2">
-                    <Flex direction="column" ml={'25px'}>
+                <Flex
+                    justifyContent={{ sm: 'flex-start', md: 'space-between' }}
+                    direction={{ sm: 'column', md: 'row' }}
+                    alignItems={{ sm: 'flex-start' }}
+                    mr="2"
+                >
+                    <Flex direction="column" ml={{ sm: '0px', md: '25px' }}>
                         <Text
                             // maxWidth="600px"
                             // minWidth="200px"
@@ -107,7 +115,7 @@ const OrderLeftColumn = ({
                             {order.title}
                         </Text>
                         <Flex
-                            direction={{ base: 'column', md: 'row' }}
+                            direction={{ base: 'row', md: 'row' }}
                             color={'rgba(85, 85, 85, 1.0)'}
                             alignItems={'center'}
                         >

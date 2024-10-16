@@ -19,7 +19,6 @@ const OrderRightAddress = ({ address }: OrderCardProps) => {
             width={'100%'}
             justifyContent={'center'}
             direction={{ base: 'column' }}
-            ml="auto"
         >
             <Flex direction={'row'}>
                 <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">

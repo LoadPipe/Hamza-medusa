@@ -277,9 +277,18 @@ const Processing = ({
                                                 }
                                             />
                                             <Flex
-                                                direction="row"
-                                                justifyContent="space-between"
-                                                alignItems="center"
+                                                direction={{
+                                                    base: 'column',
+                                                    md: 'row',
+                                                }}
+                                                justifyContent={{
+                                                    base: 'flex-start',
+                                                    md: 'center',
+                                                }}
+                                                alignItems={{
+                                                    base: 'flex-start',
+                                                    md: 'center',
+                                                }}
                                                 mb={5}
                                             >
                                                 {/* Left-aligned text */}
@@ -295,12 +304,33 @@ const Processing = ({
                                                 />
 
                                                 {/* Right-aligned buttons */}
-                                                <Flex gap={2} ml="auto">
+                                                <Flex
+                                                    direction={{
+                                                        base: 'column',
+                                                        md: 'row',
+                                                    }}
+                                                    justifyContent={'flex-end'}
+                                                    gap={2}
+                                                    mt={{ base: 4, md: 0 }}
+                                                    width="100%"
+                                                >
                                                     <Button
                                                         variant="outline"
                                                         colorScheme="white"
                                                         borderRadius="37px"
                                                         cursor="pointer"
+                                                        ml={{
+                                                            base: 0,
+                                                            md: 2,
+                                                        }}
+                                                        mt={{
+                                                            base: 2,
+                                                            md: 0,
+                                                        }}
+                                                        width={{
+                                                            base: '100%',
+                                                            md: 'auto',
+                                                        }}
                                                         _hover={{
                                                             textDecoration:
                                                                 'underline',

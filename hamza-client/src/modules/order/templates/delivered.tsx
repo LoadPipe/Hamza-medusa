@@ -159,7 +159,11 @@ const Delivered = ({
                             0
                         );
                         return (
-                            <div key={order.id}>
+                            <Flex
+                                key={order.id}
+                                direction="column"
+                                width="100%"
+                            >
                                 {order.items?.map(
                                     (item: any, index: number) => (
                                         <div key={item.id}>
@@ -182,9 +186,18 @@ const Delivered = ({
                                                 }
                                             />
                                             <Flex
-                                                direction={'row'}
-                                                justifyContent={'space-between'}
-                                                alignItems={'center'}
+                                                direction={{
+                                                    base: 'column',
+                                                    md: 'row',
+                                                }}
+                                                justifyContent={{
+                                                    base: 'flex-start',
+                                                    md: 'space-between',
+                                                }}
+                                                alignItems={{
+                                                    base: 'flex-start',
+                                                    md: 'center',
+                                                }}
                                                 mb={5}
                                             >
                                                 <OrderTotalAmount
@@ -198,15 +211,31 @@ const Delivered = ({
                                                     }
                                                 />
                                                 <Flex
-                                                    direction={'row'}
+                                                    direction={{
+                                                        base: 'column',
+                                                        md: 'row',
+                                                    }}
+                                                    justifyContent={'flex-end'}
                                                     gap={2}
-                                                    ml={'auto'}
+                                                    mt={{ base: 4, md: 0 }}
+                                                    width="100%"
                                                 >
                                                     <Button
                                                         variant="outline"
                                                         colorScheme="white"
                                                         borderRadius={'37px'}
-                                                        mt={2}
+                                                        ml={{
+                                                            base: 0,
+                                                            md: 2,
+                                                        }}
+                                                        mt={{
+                                                            base: 2,
+                                                            md: 0,
+                                                        }}
+                                                        width={{
+                                                            base: '100%',
+                                                            md: 'auto',
+                                                        }}
                                                         onClick={() =>
                                                             handleReorder(
                                                                 order || []
@@ -219,7 +248,18 @@ const Delivered = ({
                                                         variant="outline"
                                                         colorScheme="white"
                                                         borderRadius={'37px'}
-                                                        mt={2}
+                                                        ml={{
+                                                            base: 0,
+                                                            md: 2,
+                                                        }}
+                                                        mt={{
+                                                            base: 2,
+                                                            md: 0,
+                                                        }}
+                                                        width={{
+                                                            base: '100%',
+                                                            md: 'auto',
+                                                        }}
                                                     >
                                                         Return/Refund
                                                     </Button>
@@ -238,7 +278,7 @@ const Delivered = ({
                                         mb: 8,
                                     }}
                                 />
-                            </div>
+                            </Flex>
                         );
                     })}
                 </Flex>

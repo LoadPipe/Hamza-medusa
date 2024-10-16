@@ -109,7 +109,7 @@ const Cancelled = ({
                     py={5}
                 >
                     <Text color="white" fontSize="lg" mb={8}>
-                        Loading Delivered orders...
+                        Loading Cancelled orders...
                     </Text>
                     <Spinner size={80} />
                 </Box>
@@ -166,9 +166,18 @@ const Cancelled = ({
                                                 }
                                             />
                                             <Flex
-                                                direction={'row'}
-                                                justifyContent={'space-between'}
-                                                alignItems={'center'}
+                                                direction={{
+                                                    base: 'column',
+                                                    md: 'row',
+                                                }}
+                                                justifyContent={{
+                                                    base: 'flex-start',
+                                                    md: 'space-between',
+                                                }}
+                                                alignItems={{
+                                                    base: 'flex-start',
+                                                    md: 'center',
+                                                }}
                                                 mb={5}
                                             >
                                                 <OrderTotalAmount
@@ -198,7 +207,10 @@ const Cancelled = ({
                                                     </Text>
                                                 </Flex>
                                                 <Flex
-                                                    direction={'row'}
+                                                    direction={{
+                                                        base: 'column',
+                                                        md: 'row',
+                                                    }}
                                                     justifyContent={'flex-end'}
                                                 >
                                                     <Button

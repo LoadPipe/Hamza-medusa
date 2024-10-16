@@ -53,7 +53,7 @@ const RefundCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
             justifyContent="space-between"
             width="100%"
             gap={4}
-            flexDirection={{ base: 'row' }}
+            flexDirection={{ base: 'column', md: 'row' }}
             border="1px solid red"
         >
             <OrderLeftColumn

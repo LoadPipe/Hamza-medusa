@@ -58,11 +58,12 @@ const DeliveredCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
     }
     return (
         <Flex
-            my={4}
+            mb={4}
             color={'white'}
             justifyContent="space-between"
             maxWidth="100%"
-            flexDirection={{ sm: 'column', md: 'row' }}
+            flexDirection={{ base: 'column', md: 'row' }}
+            border="1px solid red"
         >
             <OrderLeftColumn
                 order={order}

@@ -58,7 +58,7 @@ const ProcessingOrderCard = ({
             color={'white'}
             justifyContent="space-between"
             maxWidth="100%"
-            flexDirection={{ sm: 'column', md: 'row' }}
+            flexDirection={{ base: 'column', md: 'row' }}
             border="1px solid red"
         >
             {/* Left Side: Default  */}

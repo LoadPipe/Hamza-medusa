@@ -30,7 +30,7 @@ const OrderTotalAmount: React.FC<OrderTotalAmountProps> = ({
     };
 
     return (
-        <Flex direction={'row'} gap={2}>
+        <Flex direction={{ sm: 'row', md: 'row' }} gap={2}>
             <Text fontSize={'18px'}>Order total:</Text>
             <Image
                 className="h-[14px] w-[14px] md:h-[24px!important] md:w-[24px!important] self-center"

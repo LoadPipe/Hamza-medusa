@@ -173,9 +173,18 @@ const Refund = ({
                                             />
 
                                             <Flex
-                                                direction="row"
-                                                justifyContent="space-between"
-                                                alignItems="center"
+                                                direction={{
+                                                    base: 'column',
+                                                    md: 'row',
+                                                }}
+                                                justifyContent={{
+                                                    base: 'flex-start',
+                                                    md: 'space-between',
+                                                }}
+                                                alignItems={{
+                                                    base: 'flex-start',
+                                                    md: 'center',
+                                                }}
                                                 mb={5}
                                             >
                                                 <OrderTotalAmount
@@ -188,7 +197,12 @@ const Refund = ({
                                                         order.items.length - 1
                                                     }
                                                 />
-                                                <Flex gap={2} ml="auto">
+                                                <Flex
+                                                    flexDirection="row"
+                                                    gap={2}
+                                                    ml={{ base: 0, md: 'auto' }}
+                                                    mt={{ base: 4, md: 0 }}
+                                                >
                                                     <Button
                                                         variant="outline"
                                                         colorScheme="white"

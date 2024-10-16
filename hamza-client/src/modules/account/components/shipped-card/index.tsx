@@ -64,11 +64,12 @@ const ShippedCard = ({
     }
     return (
         <Flex
-            my={4}
+            mb={4}
             color={'white'}
             justifyContent="space-between"
             maxWidth="100%"
-            flexDirection={{ sm: 'column', md: 'row' }}
+            flexDirection={{ base: 'column', md: 'row' }}
+            border="1px solid red"
         >
             {/* Left Side: Default  */}
             <OrderLeftColumn

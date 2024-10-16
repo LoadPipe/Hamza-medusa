@@ -64,8 +64,10 @@ const CancelCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
             my={4}
             color={'white'}
             justifyContent="space-between"
-            maxWidth="100%"
-            flexDirection={{ sm: 'column', md: 'row' }}
+            width="100%"
+            gap={4}
+            flexDirection={{ base: 'column', md: 'row' }}
+            border="1px solid red"
         >
             <OrderLeftColumn
                 order={order}
@@ -74,11 +76,7 @@ const CancelCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
                 icon={icon}
                 showDate={false}
             />
-            <Flex
-                justifyContent={'center'}
-                direction={{ base: 'column', md: 'column' }}
-                gap={2}
-            >
+            <Flex direction="column" width="100%" justifyContent={'center'}>
                 <Flex direction={'row'}></Flex>
                 <Flex direction={'row'} mr={'2rem'} gap={2}>
                     <Text fontSize="16px" fontWeight="semibold">
