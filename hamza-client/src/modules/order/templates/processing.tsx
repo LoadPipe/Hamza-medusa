@@ -24,6 +24,7 @@ import {
     ModalFooter,
     Modal,
     Icon,
+    Divider,
 } from '@chakra-ui/react';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import EmptyState from '@modules/order/components/empty-state';
@@ -226,7 +227,6 @@ const Processing = ({
                     justifyContent="center"
                     alignItems="center"
                     textAlign="center"
-                    py={5}
                 >
                     <Text color="white" fontSize="lg" mb={8}>
                         Loading Processing orders...
@@ -236,23 +236,21 @@ const Processing = ({
             ) : processingOrdersError ? (
                 <Text>Error fetching processing orders</Text>
             ) : processingOrder && processingOrder.length > 0 ? (
-                <>
-                    <h1>Processing Orders</h1>
+                <Flex width={'100%'} flexDirection="column">
+                    <Text
+                        fontSize={'16px'}
+                        color={'primary.green.900'}
+                        fontWeight="bold"
+                        ml={'auto'}
+                    >
+                        Processing
+                    </Text>
 
                     {processingOrder.map((order: any) => (
                         <>
-                            <div
-                                key={order.id}
-                                className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
-                            >
+                            <div key={order.id}>
                                 {order.items?.map((item: any) => (
-                                    <Box
-                                        key={item.id}
-                                        bg="rgba(39, 39, 39, 0.3)"
-                                        p={4}
-                                        m={2}
-                                        rounded="lg"
-                                    >
+                                    <Box key={item.id}>
                                         {/*item: {item.id} <br />*/}
                                         <ProcessingOrderCard
                                             key={item.id}
@@ -819,39 +817,45 @@ const Processing = ({
                             </div>
                             <>
                                 {order.items && order.items.length > 0 && (
-                                    <Flex
-                                        justifyContent="flex-end"
-                                        my={8}
-                                        gap={'4'}
-                                        borderBottom="1px solid"
-                                        borderColor="gray.200"
-                                        pb={6}
-                                        _last={{
-                                            pb: 0,
-                                            borderBottom: 'none',
-                                        }}
-                                    >
-                                        {order.status === 'canceled' ? (
-                                            <Button
-                                                colorScheme="red"
-                                                ml={4}
-                                                isDisabled
-                                            >
-                                                Cancellation Requested
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                variant="solid"
-                                                colorScheme="blue"
-                                                ml={4}
-                                                onClick={() =>
-                                                    openModal(order.id)
-                                                }
-                                            >
-                                                Request Cancellation
-                                            </Button>
-                                        )}
-                                    </Flex>
+                                    <>
+                                        <Flex
+                                            justifyContent="flex-end"
+                                            my={5}
+                                            mr={6}
+                                        >
+                                            {order.status === 'canceled' ? (
+                                                <Button
+                                                    colorScheme="red"
+                                                    isDisabled
+                                                >
+                                                    Cancellation Requested
+                                                </Button>
+                                            ) : (
+                                                <Button
+                                                    variant="outline"
+                                                    colorScheme="white"
+                                                    borderRadius={'37px'}
+                                                    onClick={() =>
+                                                        openModal(order.id)
+                                                    }
+                                                >
+                                                    Request Cancellation
+                                                </Button>
+                                            )}
+                                        </Flex>
+
+                                        <Divider
+                                            width="90%" // Line takes up 80% of the screen width
+                                            borderBottom="0.2px solid"
+                                            borderColor="#D9D9D9"
+                                            pr={'1rem'}
+                                            _last={{
+                                                // pb: 0,
+                                                // borderBottom: 'none',
+                                                mb: 8,
+                                            }}
+                                        />
+                                    </>
                                 )}
                             </>
                         </>
@@ -922,7 +926,7 @@ const Processing = ({
                             </ModalFooter>
                         </ModalContent>
                     </Modal>
-                </>
+                </Flex>
             ) : null}
         </div>
     );

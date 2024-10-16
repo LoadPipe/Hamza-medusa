@@ -562,7 +562,15 @@ export default class OrderService extends MedusaOrderService {
 
     async getOrdersWithUnverifiedPayments() {
         return this.orderRepository_.find({
-            where: { payment_status: PaymentStatus.AWAITING },
+            where: {
+                status: Not(In([
+                    OrderStatus.ARCHIVED,
+                    OrderStatus.REQUIRES_ACTION,
+                    OrderStatus.CANCELED,
+                    OrderStatus.COMPLETED
+                ])),
+                payment_status: PaymentStatus.AWAITING
+            },
             relations: ['payments'],
         });
     }

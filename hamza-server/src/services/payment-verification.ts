@@ -51,7 +51,7 @@ export default class PaymentVerificationService extends TransactionBaseService {
         const payments: Payment[] = order.payments;
 
         try {
-            if (order.payment_status !== PaymentStatus.CAPTURED) {
+            if (order.payment_status === PaymentStatus.CAPTURED) {
                 this.logger.info(`Order ${order.id} payment status ${order.payment_status} is in the wrong state to be verified`);
                 return output;
             }
@@ -91,6 +91,8 @@ export default class PaymentVerificationService extends TransactionBaseService {
             this.logger.info(`updating order ${order.id}, setting to ${paymentStatus}`);
             order.payment_status = paymentStatus;
             await this.orderRepository_.save(order);
+
+            //TODO: set the payments status to captured
 
             for (let p of order.payments) {
                 output.push({ order: order, payment: p });

@@ -14,7 +14,7 @@ async function main() {
         const authData = await authResponse.json();
         const authCookie = authResponse.headers.get('set-cookie');
 
-        const url = `http://localhost:${port}/admin/custom/bucky/track${process.argv[2]?.length ? `?order_id=${process.argv[2]}` : ''}`;
+        const url = `http://localhost:${port}/admin/custom/bucky/verify${process.argv[2]?.length ? `?order_id=${process.argv[2]}` : ''}`;
 
         const buckyResponse = await fetch(
             url,

@@ -5,11 +5,11 @@ import { Payment } from '../../../../../models/payment';
 import PaymentVerificationService from '../../../../../services/payment-verification';
 import BuckydropService from '../../../../../services/buckydrop';
 
-export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
+export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
     const paymentVerificationService: PaymentVerificationService = req.scope.resolve('paymentVerificationService');
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'POST', '/admin/custom/bucky/verify', ['products']
+        req, res, 'PUT', '/admin/custom/bucky/verify', ['order_id']
     );
 
     await handler.handle(async () => {
@@ -24,13 +24,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         else {
             handler.logger.info(`Verifying payments...`);
             orderPayments = await paymentVerificationService.verifyPayments();
-        }
-
-        //if orders are bucky orders, we gotta do something
-        for (let item of orderPayments) {
-            if (item.order.bucky_metadata && item.order.bucky_metadata.status === 'pending') {
-                item.order = await buckydropService.processPendingOrder(item.order.id);
-            }
         }
 
         return handler.returnStatus(200, {

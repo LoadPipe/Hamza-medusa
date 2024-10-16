@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { getSingleBucket } from '@lib/data';
-import { Box, Collapse, HStack, Icon, Text, VStack } from '@chakra-ui/react';
+import {
+    Flex,
+    Box,
+    Collapse,
+    HStack,
+    Icon,
+    Text,
+    VStack,
+} from '@chakra-ui/react';
 import { BsCircleFill } from 'react-icons/bs';
 import RefundCard from '@modules/account/components/refund-card';
 import EmptyState from '@modules/order/components/empty-state';
@@ -142,21 +150,24 @@ const Refund = ({
         <div>
             {/* Processing-specific content */}
             {refundOrder && refundOrder.length > 0 ? (
-                <>
-                    <h1>Refund Orders</h1>
+                <Flex width="100%" flexDirection="column" flex="1">
+                    <Text
+                        fontSize={'16px'}
+                        color={'primary.green.900'}
+                        fontWeight="bold"
+                        ml={'auto'}
+                    >
+                        Refund
+                    </Text>
 
                     {refundOrder.map((order: any) => (
-                        <div
-                            key={order.id} // Changed from cart_id to id since it's more reliable and unique
-                            className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
-                        >
+                        <Flex key={order.id} direction="column" width="100%">
                             {order.items?.map((item: any) => (
-                                <Box
+                                <Flex
                                     key={item.id}
-                                    bg="rgba(39, 39, 39, 0.3)"
-                                    p={4}
-                                    m={2}
-                                    rounded="lg"
+                                    direction={'column'}
+                                    flex={'1'}
+                                    width={'100%'}
                                 >
                                     {/*item: {item.id} <br />*/}
                                     <RefundCard
@@ -168,25 +179,26 @@ const Refund = ({
                                             'N/A'
                                         }
                                     />
-                                    <div className="flex justify-end pr-4 mt-4">
-                                        <Box
-                                            color={'primary.green.900'}
-                                            cursor="pointer"
-                                            _hover={{
-                                                textDecoration: 'underline',
-                                            }}
-                                            onClick={() =>
-                                                toggleRefundInfo(item.id)
-                                            }
-                                        >
-                                            Refund Details
-                                        </Box>
-                                    </div>
+                                    <Flex
+                                        justifyContent={'flex-end'}
+                                        width="100%"
+                                        flex={'1'}
+                                        color={'primary.green.900'}
+                                        cursor="pointer"
+                                        _hover={{
+                                            textDecoration: 'underline',
+                                        }}
+                                        onClick={() =>
+                                            toggleRefundInfo(item.id)
+                                        }
+                                    >
+                                        Refund Details
+                                    </Flex>
                                     <Collapse
                                         in={courierInfo === item.id}
                                         animateOpacity
                                     >
-                                        <Box mt={4}>
+                                        <Flex mt={4} width="100%">
                                             <Text
                                                 fontSize="24px"
                                                 fontWeight="semibold"
@@ -234,13 +246,13 @@ const Refund = ({
                                                     </Text>
                                                 </VStack>
                                             </HStack>
-                                        </Box>
+                                        </Flex>
                                     </Collapse>
-                                </Box>
+                                </Flex>
                             ))}
-                        </div>
+                        </Flex>
                     ))}
-                </>
+                </Flex>
             ) : null}
         </div>
     );

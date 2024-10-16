@@ -1,5 +1,5 @@
 import { getSingleBucket } from '@lib/data';
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Divider, Text, Flex } from '@chakra-ui/react';
 import CancelCard from '@modules/account/components/cancel-card';
 import EmptyState from '@modules/order/components/empty-state';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -123,25 +123,25 @@ const Cancelled = ({
     return (
         <div>
             {canceledOrder && canceledOrder.length > 0 ? (
-                <>
-                    <h1>Cancelled Orders</h1>
+                <Flex width={'100%'} flexDirection="column">
+                    <Text
+                        fontSize={'16px'}
+                        color={'primary.green.900'}
+                        fontWeight="bold"
+                        ml={'auto'}
+                    >
+                        Cancelled
+                    </Text>
 
                     {canceledOrder.map((order: any) => (
-                        <div
+                        <React.Fragment
                             key={order.id} // Changed from cart_id to id since it's more reliable and unique
-                            className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
                         >
                             {order.items?.map(
                                 (
                                     item: any // Adjusting the map to the correct path
                                 ) => (
-                                    <Box
-                                        key={item.id}
-                                        bg="rgba(39, 39, 39, 0.3)"
-                                        p={4}
-                                        m={2}
-                                        rounded="lg"
-                                    >
+                                    <Flex width={'100%'} key={item.id}>
                                         {/*item: {item.id} <br />*/}
                                         <CancelCard
                                             key={item.id}
@@ -160,12 +160,23 @@ const Cancelled = ({
                                                 'N/A'
                                             }
                                         />
-                                    </Box>
+                                    </Flex>
                                 )
                             )}
-                        </div>
+                            <Divider
+                                width="90%" // Line takes up 80% of the screen width
+                                borderBottom="0.2px solid"
+                                borderColor="#D9D9D9"
+                                pr={'1rem'}
+                                _last={{
+                                    // pb: 0,
+                                    // borderBottom: 'none',
+                                    mb: 8,
+                                }}
+                            />
+                        </React.Fragment>
                     ))}
-                </>
+                </Flex>
             ) : null}
         </div>
     );

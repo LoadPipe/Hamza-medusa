@@ -79,108 +79,124 @@ const DeliveredCard = ({ order, handle, vendorName }: OrderCardProps) => {
         return <div>Loading...</div>; // Display loading message if order is undefined
     }
     return (
-        <Box
-            // bg={'#272727'}
+        <Flex
+            my={4}
             color={'white'}
-            p={4}
-            rounded="lg"
-            shadow="base"
-            maxWidth="1000px"
+            justifyContent="space-between"
+            maxWidth="100%"
+            flex="1"
+            flexDirection={{ sm: 'column', md: 'row' }}
         >
-            <Flex alignItems="center" mb={4}>
-                <Text
-                    fontSize={{ base: '18px', md: '24px' }}
-                    fontWeight="bold"
-                    noOfLines={1}
+            <Flex
+                flexDirection={{ base: 'column' }}
+                gap={{ base: 4, md: 0 }}
+                flex="1"
+            >
+                <Flex
+                    flex="1"
+                    mb={2}
+                    display={{ base: 'flex' }}
+                    alignItems="center"
                 >
-                    {vendorName}
-                </Text>
-                <Flex display={{ base: 'flex' }} ml={2} alignItems="center">
+                    <Text
+                        fontSize={{ base: '18px', md: '24px' }}
+                        fontWeight="bold"
+                        noOfLines={1}
+                        mr={2}
+                    >
+                        {vendorName}
+                    </Text>
                     <FaCheckCircle color="#3196DF" />
                 </Flex>
-            </Flex>
-            <Flex
-                direction={{ base: 'column', md: 'row' }}
-                alignItems={{ base: 'flex-start', md: 'center' }}
-                justifyContent="space-between"
-            >
-                <Link
-                    href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}
+
+                {/* Left Side: Existing Content */}
+                <Flex
+                    direction={{ base: 'column', lg: 'row' }}
+                    alignItems={{ base: 'flex-start', md: 'center' }}
+                    justifyContent="space-between"
+                    flex="1"
                 >
-                    <Image
-                        borderRadius="lg"
-                        width={{ base: '120px', md: '180px' }}
-                        src={
-                            order?.variant?.metadata?.imgUrl ??
-                            order.thumbnail ??
-                            ''
-                        }
-                        alt={`Thumbnail of ${order.title}`}
-                        mr={{ base: 1, md: 4 }}
-                        mb={{ base: 4, md: 0 }}
-                    />
-                </Link>
-                <Flex justifyContent="space-between">
-                    <Flex direction="column">
-                        <Text fontWeight="bold" fontSize="18px">
+                    <Link
+                        href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}
+                    >
+                        <Image
+                            minWidth="80px"
+                            borderRadius="lg"
+                            width={{ base: '75px', md: '100px' }}
+                            height={{ base: '75px', md: '100px' }}
+                            src={
+                                order?.variant?.metadata?.imgUrl ??
+                                order.thumbnail ??
+                                ''
+                            }
+                            alt={`Thumbnail of ${order.title}`}
+                            mr={{ base: 2, md: 4 }}
+                            mb={{ base: 4, md: 0 }}
+                        />
+                    </Link>
+
+                    <Flex direction="column" mr="2">
+                        <Text
+                            maxWidth="600px"
+                            minWidth="200px"
+                            noOfLines={4}
+                            fontSize={{ base: '16px', md: '18px' }}
+                            fontWeight="bold"
+                        >
                             {order.title}
                         </Text>
-                        <Flex direction={{ base: 'column', md: 'row' }} mt={2}>
+                        <Flex
+                            direction={{ base: 'column', md: 'row' }}
+                            color={'rgba(85, 85, 85, 1.0)'}
+                            alignItems={'center'}
+                        >
                             <Text
-                                color={'rgba(85, 85, 85, 1.0)'}
-                                fontSize="16px"
+                                fontSize={{ base: '16px' }}
                                 mr={1} // Add some space between "Variation:" and the description
                             >
                                 Variation:
                             </Text>
-                            <Text fontSize="14px">{order.description}</Text>
-                        </Flex>{' '}
-                        <Text fontSize="24px" fontWeight="semibold">
-                            {getAmount(order.unit_price)}{' '}
-                            {order.currency_code.toUpperCase()}
-                        </Text>
+                            <Text fontSize="16px">{order.description}</Text>
+                        </Flex>
                     </Flex>
                 </Flex>
+            </Flex>
 
-                <Flex justifyContent="space-between" direction="column" mt={2}>
-                    <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
-                        {new Date(order.created_at).toLocaleDateString()}
-                    </Text>
-                    <Text fontSize="16px" my={2}>
-                        {order.quantity} item(s)
+            <Flex
+                justifyContent="flex-end"
+                direction={{ base: 'row', md: 'column' }}
+                mx="auto"
+                pl={2}
+            >
+                <Flex direction={'row'}></Flex>
+                <Flex direction={'row'}>
+                    <Text fontSize="16px" fontWeight="semibold">
+                        {getAmount(order.unit_price)}{' '}
+                        {order.currency_code.toUpperCase()}
                     </Text>
                 </Flex>
-            </Flex>
 
-            <Flex justifyContent="flex-end" mt={2} gap={'4'}>
-                <Button
-                    variant="outline"
-                    colorScheme="white"
-                    borderRadius={'37px'}
-                    onClick={() => {
-                        handleReorder(order || []);
-                    }}
-                >
-                    Buy Again
-                </Button>
-                <Button
-                    variant="outline"
-                    colorScheme="white"
-                    borderRadius={'37px'}
-                >
-                    Return/Refund
-                </Button>
-                {/*// TODO: Probably makes sense to have this here but yahh*/}
-                {/*<Button*/}
-                {/*    ml={2}*/}
-                {/*    variant="outline"*/}
-                {/*    colorScheme="white"*/}
-                {/*    borderRadius={'37px'}*/}
-                {/*>*/}
-                {/*    Add A Review*/}
-                {/*</Button>*/}
+                <Flex direction={'row'} gap={2}>
+                    <Button
+                        variant="outline"
+                        colorScheme="white"
+                        borderRadius={'37px'}
+                        mt={2}
+                        onClick={() => handleReorder(order || [])}
+                    >
+                        Buy Again
+                    </Button>
+                    <Button
+                        variant="outline"
+                        colorScheme="white"
+                        borderRadius={'37px'}
+                        mt={2}
+                    >
+                        Return/Refund
+                    </Button>
+                </Flex>
             </Flex>
-        </Box>
+        </Flex>
     );
 };
 
