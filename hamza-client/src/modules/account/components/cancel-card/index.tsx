@@ -18,6 +18,7 @@ import { FaCheckCircle } from 'react-icons/fa';
 import Link from 'next/link';
 import { upperCase } from 'lodash';
 import React from 'react';
+import OrderLeftColumn from '@modules/order/templates/order-left-column';
 
 type OrderDetails = {
     thumbnail: string;
@@ -89,109 +90,12 @@ const CancelCard = ({
             maxWidth="100%"
             my={4}
         >
-            <Flex
-                justifyContent="space-between"
-                flexDirection={{ base: 'column' }}
-                gap={{ base: 4, md: 0 }}
-            >
-                <Flex alignItems="center" mb={4}>
-                    <Text
-                        fontSize={{ base: '18px', md: '24px' }}
-                        fontWeight="bold"
-                        noOfLines={1}
-                    >
-                        {vendorName}
-                    </Text>
-                    <Flex display={{ base: 'flex' }} ml={2} alignItems="center">
-                        <FaCheckCircle color="#3196DF" />
-                    </Flex>
-                </Flex>
-
-                <Flex
-                    direction={{ base: 'column', md: 'row' }}
-                    alignItems={{ base: 'flex-start', md: 'center' }}
-                    justifyContent="space-between"
-                >
-                    {' '}
-                    {/* Left Side: Existing Content */}
-                    <Flex
-                        direction={{ base: 'column', md: 'row' }} // Ensure column layout on mobile
-                        alignItems={{ base: 'flex-start', md: 'center' }}
-                        justifyContent="space-between"
-                        flex="1"
-                        maxWidth="650px"
-                    >
-                        <Link
-                            href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}
-                        >
-                            <Image
-                                borderRadius="lg"
-                                width={{ base: '75px', md: '100px' }}
-                                height={{ base: '75px', md: '100px' }}
-                                src={
-                                    order?.variant?.metadata?.imgUrl ??
-                                    order.thumbnail ??
-                                    ''
-                                }
-                                alt={`Thumbnail of ${order.title}`}
-                                mr={4}
-                            />
-                        </Link>
-
-                        <Box flex="1">
-                            <Flex
-                                justifyContent="space-between"
-                                direction="row"
-                            >
-                                <Flex direction="column">
-                                    <Text
-                                        minWidth="250px"
-                                        maxWidth="600px"
-                                        noOfLines={4}
-                                        fontWeight="bold"
-                                        fontSize="18px"
-                                    >
-                                        {order.title}
-                                    </Text>
-                                    <Flex
-                                        direction={{
-                                            base: 'column',
-                                            md: 'row',
-                                        }}
-                                        alignItems={'center'}
-                                        color={'rgba(85, 85, 85, 1.0)'}
-                                    >
-                                        <Text
-                                            fontSize={{ base: '14px' }}
-                                            mr={1} // Add some space between "Variation:" and the description
-                                        >
-                                            Variation:
-                                        </Text>
-                                        <Text fontSize="14px">
-                                            {order.description}
-                                        </Text>
-                                    </Flex>
-                                </Flex>
-                            </Flex>
-
-                            {/*<Flex direction="column" mt={4}>*/}
-                            {/*    <Text*/}
-                            {/*        color={'rgba(85, 85, 85, 1.0)'}*/}
-                            {/*        fontSize="16px"*/}
-                            {/*    >*/}
-                            {/*        Order Date*/}
-                            {/*    </Text>*/}
-                            {/*    <Text color={'white'} fontSize="16px">*/}
-                            {/*        {new Date(*/}
-                            {/*            order.created_at*/}
-                            {/*        ).toLocaleDateString()}*/}
-                            {/*    </Text>*/}
-                            {/*</Flex>*/}
-                        </Box>
-                    </Flex>
-                </Flex>
-                {/* Right Side: Courier and Address */}
-            </Flex>
+            <OrderLeftColumn
+                order={order}
+                handle={handle}
+                vendorName={vendorName}
+                showDate={false}
+            />
 
             <Flex
                 justifyContent="space-between"

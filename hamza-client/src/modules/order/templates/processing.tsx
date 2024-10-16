@@ -264,8 +264,10 @@ const Processing = ({
                                         />
 
                                         <div className="flex justify-end pr-4 mt-4">
-                                            <Box
-                                                color={'primary.green.900'}
+                                            <Button
+                                                variant="outline"
+                                                colorScheme="white"
+                                                borderRadius={'37px'}
                                                 cursor="pointer"
                                                 _hover={{
                                                     textDecoration: 'underline',
@@ -275,7 +277,7 @@ const Processing = ({
                                                 }
                                             >
                                                 View Order
-                                            </Box>
+                                            </Button>
                                         </div>
                                         {/* Collapsible Section */}
                                         <Collapse
