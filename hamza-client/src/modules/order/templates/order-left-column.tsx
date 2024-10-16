@@ -46,8 +46,9 @@ const OrderLeftColumn = ({
 }: OrderCardProps) => {
     return (
         <Flex
-            justifyContent="space-between"
+            // justifyContent="space-between"
             flexDirection={{ base: 'column' }}
+            width={'100%'}
             gap={{ base: 4, md: 0 }}
         >
             <Flex mb={'20px'} display={{ base: 'flex' }} alignItems="center">
@@ -66,7 +67,6 @@ const OrderLeftColumn = ({
                     fontSize={{ base: '18px', md: '24px' }}
                     fontWeight="bold"
                     noOfLines={1}
-                    mr={2}
                 >
                     {storeName}
                 </Text>
@@ -76,14 +76,11 @@ const OrderLeftColumn = ({
             <Flex
                 direction={{ base: 'column', lg: 'row' }}
                 alignItems={{ base: 'flex-start', md: 'center' }}
-                justifyContent="space-between"
-                flex="1"
             >
                 <Link
                     href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}
                 >
                     <Image
-                        minWidth="80px"
                         borderRadius="lg"
                         width={{ base: '75px', md: '100px' }}
                         height={{ base: '75px', md: '100px' }}
@@ -99,10 +96,10 @@ const OrderLeftColumn = ({
                 </Link>
 
                 <Flex justifyContent="space-between" direction="row" mr="2">
-                    <Flex direction="column">
+                    <Flex direction="column" ml={'25px'}>
                         <Text
-                            maxWidth="600px"
-                            minWidth="200px"
+                            // maxWidth="600px"
+                            // minWidth="200px"
                             noOfLines={4}
                             fontSize={{ base: '16px', md: '18px' }}
                             fontWeight="bold"

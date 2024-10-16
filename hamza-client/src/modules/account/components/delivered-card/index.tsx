@@ -100,8 +100,7 @@ const DeliveredCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
             <Flex
                 justifyContent="flex-end"
                 direction={{ base: 'row', md: 'column' }}
-                mx="auto"
-                pl={2}
+                ml={'auto'}
             >
                 <Flex direction={'row'}></Flex>
                 <Flex direction={'row'}>
@@ -109,26 +108,6 @@ const DeliveredCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
                         {getAmount(order.unit_price)}{' '}
                         {order.currency_code.toUpperCase()}
                     </Text>
-                </Flex>
-
-                <Flex direction={'row'} gap={2}>
-                    <Button
-                        variant="outline"
-                        colorScheme="white"
-                        borderRadius={'37px'}
-                        mt={2}
-                        onClick={() => handleReorder(order || [])}
-                    >
-                        Buy Again
-                    </Button>
-                    <Button
-                        variant="outline"
-                        colorScheme="white"
-                        borderRadius={'37px'}
-                        mt={2}
-                    >
-                        Return/Refund
-                    </Button>
                 </Flex>
             </Flex>
         </Flex>

@@ -1,16 +1,10 @@
 'use client';
 
-import { TABS } from 'modules/order-tab-management';
+import { TABS } from '@/modules/order-tab-management';
 import {
-    Box,
     ButtonGroup,
     Button,
-    Select,
     useBreakpointValue,
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuItem,
     Flex,
 } from '@chakra-ui/react';
 import All from '@modules/order/templates/all';
@@ -21,8 +15,6 @@ import Cancelled from '@modules/order/templates/cancelled';
 import Refund from '@modules/order/templates/refund';
 import { useOrderTabStore } from '@store/order-tab-state';
 import React from 'react';
-import { ChevronDownIcon } from '@chakra-ui/icons';
-import { IoSettingsOutline } from 'react-icons/io5';
 
 const commonButtonStyles = {
     borderRadius: '8px',

@@ -30,13 +30,12 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import EmptyState from '@modules/order/components/empty-state';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
-import currencyIcons from '@/images/currencies/crypto-currencies';
 
 import ProcessingOrderCard from '@modules/account/components/processing-order-card';
 import { BsCircleFill } from 'react-icons/bs';
 import Image from 'next/image';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
-
+import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 /**
  * The Processing component displays and manages the customer's processing orders, allowing users to view order details,
  * collapse or expand order views, and request cancellations of individual orders.
@@ -280,46 +279,19 @@ const Processing = ({
                                                 mb={5}
                                             >
                                                 {/* Left-aligned text */}
-                                                <Flex direction={'row'} gap={2}>
-                                                    {index ===
-                                                    order.items.length - 1 ? (
-                                                        <>
-                                                            <Text
-                                                                fontSize={
-                                                                    '18px'
-                                                                }
-                                                            >
-                                                                Order total:
-                                                            </Text>
-                                                            <Image
-                                                                className="h-[14px] w-[14px] md:h-[24px!important] md:w-[24px!important] self-center"
-                                                                src={
-                                                                    currencyIcons[
-                                                                        item.currency_code ??
-                                                                            'usdc'
-                                                                    ]
-                                                                }
-                                                                alt={
-                                                                    item.currency_code?.toUpperCase() ??
-                                                                    'USDC'
-                                                                }
-                                                            />
-                                                            <Text
-                                                                fontSize={
-                                                                    '18px'
-                                                                }
-                                                            >
-                                                                {getAmount(
-                                                                    totalPrice,
-                                                                    item.currency_code
-                                                                )}
-                                                            </Text>
-                                                        </>
-                                                    ) : null}
-                                                </Flex>
+                                                <OrderTotalAmount
+                                                    totalPrice={totalPrice}
+                                                    currencyCode={
+                                                        item.currency_code
+                                                    }
+                                                    index={index}
+                                                    itemCount={
+                                                        order.items.length - 1
+                                                    }
+                                                />
 
                                                 {/* Right-aligned buttons */}
-                                                <Flex gap={2}>
+                                                <Flex gap={2} ml="auto">
                                                     <Button
                                                         variant="outline"
                                                         colorScheme="white"
