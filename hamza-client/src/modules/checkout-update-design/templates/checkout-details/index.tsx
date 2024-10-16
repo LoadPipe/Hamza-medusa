@@ -1,8 +1,13 @@
-import { Flex, Text, Divider, Box } from '@chakra-ui/react';
+'use client';
+
+import { Flex, Text, Divider, Box, useDisclosure } from '@chakra-ui/react';
 import React from 'react';
 import { BiPencil } from 'react-icons/bi';
+import AddressModal from '@modules/checkout-update-design/components/address-modal';
 
 const CheckoutDetails = () => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
     return (
         <Flex
             bgColor={'#121212'}
@@ -37,6 +42,7 @@ const CheckoutDetails = () => {
                     alignSelf={'center'}
                     color="white"
                     _hover={{ color: 'primary.green.900' }}
+                    onClick={onOpen}
                 >
                     <BiPencil size={23} />
                 </Box>
@@ -62,6 +68,8 @@ const CheckoutDetails = () => {
                     <BiPencil size={23} />
                 </Box>
             </Flex> */}
+            {/* Address Modal */}
+            <AddressModal isOpen={isOpen} onClose={onClose} />
         </Flex>
     );
 };
