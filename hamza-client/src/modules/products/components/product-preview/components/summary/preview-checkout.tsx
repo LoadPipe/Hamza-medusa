@@ -38,6 +38,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     selectedVariantImage,
     setSelectedVariantImage,
 }) => {
+    console.log(
+        'PreviewCheckout component rendered with productId:',
+        productId
+    );
+
     const currencies = ['eth', 'usdc', 'usdt'];
 
     const [options, setOptions] = useState<Record<string, string>>({});
@@ -77,7 +82,12 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     const { addWishlistItemMutation, removeWishlistItemMutation } =
         useWishlistMutations();
 
-    // console.log(typeof productId, productId);
+    // Clear variantId to avoid referencing ID from the previous product.
+    useEffect(() => {
+        setVariantId('');
+        setSelectedVariant(null);
+        setSelectedVariantImage('');
+    }, [productData]);
 
     useEffect(() => {
         const fetchProductReview = async () => {
@@ -127,11 +137,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         }
     }, [productData, variantId]);
 
-    //console.log(`Variant ID ${variantId}`);
-    // console.log(
-    //     `Product Data ${JSON.stringify(productData)} ${productData.variant}`
-    // );
-
     useEffect(() => {
         let checkVariantId: string | undefined = undefined;
         if (variantRecord) {
@@ -147,8 +152,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     }, [options]);
 
     useEffect(() => {
-        // clean setSelectedVariantImage
-        setSelectedVariantImage('');
         if (productData && productData.variants) {
             if (!variantId) {
                 // Initially setting the variantId if it's not set

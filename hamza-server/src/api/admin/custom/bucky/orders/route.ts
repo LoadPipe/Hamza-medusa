@@ -13,7 +13,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        const orders = await buckydropService.getPendingOrders();
+        const orders = await buckydropService.getOrdersToProcess();
 
         return handler.returnStatus(200, { orders });
     });
@@ -27,15 +27,15 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
         res,
         'PUT',
         '/admin/custom/bucky/orders',
-        ['order']
+        ['order_id']
     );
 
     await handler.handle(async () => {
         let orderId: string;
-        if (handler.hasParam('order'))
-            orderId = handler.inputParams.order;
+        if (handler.hasParam('order_id'))
+            orderId = handler.inputParams.order_id;
 
-        let orders = await buckydropService.getPendingOrders();
+        let orders = await buckydropService.getOrdersToProcess();
         if (orderId) {
             orders = orders.filter(o => o.id === orderId);
         }
@@ -48,16 +48,19 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
         }
 
         //process all selected orders 
-        const promises: Promise<Order>[] = [];
+        //const promises: Promise<Order>[] = [];
+        const output = [];
 
         for (let order of orders) {
-            promises.push(new Promise(async (resolve, reject) => {
-                handler.logger.debug(`Processing order ${orderId}`);
-                resolve(await buckydropService.processPendingOrder(order.id));
-            }))
+            //promises.push(new Promise(async (resolve, reject) => {
+            //    handler.logger.debug(`Processing order ${orderId}`);
+            //     resolve(await buckydropService.processPendingOrder(order.id));
+            //}))
+            handler.logger.debug(`Processing order ${orderId}`);
+            output.push(await buckydropService.processPendingOrder(order.id));
         }
-        orders = await Promise.all(promises);
+        //orders = await Promise.all(promises);
 
-        return handler.returnStatus(200, { orders });
+        return handler.returnStatus(200, { orders: output });
     });
 };
