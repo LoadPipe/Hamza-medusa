@@ -109,6 +109,7 @@ const AddAddress = ({ region }: { region: Region }) => {
                             <Input
                                 label="Province / State"
                                 name="province"
+                                required
                                 autoComplete="address-level1"
                             />
                             <CountrySelect

@@ -176,6 +176,7 @@ const ShippingAddress = ({
                         value={formData['shipping_address.province']}
                         onChange={handleChange}
                         maxLength={50}
+                        required
                     />
                 </div>
             </div>

@@ -461,23 +461,6 @@ export default class BuckydropService extends TransactionBaseService {
         }
     }
 
-    async getOutstandingBuckydropOrders(): Promise<Order[]> {
-        const where: FindOptionsWhere<Order> = {
-            bucky_metadata: Not(IsNull()),
-            status: OrderStatus.PENDING,
-            payment_status: PaymentStatus.CAPTURED,
-            fulfillment_status: Not(In([
-                FulfillmentStatus.CANCELED,
-                FulfillmentStatus.FULFILLED,
-                FulfillmentStatus.RETURNED,
-            ]))
-        };
-
-        return this.orderRepository_.find({
-            where: where
-        })
-    }
-
     async cancelOrder(orderId: string): Promise<Order> {
         try {
             const order: Order = await this.orderService_.retrieve(orderId);
@@ -550,11 +533,42 @@ export default class BuckydropService extends TransactionBaseService {
         }
     }
 
-    async getPendingOrders(): Promise<Order[]> {
+    async getOrdersToVerify(): Promise<Order[]> {
+        const where: FindOptionsWhere<Order> = {
+            bucky_metadata: Not(IsNull()),
+            status: OrderStatus.PENDING,
+
+            payment_status: PaymentStatus.AWAITING,
+            fulfillment_status: FulfillmentStatus.NOT_FULFILLED,
+        };
+
+        let orders: Order[] = await this.orderRepository_.find({
+            where: where
+        });
+
+        orders = orders?.filter(o => {
+            const tzOffset = o.updated_at.getTimezoneOffset();
+            console.log('timezone offset', tzOffset);
+            const localDate = new Date(o.updated_at.getTime() - tzOffset * 60000);
+
+            //order must be at least two hours old
+            return Math.floor(localDate.getTime() / 1000) < (
+                Math.floor(Date.now() / 1000) - (
+                    60 * parseInt(process.env.VERIFY_ORDER_PAYMENT_DELAY_MINUTES ?? '120')
+                )
+            );
+        }) ?? [];
+
+        orders = orders?.filter((o) => o.bucky_metadata?.status === 'pending') ?? [];
+
+        return orders;
+    }
+
+    async getOrdersToProcess(): Promise<Order[]> {
         const options: FindManyOptions<Order> = {
             where: {
                 status: OrderStatus.PENDING,
-                payment_status: PaymentStatus.AWAITING,
+                payment_status: PaymentStatus.CAPTURED,
                 fulfillment_status: FulfillmentStatus.NOT_FULFILLED,
                 bucky_metadata: Not(IsNull()),
             },
@@ -562,6 +576,24 @@ export default class BuckydropService extends TransactionBaseService {
         const orders: Order[] = await this.orderRepository_.find(options);
         return (
             orders?.filter((o) => o.bucky_metadata?.status === 'pending') ?? []
+        );
+    }
+
+    async getOrdersToTrack(): Promise<Order[]> {
+        const options: FindManyOptions<Order> = {
+            where: {
+                status: OrderStatus.PENDING,
+                payment_status: PaymentStatus.CAPTURED,
+                fulfillment_status: Not(In([
+                    FulfillmentStatus.CANCELED,
+                    FulfillmentStatus.RETURNED
+                ])),
+                bucky_metadata: Not(IsNull()),
+            },
+        };
+        const orders: Order[] = await this.orderRepository_.find(options);
+        return (
+            orders?.filter((o) => o.bucky_metadata?.status !== 'pending') ?? []
         );
     }
 
