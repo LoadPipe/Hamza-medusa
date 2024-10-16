@@ -117,12 +117,13 @@ const OrderLeftColumn = ({
                         <Flex
                             direction={{ base: 'row', md: 'row' }}
                             color={'rgba(85, 85, 85, 1.0)'}
-                            alignItems={'center'}
                         >
                             <Text fontSize={{ base: '16px' }} mr={1}>
                                 Variation:
                             </Text>
-                            <Text fontSize="16px">{order.description}</Text>
+                            <Text noOfLines={2} fontSize="16px">
+                                {order.description}
+                            </Text>
                         </Flex>
 
                         {/* Conditionally render the date if showDate is true */}

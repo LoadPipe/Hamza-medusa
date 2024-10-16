@@ -76,7 +76,11 @@ const CancelCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
                 icon={icon}
                 showDate={false}
             />
-            <Flex direction="column" width="100%" justifyContent={'center'}>
+            <Flex
+                justifyContent={'center'}
+                direction={{ base: 'column', md: 'column' }}
+                gap={2}
+            >
                 <Flex direction={'row'}></Flex>
                 <Flex direction={'row'} mr={'2rem'} gap={2}>
                     <Text fontSize="16px" fontWeight="semibold">

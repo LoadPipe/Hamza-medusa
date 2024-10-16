@@ -65,7 +65,11 @@ const RefundCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
             />
 
             {/* Right Side: Courier and Address */}
-            <Flex direction="column" width="100%" justifyContent={'center'}>
+            <Flex
+                justifyContent={'center'}
+                direction={{ base: 'column', md: 'column' }}
+                gap={2}
+            >
                 <Flex direction={{ base: 'column', md: 'column' }}>
                     <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
                         Status{' '}
@@ -74,7 +78,6 @@ const RefundCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
                         Under review
                     </Text>
                 </Flex>
-
                 <Flex direction={{ base: 'column', md: 'column' }}>
                     <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
                         Return Reason
