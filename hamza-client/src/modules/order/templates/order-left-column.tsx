@@ -49,7 +49,6 @@ const OrderLeftColumn = ({
             // justifyContent="space-between"
             flexDirection={{ base: 'column' }}
             width={'100%'}
-            gap={{ base: 4, md: 0 }}
         >
             <Flex mb={'20px'} display={{ base: 'flex' }} alignItems="center">
                 <Link
@@ -67,6 +66,7 @@ const OrderLeftColumn = ({
                     fontSize={{ base: '18px', md: '24px' }}
                     fontWeight="bold"
                     noOfLines={1}
+                    mr={'10px'}
                 >
                     {storeName}
                 </Text>

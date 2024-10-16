@@ -59,6 +59,7 @@ const ProcessingOrderCard = ({
             justifyContent="space-between"
             maxWidth="100%"
             flexDirection={{ sm: 'column', md: 'row' }}
+            border="1px solid red"
         >
             {/* Left Side: Default  */}
 

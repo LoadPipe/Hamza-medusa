@@ -223,7 +223,7 @@ const Processing = ({
     };
 
     return (
-        <div>
+        <div style={{ border: '3px solid blue', width: '100%' }}>
             {processingOrdersLoading ? (
                 <Box
                     display="flex"
@@ -240,7 +240,11 @@ const Processing = ({
             ) : processingOrdersError ? (
                 <Text>Error fetching processing orders</Text>
             ) : processingOrder && processingOrder.length > 0 ? (
-                <Flex width={'100%'} flexDirection="column">
+                <Flex
+                    width={'100%'}
+                    flexDirection="column"
+                    border="3px solid red"
+                >
                     {processingOrder.map((order: any) => {
                         const totalPrice = order.items.reduce(
                             (acc: number, item: any) =>

@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import React from 'react';
-import 'styles/globals.css';
+import '@/styles/globals.css';
 const BASE_URL =
     process.env.NEXT_PUBLIC_MEDUSA_CLIENT_URL || 'https://localhost:8000';
 import MedusaProvider from '@/components/providers/medusa/medusa-provider'; // Import MedusaProvider

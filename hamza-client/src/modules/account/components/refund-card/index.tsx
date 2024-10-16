@@ -1,8 +1,4 @@
-import { formatAmount } from '@lib/util/prices';
-import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
-import { FaCheckCircle } from 'react-icons/fa';
-import Link from 'next/link';
+import { Flex, Text } from '@chakra-ui/react';
 import React from 'react';
 import OrderLeftColumn from '@modules/order/templates/order-left-column';
 
@@ -58,7 +54,7 @@ const RefundCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
             width="100%"
             gap={4}
             flexDirection={{ base: 'row' }}
-            flex="1"
+            border="1px solid red"
         >
             <OrderLeftColumn
                 order={order}
@@ -69,7 +65,7 @@ const RefundCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
             />
 
             {/* Right Side: Courier and Address */}
-            <Flex direction="column">
+            <Flex direction="column" width="100%" justifyContent={'center'}>
                 <Flex direction={{ base: 'column', md: 'column' }}>
                     <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
                         Status{' '}

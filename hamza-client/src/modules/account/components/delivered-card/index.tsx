@@ -1,12 +1,5 @@
-import { formatAmount } from '@lib/util/prices';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
-import { FaCheckCircle } from 'react-icons/fa';
-import { addToCart } from '@modules/cart/actions';
-import { useParams, useRouter } from 'next/navigation';
-import toast from 'react-hot-toast';
-import Link from 'next/link';
-import Spinner from '@modules/common/icons/spinner';
+import { Flex, Text } from '@chakra-ui/react';
 import React from 'react';
 import OrderLeftColumn from '@modules/order/templates/order-left-column';
 
@@ -49,10 +42,6 @@ type OrderCardProps = {
 
 const DeliveredCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
     const orderString = typeof order.currency_code;
-    const router = useRouter();
-    let countryCode = useParams().countryCode as string;
-    if (process.env.NEXT_PUBLIC_FORCE_COUNTRY)
-        countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY;
 
     const getAmount = (amount?: number | null) => {
         if (amount === null || amount === undefined) {
@@ -60,21 +49,6 @@ const DeliveredCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
         }
 
         return formatCryptoPrice(amount, order.currency_code || 'USDC');
-    };
-
-    //TODO: Refactor to a mutation
-    const handleReorder = async (order: any) => {
-        try {
-            await addToCart({
-                variantId: order.variant_id,
-                countryCode: countryCode,
-                quantity: order.quantity,
-            });
-        } catch (e) {
-            toast.error(`Product with name ${order.title} could not be added`);
-        }
-
-        router.push('/checkout');
     };
 
     if (!order) {
@@ -86,7 +60,6 @@ const DeliveredCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
             color={'white'}
             justifyContent="space-between"
             maxWidth="100%"
-            flex="1"
             flexDirection={{ sm: 'column', md: 'row' }}
         >
             <OrderLeftColumn

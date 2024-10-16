@@ -1,13 +1,15 @@
 import { getSingleBucket } from '@lib/data';
 import { Box, Divider, Text, Flex, Button } from '@chakra-ui/react';
 import Spinner from '@modules/common/icons/spinner';
-
+import { addToCart } from '@modules/cart/actions';
+import toast from 'react-hot-toast';
 import DeliveredCard from '@modules/account/components/delivered-card';
 import EmptyState from '@modules/order/components/empty-state';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { debounce } from 'lodash';
+import { useParams, useRouter } from 'next/navigation';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 
@@ -23,6 +25,10 @@ const Delivered = ({
     isEmpty?: boolean;
 }) => {
     const [shouldFetch, setShouldFetch] = useState(false);
+    const router = useRouter();
+    let countryCode = useParams().countryCode as string;
+    if (process.env.NEXT_PUBLIC_FORCE_COUNTRY)
+        countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY;
 
     // const debouncedOnSuccess = debounce(() => {
     //     onSuccess && onSuccess();
@@ -48,6 +54,21 @@ const Delivered = ({
             refetchOnWindowFocus: true,
         }
     );
+
+    //TODO: Refactor to a mutation
+    const handleReorder = async (order: any) => {
+        try {
+            await addToCart({
+                variantId: order.variant_id,
+                countryCode: countryCode,
+                quantity: order.quantity,
+            });
+        } catch (e) {
+            toast.error(`Product with name ${order.title} could not be added`);
+        }
+
+        router.push('/checkout');
+    };
 
     // manually trigger a refetch if its stale
     useEffect(() => {
