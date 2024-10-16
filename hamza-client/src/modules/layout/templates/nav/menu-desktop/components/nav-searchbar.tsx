@@ -12,7 +12,7 @@ import { FaSearch } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import SearchModal from '@modules/search/templates/search-modal';
-import { getRegion } from 'app/actions';
+import { getRegion } from '@/app/actions';
 import fslash from '../../.../../../../../../../public/images/nav/search/fslash.svg';
 import Image from 'next/image';
 
@@ -20,7 +20,8 @@ const NavSearchBar = () => {
     const [searchOpened, setSearchOpened] = useState(false);
     const pathname = usePathname();
     //Todo: get country code
-    const isHomePage = pathname === `/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}`;
+    const isHomePage =
+        pathname === `/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}`;
 
     useEffect(() => {
         window.addEventListener('keydown', (event) => {

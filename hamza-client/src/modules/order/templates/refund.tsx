@@ -132,11 +132,7 @@ const Refund = ({
             ) : isError ? (
                 <Text>Error fetching refunded orders</Text>
             ) : refundOrder && refundOrder.length > 0 ? (
-                <Flex
-                    width={'100%'}
-                    flexDirection="column"
-                    border="3px solid red"
-                >
+                <Flex width={'100%'} flexDirection="column">
                     {refundOrder.map((order: any) => {
                         const totalPrice = order.items.reduce(
                             (acc: number, item: any) =>

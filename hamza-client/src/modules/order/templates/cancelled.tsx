@@ -127,11 +127,7 @@ const Cancelled = ({
                     </Text>
                 </Box>
             ) : canceledOrder && canceledOrder.length > 0 ? (
-                <Flex
-                    width={'100%'}
-                    flexDirection="column"
-                    border="3px solid red"
-                >
+                <Flex width={'100%'} flexDirection="column">
                     {canceledOrder.map((order: any) => {
                         const totalPrice = order.items.reduce(
                             (acc: number, item: any) =>

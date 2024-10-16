@@ -3,7 +3,7 @@ import { LineItem, Region } from '@medusajs/medusa';
 import { clx } from '@medusajs/ui';
 import Image from 'next/image';
 import { getPercentageDiff } from '@lib/util/get-precentage-diff';
-import { CalculatedVariant } from 'types/medusa';
+import { CalculatedVariant } from '@/types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { Flex, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';

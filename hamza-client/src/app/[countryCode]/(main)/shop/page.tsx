@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
-import ShopTemplate from 'modules/shop';
+import ShopTemplate from '@/modules/shop';
 import { Box } from '@chakra-ui/react';
 
 export const metadata: Metadata = {

@@ -8,7 +8,7 @@ import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
 import ReviewStar from '../../../../../../../public/images/products/review-star.svg';
 import Image from 'next/image';
-import { Variant } from 'types/medusa';
+import { Variant } from '@/types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import toast from 'react-hot-toast';

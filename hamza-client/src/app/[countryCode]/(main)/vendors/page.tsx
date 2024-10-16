@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 
 import { getStores } from '@lib/data/index';
 import { Region } from '@medusajs/medusa';
-import { getRegion } from 'app/actions';
+import { getRegion } from '@/app/actions';
 import StoreTemplate from '@modules/store/store-template';
 
 type Props = {

@@ -6,10 +6,8 @@ import {
 import { clx } from '@medusajs/ui';
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-    formatCryptoPrice,
-} from '@lib/util/get-product-price';
-import { RegionInfo } from 'types/global';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
+import { RegionInfo } from '@/types/global';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { getAverageRatings, getReviewCount, getStore } from '@lib/data';
 import { renderStars } from '../review-stars';
@@ -74,7 +72,9 @@ export default function ProductPrice({
     }, [product.id]);
 
     const navigateToVendor = () => {
-        router.push(`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/vendor/${storeName}`);
+        router.push(
+            `/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/vendor/${storeName}`
+        );
     };
 
     let preferredPrice =

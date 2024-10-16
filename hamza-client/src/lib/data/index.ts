@@ -18,7 +18,10 @@ import { decode } from 'jsonwebtoken';
 import sortProducts from '@lib/util/sort-products';
 import transformProductPreview from '@lib/util/transform-product-preview';
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
-import { ProductCategoryWithChildren, ProductPreviewType } from 'types/global';
+import {
+    ProductCategoryWithChildren,
+    ProductPreviewType,
+} from '@/types/global';
 import { medusaClient } from '../config';
 import medusaError from '@lib/util/medusa-error';
 import axios from 'axios';

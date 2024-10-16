@@ -3,7 +3,7 @@ import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 import { getProductsList } from '@lib/data';
 
-import { getRegion } from 'app/actions';
+import { getRegion } from '@/app/actions';
 import ProductPreview from '../product-preview';
 
 type RelatedProductsProps = {
