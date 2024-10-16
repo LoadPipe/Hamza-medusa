@@ -85,6 +85,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     // console.log(typeof productId, productId);
 
     useEffect(() => {
+        console.log('New productId detected:', productId);
+
         const fetchProductReview = async () => {
             const averageRatingResponse = await getAverageRatings(productId);
             const reviewCountResponse = await getReviewCount(productId);
@@ -152,11 +154,35 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     }, [options]);
 
     useEffect(() => {
+        console.log('Updated productData:', productData);
+        if (productData && productData.variants) {
+            console.log('Available variants:', productData.variants);
+        }
+    }, [productData]);
+
+    useEffect(() => {
+        console.log('Variant ID changed:', variantId);
+        console.log('Selected Variant:', selectedVariant);
+    }, [variantId, selectedVariant]);
+
+    useEffect(() => {
+        console.log('Selected Price updated:', selectedPrice);
+    }, [selectedPrice]);
+
+    useEffect(() => {
+        console.log('Initial options set:', options);
+    }, [options]);
+
+    useEffect(() => {
         // clean setSelectedVariantImage
         setSelectedVariantImage('');
         if (productData && productData.variants) {
             if (!variantId) {
                 // Initially setting the variantId if it's not set
+                console.log(
+                    'Setting default variant ID:',
+                    productData.variants[0].id
+                );
                 setVariantId(productData.variants[0].id);
             } else {
                 // Finding the variant that matches the current variantId
