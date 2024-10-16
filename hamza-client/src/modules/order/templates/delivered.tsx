@@ -122,7 +122,7 @@ const Delivered = ({
     }
 
     return (
-        <div style={{ border: '3px solid blue', width: '100%' }}>
+        <div style={{ width: '100%' }}>
             {isLoading ? (
                 <Box
                     display="flex"

@@ -170,7 +170,7 @@ const Shipped = ({
                                                     }
                                                     paymentType={'Shipped'}
                                                 />
-                                            ) : null}{' '}
+                                            ) : null}
                                             <ShippedCard
                                                 key={item.id}
                                                 order={item}
@@ -183,10 +183,20 @@ const Shipped = ({
                                                 }
                                             />
                                             <Flex
-                                                direction="row"
-                                                justifyContent="space-between"
-                                                alignItems="center"
+                                                direction={{
+                                                    base: 'column',
+                                                    md: 'row',
+                                                }}
+                                                justifyContent={{
+                                                    base: 'flex-start',
+                                                    md: 'space-between',
+                                                }}
+                                                alignItems={{
+                                                    base: 'flex-start',
+                                                    md: 'center',
+                                                }}
                                                 mb={5}
+                                                gap={'2'}
                                             >
                                                 <OrderTotalAmount
                                                     totalPrice={totalPrice}
@@ -200,7 +210,21 @@ const Shipped = ({
                                                 />
 
                                                 {/* Right-aligned buttons */}
-                                                <Flex gap={2} ml="auto">
+                                                <Flex
+                                                    direction={{
+                                                        base: 'column',
+                                                        md: 'row',
+                                                    }}
+                                                    justifyContent={{
+                                                        base: 'flex-start',
+                                                        md: 'center',
+                                                    }}
+                                                    alignItems={{
+                                                        base: 'flex-start',
+                                                        md: 'center',
+                                                    }}
+                                                    mb={5}
+                                                >
                                                     <Button
                                                         variant="outline"
                                                         colorScheme="white"

@@ -67,7 +67,6 @@ const CancelCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
             width="100%"
             gap={4}
             flexDirection={{ base: 'column', md: 'row' }}
-            border="1px solid red"
         >
             <OrderLeftColumn
                 order={order}

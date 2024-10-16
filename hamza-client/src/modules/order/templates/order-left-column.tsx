@@ -103,6 +103,7 @@ const OrderLeftColumn = ({
                     direction={{ sm: 'column', md: 'row' }}
                     alignItems={{ sm: 'flex-start' }}
                     mr="2"
+                    gap={{ sm: '2', md: '0' }}
                 >
                     <Flex direction="column" ml={{ sm: '0px', md: '25px' }}>
                         <Text
