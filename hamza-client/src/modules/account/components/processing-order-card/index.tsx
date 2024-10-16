@@ -1,5 +1,4 @@
-import { Box, Flex, Text, Image } from '@chakra-ui/react';
-import { FaCheckCircle } from 'react-icons/fa';
+import { Flex } from '@chakra-ui/react';
 import React from 'react';
 
 type OrderDetails = {
@@ -7,7 +6,6 @@ type OrderDetails = {
     title: string;
     description: string;
 };
-import Link from 'next/link';
 import OrderLeftColumn from '@modules/order/templates/order-left-column';
 import OrderRightAddress from '@modules/order/templates/order-right-address';
 
