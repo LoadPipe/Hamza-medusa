@@ -82,23 +82,14 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     const { addWishlistItemMutation, removeWishlistItemMutation } =
         useWishlistMutations();
 
-    // console.log(typeof productId, productId);
-
+    // Clear variantId to avoid referencing ID from the previous product.
     useEffect(() => {
-        // Clear variantId to avoid referencing a stale ID from the previous product.
         setVariantId('');
         setSelectedVariant(null);
         setSelectedVariantImage('');
     }, [productData]);
 
     useEffect(() => {
-        console.log('Product Data:', productData);
-        console.log('Current Variant ID:', variantId);
-    }, [productData, variantId]);
-
-    useEffect(() => {
-        console.log('New productId detected:', productId);
-
         const fetchProductReview = async () => {
             const averageRatingResponse = await getAverageRatings(productId);
             const reviewCountResponse = await getReviewCount(productId);
@@ -146,11 +137,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         }
     }, [productData, variantId]);
 
-    //console.log(`Variant ID ${variantId}`);
-    // console.log(
-    //     `Product Data ${JSON.stringify(productData)} ${productData.variant}`
-    // );
-
     useEffect(() => {
         let checkVariantId: string | undefined = undefined;
         if (variantRecord) {
@@ -166,35 +152,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     }, [options]);
 
     useEffect(() => {
-        console.log('Updated productData:', productData);
-        if (productData && productData.variants) {
-            console.log('Available variants:', productData.variants);
-        }
-    }, [productData]);
-
-    useEffect(() => {
-        console.log('Variant ID changed:', variantId);
-        console.log('Selected Variant:', selectedVariant);
-    }, [variantId, selectedVariant]);
-
-    useEffect(() => {
-        console.log('Selected Price updated:', selectedPrice);
-    }, [selectedPrice]);
-
-    useEffect(() => {
-        console.log('Initial options set:', options);
-    }, [options]);
-
-    useEffect(() => {
-        // clean setSelectedVariantImage
-        setSelectedVariantImage('');
         if (productData && productData.variants) {
             if (!variantId) {
                 // Initially setting the variantId if it's not set
-                console.log(
-                    'Setting default variant ID:',
-                    productData.variants[0].id
-                );
                 setVariantId(productData.variants[0].id);
             } else {
                 // Finding the variant that matches the current variantId
