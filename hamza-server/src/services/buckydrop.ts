@@ -537,21 +537,29 @@ export default class BuckydropService extends TransactionBaseService {
         const where: FindOptionsWhere<Order> = {
             bucky_metadata: Not(IsNull()),
             status: OrderStatus.PENDING,
+
             payment_status: PaymentStatus.AWAITING,
             fulfillment_status: FulfillmentStatus.NOT_FULFILLED,
         };
 
-        let orders = await this.orderRepository_.find({
+        let orders: Order[] = await this.orderRepository_.find({
             where: where
         });
 
-        orders = orders.filter(o => {
-            const tzOffset = o.created_at.getTimezoneOffset();
-            const localDate = new Date(o.created_at.getTime() - tzOffset * 60000);
+        orders = orders?.filter(o => {
+            const tzOffset = o.updated_at.getTimezoneOffset();
+            console.log('timezone offset', tzOffset);
+            const localDate = new Date(o.updated_at.getTime() - tzOffset * 60000);
 
             //order must be at least two hours old
-            return Math.floor(localDate.getTime() / 1000) > (Math.floor(Date.now() / 1000) - 60 * 120);
-        });
+            return Math.floor(localDate.getTime() / 1000) < (
+                Math.floor(Date.now() / 1000) - (
+                    60 * parseInt(process.env.VERIFY_ORDER_PAYMENT_DELAY_MINUTES ?? '120')
+                )
+            );
+        }) ?? [];
+
+        orders = orders?.filter((o) => o.bucky_metadata?.status === 'pending') ?? [];
 
         return orders;
     }
