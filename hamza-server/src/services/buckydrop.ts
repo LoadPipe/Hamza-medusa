@@ -374,9 +374,9 @@ export default class BuckydropService extends TransactionBaseService {
 
                 const setOrderStatus = (status: OrderStatus, fulfillmentStatus: FulfillmentStatus) => {
                     if (order.status != status || order.fulfillment_status != fulfillmentStatus) {
-
                         order.status = status;
                         order.fulfillment_status = fulfillmentStatus;
+                        return true;
                     }
                     return false;
                 };
@@ -440,6 +440,9 @@ export default class BuckydropService extends TransactionBaseService {
                         }
                         if (order.fulfillment_status == FulfillmentStatus.FULFILLED) {
                             this.orderService_.sendDeliveredEmail(order);
+                        }
+                        if (order.status == OrderStatus.CANCELED) {
+                            this.orderService_.sendCancelledEmail(order);
                         }
                     }
 
