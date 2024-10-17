@@ -182,10 +182,14 @@ const Refund = ({
                                                     }
                                                 />
                                                 <Flex
-                                                    flexDirection="row"
+                                                    direction={{
+                                                        base: 'column',
+                                                        md: 'row',
+                                                    }}
+                                                    justifyContent={'flex-end'}
                                                     gap={2}
-                                                    ml={{ base: 0, md: 'auto' }}
                                                     mt={{ base: 4, md: 0 }}
+                                                    width="100%"
                                                 >
                                                     <Button
                                                         variant="outline"

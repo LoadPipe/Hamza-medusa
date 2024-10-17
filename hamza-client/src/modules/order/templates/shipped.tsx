@@ -205,15 +205,10 @@ const Shipped = ({
                                                         base: 'column',
                                                         md: 'row',
                                                     }}
-                                                    justifyContent={{
-                                                        base: 'flex-start',
-                                                        md: 'center',
-                                                    }}
-                                                    alignItems={{
-                                                        base: 'flex-start',
-                                                        md: 'center',
-                                                    }}
-                                                    mb={5}
+                                                    justifyContent={'flex-end'}
+                                                    gap={2}
+                                                    mt={{ base: 4, md: 0 }}
+                                                    width="100%"
                                                 >
                                                     <Button
                                                         variant="outline"
@@ -223,6 +218,18 @@ const Shipped = ({
                                                         _hover={{
                                                             textDecoration:
                                                                 'underline',
+                                                        }}
+                                                        ml={{
+                                                            base: 0,
+                                                            md: 2,
+                                                        }}
+                                                        mt={{
+                                                            base: 2,
+                                                            md: 0,
+                                                        }}
+                                                        width={{
+                                                            base: '100%',
+                                                            md: 'auto',
                                                         }}
                                                         onClick={() =>
                                                             toggleCourierInfo(

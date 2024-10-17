@@ -201,6 +201,9 @@ const Cancelled = ({
                                                         md: 'row',
                                                     }}
                                                     justifyContent={'flex-end'}
+                                                    gap={2}
+                                                    mt={{ base: 4, md: 0 }}
+                                                    width="100%"
                                                 >
                                                     <Button
                                                         variant="outline"
