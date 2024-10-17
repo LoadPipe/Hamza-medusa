@@ -5,23 +5,12 @@ import { NotificationTypeRepository } from '../repositories/notification-type';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import { CustomerNotification } from 'src/models/customer-notification';
 
-const notificationTypes = [
-    { name: 'order_shipped' },
-    //{ name: 'posted a new product' },
-    { name: 'order status changed' },
-    { name: 'promotions/discounts' },
-    { name: 'survey_update' },
-    //{ name: 'sms' },
-    { name: 'email' },
-    //{ name: 'LINE' },
-    //{ name: 'whatsapp' },
-];
-
-export declare enum NotificationType {
-    OrderShipped = 'orderShipped',
-    OrderStatusChanged = 'orderStatusChanged',
-    Email = 'email'
-}
+//TODO: get this enum to work
+//export declare enum NotificationType {
+//    OrderShipped = 'orderShipped',
+//    OrderStatusChanged = 'orderStatusChanged',
+//    Email = 'email'
+//}
 
 class CustomerNotificationService extends TransactionBaseService {
     static LIFE_TIME = Lifetime.SCOPED;
@@ -118,21 +107,21 @@ class CustomerNotificationService extends TransactionBaseService {
         }
     }
 
-    async hasNotification(customerId: string, notificationType: NotificationType): Promise<boolean> {
+    async hasNotification(customerId: string, notificationType: string): Promise<boolean> {
         return this.hasNotifications(customerId, [notificationType]);
     }
 
     async hasNotifications(customerId: string, notificationTypes: string[]): Promise<boolean> {
         const notifications: string[] = await this.getNotificationTypes(customerId);
         for (let nt of notificationTypes) {
-            if (!notifications.includes(nt.toString()))
+            if (!notifications.includes(nt))
                 return false;
         }
         return true;
     }
 
     async setDefaultNotifications(customerId: string): Promise<void> {
-        await this.addOrUpdateNotification(customerId, 'email, orderShipped, orderStatusChanged');
+        await this.addOrUpdateNotification(customerId, 'email,orderShipped,orderStatusChanged');
     }
 }
 
