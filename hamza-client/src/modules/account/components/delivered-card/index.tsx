@@ -186,14 +186,18 @@ const DeliveredCard = ({ order, handle, vendorName }: OrderCardProps) => {
                     >
                         Buy Again
                     </Button>
-                    <Button
-                        variant="outline"
-                        colorScheme="white"
-                        borderRadius={'37px'}
-                        mt={2}
+                    <Link
+                        href='https://support.hamza.market/help/1568263160' target='_blank'
                     >
-                        Return/Refund
-                    </Button>
+                        <Button
+                            variant="outline"
+                            colorScheme="white"
+                            borderRadius={'37px'}
+                            mt={2}
+                        >
+                            Return/Refund
+                        </Button>
+                    </Link>
                 </Flex>
             </Flex>
         </Flex>
