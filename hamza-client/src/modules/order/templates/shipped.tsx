@@ -51,40 +51,29 @@ const Shipped = ({
 
     const queryClient = useQueryClient();
 
-    const {
-        data: shippedOrder,
-        isLoading,
-        isError,
-        isFetching,
-        failureCount,
-        isStale,
-    } = useQuery(
-        ['fetchShippedOrder', customer],
-        () => getSingleBucket(customer, 2), // Fetching shipped orders (bucket 2)
-        {
-            enabled: !!customer,
-            retry: true,
-            refetchOnWindowFocus: true,
-        }
-    );
+    const { data, isLoading, isError, refetch, isStale } = useQuery([
+        'batchOrders',
+    ]);
+
+    const shippedOrder = data?.Shipped || [];
 
     // manually trigger a refetch if its stale
-    useEffect(() => {
-        const retryFetch = async () => {
-            if (isStale && shippedOrder == undefined) {
-                for (let i = 0; i < 5; i++) {
-                    if (shippedOrder == undefined) {
-                        queryClient.resetQueries(['fetchShippedOrder']);
-                        queryClient.invalidateQueries(['fetchShippedOrder']);
-                        await new Promise((resolve) =>
-                            setTimeout(resolve, 100)
-                        );
-                    }
-                }
-            }
-        };
-        retryFetch();
-    }, [isStale]);
+    // useEffect(() => {
+    //     const retryFetch = async () => {
+    //         if (isStale && shippedOrder == undefined) {
+    //             for (let i = 0; i < 5; i++) {
+    //                 if (shippedOrder == undefined) {
+    //                     queryClient.resetQueries(['fetchShippedOrder']);
+    //                     queryClient.invalidateQueries(['fetchShippedOrder']);
+    //                     await new Promise((resolve) =>
+    //                         setTimeout(resolve, 100)
+    //                     );
+    //                 }
+    //             }
+    //         }
+    //     };
+    //     retryFetch();
+    // }, [isStale]);
 
     // useEffect(() => {
     //     if (isSuccess && shippedOrder) {
@@ -93,15 +82,15 @@ const Shipped = ({
     //     }
     // }, [isSuccess, chainEnabled]);
 
-    console.log({
-        template: 'SHIPPED',
-        isLoading,
-        isError,
-        isFetching,
-        failureCount,
-        shippedOrder,
-        isStale,
-    });
+    // console.log({
+    //     template: 'SHIPPED',
+    //     isLoading,
+    //     isError,
+    //     isFetching,
+    //     failureCount,
+    //     shippedOrder,
+    //     isStale,
+    // });
 
     if (isLoading) {
         return (

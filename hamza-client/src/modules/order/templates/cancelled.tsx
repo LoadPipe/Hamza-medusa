@@ -39,41 +39,32 @@ const Cancelled = ({
     const queryClient = useQueryClient();
 
     const {
-        data: canceledOrder,
+        data,
         isLoading: cancelIsLoading,
         isError: cancelIsError,
-        isFetching,
-        failureCount,
-        isStale,
-        isSuccess,
         refetch,
-    } = useQuery(
-        ['fetchCanceledOrder', customer],
-        () => getSingleBucket(customer, 4),
-        {
-            enabled: !!customer,
-            retry: true,
-            refetchOnWindowFocus: true,
-        }
-    );
+        isStale,
+    } = useQuery(['batchOrders']);
+
+    const canceledOrder = data?.Cancelled || [];
 
     // manually trigger a refetch if its stale
-    useEffect(() => {
-        const retryFetch = async () => {
-            if (isStale && canceledOrder == undefined) {
-                for (let i = 0; i < 5; i++) {
-                    if (canceledOrder == undefined) {
-                        queryClient.resetQueries(['fetchCanceledOrder']);
-                        queryClient.invalidateQueries(['fetchCanceledOrder']);
-                        await new Promise((resolve) =>
-                            setTimeout(resolve, 100)
-                        );
-                    }
-                }
-            }
-        };
-        retryFetch();
-    }, [isStale]);
+    // useEffect(() => {
+    //     const retryFetch = async () => {
+    //         if (isStale && canceledOrder == undefined) {
+    //             for (let i = 0; i < 5; i++) {
+    //                 if (canceledOrder == undefined) {
+    //                     queryClient.resetQueries(['fetchCanceledOrder']);
+    //                     queryClient.invalidateQueries(['fetchCanceledOrder']);
+    //                     await new Promise((resolve) =>
+    //                         setTimeout(resolve, 100)
+    //                     );
+    //                 }
+    //             }
+    //         }
+    //     };
+    //     retryFetch();
+    // }, [isStale]);
 
     // useEffect(() => {
     //     if (isSuccess && canceledOrder) {
@@ -83,15 +74,15 @@ const Cancelled = ({
     // }, [isSuccess, chainEnabled]);
 
     // Log the queries for cancelled state and data
-    console.log({
-        template: 'CANCELLED',
-        cancelIsLoading,
-        cancelIsError,
-        isFetching,
-        failureCount,
-        canceledOrder,
-        isStale,
-    });
+    // console.log({
+    //     template: 'CANCELLED',
+    //     cancelIsLoading,
+    //     cancelIsError,
+    //     isFetching,
+    //     failureCount,
+    //     canceledOrder,
+    //     isStale,
+    // });
 
     if (isEmpty && canceledOrder && canceledOrder?.length == 0) {
         return <EmptyState />;

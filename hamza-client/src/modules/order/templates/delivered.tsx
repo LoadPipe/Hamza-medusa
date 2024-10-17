@@ -36,24 +36,11 @@ const Delivered = ({
 
     const queryClient = useQueryClient();
 
-    const {
-        data: deliveredOrder,
-        isLoading,
-        isError,
-        isFetching,
-        failureCount,
-        isStale,
-        isSuccess,
-        refetch,
-    } = useQuery(
-        ['fetchDeliveredOrder', customer],
-        () => getSingleBucket(customer, 3),
-        {
-            enabled: !!customer,
-            retry: true,
-            refetchOnWindowFocus: true,
-        }
-    );
+    const { data, isLoading, isError, refetch, isStale } = useQuery([
+        'batchOrders',
+    ]);
+
+    const deliveredOrder = data?.Delivered || [];
 
     //TODO: Refactor to a mutation
     const handleReorder = async (order: any) => {
@@ -96,15 +83,6 @@ const Delivered = ({
     // }, [isSuccess, chainEnabled]);
 
     // Log the queries for delivered state and data
-    console.log({
-        template: 'DELIVERED',
-        isLoading,
-        isError,
-        isFetching,
-        failureCount,
-        deliveredOrder,
-        isStale,
-    });
 
     const getAmount = (
         amount?: number | null,

@@ -40,42 +40,29 @@ const Refund = ({
 
     const queryClient = useQueryClient();
 
-    const {
-        data: refundOrder,
-        isLoading,
-        isError,
-        isFetching,
-        failureCount,
-        isStale,
-        isSuccess,
-        refetch,
-    } = useQuery(
-        ['fetchRefundOrder', customer],
-        () => getSingleBucket(customer, 5),
-        {
-            enabled: !!customer,
-            retry: true,
-            refetchOnWindowFocus: true,
-        }
-    );
+    const { data, isLoading, isError, refetch, isStale } = useQuery([
+        'batchOrders',
+    ]);
+
+    const refundOrder = data?.Refunded || [];
 
     // manually trigger a refetch if its stale
-    useEffect(() => {
-        const retryFetch = async () => {
-            if (isStale && refundOrder == undefined) {
-                for (let i = 0; i < 3; i++) {
-                    if (refundOrder == undefined) {
-                        queryClient.resetQueries(['fetchRefundOrder']);
-                        queryClient.invalidateQueries(['fetchRefundOrder']);
-                        await new Promise((resolve) =>
-                            setTimeout(resolve, 100)
-                        );
-                    }
-                }
-            }
-        };
-        retryFetch();
-    }, [isStale]);
+    // useEffect(() => {
+    //     const retryFetch = async () => {
+    //         if (isStale && refundOrder == undefined) {
+    //             for (let i = 0; i < 3; i++) {
+    //                 if (refundOrder == undefined) {
+    //                     queryClient.resetQueries(['fetchRefundOrder']);
+    //                     queryClient.invalidateQueries(['fetchRefundOrder']);
+    //                     await new Promise((resolve) =>
+    //                         setTimeout(resolve, 100)
+    //                     );
+    //                 }
+    //             }
+    //         }
+    //     };
+    //     retryFetch();
+    // }, [isStale]);
 
     // useEffect(() => {
     //     if (isSuccess && refundOrder) {
@@ -85,15 +72,15 @@ const Refund = ({
     // }, [isSuccess, chainEnabled]);
 
     // Log the queries for refunded state and data
-    console.log({
-        template: 'REFUNDED',
-        isLoading,
-        isError,
-        isFetching,
-        failureCount,
-        refundOrder,
-        isStale,
-    });
+    // console.log({
+    //     template: 'REFUNDED',
+    //     isLoading,
+    //     isError,
+    //     isFetching,
+    //     failureCount,
+    //     refundOrder,
+    //     isStale,
+    // });
 
     const toggleRefundInfo = (orderId: any) => {
         setCourierInfo(courierInfo === orderId ? null : orderId);

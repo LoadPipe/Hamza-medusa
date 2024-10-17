@@ -94,58 +94,14 @@ const Processing = ({
     const queryClient = useQueryClient();
 
     const {
-        data: processingOrder,
+        data,
         isLoading: processingOrdersLoading,
         isError: processingOrdersError,
-        isFetching,
-        failureCount,
-        isStale,
-        isSuccess,
         refetch,
-    } = useQuery(
-        ['fetchProcessingOrder', customer],
-        () => getSingleBucket(customer, 1),
-        {
-            enabled: !!customer,
-            retry: true,
-            refetchOnWindowFocus: true,
-        }
-    );
-
-    useEffect(() => {
-        const retryFetch = async () => {
-            if (isStale && processingOrder == undefined) {
-                for (let i = 0; i < 5; i++) {
-                    if (processingOrder == undefined) {
-                        queryClient.resetQueries(['fetchProcessingOrder']);
-                        queryClient.invalidateQueries(['fetchProcessingOrder']);
-                        await new Promise((resolve) =>
-                            setTimeout(resolve, 100)
-                        );
-                    }
-                }
-            }
-        };
-        retryFetch();
-    }, [isStale]);
-
-    // useEffect(() => {
-    //     if (isSuccess && processingOrder && processingOrder.length > 0) {
-    //         console.log(`TRIGGER`);
-    //         debouncedOnSuccess();
-    //     }
-    // }, [isSuccess]);
-
-    // Log the queries for processing state and data
-    console.log({
-        template: 'PROCESSING',
-        processingOrdersLoading,
-        processingOrdersError,
-        isFetching,
-        failureCount,
-        processingOrder,
         isStale,
-    });
+    } = useQuery(['batchOrders']);
+
+    const processingOrder = data?.Processing || [];
 
     const mutation = useMutation(
         ({
