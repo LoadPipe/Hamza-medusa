@@ -1,4 +1,4 @@
-import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
+import { type MedusaRequest, type MedusaResponse, type Logger, OrderStatus, FulfillmentStatus } from '@medusajs/medusa';
 import { RouteHandler } from '../../../../route-handler';
 import { Order } from '../../../../../models/order';
 import { Payment } from '../../../../../models/payment';

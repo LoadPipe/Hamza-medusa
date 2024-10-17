@@ -28,7 +28,7 @@ export class CurrencyConversionClient {
      */
     async checkStatus(): Promise<boolean> {
         try {
-            const response = await this.client.get('/');
+            const response = await this.client.get('/health');
             return response.status === 200;
         } catch (error) {
             console.error('Error checking status:', error.message);
@@ -36,11 +36,6 @@ export class CurrencyConversionClient {
         }
     }
 
-    /**
-     * Checks the status of the rest api server.
-     *
-     * @returns boolean, true if a-ok
-     */
     async getExchangeRate(
         baseCurrency: string,
         toCurrency: string
