@@ -9,13 +9,22 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getOrderBucket } from '@lib/data';
 
+type Order = {};
+export type OrdersData = {
+    Processing: Order[];
+    Shipped: Order[];
+    Delivered: Order[];
+    Cancelled: Order[];
+    Refunded: Order[];
+};
+
 const All = ({ customer }: { customer: string }) => {
     const [processingFetched, setProcessingFetched] = useState(false);
     const [shippedFetched, setShippedFetched] = useState(false);
     const [deliveredFetched, setDeliveredFetched] = useState(false);
     const [cancelledFetched, setCancelledFetched] = useState(false);
 
-    const { data, error, isLoading } = useQuery(
+    const { data, error, isLoading } = useQuery<OrdersData>(
         ['batchOrders'],
         () => getOrderBucket(customer),
         {

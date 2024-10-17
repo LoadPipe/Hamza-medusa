@@ -26,6 +26,7 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
+import { OrdersData } from './all';
 
 const Shipped = ({
     customer,
@@ -51,9 +52,9 @@ const Shipped = ({
 
     const queryClient = useQueryClient();
 
-    const { data, isLoading, isError, refetch, isStale } = useQuery([
-        'batchOrders',
-    ]);
+    const { data, isLoading, isError, refetch, isStale } = useQuery<OrdersData>(
+        ['batchOrders']
+    );
 
     const shippedOrder = data?.Shipped || [];
 

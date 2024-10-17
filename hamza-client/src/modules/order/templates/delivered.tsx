@@ -12,6 +12,7 @@ import { debounce } from 'lodash';
 import { useParams, useRouter } from 'next/navigation';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
+import { OrdersData } from './all';
 
 const Delivered = ({
     customer,
@@ -36,9 +37,9 @@ const Delivered = ({
 
     const queryClient = useQueryClient();
 
-    const { data, isLoading, isError, refetch, isStale } = useQuery([
-        'batchOrders',
-    ]);
+    const { data, isLoading, isError, refetch, isStale } = useQuery<OrdersData>(
+        ['batchOrders']
+    );
 
     const deliveredOrder = data?.Delivered || [];
 

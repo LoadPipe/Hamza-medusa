@@ -19,6 +19,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { debounce, upperCase } from 'lodash';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
+import { OrdersData } from './all';
 
 const Refund = ({
     customer,
@@ -40,9 +41,9 @@ const Refund = ({
 
     const queryClient = useQueryClient();
 
-    const { data, isLoading, isError, refetch, isStale } = useQuery([
-        'batchOrders',
-    ]);
+    const { data, isLoading, isError, refetch, isStale } = useQuery<OrdersData>(
+        ['batchOrders']
+    );
 
     const refundOrder = data?.Refunded || [];
 

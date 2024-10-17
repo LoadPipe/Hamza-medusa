@@ -16,6 +16,8 @@ import { debounce } from 'lodash';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import CancellationModal from '@modules/order/templates/cancelled-modal';
+import { OrdersData } from './all';
+
 const Cancelled = ({
     customer,
     // chainEnabled,
@@ -44,7 +46,7 @@ const Cancelled = ({
         isError: cancelIsError,
         refetch,
         isStale,
-    } = useQuery(['batchOrders']);
+    } = useQuery<OrdersData>(['batchOrders']);
 
     const canceledOrder = data?.Cancelled || [];
 

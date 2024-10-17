@@ -36,6 +36,7 @@ import { BsCircleFill } from 'react-icons/bs';
 import Image from 'next/image';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
+import { OrdersData } from './all';
 /**
  * The Processing component displays and manages the customer's processing orders, allowing users to view order details,
  * collapse or expand order views, and request cancellations of individual orders.
@@ -99,7 +100,7 @@ const Processing = ({
         isError: processingOrdersError,
         refetch,
         isStale,
-    } = useQuery(['batchOrders']);
+    } = useQuery<OrdersData>(['batchOrders']);
 
     const processingOrder = data?.Processing || [];
 
