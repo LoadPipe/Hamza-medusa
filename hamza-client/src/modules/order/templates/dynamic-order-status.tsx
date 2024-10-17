@@ -17,7 +17,7 @@ const DynamicOrderStatus = ({
         <Flex
             justifyContent={{ sm: 'center', md: 'flex-end' }}
             direction={'row'}
-            fontSize={'16px'}
+            fontSize={{ sm: '14px', md: '16px' }}
             fontWeight="bold"
             alignItems={'center'}
             ml={'auto'}

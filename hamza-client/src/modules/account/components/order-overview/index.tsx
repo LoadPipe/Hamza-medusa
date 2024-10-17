@@ -50,7 +50,6 @@ const OrderOverview = ({
     const setOrderActiveTab = useOrderTabStore(
         (state) => state.setOrderActiveTab
     );
-    console.log('Dehydrated State:', dehydratedState);
 
     const handleTabChange = (tab: string) => {
         if (orderActiveTab !== tab) {

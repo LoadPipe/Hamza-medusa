@@ -46,15 +46,18 @@ const OrderLeftColumn = ({
 }: OrderCardProps) => {
     return (
         <Flex
-            justifyContent={{ md: 'space-between' }}
+            justifyContent={{ sm: 'center', md: 'space-between' }}
             flexDirection={{ base: 'column' }}
             width={'100%'}
+            minW={{ sm: '350px', md: '350px', lg: '400px' }}
+            // border="1px solid red"
         >
             <Flex
                 mx={{ base: 'auto', md: 0 }}
-                mb={'20px'}
+                my={'10px'}
                 display={{ base: 'flex' }}
                 alignItems="center"
+                gap={1.5}
             >
                 <Link
                     href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/store/${storeName}`}
@@ -64,7 +67,6 @@ const OrderLeftColumn = ({
                         alt="Light Logo"
                         boxSize={{ base: '32px' }}
                         borderRadius="full"
-                        mr={'12px'}
                     />
                 </Link>
                 <Text

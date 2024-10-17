@@ -31,12 +31,13 @@ export default async function Orders() {
     }
     return (
         <Flex
-            maxW={'927px'}
+            maxW={{ md: '600px', lg: '927px' }}
             width="100%"
             backgroundColor={'#121212'}
             flexDirection={'column'}
             color="white"
             p={6}
+            rounded="lg"
         >
             <OrderOverview
                 customer={customer}
