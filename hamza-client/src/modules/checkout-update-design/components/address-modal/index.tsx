@@ -17,7 +17,7 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Cart, Customer } from '@medusajs/medusa';
-import { setAddresses, setAddresses2 } from '@modules/checkout/actions';
+import { setAddresses } from '../../actions';
 import CountrySelect from '@modules/checkout/components/country-select';
 
 interface AddressModalProps {
@@ -86,7 +86,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formPayload = new FormData(e.currentTarget);
-        setAddresses(formPayload, null);
+        setAddresses(formPayload);
         onClose();
     };
 
