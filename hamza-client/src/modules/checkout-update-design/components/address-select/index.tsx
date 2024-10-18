@@ -51,7 +51,7 @@ const AddressSelect = ({ addresses, cart }: AddressSelectProps) => {
     }, [addresses, cart?.shipping_address]);
 
     return (
-        <Box position="relative">
+        <Box position="relative" flex={1}>
             {/* Button to toggle the address selection */}
             <Button
                 width="full"

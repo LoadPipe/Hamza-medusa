@@ -4,6 +4,7 @@ import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { LineItem } from '@medusajs/medusa';
 import CartTotals from './cart-totals/cart-totals';
 import PaymentButton from '@modules/checkout-update-design/components/payment-button';
+import DiscountCode from '@modules/checkout/components/discount-code';
 
 const PaymentSummary = async (params: any) => {
     const cartId = params.cartId;
@@ -28,7 +29,8 @@ const PaymentSummary = async (params: any) => {
             color={'white'}
             maxW={{ base: '100%', md: '401px' }}
             width={'100%'}
-            height={{ base: 'auto', md: '540px' }}
+            minHeight={{ base: 'auto', md: '400px' }}
+            maxHeight={{ base: 'auto', md: '620px' }}
             flexDir={'column'}
             borderRadius={'16px'}
             p={{ base: '16px', md: '40px' }}
@@ -44,6 +46,7 @@ const PaymentSummary = async (params: any) => {
             <CartTotals data={cart} />
 
             <Flex mt="auto" flexDir={'column'} gap={5}>
+                <DiscountCode cart={cart} />
                 <PaymentButton cart={cart} />
                 <Text
                     textAlign="center"
