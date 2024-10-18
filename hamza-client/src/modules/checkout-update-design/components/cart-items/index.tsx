@@ -18,11 +18,7 @@ type ItemsTemplateProps = {
 const CartItems = ({ items, region, currencyCode }: ItemsTemplateProps) => {
     return (
         <>
-            <Box
-                mt="1rem"
-                height={{ base: '170px', md: '400px' }}
-                overflowY="scroll"
-            >
+            <Box mt="1rem" height={'auto'}>
                 {items && region
                     ? items
                           .sort((a, b) => {
