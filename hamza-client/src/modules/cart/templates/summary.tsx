@@ -7,7 +7,7 @@ import DiscountCode from '@modules/checkout/components/discount-code';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import Spinner from '@modules/common/icons/spinner';
 import { useCartStore } from '@store/cart-store/cart-store'; // Import Zustand store
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 type SummaryProps = {
     cart: CartWithCheckoutStep;
@@ -15,6 +15,19 @@ type SummaryProps = {
 
 const Summary = ({ cart }: SummaryProps) => {
     const isUpdating = useCartStore((state) => state.isUpdating);
+
+    const [step, setSet] = useState('');
+    useEffect(() => {
+        const checkoutStep = () => {
+            if (cart && cart.shipping_address) {
+                setSet('review');
+            } else {
+                setSet('address');
+            }
+        };
+
+        checkoutStep();
+    }, [cart]);
 
     return (
         <Flex
@@ -37,7 +50,7 @@ const Summary = ({ cart }: SummaryProps) => {
             </Text>
             <CartTotals data={cart} />
             <DiscountCode cart={cart} />
-            <LocalizedClientLink href={'/checkout?step=' + cart.checkout_step}>
+            <LocalizedClientLink href={'/checkout?step=' + step}>
                 <Button
                     mt="2rem"
                     backgroundColor={'primary.indigo.900'}

@@ -33,6 +33,7 @@ import AddressModal from '../address-modal';
 import { IoLocationOutline } from 'react-icons/io5';
 import { CiSaveDown2 } from 'react-icons/ci';
 import AddressSelect from '../address-select';
+import { useEffect } from 'react';
 
 const Addresses = ({
     cart,
@@ -72,6 +73,12 @@ const Addresses = ({
         : '';
 
     const contactPhone = cart?.shipping_address?.phone ?? '';
+
+    useEffect(() => {
+        if (cart && cart.shipping_address) {
+            router.push(pathname + '?step=review');
+        }
+    }, [cart]);
 
     return (
         <div>
