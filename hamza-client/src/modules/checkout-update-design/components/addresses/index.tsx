@@ -32,6 +32,7 @@ import { BiPencil } from 'react-icons/bi';
 import AddressModal from '../address-modal';
 import { IoLocationOutline } from 'react-icons/io5';
 import { CiSaveDown2 } from 'react-icons/ci';
+import AddressSelect from '../address-select';
 
 const Addresses = ({
     cart,
@@ -141,21 +142,11 @@ const Addresses = ({
                             >
                                 Change Shipping Address
                             </Button>
-                            <Button
-                                leftIcon={<CiSaveDown2 size={20} />}
-                                flex={1}
-                                borderRadius={'full'}
-                                height={'52px'}
-                                color={'white'}
-                                backgroundColor={'primary.indigo.900'}
-                                opacity={1}
-                                _hover={{
-                                    opacity: 0.5,
-                                }}
-                                onClick={onOpen}
-                            >
-                                Use Saved Address
-                            </Button>
+
+                            <AddressSelect
+                                cart={cart}
+                                addresses={customer?.shipping_addresses}
+                            />
                         </Flex>
                     </Flex>
                 ) : (
