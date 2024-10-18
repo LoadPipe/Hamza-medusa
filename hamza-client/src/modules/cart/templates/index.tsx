@@ -2,7 +2,7 @@
 import React from 'react';
 import ItemsTemplate from './items';
 import Summary from './summary';
-import { CartWithCheckoutStep } from 'types/global';
+import { CartWithCheckoutStep } from '@/types/global';
 import SignInPrompt from '../components/sign-in-prompt';
 import Divider from '@modules/common/components/divider';
 import { Customer } from '@medusajs/medusa';

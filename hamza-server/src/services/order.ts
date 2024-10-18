@@ -563,13 +563,15 @@ export default class OrderService extends MedusaOrderService {
     async getOrdersWithUnverifiedPayments() {
         return this.orderRepository_.find({
             where: {
-                status: Not(In([
-                    OrderStatus.ARCHIVED,
-                    OrderStatus.REQUIRES_ACTION,
-                    OrderStatus.CANCELED,
-                    OrderStatus.COMPLETED
-                ])),
-                payment_status: PaymentStatus.AWAITING
+                status: Not(
+                    In([
+                        OrderStatus.ARCHIVED,
+                        OrderStatus.REQUIRES_ACTION,
+                        OrderStatus.CANCELED,
+                        OrderStatus.COMPLETED,
+                    ])
+                ),
+                payment_status: PaymentStatus.AWAITING,
             },
             relations: ['payments'],
         });
@@ -578,7 +580,7 @@ export default class OrderService extends MedusaOrderService {
     async sendShippedEmail(order: Order): Promise<void> {
         return this.sendOrderEmail(
             order,
-            'order_shipped',
+            'orderShipped',
             'order-shipped',
             'shipped'
         );
@@ -587,7 +589,7 @@ export default class OrderService extends MedusaOrderService {
     async sendDeliveredEmail(order: Order): Promise<void> {
         return this.sendOrderEmail(
             order,
-            'order_shipped',
+            'orderStatusChanged',
             'order-delivered',
             'delivered'
         );
@@ -596,7 +598,7 @@ export default class OrderService extends MedusaOrderService {
     async sendCancelledEmail(order: Order): Promise<void> {
         return this.sendOrderEmail(
             order,
-            'order_cancelled',
+            'orderStatusChanged',
             'order-cancelled',
             'cancelled'
         );
@@ -609,16 +611,23 @@ export default class OrderService extends MedusaOrderService {
         emailType: string
     ): Promise<void> {
         try {
-            const notificationTypes =
-                await this.customerNotificationService_.getNotificationTypes(
-                    order.customer_id
+            const hasNotification =
+                await this.customerNotificationService_.hasNotification(
+                    order.customer_id,
+                    requiredNotification
                 );
-            const customer: Customer = await this.customerRepository_.findOne({
-                where: { id: order.customer_id },
-            });
-            const cart: Cart = await this.cartService_.retrieve(order.cart_id);
 
-            if (notificationTypes.includes(requiredNotification)) {
+            if (hasNotification) {
+                //get customer & cart
+                const customer: Customer =
+                    await this.customerRepository_.findOne({
+                        where: { id: order.customer_id },
+                    });
+                const cart: Cart = await this.cartService_.retrieve(
+                    order.cart_id
+                );
+
+                //send the mail
                 this.smtpMailService.sendMail({
                     from:
                         process.env.SMTP_HAMZA_FROM ??

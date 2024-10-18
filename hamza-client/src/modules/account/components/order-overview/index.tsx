@@ -1,16 +1,9 @@
 'use client';
-
-import { TABS } from 'modules/order-tab-management';
+import { TABS } from '@/modules/order-tab-management';
 import {
-    Box,
     ButtonGroup,
     Button,
-    Select,
     useBreakpointValue,
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuItem,
     Flex,
 } from '@chakra-ui/react';
 import All from '@modules/order/templates/all';
@@ -21,8 +14,7 @@ import Cancelled from '@modules/order/templates/cancelled';
 import Refund from '@modules/order/templates/refund';
 import { useOrderTabStore } from '@store/order-tab-state';
 import React from 'react';
-import { ChevronDownIcon } from '@chakra-ui/icons';
-import { IoSettingsOutline } from 'react-icons/io5';
+import { Hydrate } from '@tanstack/react-query';
 
 const commonButtonStyles = {
     borderRadius: '8px',
@@ -48,10 +40,10 @@ const commonButtonStyles = {
 
 const OrderOverview = ({
     customer,
-    ordersExist,
+    dehydratedState,
 }: {
     customer: any;
-    ordersExist: boolean;
+    dehydratedState: any;
 }) => {
     const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
@@ -80,7 +72,7 @@ const OrderOverview = ({
             case TABS.REFUND:
                 return <Refund customer={customer.id} isEmpty={true} />;
             default:
-                return <All customer={customer.id} ordersExist={ordersExist} />;
+                return <All customer={customer.id} />;
         }
     };
 
@@ -111,7 +103,7 @@ const OrderOverview = ({
                     ))}
                 </ButtonGroup>
             )}
-            {renderTabContent()}
+            <Hydrate state={dehydratedState}>{renderTabContent()}</Hydrate>
         </Flex>
     );
 };

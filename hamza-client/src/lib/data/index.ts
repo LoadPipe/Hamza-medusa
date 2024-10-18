@@ -18,7 +18,10 @@ import { decode } from 'jsonwebtoken';
 import sortProducts from '@lib/util/sort-products';
 import transformProductPreview from '@lib/util/transform-product-preview';
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
-import { ProductCategoryWithChildren, ProductPreviewType } from 'types/global';
+import {
+    ProductCategoryWithChildren,
+    ProductPreviewType,
+} from '@/types/global';
 import { medusaClient } from '../config';
 import medusaError from '@lib/util/medusa-error';
 import axios from 'axios';
@@ -397,16 +400,11 @@ export async function getOrderDetails(customer_id: string) {
     return output.orders.orders;
 }
 
-export async function getOrderBucket(
-    customer_id: string,
-    check_buckets = false
-) {
+export async function getOrderBucket(customer_id: string) {
     const response = await getSecure('/custom/order/customer-orders', {
         customer_id,
         buckets: true,
-        check_buckets,
     });
-    if (check_buckets) return response.buckets;
     return response.orders;
 }
 

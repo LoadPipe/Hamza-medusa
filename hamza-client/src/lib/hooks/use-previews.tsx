@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import sortProducts from '@lib/util/sort-products';
 import transformProductPreview from '@lib/util/transform-product-preview';
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
-import { InfiniteProductPage, ProductPreviewType } from 'types/global';
+import { InfiniteProductPage, ProductPreviewType } from '@/types/global';
 
 type UsePreviewProps<T> = {
     pages?: T[];

@@ -215,12 +215,15 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                         {preferred_currency_code === 'eth' && (
                             <Flex justifyContent="flex-end" width="100%">
                                 <Text
+                                    as="h3"
+                                    variant="semibold"
+                                    color="white"
                                     mt={2}
-                                    fontSize={{ base: '15px', md: '24px' }}
+                                    fontSize={{ base: '15px', md: '18px' }}
                                     fontWeight={700}
                                     textAlign="right"
                                 >
-                                    {`$${formatCryptoPrice(usdGrandTotal, 'usdc')} USD`}
+                                    {`$ ${formatCryptoPrice(usdGrandTotal, 'usdc')}`}
                                 </Text>
                             </Flex>
                         )}

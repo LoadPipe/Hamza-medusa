@@ -3,8 +3,8 @@ import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 //import { getPercentageDiff } from '@lib/util/get-precentage-diff';
 //import { formatAmount } from '@lib/util/prices';
-import { ProductPreviewType } from 'types/global';
-import { CalculatedVariant } from 'types/medusa';
+import { ProductPreviewType } from '@/types/global';
+import { CalculatedVariant } from '@/types/medusa';
 
 const transformProductPreview = (
     product: PricedProduct,

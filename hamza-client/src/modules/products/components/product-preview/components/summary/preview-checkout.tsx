@@ -8,7 +8,7 @@ import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
 import ReviewStar from '../../../../../../../public/images/products/review-star.svg';
 import Image from 'next/image';
-import { Variant } from 'types/medusa';
+import { Variant } from '@/types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import toast from 'react-hot-toast';
@@ -16,7 +16,7 @@ import OptionSelect from '../../../option-select';
 import { isEqual } from 'lodash';
 import CartPopup from '../../../cart-popup';
 import { getAverageRatings, getStore, getReviewCount } from '@lib/data';
-import currencyIcons from '../../../../../../../public/images/currencies/crypto-currencies';
+import currencyIcons from '@/images/currencies/crypto-currencies';
 import Spinner from '@modules/common/icons/spinner';
 import TermsOfService from '../terms-of-service/product-details-tos';
 import { renderStars } from '@modules/products/components/review-stars';
@@ -38,6 +38,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     selectedVariantImage,
     setSelectedVariantImage,
 }) => {
+    console.log(
+        'PreviewCheckout component rendered with productId:',
+        productId
+    );
+
     const currencies = ['eth', 'usdc', 'usdt'];
 
     const [options, setOptions] = useState<Record<string, string>>({});
@@ -77,7 +82,12 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     const { addWishlistItemMutation, removeWishlistItemMutation } =
         useWishlistMutations();
 
-    // console.log(typeof productId, productId);
+    // Clear variantId to avoid referencing ID from the previous product.
+    useEffect(() => {
+        setVariantId('');
+        setSelectedVariant(null);
+        setSelectedVariantImage('');
+    }, [productData]);
 
     useEffect(() => {
         const fetchProductReview = async () => {
@@ -127,11 +137,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         }
     }, [productData, variantId]);
 
-    //console.log(`Variant ID ${variantId}`);
-    // console.log(
-    //     `Product Data ${JSON.stringify(productData)} ${productData.variant}`
-    // );
-
     useEffect(() => {
         let checkVariantId: string | undefined = undefined;
         if (variantRecord) {
@@ -147,8 +152,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     }, [options]);
 
     useEffect(() => {
-        // clean setSelectedVariantImage
-        setSelectedVariantImage('');
         if (productData && productData.variants) {
             if (!variantId) {
                 // Initially setting the variantId if it's not set
@@ -414,7 +417,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     color="white"
                 >
                     {preferred_currency_code === 'eth'
-                        ? `$${formatCryptoPrice(parseFloat(usdPrice!), 'usdc')} USD`
+                        ? `$ ${formatCryptoPrice(parseFloat(usdPrice!), 'usdc')}`
                         : `${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} ${preferred_currency_code?.toUpperCase() ?? 'USDC'}`}
                 </Heading>
                 {reviewCount > 0 ? (

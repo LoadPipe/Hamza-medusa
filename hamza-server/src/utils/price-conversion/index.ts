@@ -43,6 +43,11 @@ export class PriceConverter {
     }
 
     async getPrice(price: IPrice): Promise<number> {
+
+        //if identity, return as such
+        if (price.baseCurrency == price.toCurrency)
+            return price.baseAmount;
+
         // Step 1: Try to get the rate from the cache
         let rate: number = this.getFromCache(price);
         let usingRateFromDb: boolean = false;

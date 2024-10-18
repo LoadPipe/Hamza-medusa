@@ -16,7 +16,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         res,
         'GET',
         '/custom/order/customer-orders',
-        ['customer_id', 'buckets', 'check_buckets']
+        ['customer_id', 'buckets']
     );
 
     await handler.handle(async () => {
@@ -41,21 +41,14 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
             const checkBuckets = handler.inputParams.check_buckets;
             console.log(`CHECK BUCKETS: ${checkBuckets}`);
-            if (checkBuckets) {
-                console.log(`WTF`);
-                const buckets =
-                    await orderService.checkCustomerOrderBucket(customerId);
-                handler.returnStatus(200, { buckets: buckets });
+
+            if (handler.inputParams.buckets) {
+                const orders =
+                    await orderService.getCustomerOrderBuckets(customerId);
+                handler.returnStatus(200, { orders: orders });
             } else {
-                if (handler.inputParams.buckets) {
-                    const orders =
-                        await orderService.getCustomerOrderBuckets(customerId);
-                    handler.returnStatus(200, { orders: orders });
-                } else {
-                    const orders =
-                        await orderService.getCustomerOrders(customerId);
-                    handler.returnStatus(200, { orders: orders });
-                }
+                const orders = await orderService.getCustomerOrders(customerId);
+                handler.returnStatus(200, { orders: orders });
             }
         }
     });

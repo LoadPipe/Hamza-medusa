@@ -255,9 +255,17 @@ export default async function Footer() {
                     </Flex>
                 </Flex>
 
+                {/* Freescout (chat) */}
                 <Flex dangerouslySetInnerHTML={{
                     __html: '`<script>var FreeScoutW={s:{"color":"#5ab334","position":"br","id":2009307235}};(function(d,e,s){if(d.getElementById("freescout-w"))return;a=d.createElement(e);m=d.getElementsByTagName(e)[0];a.async=1;a.id="freescout-w";a.src=s;m.parentNode.insertBefore(a, m)})(document,"script","[https://support.hamza.market/modules/chat/js/widget.js?v=4239"](https://support.hamza.market/modules/chat/js/widget.js?v=4239%22));</script>` '
                 }}></Flex>
+
+                {/* google analytics */}
+                {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TAG === 'true' &&
+                    <Flex dangerouslySetInnerHTML={{
+                        __html: '<!-- Google tag (gtag.js) --><script async src="[https://www.googletagmanager.com/gtag/js?id=G-EL9E6JGL7S">](https://www.googletagmanager.com/gtag/js?id=G-EL9E6JGL7S%22%3E)</script><script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag("js", new Date());gtag("config", "G-EL9E6JGL7S");</script>` '
+                    }}></Flex>
+                }
             </Flex>
         </Flex>
     );

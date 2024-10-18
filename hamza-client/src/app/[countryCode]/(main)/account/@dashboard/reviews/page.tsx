@@ -7,7 +7,7 @@ import {
     listRegions,
     getVerificationStatus,
 } from '@lib/data';
-import ReviewPage from 'modules/account/components/reviews';
+import ReviewPage from '@/modules/account/components/reviews';
 import React from 'react';
 
 export const metadata: Metadata = {

@@ -6,46 +6,51 @@ import Delivered from '@modules/order/templates/delivered';
 import Cancelled from '@modules/order/templates/cancelled';
 import Refund from '@modules/order/templates/refund';
 import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { getOrderBucket } from '@lib/data';
 
-const All = ({
-    customer,
-    ordersExist,
-}: {
-    customer: string;
-    ordersExist: boolean;
-}) => {
+type Order = {};
+export type OrdersData = {
+    Processing: Order[];
+    Shipped: Order[];
+    Delivered: Order[];
+    Cancelled: Order[];
+    Refunded: Order[];
+};
+
+const All = ({ customer }: { customer: string }) => {
     const [processingFetched, setProcessingFetched] = useState(false);
     const [shippedFetched, setShippedFetched] = useState(false);
     const [deliveredFetched, setDeliveredFetched] = useState(false);
     const [cancelledFetched, setCancelledFetched] = useState(false);
 
+    const { data, error, isLoading } = useQuery<OrdersData>(
+        ['batchOrders'],
+        () => getOrderBucket(customer),
+        {
+            staleTime: 5000, // Keep data fresh for 5 seconds
+            cacheTime: 60000, // Cache data for 1 minute
+        }
+    );
+
+    // Check if any tab contains data
+    const ordersExist =
+        data &&
+        ((data.Processing && data.Processing.length > 0) ||
+            (data.Shipped && data.Shipped.length > 0) ||
+            (data.Delivered && data.Delivered.length > 0) ||
+            (data.Cancelled && data.Cancelled.length > 0) ||
+            (data.Refunded && data.Refunded.length > 0));
+
     return (
         <React.Fragment>
             {ordersExist ? (
                 <React.Fragment>
-                    <Processing
-                        customer={customer}
-                        // onSuccess={() => setProcessingFetched(true)}
-                    />
-                    <Shipped
-                        customer={customer}
-                        // chainEnabled={processingFetched}
-                        // onSuccess={() => setShippedFetched(true)}
-                    />
-                    <Delivered
-                        customer={customer}
-                        // chainEnabled={shippedFetched}
-                        // onSuccess={() => setDeliveredFetched(true)}
-                    />
-                    <Cancelled
-                        customer={customer}
-                        // chainEnabled={deliveredFetched}
-                        // onSuccess={() => setCancelledFetched(true)}
-                    />
-                    <Refund
-                        customer={customer}
-                        // chainEnabled={cancelledFetched}
-                    />
+                    <Processing customer={customer} />
+                    <Shipped customer={customer} />
+                    <Delivered customer={customer} />
+                    <Cancelled customer={customer} />
+                    <Refund customer={customer} />
                 </React.Fragment>
             ) : (
                 <Box
