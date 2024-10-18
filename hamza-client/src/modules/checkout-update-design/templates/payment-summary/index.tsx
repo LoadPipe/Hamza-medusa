@@ -1,14 +1,34 @@
 import React from 'react';
 import { Flex, Text, Divider, Button } from '@chakra-ui/react';
+import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
+import { LineItem } from '@medusajs/medusa';
+import CartTotals from './cart-totals/cart-totals';
+import PaymentButton from '@modules/checkout-update-design/components/payment-button';
 
-const PaymentSummary = () => {
+const PaymentSummary = async (params: any) => {
+    const cartId = params.cartId;
+    const cart = await retrieveCart(cartId).then((cart) => cart);
+
+    if (!cart) {
+        console.log('cart not found');
+        return null;
+    }
+
+    if (cart?.items.length) {
+        const enrichedItems = await enrichLineItems(
+            cart?.items,
+            cart?.region_id
+        );
+        cart.items = enrichedItems as LineItem[];
+    }
+
     return (
         <Flex
             bgColor={'#121212'}
             color={'white'}
             maxW={{ base: '100%', md: '401px' }}
             width={'100%'}
-            height={{ base: 'auto', md: '480px' }}
+            height={{ base: 'auto', md: '540px' }}
             flexDir={'column'}
             borderRadius={'16px'}
             p={{ base: '16px', md: '40px' }}
@@ -21,32 +41,10 @@ const PaymentSummary = () => {
                 Payment Summary
             </Text>
 
-            <Flex my="2rem" flexDir="column" gap={{ base: 2, md: 4 }}>
-                <Text fontSize={{ base: '14px', md: '16px' }}>Subtotal</Text>
-                <Text fontSize={{ base: '14px', md: '16px' }}>Discount</Text>
-                <Text fontSize={{ base: '14px', md: '16px' }}>
-                    Shipping Fee
-                </Text>
-                <Text fontSize={{ base: '14px', md: '16px' }}>Vat (5%)</Text>
-                <Divider
-                    my={{ base: '1rem', md: '0' }}
-                    borderWidth={'1px'}
-                    borderColor={'#3E3E3E'}
-                />
-                <Text fontSize={{ base: '14px', md: '16px' }}>Total</Text>
-            </Flex>
+            <CartTotals data={cart} />
 
             <Flex mt="auto" flexDir={'column'} gap={5}>
-                <Button
-                    borderRadius={'full'}
-                    height={{ base: '42px', md: '58px' }}
-                    opacity={1}
-                    color={'white'}
-                    _hover={{ opacity: 0.5 }}
-                    backgroundColor={'primary.indigo.900'}
-                >
-                    Confirm Order
-                </Button>
+                <PaymentButton cart={cart} />
                 <Text
                     textAlign="center"
                     fontSize={{ base: '10px', md: '12px' }}

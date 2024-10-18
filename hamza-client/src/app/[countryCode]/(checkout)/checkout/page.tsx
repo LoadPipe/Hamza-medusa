@@ -9,6 +9,9 @@ import CheckoutForm from '@modules/checkout-update-design/templates/checkout-for
 import CheckoutSummary from '@modules/checkout/templates/checkout-summary';
 import { Box, Flex } from '@chakra-ui/react';
 import CheckoutTemplate from '@modules/checkout-update-design/templates';
+import CheckoutDetails from '@modules/checkout-update-design/templates/checkout-details';
+import OrderSummary from '@modules/checkout-update-design/templates/order-summary';
+import PaymentSummary from '@modules/checkout-update-design/templates/payment-summary';
 
 export const metadata: Metadata = {
     title: 'Checkout',
@@ -59,7 +62,26 @@ export default async function Checkout(params: any) {
 
             <CheckoutSummary cartId={cartId} /> */}
 
-            <CheckoutTemplate cart={cart} />
+            {/* <CheckoutTemplate cart={cart} cartId={cartId} /> */}
+
+            <Flex
+                maxW={'1258px'}
+                width={'100%'}
+                mx="1rem"
+                my="2rem"
+                flexDir={{ base: 'column', md: 'row' }}
+                gap={{ base: 3, md: 5 }}
+            >
+                <Flex
+                    width={'100%'}
+                    flexDir={'column'}
+                    gap={{ base: 3, md: '41px' }}
+                >
+                    <CheckoutDetails cartId={cartId} />
+                    <OrderSummary cart={cart} />
+                </Flex>
+                <PaymentSummary />
+            </Flex>
         </Flex>
     );
 }

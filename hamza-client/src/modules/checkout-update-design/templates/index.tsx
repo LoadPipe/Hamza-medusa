@@ -8,9 +8,11 @@ import { Cart, Customer } from '@medusajs/medusa';
 const CheckoutTemplate = ({
     cart,
     customer,
+    cartId,
 }: {
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | null;
     customer: Omit<Customer, 'password_hash'> | null;
+    cartId: any;
 }) => {
     return (
         <Flex
@@ -26,7 +28,7 @@ const CheckoutTemplate = ({
                 flexDir={'column'}
                 gap={{ base: 3, md: '41px' }}
             >
-                <CheckoutDetails />
+                <CheckoutDetails cartId={cartId} />
                 <OrderSummary cart={cart} />
             </Flex>
             <PaymentSummary />
