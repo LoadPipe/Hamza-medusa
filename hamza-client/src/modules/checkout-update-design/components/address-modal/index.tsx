@@ -100,7 +100,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                         textAlign={'center'}
                         fontSize={'24px'}
                     >
-                        Add New Address
+                        Shipping Address
                     </ModalHeader>
                     <ModalCloseButton color={'white'} />
                     <ModalBody>
@@ -119,6 +119,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         borderWidth={0}
                                         borderRadius={'12px'}
                                         name="shipping_address.first_name"
+                                        color={'white'}
+                                        _placeholder={{ color: 'white' }}
                                         value={
                                             formData[
                                                 'shipping_address.first_name'
@@ -136,6 +138,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         borderWidth={0}
                                         borderRadius={'12px'}
                                         name="shipping_address.last_name"
+                                        color={'white'}
+                                        _placeholder={{ color: 'white' }}
                                         value={
                                             formData[
                                                 'shipping_address.last_name'
@@ -153,6 +157,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         borderWidth={0}
                                         borderRadius={'12px'}
                                         name="shipping_address.phone"
+                                        color={'white'}
+                                        _placeholder={{ color: 'white' }}
                                         value={
                                             formData['shipping_address.phone']
                                         }
@@ -171,6 +177,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                     borderWidth={0}
                                     borderRadius={'12px'}
                                     name="shipping_address.address_1"
+                                    color={'white'}
+                                    _placeholder={{ color: 'white' }}
                                     value={
                                         formData['shipping_address.address_1']
                                     }
@@ -186,6 +194,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                     borderWidth={0}
                                     borderRadius={'12px'}
                                     name="shipping_address.address_2"
+                                    color={'white'}
+                                    _placeholder={{ color: 'white' }}
                                     value={
                                         formData['shipping_address.address_2']
                                     }
@@ -207,6 +217,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         borderWidth={0}
                                         borderRadius={'12px'}
                                         name="shipping_address.city"
+                                        color={'white'}
+                                        _placeholder={{ color: 'white' }}
                                         value={
                                             formData['shipping_address.city']
                                         }
@@ -222,6 +234,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         borderWidth={0}
                                         borderRadius={'12px'}
                                         name="shipping_address.province"
+                                        color={'white'}
+                                        _placeholder={{ color: 'white' }}
                                         value={
                                             formData[
                                                 'shipping_address.province'
@@ -242,6 +256,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         name="shipping_address.country_code"
                                         autoComplete="country"
                                         region={cart?.region}
+                                        color={'white'}
+                                        _placeholder={{ color: 'white' }}
                                         value={
                                             formData[
                                                 'shipping_address.country_code'
@@ -260,6 +276,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         borderWidth={0}
                                         borderRadius={'12px'}
                                         name="shipping_address.postal_code"
+                                        color={'white'}
+                                        _placeholder={{ color: 'white' }}
                                         value={
                                             formData[
                                                 'shipping_address.postal_code'
@@ -274,6 +292,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         type="email"
                                         title="Enter a valid email address."
                                         autoComplete="email"
+                                        color={'white'}
+                                        _placeholder={{ color: 'white' }}
                                         value={
                                             formData.email.includes(
                                                 '@evm.blockchain'

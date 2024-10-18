@@ -30,6 +30,8 @@ import ErrorMessage from '../error-message';
 import compareAddresses from '@lib/util/compare-addresses';
 import { BiPencil } from 'react-icons/bi';
 import AddressModal from '../address-modal';
+import { IoLocationOutline } from 'react-icons/io5';
+import { CiSaveDown2 } from 'react-icons/ci';
 
 const Addresses = ({
     cart,
@@ -80,16 +82,19 @@ const Addresses = ({
                 >
                     Shipping To:
                 </Text>
-                <Box
+                <Flex
+                    flexDir={'row'}
                     cursor={'pointer'}
                     ml="auto"
                     alignSelf={'center'}
                     color="white"
                     _hover={{ color: 'primary.green.900' }}
                     onClick={onOpen}
+                    gap={2}
                 >
+                    <Text alignSelf={'center'}>Edit</Text>
                     <BiPencil size={23} />
-                </Box>
+                </Flex>
             </Flex>
 
             <div>
@@ -120,6 +125,7 @@ const Addresses = ({
                             gap={5}
                         >
                             <Button
+                                leftIcon={<IoLocationOutline size={20} />}
                                 flex={1}
                                 borderRadius={'full'}
                                 height={'52px'}
@@ -136,6 +142,7 @@ const Addresses = ({
                                 Change Shipping Address
                             </Button>
                             <Button
+                                leftIcon={<CiSaveDown2 size={20} />}
                                 flex={1}
                                 borderRadius={'full'}
                                 height={'52px'}
@@ -152,9 +159,44 @@ const Addresses = ({
                         </Flex>
                     </Flex>
                 ) : (
-                    <Box mt="2rem">
-                        <Button onClick={onOpen}>Add Shipping Address</Button>
-                    </Box>
+                    <Flex
+                        mt="2rem"
+                        flexDir={{ base: 'column', md: 'row' }}
+                        gap={5}
+                    >
+                        <Button
+                            leftIcon={<IoLocationOutline size={20} />}
+                            flex={1}
+                            borderRadius={'full'}
+                            height={'52px'}
+                            borderWidth={'1px'}
+                            borderColor={'primary.indigo.900'}
+                            color={'primary.indigo.900'}
+                            backgroundColor={'transparent'}
+                            opacity={1}
+                            _hover={{
+                                opacity: 0.5,
+                            }}
+                            onClick={onOpen}
+                        >
+                            Add Shipping Address
+                        </Button>
+                        <Button
+                            leftIcon={<CiSaveDown2 size={20} />}
+                            flex={1}
+                            borderRadius={'full'}
+                            height={'52px'}
+                            color={'white'}
+                            backgroundColor={'primary.indigo.900'}
+                            opacity={1}
+                            _hover={{
+                                opacity: 0.5,
+                            }}
+                            onClick={onOpen}
+                        >
+                            Use Saved Address
+                        </Button>
+                    </Flex>
                 )}
             </div>
             <AddressModal

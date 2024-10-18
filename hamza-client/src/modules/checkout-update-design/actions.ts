@@ -159,9 +159,11 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
     }
 
     redirect(
-        `/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?
-            process.env.NEXT_PUBLIC_FORCE_COUNTRY :
-            formData.get('shipping_address.country_code')}/checkout?step=review&cart=${cartId}`
+        `/${
+            process.env.NEXT_PUBLIC_FORCE_COUNTRY
+                ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
+                : formData.get('shipping_address.country_code')
+        }/checkout?step=review&cart=${cartId}`
     );
 }
 

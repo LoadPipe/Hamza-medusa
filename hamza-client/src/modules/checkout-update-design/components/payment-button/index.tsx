@@ -375,7 +375,9 @@ const CryptoPaymentButton = ({
                 isDisabled={step !== 'review' ? true : false}
                 onClick={handlePayment}
             >
-                {step === 'review' ? 'Confirm Order' : 'Add address to order'}
+                {step === 'review'
+                    ? 'Review & Confirm'
+                    : 'Add address to order'}
             </Button>
             <ErrorMessage error={errorMessage} />
         </>
