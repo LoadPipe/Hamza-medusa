@@ -112,7 +112,18 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                     </Flex>
                 )}
 
-                <Text fontSize={{ base: '14px', md: '16px' }}>Discount</Text>
+                {!!discount_total && (
+                    <Text fontSize={{ base: '14px', md: '16px' }}>
+                        Discount
+                    </Text>
+                )}
+
+                {!!gift_card_total && (
+                    <Text fontSize={{ base: '14px', md: '16px' }}>
+                        Gift Card
+                    </Text>
+                )}
+
                 <Flex justifyContent={'space-between'}>
                     <Text
                         alignSelf={'center'}
@@ -210,21 +221,6 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                         </Flex>
                     </Flex>
                 )}
-            </Flex>
-
-            <Flex flexDirection={'column'} color="white">
-                {!!discount_total && (
-                    <div className="flex items-center justify-between">
-                        <span>Discount</span>
-                    </div>
-                )}
-                {!!gift_card_total && (
-                    <div className="flex items-center justify-between">
-                        <span>Gift card</span>
-                    </div>
-                )}
-
-                {/* final total */}
             </Flex>
         </>
     );

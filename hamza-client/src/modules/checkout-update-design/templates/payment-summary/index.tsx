@@ -30,7 +30,7 @@ const PaymentSummary = async (params: any) => {
             maxW={{ base: '100%', md: '401px' }}
             width={'100%'}
             minHeight={{ base: 'auto', md: '400px' }}
-            maxHeight={{ base: 'auto', md: '620px' }}
+            maxHeight={{ base: 'auto', md: '580px' }}
             flexDir={'column'}
             borderRadius={'16px'}
             p={{ base: '16px', md: '40px' }}
