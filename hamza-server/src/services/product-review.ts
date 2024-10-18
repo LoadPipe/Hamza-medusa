@@ -93,6 +93,7 @@ class ProductReviewService extends TransactionBaseService {
             .createQueryBuilder('order')
             .leftJoinAndSelect('order.items', 'item')
             .leftJoinAndSelect('item.variant', 'variant')
+            .leftJoinAndSelect('order.store', 'store')
             .leftJoinAndSelect('variant.product', 'product')
             .where('order.customer_id = :customer_id', { customer_id })
             .andWhere(

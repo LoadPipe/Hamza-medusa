@@ -30,19 +30,16 @@ export default async function Reviews() {
     }
 
     return (
-        <Box
-            maxW={'927px'}
+        <Flex
+            maxW={{ md: '600px', lg: '927px' }}
             width="100%"
             backgroundColor={'#121212'}
             flexDirection={'column'}
             color="white"
-            rounded={'lg'}
-            justifyContent="center"
-            alignItems="center"
+            p={'24px'}
+            rounded="lg"
         >
-            <Box display="flex" flexDirection="column">
-                <ReviewPage customer={customer} />
-            </Box>
-        </Box>
+            <ReviewPage customer={customer} />
+        </Flex>
     );
 }
