@@ -108,7 +108,7 @@ export async function submitDiscountForm(
     }
 }
 
-export async function setAddresses(currentState: unknown, formData: FormData) {
+export async function setAddresses(formData: FormData) {
     if (!formData) return 'No form data received';
 
     const cartId = cookies().get('_medusa_cart_id')?.value;
