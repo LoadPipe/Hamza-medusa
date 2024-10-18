@@ -389,7 +389,10 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                             <Flex
                                                 mx={{ base: 'auto', md: 0 }}
                                                 my={'10px'}
-                                                display={{ base: 'flex' }}
+                                                flexDirection={{
+                                                    base: 'column',
+                                                    md: 'row',
+                                                }}
                                                 alignItems="center"
                                                 gap={1.5}
                                             >
