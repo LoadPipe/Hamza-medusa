@@ -2,7 +2,7 @@ import { Box, Flex, Radio, Text } from '@chakra-ui/react';
 import { LineItem, Region } from '@medusajs/medusa';
 import { Heading, Table } from '@medusajs/ui';
 
-import Item from '@modules/cart/components/item';
+import Item from '@modules/cart/components/item-checkout';
 import SkeletonLineItem from '@modules/skeletons/components/skeleton-line-item';
 
 type ExtendedLineItem = LineItem & {
