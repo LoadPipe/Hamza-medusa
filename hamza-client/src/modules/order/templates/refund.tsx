@@ -67,24 +67,6 @@ const Refund = ({
     //     retryFetch();
     // }, [isStale]);
 
-    // useEffect(() => {
-    //     if (isSuccess && refundOrder) {
-    //         console.log(`TRIGGER`);
-    //         debouncedOnSuccess();
-    //     }
-    // }, [isSuccess, chainEnabled]);
-
-    // Log the queries for refunded state and data
-    // console.log({
-    //     template: 'REFUNDED',
-    //     isLoading,
-    //     isError,
-    //     isFetching,
-    //     failureCount,
-    //     refundOrder,
-    //     isStale,
-    // });
-
     const toggleRefundInfo = (orderId: any) => {
         setCourierInfo(courierInfo === orderId ? null : orderId);
     };

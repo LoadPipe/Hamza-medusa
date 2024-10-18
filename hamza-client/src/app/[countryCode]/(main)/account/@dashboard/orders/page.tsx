@@ -14,8 +14,6 @@ export const metadata: Metadata = {
 export default async function Orders() {
     const customer = await getHamzaCustomer();
 
-    console.log(`ORDER PAGE`);
-    console.log(`CUSTOMER ${customer.id}`);
     const queryClient = getQueryClient();
     await queryClient.prefetchQuery({
         queryKey: ['batchOrders'],

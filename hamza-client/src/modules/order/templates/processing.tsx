@@ -91,10 +91,6 @@ const Processing = ({
 
     const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
-    // const debouncedOnSuccess = debounce(() => {
-    //     onSuccess && onSuccess(); // Call the parent onSuccess after debounce delay
-    // }, 1000); // 1000ms (1 second) delay
-
     const queryClient = useQueryClient();
 
     const {
@@ -102,7 +98,6 @@ const Processing = ({
         isLoading: processingOrdersLoading,
         isError: processingOrdersError,
         refetch,
-        isStale,
     } = useQuery<OrdersData>(['batchOrders']);
 
     const processingOrder = data?.Processing || [];
@@ -166,7 +161,6 @@ const Processing = ({
         setExpandViewOrder(expandViewOrder === orderId ? null : orderId);
     };
 
-    // **** DO NOT REMOVE ***** Order history commented out atm so this is not in use **** DO NOT REMOVE *****
     const getAmount = (amount?: number | null, currency_code?: string) => {
         if (amount === null || amount === undefined) {
             return;
@@ -197,7 +191,7 @@ const Processing = ({
             ) : processingOrdersError && orderActiveTab !== 'All Orders' ? (
                 <Text>Error fetching processing orders</Text>
             ) : processingOrdersError && orderActiveTab === 'All Orders' ? (
-                <Text>Error Fetching Orders</Text>
+                <Text>Error Fetching Orders, please refresh</Text>
             ) : processingOrder && processingOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {processingOrder.map((order: any) => {

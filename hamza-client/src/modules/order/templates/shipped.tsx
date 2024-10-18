@@ -41,59 +41,18 @@ const Shipped = ({
     isEmpty?: boolean;
 }) => {
     const [courierInfo, setCourierInfo] = useState(false);
-    const [shouldFetch, setShouldFetch] = useState(false);
 
-    // const debouncedOnSuccess = debounce(() => {
-    //     onSuccess && onSuccess();
-    // }, 1000);
     const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
     const toggleCourierInfo = (orderId: any) => {
         setCourierInfo(courierInfo === orderId ? null : orderId);
     };
 
-    const queryClient = useQueryClient();
-
     const { data, isLoading, isError, refetch, isStale } = useQuery<OrdersData>(
         ['batchOrders']
     );
 
     const shippedOrder = data?.Shipped || [];
-
-    // manually trigger a refetch if its stale
-    // useEffect(() => {
-    //     const retryFetch = async () => {
-    //         if (isStale && shippedOrder == undefined) {
-    //             for (let i = 0; i < 5; i++) {
-    //                 if (shippedOrder == undefined) {
-    //                     queryClient.resetQueries(['fetchShippedOrder']);
-    //                     queryClient.invalidateQueries(['fetchShippedOrder']);
-    //                     await new Promise((resolve) =>
-    //                         setTimeout(resolve, 100)
-    //                     );
-    //                 }
-    //             }
-    //         }
-    //     };
-    //     retryFetch();
-    // }, [isStale]);
-
-    // useEffect(() => {
-    //     if (isSuccess && shippedOrder) {
-    //         console.log(`TRIGGER`);
-    //         debouncedOnSuccess();
-    //     }
-    // }, [isSuccess, chainEnabled]);
-
-    // console.log({
-    //     template: 'SHIPPED',
-    //     isLoading,
-    //     isError,
-    //     isFetching,
-    //     failureCount,
-    //     shippedOrder,
-    //     isStale,
-    // });
 
     if (isLoading) {
         return (
