@@ -76,6 +76,7 @@ const AddressSelect = ({ addresses, cart }: AddressSelectProps) => {
                     bg="white"
                     border="1px"
                     borderColor="gray.200"
+                    color={'black'}
                     borderRadius="md"
                     overflow="hidden"
                     boxShadow="md"
