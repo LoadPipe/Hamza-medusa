@@ -30,19 +30,22 @@ const OrderTotalAmount: React.FC<OrderTotalAmountProps> = ({
     };
 
     return (
-        <Flex direction={{ sm: 'row', md: 'row' }} gap={2}>
-            <Text fontSize={'18px'}>Order total:</Text>
+        <Flex direction={'row'} gap={2} flexWrap={'nowrap'}>
             <Flex
                 direction={'row'}
                 gap={2}
                 alignItems={'center'}
-                alignContent={'center'}
+                flexWrap={'nowrap'}
             >
+                <Text fontSize={'18px'} whiteSpace="nowrap">
+                    Order total:
+                </Text>
+
                 <Image
                     src={currencyIcons[currencyCode ?? 'usdc']}
                     alt={currencyCode?.toUpperCase() ?? 'USDC'}
                 />
-                <Text fontSize={'18px'}>
+                <Text fontSize={'18px'} whiteSpace="nowrap">
                     {getAmount(totalPrice, currencyCode)}
                 </Text>
             </Flex>
