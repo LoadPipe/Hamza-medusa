@@ -227,8 +227,8 @@ const AccountNavDesktop = ({
                     <NavLink
                         href={'/account/orders'}
                         route={route!}
-                        title="Shipped"
-                        tab={'Shipped'}
+                        title="In Transit"
+                        tab={'In Transit'}
                         handleTabChange={() => handleTabChange(TABS.SHIPPED)}
                     />
                     <NavLink
