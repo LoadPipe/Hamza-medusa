@@ -44,6 +44,7 @@ const commonButtonStyles = {
 };
 import Link from 'next/link';
 import { renderStars } from '@modules/products/components/review-stars';
+import { FaCheckCircle } from 'react-icons/fa';
 /**
  * The ReviewPage component is responsible for displaying both pending reviews and previously submitted reviews for a customer.
  * It allows users to see which products they have purchased but have yet to review, and provides a way to edit or submit reviews for those products.
@@ -155,13 +156,17 @@ const ReviewPage = ({ customer }: { customer: any }) => {
             </ButtonGroup>
 
             {activeButton === 'reviews' && (
-                <Flex width={'100%'}>
+                <Flex
+                    width={'100%'}
+                    justifyContent={'center'}
+                    alignItems={'center'}
+                >
                     {reviewQuery.isLoading ? (
                         <Flex
                             flexDirection="column"
-                            justifyContent="center"
-                            alignItems="center"
-                            textAlign="center"
+                            width={'100%'}
+                            justifyContent={'center'}
+                            alignItems={'center'}
                             py={5}
                         >
                             <Text color="white" fontSize="lg" mb={8}>
@@ -326,13 +331,17 @@ const ReviewPage = ({ customer }: { customer: any }) => {
             )}
 
             {activeButton === 'pending' && (
-                <Flex>
+                <Flex
+                    width={'100%'}
+                    justifyContent={'center'}
+                    alignItems={'center'}
+                >
                     {pendingReviewsQuery.isLoading ? (
                         <Flex
-                            flexDirection="column"
-                            justifyContent="center"
-                            alignItems="center"
-                            textAlign="center"
+                            width={'100%'}
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                            flexDirection={'column'}
                             py={5}
                         >
                             <Text color="white" fontSize="lg" mb={8}>
@@ -347,112 +356,186 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                             </Text>
                         </Flex>
                     ) : pendingReviewsQuery.data?.length > 0 ? (
-                        <Stack divider={<StackDivider />} spacing={4}>
+                        <Flex
+                            direction={'column'}
+                            width="100%"
+                            border={'1px solid green'}
+                        >
                             {pendingReviewsQuery.data.map((review: any) =>
                                 review.items.map((item: any) => (
-                                    <Flex key={item.id}>
+                                    <Flex
+                                        flexDirection="column"
+                                        width="100%"
+                                        key={review.id}
+                                        my={'20px'}
+                                        border={'1px solid orange'}
+                                    >
                                         <Flex
-                                            direction={{
-                                                base: 'column',
-                                                md: 'column',
+                                            direction={'row'}
+                                            fontSize={{
+                                                base: '14px',
+                                                md: '16px',
                                             }}
-                                            justify="space-between"
-                                            align={{
-                                                base: 'stretch',
-                                                md: 'center',
-                                            }}
-                                            gap={4}
+                                            pb={{ base: 2, md: 4 }}
+                                            gap={2}
+                                            border={'3px solid purple'}
                                         >
-                                            <Flex flexDirection={'row'}>
-                                                <Text
-                                                    fontSize={{
-                                                        base: '14px',
-                                                        md: '16px',
-                                                    }}
-                                                    pb={{ base: 2, md: 4 }}
-                                                >
-                                                    <Text
-                                                        as="span"
-                                                        color="#555555"
-                                                    >
-                                                        Purchase Date:{' '}
-                                                    </Text>
-                                                    {format(
-                                                        new Date(
-                                                            review.created_at
-                                                        ),
-                                                        'PPP'
-                                                    )}
+                                            <Text
+                                                fontSize={{
+                                                    base: '14px',
+                                                    md: '16px',
+                                                }}
+                                                pb={{ base: 2, md: 4 }}
+                                            >
+                                                <Text as="span" color="#555555">
+                                                    Purchase Date:{' '}
                                                 </Text>
-                                            </Flex>
+                                                {format(
+                                                    new Date(review.created_at),
+                                                    'PPP'
+                                                )}
+                                            </Text>
+                                        </Flex>
 
+                                        <Flex
+                                            flexDirection={'column'}
+                                            width="100%"
+                                            gap={2}
+                                            border={'8px solid brown'}
+                                        >
+                                            <Link
+                                                href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${item.variant.product.handle}`}
+                                            >
+                                                <Image
+                                                    rounded="lg"
+                                                    width={{
+                                                        base: '72px',
+                                                        md: '100px',
+                                                    }}
+                                                    height={{
+                                                        base: '72px',
+                                                        md: '100px',
+                                                    }}
+                                                    src={item.thumbnail}
+                                                />
+                                            </Link>
+                                            <Text
+                                                fontSize={{
+                                                    base: '14px',
+                                                    md: '18px',
+                                                }}
+                                                maxWidth="100%"
+                                                fontWeight="bold"
+                                                textTransform="uppercase"
+                                                isTruncated
+                                            >
+                                                {item.title}
+                                            </Text>
                                             <Flex
-                                                mx={{ base: 'auto', md: 0 }}
-                                                my={'10px'}
-                                                flexDirection={{
-                                                    base: 'column',
+                                                direction={{
+                                                    base: 'row',
                                                     md: 'row',
                                                 }}
-                                                alignItems="center"
-                                                gap={1.5}
+                                                color={'rgba(85, 85, 85, 1.0)'}
                                             >
-                                                <Link
-                                                    href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${item.variant.product.handle}`}
-                                                >
-                                                    <Image
-                                                        rounded="lg"
-                                                        width={{
-                                                            base: '72px',
-                                                            md: '100px',
-                                                        }}
-                                                        height={{
-                                                            base: '72px',
-                                                            md: '100px',
-                                                        }}
-                                                        src={item.thumbnail}
-                                                    />
-                                                </Link>
                                                 <Text
-                                                    fontSize={{
-                                                        base: '14px',
-                                                        md: '18px',
-                                                    }}
-                                                    maxWidth="100%"
-                                                    fontWeight="bold"
-                                                    textTransform="uppercase"
-                                                    isTruncated
+                                                    fontSize={{ base: '16px' }}
+                                                    mr={1}
                                                 >
-                                                    {item.title}
+                                                    Variation:
+                                                </Text>
+                                                <Text
+                                                    noOfLines={2}
+                                                    fontSize="16px"
+                                                >
+                                                    {item.description}
                                                 </Text>
                                             </Flex>
-                                            <Flex>
-                                                <Button
-                                                    onClick={() =>
-                                                        handlePendingReview(
-                                                            review
-                                                        )
-                                                    }
-                                                    variant="outline"
-                                                    colorScheme="white"
-                                                    borderRadius="37px"
-                                                    cursor="pointer"
-                                                    _hover={{
-                                                        textDecoration:
-                                                            'underline',
-                                                    }}
-                                                    width={{
-                                                        base: 'full',
-                                                        md: '207px',
-                                                    }}
+                                            <Flex
+                                                flexDirection={{ md: 'column' }}
+                                                width="100%"
+                                            >
+                                                <Flex
+                                                    mx={{ base: 'auto', md: 0 }}
+                                                    my={'10px'}
+                                                    display={{ base: 'flex' }}
+                                                    alignItems="center"
+                                                    gap={1.5}
+                                                    width={'100%'}
                                                 >
-                                                    Review This Product
-                                                </Button>
+                                                    <Link
+                                                        href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/store/${review.store.name}`}
+                                                    >
+                                                        <Image
+                                                            src={
+                                                                review.store
+                                                                    .icon
+                                                            }
+                                                            alt="Light Logo"
+                                                            boxSize={{
+                                                                base: '32px',
+                                                            }}
+                                                            borderRadius="full"
+                                                        />
+                                                    </Link>
+                                                    <Text
+                                                        fontSize={{
+                                                            base: '18px',
+                                                            md: '24px',
+                                                        }}
+                                                        fontWeight="bold"
+                                                        noOfLines={1}
+                                                        mr={{
+                                                            sm: '5px',
+                                                            md: '10px',
+                                                        }}
+                                                    >
+                                                        {review.store.name}
+                                                    </Text>
+                                                    <FaCheckCircle color="#3196DF" />
+                                                </Flex>
+
+                                                <Flex
+                                                    flexDirection={'row'}
+                                                    width={'100%'}
+                                                >
+                                                    <Button
+                                                        onClick={() =>
+                                                            handlePendingReview(
+                                                                review
+                                                            )
+                                                        }
+                                                        variant="outline"
+                                                        ml="auto"
+                                                        colorScheme="white"
+                                                        borderRadius="37px"
+                                                        cursor="pointer"
+                                                        _hover={{
+                                                            textDecoration:
+                                                                'underline',
+                                                        }}
+                                                        width={{
+                                                            base: 'full',
+                                                            md: '207px',
+                                                        }}
+                                                    >
+                                                        Review This Product
+                                                    </Button>
+                                                </Flex>
                                             </Flex>
                                         </Flex>
+                                        <Flex
+                                            width={'100%'}
+                                            mb={'16px'}
+                                            flexDirection={{
+                                                base: 'column',
+                                                md: 'row',
+                                            }}
+                                        ></Flex>
                                     </Flex>
                                 ))
                             )}
-                        </Stack>
+                        </Flex>
                     ) : (
                         <Box textAlign="center" py={5}>
                             <Text>No pending reviews available.</Text>
