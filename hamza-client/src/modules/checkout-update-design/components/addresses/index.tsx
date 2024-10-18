@@ -127,9 +127,9 @@ const Addresses = ({
                         >
                             <Button
                                 leftIcon={<IoLocationOutline size={20} />}
-                                flex={1}
+                                flex={{ base: 'unset', md: 1 }}
                                 borderRadius={'full'}
-                                height={'52px'}
+                                height={{ base: '52px', md: '52px' }}
                                 borderWidth={'1px'}
                                 borderColor={'primary.indigo.900'}
                                 color={'primary.indigo.900'}
