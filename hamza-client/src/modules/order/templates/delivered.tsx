@@ -13,6 +13,7 @@ import { useParams, useRouter } from 'next/navigation';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import { OrdersData } from './all';
+import { useOrderTabStore } from '@store/order-tab-state';
 
 const Delivered = ({
     customer,
@@ -35,6 +36,7 @@ const Delivered = ({
     //     onSuccess && onSuccess();
     // }, 1000);
 
+    const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
     const queryClient = useQueryClient();
 
     const { data, isLoading, isError, refetch, isStale } = useQuery<OrdersData>(
@@ -116,7 +118,7 @@ const Delivered = ({
                     </Text>
                     <Spinner size={80} />
                 </Box>
-            ) : isError ? (
+            ) : isError && orderActiveTab !== 'All Orders' ? (
                 <Box
                     display="flex"
                     flexDirection="column"

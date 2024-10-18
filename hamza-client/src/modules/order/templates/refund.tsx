@@ -20,6 +20,7 @@ import { debounce, upperCase } from 'lodash';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import { OrdersData } from './all';
+import { useOrderTabStore } from '@store/order-tab-state';
 
 const Refund = ({
     customer,
@@ -34,6 +35,7 @@ const Refund = ({
 }) => {
     const [courierInfo, setCourierInfo] = useState(false);
     const [shouldFetch, setShouldFetch] = useState(false);
+    const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
     // const debouncedOnSuccess = debounce(() => {
     //     onSuccess && onSuccess();
@@ -117,7 +119,7 @@ const Refund = ({
                     </Text>
                     <Spinner size={80} />
                 </Box>
-            ) : isError ? (
+            ) : isError && orderActiveTab !== 'All Orders' ? (
                 <Text>Error fetching refunded orders</Text>
             ) : refundOrder && refundOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">

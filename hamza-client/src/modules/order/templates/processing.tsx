@@ -37,6 +37,7 @@ import Image from 'next/image';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import { OrdersData } from './all';
+import { useOrderTabStore } from '@store/order-tab-state';
 /**
  * The Processing component displays and manages the customer's processing orders, allowing users to view order details,
  * collapse or expand order views, and request cancellations of individual orders.
@@ -87,6 +88,8 @@ const Processing = ({
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
     const [expandViewOrder, setExpandViewOrder] = useState(false);
     const [shouldFetch, setShouldFetch] = useState(false);
+
+    const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
     // const debouncedOnSuccess = debounce(() => {
     //     onSuccess && onSuccess(); // Call the parent onSuccess after debounce delay
@@ -175,9 +178,6 @@ const Processing = ({
     if (isEmpty && processingOrder?.length === 0) {
         return <EmptyState />;
     }
-    const capitalizeFirstLetter = (word: string) => {
-        return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-    };
 
     return (
         <div style={{ width: '100%' }}>
@@ -194,8 +194,10 @@ const Processing = ({
                     </Text>
                     <Spinner size={80} />
                 </Box>
-            ) : processingOrdersError ? (
+            ) : processingOrdersError && orderActiveTab !== 'All Orders' ? (
                 <Text>Error fetching processing orders</Text>
+            ) : processingOrdersError && orderActiveTab === 'All Orders' ? (
+                <Text>Error Fetching Orders</Text>
             ) : processingOrder && processingOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {processingOrder.map((order: any) => {

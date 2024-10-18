@@ -49,7 +49,7 @@ const OrderLeftColumn = ({
             justifyContent={{ sm: 'center', md: 'space-between' }}
             flexDirection={{ base: 'column' }}
             width={'100%'}
-            minW={{ sm: '350px', md: '350px', lg: '400px' }}
+            minW={{ sm: '350px', md: '350px', lg: '500px' }}
             // border="1px solid red"
         >
             <Flex

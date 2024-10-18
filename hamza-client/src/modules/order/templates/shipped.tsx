@@ -27,6 +27,7 @@ import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import { OrdersData } from './all';
+import { useOrderTabStore } from '@store/order-tab-state';
 
 const Shipped = ({
     customer,
@@ -45,6 +46,7 @@ const Shipped = ({
     // const debouncedOnSuccess = debounce(() => {
     //     onSuccess && onSuccess();
     // }, 1000);
+    const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
     const toggleCourierInfo = (orderId: any) => {
         setCourierInfo(courierInfo === orderId ? null : orderId);
@@ -111,7 +113,7 @@ const Shipped = ({
         );
     }
 
-    if (isError || !shippedOrder) {
+    if ((isError && orderActiveTab !== 'All Orders') || !shippedOrder) {
         return (
             <Box
                 display="flex"

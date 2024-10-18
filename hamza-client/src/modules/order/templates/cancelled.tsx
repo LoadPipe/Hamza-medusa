@@ -17,6 +17,7 @@ import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import CancellationModal from '@modules/order/templates/cancelled-modal';
 import { OrdersData } from './all';
+import { useOrderTabStore } from '@store/order-tab-state';
 
 const Cancelled = ({
     customer,
@@ -33,6 +34,7 @@ const Cancelled = ({
     const [shouldFetch, setShouldFetch] = useState(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [activeOrder, setActiveOrder] = useState<string | null>(null); // State to track the active order's modal
+    const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
     // const debouncedOnSuccess = debounce(() => {
     //     onSuccess && onSuccess();
@@ -106,7 +108,7 @@ const Cancelled = ({
                     </Text>
                     <Spinner size={80} />
                 </Box>
-            ) : cancelIsError ? (
+            ) : cancelIsError && orderActiveTab !== 'All Orders' ? (
                 <Box
                     display="flex"
                     flexDirection="column"
