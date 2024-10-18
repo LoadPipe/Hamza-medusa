@@ -1,5 +1,5 @@
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
-import { ProductPreviewType } from 'types/global';
+import { ProductPreviewType } from '@/types/global';
 
 const stripCurrency = (price: string) => {
     return parseFloat(price.replace(/[^0-9.]/g, ''));

@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { getAllProducts } from '@lib/data';
-import { getRegion } from 'app/actions';
+import { getRegion } from '@/app/actions';
 import SearchAndFilterPanel from '@modules/home/components/search-and-filter-panel';
 import { Box } from '@chakra-ui/react';
 import HeroBanner from '@modules/home/components/hero-banner';
