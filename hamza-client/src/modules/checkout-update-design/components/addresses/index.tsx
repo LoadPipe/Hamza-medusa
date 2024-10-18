@@ -157,9 +157,9 @@ const Addresses = ({
                     >
                         <Button
                             leftIcon={<IoLocationOutline size={20} />}
-                            flex={1}
+                            flex={{ base: 'unset', md: 1 }}
                             borderRadius={'full'}
-                            height={'52px'}
+                            height={{ base: '52px', md: '52px' }}
                             borderWidth={'1px'}
                             borderColor={'primary.indigo.900'}
                             color={'primary.indigo.900'}
@@ -172,21 +172,11 @@ const Addresses = ({
                         >
                             Add Shipping Address
                         </Button>
-                        <Button
-                            leftIcon={<CiSaveDown2 size={20} />}
-                            flex={1}
-                            borderRadius={'full'}
-                            height={'52px'}
-                            color={'white'}
-                            backgroundColor={'primary.indigo.900'}
-                            opacity={1}
-                            _hover={{
-                                opacity: 0.5,
-                            }}
-                            onClick={onOpen}
-                        >
-                            Use Saved Address
-                        </Button>
+
+                        <AddressSelect
+                            cart={cart}
+                            addresses={customer?.shipping_addresses}
+                        />
                     </Flex>
                 )}
             </div>
