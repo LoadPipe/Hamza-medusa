@@ -49,24 +49,6 @@ const Refund = ({
 
     const refundOrder = data?.Refunded || [];
 
-    // manually trigger a refetch if its stale
-    // useEffect(() => {
-    //     const retryFetch = async () => {
-    //         if (isStale && refundOrder == undefined) {
-    //             for (let i = 0; i < 3; i++) {
-    //                 if (refundOrder == undefined) {
-    //                     queryClient.resetQueries(['fetchRefundOrder']);
-    //                     queryClient.invalidateQueries(['fetchRefundOrder']);
-    //                     await new Promise((resolve) =>
-    //                         setTimeout(resolve, 100)
-    //                     );
-    //                 }
-    //             }
-    //         }
-    //     };
-    //     retryFetch();
-    // }, [isStale]);
-
     const toggleRefundInfo = (orderId: any) => {
         setCourierInfo(courierInfo === orderId ? null : orderId);
     };

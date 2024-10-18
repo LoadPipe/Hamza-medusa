@@ -189,9 +189,27 @@ const Processing = ({
                     <Spinner size={80} />
                 </Box>
             ) : processingOrdersError && orderActiveTab !== 'All Orders' ? (
-                <Text>Error fetching processing orders</Text>
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    textAlign="center"
+                    py={5}
+                >
+                    <Text>Error fetching processing orders</Text>
+                </Box>
             ) : processingOrdersError && orderActiveTab === 'All Orders' ? (
-                <Text>Error Fetching Orders, please refresh</Text>
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    textAlign="center"
+                    py={5}
+                >
+                    <Text>Error Fetching Orders, please refresh</Text>
+                </Box>
             ) : processingOrder && processingOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {processingOrder.map((order: any) => {
