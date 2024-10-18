@@ -398,7 +398,10 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                         </Flex>
 
                                         <Flex
-                                            flexDirection={'column'}
+                                            flexDirection={{
+                                                base: 'column',
+                                                md: 'row',
+                                            }}
                                             width="100%"
                                             gap={2}
                                             border={'8px solid brown'}
@@ -419,18 +422,29 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                     src={item.thumbnail}
                                                 />
                                             </Link>
-                                            <Text
-                                                fontSize={{
-                                                    base: '14px',
-                                                    md: '18px',
+
+                                            <Flex
+                                                flexDirection={{
+                                                    base: 'column',
+                                                    md: 'row',
                                                 }}
-                                                maxWidth="100%"
-                                                fontWeight="bold"
-                                                textTransform="uppercase"
-                                                isTruncated
+                                                width="100%"
+                                                gap={2}
+                                                border={'8px solid brown'}
                                             >
-                                                {item.title}
-                                            </Text>
+                                                <Text
+                                                    fontSize={{
+                                                        base: '14px',
+                                                        md: '18px',
+                                                    }}
+                                                    maxWidth="100%"
+                                                    fontWeight="bold"
+                                                    textTransform="uppercase"
+                                                    isTruncated
+                                                >
+                                                    {item.title}
+                                                </Text>
+                                            </Flex>
                                             <Flex
                                                 direction={{
                                                     base: 'row',
@@ -454,11 +468,15 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                             <Flex
                                                 flexDirection={{ md: 'column' }}
                                                 width="100%"
+                                                border={'5px solid orange'}
+                                                justifyContent={'flex-end'}
                                             >
                                                 <Flex
-                                                    mx={{ base: 'auto', md: 0 }}
                                                     my={'10px'}
-                                                    display={{ base: 'flex' }}
+                                                    ml={'auto'}
+                                                    flexDirection={{
+                                                        base: 'row',
+                                                    }}
                                                     alignItems="center"
                                                     gap={1.5}
                                                     width={'100%'}
