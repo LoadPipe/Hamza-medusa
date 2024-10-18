@@ -86,7 +86,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formPayload = new FormData(e.currentTarget);
-        setAddresses2(formPayload);
+        setAddresses(formPayload, null);
         onClose();
     };
 

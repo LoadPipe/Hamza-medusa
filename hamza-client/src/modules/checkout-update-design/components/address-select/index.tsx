@@ -59,7 +59,7 @@ const AddressSelect = ({ addresses, cart }: AddressSelectProps) => {
                 color="white"
                 leftIcon={<ChevronUpDown />}
                 borderRadius="full"
-                height="52px"
+                height={{ base: '42px', md: '52px' }}
                 _hover={{ opacity: 0.5 }}
                 onClick={() => setIsOpen(!isOpen)}
             >

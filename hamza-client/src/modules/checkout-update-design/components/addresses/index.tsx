@@ -93,43 +93,46 @@ const Addresses = ({
                     onClick={onOpen}
                     gap={2}
                 >
-                    <Text alignSelf={'center'}>Edit</Text>
                     <BiPencil size={23} />
                 </Flex>
             </Flex>
 
             <div>
                 {cart && cart.shipping_address ? (
-                    <Flex flexDir={'column'} color="primary.green.900">
-                        <Text className="text-medium text-white  font-bold">
+                    <Flex flexDir={'column'} color="white">
+                        <Text
+                            fontWeight={700}
+                            fontSize={{ base: '14px', md: '16px' }}
+                        >
                             {cart.shipping_address.first_name}{' '}
                             {cart.shipping_address.last_name}
                         </Text>
-                        <Text className="text-medium text-white">
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
                             {cart.shipping_address.address_1}{' '}
                             {cart.shipping_address.address_2}
                         </Text>
-                        <Text className="text-medium text-white">
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
                             {cart.shipping_address.postal_code},{' '}
                             {cart.shipping_address.city}
                         </Text>
-                        <Text className="text-medium text-white">
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
                             {cart.shipping_address.country_code?.toUpperCase()}
                         </Text>
-                        <Text className="text-medium text-white">
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
                             {contactEmail}
                         </Text>
 
                         <Flex
                             mt="2rem"
                             flexDir={{ base: 'column', md: 'row' }}
-                            gap={5}
+                            gap={{ base: 4, md: 5 }}
+                            mb={{ base: '0.5rem', md: 0 }}
                         >
                             <Button
                                 leftIcon={<IoLocationOutline size={20} />}
                                 flex={{ base: 'unset', md: 1 }}
                                 borderRadius={'full'}
-                                height={{ base: '52px', md: '52px' }}
+                                height={{ base: '42px', md: '52px' }}
                                 borderWidth={'1px'}
                                 borderColor={'primary.indigo.900'}
                                 color={'primary.indigo.900'}
@@ -153,13 +156,13 @@ const Addresses = ({
                     <Flex
                         mt="2rem"
                         flexDir={{ base: 'column', md: 'row' }}
-                        gap={5}
+                        gap={{ base: 4, md: 5 }}
                     >
                         <Button
                             leftIcon={<IoLocationOutline size={20} />}
                             flex={{ base: 'unset', md: 1 }}
                             borderRadius={'full'}
-                            height={{ base: '52px', md: '52px' }}
+                            height={{ base: '42px', md: '52px' }}
                             borderWidth={'1px'}
                             borderColor={'primary.indigo.900'}
                             color={'primary.indigo.900'}

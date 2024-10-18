@@ -49,7 +49,7 @@ export default async function CheckoutDetails(params: any) {
             bgColor={'#121212'}
             maxW={'825px'}
             width={'100%'}
-            height={'406px'}
+            height={{ base: 'auto', md: '406px' }}
             flexDir={'column'}
             borderRadius={'16px'}
             px={{ base: '16px', md: '60px' }}
@@ -58,7 +58,7 @@ export default async function CheckoutDetails(params: any) {
             <Text
                 color={'primary.green.900'}
                 fontSize={'18px'}
-                textAlign={{ base: 'center', md: 'unset' }}
+                // textAlign={{ base: 'center', md: 'unset' }}
                 fontWeight={600}
             >
                 Checkout Details

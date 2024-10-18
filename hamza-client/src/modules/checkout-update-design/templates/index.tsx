@@ -15,18 +15,6 @@ const CheckoutTemplate = ({
     customer: Omit<Customer, 'password_hash'> | null;
     cartId: any;
 }) => {
-    const router = useRouter();
-
-    useEffect(() => {
-        if (cart && cart.shipping_address) {
-            router.push((`/checkout?step=review&cart=${cartId}`)
-        }
-
-        return () => {
-            // Cleanup if needed
-        };
-    }, [cart, cartId]); // Correctly set dependencies
-
     return (
         <Flex
             maxW={'1258px'}
