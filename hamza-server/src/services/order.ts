@@ -634,6 +634,10 @@ export default class OrderService extends MedusaOrderService {
         return order;
     };
 
+    async getOrderHistory(orderId: string): Promise<OrderHistory[]> {
+        return this.orderHistoryService_.retrieve(orderId);
+    }
+
     private async sendOrderEmail(
         order: Order,
         requiredNotification: string,

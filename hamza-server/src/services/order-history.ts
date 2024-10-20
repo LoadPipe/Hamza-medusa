@@ -22,7 +22,7 @@ export default class OrderHistoryService extends TransactionBaseService {
         this.logger = createLogger(container, 'OrderHistoryService');
     }
 
-    async create(order: Order, createInput: CreateOrderHistoryInput) {
+    async create(order: Order, createInput: CreateOrderHistoryInput): Promise<OrderHistory> {
         const item: OrderHistory = new OrderHistory();
 
         item.order_id = order.id;
@@ -31,6 +31,10 @@ export default class OrderHistoryService extends TransactionBaseService {
         item.to_fulfillment_status = createInput.to_fulfillment_status;
         item.metadata = createInput.metadata;
 
-        this.orderHistoryRepository_.save(item);
+        return this.orderHistoryRepository_.save(item);
+    }
+
+    async retrieve(orderId: string): Promise<OrderHistory[]> {
+        return this.orderHistoryRepository_.find({ where: { order_id: orderId } });
     }
 }
