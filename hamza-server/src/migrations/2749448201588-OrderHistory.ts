@@ -4,6 +4,7 @@ export class OrderHistory2749448201588 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
             `CREATE TABLE "order_history" ( 
+            "id" character varying NOT NULL,
             "order_id" character varying NOT NULL,
             "title" character varying,
             "to_status" character varying,

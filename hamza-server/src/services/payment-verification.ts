@@ -89,8 +89,9 @@ export default class PaymentVerificationService extends TransactionBaseService {
 
             //save the order
             this.logger.info(`updating order ${order.id}, setting to ${paymentStatus}`);
-            order.payment_status = paymentStatus;
-            await this.orderRepository_.save(order);
+            //order.payment_status = paymentStatus;
+            //await this.orderRepository_.save(order);
+            order = await this.orderService_.setOrderStatus(order, null, null, paymentStatus);
 
             //TODO: set the payments status to captured
 
