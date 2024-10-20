@@ -376,67 +376,67 @@ export default class BuckydropService extends TransactionBaseService {
                         switch (parseInt(status)) {
                             case 0:
                                 order = await this.orderService_.setOrderStatus(
-                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED
+                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED, null, orderDetail
                                 );
                                 break;
                             case 1:
                                 order = await this.orderService_.setOrderStatus(
-                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED
+                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED, null, orderDetail
                                 );
                                 break;
                             case 2:
                                 order = await this.orderService_.setOrderStatus(
-                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED
+                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED, null, orderDetail
                                 );
                                 break;
                             case 3:
                                 order = await this.orderService_.setOrderStatus(
-                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED
+                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED, null, orderDetail
                                 );
                                 break;
                             case 4:
                                 order = await this.orderService_.setOrderStatus(
-                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED
+                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED, null, orderDetail
                                 );
                                 break;
                             case 5:
                                 order = await this.orderService_.setOrderStatus(
-                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED
+                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED, null, orderDetail
                                 );
                                 break;
                             case 6:
                                 order = await this.orderService_.setOrderStatus(
-                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED
+                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED, null, orderDetail
                                 );
                                 break;
                             case 7:
                                 order = await this.orderService_.setOrderStatus(
-                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED
+                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED, null, orderDetail
                                 );
                                 break;
                             case 8:
                                 order = await this.orderService_.setOrderStatus(
-                                    order, OrderStatus.CANCELED, FulfillmentStatus.CANCELED
+                                    order, OrderStatus.CANCELED, FulfillmentStatus.CANCELED, null, orderDetail
                                 );
                                 break;
                             case 9:
                                 order = await this.orderService_.setOrderStatus(
-                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED
+                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED, null, orderDetail
                                 );
                                 break;
                             case 10:
                                 order = await this.orderService_.setOrderStatus(
-                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED
+                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED, null, orderDetail
                                 );
                                 break;
                             case 11:
                                 order = await this.orderService_.setOrderStatus(
-                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED
+                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED, null, orderDetail
                                 );
                                 break;
                             case 10:
                                 order = await this.orderService_.setOrderStatus(
-                                    order, OrderStatus.COMPLETED, FulfillmentStatus.FULFILLED
+                                    order, OrderStatus.COMPLETED, FulfillmentStatus.FULFILLED, null, orderDetail
                                 );
                                 break;
                         }

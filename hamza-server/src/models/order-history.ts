@@ -4,6 +4,13 @@ import { FulfillmentStatus, OrderStatus, PaymentStatus } from '@medusajs/medusa'
 
 @Entity()
 export class OrderHistory extends BaseEntity {
+
+    constructor() {
+        super();
+        if (!this.id)
+            this.beforeInsert();
+    }
+
     @PrimaryColumn()
     id: string;
 
@@ -27,6 +34,6 @@ export class OrderHistory extends BaseEntity {
 
     @BeforeInsert()
     private beforeInsert(): void {
-        this.id = generateEntityId(this.id, 'hist');
+        this.id = generateEntityId('id', 'hist');
     }
 }
