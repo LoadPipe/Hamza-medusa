@@ -585,6 +585,31 @@ export default class OrderService extends MedusaOrderService {
         return this.sendOrderEmail(order, 'orderStatusChanged', 'order-cancelled', 'cancelled');
     }
 
+    async setOrderStatus(order: Order, status: OrderStatus, fulfillmentStatus: FulfillmentStatus): Promise<Order> {
+        if (order.status != status || order.fulfillment_status != fulfillmentStatus) {
+            order.status = status;
+            order.fulfillment_status = fulfillmentStatus;
+
+
+            //send emails
+            //TODO: this should follow medusa events 
+            if (order.fulfillment_status == FulfillmentStatus.SHIPPED) {
+                this.sendShippedEmail(order);
+            }
+            if (order.fulfillment_status == FulfillmentStatus.FULFILLED) {
+                this.sendDeliveredEmail(order);
+            }
+            if (order.status == OrderStatus.CANCELED) {
+                this.sendCancelledEmail(order);
+            }
+
+            //save the order
+            await this.orderRepository_.save(order);
+        }
+
+        return order;
+    };
+
     private async sendOrderEmail(
         order: Order,
         requiredNotification: string,
