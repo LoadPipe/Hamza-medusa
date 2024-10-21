@@ -216,6 +216,26 @@ export const config: MiddlewaresConfig = {
                 restrictCustomerOrders,
             ],
         },
+        {
+            matcher: '/store/payment-collection',
+            middlewares: [
+                cors({
+                    origin: [STORE_CORS],
+                    credentials: true,
+                }),
+                restrictCustomerOrders,
+            ],
+        },
+        {
+            matcher: '/store/returns',
+            middlewares: [
+                cors({
+                    origin: [STORE_CORS],
+                    credentials: true,
+                }),
+                restrictCustomerOrders,
+            ],
+        },
 
         // {
         //     matcher: '/custom/confirmation-token/generate',
