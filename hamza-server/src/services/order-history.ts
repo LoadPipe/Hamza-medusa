@@ -31,6 +31,17 @@ export default class OrderHistoryService extends TransactionBaseService {
         item.to_fulfillment_status = createInput.to_fulfillment_status;
         item.metadata = createInput.metadata;
 
+        //calculate item title 
+        if (item.to_status) {
+            item.title = item.to_status.toString();
+        }
+        else {
+            if (item.to_fulfillment_status)
+                item.title = item.to_fulfillment_status.toString();
+            else
+                item.title = item.to_payment_status.toString();
+        }
+
         return this.orderHistoryRepository_.save(item);
     }
 
