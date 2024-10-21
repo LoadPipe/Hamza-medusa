@@ -132,7 +132,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                     </div>
                 )}
 
-                {shippingCost &&
+                {shippingCost ?
                     <Flex justifyContent={'space-between'}>
                         <Text
                             alignSelf={'center'}
@@ -151,6 +151,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                             ).toString()}
                         </Text>
                     </Flex>
+                    : <Flex></Flex>
                 }
 
                 {/* final total */}
