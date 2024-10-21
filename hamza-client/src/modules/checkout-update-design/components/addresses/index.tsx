@@ -1,39 +1,16 @@
 'use client';
 
-import {
-    useSearchParams,
-    useRouter,
-    usePathname,
-    useParams,
-} from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { Cart, Customer } from '@medusajs/medusa';
-import { CheckCircleSolid } from '@medusajs/icons';
 import { useToggleState } from '@medusajs/ui';
-import {
-    Flex,
-    Heading,
-    Text,
-    Box,
-    useDisclosure,
-    Button,
-} from '@chakra-ui/react';
+import { Flex, Text, useDisclosure, Button } from '@chakra-ui/react';
 
-import Divider from '@modules/common/components/divider';
-import Spinner from '@modules/common/icons/spinner';
-
-import BillingAddress from '../billing_address';
-import ShippingAddress from '../shipping-address';
-import { setAddresses } from '../../actions';
-import { SubmitButton } from '../submit-button';
-import { useFormState } from 'react-dom';
-import ErrorMessage from '../error-message';
 import compareAddresses from '@lib/util/compare-addresses';
 import { BiPencil } from 'react-icons/bi';
 import AddressModal from '../address-modal';
 import { IoLocationOutline } from 'react-icons/io5';
-import { CiSaveDown2 } from 'react-icons/ci';
 import AddressSelect from '../address-select';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const Addresses = ({
     cart,
@@ -47,12 +24,21 @@ const Addresses = ({
         'add'
     );
 
+    // Hooks to open and close address modal
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const params = useParams();
 
+    // Get country code
+    const params = useParams();
     const countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY
         ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
         : (params.countryCode as string);
+
+    // Set contact email on shipping address display
+    const contactEmail = cart?.email
+        ? cart.email.endsWith('@evm.blockchain')
+            ? ''
+            : cart.email
+        : '';
 
     const { state: sameAsSBilling, toggle: toggleSameAsBilling } =
         useToggleState(
@@ -63,12 +49,6 @@ const Addresses = ({
                   )
                 : true
         );
-
-    const contactEmail = cart?.email
-        ? cart.email.endsWith('@evm.blockchain')
-            ? ''
-            : cart.email
-        : '';
 
     return (
         <div>

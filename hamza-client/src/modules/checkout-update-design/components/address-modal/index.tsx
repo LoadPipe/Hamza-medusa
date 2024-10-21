@@ -19,6 +19,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Cart, Customer } from '@medusajs/medusa';
 import { setAddresses } from '../../actions';
 import CountrySelect from '@modules/checkout/components/country-select';
+import { addCustomerShippingAddress } from '@/modules/account/actions';
 
 interface AddressModalProps {
     isOpen: boolean;
@@ -68,10 +69,42 @@ const AddressModal: React.FC<AddressModalProps> = ({
         });
     };
 
-    const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const [formState, formAction] = useFormState(addCustomerShippingAddress, {
+        success: false,
+        error: null,
+    });
+
+    const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formPayload = new FormData(e.currentTarget);
-        setAddresses(addressActionType, formPayload);
+
+        // If "Save shipping address" checkbox is checked, save the address for the customer
+        if (checked && customer) {
+            try {
+                const shippingAddressData = {
+                    first_name: formData['shipping_address.first_name'],
+                    last_name: formData['shipping_address.last_name'],
+                    address_1: formData['shipping_address.address_1'],
+                    address_2: formData['shipping_address.address_2'],
+                    company: formData['shipping_address.company'],
+                    postal_code: formData['shipping_address.postal_code'],
+                    city: formData['shipping_address.city'],
+                    country_code: formData['shipping_address.country_code'],
+                    province: formData['shipping_address.province'],
+                    phone: formData['shipping_address.phone'],
+                };
+
+                await addCustomerShippingAddress(
+                    customer.id,
+                    shippingAddressData
+                );
+            } catch (error) {
+                console.error('Failed to save shipping address:', error);
+            }
+        }
+
+        // Continue to set the addresses as usual
+        await setAddresses(addressActionType, formPayload);
         onClose();
     };
 
@@ -298,7 +331,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                             </Flex>
 
                             {/* Checkbox for Default Address */}
-                            {/* <Flex alignItems="center" my="3" color={'white'}>
+                            <Flex alignItems="center" my="3" color={'white'}>
                                 <Checkbox
                                     mr="2"
                                     isChecked={checked}
@@ -307,7 +340,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                 <Text alignSelf={'center'}>
                                     Save shipping address
                                 </Text>
-                            </Flex> */}
+                            </Flex>
                         </Flex>
                     </ModalBody>
 
