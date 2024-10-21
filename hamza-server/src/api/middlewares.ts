@@ -57,38 +57,53 @@ const registerLoggedInCustomer = async (
     });
 };
 
-// Logged in customer can check all public routes
-const restrictLoggedInCustomer = async (
+const restrictLoggedInCart = async (
     req: MedusaRequest,
     res: MedusaResponse,
     next: MedusaNextFunction
 ) => {
-    const logger = req.scope.resolve('logger') as Logger;
+    let authorized = false;
+    const logger = req.scope.resolve('logger');
 
+    const cart_id = req.query.id || req.headers.id || req.url.split('/')[1]; // Assuming cart_id is the 4th part of the URL
+    console.log(`CART_ID IS ${cart_id}`);
+    let cartService;
+    let cart;
+    if (cart_id) {
+        cartService = req.scope.resolve('cartService');
+        cart = await cartService.retrieve(cart_id);
+        if (cart.email === null && cart.customer_id === null) {
+            next();
+            authorized = true;
+        }
+    }
+    // Check for LOGGED IN
     if (req.headers.authorization) {
         const jwtToken: any = jwt.decode(
             req.headers.authorization.replace('Bearer ', '')
         );
         const customerId = jwtToken?.customer_id;
 
-        logger.debug(`JWT token decoded: ${JSON.stringify(jwtToken)}`);
+        logger.debug(`cart_id ${cart_id}`);
+        if (cart_id) {
+            const cartService = req.scope.resolve('cartService');
+            const cart = await cartService.retrieve(cart_id);
 
-        if (customerId) {
-            logger.debug(`Customer ID in request: ${customerId}`);
-
-            // Store customerId in session for use elsewhere if necessary
-            asyncLocalStorage.run(new Map(), () => {
-                sessionStorage.customerId = customerId;
-                sessionStorage.requestId = generateEntityId();
-                sessionStorage.sessionId = '';
-                next();
-            });
-            return;
+            // Check if NOT anonymous cart first...
+            if (cart.email !== null) {
+                if (cart_id === cart.id && customerId === cart.customer_id) {
+                    next();
+                    authorized = true;
+                }
+                // If anonymous cart just return their data..
+            }
         }
     }
 
-    // If no customer ID, unauthorized
-    res.status(401).json({ status: false, message: 'Unauthorized' });
+    if (!authorized) {
+        res.status(401).json({ status: false });
+        return;
+    }
 };
 
 const restrictLoggedInCustomerById = async (
@@ -110,9 +125,7 @@ const restrictLoggedInCustomerById = async (
         if (email && customerId?.length) {
             const customerService = req.scope.resolve('customerService');
             const customer = await customerService.retrieve(customerId);
-            logger.debug(
-                `order customer id in store/orders route is ${JSON.stringify(customer)}`
-            );
+
             if (customer?.id === customerId && email === customer.email) {
                 authorized = true;
                 return res.status(200).json({ exists: true });
@@ -141,7 +154,6 @@ const restrictCustomerOrders = async (
         logger.debug(`customer id in store/orders route is ${customerId}`);
 
         const orderId = req.url.replace('/', '');
-        logger.debug(`ORDERID ${orderId}`);
         if (orderId && orderId.startsWith('order_') && customerId?.length) {
             const orderService = req.scope.resolve('orderService');
             const order = await orderService.retrieve(orderId);
@@ -284,7 +296,7 @@ export const config: MiddlewaresConfig = {
                     origin: [STORE_CORS],
                     credentials: true,
                 }),
-                restrictLoggedInCustomer,
+                restrictCustomerOrders,
             ],
         },
         {
@@ -294,7 +306,7 @@ export const config: MiddlewaresConfig = {
                     origin: [STORE_CORS],
                     credentials: true,
                 }),
-                restrictLoggedInCustomer,
+                restrictCustomerOrders,
             ],
         },
         {
@@ -304,7 +316,7 @@ export const config: MiddlewaresConfig = {
                     origin: [STORE_CORS],
                     credentials: true,
                 }),
-                restrictLoggedInCustomer,
+                restrictCustomerOrders,
             ],
         },
         {
@@ -315,6 +327,17 @@ export const config: MiddlewaresConfig = {
                     credentials: true,
                 }),
                 restrictLoggedInCustomerById,
+            ],
+        },
+
+        {
+            matcher: '/store/carts',
+            middlewares: [
+                cors({
+                    origin: [STORE_CORS],
+                    credentials: true,
+                }),
+                restrictLoggedInCart,
             ],
         },
 
