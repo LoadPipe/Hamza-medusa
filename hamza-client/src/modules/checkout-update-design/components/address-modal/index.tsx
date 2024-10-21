@@ -26,8 +26,7 @@ interface AddressModalProps {
     onClose: () => void;
     customer: Omit<Customer, 'password_hash'> | null;
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | null;
-    checked: boolean;
-    onChange: () => void;
+    toggleSameAsBilling: () => void;
     countryCode: string;
     addressActionType: 'add' | 'edit';
 }
@@ -37,8 +36,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
     onClose,
     customer,
     cart,
-    checked,
-    onChange,
+    toggleSameAsBilling,
     countryCode,
     addressActionType,
 }) => {

@@ -12,7 +12,7 @@ import { ChevronUpDown } from '@medusajs/icons';
 import { Address, AddressPayload, Cart } from '@medusajs/medusa';
 import { omit } from 'lodash';
 import { useState, useMemo } from 'react';
-
+import { useRouter } from 'next/navigation';
 import { cartUpdate } from '@modules/checkout/actions';
 import compareAddresses from '@lib/util/compare-addresses';
 
@@ -24,9 +24,11 @@ type AddressSelectProps = {
 const AddressSelect = ({ addresses, cart }: AddressSelectProps) => {
     const [isOpen, setIsOpen] = useState(false); // State to manage dropdown open/close
     const [selectedId, setSelectedId] = useState<string | null>(null); // State for selected address id
+    const router = useRouter();
 
     const handleSelect = (id: string) => {
         const savedAddress = addresses.find((a) => a.id === id);
+
         if (savedAddress) {
             cartUpdate({
                 shipping_address: omit(savedAddress, [
@@ -41,6 +43,11 @@ const AddressSelect = ({ addresses, cart }: AddressSelectProps) => {
             });
             setSelectedId(id); // Set the selected address ID
             setIsOpen(false); // Close the dropdown after selection
+
+            //If no shipping address in cart, go to review when cart is updated with address
+            if (!cart?.shipping_address) {
+                router.push('/checkout?step=review');
+            }
         }
     };
 

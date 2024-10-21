@@ -2,13 +2,8 @@ import { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { LineItem } from '@medusajs/medusa';
-
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
-import Wrapper from '@modules/checkout/components/payment-wrapper';
-import CheckoutForm from '@modules/checkout-update-design/templates/checkout-form';
-import CheckoutSummary from '@modules/checkout/templates/checkout-summary';
-import { Box, Flex } from '@chakra-ui/react';
-import CheckoutTemplate from '@modules/checkout-update-design/templates';
+import { Flex } from '@chakra-ui/react';
 import CheckoutDetails from '@modules/checkout-update-design/templates/checkout-details';
 import OrderSummary from '@modules/checkout-update-design/templates/order-summary';
 import PaymentSummary from '@modules/checkout-update-design/templates/payment-summary';
@@ -56,14 +51,6 @@ export default async function Checkout(params: any) {
 
     return (
         <Flex flexDir="row" maxW={'1280px'} width={'100%'}>
-            {/* <Wrapper cart={cart}>
-                <CheckoutForm cartId={cartId} />
-            </Wrapper>
-
-            <CheckoutSummary cartId={cartId} /> */}
-
-            {/* <CheckoutTemplate cart={cart} cartId={cartId} /> */}
-
             <Flex
                 maxW={'1258px'}
                 width={'100%'}

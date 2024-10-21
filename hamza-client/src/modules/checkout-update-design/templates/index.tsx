@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import OrderSummary from './order-summary';
 import PaymentSummary from './payment-summary';
 import CheckoutDetails from './checkout-details';
 import { Flex } from '@chakra-ui/react';
 import { Cart, Customer } from '@medusajs/medusa';
-import { redirect, useRouter } from 'next/navigation';
 
 const CheckoutTemplate = ({
     cart,
