@@ -90,6 +90,15 @@ const AddressModal: React.FC<AddressModalProps> = ({
         onClose();
     };
 
+    /* const [formState, formAction] = useFormState(
+        updateCustomerShippingAddress,
+        {
+            success: false,
+            error: null,
+            addressId: address.id,
+        }
+    );*/
+
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="lg">
             <ModalOverlay />
