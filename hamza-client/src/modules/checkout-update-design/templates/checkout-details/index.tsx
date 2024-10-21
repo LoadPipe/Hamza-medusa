@@ -5,7 +5,7 @@ import AddressModal from '@modules/checkout-update-design/components/address-mod
 import Addresses from '@modules/checkout-update-design/components/addresses';
 import { Cart, Customer } from '@medusajs/medusa';
 import Payment from '@modules/checkout/components/payment';
-import { CartWithCheckoutStep } from 'types/global';
+import { CartWithCheckoutStep } from '@/types/global';
 import { getCheckoutStep } from '@lib/util/get-checkout-step';
 import {
     createPaymentSessions,
