@@ -45,6 +45,13 @@ const AddressModal: React.FC<AddressModalProps> = ({
     // Save address to address book if radio button clicked
     const [saveAddress, setSaveAddress] = useState(false);
 
+    // Reset the checkbox state to false when the modal opens
+    useEffect(() => {
+        if (isOpen) {
+            setSaveAddress(false);
+        }
+    }, [isOpen]);
+
     const [formData, setFormData] = useState({
         'shipping_address.first_name': cart?.shipping_address?.first_name || '',
         'shipping_address.last_name': cart?.shipping_address?.last_name || '',

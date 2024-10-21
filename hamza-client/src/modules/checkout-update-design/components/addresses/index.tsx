@@ -128,7 +128,7 @@ const Addresses = ({
 
                             <AddressSelect
                                 cart={cart}
-                                addresses={customer?.shipping_addresses}
+                                addresses={customer?.shipping_addresses ?? []}
                             />
                         </Flex>
                     </Flex>
@@ -161,7 +161,7 @@ const Addresses = ({
 
                         <AddressSelect
                             cart={cart}
-                            addresses={customer?.shipping_addresses}
+                            addresses={customer?.shipping_addresses ?? []}
                         />
                     </Flex>
                 )}
