@@ -42,6 +42,9 @@ const AddressModal: React.FC<AddressModalProps> = ({
     countryCode,
     addressActionType,
 }) => {
+    // Save address to address book if radio button clicked
+    const [saveAddress, setSaveAddress] = useState(false);
+
     const [formData, setFormData] = useState({
         'shipping_address.first_name': cart?.shipping_address?.first_name || '',
         'shipping_address.last_name': cart?.shipping_address?.last_name || '',
@@ -69,35 +72,62 @@ const AddressModal: React.FC<AddressModalProps> = ({
         });
     };
 
-    const [formState, formAction] = useFormState(addCustomerShippingAddress, {
-        success: false,
-        error: null,
-    });
+    const handleSaveAddressChange = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setSaveAddress(e.target.checked);
+    };
 
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formPayload = new FormData(e.currentTarget);
 
         // If "Save shipping address" checkbox is checked, save the address for the customer
-        if (checked && customer) {
+        if (saveAddress) {
             try {
-                const shippingAddressData = {
-                    first_name: formData['shipping_address.first_name'],
-                    last_name: formData['shipping_address.last_name'],
-                    address_1: formData['shipping_address.address_1'],
-                    address_2: formData['shipping_address.address_2'],
-                    company: formData['shipping_address.company'],
-                    postal_code: formData['shipping_address.postal_code'],
-                    city: formData['shipping_address.city'],
-                    country_code: formData['shipping_address.country_code'],
-                    province: formData['shipping_address.province'],
-                    phone: formData['shipping_address.phone'],
-                };
-
-                await addCustomerShippingAddress(
-                    customer.id,
-                    shippingAddressData
+                const shippingAddressData = new FormData();
+                shippingAddressData.append(
+                    'first_name',
+                    formData['shipping_address.first_name']
                 );
+                shippingAddressData.append(
+                    'last_name',
+                    formData['shipping_address.last_name']
+                );
+                shippingAddressData.append(
+                    'address_1',
+                    formData['shipping_address.address_1']
+                );
+                shippingAddressData.append(
+                    'address_2',
+                    formData['shipping_address.address_2']
+                );
+                shippingAddressData.append(
+                    'company',
+                    formData['shipping_address.company']
+                );
+                shippingAddressData.append(
+                    'postal_code',
+                    formData['shipping_address.postal_code']
+                );
+                shippingAddressData.append(
+                    'city',
+                    formData['shipping_address.city']
+                );
+                shippingAddressData.append(
+                    'country_code',
+                    formData['shipping_address.country_code']
+                );
+                shippingAddressData.append(
+                    'province',
+                    formData['shipping_address.province']
+                );
+                shippingAddressData.append(
+                    'phone',
+                    formData['shipping_address.phone']
+                );
+
+                await addCustomerShippingAddress({}, shippingAddressData);
             } catch (error) {
                 console.error('Failed to save shipping address:', error);
             }
@@ -334,8 +364,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
                             <Flex alignItems="center" my="3" color={'white'}>
                                 <Checkbox
                                     mr="2"
-                                    isChecked={checked}
-                                    onChange={onChange}
+                                    isChecked={saveAddress}
+                                    onChange={handleSaveAddressChange}
                                 />
                                 <Text alignSelf={'center'}>
                                     Save shipping address
