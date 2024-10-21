@@ -66,7 +66,6 @@ const restrictLoggedInCart = async (
     const logger = req.scope.resolve('logger');
 
     const cart_id = req.query.id || req.headers.id || req.url.split('/')[1]; // Assuming cart_id is the 4th part of the URL
-    console.log(`CART_ID IS ${cart_id}`);
     let cartService;
     let cart;
     if (cart_id) {
@@ -95,7 +94,6 @@ const restrictLoggedInCart = async (
                     next();
                     authorized = true;
                 }
-                // If anonymous cart just return their data..
             }
         }
     }
