@@ -56,6 +56,37 @@ const registerLoggedInCustomer = async (
     });
 };
 
+const restrictLoggedInCustomer = async (
+    req: MedusaRequest,
+    res: MedusaResponse,
+    next: MedusaNextFunction
+) => {
+    const logger = req.scope.resolve('logger') as Logger;
+
+    if (req.headers.authorization) {
+        const jwtToken: any = jwt.decode(
+            req.headers.authorization.replace('Bearer ', '')
+        );
+        const customerId = jwtToken?.customer_id;
+
+        if (customerId) {
+            logger.debug(`Customer ID in request: ${customerId}`);
+
+            // Store customerId in session for use elsewhere if necessary
+            asyncLocalStorage.run(new Map(), () => {
+                sessionStorage.customerId = customerId;
+                sessionStorage.requestId = generateEntityId();
+                sessionStorage.sessionId = '';
+                next();
+            });
+            return; // Exit after calling next()
+        }
+    }
+
+    // If no customer ID, unauthorized
+    res.status(401).json({ status: false, message: 'Unauthorized' });
+};
+
 const restrictCustomerOrders = async (
     req: MedusaRequest,
     res: MedusaResponse,
@@ -213,7 +244,7 @@ export const config: MiddlewaresConfig = {
                     origin: [STORE_CORS],
                     credentials: true,
                 }),
-                restrictCustomerOrders,
+                restrictLoggedInCustomer,
             ],
         },
         {
@@ -223,7 +254,7 @@ export const config: MiddlewaresConfig = {
                     origin: [STORE_CORS],
                     credentials: true,
                 }),
-                restrictCustomerOrders,
+                restrictLoggedInCustomer,
             ],
         },
         {
@@ -233,7 +264,7 @@ export const config: MiddlewaresConfig = {
                     origin: [STORE_CORS],
                     credentials: true,
                 }),
-                restrictCustomerOrders,
+                restrictLoggedInCustomer,
             ],
         },
 
