@@ -65,8 +65,6 @@ export default async function CheckoutDetails(params: any) {
             </Text>
 
             <Addresses cart={cart} customer={customer} />
-
-            {/* <Payment cart={cart} /> */}
         </Flex>
     );
 }

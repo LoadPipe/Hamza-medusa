@@ -379,7 +379,6 @@ const CryptoPaymentButton = ({
                     ? 'Review & Confirm'
                     : 'Add address to order'}
             </Button>
-            <ErrorMessage error={errorMessage} />
         </>
     );
 };

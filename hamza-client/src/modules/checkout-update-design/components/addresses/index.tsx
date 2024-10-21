@@ -33,7 +33,7 @@ import AddressModal from '../address-modal';
 import { IoLocationOutline } from 'react-icons/io5';
 import { CiSaveDown2 } from 'react-icons/ci';
 import AddressSelect from '../address-select';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const Addresses = ({
     cart,
@@ -42,10 +42,12 @@ const Addresses = ({
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | null;
     customer: Omit<Customer, 'password_hash'> | null;
 }) => {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    // Set whether we are adding or editing address
+    const [addressActionType, setActionAddressType] = useState<'add' | 'edit'>(
+        'add'
+    );
 
-    const router = useRouter();
-    const pathname = usePathname();
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const params = useParams();
 
     const countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY
@@ -62,23 +64,11 @@ const Addresses = ({
                 : true
         );
 
-    // const [message, formAction] = useFormState(setAddresses, null);
-
-    const [message, onSubmit] = useFormState(setAddresses, null);
-
     const contactEmail = cart?.email
         ? cart.email.endsWith('@evm.blockchain')
             ? ''
             : cart.email
         : '';
-
-    const contactPhone = cart?.shipping_address?.phone ?? '';
-
-    useEffect(() => {
-        if (cart && cart.shipping_address) {
-            router.push(pathname + '?step=review');
-        }
-    }, [cart]);
 
     return (
         <div>
@@ -148,7 +138,10 @@ const Addresses = ({
                                 _hover={{
                                     opacity: 0.5,
                                 }}
-                                onClick={onOpen}
+                                onClick={() => {
+                                    onOpen();
+                                    setActionAddressType('edit');
+                                }}
                             >
                                 Edit Shipping Address
                             </Button>
@@ -178,7 +171,10 @@ const Addresses = ({
                             _hover={{
                                 opacity: 0.5,
                             }}
-                            onClick={onOpen}
+                            onClick={() => {
+                                onOpen();
+                                setActionAddressType('add');
+                            }}
                         >
                             Add Shipping Address
                         </Button>
@@ -193,6 +189,7 @@ const Addresses = ({
             <AddressModal
                 customer={customer}
                 countryCode={countryCode}
+                addressActionType={addressActionType}
                 checked={sameAsSBilling}
                 onChange={toggleSameAsBilling}
                 cart={cart}

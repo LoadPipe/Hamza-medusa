@@ -108,7 +108,7 @@ export async function submitDiscountForm(
     }
 }
 
-export async function setAddresses(formData: FormData) {
+export async function setAddresses(currentState: unknown, formData: FormData) {
     if (!formData) return 'No form data received';
 
     const cartId = cookies().get('_medusa_cart_id')?.value;
@@ -158,13 +158,15 @@ export async function setAddresses(formData: FormData) {
         return error.toString();
     }
 
-    redirect(
-        `/${
-            process.env.NEXT_PUBLIC_FORCE_COUNTRY
-                ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
-                : formData.get('shipping_address.country_code')
-        }/checkout?step=review&cart=${cartId}`
-    );
+    if (currentState === 'add') {
+        redirect(
+            `/${
+                process.env.NEXT_PUBLIC_FORCE_COUNTRY
+                    ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
+                    : formData.get('shipping_address.country_code')
+            }/checkout?step=review&cart=${cartId}`
+        );
+    }
 }
 
 export async function setShippingMethod(shippingMethodId: string) {

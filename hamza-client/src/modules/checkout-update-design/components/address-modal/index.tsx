@@ -28,6 +28,7 @@ interface AddressModalProps {
     checked: boolean;
     onChange: () => void;
     countryCode: string;
+    addressActionType: 'add' | 'edit';
 }
 
 const AddressModal: React.FC<AddressModalProps> = ({
@@ -38,6 +39,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
     checked,
     onChange,
     countryCode,
+    addressActionType,
 }) => {
     const [formData, setFormData] = useState({
         'shipping_address.first_name': cart?.shipping_address?.first_name || '',
@@ -66,38 +68,12 @@ const AddressModal: React.FC<AddressModalProps> = ({
         });
     };
 
-    // TODO (For G), take a look at what obj / type we are sending instead of passing any
-    const countriesInRegion = useMemo(
-        () => cart?.region.countries.map((c: any) => c.iso_2),
-        [cart?.region]
-    );
-
-    // check if customer has saved addresses that are in the current region
-    const addressesInRegion = useMemo(
-        () =>
-            customer?.shipping_addresses?.filter(
-                (a) =>
-                    a.country_code &&
-                    countriesInRegion?.includes(a.country_code)
-            ),
-        [customer?.shipping_addresses, countriesInRegion]
-    );
-
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formPayload = new FormData(e.currentTarget);
-        setAddresses(formPayload);
+        setAddresses(addressActionType, formPayload);
         onClose();
     };
-
-    /* const [formState, formAction] = useFormState(
-        updateCustomerShippingAddress,
-        {
-            success: false,
-            error: null,
-            addressId: address.id,
-        }
-    );*/
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="lg">
@@ -157,7 +133,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         onChange={handleChange}
                                     />
                                 </FormControl>
-                                <FormControl isRequired>
+                                <FormControl>
                                     <Input
                                         placeholder="Phone Number"
                                         height={'50px'}
@@ -266,7 +242,6 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         autoComplete="country"
                                         region={cart?.region}
                                         color={'white'}
-                                        _placeholder={{ color: 'white' }}
                                         value={
                                             formData[
                                                 'shipping_address.country_code'
@@ -323,16 +298,16 @@ const AddressModal: React.FC<AddressModalProps> = ({
                             </Flex>
 
                             {/* Checkbox for Default Address */}
-                            <Flex alignItems="center" my="3" color={'white'}>
+                            {/* <Flex alignItems="center" my="3" color={'white'}>
                                 <Checkbox
                                     mr="2"
                                     isChecked={checked}
                                     onChange={onChange}
                                 />
                                 <Text alignSelf={'center'}>
-                                    Set address as default
+                                    Save shipping address
                                 </Text>
-                            </Flex>
+                            </Flex> */}
                         </Flex>
                     </ModalBody>
 
