@@ -72,6 +72,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
         });
     };
 
+    // When clicked save address on submit
     const handleSaveAddressChange = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
@@ -132,7 +133,6 @@ const AddressModal: React.FC<AddressModalProps> = ({
                 console.error('Failed to save shipping address:', error);
             }
         }
-
         // Continue to set the addresses as usual
         await setAddresses(addressActionType, formPayload);
         onClose();
