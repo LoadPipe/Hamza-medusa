@@ -3,6 +3,7 @@ import {
     type User,
     type UserService,
     type MedusaNextFunction,
+    type CustomerService,
     type MedusaRequest,
     type MedusaResponse,
     authenticateCustomer,
@@ -56,6 +57,7 @@ const registerLoggedInCustomer = async (
     });
 };
 
+// Logged in customer can check all public routes
 const restrictLoggedInCustomer = async (
     req: MedusaRequest,
     res: MedusaResponse,
@@ -69,6 +71,8 @@ const restrictLoggedInCustomer = async (
         );
         const customerId = jwtToken?.customer_id;
 
+        logger.debug(`JWT token decoded: ${JSON.stringify(jwtToken)}`);
+
         if (customerId) {
             logger.debug(`Customer ID in request: ${customerId}`);
 
@@ -79,12 +83,47 @@ const restrictLoggedInCustomer = async (
                 sessionStorage.sessionId = '';
                 next();
             });
-            return; // Exit after calling next()
+            return;
         }
     }
 
     // If no customer ID, unauthorized
     res.status(401).json({ status: false, message: 'Unauthorized' });
+};
+
+const restrictLoggedInCustomerById = async (
+    req: MedusaRequest,
+    res: MedusaResponse,
+    next: MedusaNextFunction
+) => {
+    let authorized = false;
+    if (req.headers.authorization) {
+        const logger = req.scope.resolve('logger');
+        const jwtToken: any = jwt.decode(
+            req.headers.authorization.replace('Bearer ', '')
+        );
+        const customerId = jwtToken?.customer_id;
+        logger.debug(`customer id in store/auth route is ${customerId}`);
+
+        const email = req.query.email || req.headers.email || req.url;
+        logger.debug(`email ${email}`);
+        if (email && customerId?.length) {
+            const customerService = req.scope.resolve('customerService');
+            const customer = await customerService.retrieve(customerId);
+            logger.debug(
+                `order customer id in store/orders route is ${JSON.stringify(customer)}`
+            );
+            if (customer?.id === customerId && email === customer.email) {
+                authorized = true;
+                return res.status(200).json({ exists: true });
+            }
+        }
+    }
+
+    if (!authorized) {
+        res.status(401).json({ status: false });
+        return;
+    }
 };
 
 const restrictCustomerOrders = async (
@@ -102,6 +141,7 @@ const restrictCustomerOrders = async (
         logger.debug(`customer id in store/orders route is ${customerId}`);
 
         const orderId = req.url.replace('/', '');
+        logger.debug(`ORDERID ${orderId}`);
         if (orderId && orderId.startsWith('order_') && customerId?.length) {
             const orderService = req.scope.resolve('orderService');
             const order = await orderService.retrieve(orderId);
@@ -265,6 +305,16 @@ export const config: MiddlewaresConfig = {
                     credentials: true,
                 }),
                 restrictLoggedInCustomer,
+            ],
+        },
+        {
+            matcher: '/store/auth',
+            middlewares: [
+                cors({
+                    origin: [STORE_CORS],
+                    credentials: true,
+                }),
+                restrictLoggedInCustomerById,
             ],
         },
 
