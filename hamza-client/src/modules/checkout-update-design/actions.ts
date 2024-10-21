@@ -108,7 +108,10 @@ export async function submitDiscountForm(
     }
 }
 
-export async function setAddresses(currentState: unknown, formData: FormData) {
+export async function setAddresses(
+    addressActionType: 'add' | 'edit',
+    formData: FormData
+) {
     if (!formData) return 'No form data received';
 
     const cartId = cookies().get('_medusa_cart_id')?.value;
@@ -158,7 +161,7 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
         return error.toString();
     }
 
-    if (currentState === 'add') {
+    if (addressActionType === 'add') {
         redirect(
             `/${
                 process.env.NEXT_PUBLIC_FORCE_COUNTRY

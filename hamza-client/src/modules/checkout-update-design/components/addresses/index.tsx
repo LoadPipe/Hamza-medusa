@@ -146,10 +146,10 @@ const Addresses = ({
                                 Edit Shipping Address
                             </Button>
 
-                            {/* <AddressSelect
+                            <AddressSelect
                                 cart={cart}
                                 addresses={customer?.shipping_addresses}
-                            /> */}
+                            />
                         </Flex>
                     </Flex>
                 ) : (
@@ -179,10 +179,10 @@ const Addresses = ({
                             Add Shipping Address
                         </Button>
 
-                        {/* <AddressSelect
+                        <AddressSelect
                             cart={cart}
                             addresses={customer?.shipping_addresses}
-                        /> */}
+                        />
                     </Flex>
                 )}
             </div>
