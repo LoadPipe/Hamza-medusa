@@ -64,7 +64,9 @@ const restrictCustomerOrders = async (
     let authorized = false;
     if (req.headers.authorization) {
         const logger = req.scope.resolve('logger');
-        const jwtToken: any = jwt.decode(req.headers.authorization.replace('Bearer ', ''));
+        const jwtToken: any = jwt.decode(
+            req.headers.authorization.replace('Bearer ', '')
+        );
         const customerId = jwtToken?.customer_id;
         logger.debug(`customer id in store/orders route is ${customerId}`);
 
@@ -72,7 +74,9 @@ const restrictCustomerOrders = async (
         if (orderId && orderId.startsWith('order_') && customerId?.length) {
             const orderService = req.scope.resolve('orderService');
             const order = await orderService.retrieve(orderId);
-            logger.debug(`order customer id in store/orders route is ${order?.customer_id}`);
+            logger.debug(
+                `order customer id in store/orders route is ${order?.customer_id}`
+            );
             if (order?.customer_id === customerId) {
                 next();
                 authorized = true;
@@ -81,7 +85,7 @@ const restrictCustomerOrders = async (
     }
 
     if (!authorized) {
-        res.status(401).json({ status: false })
+        res.status(401).json({ status: false });
         return;
     }
 };
@@ -198,7 +202,18 @@ export const config: MiddlewaresConfig = {
                     origin: [STORE_CORS],
                     credentials: true,
                 }),
-                restrictCustomerOrders
+                restrictCustomerOrders,
+            ],
+        },
+
+        {
+            matcher: '/store/order-edits',
+            middlewares: [
+                cors({
+                    origin: [STORE_CORS],
+                    credentials: true,
+                }),
+                restrictCustomerOrders,
             ],
         },
 
