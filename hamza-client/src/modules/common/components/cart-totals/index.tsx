@@ -72,7 +72,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
     );
 
     const shippingCost = shipping_total ?? 0;
-    const usdShippingCost = shippingCost ? 5 : 0; //TODO: hard-coded for now
+    const usdShippingCost = shippingCost ? 500 : 0; //TODO: hard-coded for now
     const taxTotal = tax_total ?? 0;
     const grandTotal = (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
     const displayCurrency = finalSubtotal?.currency?.length
