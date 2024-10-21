@@ -36,7 +36,7 @@ const OrderSummary = ({
             <CartItems
                 region={cart?.region}
                 items={cart?.items}
-                currencyCode={preferred_currency_code ?? undefined}
+                currencyCode={preferred_currency_code ?? 'usdc'}
             />
         </Flex>
     );
