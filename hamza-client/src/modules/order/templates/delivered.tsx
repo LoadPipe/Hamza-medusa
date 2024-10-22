@@ -11,6 +11,7 @@ import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import { OrdersData } from './all';
 import { useOrderTabStore } from '@store/order-tab-state';
+import Link from 'next/link';
 
 const Delivered = ({
     customer,
@@ -192,25 +193,27 @@ const Delivered = ({
                                                     >
                                                         Buy Again
                                                     </Button>
-                                                    <Button
-                                                        variant="outline"
-                                                        colorScheme="white"
-                                                        borderRadius={'37px'}
-                                                        ml={{
-                                                            base: 0,
-                                                            md: 2,
-                                                        }}
-                                                        mt={{
-                                                            base: 2,
-                                                            md: 0,
-                                                        }}
-                                                        width={{
-                                                            base: '100%',
-                                                            md: 'auto',
-                                                        }}
-                                                    >
-                                                        Return/Refund
-                                                    </Button>
+                                                    <Link href='https://support.hamza.market/help/1568263160' target='_blank'>
+                                                        <Button
+                                                            variant="outline"
+                                                            colorScheme="white"
+                                                            borderRadius={'37px'}
+                                                            ml={{
+                                                                base: 0,
+                                                                md: 2,
+                                                            }}
+                                                            mt={{
+                                                                base: 2,
+                                                                md: 0,
+                                                            }}
+                                                            width={{
+                                                                base: '100%',
+                                                                md: 'auto',
+                                                            }}
+                                                        >
+                                                            Return/Refund
+                                                        </Button>
+                                                    </Link>
                                                 </Flex>
                                             </Flex>
                                         </div>

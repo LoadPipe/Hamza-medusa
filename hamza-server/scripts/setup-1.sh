@@ -1,1 +1,4 @@
-node ./scripts/call-api.js
+cd ./scripts
+node ./call-api.js
+cd ..
+
