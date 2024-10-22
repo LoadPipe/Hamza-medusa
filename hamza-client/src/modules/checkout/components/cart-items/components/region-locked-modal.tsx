@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
     Modal,
     ModalOverlay,
@@ -11,7 +11,6 @@ import {
     Flex,
 } from '@chakra-ui/react';
 import { LineItem } from '@medusajs/medusa';
-import RemoveProductsButton from './remove-products-button';
 import Thumbnail from '@modules/products/components/thumbnail';
 
 type ExtendedLineItem = LineItem & {
@@ -32,7 +31,12 @@ const RegionLockedModal: React.FC<RegionLockedModalProps> = ({
     lockedItems,
 }) => {
     return (
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            closeOnOverlayClick={false}
+            closeOnEsc={false}
+        >
             <ModalOverlay />
             <ModalContent
                 backgroundColor={'#121212'}
