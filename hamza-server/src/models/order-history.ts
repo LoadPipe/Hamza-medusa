@@ -17,16 +17,9 @@ export class OrderHistory extends BaseEntity {
     @Column({ name: 'order_id' })
     order_id: string;
 
-    @Column({ name: 'title' })
     title: string;
-
-    @Column({ name: 'to_status' })
     to_status: OrderStatus;
-
-    @Column({ name: 'to_payment_status' })
     to_payment_status: PaymentStatus;
-
-    @Column({ name: 'to_fulfillment_status' })
     to_fulfillment_status: FulfillmentStatus;
 
     @Column('jsonb')
