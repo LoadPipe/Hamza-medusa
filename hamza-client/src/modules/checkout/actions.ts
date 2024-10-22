@@ -159,10 +159,9 @@ export async function setAddresses(currentState: unknown, formData: FormData) {
     }
 
     redirect(
-        `/${
-            process.env.NEXT_PUBLIC_FORCE_COUNTRY
-                ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
-                : formData.get('shipping_address.country_code')
+        `/${process.env.NEXT_PUBLIC_FORCE_COUNTRY
+            ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
+            : formData.get('shipping_address.country_code')
         }/checkout?step=review&cart=${cartId}`
     );
 }
@@ -289,31 +288,4 @@ export async function setPaymentMethod(providerId: string) {
         console.log(error);
         throw error;
     }
-}
-
-export async function placeOrder() {
-    const cartId = cookies().get('_medusa_cart_id')?.value;
-
-    if (!cartId) throw new Error('No cartId cookie found');
-
-    let cart;
-
-    try {
-        cart = await completeCart(cartId);
-        revalidateTag('cart');
-    } catch (error: any) {
-        throw error;
-    }
-
-    if (cart?.type === 'order') {
-        const countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY
-            ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
-            : cart.data.shipping_address?.country_code?.toLowerCase();
-        cookies().set('_medusa_cart_id', '', { maxAge: -1 });
-        redirect(
-            `/${countryCode}/order/confirmed/${cart?.data.id}?cart=${cartId}`
-        );
-    }
-
-    return cart;
 }
