@@ -1,11 +1,16 @@
 import { MedusaRequest, MedusaResponse } from '@medusajs/medusa';
-import { RouteHandler } from '../../route-handler';
-import ProductService from '../../../services/product';
+import { RouteHandler } from '../../../route-handler';
+import ProductService from '../../../../services/product';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     let productService: ProductService = req.scope.resolve('productService');
 
-    const handler = new RouteHandler(req, res, 'GET', '/custom/meilisearch');
+    const handler = new RouteHandler(
+        req,
+        res,
+        'GET',
+        '/admin/custom/meilisearch'
+    );
 
     await handler.handle(async () => {
         const product = await productService.reindexProducts();
