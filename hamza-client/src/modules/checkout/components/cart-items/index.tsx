@@ -1,7 +1,5 @@
-import { Box, Flex, Radio, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, useDisclosure } from '@chakra-ui/react';
 import { Cart, LineItem, Region } from '@medusajs/medusa';
-import { Heading, Table } from '@medusajs/ui';
-
 import Item from '@modules/cart/components/item-checkout';
 import SkeletonLineItem from '@modules/skeletons/components/skeleton-line-item';
 import RegionLockedModal from './components/region-locked-modal';
