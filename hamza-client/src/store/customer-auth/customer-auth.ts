@@ -4,6 +4,8 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 
 type State = {
     walletAddress: string;
+    hnsAvatar: string | null;
+    hnsName: string | null;
     authData: {
         wallet_address: string;
         token: string;
@@ -20,6 +22,8 @@ type State = {
 
 type Actions = {
     setWalletAddress: (walletAddress: string) => void;
+    setHnsAvatar: (hnsAvatar: string | null) => void;
+    setHnsName: (hnsName: string | null) => void;
     setCustomerAuthData: (authData: State['authData']) => void;
     setCustomerPreferredCurrency: (currency: string) => void;
     setWhitelistConfig: (configData: State['whitelist_config']) => void;
@@ -30,6 +34,8 @@ export const useCustomerAuthStore = create<State & Actions>()(
     persist(
         (set, get) => ({
             walletAddress: '',
+            hnsAvatar: null,
+            hnsName: null,
             authData: {
                 customer_id: '',
                 is_verified: false,
@@ -77,6 +83,15 @@ export const useCustomerAuthStore = create<State & Actions>()(
                         is_verified: isVerified,
                     },
                 }));
+            },
+            // Define setHnsAvatar
+            setHnsAvatar: (hnsAvatar: string | null) => {
+                set({ hnsAvatar });
+            },
+
+            // Define setHnsName
+            setHnsName: (hnsName: string | null) => {
+                set({ hnsName });
             },
         }),
 

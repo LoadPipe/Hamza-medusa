@@ -14,11 +14,11 @@ const chainConfig: any = {
         },
         lite_switch: {
             //address: '0x08EdF664EB5617d7eCf4F1ec74Ee49d9e99Fbd5f'
-            address: '0x1fFc6ba4FcdfC3Ca72a53c2b64db3807B4A5aec8'
+            address: '0x1fFc6ba4FcdfC3Ca72a53c2b64db3807B4A5aec8',
         },
         dao: {
-            address: '0x8bA35513C3F5ac659907D222e3DaB38b20f8F52A'
-        }
+            address: '0x8bA35513C3F5ac659907D222e3DaB38b20f8F52A',
+        },
     },
     11155420: {
         chain_name: 'op-sepolia',
@@ -29,11 +29,11 @@ const chainConfig: any = {
             address: '0x0',
         },
         lite_switch: {
-            address: '0x0'
+            address: '0x0',
         },
         dao: {
-            address: '0x8bA35513C3F5ac659907D222e3DaB38b20f8F52A'
-        }
+            address: '0x8bA35513C3F5ac659907D222e3DaB38b20f8F52A',
+        },
     },
     1: {
         chain_name: 'mainnet',
@@ -44,11 +44,11 @@ const chainConfig: any = {
             address: '0x0',
         },
         lite_switch: {
-            address: '0x0'
+            address: '0x0',
         },
         dao: {
-            address: '0x20823791a73f283d20B1cde299E738D5783499d8'
-        }
+            address: '0x20823791a73f283d20B1cde299E738D5783499d8',
+        },
     },
     10: {
         chain_name: 'optimism',
@@ -60,18 +60,19 @@ const chainConfig: any = {
         },
         lite_switch: {
             //address: '0x5b691FFdc872eC40d63fe34f471e3Edb16dAE154'
-            address: '0x49E5231A3aE4c4272257b87b944415CFD113D2c3'
+            address: '0x49E5231A3aE4c4272257b87b944415CFD113D2c3',
         },
         dao: {
-            address: '0x214bef460Fda073a328aD02371C48E69Bd13442B'
-        }
+            address: '0x214bef460Fda073a328aD02371C48E69Bd13442B',
+        },
+        hns: {
+            address: '0xDDa56f06D80f3D8E3E35159701A63753f39c3BCB',
+        },
     },
 };
 
 const getContractAddress = (contractId: string, chainId: number = 1) =>
-    chainConfig[chainId]
-        ? chainConfig[chainId][contractId]?.address ?? ''
-        : '';
+    chainConfig[chainId] ? chainConfig[chainId][contractId]?.address ?? '' : '';
 
 const getMasterSwitchAddress = (chainId: number = 1) =>
     chainConfig[chainId]
@@ -83,4 +84,8 @@ const getMassmarketPaymentAddress = (chainId: number = 1) =>
         ? chainConfig[chainId]?.massmarket_payment?.address
         : undefined;
 
-export { getContractAddress, getMasterSwitchAddress, getMassmarketPaymentAddress };
+export {
+    getContractAddress,
+    getMasterSwitchAddress,
+    getMassmarketPaymentAddress,
+};
