@@ -4,9 +4,9 @@ import { notFound } from 'next/navigation';
 import { LineItem } from '@medusajs/medusa';
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { Flex } from '@chakra-ui/react';
-import CheckoutDetails from '@modules/checkout-update-design/templates/checkout-details';
-import OrderSummary from '@modules/checkout-update-design/templates/order-summary';
-import PaymentSummary from '@modules/checkout-update-design/templates/payment-summary';
+import CheckoutDetails from '@/modules/checkout/templates/checkout-details';
+import OrderSummary from '@/modules/checkout/templates/order-summary';
+import PaymentSummary from '@/modules/checkout/templates/payment-summary';
 
 export const metadata: Metadata = {
     title: 'Checkout',

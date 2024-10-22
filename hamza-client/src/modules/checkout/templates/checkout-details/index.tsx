@@ -1,9 +1,6 @@
-import { Flex, Text, Divider, Box, useDisclosure } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import React from 'react';
-import { BiPencil } from 'react-icons/bi';
-import Addresses from '@modules/checkout-update-design/components/addresses';
-import { Cart, Customer } from '@medusajs/medusa';
-import Payment from '@modules/checkout/components/payment';
+import Addresses from '@modules/checkout/components/addresses';
 import { CartWithCheckoutStep } from '@/types/global';
 import { getCheckoutStep } from '@lib/util/get-checkout-step';
 import {
