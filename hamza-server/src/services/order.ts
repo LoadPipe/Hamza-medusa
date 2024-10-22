@@ -606,20 +606,27 @@ export default class OrderService extends MedusaOrderService {
             const to_payment_status: PaymentStatus | null = (paymentStatus && order.payment_status != paymentStatus) ? paymentStatus : null;
             const to_fulfillment_status: FulfillmentStatus | null = (fulfillmentStatus && order.fulfillment_status != fulfillmentStatus) ? fulfillmentStatus : null;
 
-            order.status = status;
-            order.fulfillment_status = fulfillmentStatus;
+            if (status) {
+                order.status = status;
+                if (order.fulfillment_status == FulfillmentStatus.FULFILLED) {
+                    this.sendDeliveredEmail(order);
+                }
+            }
+            if (fulfillmentStatus) {
+                order.fulfillment_status = fulfillmentStatus;
+                if (order.fulfillment_status == FulfillmentStatus.SHIPPED) {
+                    this.sendShippedEmail(order);
+                }
+            }
+            if (paymentStatus) {
+                order.payment_status = paymentStatus;
+                if (order.status == OrderStatus.CANCELED) {
+                    this.sendCancelledEmail(order);
+                }
+            }
 
             //send emails
             //TODO: this should follow medusa events 
-            if (order.fulfillment_status == FulfillmentStatus.SHIPPED) {
-                this.sendShippedEmail(order);
-            }
-            if (order.fulfillment_status == FulfillmentStatus.FULFILLED) {
-                this.sendDeliveredEmail(order);
-            }
-            if (order.status == OrderStatus.CANCELED) {
-                this.sendCancelledEmail(order);
-            }
 
             //save the order
             await this.orderRepository_.save(order);
