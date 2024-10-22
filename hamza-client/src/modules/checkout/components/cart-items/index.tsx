@@ -32,36 +32,37 @@ const CartItems = ({
 
     useEffect(() => {
         if (cart?.shipping_address) {
+            console.log('Shipping address detected:', cart.shipping_address);
+
             if (items) {
+                // Filter items with geo-restriction tags
                 const variantsWithGeoRestriction = cart.items.filter((i) =>
                     i.variant.product.tags.find((t: any) =>
                         t.id.startsWith('geo-restriction')
                     )
                 );
 
-                // const restrictedVariants = [];
-                // for (let variant of variantsWithGeoRestriction) {
-                //     const tags = variant.product.tags.filter((t: any) =>
-                //         t.id.startsWith('geo-restriction')
-                //     );
-                //     for (let tag of tags) {
-                //         if (tag.metadata.country) {
-                //             if (
-                //                 cart.shipping_address.country_code.toLowerCase() !=
-                //                 tag.metadata.country.toLowerCase()
-                //             ) {
-                //                 restrictedVariants.push(variant);
-                //             }
-                //         }
-                //     }
-                // }
+                const restrictedVariants = [];
+                for (let item of variantsWithGeoRestriction) {
+                    const tags = item.variant.product.tags.filter((t: any) =>
+                        t.id.startsWith('geo-restriction')
+                    );
+                    for (let tag of tags) {
+                        if (tag.metadata.country) {
+                            if (
+                                cart?.shipping_address.country_code !=
+                                tag.metadata.country.toLowerCase()
+                            ) {
+                                restrictedVariants.push(item);
+                            }
+                        }
+                    }
+                }
 
-                setRegionLockedItems(
-                    variantsWithGeoRestriction as ExtendedLineItem[]
-                );
+                setRegionLockedItems(restrictedVariants as ExtendedLineItem[]);
 
                 // If there are region-locked items, show the modal
-                if (variantsWithGeoRestriction.length > 0) {
+                if (restrictedVariants.length > 0) {
                     onOpen();
                 }
             }
@@ -69,9 +70,6 @@ const CartItems = ({
     }, [items, region, onOpen, cart]);
 
     const handleRemoveLockedItems = () => {
-        // Log the region-locked items
-        console.log('Removing region-locked items:', regionLockedItems);
-
         // Delete all region locked items
         regionLockedItems.forEach((item) => {
             deleteLineItem(item.id)
