@@ -36,7 +36,7 @@ const CartItems = ({
                 const lockedItems = items.filter((item) => {
                     return item.id !== region.id;
                 });
-                // Find items that are region-locked
+
                 setRegionLockedItems(lockedItems as ExtendedLineItem[]);
 
                 // If there are region-locked items, show the modal
