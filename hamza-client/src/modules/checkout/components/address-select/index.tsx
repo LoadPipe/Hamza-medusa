@@ -1,11 +1,18 @@
-import { Listbox, Transition } from '@headlessui/react';
-import { Address, AddressPayload, Cart } from '@medusajs/medusa';
+import {
+    Box,
+    Button,
+    IconButton,
+    Flex,
+    VStack,
+    Text,
+    Radio,
+    RadioGroup,
+} from '@chakra-ui/react';
 import { ChevronUpDown } from '@medusajs/icons';
-import { clx } from '@medusajs/ui';
+import { Address, AddressPayload, Cart } from '@medusajs/medusa';
 import { omit } from 'lodash';
-import { Fragment, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 
-import Radio from '@modules/common/components/radio';
 import { cartUpdate } from '@modules/checkout/actions';
 import compareAddresses from '@lib/util/compare-addresses';
 
@@ -15,6 +22,9 @@ type AddressSelectProps = {
 };
 
 const AddressSelect = ({ addresses, cart }: AddressSelectProps) => {
+    const [isOpen, setIsOpen] = useState(false); // State to manage dropdown open/close
+    const [selectedId, setSelectedId] = useState<string | null>(null); // State for selected address id
+
     const handleSelect = (id: string) => {
         const savedAddress = addresses.find((a) => a.id === id);
         if (savedAddress) {
@@ -29,8 +39,68 @@ const AddressSelect = ({ addresses, cart }: AddressSelectProps) => {
                     'customer_id',
                 ]) as AddressPayload,
             });
+            setSelectedId(id); // Set the selected address ID
+            setIsOpen(false); // Close the dropdown after selection
         }
     };
+
+    /*
+     const handleSelect = async (id: string) => {
+        const savedAddress = addresses.find((a) => a.id === id);
+
+        if (savedAddress) {
+            // Create FormData to match the structure expected by setAddresses
+            const formData = new FormData();
+            formData.append(
+                'shipping_address.first_name',
+                savedAddress.first_name || ''
+            );
+            formData.append(
+                'shipping_address.last_name',
+                savedAddress.last_name || ''
+            );
+            formData.append(
+                'shipping_address.address_1',
+                savedAddress.address_1 || ''
+            );
+            formData.append(
+                'shipping_address.address_2',
+                savedAddress.address_2 || ''
+            );
+            formData.append(
+                'shipping_address.company',
+                savedAddress.company || ''
+            );
+            formData.append(
+                'shipping_address.postal_code',
+                savedAddress.postal_code || ''
+            );
+            formData.append('shipping_address.city', savedAddress.city || '');
+            formData.append(
+                'shipping_address.country_code',
+                savedAddress.country_code || ''
+            );
+            formData.append(
+                'shipping_address.province',
+                savedAddress.province || ''
+            );
+            formData.append('shipping_address.phone', savedAddress.phone || '');
+
+            // Check if the cart already has a shipping address
+            const isAddressEmpty = !cart?.shipping_address;
+
+            if (isAddressEmpty) {
+                // Use 'add' action type if no shipping address exists
+                await setAddresses('add', formData);
+            } else {
+                // Use 'edit' action type if the shipping address already exists
+                await setAddresses('edit', formData);
+            }
+
+            setSelectedId(id); // Set the selected address ID
+            setIsOpen(false); // Close the dropdown after selection
+        }
+    };*/
 
     const selectedAddress = useMemo(() => {
         return addresses.find((a) =>
@@ -38,94 +108,88 @@ const AddressSelect = ({ addresses, cart }: AddressSelectProps) => {
         );
     }, [addresses, cart?.shipping_address]);
 
-    useEffect(() => {
-        if (addresses.length > 0 && !selectedAddress) {
-            handleSelect(addresses[0].id);
-        }
-    }, [addresses]);
-
     return (
-        <Listbox onChange={handleSelect} value={selectedAddress?.id}>
-            <div className="relative">
-                <Listbox.Button className="relative w-full flex justify-between items-center px-4 py-[10px] text-left bg-white cursor-default focus:outline-none border rounded-rounded focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-gray-300 focus-visible:ring-offset-2 focus-visible:border-gray-300 text-base-regular">
-                    {({ open }) => (
-                        <>
-                            <span className="block truncate">
-                                {selectedAddress
-                                    ? selectedAddress.address_1
-                                    : 'Choose an address'}
-                            </span>
-                            <ChevronUpDown
-                                className={clx(
-                                    'transition-rotate duration-200',
-                                    {
-                                        'transform rotate-180': open,
-                                    }
-                                )}
-                            />
-                        </>
-                    )}
-                </Listbox.Button>
-                <Transition
-                    as={Fragment}
-                    leave="transition ease-in duration-100"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
+        <Box position="relative" flex={1}>
+            {/* Button to toggle the address selection */}
+            <Button
+                width="full"
+                bg="primary.indigo.900"
+                color="white"
+                leftIcon={<ChevronUpDown />}
+                borderRadius="full"
+                height={{ base: '42px', md: '52px' }}
+                _hover={{ opacity: 0.5 }}
+                onClick={() => setIsOpen(!isOpen)}
+            >
+                Use Saved Address
+            </Button>
+
+            {/* Dropdown (or list) of addresses */}
+            {isOpen && (
+                <Box
+                    position="absolute"
+                    zIndex="20"
+                    mt={2}
+                    width="full"
+                    bg="white"
+                    border="1px"
+                    borderColor="gray.200"
+                    color={'black'}
+                    borderRadius="md"
+                    overflow="hidden"
+                    boxShadow="md"
                 >
-                    <Listbox.Options className="absolute z-20 w-full overflow-auto text-small-regular bg-white border border-top-0 max-h-60 focus:outline-none sm:text-sm">
-                        {addresses.map((address) => {
-                            return (
-                                <Listbox.Option
+                    <RadioGroup
+                        onChange={handleSelect}
+                        value={selectedId ?? selectedAddress?.id ?? ''}
+                    >
+                        <VStack align="stretch" spacing={1}>
+                            {addresses.map((address) => (
+                                <Box
                                     key={address.id}
-                                    value={address.id}
-                                    className="cursor-default select-none relative pl-6 pr-10 hover:bg-gray-50 py-4"
+                                    p={4}
+                                    _hover={{ bg: 'gray.50' }}
+                                    cursor="pointer"
+                                    display="flex"
+                                    alignItems="start"
                                 >
-                                    <div className="flex gap-x-4 items-start">
-                                        <Radio
-                                            checked={
-                                                selectedAddress?.id ===
-                                                address.id
-                                            }
-                                        />
-                                        <div className="flex flex-col">
-                                            <span className="text-left text-base-semi">
-                                                {address.first_name}{' '}
-                                                {address.last_name}
-                                            </span>
-                                            {address.company && (
-                                                <span className="text-small-regular text-ui-fg-base">
-                                                    {address.company}
+                                    <Radio value={address.id} />
+                                    <Box ml={4}>
+                                        <Text fontWeight="semibold">
+                                            {address.first_name}{' '}
+                                            {address.last_name}
+                                        </Text>
+                                        {address.company && (
+                                            <Text
+                                                fontSize="sm"
+                                                color="gray.600"
+                                            >
+                                                {address.company}
+                                            </Text>
+                                        )}
+                                        <Text fontSize="sm" mt={2}>
+                                            {address.address_1}
+                                            {address.address_2 && (
+                                                <span>
+                                                    , {address.address_2}
                                                 </span>
                                             )}
-                                            <div className="flex flex-col text-left text-base-regular mt-2">
-                                                <span>
-                                                    {address.address_1}
-                                                    {address.address_2 && (
-                                                        <span>
-                                                            ,{' '}
-                                                            {address.address_2}
-                                                        </span>
-                                                    )}
-                                                </span>
-                                                <span>
-                                                    {address.postal_code},{' '}
-                                                    {address.city}
-                                                </span>
-                                                <span>
-                                                    {address.province &&
-                                                        `${address.province}, `}
-                                                    {address.country_code?.toUpperCase()}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Listbox.Option>
-                            );
-                        })}
-                    </Listbox.Options>
-                </Transition>
-            </div>
-        </Listbox>
+                                            <br />
+                                            {address.postal_code},{' '}
+                                            {address.city}
+                                            <br />
+                                            {address.province &&
+                                                `${address.province}, `}
+                                            {address.country_code?.toUpperCase()}
+                                        </Text>
+                                    </Box>
+                                </Box>
+                            ))}
+                        </VStack>
+                    </RadioGroup>
+                </Box>
+            )}
+        </Box>
     );
 };
 

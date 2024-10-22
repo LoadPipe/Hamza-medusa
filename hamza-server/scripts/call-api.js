@@ -1,16 +1,17 @@
-require('dotenv').config();
-
 async function main() {
-    const port = process.env.PORT;
+    const port = 9000;
     try {
-        const authResponse = await fetch(`http://localhost:${port}/admin/auth`, {
-            method: 'POST',
-            body: JSON.stringify({
-                email: process.env.ADMIN_EMAIL,
-                password: process.env.ADMIN_PASSWORD,
-            }),
-            headers: { 'Content-type': 'application/json; charset=UTF-8' },
-        });
+        const authResponse = await fetch(
+            `http://localhost:${port}/admin/auth`,
+            {
+                method: 'POST',
+                body: JSON.stringify({
+                    email: 'admin@medusa-test.com',
+                    password: 'supersecret',
+                }),
+                headers: { 'Content-type': 'application/json; charset=UTF-8' },
+            }
+        );
         const authData = await authResponse.json();
         const authCookie = authResponse.headers.get('set-cookie');
 

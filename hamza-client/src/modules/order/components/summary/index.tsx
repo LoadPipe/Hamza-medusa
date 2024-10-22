@@ -117,7 +117,11 @@ const Summary: React.FC<SummaryProps> = ({ cart_id, cart, order }) => {
                             >
                                 <Image
                                     className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                                    src={currencyIcons[product.currency_code ?? 'usdc']}
+                                    src={
+                                        currencyIcons[
+                                            product.currency_code ?? 'usdc'
+                                        ]
+                                    }
                                     alt={product.currency_code ?? 'usdc'}
                                 />
                             </Flex>
@@ -133,7 +137,7 @@ const Summary: React.FC<SummaryProps> = ({ cart_id, cart, order }) => {
                                 >
                                     {formatCryptoPrice(
                                         cart.items[index].quantity *
-                                        product.unit_price,
+                                            product.unit_price,
                                         product.currency_code
                                     )}
                                 </Text>

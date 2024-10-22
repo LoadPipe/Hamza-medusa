@@ -414,6 +414,7 @@ export default class OrderService extends MedusaOrderService {
         const products = [];
         let cart: Cart = null;
 
+        console.log('***** ORDER ******', orders);
         orders.forEach((order) => {
             cart = order.cart;
             order.cart.items.forEach((item) => {
@@ -556,37 +557,54 @@ export default class OrderService extends MedusaOrderService {
 
         return relevantItems?.length
             ? {
-                variants: relevantItems.map((i) => i.variant),
-                quantities: relevantItems.map((i) => i.quantity),
-            }
+                  variants: relevantItems.map((i) => i.variant),
+                  quantities: relevantItems.map((i) => i.quantity),
+              }
             : { variants: [], quantities: [] };
     }
 
     async getOrdersWithUnverifiedPayments() {
         return this.orderRepository_.find({
             where: {
-                status: Not(In([
-                    OrderStatus.ARCHIVED,
-                    OrderStatus.REQUIRES_ACTION,
-                    OrderStatus.CANCELED,
-                    OrderStatus.COMPLETED
-                ])),
-                payment_status: PaymentStatus.AWAITING
+                status: Not(
+                    In([
+                        OrderStatus.ARCHIVED,
+                        OrderStatus.REQUIRES_ACTION,
+                        OrderStatus.CANCELED,
+                        OrderStatus.COMPLETED,
+                    ])
+                ),
+                payment_status: PaymentStatus.AWAITING,
             },
             relations: ['payments'],
         });
     }
 
     async sendShippedEmail(order: Order): Promise<void> {
-        return this.sendOrderEmail(order, 'orderShipped', 'order-shipped', 'shipped');
+        return this.sendOrderEmail(
+            order,
+            'orderShipped',
+            'order-shipped',
+            'shipped'
+        );
     }
 
     async sendDeliveredEmail(order: Order): Promise<void> {
-        return this.sendOrderEmail(order, 'orderStatusChanged', 'order-delivered', 'delivered');
+        return this.sendOrderEmail(
+            order,
+            'orderStatusChanged',
+            'order-delivered',
+            'delivered'
+        );
     }
 
     async sendCancelledEmail(order: Order): Promise<void> {
-        return this.sendOrderEmail(order, 'orderStatusChanged', 'order-cancelled', 'cancelled');
+        return this.sendOrderEmail(
+            order,
+            'orderStatusChanged',
+            'order-cancelled',
+            'cancelled'
+        );
     }
 
     async setOrderStatus(
@@ -654,15 +672,19 @@ export default class OrderService extends MedusaOrderService {
         try {
             const hasNotification =
                 await this.customerNotificationService_.hasNotification(
-                    order.customer_id, requiredNotification
+                    order.customer_id,
+                    requiredNotification
                 );
 
             if (hasNotification) {
                 //get customer & cart
-                const customer: Customer = await this.customerRepository_.findOne(
-                    { where: { id: order.customer_id } }
+                const customer: Customer =
+                    await this.customerRepository_.findOne({
+                        where: { id: order.customer_id },
+                    });
+                const cart: Cart = await this.cartService_.retrieve(
+                    order.cart_id
                 );
-                const cart: Cart = await this.cartService_.retrieve(order.cart_id);
 
                 //send the mail
                 this.smtpMailService_.sendMail({

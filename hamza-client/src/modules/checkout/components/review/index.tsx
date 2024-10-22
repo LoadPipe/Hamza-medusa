@@ -21,6 +21,9 @@ const Review = ({
         cart.shipping_methods.length > 0 &&
         cart.payment_session;
 
+    console.log('****** shipping methods *****', cart.shipping_methods);
+    console.log('****** shipping methods *****', cart);
+
     return (
         <div className="bg-black">
             <div className="flex flex-row items-center justify-between mb-6">
