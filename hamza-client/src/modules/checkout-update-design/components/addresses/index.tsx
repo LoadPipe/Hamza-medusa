@@ -158,11 +158,6 @@ const Addresses = ({
                         >
                             Add Shipping Address
                         </Button>
-
-                        <AddressSelect
-                            cart={cart}
-                            addresses={customer?.shipping_addresses ?? []}
-                        />
                     </Flex>
                 )}
             </div>
