@@ -32,8 +32,6 @@ const CartItems = ({
 
     useEffect(() => {
         if (cart?.shipping_address) {
-            console.log('Shipping address detected:', cart.shipping_address);
-
             if (items) {
                 // Filter items with geo-restriction tags
                 const variantsWithGeoRestriction = cart.items.filter((i) =>
