@@ -34,6 +34,7 @@ const OrderSummary = ({
             </Text>
 
             <CartItems
+                cart={cart}
                 region={cart?.region}
                 items={cart?.items}
                 currencyCode={preferred_currency_code ?? 'usdc'}
