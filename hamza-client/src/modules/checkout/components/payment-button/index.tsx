@@ -16,7 +16,7 @@ import { useAccount, useConnect, WindowProvider, useWalletClient } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
 import { ethers, BigNumberish } from 'ethers';
 import { useCompleteCart, useUpdateCart } from 'medusa-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import { clearCart, finalizeCheckout, getCheckoutData } from '@lib/data';
 import toast from 'react-hot-toast';
@@ -357,25 +357,28 @@ const CryptoPaymentButton = ({
         }
     };
 
+    // Check params, if step !== review then disable payment button
+    const searchParams = useSearchParams();
+    const step = searchParams.get('step');
+
     return (
         <>
             {loaderVisible && <HamzaLogoLoader />}
             <Button
-                height="52px"
-                color="white"
+                borderRadius={'full'}
+                height={{ base: '42px', md: '58px' }}
+                opacity={1}
+                color={'white'}
+                _hover={{ opacity: 0.5 }}
                 backgroundColor={'primary.indigo.900'}
-                className="mt-6 py-3 px-6 "
                 isLoading={submitting}
-                disabled={notReady}
+                isDisabled={step !== 'review' ? true : false}
                 onClick={handlePayment}
-                _hover={{
-                    backgroundColor: 'white',
-                    color: 'black',
-                }}
             >
-                Place Order
+                {step === 'review'
+                    ? 'Review & Confirm'
+                    : 'Add address to order'}
             </Button>
-            <ErrorMessage error={errorMessage} />
         </>
     );
 };
