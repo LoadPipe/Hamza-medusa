@@ -32,15 +32,36 @@ const CartItems = ({
 
     useEffect(() => {
         if (cart?.shipping_address) {
-            if (items && region) {
-                const lockedItems = items.filter((item) => {
-                    return item.id !== region.id;
-                });
+            if (items) {
+                const variantsWithGeoRestriction = cart.items.filter((i) =>
+                    i.variant.product.tags.find((t: any) =>
+                        t.id.startsWith('geo-restriction')
+                    )
+                );
 
-                setRegionLockedItems(lockedItems as ExtendedLineItem[]);
+                // const restrictedVariants = [];
+                // for (let variant of variantsWithGeoRestriction) {
+                //     const tags = variant.product.tags.filter((t: any) =>
+                //         t.id.startsWith('geo-restriction')
+                //     );
+                //     for (let tag of tags) {
+                //         if (tag.metadata.country) {
+                //             if (
+                //                 cart.shipping_address.country_code.toLowerCase() !=
+                //                 tag.metadata.country.toLowerCase()
+                //             ) {
+                //                 restrictedVariants.push(variant);
+                //             }
+                //         }
+                //     }
+                // }
+
+                setRegionLockedItems(
+                    variantsWithGeoRestriction as ExtendedLineItem[]
+                );
 
                 // If there are region-locked items, show the modal
-                if (lockedItems.length > 0) {
+                if (variantsWithGeoRestriction.length > 0) {
                     onOpen();
                 }
             }
