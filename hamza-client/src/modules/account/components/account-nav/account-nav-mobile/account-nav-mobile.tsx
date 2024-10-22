@@ -46,7 +46,7 @@ import NavLinkMobile from '../components/nav-link-mobile';
 import NavLinkMobileOrders from '../components/nav-link-mobile-orders';
 import { LogoutMobile } from '../components/logout-mobile';
 
-import { TABS } from 'modules/order-tab-management';
+import { TABS } from '@/modules/order-tab-management';
 const AccountNavMobile = ({
     customer,
 }: {
@@ -277,8 +277,8 @@ const AccountNavMobile = ({
                                 <NavLinkMobileOrders
                                     href="/account/orders"
                                     route={route!}
-                                    title={'Shipped'}
-                                    tab={'Shipped'}
+                                    title={'In Transit'}
+                                    tab={'In Transit'}
                                     handleTabChange={() =>
                                         handleTabChange(TABS.SHIPPED)
                                     }

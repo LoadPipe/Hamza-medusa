@@ -18,12 +18,16 @@ import { decode } from 'jsonwebtoken';
 import sortProducts from '@lib/util/sort-products';
 import transformProductPreview from '@lib/util/transform-product-preview';
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
-import { ProductCategoryWithChildren, ProductPreviewType } from 'types/global';
+import {
+    ProductCategoryWithChildren,
+    ProductPreviewType,
+} from '@/types/global';
 import { medusaClient } from '../config';
 import medusaError from '@lib/util/medusa-error';
 import axios from 'axios';
 
 import { cookies } from 'next/headers';
+import { next } from 'sucrase/dist/types/parser/tokenizer';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -244,6 +248,26 @@ export async function getWishlist(customer_id: string) {
     });
 }
 
+// Get all home products by default
+export async function getAllProducts(
+    categorySelect: string[] | null = ['all'],
+    priceHigh: number = 5000000,
+    priceLow: number = 0
+) {
+    const categoryString =
+        categorySelect && categorySelect.length > 0
+            ? categorySelect.length === 1
+                ? categorySelect[0]
+                : categorySelect.join(',')
+            : '';
+
+    return getSecure('/custom/product/filter', {
+        category_name: categoryString,
+        price_hi: priceHigh,
+        price_lo: priceLow,
+    });
+}
+
 // DELETE Wishlist Item
 export async function deleteWishlistItem(
     customer_id: string,
@@ -376,16 +400,11 @@ export async function getOrderDetails(customer_id: string) {
     return output.orders.orders;
 }
 
-export async function getOrderBucket(
-    customer_id: string,
-    check_buckets = false
-) {
+export async function getOrderBucket(customer_id: string) {
     const response = await getSecure('/custom/order/customer-orders', {
         customer_id,
         buckets: true,
-        check_buckets,
     });
-    if (check_buckets) return response.buckets;
     return response.orders;
 }
 

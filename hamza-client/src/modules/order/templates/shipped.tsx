@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { getSingleBucket } from '@lib/data';
 import {
     Box,
+    Button,
     Collapse,
+    Divider,
     Flex,
     HStack,
     Icon,
@@ -21,6 +23,11 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
 import { debounce, upperCase } from 'lodash';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
+import currencyIcons from '@/images/currencies/crypto-currencies';
+import OrderTotalAmount from '@modules/order/templates/order-total-amount';
+import { OrdersData } from './all';
+import { useOrderTabStore } from '@store/order-tab-state';
 
 const Shipped = ({
     customer,
@@ -34,69 +41,18 @@ const Shipped = ({
     isEmpty?: boolean;
 }) => {
     const [courierInfo, setCourierInfo] = useState(false);
-    const [shouldFetch, setShouldFetch] = useState(false);
 
-    // const debouncedOnSuccess = debounce(() => {
-    //     onSuccess && onSuccess();
-    // }, 1000);
+    const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
     const toggleCourierInfo = (orderId: any) => {
         setCourierInfo(courierInfo === orderId ? null : orderId);
     };
 
-    const queryClient = useQueryClient();
-
-    const {
-        data: shippedOrder,
-        isLoading,
-        isError,
-        isFetching,
-        failureCount,
-        isStale,
-    } = useQuery(
-        ['fetchShippedOrder', customer],
-        () => getSingleBucket(customer, 2), // Fetching shipped orders (bucket 2)
-        {
-            enabled: !!customer,
-            retry: true,
-            refetchOnWindowFocus: true,
-        }
+    const { data, isLoading, isError, refetch, isStale } = useQuery<OrdersData>(
+        ['batchOrders']
     );
 
-    // manually trigger a refetch if its stale
-    useEffect(() => {
-        const retryFetch = async () => {
-            if (isStale && shippedOrder == undefined) {
-                for (let i = 0; i < 5; i++) {
-                    if (shippedOrder == undefined) {
-                        queryClient.resetQueries(['fetchShippedOrder']);
-                        queryClient.invalidateQueries(['fetchShippedOrder']);
-                        await new Promise((resolve) =>
-                            setTimeout(resolve, 100)
-                        );
-                    }
-                }
-            }
-        };
-        retryFetch();
-    }, [isStale]);
-
-    // useEffect(() => {
-    //     if (isSuccess && shippedOrder) {
-    //         console.log(`TRIGGER`);
-    //         debouncedOnSuccess();
-    //     }
-    // }, [isSuccess, chainEnabled]);
-
-    console.log({
-        template: 'SHIPPED',
-        isLoading,
-        isError,
-        isFetching,
-        failureCount,
-        shippedOrder,
-        isStale,
-    });
+    const shippedOrder = data?.Shipped || [];
 
     if (isLoading) {
         return (
@@ -116,7 +72,7 @@ const Shipped = ({
         );
     }
 
-    if (isError || !shippedOrder) {
+    if ((isError && orderActiveTab !== 'All Orders') || !shippedOrder) {
         return (
             <Box
                 display="flex"
@@ -141,126 +97,213 @@ const Shipped = ({
         <div>
             {/* Processing-specific content */}
             {shippedOrder && shippedOrder.length > 0 ? (
-                <>
-                    <h1>Shipped Orders</h1>
-
-                    {shippedOrder.map((order: any) => (
-                        <div
-                            key={order.id} // Changed from cart_id to id since it's more reliable and unique
-                            className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
-                        >
-                            {order.items?.map(
-                                (
-                                    item: any // Adjusting the map to the correct path
-                                ) => (
-                                    <Box
-                                        key={item.id}
-                                        bg="rgba(39, 39, 39, 0.3)"
-                                        p={4}
-                                        m={2}
-                                        rounded="lg"
-                                    >
-                                        {/*item: {item.id} <br />*/}
-                                        <ShippedCard
-                                            key={item.id}
-                                            order={item}
-                                            vendorName={order.store.name}
-                                            address={order.shipping_address}
-                                            handle={
-                                                item.variant?.product?.handle ||
-                                                'N/A'
-                                            }
-                                        />
-                                        <div className="flex justify-end pr-4 mt-4">
-                                            <Box
-                                                color={'primary.green.900'}
-                                                cursor="pointer"
-                                                _hover={{
-                                                    textDecoration: 'underline',
-                                                }}
-                                                onClick={() =>
-                                                    toggleCourierInfo(item.id)
+                <Flex width={'100%'} flexDirection="column">
+                    {shippedOrder.map((order: any) => {
+                        const totalPrice = order.items.reduce(
+                            (acc: number, item: any) =>
+                                acc + item.unit_price * item.quantity,
+                            0
+                        );
+                        return (
+                            <div
+                                key={order.id} // Changed from cart_id to id since it's more reliable and unique
+                            >
+                                {order.items?.map(
+                                    (
+                                        item: any,
+                                        index: number // Adjusting the map to the correct path
+                                    ) => (
+                                        <div key={item.id}>
+                                            {index === 0 ? (
+                                                <DynamicOrderStatus
+                                                    paymentStatus={
+                                                        order.payment_status
+                                                    }
+                                                    paymentType={'Shipped'}
+                                                />
+                                            ) : null}
+                                            <ShippedCard
+                                                key={item.id}
+                                                order={item}
+                                                storeName={order.store.name}
+                                                icon={order.store.icon}
+                                                address={order.shipping_address}
+                                                handle={
+                                                    item.variant?.product
+                                                        ?.handle || 'N/A'
                                                 }
+                                            />
+                                            <Flex
+                                                direction={{
+                                                    base: 'column',
+                                                    md: 'row',
+                                                }}
+                                                justifyContent={{
+                                                    base: 'flex-start',
+                                                    md: 'space-between',
+                                                }}
+                                                alignItems={{
+                                                    base: 'flex-start',
+                                                    md: 'center',
+                                                }}
+                                                mb={5}
+                                                gap={'2'}
                                             >
-                                                Track Courier
-                                            </Box>
-                                        </div>
-                                        <Collapse
-                                            in={courierInfo === item.id}
-                                            animateOpacity
-                                        >
-                                            <Box mt={4}>
-                                                <Tabs variant="unstyled">
-                                                    <TabList>
-                                                        <Tab
-                                                            _selected={{
-                                                                color: 'primary.green.900',
-                                                                borderBottom:
-                                                                    '2px solid',
-                                                                borderColor:
-                                                                    'primary.green.900',
-                                                            }}
-                                                        >
-                                                            Order Update
-                                                        </Tab>
-                                                        <Tab
-                                                            _selected={{
-                                                                color: 'primary.green.900',
-                                                                borderBottom:
-                                                                    '2px solid',
-                                                                borderColor:
-                                                                    'primary.green.900',
-                                                            }}
-                                                        >
-                                                            Item Details
-                                                        </Tab>
-                                                    </TabList>
-                                                    <TabPanels>
-                                                        <TabPanel>
-                                                            <HStack
-                                                                align="start"
-                                                                spacing={3}
-                                                                w="100%"
+                                                <OrderTotalAmount
+                                                    totalPrice={totalPrice}
+                                                    currencyCode={
+                                                        item.currency_code
+                                                    }
+                                                    index={index}
+                                                    itemCount={
+                                                        order.items.length - 1
+                                                    }
+                                                />
+
+                                                {/* Right-aligned buttons */}
+                                                <Flex
+                                                    direction={{
+                                                        base: 'column',
+                                                        md: 'row',
+                                                    }}
+                                                    justifyContent={'flex-end'}
+                                                    gap={2}
+                                                    mt={{ base: 4, md: 0 }}
+                                                    width="100%"
+                                                >
+                                                    <Button
+                                                        variant="outline"
+                                                        colorScheme="white"
+                                                        borderRadius="37px"
+                                                        cursor="pointer"
+                                                        _hover={{
+                                                            textDecoration:
+                                                                'underline',
+                                                        }}
+                                                        ml={{
+                                                            base: 0,
+                                                            md: 2,
+                                                        }}
+                                                        mt={{
+                                                            base: 2,
+                                                            md: 0,
+                                                        }}
+                                                        width={{
+                                                            base: '100%',
+                                                            md: 'auto',
+                                                        }}
+                                                        onClick={() =>
+                                                            toggleCourierInfo(
+                                                                item.id
+                                                            )
+                                                        }
+                                                    >
+                                                        Track Courier
+                                                    </Button>
+                                                </Flex>
+                                            </Flex>
+                                            <Collapse
+                                                in={courierInfo === item.id}
+                                                animateOpacity
+                                            >
+                                                <Box mt={4}>
+                                                    <Tabs variant="unstyled">
+                                                        <TabList>
+                                                            <Tab
+                                                                _selected={{
+                                                                    color: 'primary.green.900',
+                                                                    borderBottom:
+                                                                        '2px solid',
+                                                                    borderColor:
+                                                                        'primary.green.900',
+                                                                }}
                                                             >
-                                                                {' '}
-                                                                {/* Align icon and text block horizontally */}
-                                                                {/* Left Column: Icon */}
-                                                                <Icon
-                                                                    as={
-                                                                        BsCircleFill
-                                                                    }
-                                                                    color="primary.green.900"
-                                                                    boxSize={3} // Adjust size as needed
-                                                                    mt={1} // Optional: Adjust this to vertically center the icon with the text
-                                                                />
-                                                                {/* Right Column: Text */}
-                                                                <VStack
+                                                                Order Update
+                                                            </Tab>
+                                                            <Tab
+                                                                _selected={{
+                                                                    color: 'primary.green.900',
+                                                                    borderBottom:
+                                                                        '2px solid',
+                                                                    borderColor:
+                                                                        'primary.green.900',
+                                                                }}
+                                                            >
+                                                                Item Details
+                                                            </Tab>
+                                                        </TabList>
+                                                        <TabPanels>
+                                                            <TabPanel>
+                                                                <HStack
                                                                     align="start"
-                                                                    spacing={2}
+                                                                    spacing={3}
+                                                                    w="100%"
                                                                 >
                                                                     {' '}
-                                                                    {/* Stack text vertically */}
-                                                                    <Flex alignItems="center">
-                                                                        <Text
-                                                                            fontWeight="bold"
-                                                                            mr={
-                                                                                2
-                                                                            }
-                                                                        >
-                                                                            Shipped
-                                                                            on
-                                                                            Date:
-                                                                        </Text>
-                                                                        <Text>
-                                                                            {order
-                                                                                .bucky_metadata
-                                                                                ?.tracking
-                                                                                ?.data
-                                                                                ?.soOrderInfo
-                                                                                ?.createTime
+                                                                    {/* Align icon and text block horizontally */}
+                                                                    {/* Left Column: Icon */}
+                                                                    <Icon
+                                                                        as={
+                                                                            BsCircleFill
+                                                                        }
+                                                                        color="primary.green.900"
+                                                                        boxSize={
+                                                                            3
+                                                                        } // Adjust size as needed
+                                                                        mt={1} // Optional: Adjust this to vertically center the icon with the text
+                                                                    />
+                                                                    {/* Right Column: Text */}
+                                                                    <VStack
+                                                                        align="start"
+                                                                        spacing={
+                                                                            2
+                                                                        }
+                                                                    >
+                                                                        {' '}
+                                                                        {/* Stack text vertically */}
+                                                                        <Flex alignItems="center">
+                                                                            <Text
+                                                                                fontWeight="bold"
+                                                                                mr={
+                                                                                    2
+                                                                                }
+                                                                            >
+                                                                                Shipped
+                                                                                on
+                                                                                Date:
+                                                                            </Text>
+                                                                            <Text>
+                                                                                {order
+                                                                                    .bucky_metadata
+                                                                                    ?.tracking
+                                                                                    ?.data
+                                                                                    ?.soOrderInfo
+                                                                                    ?.createTime
+                                                                                    ? new Date(
+                                                                                          order.bucky_metadata.tracking.data.soOrderInfo.createTime
+                                                                                      ).toLocaleString(
+                                                                                          undefined,
+                                                                                          {
+                                                                                              year: 'numeric',
+                                                                                              month: 'long',
+                                                                                              day: 'numeric',
+                                                                                              hour: '2-digit',
+                                                                                              minute: '2-digit',
+                                                                                              second: '2-digit',
+                                                                                          }
+                                                                                      )
+                                                                                    : 'Date not available'}
+                                                                            </Text>
+                                                                        </Flex>
+                                                                        <Text fontSize="16px">
+                                                                            <strong>
+                                                                                Order
+                                                                                Created:
+                                                                            </strong>{' '}
+                                                                            {order?.created_at
                                                                                 ? new Date(
-                                                                                      order.bucky_metadata.tracking.data.soOrderInfo.createTime
-                                                                                  ).toLocaleString(
+                                                                                      order.created_at
+                                                                                  ).toLocaleDateString(
                                                                                       undefined,
                                                                                       {
                                                                                           year: 'numeric',
@@ -271,120 +314,113 @@ const Shipped = ({
                                                                                           second: '2-digit',
                                                                                       }
                                                                                   )
-                                                                                : 'Date not available'}
+                                                                                : 'N/A'}
                                                                         </Text>
-                                                                    </Flex>
-                                                                    <Text fontSize="16px">
-                                                                        <strong>
-                                                                            Order
-                                                                            Created:
-                                                                        </strong>{' '}
-                                                                        {order?.created_at
-                                                                            ? new Date(
-                                                                                  order.created_at
-                                                                              ).toLocaleDateString(
-                                                                                  undefined,
-                                                                                  {
-                                                                                      year: 'numeric',
-                                                                                      month: 'long',
-                                                                                      day: 'numeric',
-                                                                                      hour: '2-digit',
-                                                                                      minute: '2-digit',
-                                                                                      second: '2-digit',
-                                                                                  }
-                                                                              )
-                                                                            : 'N/A'}
-                                                                    </Text>
-                                                                    <Text>
-                                                                        <strong>
-                                                                            Shop
-                                                                            Order
-                                                                            Number:
-                                                                        </strong>{' '}
-                                                                        {order
-                                                                            .bucky_metadata
-                                                                            ?.data
-                                                                            ?.shopOrderNo ||
-                                                                            'N/A'}
-                                                                    </Text>
-                                                                </VStack>
-                                                            </HStack>
-                                                        </TabPanel>
+                                                                        <Text>
+                                                                            <strong>
+                                                                                Shop
+                                                                                Order
+                                                                                Number:
+                                                                            </strong>{' '}
+                                                                            {order
+                                                                                .bucky_metadata
+                                                                                ?.data
+                                                                                ?.shopOrderNo ||
+                                                                                'N/A'}
+                                                                        </Text>
+                                                                    </VStack>
+                                                                </HStack>
+                                                            </TabPanel>
 
-                                                        <TabPanel>
-                                                            <VStack
-                                                                align="start"
-                                                                spacing={4}
-                                                                p={4}
-                                                                borderRadius="lg"
-                                                                w="100%"
-                                                            >
+                                                            <TabPanel>
                                                                 <VStack
                                                                     align="start"
-                                                                    spacing={2}
+                                                                    spacing={4}
+                                                                    p={4}
+                                                                    borderRadius="lg"
+                                                                    w="100%"
                                                                 >
-                                                                    <Text fontSize="md">
-                                                                        <strong>
-                                                                            Product
-                                                                            Name:
-                                                                        </strong>{' '}
-                                                                        {order
-                                                                            .bucky_metadata
-                                                                            ?.data
-                                                                            ?.productList[0]
-                                                                            ?.productName ||
-                                                                            'N/A'}
-                                                                    </Text>
-                                                                    <Text fontSize="md">
-                                                                        <strong>
-                                                                            Quantity:
-                                                                        </strong>{' '}
-                                                                        {order
-                                                                            .bucky_metadata
-                                                                            ?.data
-                                                                            ?.productList[0]
-                                                                            ?.productCount ||
-                                                                            'N/A'}
-                                                                    </Text>
-                                                                    <Text fontSize="md">
-                                                                        <strong>
-                                                                            Price:
-                                                                        </strong>{' '}
-                                                                        {formatCryptoPrice(
-                                                                            Number(
-                                                                                item.unit_price
-                                                                            ),
-                                                                            item.currency_code ??
-                                                                                'usdc'
-                                                                        )}{' '}
-                                                                        {upperCase(
-                                                                            item.currency_code
-                                                                        )}
-                                                                    </Text>
-                                                                    <Text fontSize="md">
-                                                                        <strong>
-                                                                            Platform:
-                                                                        </strong>{' '}
-                                                                        {order
-                                                                            .bucky_metadata
-                                                                            ?.data
-                                                                            ?.productList[0]
-                                                                            ?.platform ||
-                                                                            'N/A'}
-                                                                    </Text>
+                                                                    <VStack
+                                                                        align="start"
+                                                                        spacing={
+                                                                            2
+                                                                        }
+                                                                    >
+                                                                        <Text fontSize="md">
+                                                                            <strong>
+                                                                                Product
+                                                                                Name:
+                                                                            </strong>{' '}
+                                                                            {order
+                                                                                .bucky_metadata
+                                                                                ?.data
+                                                                                ?.productList[0]
+                                                                                ?.productName ||
+                                                                                'N/A'}
+                                                                        </Text>
+                                                                        <Text fontSize="md">
+                                                                            <strong>
+                                                                                Quantity:
+                                                                            </strong>{' '}
+                                                                            {order
+                                                                                .bucky_metadata
+                                                                                ?.data
+                                                                                ?.productList[0]
+                                                                                ?.productCount ||
+                                                                                'N/A'}
+                                                                        </Text>
+                                                                        <Text fontSize="md">
+                                                                            <strong>
+                                                                                Price:
+                                                                            </strong>{' '}
+                                                                            {formatCryptoPrice(
+                                                                                Number(
+                                                                                    item.unit_price
+                                                                                ),
+                                                                                item.currency_code ??
+                                                                                    'usdc'
+                                                                            )}{' '}
+                                                                            {upperCase(
+                                                                                item.currency_code
+                                                                            )}
+                                                                        </Text>
+                                                                        {/*<Text fontSize="md">*/}
+                                                                        {/*    <strong>*/}
+                                                                        {/*        Platform:*/}
+                                                                        {/*    </strong>{' '}*/}
+                                                                        {/*    {order*/}
+                                                                        {/*        .bucky_metadata*/}
+                                                                        {/*        ?.data*/}
+                                                                        {/*        ?.productList[0]*/}
+                                                                        {/*        ?.platform ||*/}
+                                                                        {/*        'N/A'}*/}
+                                                                        {/*</Text>*/}
+                                                                    </VStack>
                                                                 </VStack>
-                                                            </VStack>
-                                                        </TabPanel>
-                                                    </TabPanels>
-                                                </Tabs>
-                                            </Box>
-                                        </Collapse>
-                                    </Box>
-                                )
-                            )}
-                        </div>
-                    ))}
-                </>
+                                                            </TabPanel>
+                                                        </TabPanels>
+                                                    </Tabs>
+                                                </Box>
+                                            </Collapse>
+                                        </div>
+                                    )
+                                )}
+                                <Divider
+                                    width="90%" // Line takes up 80% of the screen width
+                                    borderBottom="0.2px solid"
+                                    mt={4}
+                                    borderColor="#D9D9D9"
+                                    pr={'1rem'}
+                                    _last={{
+                                        // pb: 0,
+                                        // borderBottom: 'none',
+                                        mb: 8,
+                                    }}
+                                />
+                            </div>
+                        );
+                    })}
+                </Flex>
             ) : null}
         </div>
     );

@@ -9,7 +9,6 @@ import SmtpMailService from './smtp-mail';
 import ordersDataParser from '../utils/notification/order-data-handler';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import CustomerNotificationSerivce from './customer-notification';
-import { NotificationType } from './customer-notification';
 
 class SmtpNotificationService extends AbstractNotificationService {
     static identifier = 'smtp-notification';

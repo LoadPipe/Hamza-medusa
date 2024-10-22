@@ -48,13 +48,13 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
         context: PriceSelectionContext
     ): Promise<Map<string, PriceSelectionResult>> {
         //if we have a customer, then we will check for preferred currency
-        const preferredCurrency: string =
-            await this.getCustomerPreferredCurrency(context.customer_id);
+        //const preferredCurrency: string =
+        //    await this.getCustomerPreferredCurrency(context.customer_id);
 
         //get all relevant variants, including preferred currency (if any)
         return await this.getPricesForVariants(
             data.map((d) => d.variantId), //variant ids
-            preferredCurrency ?? 'usdc'
+            //preferredCurrency ?? 'usdc'
         );
     }
 

@@ -3,7 +3,7 @@ import { LineItem, Region } from '@medusajs/medusa';
 import { clx } from '@medusajs/ui';
 import Image from 'next/image';
 import { getPercentageDiff } from '@lib/util/get-precentage-diff';
-import { CalculatedVariant } from 'types/medusa';
+import { CalculatedVariant } from '@/types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { Flex, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
@@ -29,7 +29,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
         undefined
     );
 
-    console.log("CART ITEM IS", item);
+    // console.log("CART ITEM IS", item);
 
     useEffect(() => {
         const fetchCustomerPreferredCurrency = async () => {
@@ -61,7 +61,8 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
 
     useEffect(() => {
         const originalTotal = item.original_total ?? null;
-        const totalItemAmount = item.subtotal ?? (item.unit_price * item.quantity);
+        const totalItemAmount =
+            item.subtotal ?? item.unit_price * item.quantity;
         const discountTotal = item.discount_total ?? null;
         setPrice(totalItemAmount);
         setReducedPrice(reducedPrice);

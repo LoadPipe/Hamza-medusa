@@ -380,7 +380,7 @@ GET http://localhost:9000/custom/cart/recover?customer_id=cus_01J8FQES9MPH63SMSS
 
 
 ### Get Specific Customers All Orders METHOD: listCustomerOrders() in order.ts
-GET http://localhost:9000/custom/order/customer-orders?customer_id=cus_01J8MD5FK7AT7CRHCXGNVXTB54&buckets=true&check_buckets=true
+GET http://localhost:9000/custom/order/customer-orders?customer_id=cus_01J8MD5FK7AT7CRHCXGNVXTB54&buckets=true
 Content-Type: application/json
 
 
@@ -444,5 +444,21 @@ GET http://localhost:9000/custom/product/category/products?category_name=fashion
 Content-Type: application/json
 
 ### GET multi-category products inclusive
-GET http://localhost:9000/custom/product/filter?category_name=gaming,fashion&price_hi=0&price_lo=0
+GET http://localhost:9000/custom/product/filter?category_name=all&price_hi=0&price_lo=0
 Content-Type: application/json
+
+
+### CREATE A CART POST
+POST http://localhost:9000/store/carts
+Content-Type: application/json
+
+### Return orderlist?
+POST http://localhost:9000/custom/order
+Content-Type: application/json
+
+{
+  "cart_id": "cart_01J8MXQNNTS03Y4QYABD1H0VWC"
+}
+
+### Get vendor from order?
+GET http://localhost:9000/custom/order/store?order_id=order_01J9R821KNNRRS9EWSV2CFW2MH

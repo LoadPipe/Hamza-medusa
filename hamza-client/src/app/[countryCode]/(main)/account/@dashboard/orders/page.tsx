@@ -1,9 +1,11 @@
 import { Metadata } from 'next';
-
 import OrderOverview from '@modules/account/components/order-overview';
 import { getHamzaCustomer, getOrderBucket } from '@lib/data';
 import { notFound } from 'next/navigation';
-import { Box } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
+import getQueryClient from '@/getQueryClient';
+import { dehydrate } from '@tanstack/react-query';
+
 export const metadata: Metadata = {
     title: 'Orders',
     description: 'Overview of your previous orders.',
@@ -11,25 +13,34 @@ export const metadata: Metadata = {
 
 export default async function Orders() {
     const customer = await getHamzaCustomer();
-    const ordersExist = await getOrderBucket(customer.id, true);
+
+    const queryClient = getQueryClient();
+    await queryClient.prefetchQuery({
+        queryKey: ['batchOrders'],
+        queryFn: () => {
+            return getOrderBucket(customer.id);
+        },
+    });
+
+    const dehydratedOrders = dehydrate(queryClient);
 
     if (!customer) {
         notFound();
     }
     return (
-        <Box
-            maxW={'927px'}
+        <Flex
+            maxW={{ md: '600px', lg: '927px' }}
             width="100%"
             backgroundColor={'#121212'}
             flexDirection={'column'}
             color="white"
-            rounded={'lg'}
-            justifyContent="center"
-            alignItems="center"
+            p={6}
+            rounded="lg"
         >
-            <Box display="flex" flexDirection="column">
-                <OrderOverview customer={customer} ordersExist={ordersExist} />
-            </Box>
-        </Box>
+            <OrderOverview
+                customer={customer}
+                dehydratedState={dehydratedOrders}
+            />
+        </Flex>
     );
 }

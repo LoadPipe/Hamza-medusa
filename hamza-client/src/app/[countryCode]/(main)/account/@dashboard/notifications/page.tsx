@@ -6,7 +6,7 @@ import Notification from '@modules/account/components/notifications';
 
 import { getHamzaCustomer, getVerificationStatus } from '@lib/data';
 
-import { getRegion } from 'app/actions';
+import { getRegion } from '@/app/actions';
 import { headers } from 'next/headers';
 
 export const metadata: Metadata = {

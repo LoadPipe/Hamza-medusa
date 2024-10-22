@@ -23,7 +23,7 @@ import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import NavLink from '../components/nav-link';
-import { TABS } from 'modules/order-tab-management';
+import { TABS } from '@/modules/order-tab-management';
 import { RiShoppingBasket2Line } from 'react-icons/ri';
 import { LogoutDesktop } from '../components/logout-desktop';
 
@@ -227,8 +227,8 @@ const AccountNavDesktop = ({
                     <NavLink
                         href={'/account/orders'}
                         route={route!}
-                        title="Shipped"
-                        tab={'Shipped'}
+                        title="In Transit"
+                        tab={'In Transit'}
                         handleTabChange={() => handleTabChange(TABS.SHIPPED)}
                     />
                     <NavLink

@@ -2,7 +2,7 @@
 
 import { Button, Text, Flex } from '@chakra-ui/react';
 import CartTotals from '@modules/common/components/cart-totals';
-import { CartWithCheckoutStep } from 'types/global';
+import { CartWithCheckoutStep } from '@/types/global';
 import DiscountCode from '@modules/checkout/components/discount-code';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import Spinner from '@modules/common/icons/spinner';

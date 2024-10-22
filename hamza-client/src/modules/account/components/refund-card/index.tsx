@@ -1,9 +1,6 @@
-import { formatAmount } from '@lib/util/prices';
-import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
-import { FaCheckCircle } from 'react-icons/fa';
-import Link from 'next/link';
+import { Flex, Text } from '@chakra-ui/react';
 import React from 'react';
+import OrderLeftColumn from '@modules/order/templates/order-left-column';
 
 type OrderDetails = {
     thumbnail: string;
@@ -38,10 +35,11 @@ type Order = {
 type OrderCardProps = {
     order: Order;
     handle: string;
-    vendorName: string;
+    storeName: string;
+    icon: string;
 };
 
-const RefundCard = ({ order, handle, vendorName }: OrderCardProps) => {
+const RefundCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
     const orderString = typeof order.currency_code;
 
     if (!order) {
@@ -49,121 +47,46 @@ const RefundCard = ({ order, handle, vendorName }: OrderCardProps) => {
     }
 
     return (
-        <Box
-            // bg={'#272727'}
+        <Flex
+            my={4}
             color={'white'}
-            p={4}
-            rounded="lg"
-            shadow="base"
-            maxWidth="1000px"
+            justifyContent="space-between"
+            width="100%"
+            gap={4}
+            flexDirection={{ base: 'column', md: 'row' }}
         >
-            <Flex alignItems="center" mb={4}>
-                <Text
-                    fontSize={{ base: '18px', md: '24px' }}
-                    fontWeight="bold"
-                    noOfLines={1}
-                >
-                    {vendorName}
-                </Text>
-                <Flex
-                    display={{ base: 'none', md: 'flex' }}
-                    ml={2}
-                    alignItems="center"
-                >
-                    <FaCheckCircle color="#3196DF" />
-                </Flex>
-            </Flex>
+            <OrderLeftColumn
+                order={order}
+                handle={handle}
+                storeName={storeName}
+                icon={icon}
+                showDate={true}
+            />
 
+            {/* Right Side: Courier and Address */}
             <Flex
-                justifyContent="space-between"
-                flexDirection={{ base: 'column', md: 'row' }}
-                gap={{ base: 4, md: 0 }}
+                justifyContent={'center'}
+                direction={{ base: 'column', md: 'column' }}
+                gap={2}
             >
-                {' '}
-                {/* Left Side: Existing Content */}
-                <Flex
-                    direction={{ base: 'column', md: 'row' }}
-                    alignItems={{ base: 'flex-start', md: 'center' }}
-                    justifyContent="space-between"
-                >
-                    <Link
-                        href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}
-                    >
-                        <Image
-                            borderRadius="lg"
-                            width={{ base: '120px', md: '180px' }}
-                            src={
-                                order?.variant?.metadata?.imgUrl ??
-                                order.thumbnail ??
-                                ''
-                            }
-                            alt={`Thumbnail of ${order.title}`}
-                            mr={{ base: 1, md: 4 }}
-                            mb={{ base: 4, md: 0 }}
-                        />
-                    </Link>
-
-                    <Box flex="1">
-                        <Flex justifyContent="space-between" direction="row">
-                            <Flex direction="column">
-                                <Text fontWeight="bold" fontSize="18px">
-                                    {order.title}
-                                </Text>
-                                <Flex
-                                    direction={{ base: 'column', md: 'row' }}
-                                    mt={2}
-                                >
-                                    <Text
-                                        fontSize={{ base: '14px', md: '16px' }}
-                                        color={'rgba(85, 85, 85, 1.0)'}
-                                        mr={1} // Add some space between "Variation:" and the description
-                                    >
-                                        Variation:
-                                    </Text>
-                                    <Text fontSize="14px">
-                                        {order.description}
-                                    </Text>
-                                </Flex>
-                            </Flex>
-                        </Flex>
-
-                        <Flex direction="column" mt={2}>
-                            <Text
-                                color={'rgba(85, 85, 85, 1.0)'}
-                                fontSize="16px"
-                            >
-                                Order Date
-                            </Text>
-                            <Text color={'white'} fontSize="16px">
-                                {new Date(
-                                    order.created_at
-                                ).toLocaleDateString()}
-                            </Text>
-                        </Flex>
-                    </Box>
+                <Flex direction={{ base: 'column', md: 'column' }}>
+                    <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
+                        Status{' '}
+                    </Text>
+                    <Text color={'white'} fontSize="16px">
+                        Under review
+                    </Text>
                 </Flex>
-                {/* Right Side: Courier and Address */}
-                <Flex direction="column" minWidth="200px" maxWidth="300px">
-                    <Box mb={4}>
-                        <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
-                            Status
-                        </Text>
-                        <Text color={'white'} fontSize="16px">
-                            Under review
-                        </Text>
-                    </Box>
-
-                    <Box>
-                        <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
-                            Return Reason
-                        </Text>
-                        <Text color={'white'} fontSize="16px">
-                            Received the wrong product
-                        </Text>
-                    </Box>
+                <Flex direction={{ base: 'column', md: 'column' }}>
+                    <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
+                        Return Reason
+                    </Text>
+                    <Text color={'white'} fontSize="16px">
+                        Received the wrong product
+                    </Text>
                 </Flex>
             </Flex>
-        </Box>
+        </Flex>
     );
 };
 

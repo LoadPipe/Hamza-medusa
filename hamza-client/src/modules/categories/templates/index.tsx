@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 
-import { ProductCategoryWithChildren } from 'types/global';
+import { ProductCategoryWithChildren } from '@/types/global';
 import InteractiveLink from '@modules/common/components/interactive-link';
 import SkeletonProductGrid from '@modules/skeletons/templates/skeleton-product-grid';
 import RefinementList from '@modules/shop/components/refinement-list';

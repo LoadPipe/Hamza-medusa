@@ -1,13 +1,9 @@
-import { formatAmount } from '@lib/util/prices';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
-import { FaCheckCircle } from 'react-icons/fa';
-import { addToCart } from '@modules/cart/actions';
-import { useParams, useRouter } from 'next/navigation';
-import toast from 'react-hot-toast';
-import Link from 'next/link';
-import Spinner from '@modules/common/icons/spinner';
+import { Flex, Text } from '@chakra-ui/react';
 import React from 'react';
+import OrderLeftColumn from '@modules/order/templates/order-left-column';
+import currencyIcons from '@/images/currencies/crypto-currencies';
+import Image from 'next/image';
 
 type OrderDetails = {
     thumbnail: string;
@@ -42,15 +38,12 @@ type Order = {
 type OrderCardProps = {
     order: Order;
     handle: string;
-    vendorName: string;
+    storeName: string;
+    icon: string;
 };
 
-const DeliveredCard = ({ order, handle, vendorName }: OrderCardProps) => {
+const DeliveredCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
     const orderString = typeof order.currency_code;
-    const router = useRouter();
-    let countryCode = useParams().countryCode as string;
-    if (process.env.NEXT_PUBLIC_FORCE_COUNTRY)
-        countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY;
 
     const getAmount = (amount?: number | null) => {
         if (amount === null || amount === undefined) {
@@ -60,127 +53,42 @@ const DeliveredCard = ({ order, handle, vendorName }: OrderCardProps) => {
         return formatCryptoPrice(amount, order.currency_code || 'USDC');
     };
 
-    //TODO: Refactor to a mutation
-    const handleReorder = async (order: any) => {
-        try {
-            await addToCart({
-                variantId: order.variant_id,
-                countryCode: countryCode,
-                quantity: order.quantity,
-            });
-        } catch (e) {
-            toast.error(`Product with name ${order.title} could not be added`);
-        }
-
-        router.push('/checkout');
-    };
-
     if (!order) {
         return <div>Loading...</div>; // Display loading message if order is undefined
     }
     return (
-        <Box
-            // bg={'#272727'}
+        <Flex
+            mb={4}
             color={'white'}
-            p={4}
-            rounded="lg"
-            shadow="base"
-            maxWidth="1000px"
+            justifyContent="space-between"
+            maxWidth="100%"
+            flexDirection={{ base: 'column', md: 'row' }}
         >
-            <Flex alignItems="center" mb={4}>
-                <Text
-                    fontSize={{ base: '18px', md: '24px' }}
-                    fontWeight="bold"
-                    noOfLines={1}
-                >
-                    {vendorName}
-                </Text>
-                <Flex display={{ base: 'flex' }} ml={2} alignItems="center">
-                    <FaCheckCircle color="#3196DF" />
-                </Flex>
-            </Flex>
+            <OrderLeftColumn
+                order={order}
+                handle={handle}
+                storeName={storeName}
+                icon={icon}
+                showDate={false}
+            />
+
             <Flex
-                direction={{ base: 'column', md: 'row' }}
-                alignItems={{ base: 'flex-start', md: 'center' }}
-                justifyContent="space-between"
+                justifyContent={'center'}
+                direction={{ base: 'column', md: 'column' }}
+                gap={2}
             >
-                <Link
-                    href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${handle}`}
-                >
+                <Flex direction={'row'}></Flex>
+                <Flex direction={'row'} mr={'2rem'} gap={2}>
+                    <Text fontSize="16px" fontWeight="semibold">
+                        {getAmount(order.unit_price)}{' '}
+                    </Text>
                     <Image
-                        borderRadius="lg"
-                        width={{ base: '120px', md: '180px' }}
-                        src={
-                            order?.variant?.metadata?.imgUrl ??
-                            order.thumbnail ??
-                            ''
-                        }
-                        alt={`Thumbnail of ${order.title}`}
-                        mr={{ base: 1, md: 4 }}
-                        mb={{ base: 4, md: 0 }}
+                        src={currencyIcons[order.currency_code ?? 'usdc']}
+                        alt={order.currency_code?.toUpperCase() ?? 'USDC'}
                     />
-                </Link>
-                <Flex justifyContent="space-between">
-                    <Flex direction="column">
-                        <Text fontWeight="bold" fontSize="18px">
-                            {order.title}
-                        </Text>
-                        <Flex direction={{ base: 'column', md: 'row' }} mt={2}>
-                            <Text
-                                color={'rgba(85, 85, 85, 1.0)'}
-                                fontSize="16px"
-                                mr={1} // Add some space between "Variation:" and the description
-                            >
-                                Variation:
-                            </Text>
-                            <Text fontSize="14px">{order.description}</Text>
-                        </Flex>{' '}
-                        <Text fontSize="24px" fontWeight="semibold">
-                            {getAmount(order.unit_price)}{' '}
-                            {order.currency_code.toUpperCase()}
-                        </Text>
-                    </Flex>
-                </Flex>
-
-                <Flex justifyContent="space-between" direction="column" mt={2}>
-                    <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
-                        {new Date(order.created_at).toLocaleDateString()}
-                    </Text>
-                    <Text fontSize="16px" my={2}>
-                        {order.quantity} item(s)
-                    </Text>
                 </Flex>
             </Flex>
-
-            <Flex justifyContent="flex-end" mt={2} gap={'4'}>
-                <Button
-                    variant="outline"
-                    colorScheme="white"
-                    borderRadius={'37px'}
-                    onClick={() => {
-                        handleReorder(order || []);
-                    }}
-                >
-                    Buy Again
-                </Button>
-                <Button
-                    variant="outline"
-                    colorScheme="white"
-                    borderRadius={'37px'}
-                >
-                    Return/Refund
-                </Button>
-                {/*// TODO: Probably makes sense to have this here but yahh*/}
-                {/*<Button*/}
-                {/*    ml={2}*/}
-                {/*    variant="outline"*/}
-                {/*    colorScheme="white"*/}
-                {/*    borderRadius={'37px'}*/}
-                {/*>*/}
-                {/*    Add A Review*/}
-                {/*</Button>*/}
-            </Flex>
-        </Box>
+        </Flex>
     );
 };
 

@@ -47,7 +47,7 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
                             borderColor={
                                 v === current ? 'blue.500' : 'gray.200'
                             }
-                            borderWidth="1px"
+                            borderWidth={v === current ? '4px' : '1px'}
                             _hover={{
                                 boxShadow: 'md',
                             }}

@@ -8,7 +8,7 @@ import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
 import ReviewStar from '../../../../../../../public/images/products/review-star.svg';
 import Image from 'next/image';
-import { Variant } from 'types/medusa';
+import { Variant } from '@/types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import toast from 'react-hot-toast';
@@ -16,7 +16,7 @@ import OptionSelect from '../../../option-select';
 import { isEqual } from 'lodash';
 import CartPopup from '../../../cart-popup';
 import { getAverageRatings, getStore, getReviewCount } from '@lib/data';
-import currencyIcons from '../../../../../../../public/images/currencies/crypto-currencies';
+import currencyIcons from '@/images/currencies/crypto-currencies';
 import Spinner from '@modules/common/icons/spinner';
 import TermsOfService from '../terms-of-service/product-details-tos';
 import { renderStars } from '@modules/products/components/review-stars';
@@ -38,6 +38,11 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     selectedVariantImage,
     setSelectedVariantImage,
 }) => {
+    console.log(
+        'PreviewCheckout component rendered with productId:',
+        productId
+    );
+
     const currencies = ['eth', 'usdc', 'usdt'];
 
     const [options, setOptions] = useState<Record<string, string>>({});
@@ -58,6 +63,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     const { productData, variantId, quantity, setVariantId } =
         useProductPreview();
     const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
+    const [usdPrice, setUsdPrice] = useState<string | null>(null);
     const [selectedVariant, setSelectedVariant] = useState<null | Variant>(
         null
     );
@@ -76,7 +82,12 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     const { addWishlistItemMutation, removeWishlistItemMutation } =
         useWishlistMutations();
 
-    // console.log(typeof productId, productId);
+    // Clear variantId to avoid referencing ID from the previous product.
+    useEffect(() => {
+        setVariantId('');
+        setSelectedVariant(null);
+        setSelectedVariantImage('');
+    }, [productData]);
 
     useEffect(() => {
         const fetchProductReview = async () => {
@@ -126,11 +137,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         }
     }, [productData, variantId]);
 
-    //console.log(`Variant ID ${variantId}`);
-    // console.log(
-    //     `Product Data ${JSON.stringify(productData)} ${productData.variant}`
-    // );
-
     useEffect(() => {
         let checkVariantId: string | undefined = undefined;
         if (variantRecord) {
@@ -146,8 +152,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     }, [options]);
 
     useEffect(() => {
-        // clean setSelectedVariantImage
-        setSelectedVariantImage('');
         if (productData && productData.variants) {
             if (!variantId) {
                 // Initially setting the variantId if it's not set
@@ -173,6 +177,17 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     setSelectedVariant(selectedProductVariant);
 
                     // Find the price for the selected currency or default to the first price available
+                    if (preferred_currency_code === 'eth') {
+                        let price;
+                        try {
+                            price = selectedProductVariant.prices.find(
+                                (p: any) => p.currency_code === 'usdc'
+                            );
+                        } catch (e) {
+                            console.log(e);
+                        }
+                        setUsdPrice(price?.amount ?? 0);
+                    }
                     const price = selectedProductVariant.prices.find(
                         (p: any) =>
                             p.currency_code ===
@@ -219,7 +234,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             console.log('white list config ', whitelist_config);
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                whitelist_config.whitelisted_stores.includes(data.data)
+                    whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -318,7 +333,10 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         fontSize={{ base: '18px', md: '32px' }}
                         color="white"
                     >
-                        {`${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} `}
+                        {formatCryptoPrice(
+                            parseFloat(selectedPrice!),
+                            preferred_currency_code ?? 'usdc'
+                        )}
                     </Heading>
 
                     {authData.status == 'authenticated' && (
@@ -398,7 +416,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     fontSize={'18px'}
                     color="white"
                 >
-                    {`${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} ${preferred_currency_code?.toUpperCase() ?? 'USDC'}`}
+                    {preferred_currency_code === 'eth'
+                        ? `≅ $ ${formatCryptoPrice(parseFloat(usdPrice!), 'usdc')}`
+                        : `${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} ${preferred_currency_code?.toUpperCase() ?? 'USDC'}`}
                 </Heading>
                 {reviewCount > 0 ? (
                     <Flex
@@ -584,8 +604,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     {!inStock && isWhitelisted
                         ? 'Add to cart'
                         : inStock
-                          ? 'Add to Cart'
-                          : 'Out of Stock'}
+                            ? 'Add to Cart'
+                            : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs text-white px-4 py-2">

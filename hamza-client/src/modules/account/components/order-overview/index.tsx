@@ -1,16 +1,10 @@
 'use client';
-
-import { TABS } from 'modules/order-tab-management';
+import { TABS } from '@/modules/order-tab-management';
 import {
-    Box,
     ButtonGroup,
     Button,
-    Select,
     useBreakpointValue,
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuItem,
+    Flex,
 } from '@chakra-ui/react';
 import All from '@modules/order/templates/all';
 import Processing from '@modules/order/templates/processing';
@@ -20,12 +14,12 @@ import Cancelled from '@modules/order/templates/cancelled';
 import Refund from '@modules/order/templates/refund';
 import { useOrderTabStore } from '@store/order-tab-state';
 import React from 'react';
-import { ChevronDownIcon } from '@chakra-ui/icons';
-import { IoSettingsOutline } from 'react-icons/io5';
+import { Hydrate } from '@tanstack/react-query';
 
 const commonButtonStyles = {
     borderRadius: '8px',
-    width: '146px',
+    width: '100%',
+    maxWidth: '146px',
     height: '56px',
     padding: '16px',
     bg: 'gray.900',
@@ -46,10 +40,10 @@ const commonButtonStyles = {
 
 const OrderOverview = ({
     customer,
-    ordersExist,
+    dehydratedState,
 }: {
     customer: any;
-    ordersExist: boolean;
+    dehydratedState: any;
 }) => {
     const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
@@ -78,82 +72,39 @@ const OrderOverview = ({
             case TABS.REFUND:
                 return <Refund customer={customer.id} isEmpty={true} />;
             default:
-                return <All customer={customer.id} ordersExist={ordersExist} />;
+                return <All customer={customer.id} />;
         }
     };
 
     return (
-        <Box
-            display="flex"
+        <Flex
             flexDirection="column"
             justifyContent="center"
             alignItems="center"
-            gap="4"
-            mt={4}
             color="white"
-            p={{ base: '3', lg: '4' }}
+            width={'100%'}
         >
-            {isMobile ? (
-                <Menu>
-                    <MenuButton
-                        as={Button}
-                        height="56px"
-                        backgroundColor={'#121212'}
-                        color="primary.green.900"
-                        rightIcon={<ChevronDownIcon color="white" />}
-                        _hover={{ backgroundColor: '#121212' }}
-                        _active={{
-                            backgroundColor: '#121212',
-                            borderColor: '#555555',
-                            borderWidth: '1px',
-                        }}
-                        _focus={{
-                            boxShadow: 'none',
-                        }}
-                    >
-                        {orderActiveTab}
-                    </MenuButton>
-                    <MenuList
-                        color={'white'}
-                        width={'calc(80vw - 2rem)'}
-                        backgroundColor={'#121212'}
-                        borderColor={'#555555'}
-                        padding={'0'}
-                        margin={'0'}
-                    >
-                        {Object.values(TABS).map((tab) => (
-                            <MenuItem
-                                width={'100%'}
-                                key={tab}
-                                value={tab}
-                                backgroundColor="#333"
-                                color="#fff"
-                                _hover={{ backgroundColor: '#444' }}
-                                padding="12px"
-                                onClick={() => handleTabChange(tab)}
-                            >
-                                {tab}
-                            </MenuItem>
-                        ))}
-                    </MenuList>
-                </Menu>
-            ) : (
-                <ButtonGroup isAttached justifyContent="center">
+            {isMobile ? null : (
+                <ButtonGroup
+                    width={'100%'}
+                    isAttached
+                    justifyContent="center"
+                    mb={4}
+                >
                     {Object.values(TABS).map((tab) => (
                         <Button
                             key={tab}
                             onClick={() => handleTabChange(tab)}
                             {...commonButtonStyles}
                             isActive={orderActiveTab === tab}
-                            w={['100%', '100%', '30%']} // Full width on smaller screens, 30% on larger
                         >
                             {tab}
                         </Button>
                     ))}
                 </ButtonGroup>
             )}
-            {renderTabContent()}
-        </Box>
+            <Hydrate state={dehydratedState}>{renderTabContent()}</Hydrate>
+        </Flex>
     );
 };
 

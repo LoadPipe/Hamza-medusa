@@ -16,7 +16,7 @@ import useWishlistStore, {
 } from '@store/wishlist/wishlist-store';
 import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import { Variant } from 'types/medusa';
+import { Variant } from '@/types/medusa';
 import Image from 'next/image';
 import ReviewStar from '../../../../../../../public/images/products/review-star.svg';
 import {
