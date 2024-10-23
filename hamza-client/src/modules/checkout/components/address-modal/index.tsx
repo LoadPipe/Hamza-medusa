@@ -19,7 +19,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Cart, Customer } from '@medusajs/medusa';
 import { setAddresses } from '../../actions';
 import CountrySelect from '@modules/checkout/components/country-select';
-import { addCustomerShippingAddress } from '@/modules/account/actions';
+import { addCustomerShippingAddress, updateCustomerShippingAddress } from '@/modules/account/actions';
 import { custom } from 'viem';
 
 interface AddressModalProps {
@@ -44,6 +44,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
 }) => {
     // Save address to address book if radio button clicked
     const [saveAddress, setSaveAddress] = useState(false);
+    const [saveAddressButtonText, setSaveAddressButtonText] = useState('Set Address');
 
     // Reset the checkbox state to false when the modal opens
     useEffect(() => {
@@ -51,9 +52,6 @@ const AddressModal: React.FC<AddressModalProps> = ({
             setSaveAddress(false);
         }
     }, [isOpen]);
-
-    console.log(cart?.shipping_address);
-    console.log(customer?.shipping_addresses);
 
     const [formData, setFormData] = useState({
         'shipping_address.first_name': cart?.shipping_address?.first_name || '',
@@ -87,6 +85,12 @@ const AddressModal: React.FC<AddressModalProps> = ({
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         setSaveAddress(e.target.checked);
+
+        if (e.target.checked)
+            setSaveAddressButtonText((selectedAddressId?.length) ? 'Overwrite Address' : 'Add Address');
+        else
+            setSaveAddressButtonText('Set Address');
+
     };
 
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -98,9 +102,6 @@ const AddressModal: React.FC<AddressModalProps> = ({
         // If "Save shipping address" checkbox is checked, save the address for the customer
         if (saveAddress) {
             try {
-                if (selectedAddressId?.length) {
-                    //TODO: yes
-                }
                 const shippingAddressData = new FormData();
                 shippingAddressData.append(
                     'first_name',
@@ -143,7 +144,14 @@ const AddressModal: React.FC<AddressModalProps> = ({
                     formData['shipping_address.phone']
                 );
 
-                await addCustomerShippingAddress({}, shippingAddressData);
+                //if existing selected, update instead of adding new 
+                if (selectedAddressId?.length) {
+                    await updateCustomerShippingAddress({ addressId: selectedAddressId }, shippingAddressData)
+                }
+                else {
+                    //otherwise, add new 
+                    await addCustomerShippingAddress({}, shippingAddressData);
+                }
             } catch (error) {
                 console.error('Failed to save shipping address:', error);
             }
@@ -413,7 +421,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                 _hover={{ opacity: 0.5 }}
                                 type="submit"
                             >
-                                Add Address
+                                {saveAddressButtonText}
                             </Button>
                         </Flex>
                     </ModalFooter>
