@@ -28,6 +28,8 @@ import { createLogger, ILogger } from '../utils/logging/logger';
 import SmtpMailService from './smtp-mail';
 import CustomerNotificationService from './customer-notification';
 import { formatCryptoPrice } from '../utils/price-formatter';
+import OrderHistoryService from './order-history';
+import { OrderHistory } from 'src/models/order-history';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
 // In medusa we have these 5 DEFAULT order.STATUS's {PENDING, COMPLETED, ARCHIVED, CANCELED, REQUIRES_ACTION}
@@ -59,11 +61,12 @@ export default class OrderService extends MedusaOrderService {
     protected paymentRepository_: typeof PaymentRepository;
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
+    protected readonly buckyLogRepository_: typeof BuckyLogRepository;
+    protected customerNotificationService_: CustomerNotificationService;
+    protected smtpMailService_: SmtpMailService = new SmtpMailService();
+    protected orderHistoryService_: OrderHistoryService;
     protected readonly logger: ILogger;
     protected buckyClient: BuckyClient;
-    protected readonly buckyLogRepository: typeof BuckyLogRepository;
-    protected customerNotificationService_: CustomerNotificationService;
-    protected smtpMailService: SmtpMailService = new SmtpMailService();
 
     constructor(container) {
         super(container);
@@ -76,8 +79,9 @@ export default class OrderService extends MedusaOrderService {
         this.productVariantRepository_ = container.productVariantRepository;
         this.customerNotificationService_ =
             container.customerNotificationService;
+        this.orderHistoryService_ = container.orderHistoryService;
         this.logger = createLogger(container, 'OrderService');
-        this.buckyLogRepository = container.buckyLogRepository;
+        this.buckyLogRepository_ = container.buckyLogRepository;
         this.buckyClient = new BuckyClient(container.buckyLogRepository);
     }
 
@@ -603,6 +607,71 @@ export default class OrderService extends MedusaOrderService {
         );
     }
 
+    async setOrderStatus(
+        order: Order,
+        status?: OrderStatus,
+        fulfillmentStatus?: FulfillmentStatus,
+        paymentStatus?: PaymentStatus,
+        metadata?: Record<string, unknown>
+    ): Promise<Order> {
+        if (
+            (status && order.status != status) ||
+            (fulfillmentStatus &&
+                order.fulfillment_status != fulfillmentStatus) ||
+            (paymentStatus && order.payment_status != paymentStatus)
+        ) {
+            //get values to add to history
+            const to_status: OrderStatus | null =
+                status && order.status != status ? status : null;
+            const to_payment_status: PaymentStatus | null =
+                paymentStatus && order.payment_status != paymentStatus
+                    ? paymentStatus
+                    : null;
+            const to_fulfillment_status: FulfillmentStatus | null =
+                fulfillmentStatus &&
+                order.fulfillment_status != fulfillmentStatus
+                    ? fulfillmentStatus
+                    : null;
+
+            if (status) {
+                order.status = status;
+                if (order.fulfillment_status == FulfillmentStatus.FULFILLED) {
+                    this.sendDeliveredEmail(order);
+                }
+            }
+            if (fulfillmentStatus) {
+                order.fulfillment_status = fulfillmentStatus;
+                if (order.fulfillment_status == FulfillmentStatus.SHIPPED) {
+                    this.sendShippedEmail(order);
+                }
+            }
+            if (paymentStatus) {
+                order.payment_status = paymentStatus;
+                if (order.status == OrderStatus.CANCELED) {
+                    this.sendCancelledEmail(order);
+                }
+            }
+
+            //send emails
+            //TODO: this should follow medusa events
+
+            //save the order
+            await this.orderRepository_.save(order);
+            await this.orderHistoryService_.create(order, {
+                to_status,
+                to_payment_status,
+                to_fulfillment_status,
+                metadata,
+            });
+        }
+
+        return order;
+    }
+
+    async getOrderHistory(orderId: string): Promise<OrderHistory[]> {
+        return this.orderHistoryService_.retrieve(orderId);
+    }
+
     private async sendOrderEmail(
         order: Order,
         requiredNotification: string,
@@ -627,7 +696,7 @@ export default class OrderService extends MedusaOrderService {
                 );
 
                 //send the mail
-                this.smtpMailService.sendMail({
+                this.smtpMailService_.sendMail({
                     from:
                         process.env.SMTP_HAMZA_FROM ??
                         'support@hamzamarket.com',

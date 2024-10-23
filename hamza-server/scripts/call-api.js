@@ -15,7 +15,9 @@ async function main() {
         const authData = await authResponse.json();
         const authCookie = authResponse.headers.get('set-cookie');
 
-        const response = await fetch(
+        console.log(authData);
+
+        const storeResponse = await fetch(
             `http://localhost:${port}/admin/custom/user?email=goblinvendor@hamza.com&password=password`,
             {
                 method: 'GET',
@@ -24,6 +26,7 @@ async function main() {
                 },
             }
         );
+        console.log(storeResponse);
 
         //await fetch(`http://localhost:${port}/admin/custom/massmarket`, {
         //    method: 'GET',
@@ -41,9 +44,10 @@ async function main() {
                 },
             }
         );
+        console.log(buckySetupResponse);
 
         const buckyResponse = await fetch(
-            `http://localhost:${port}/custom/bucky/import?keyword=electronics&count=2`,
+            `http://localhost:${port}/admin/custom/bucky/import?keyword=electronics&count=2`,
             {
                 method: 'GET',
                 headers: {
@@ -51,8 +55,9 @@ async function main() {
                 },
             }
         );
+        console.log(buckyResponse);
 
-        await fetch(
+        const whitelistResponse = await fetch(
             `http://localhost:${port}/admin/custom/whitelist?store=Hamza Official`,
             {
                 method: 'GET',
@@ -61,6 +66,7 @@ async function main() {
                 },
             }
         );
+        console.log(whitelistResponse);
     } catch (e) {
         console.error(e);
     }

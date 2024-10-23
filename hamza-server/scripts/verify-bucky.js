@@ -19,7 +19,7 @@ async function main() {
         const buckyResponse = await fetch(
             url,
             {
-                method: 'GET',
+                method: 'PUT',
                 headers: {
                     Cookie: authCookie.substring(0, authCookie.indexOf(';')),
                 },

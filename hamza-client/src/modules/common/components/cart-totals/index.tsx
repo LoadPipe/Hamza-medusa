@@ -58,8 +58,8 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
             }
         }
 
-        return subtotals[currencyCode]
-            ? { currency: currencyCode, amount: subtotals[currencyCode] }
+        return subtotals[itemCurrencyCode]
+            ? { currency: itemCurrencyCode, amount: subtotals[itemCurrencyCode] }
             : {
                 currency: itemCurrencyCode,
                 amount: subtotals[itemCurrencyCode],
@@ -87,7 +87,6 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
         usdGrandTotal = (usdSubtotal.amount ?? 0) + usdShippingCost + taxTotal;
     }
 
-    // console.log(grandTotal);
     return (
         <div>
             <hr
