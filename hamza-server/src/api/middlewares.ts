@@ -109,6 +109,9 @@ const restrictLoggedInCustomerById = async (
     res: MedusaResponse,
     next: MedusaNextFunction
 ) => {
+    if (req.url.includes('/token')) {
+        return next(); // Skip the middleware if the URL is /token
+    }
     let authorized = false;
     if (req.headers.authorization) {
         const logger = req.scope.resolve('logger');
@@ -328,16 +331,16 @@ export const config: MiddlewaresConfig = {
             ],
         },
 
-        {
-            matcher: '/store/carts',
-            middlewares: [
-                cors({
-                    origin: [STORE_CORS],
-                    credentials: true,
-                }),
-                restrictLoggedInCart,
-            ],
-        },
+        // {
+        //     matcher: '/store/carts',
+        //     middlewares: [
+        //         cors({
+        //             origin: [STORE_CORS],
+        //             credentials: true,
+        //         }),
+        //         restrictLoggedInCart,
+        //     ],
+        // },
 
         // {
         //     matcher: '/custom/confirmation-token/generate',
