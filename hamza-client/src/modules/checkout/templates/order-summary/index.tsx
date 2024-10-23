@@ -1,11 +1,10 @@
 'use client';
-
-import { Flex, Text, Divider } from '@chakra-ui/react';
+import { Flex, Text, Button, Link, Divider } from '@chakra-ui/react';
 import { Cart } from '@medusajs/medusa';
-import ItemsTemplate from '@modules/cart/templates/items';
 import CartItems from '@modules/checkout/components/cart-items';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import React from 'react';
+import { HiOutlineShoppingCart } from 'react-icons/hi';
 
 const OrderSummary = ({
     cart,
@@ -14,6 +13,7 @@ const OrderSummary = ({
 }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
 
+    const isCartEmpty = !cart?.items || cart.items.length === 0;
     return (
         <Flex
             bgColor={'#121212'}
@@ -33,11 +33,80 @@ const OrderSummary = ({
                 Order Summary
             </Text>
 
-            <CartItems
-                region={cart?.region}
-                items={cart?.items}
-                currencyCode={preferred_currency_code ?? 'usdc'}
-            />
+            {isCartEmpty ? (
+                // Empty cart template
+                <Flex
+                    width={'100%'}
+                    flexDir={'column'}
+                    justifyContent={'center'}
+                    alignItems={'center'}
+                    color={'white'}
+                >
+                    <Divider borderColor="#3E3E3E" borderWidth={'1px'} />
+                    <Flex
+                        mt={{ base: '0', md: '3.5rem' }}
+                        maxW={'329px'}
+                        height={{ base: '170px', md: '273px' }}
+                        width={'100%'}
+                        flexDir={'column'}
+                        gap={{ base: 3, md: 30 }}
+                        justifyContent={'center'}
+                        alignItems={'center'}
+                    >
+                        <Flex
+                            flexDir={'column'}
+                            mt={{ base: '0', md: '-1rem' }}
+                            gap={{ base: 0, md: '8px' }}
+                        >
+                            <Flex
+                                fontSize={{ base: '26px', md: '56px' }}
+                                alignSelf={'center'}
+                                mb="0.25rem"
+                            >
+                                <HiOutlineShoppingCart />
+                            </Flex>
+                            <Text
+                                textAlign={'center'}
+                                fontSize={{ base: '14px', md: '20px' }}
+                                fontWeight={600}
+                                color="primary.green.900"
+                            >
+                                Your cart is empty
+                            </Text>
+                            <Text
+                                fontSize={{ base: '14px', md: '16px' }}
+                                textAlign={'center'}
+                            >
+                                Looks like you haven't added anything to your
+                                cart yet.
+                            </Text>
+                        </Flex>
+                        <Link
+                            href={'/shop'}
+                            textAlign={'center'}
+                            width={'100%'}
+                        >
+                            <Button
+                                backgroundColor={'primary.green.900'}
+                                color="black"
+                                width={{ base: '100%', md: '174px' }}
+                                borderRadius={'30px'}
+                                height={{ base: '42px', md: '52px' }}
+                                fontSize={{ base: '14px', md: '16px' }}
+                            >
+                                Start Shopping
+                            </Button>
+                        </Link>
+                    </Flex>
+                </Flex>
+            ) : (
+                // Cart items template
+                <CartItems
+                    region={cart?.region}
+                    items={cart?.items}
+                    currencyCode={preferred_currency_code ?? 'usdc'}
+                />
+            )}
         </Flex>
     );
 };
