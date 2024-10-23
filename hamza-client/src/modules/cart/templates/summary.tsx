@@ -16,19 +16,6 @@ type SummaryProps = {
 const Summary = ({ cart }: SummaryProps) => {
     const isUpdating = useCartStore((state) => state.isUpdating);
 
-    const [step, setSet] = useState('');
-    useEffect(() => {
-        const checkoutStep = () => {
-            if (cart && cart.shipping_address) {
-                setSet('review');
-            } else {
-                setSet('address');
-            }
-        };
-
-        checkoutStep();
-    }, [cart]);
-
     return (
         <Flex
             flexDir={'column'}
@@ -50,7 +37,7 @@ const Summary = ({ cart }: SummaryProps) => {
             </Text>
             <CartTotals data={cart} />
             <DiscountCode cart={cart} />
-            <LocalizedClientLink href={'/checkout?step=' + step}>
+            <LocalizedClientLink href={'/checkout?step=' + cart.checkout_step}>
                 <Button
                     mt="2rem"
                     backgroundColor={'primary.indigo.900'}

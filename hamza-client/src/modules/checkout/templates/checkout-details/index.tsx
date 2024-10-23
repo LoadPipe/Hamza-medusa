@@ -8,7 +8,7 @@ import {
     getHamzaCustomer,
     listShippingMethods,
 } from '@lib/data';
-
+import { redirect } from 'next/navigation';
 export default async function CheckoutDetails(params: any) {
     const cartId = params.cartId;
 
@@ -26,7 +26,6 @@ export default async function CheckoutDetails(params: any) {
     }
 
     cart.checkout_step = cart && getCheckoutStep(cart);
-    console.log(cart.checkout_step);
 
     // get available shipping methods
     const availableShippingMethods = await listShippingMethods(
