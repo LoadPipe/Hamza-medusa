@@ -61,9 +61,9 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
         return subtotals[currencyCode]
             ? { currency: currencyCode, amount: subtotals[currencyCode] }
             : {
-                currency: itemCurrencyCode,
-                amount: subtotals[itemCurrencyCode],
-            };
+                  currency: itemCurrencyCode,
+                  amount: subtotals[itemCurrencyCode],
+              };
     };
 
     const finalSubtotal = getCartSubtotal(
@@ -125,7 +125,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                     </Text>
                 )}
 
-                {shippingCost ?
+                {shippingCost ? (
                     <Flex justifyContent={'space-between'}>
                         <Text
                             alignSelf={'center'}
@@ -144,8 +144,23 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                             ).toString()}
                         </Text>
                     </Flex>
-                    : <Flex></Flex>
-                }
+                ) : (
+                    <Flex justifyContent={'space-between'}>
+                        <Text
+                            alignSelf={'center'}
+                            fontSize={{ base: '14px', md: '16px' }}
+                        >
+                            Shipping Fee
+                        </Text>
+
+                        <Text
+                            fontSize={{ base: '14px', md: '16px' }}
+                            alignSelf="center"
+                        >
+                            0.00
+                        </Text>
+                    </Flex>
+                )}
 
                 <Flex justifyContent={'space-between'}>
                     <Text
