@@ -23,6 +23,7 @@ const Addresses = ({
     const [addressActionType, setActionAddressType] = useState<'add' | 'edit'>(
         'add'
     );
+    const [selectedAddressId, setSelectedAddressId] = useState<string>('');
 
     // Hooks to open and close address modal
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -130,6 +131,7 @@ const Addresses = ({
                                 <AddressSelect
                                     cart={cart}
                                     addresses={customer?.shipping_addresses ?? []}
+                                    onSelect={(addrId) => setSelectedAddressId(addrId)}
                                 />
                             }
                         </Flex>
@@ -171,6 +173,7 @@ const Addresses = ({
                 cart={cart}
                 isOpen={isOpen}
                 onClose={onClose}
+                selectedAddressId={selectedAddressId}
             />
         </div>
     );
