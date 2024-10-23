@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Cart, Customer } from '@medusajs/medusa';
 import { useToggleState } from '@medusajs/ui';
 import { Flex, Text, useDisclosure, Button } from '@chakra-ui/react';
@@ -10,7 +10,7 @@ import { BiPencil } from 'react-icons/bi';
 import AddressModal from '../address-modal';
 import { IoLocationOutline } from 'react-icons/io5';
 import AddressSelect from '../address-select';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const Addresses = ({
     cart,
@@ -19,6 +19,7 @@ const Addresses = ({
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | null;
     customer: Omit<Customer, 'password_hash'> | null;
 }) => {
+    const router = useRouter();
     // Set whether we are adding or editing address
     const [addressActionType, setActionAddressType] = useState<'add' | 'edit'>(
         'add'
@@ -44,11 +45,18 @@ const Addresses = ({
         useToggleState(
             cart?.shipping_address && cart?.billing_address
                 ? compareAddresses(
-                    cart?.shipping_address,
-                    cart?.billing_address
-                )
+                      cart?.shipping_address,
+                      cart?.billing_address
+                  )
                 : true
         );
+
+    // Run once when component mounts to check if address already set and push to next step
+    useEffect(() => {
+        if (cart?.shipping_address) {
+            router.push('/checkout?step=review');
+        }
+    }, []);
 
     return (
         <div>
@@ -126,12 +134,15 @@ const Addresses = ({
                                 Edit Shipping Address
                             </Button>
 
-                            {(customer?.shipping_addresses?.length ?? 0) > 0 &&
+                            {(customer?.shipping_addresses?.length ?? 0) >
+                                0 && (
                                 <AddressSelect
                                     cart={cart}
-                                    addresses={customer?.shipping_addresses ?? []}
+                                    addresses={
+                                        customer?.shipping_addresses ?? []
+                                    }
                                 />
-                            }
+                            )}
                         </Flex>
                     </Flex>
                 ) : (
