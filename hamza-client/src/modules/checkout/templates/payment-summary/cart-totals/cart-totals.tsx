@@ -73,7 +73,6 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
 
     const shippingCost = shipping_total ?? 0;
     const taxTotal = tax_total ?? 0;
-    const usdShippingCost = shippingCost ? 500 : 0; //TODO: hard-coded for now
     const grandTotal = (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
     const displayCurrency = finalSubtotal?.currency?.length
         ? finalSubtotal.currency
@@ -84,7 +83,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
     let usdGrandTotal: number = 0;
     if (preferred_currency_code === 'eth') {
         usdSubtotal = getCartSubtotal(data, 'usdc');
-        usdGrandTotal = (usdSubtotal.amount ?? 0) + usdShippingCost + taxTotal;
+        usdGrandTotal = (usdSubtotal.amount ?? 0) + shippingCost + taxTotal;
     }
 
     // console.log(grandTotal);

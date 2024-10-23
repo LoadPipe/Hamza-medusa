@@ -33,6 +33,8 @@ const OrderSummary = ({
                 Order Summary
             </Text>
 
+
+
             {isCartEmpty ? (
                 // Empty cart template
                 <Flex
@@ -107,6 +109,7 @@ const OrderSummary = ({
                     currencyCode={preferred_currency_code ?? 'usdc'}
                 />
             )}
+
         </Flex>
     );
 };
