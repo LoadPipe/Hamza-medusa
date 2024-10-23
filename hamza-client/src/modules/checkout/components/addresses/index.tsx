@@ -44,9 +44,9 @@ const Addresses = ({
         useToggleState(
             cart?.shipping_address && cart?.billing_address
                 ? compareAddresses(
-                      cart?.shipping_address,
-                      cart?.billing_address
-                  )
+                    cart?.shipping_address,
+                    cart?.billing_address
+                )
                 : true
         );
 
@@ -126,10 +126,12 @@ const Addresses = ({
                                 Edit Shipping Address
                             </Button>
 
-                            <AddressSelect
-                                cart={cart}
-                                addresses={customer?.shipping_addresses ?? []}
-                            />
+                            {(customer?.shipping_addresses?.length ?? 0) > 0 &&
+                                <AddressSelect
+                                    cart={cart}
+                                    addresses={customer?.shipping_addresses ?? []}
+                                />
+                            }
                         </Flex>
                     </Flex>
                 ) : (
