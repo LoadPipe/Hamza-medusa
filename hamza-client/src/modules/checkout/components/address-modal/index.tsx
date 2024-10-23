@@ -20,6 +20,7 @@ import { Cart, Customer } from '@medusajs/medusa';
 import { setAddresses } from '../../actions';
 import CountrySelect from '@modules/checkout/components/country-select';
 import { addCustomerShippingAddress } from '@/modules/account/actions';
+import { custom } from 'viem';
 
 interface AddressModalProps {
     isOpen: boolean;
@@ -28,6 +29,7 @@ interface AddressModalProps {
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | null;
     toggleSameAsBilling: () => void;
     countryCode: string;
+    selectedAddressId: string;
     addressActionType: 'add' | 'edit';
 }
 
@@ -36,8 +38,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
     onClose,
     customer,
     cart,
-    toggleSameAsBilling,
     countryCode,
+    selectedAddressId,
     addressActionType,
 }) => {
     // Save address to address book if radio button clicked
@@ -49,6 +51,9 @@ const AddressModal: React.FC<AddressModalProps> = ({
             setSaveAddress(false);
         }
     }, [isOpen]);
+
+    console.log(cart?.shipping_address);
+    console.log(customer?.shipping_addresses);
 
     const [formData, setFormData] = useState({
         'shipping_address.first_name': cart?.shipping_address?.first_name || '',
@@ -93,6 +98,9 @@ const AddressModal: React.FC<AddressModalProps> = ({
         // If "Save shipping address" checkbox is checked, save the address for the customer
         if (saveAddress) {
             try {
+                if (selectedAddressId?.length) {
+                    //TODO: yes
+                }
                 const shippingAddressData = new FormData();
                 shippingAddressData.append(
                     'first_name',
@@ -177,7 +185,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         _placeholder={{ color: 'white' }}
                                         value={
                                             formData[
-                                                'shipping_address.first_name'
+                                            'shipping_address.first_name'
                                             ]
                                         }
                                         onChange={handleChange}
@@ -196,7 +204,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         _placeholder={{ color: 'white' }}
                                         value={
                                             formData[
-                                                'shipping_address.last_name'
+                                            'shipping_address.last_name'
                                             ]
                                         }
                                         onChange={handleChange}
@@ -292,7 +300,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         _placeholder={{ color: 'white' }}
                                         value={
                                             formData[
-                                                'shipping_address.province'
+                                            'shipping_address.province'
                                             ]
                                         }
                                         onChange={handleChange}
@@ -313,7 +321,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         color={'white'}
                                         value={
                                             formData[
-                                                'shipping_address.country_code'
+                                            'shipping_address.country_code'
                                             ]
                                         }
                                         onChange={handleChange}
@@ -333,7 +341,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         _placeholder={{ color: 'white' }}
                                         value={
                                             formData[
-                                                'shipping_address.postal_code'
+                                            'shipping_address.postal_code'
                                             ]
                                         }
                                         onChange={handleChange}
@@ -374,7 +382,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                     onChange={handleSaveAddressChange}
                                 />
                                 <Text alignSelf={'center'}>
-                                    Save shipping address
+                                    Save address
                                 </Text>
                             </Flex>
                         </Flex>

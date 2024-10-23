@@ -19,9 +19,10 @@ import compareAddresses from '@lib/util/compare-addresses';
 type AddressSelectProps = {
     addresses: Address[];
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | null;
+    onSelect?: (addr: string) => void;
 };
 
-const AddressSelect = ({ addresses, cart }: AddressSelectProps) => {
+const AddressSelect = ({ addresses, cart, onSelect }: AddressSelectProps) => {
     const [isOpen, setIsOpen] = useState(false); // State to manage dropdown open/close
     const [selectedId, setSelectedId] = useState<string | null>(null); // State for selected address id
 
@@ -41,6 +42,9 @@ const AddressSelect = ({ addresses, cart }: AddressSelectProps) => {
             });
             setSelectedId(id); // Set the selected address ID
             setIsOpen(false); // Close the dropdown after selection
+
+            if (onSelect)
+                onSelect(id);
         }
     };
 
