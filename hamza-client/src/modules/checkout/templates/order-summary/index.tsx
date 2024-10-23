@@ -33,8 +33,6 @@ const OrderSummary = ({
                 Order Summary
             </Text>
 
-
-
             {isCartEmpty ? (
                 // Empty cart template
                 <Flex
@@ -104,12 +102,12 @@ const OrderSummary = ({
             ) : (
                 // Cart items template
                 <CartItems
+                    cart={cart}
                     region={cart?.region}
                     items={cart?.items}
                     currencyCode={preferred_currency_code ?? 'usdc'}
                 />
             )}
-
         </Flex>
     );
 };
