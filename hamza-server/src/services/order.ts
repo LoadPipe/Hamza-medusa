@@ -616,13 +616,22 @@ export default class OrderService extends MedusaOrderService {
     ): Promise<Order> {
         if (
             (status && order.status != status) ||
-            (fulfillmentStatus && order.fulfillment_status != fulfillmentStatus) ||
-            (paymentStatus && order.payment_status != paymentStatus)) {
-
+            (fulfillmentStatus &&
+                order.fulfillment_status != fulfillmentStatus) ||
+            (paymentStatus && order.payment_status != paymentStatus)
+        ) {
             //get values to add to history
-            const to_status: OrderStatus | null = (status && order.status != status) ? status : null;
-            const to_payment_status: PaymentStatus | null = (paymentStatus && order.payment_status != paymentStatus) ? paymentStatus : null;
-            const to_fulfillment_status: FulfillmentStatus | null = (fulfillmentStatus && order.fulfillment_status != fulfillmentStatus) ? fulfillmentStatus : null;
+            const to_status: OrderStatus | null =
+                status && order.status != status ? status : null;
+            const to_payment_status: PaymentStatus | null =
+                paymentStatus && order.payment_status != paymentStatus
+                    ? paymentStatus
+                    : null;
+            const to_fulfillment_status: FulfillmentStatus | null =
+                fulfillmentStatus &&
+                order.fulfillment_status != fulfillmentStatus
+                    ? fulfillmentStatus
+                    : null;
 
             if (status) {
                 order.status = status;
@@ -644,7 +653,7 @@ export default class OrderService extends MedusaOrderService {
             }
 
             //send emails
-            //TODO: this should follow medusa events 
+            //TODO: this should follow medusa events
 
             //save the order
             await this.orderRepository_.save(order);
@@ -652,12 +661,12 @@ export default class OrderService extends MedusaOrderService {
                 to_status,
                 to_payment_status,
                 to_fulfillment_status,
-                metadata
+                metadata,
             });
         }
 
         return order;
-    };
+    }
 
     async getOrderHistory(orderId: string): Promise<OrderHistory[]> {
         return this.orderHistoryService_.retrieve(orderId);

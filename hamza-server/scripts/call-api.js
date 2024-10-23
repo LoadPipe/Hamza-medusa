@@ -57,12 +57,15 @@ async function main() {
         );
         console.log(buckyResponse);
 
-        const whitelistResponse = await fetch(`http://localhost:${port}/admin/custom/whitelist?store=Hamza Official`, {
-            method: 'GET',
-            headers: {
-                Cookie: authCookie.substring(0, authCookie.indexOf(';')),
-            },
-        });
+        const whitelistResponse = await fetch(
+            `http://localhost:${port}/admin/custom/whitelist?store=Hamza Official`,
+            {
+                method: 'GET',
+                headers: {
+                    Cookie: authCookie.substring(0, authCookie.indexOf(';')),
+                },
+            }
+        );
         console.log(whitelistResponse);
     } catch (e) {
         console.error(e);
