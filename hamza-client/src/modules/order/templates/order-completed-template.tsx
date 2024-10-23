@@ -71,11 +71,11 @@ export default function OrderCompletedTemplate({
             {/* Order Body */}
             <OrderDetails order={order} />
             <Divider my="2rem" borderColor="#555555" />
-            <Summary cart_id={order.cart_id} cart={cart} order={order} />
+            <Summary cart={cart} />
 
             <TransactionDetails data={cart} />
 
-            {/* Check Order Buttin */}
+            {/* Check Order Button */}
             <Link href="/account/orders" style={{ width: '100%' }}>
                 <Flex
                     height={{ base: '42px', md: '52px' }}
