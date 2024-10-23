@@ -19,7 +19,10 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Cart, Customer } from '@medusajs/medusa';
 import { setAddresses } from '../../actions';
 import CountrySelect from '@modules/checkout/components/country-select';
-import { addCustomerShippingAddress, updateCustomerShippingAddress } from '@/modules/account/actions';
+import {
+    addCustomerShippingAddress,
+    updateCustomerShippingAddress,
+} from '@/modules/account/actions';
 import { custom } from 'viem';
 
 interface AddressModalProps {
@@ -44,7 +47,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
 }) => {
     // Save address to address book if radio button clicked
     const [saveAddress, setSaveAddress] = useState(false);
-    const [saveAddressButtonText, setSaveAddressButtonText] = useState('Set Address');
+    const [saveAddressButtonText, setSaveAddressButtonText] =
+        useState('Set Address');
 
     // Reset the checkbox state to false when the modal opens
     useEffect(() => {
@@ -87,10 +91,10 @@ const AddressModal: React.FC<AddressModalProps> = ({
         setSaveAddress(e.target.checked);
 
         if (e.target.checked)
-            setSaveAddressButtonText((selectedAddressId?.length) ? 'Overwrite Address' : 'Add Address');
-        else
-            setSaveAddressButtonText('Set Address');
-
+            setSaveAddressButtonText(
+                selectedAddressId?.length ? 'Overwrite Address' : 'Add Address'
+            );
+        else setSaveAddressButtonText('Set Address');
     };
 
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -144,12 +148,14 @@ const AddressModal: React.FC<AddressModalProps> = ({
                     formData['shipping_address.phone']
                 );
 
-                //if existing selected, update instead of adding new 
+                //if existing selected, update instead of adding new
                 if (selectedAddressId?.length) {
-                    await updateCustomerShippingAddress({ addressId: selectedAddressId }, shippingAddressData)
-                }
-                else {
-                    //otherwise, add new 
+                    await updateCustomerShippingAddress(
+                        { addressId: selectedAddressId },
+                        shippingAddressData
+                    );
+                } else {
+                    //otherwise, add new
                     await addCustomerShippingAddress({}, shippingAddressData);
                 }
             } catch (error) {
@@ -163,7 +169,12 @@ const AddressModal: React.FC<AddressModalProps> = ({
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="lg">
             <ModalOverlay />
-            <ModalContent maxW="737px" maxH="775px" p="6" bgColor={'#121212'}>
+            <ModalContent
+                maxW="737px"
+                maxH={{ base: 'auto', md: '775px' }}
+                p="6"
+                bgColor={'#121212'}
+            >
                 <form onSubmit={handleFormSubmit}>
                     <ModalHeader
                         color={'primary.green.900'}
@@ -193,7 +204,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         _placeholder={{ color: 'white' }}
                                         value={
                                             formData[
-                                            'shipping_address.first_name'
+                                                'shipping_address.first_name'
                                             ]
                                         }
                                         onChange={handleChange}
@@ -212,25 +223,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         _placeholder={{ color: 'white' }}
                                         value={
                                             formData[
-                                            'shipping_address.last_name'
+                                                'shipping_address.last_name'
                                             ]
-                                        }
-                                        onChange={handleChange}
-                                    />
-                                </FormControl>
-                                <FormControl>
-                                    <Input
-                                        placeholder="Phone Number"
-                                        height={'50px'}
-                                        fontSize={'14px'}
-                                        bgColor={'#040404'}
-                                        borderWidth={0}
-                                        borderRadius={'12px'}
-                                        name="shipping_address.phone"
-                                        color={'white'}
-                                        _placeholder={{ color: 'white' }}
-                                        value={
-                                            formData['shipping_address.phone']
                                         }
                                         onChange={handleChange}
                                     />
@@ -308,7 +302,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         _placeholder={{ color: 'white' }}
                                         value={
                                             formData[
-                                            'shipping_address.province'
+                                                'shipping_address.province'
                                             ]
                                         }
                                         onChange={handleChange}
@@ -322,14 +316,13 @@ const AddressModal: React.FC<AddressModalProps> = ({
                             >
                                 <FormControl isRequired>
                                     <CountrySelect
-                                        className="bg-white"
                                         name="shipping_address.country_code"
                                         autoComplete="country"
                                         region={cart?.region}
                                         color={'white'}
                                         value={
                                             formData[
-                                            'shipping_address.country_code'
+                                                'shipping_address.country_code'
                                             ]
                                         }
                                         onChange={handleChange}
@@ -349,8 +342,32 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         _placeholder={{ color: 'white' }}
                                         value={
                                             formData[
-                                            'shipping_address.postal_code'
+                                                'shipping_address.postal_code'
                                             ]
+                                        }
+                                        onChange={handleChange}
+                                    />
+                                </FormControl>
+                            </Flex>
+
+                            {/* Phone and Email Fields */}
+                            <Flex
+                                gap="4"
+                                flexDir={{ base: 'column', md: 'row' }}
+                            >
+                                <FormControl>
+                                    <Input
+                                        placeholder="Phone Number"
+                                        height={'50px'}
+                                        fontSize={'14px'}
+                                        bgColor={'#040404'}
+                                        borderWidth={0}
+                                        borderRadius={'12px'}
+                                        name="shipping_address.phone"
+                                        color={'white'}
+                                        _placeholder={{ color: 'white' }}
+                                        value={
+                                            formData['shipping_address.phone']
                                         }
                                         onChange={handleChange}
                                     />
@@ -389,9 +406,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                     isChecked={saveAddress}
                                     onChange={handleSaveAddressChange}
                                 />
-                                <Text alignSelf={'center'}>
-                                    Save address
-                                </Text>
+                                <Text alignSelf={'center'}>Save address</Text>
                             </Flex>
                         </Flex>
                     </ModalBody>
