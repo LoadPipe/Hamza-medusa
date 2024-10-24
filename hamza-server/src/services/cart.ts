@@ -147,7 +147,7 @@ export default class CartService extends MedusaCartService {
         return cart;
     }
 
-    async recover(customerId: string): Promise<Cart> {
+    async recover(customerId: string, cartId: string): Promise<Cart> {
         //get last three carts
         const carts = await this.cartRepository_.find({
             where: { customer_id: customerId },
@@ -155,10 +155,23 @@ export default class CartService extends MedusaCartService {
             take: 1,
         });
 
+        //is there also a non-logged-in cart from cookies? 
+        const existingCart = await this.cartRepository_.findOne(
+            { where: { id: cartId } }
+        );
+
         //only return if the most recent one is not completed
         let cart = null;
         if (carts.length > 0) {
             if (!carts[0].completed_at) cart = carts[0];
+        }
+
+        if (!cart && existingCart) {
+            cart = existingCart;
+        }
+        else if (cart && existingCart) {
+            //merge carts
+            cart = await this.mergeCarts(cart, existingCart);
         }
 
         return cart;
@@ -243,5 +256,37 @@ export default class CartService extends MedusaCartService {
 
         //if no preferred, return the first
         return price?.currency_code ?? 'usdc';
+    }
+
+    private async mergeCarts(cart1: Cart, cart2: Cart): Promise<Cart> {
+        try {
+            //make sure both carts contain items 
+            if (!cart2.items) {
+                cart1 = await this.cartRepository_.findOne(
+                    { where: { id: cart1.id }, relations: ['items'] }
+                );
+            }
+
+            if (cart2.items.length) {
+                if (!cart1.items) {
+                    cart1 = await this.cartRepository_.findOne(
+                        { where: { id: cart1.id }, relations: ['items'] }
+                    );
+                }
+
+                //move cart 2's line items to cart 1
+                for (let lineItem of cart2.items) {
+                    cart1.items.push(lineItem);
+                }
+            }
+
+            //save cart 1
+            await this.cartRepository_.save(cart1);
+        }
+        catch (e) {
+            this.logger.error('Error merging carts', e);
+        }
+
+        return cart1;
     }
 }
