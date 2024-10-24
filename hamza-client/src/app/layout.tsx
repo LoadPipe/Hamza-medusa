@@ -8,7 +8,7 @@ import { RainbowWrapper } from '@/components/providers/rainbowkit/rainbow-provid
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import theme from '../styles/chakra-theme';
 import { Toaster } from 'react-hot-toast';
-import { Sora } from "next/font/google";
+import { Sora } from 'next/font/google';
 
 export const metadata: Metadata = {
     metadataBase: new URL(BASE_URL),
@@ -22,6 +22,12 @@ const sora = Sora({
 export default function RootLayout(props: { children: React.ReactNode }) {
     return (
         <html lang="en" data-mode="dark">
+            <head>
+                <script
+                    type="text/javascript"
+                    src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=W8Yntv"
+                ></script>
+            </head>
             <body>
                 <div>
                     <MedusaProvider>
