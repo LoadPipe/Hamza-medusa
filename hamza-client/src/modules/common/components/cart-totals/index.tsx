@@ -37,13 +37,9 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
         );
     };
     useEffect(() => {
-        // Set the shipping cost based on the available options
         if (!isLoading && shipping_options && shipping_options.length > 0) {
-            // Use the first available shipping option cost for simplicity
-            const defaultOption = shipping_options[1];
             const bucky_shipping = getBuckyShippingOption(shipping_options);
-
-            if (defaultOption) {
+            if (bucky_shipping) {
                 setShippingCost(bucky_shipping.amount);
             }
         }
