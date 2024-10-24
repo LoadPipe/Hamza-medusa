@@ -50,28 +50,52 @@ const AddressModal: React.FC<AddressModalProps> = ({
     const [saveAddressButtonText, setSaveAddressButtonText] =
         useState('Set Address');
 
+    const [formData, setFormData] = useState({
+        'shipping_address.first_name': '',
+        'shipping_address.last_name': '',
+        'shipping_address.address_1': '',
+        'shipping_address.address_2': '',
+        'shipping_address.company': '',
+        'shipping_address.postal_code': '',
+        'shipping_address.city': '',
+        'shipping_address.country_code': countryCode || '',
+        'shipping_address.province': '',
+        email: '',
+        'shipping_address.phone': '',
+    });
+
+    useEffect(() => {
+        if (cart) {
+            setFormData({
+                'shipping_address.first_name':
+                    cart?.shipping_address?.first_name || '',
+                'shipping_address.last_name':
+                    cart?.shipping_address?.last_name || '',
+                'shipping_address.address_1':
+                    cart?.shipping_address?.address_1 || '',
+                'shipping_address.address_2':
+                    cart?.shipping_address?.address_2 || '',
+                'shipping_address.company':
+                    cart?.shipping_address?.company || '',
+                'shipping_address.postal_code':
+                    cart?.shipping_address?.postal_code || '',
+                'shipping_address.city': cart?.shipping_address?.city || '',
+                'shipping_address.country_code':
+                    cart?.shipping_address?.country_code || countryCode || '',
+                'shipping_address.province':
+                    cart?.shipping_address?.province || '',
+                email: cart?.email || '',
+                'shipping_address.phone': cart?.shipping_address?.phone || '',
+            });
+        }
+    }, [cart, countryCode]);
+
     // Reset the checkbox state to false when the modal opens
     useEffect(() => {
         if (isOpen) {
             setSaveAddress(false);
         }
     }, [isOpen]);
-
-    const [formData, setFormData] = useState({
-        'shipping_address.first_name': cart?.shipping_address?.first_name || '',
-        'shipping_address.last_name': cart?.shipping_address?.last_name || '',
-        'shipping_address.address_1': cart?.shipping_address?.address_1 || '',
-        'shipping_address.address_2': cart?.shipping_address?.address_2 || '',
-        'shipping_address.company': cart?.shipping_address?.company || '',
-        'shipping_address.postal_code':
-            cart?.shipping_address?.postal_code || '',
-        'shipping_address.city': cart?.shipping_address?.city || '',
-        'shipping_address.country_code':
-            cart?.shipping_address?.country_code || countryCode || '',
-        'shipping_address.province': cart?.shipping_address?.province || '',
-        email: cart?.email || '',
-        'shipping_address.phone': cart?.shipping_address?.phone || '',
-    });
 
     const handleChange = (
         e: React.ChangeEvent<
