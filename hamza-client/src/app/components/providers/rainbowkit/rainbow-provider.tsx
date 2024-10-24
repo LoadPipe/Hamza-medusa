@@ -89,7 +89,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         let retries = 0;
-        const maxRetries = 3; // Set a max retry limit
+        const maxRetries = 2; // Set a max retry limit
 
         const getHnsClient = async () => {
             try {
@@ -112,10 +112,10 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
             }
         };
 
-        if (walletAddress) {
+        if (walletAddress && authData.status === 'authenticated') {
             getHnsClient();
         }
-    }, [walletAddress]);
+    }, [authData.status]);
 
     useEffect(() => {
         if (authData.status === 'authenticated' && customer_id) {
@@ -140,14 +140,14 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         console.log('Saved wallet address', clientWallet);
         if (clientWallet?.length) {
             getHamzaCustomer().then((hamzaCustomer) => {
-                console.log('Hamza Customer: ', hamzaCustomer);
                 getCustomer().then((customer) => {
-                    console.log('Medusa Customer: ', customer);
                     if (
                         !customer ||
                         !hamzaCustomer ||
                         customer?.id !== hamzaCustomer?.id
                     ) {
+                        console.log('Hamza Customer: ', hamzaCustomer);
+                        console.log('Medusa Customer: ', customer);
                         clearLogin();
                     }
                 });
@@ -163,9 +163,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         },
 
         createMessage: ({ nonce, address, chainId }) => {
-            console.log(
-                `Creating message with nonce: ${nonce}, address: ${address}, chainId: ${chainId}`
-            );
             const message = new SiweMessage({
                 domain: window.location.host,
                 address,
