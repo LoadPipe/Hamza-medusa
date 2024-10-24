@@ -16,12 +16,13 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import ProductCard from '@modules/shop/components/product-card';
 import useStorePage from '@store/store-page/store-page';
+import useSideFilter from '@/store/store-page/side-filter';
 
 const ProductCardGroup = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const { categorySelect } = useStorePage();
     const [visibleProductsCount, setVisibleProductsCount] = useState(15); // State to manage visible products count (4 rows, 16 items)
-
+    const { priceHi, priceLo } = useSideFilter();
     console.log('This is the categorySelect from Store Page', categorySelect);
     //TODO: MOVE TO INDEX.TS
     // Get products from vendor
@@ -29,9 +30,9 @@ const ProductCardGroup = () => {
     //TODO: MOVE TO INDEX.TS
     // Get products from vendor
     const { data, error, isLoading } = useQuery(
-        ['categories', categorySelect], // Use a unique key here to identify the query
+        ['categories', categorySelect, priceHi, priceLo], // Use a unique key here to identify the query
         async () => {
-            const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${2000}&price_lo=${0}`;
+            const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${200000000000}&price_lo=${Number(0)}`;
             const response = await axios.get(multiUrl);
             return response.data; // Return the data from the response
         }

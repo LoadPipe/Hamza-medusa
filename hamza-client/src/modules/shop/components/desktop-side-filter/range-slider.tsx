@@ -13,13 +13,19 @@ import {
 // Define a type for the range state
 type RangeType = [number, number];
 
-const RangeSliderComponent = () => {
-    // Using the RangeType for the state
-    const [range, setRange] = useState<RangeType>([0, 2000]);
+type RangeSliderProps = {
+    range: [number, number];
+    setRange: (range: [number, number]) => void;
+};
 
+const RangeSliderComponent: React.FC<RangeSliderProps> = ({
+    range,
+    setRange,
+}) => {
     // Define the type for the values parameter
     const handleRangeChange = (values: number[]) => {
         setRange(values as RangeType);
+        console.log('Range Slider range', range);
     };
 
     return (
@@ -28,7 +34,7 @@ const RangeSliderComponent = () => {
                 <RangeSlider
                     // eslint-disable-next-line jsx-a11y/aria-proptypes
                     aria-label={['min', 'max']}
-                    defaultValue={[0, 2000]}
+                    defaultValue={range}
                     min={0}
                     max={2000}
                     onChange={handleRangeChange}
