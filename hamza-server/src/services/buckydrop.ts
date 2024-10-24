@@ -169,6 +169,10 @@ export default class BuckydropService extends TransactionBaseService {
 
             if (!cart) throw new Error(`Cart with id ${cartId} not found`);
 
+            if (!cart.items?.length) {
+                return 0;
+            }
+
             if (!cart.customer) {
                 cart.customer = await this.customerService_.retrieve(
                     cart.customer_id
