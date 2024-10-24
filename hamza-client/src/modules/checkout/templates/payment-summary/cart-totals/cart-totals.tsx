@@ -72,6 +72,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
     );
 
     const shippingCost = shipping_total ?? 0;
+    const usdShippingCost = shippingCost ? 500 : 0; //TODO: hard-coded for now
     const taxTotal = tax_total ?? 0;
     const grandTotal = (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
     const displayCurrency = finalSubtotal?.currency?.length
@@ -83,9 +84,8 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
     let usdGrandTotal: number = 0;
     if (preferred_currency_code === 'eth') {
         usdSubtotal = getCartSubtotal(data, 'usdc');
-        usdGrandTotal = (usdSubtotal.amount ?? 0) + shippingCost + taxTotal;
+        usdGrandTotal = (usdSubtotal.amount ?? 0) + usdShippingCost + taxTotal;
     }
-
     // console.log(grandTotal);
     return (
         <>
@@ -144,21 +144,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                         </Text>
                     </Flex>
                 ) : (
-                    <Flex justifyContent={'space-between'}>
-                        <Text
-                            alignSelf={'center'}
-                            fontSize={{ base: '14px', md: '16px' }}
-                        >
-                            Shipping Fee
-                        </Text>
-
-                        <Text
-                            fontSize={{ base: '14px', md: '16px' }}
-                            alignSelf="center"
-                        >
-                            0.00
-                        </Text>
-                    </Flex>
+                    <Flex mt="-1rem" justifyContent={'space-between'}></Flex>
                 )}
 
                 <Flex justifyContent={'space-between'}>
