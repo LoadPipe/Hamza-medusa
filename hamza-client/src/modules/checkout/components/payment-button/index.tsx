@@ -357,9 +357,23 @@ const CryptoPaymentButton = ({
         }
     };
 
-    // Check params, if step !== review then disable payment button
     const searchParams = useSearchParams();
     const step = searchParams.get('step');
+    const isCartEmpty = cart?.items.length === 0;
+    const isMissingAddress = !cart?.shipping_address;
+    const isMissingShippingDetails = cart?.shipping_methods.length === 0;
+    const disableButton =
+        step !== 'review' ||
+        isCartEmpty ||
+        isMissingAddress ||
+        isMissingShippingDetails;
+
+    const getButtonText = () => {
+        if (isCartEmpty) return 'Add products to order';
+        if (isMissingAddress) return 'Add address to order';
+        if (isMissingShippingDetails) return 'No shipping option selected';
+        return 'Confirm Order';
+    };
 
     return (
         <>
@@ -372,10 +386,10 @@ const CryptoPaymentButton = ({
                 _hover={{ opacity: 0.5 }}
                 backgroundColor={'primary.indigo.900'}
                 isLoading={submitting}
-                isDisabled={step !== 'review' ? true : false}
+                isDisabled={disableButton}
                 onClick={handlePayment}
             >
-                {step === 'review' ? 'Confirm Order' : 'Add address to order'}
+                {getButtonText()}
             </Button>
         </>
     );
