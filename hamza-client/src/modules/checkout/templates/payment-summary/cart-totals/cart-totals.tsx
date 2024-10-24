@@ -3,10 +3,11 @@
 import Image from 'next/image';
 import { Cart, Order, LineItem } from '@medusajs/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { Flex, Text, Divider } from '@chakra-ui/react';
 import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
+import { addDefaultShippingMethod } from '@lib/data';
 
 type CartTotalsProps = {
     data: Omit<Cart, 'refundable_amount' | 'refunded_total'> | Order;
@@ -27,7 +28,11 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
     } = data;
 
     const { preferred_currency_code } = useCustomerAuthStore();
-
+    useEffect(() => {
+        if (data) {
+            addDefaultShippingMethod(data.id);
+        }
+    }, [data.items]); // Trigger re-calculation when the cart items change
     //TODO: this can be replaced later by extending the cart, if necessary
     const getCartSubtotal = (cart: any, currencyCode: string) => {
         const subtotals: { [key: string]: number } = {};

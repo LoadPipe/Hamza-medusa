@@ -62,6 +62,7 @@ const CartTemplate = ({
                     <ItemsTemplate
                         region={cart?.region}
                         items={cart?.items}
+                        cart_id={cart?.id as string}
                         currencyCode={preferred_currency_code ?? undefined}
                     />
                     {/* Shipping Address */}
