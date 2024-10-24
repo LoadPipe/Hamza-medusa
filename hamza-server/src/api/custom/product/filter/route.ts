@@ -50,8 +50,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         //HAD TO COMMENT OUT AND PASS ZEROS, BECAUSE FILTER WAS CAUSING SOME PRODUCTS TO NOT SHOW UP -JK (I can explain more)
         const products = await productService.getFilteredProducts(
             categories,
-            0, //upperPrice,
-            0, //lowerPrice
+            upperPrice,
+            lowerPrice
         );
 
         return handler.returnStatus(200, { products }, 200);

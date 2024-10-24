@@ -61,23 +61,19 @@ const SideMenu = () => {
             width={'348.74px'}
             backgroundColor={'secondary.onyx.900'}
         >
-            {USE_PRICE_FILTER && (
-                <>
-                    <Heading as="h2" size="h2">
-                        Price Range
-                    </Heading>
+            <Heading as="h2" size="h2">
+                Price Range
+            </Heading>
 
-                    <Text mt="5px" color="secondary.davy.900">
-                        Prices before fees and taxes
-                    </Text>
+            <Text mt="5px" color="secondary.davy.900">
+                Prices before fees and taxes
+            </Text>
 
-                    {/* Slider  */}
-                    <RangeSlider />
-                    {/* Slider end */}
+            {/* Slider  */}
+            <RangeSlider />
+            {/* Slider end */}
 
-                    {/* Crypto Currencies */}
-                </>
-            )}
+            {/* Crypto Currencies */}
 
             {/* Categories */}
             <Box mt="2rem">

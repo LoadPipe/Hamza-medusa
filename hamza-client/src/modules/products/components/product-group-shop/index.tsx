@@ -25,7 +25,7 @@ const ProductCardGroup = () => {
     console.log('This is the categorySelect from Store Page', categorySelect);
     //TODO: MOVE TO INDEX.TS
     // Get products from vendor
-    const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${5000000}&price_lo=${0}`;
+    const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${10}&price_lo=${0}`;
 
     //TODO: MOVE TO INDEX.TS
     // Get products from vendor
@@ -129,7 +129,9 @@ const ProductCardGroup = () => {
                             (acc: number, review: any) => acc + review.rating,
                             0
                         );
-                        const avgRating = reviewCounter ? totalRating / reviewCounter : 0;
+                        const avgRating = reviewCounter
+                            ? totalRating / reviewCounter
+                            : 0;
                         const roundedAvgRating = parseFloat(
                             avgRating.toFixed(2)
                         );
