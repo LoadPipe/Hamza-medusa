@@ -13,7 +13,7 @@ import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import ShippingOptionRepository from '@medusajs/medusa/dist/repositories/shipping-option';
 import { CartEmailRepository } from 'src/repositories/cart-email';
-import { IsNull } from 'typeorm';
+import { IsNull, Not } from 'typeorm';
 
 export default class CartService extends MedusaCartService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
@@ -112,14 +112,12 @@ export default class CartService extends MedusaCartService {
                             : 'Price has changed'
                         : 'Currency has changed';
 
-                    //console.log('***************************** STARTETH *************************************')
                     this.logger.info(
                         `cart item with currency ${originalCurrency} price ${originalPrice} changing to ${item.currency_code} ${item.unit_price}`
                     );
                     this.logger.debug(
                         `${reason}, updating line item in cart ${cart.id}`
                     );
-                    //console.log('****************************** ENDETH ************************************')
 
                     itemsToSave.push(item);
                 }
@@ -148,9 +146,9 @@ export default class CartService extends MedusaCartService {
     }
 
     async recover(customerId: string, cartId: string): Promise<Cart> {
-        //get last three carts
+        //get last cart
         const carts = await this.cartRepository_.find({
-            where: { customer_id: customerId },
+            where: { customer_id: customerId, id: Not(cartId) },
             order: { updated_at: 'DESC' },
             take: 1,
         });
@@ -261,13 +259,13 @@ export default class CartService extends MedusaCartService {
     private async mergeCarts(cart1: Cart, cart2: Cart): Promise<Cart> {
         try {
             //make sure both carts contain items 
-            if (!cart2.items) {
-                cart1 = await this.cartRepository_.findOne(
-                    { where: { id: cart1.id }, relations: ['items'] }
+            if (!cart2?.items) {
+                cart2 = await this.cartRepository_.findOne(
+                    { where: { id: cart2.id }, relations: ['items'] }
                 );
             }
 
-            if (cart2.items.length) {
+            if (cart2?.items.length) {
                 if (!cart1.items) {
                     cart1 = await this.cartRepository_.findOne(
                         { where: { id: cart1.id }, relations: ['items'] }
@@ -275,13 +273,10 @@ export default class CartService extends MedusaCartService {
                 }
 
                 //move cart 2's line items to cart 1
-                for (let lineItem of cart2.items) {
-                    cart1.items.push(lineItem);
-                }
+                await this.addOrUpdateLineItems(
+                    cart1.id, cart2.items, { validateSalesChannels: false }
+                );
             }
-
-            //save cart 1
-            await this.cartRepository_.save(cart1);
         }
         catch (e) {
             this.logger.error('Error merging carts', e);
