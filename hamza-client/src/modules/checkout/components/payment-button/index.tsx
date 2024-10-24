@@ -361,7 +361,7 @@ const CryptoPaymentButton = ({
     const step = searchParams.get('step');
     const isCartEmpty = cart?.items.length === 0;
     const isMissingAddress = !cart?.shipping_address;
-    const isMissingShippingDetails = cart?.shipping_methods.length === 0;
+    const isMissingShippingDetails = cart?.shipping_methods?.length === 0;
     const disableButton =
         step !== 'review' ||
         isCartEmpty ||
