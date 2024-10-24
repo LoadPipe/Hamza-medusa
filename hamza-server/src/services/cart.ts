@@ -169,8 +169,7 @@ export default class CartService extends MedusaCartService {
             relations: ['shipping_methods'],
         });
 
-        // if (cart && cart.shipping_methods.length === 0) {
-        if (cart) {
+        if (cart && cart.shipping_methods.length === 0) {
             this.logger.debug(
                 `Auto-adding shipping method for cart ${cart.id}`
             );
