@@ -35,12 +35,16 @@ const ProductReview = () => {
     );
 
     useEffect(() => {
+        console.log('Product ID:', productId); // Check if productId is valid
+
         if (!productId) {
             return;
         }
         const fetchReviews = async () => {
             try {
                 let res = await allReviews(productId);
+                console.log('Fetched Reviews:', res); // Log to ensure data is correct
+
                 if (res) {
                     setReviews(
                         res.map((a: any) => ({

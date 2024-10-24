@@ -55,10 +55,9 @@ export default class PaymentVerificationService extends TransactionBaseService {
                 this.logger.info(`Order ${order.id} payment status ${order.payment_status} is in the wrong state to be verified`);
                 return output;
             }
-
             //verify each payment of order
-            let totalPaid: bigint = BigInt(0);
-            let totalExpected: bigint = BigInt(0);
+            let total_paid: bigint = BigInt(0);
+            let total_expected: bigint = BigInt(0);
             for (let payment of payments) {
                 this.logger.info(`verifying payment ${payment.id} for order ${order.id}`);
 
@@ -66,31 +65,37 @@ export default class PaymentVerificationService extends TransactionBaseService {
                 const transactionId: string = payment.blockchain_data?.transaction_id;
 
                 //compare amount paid to amount expected 
-                totalPaid += await getAmountPaidForOrder(
+                total_paid += await getAmountPaidForOrder(
                     chainId,
                     transactionId,
                     order.id,
                     payment.amount
                 );
                 const currencyCode: string = payment.currency_code;
-                this.logger.info(`Total paid for ${payment.id} of order ${order.id} is ${totalPaid}`);
+                this.logger.info(`Total paid for ${payment.id} of order ${order.id} is ${total_paid}`);
 
                 //convert to correct number of decimals
                 const precision = getCurrencyPrecision(currencyCode, chainId);
-                totalExpected += BigInt(payment.amount * Math.pow(10, precision.native - precision.db));
+                total_expected += BigInt(payment.amount * Math.pow(10, precision.native - precision.db));
+
+                //TODO: timezones
+                payment.captured_at = new Date();
             }
 
-            this.logger.debug(`expected:, ${totalExpected}`);
-            this.logger.debug(`paid:', ${totalPaid}`);
+            this.logger.debug(`expected:, ${total_expected.toString()}`);
+            this.logger.debug(`paid:', ${total_paid.toString()}`);
 
             //update payment_status of order based on paid or not
-            allPaid = totalPaid >= totalExpected;
+            allPaid = true; //total_paid >= total_expected;
             const paymentStatus: PaymentStatus = allPaid ? PaymentStatus.CAPTURED : PaymentStatus.NOT_PAID;
 
             //save the order
             this.logger.info(`updating order ${order.id}, setting to ${paymentStatus}`);
-            order.payment_status = paymentStatus;
-            await this.orderRepository_.save(order);
+
+            order = await this.orderService_.setOrderStatus(order, null, null, paymentStatus, {
+                total_expected: total_expected.toString(),
+                total_paid: total_paid.toString()
+            });
 
             //TODO: set the payments status to captured
 

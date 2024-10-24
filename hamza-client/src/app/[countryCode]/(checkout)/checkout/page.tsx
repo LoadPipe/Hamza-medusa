@@ -2,11 +2,11 @@ import { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { LineItem } from '@medusajs/medusa';
-
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
-import Wrapper from '@modules/checkout/components/payment-wrapper';
-import CheckoutForm from '@modules/checkout/templates/checkout-form';
-import CheckoutSummary from '@modules/checkout/templates/checkout-summary';
+import { Flex } from '@chakra-ui/react';
+import CheckoutDetails from '@/modules/checkout/templates/checkout-details';
+import OrderSummary from '@/modules/checkout/templates/order-summary';
+import PaymentSummary from '@/modules/checkout/templates/payment-summary';
 
 export const metadata: Metadata = {
     title: 'Checkout',
@@ -50,11 +50,25 @@ export default async function Checkout(params: any) {
     }
 
     return (
-        <div className="grid grid-cols-1 small:grid-cols-[1fr_416px] content-container gap-x-40 py-12 bg-black">
-            <Wrapper cart={cart}>
-                <CheckoutForm cartId={cartId} />
-            </Wrapper>
-            <CheckoutSummary cartId={cartId} />
-        </div>
+        <Flex flexDir="row" maxW={'1280px'} width={'100%'}>
+            <Flex
+                maxW={'1258px'}
+                width={'100%'}
+                mx="1rem"
+                my="2rem"
+                flexDir={{ base: 'column', md: 'row' }}
+                gap={{ base: 3, md: 5 }}
+            >
+                <Flex
+                    width={'100%'}
+                    flexDir={'column'}
+                    gap={{ base: 3, md: '41px' }}
+                >
+                    <CheckoutDetails cartId={cartId} />
+                    <OrderSummary cart={cart} />
+                </Flex>
+                <PaymentSummary />
+            </Flex>
+        </Flex>
     );
 }

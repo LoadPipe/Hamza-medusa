@@ -1,26 +1,16 @@
 'use client';
 
-import {
-    useSearchParams,
-    useRouter,
-    usePathname,
-    useParams,
-} from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Cart, Customer } from '@medusajs/medusa';
-import { CheckCircleSolid } from '@medusajs/icons';
-import { Text, useToggleState } from '@medusajs/ui';
-import { Flex, Heading } from '@chakra-ui/react';
+import { useToggleState } from '@medusajs/ui';
+import { Flex, Text, useDisclosure, Button } from '@chakra-ui/react';
 
-import Divider from '@modules/common/components/divider';
-import Spinner from '@modules/common/icons/spinner';
-
-import BillingAddress from '../billing_address';
-import ShippingAddress from '../shipping-address';
-import { setAddresses } from '../../actions';
-import { SubmitButton } from '../submit-button';
-import { useFormState } from 'react-dom';
-import ErrorMessage from '../error-message';
 import compareAddresses from '@lib/util/compare-addresses';
+import { BiPencil } from 'react-icons/bi';
+import AddressModal from '../address-modal';
+import { IoLocationOutline } from 'react-icons/io5';
+import AddressSelect from '../address-select';
+import { useEffect, useState } from 'react';
 
 const Addresses = ({
     cart,
@@ -29,127 +19,175 @@ const Addresses = ({
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | null;
     customer: Omit<Customer, 'password_hash'> | null;
 }) => {
-    const searchParams = useSearchParams();
     const router = useRouter();
-    const pathname = usePathname();
-    const params = useParams();
+    // Set whether we are adding or editing address
+    const [addressActionType, setActionAddressType] = useState<'add' | 'edit'>(
+        'add'
+    );
+    const [selectedAddressId, setSelectedAddressId] = useState<string>('');
 
+    // Hooks to open and close address modal
+    const { isOpen, onOpen, onClose } = useDisclosure();
+
+    // Get country code
+    const params = useParams();
     const countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY
         ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
         : (params.countryCode as string);
 
-    const isOpen =
-        (searchParams.get('step') && searchParams.get('step') === 'address') ||
-        !searchParams.get('step');
-
-    const { state: sameAsSBilling, toggle: toggleSameAsBilling } =
-        useToggleState(
-            cart?.shipping_address && cart?.billing_address
-                ? compareAddresses(
-                    cart?.shipping_address,
-                    cart?.billing_address
-                )
-                : true
-        );
-
-    const handleEdit = () => {
-        router.push(pathname + '?step=address');
-    };
-
-    const [message, formAction] = useFormState(setAddresses, null);
-    console.log('cart.email == ', cart?.email);
+    // Set contact email on shipping address display
     const contactEmail = cart?.email
         ? cart.email.endsWith('@evm.blockchain')
             ? ''
             : cart.email
         : '';
-    const contactPhone = cart?.shipping_address?.phone ?? '';
+
+    const { state: sameAsSBilling, toggle: toggleSameAsBilling } =
+        useToggleState(
+            cart?.shipping_address && cart?.billing_address
+                ? compareAddresses(
+                      cart?.shipping_address,
+                      cart?.billing_address
+                  )
+                : true
+        );
+
+    // Run once when component mounts to check if address already set and push to next step
+    useEffect(() => {
+        if (cart?.shipping_address) {
+            router.push('/checkout?step=review');
+        }
+    }, []);
 
     return (
-        <div className="bg-black">
-            <div className="flex flex-row items-center justify-between mb-6">
-                <Heading
-                    className="flex flex-row text-3xl-regular gap-x-2 items-baseline"
+        <div>
+            <Flex mt="2rem" width={'100%'} flexDir={'row'}>
+                <Text
                     color={'primary.green.900'}
+                    fontSize={{ base: '16px', md: '18px' }}
+                    fontWeight={600}
                 >
-                    Shipping Address
-                    {/* {!isOpen && <CheckCircleSolid />} */}
-                </Heading>
-                {!isOpen && cart?.shipping_address && (
-                    <Text>
-                        <button
-                            onClick={handleEdit}
-                            className="text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
+                    Shipping To:
+                </Text>
+                <Flex
+                    flexDir={'row'}
+                    cursor={'pointer'}
+                    ml="auto"
+                    alignSelf={'center'}
+                    color="white"
+                    _hover={{ color: 'primary.green.900' }}
+                    onClick={onOpen}
+                    gap={2}
+                >
+                    <BiPencil size={23} />
+                </Flex>
+            </Flex>
+
+            <div>
+                {cart && cart.shipping_address ? (
+                    <Flex flexDir={'column'} color="white">
+                        <Text
+                            fontWeight={700}
+                            fontSize={{ base: '14px', md: '16px' }}
                         >
-                            Edit
-                        </button>
-                    </Text>
+                            {cart.shipping_address.first_name}{' '}
+                            {cart.shipping_address.last_name}
+                        </Text>
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
+                            {cart.shipping_address.address_1}{' '}
+                            {cart.shipping_address.address_2}
+                        </Text>
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
+                            {cart.shipping_address.postal_code},{' '}
+                            {cart.shipping_address.city}
+                        </Text>
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
+                            {cart.shipping_address.country_code?.toUpperCase()}
+                        </Text>
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
+                            {contactEmail}
+                        </Text>
+
+                        <Flex
+                            mt="2rem"
+                            flexDir={{ base: 'column', md: 'row' }}
+                            gap={{ base: 4, md: 5 }}
+                            mb={{ base: '0.5rem', md: 0 }}
+                        >
+                            <Button
+                                leftIcon={<IoLocationOutline size={20} />}
+                                flex={{ base: 'unset', md: 1 }}
+                                borderRadius={'full'}
+                                height={{ base: '42px', md: '52px' }}
+                                borderWidth={'1px'}
+                                borderColor={'primary.indigo.900'}
+                                color={'primary.indigo.900'}
+                                backgroundColor={'transparent'}
+                                opacity={1}
+                                _hover={{
+                                    opacity: 0.5,
+                                }}
+                                onClick={() => {
+                                    onOpen();
+                                    setActionAddressType('edit');
+                                }}
+                            >
+                                Edit Shipping Address
+                            </Button>
+
+                            {(customer?.shipping_addresses?.length ?? 0) >
+                                0 && (
+                                <AddressSelect
+                                    cart={cart}
+                                    addresses={
+                                        customer?.shipping_addresses ?? []
+                                    }
+                                    onSelect={(addrId) =>
+                                        setSelectedAddressId(addrId)
+                                    }
+                                />
+                            )}
+                        </Flex>
+                    </Flex>
+                ) : (
+                    <Flex
+                        mt="2rem"
+                        flexDir={{ base: 'column', md: 'row' }}
+                        gap={{ base: 4, md: 5 }}
+                    >
+                        <Button
+                            leftIcon={<IoLocationOutline size={20} />}
+                            flex={{ base: 'unset', md: 1 }}
+                            borderRadius={'full'}
+                            height={{ base: '42px', md: '52px' }}
+                            borderWidth={'1px'}
+                            borderColor={'primary.indigo.900'}
+                            color={'primary.indigo.900'}
+                            backgroundColor={'transparent'}
+                            opacity={1}
+                            _hover={{
+                                opacity: 0.5,
+                            }}
+                            onClick={() => {
+                                onOpen();
+                                setActionAddressType('add');
+                            }}
+                        >
+                            Add Shipping Address
+                        </Button>
+                    </Flex>
                 )}
             </div>
-            {isOpen ? (
-                <form action={formAction}>
-                    <div className="pb-8">
-                        <ShippingAddress
-                            customer={customer}
-                            countryCode={countryCode}
-                            checked={sameAsSBilling}
-                            onChange={toggleSameAsBilling}
-                            cart={cart}
-                        />
-                        <SubmitButton className="mt-6 bg-[#7B61FF] h-[52px] rounded-full py-3 px-6 text-base hover:bg-white hover:text-black text-white ">
-                            Continue to delivery
-                        </SubmitButton>
-
-                        <ErrorMessage error={message} />
-                    </div>
-                </form>
-            ) : (
-                <div className="bg-black text-white rounded-md shadow-md">
-                    {cart && cart.shipping_address ? (
-                        <Flex flexDir={'column'} color="primary.green.900">
-                            <Text className="font-bold">Shipping To:</Text>
-                            <Text className="text-medium text-white  font-bold">
-                                {cart.shipping_address.first_name}{' '}
-                                {cart.shipping_address.last_name}
-                            </Text>
-                            <Text className="text-medium text-white">
-                                {cart.shipping_address.address_1}{' '}
-                                {cart.shipping_address.address_2}
-                            </Text>
-                            <Text className="text-medium text-white">
-                                {cart.shipping_address.postal_code},{' '}
-                                {cart.shipping_address.city}
-                            </Text>
-                            <Text className="text-medium text-white">
-                                {cart.shipping_address.country_code?.toUpperCase()}
-                            </Text>
-                            <Text className="text-medium text-white">
-                                {contactEmail}
-                            </Text>
-
-                            {/* {contactEmail?.length > 0 &&
-                                        contactPhone?.length > 0 && (
-                                            <div className="flex flex-col w-full md:w-1/3 mb-4 md:mb-0">
-                                                <Text className="text-medium-plus text-white mb-1">
-                                                    Contact
-                                                </Text>
-                                                <Text className="text-medium text-white">
-                                                    {contactEmail}
-                                                </Text>
-                                                <Text className="text-medium text-white">
-                                                    {contactPhone}
-                                                </Text>
-                                            </div>
-                                        )} */}
-                        </Flex>
-                    ) : (
-                        <div>
-                            <Spinner />
-                        </div>
-                    )}
-                </div>
-            )}
-            <Divider className="mt-8" />
+            <AddressModal
+                customer={customer}
+                countryCode={countryCode}
+                addressActionType={addressActionType}
+                toggleSameAsBilling={toggleSameAsBilling}
+                cart={cart}
+                isOpen={isOpen}
+                onClose={onClose}
+                selectedAddressId={selectedAddressId}
+            />
         </div>
     );
 };

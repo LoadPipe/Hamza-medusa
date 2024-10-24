@@ -79,28 +79,28 @@ const plugins = [
                         ],
                     },
                     primaryKey: 'id',
-                    transformer: (product) => {
-                        console.log(
-                            'Transforming product:',
-                            product.id,
-                            'Status:',
-                            product.status
-                        );
-                        if (product.status !== 'draft') {
-                            return {
-                                id: product.id,
-                                title: product.title,
-                                description: product.description,
-                                variant_sku: product.variant_sku,
-                                thumbnail: product.thumbnail,
-                                handle: product.handle,
-                                status: product.status,
-                            };
-                        } else {
-                            console.log('Skipping draft product:', product.id);
-                            return null;
-                        }
-                    },
+                    // transformer: (product) => {
+                    //     console.log(
+                    //         'Transforming product:',
+                    //         product.id,
+                    //         'Status:',
+                    //         product.status
+                    //     );
+                    //     if (product.status !== 'draft') {
+                    //         return {
+                    //             id: product.id,
+                    //             title: product.title,
+                    //             description: product.description,
+                    //             variant_sku: product.variant_sku,
+                    //             thumbnail: product.thumbnail,
+                    //             handle: product.handle,
+                    //             status: product.status,
+                    //         };
+                    //     } else {
+                    //         console.log('Skipping draft product:', product.id);
+                    //         return null;
+                    //     }
+                    // },
                 },
             },
         },
