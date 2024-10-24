@@ -169,7 +169,7 @@ export default class BuckydropService extends TransactionBaseService {
 
             if (!cart) throw new Error(`Cart with id ${cartId} not found`);
 
-            if (!cart.items?.length) {
+            if (!cart?.items?.length) {
                 return 0;
             }
 
