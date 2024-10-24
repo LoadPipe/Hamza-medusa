@@ -5,6 +5,7 @@ import { LineItem } from '@medusajs/medusa';
 import CartTotals from './cart-totals/cart-totals';
 import PaymentButton from '@modules/checkout/components/payment-button';
 import DiscountCode from '@modules/checkout/components/discount-code';
+import CheckoutTermsOfService from '@modules/terms-of-service/checkout-tos';
 
 const PaymentSummary = async (params: any) => {
     const cartId = params.cartId;
@@ -55,16 +56,7 @@ const PaymentSummary = async (params: any) => {
                     mx="auto"
                 >
                     By clicking on confirm order, you agree to these{' '}
-                    <Text
-                        as="span"
-                        color="primary.indigo.900"
-                        cursor={'pointer'}
-                        opacity={1}
-                        _hover={{ opacity: 0.7 }}
-                    >
-                        {' '}
-                        Terms and Conditions.
-                    </Text>
+                    <CheckoutTermsOfService />
                 </Text>
             </Flex>
         </Flex>
