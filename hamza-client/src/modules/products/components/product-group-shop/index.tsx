@@ -25,13 +25,13 @@ const ProductCardGroup = () => {
     console.log('This is the categorySelect from Store Page', categorySelect);
     //TODO: MOVE TO INDEX.TS
     // Get products from vendor
-    const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${10}&price_lo=${0}`;
 
     //TODO: MOVE TO INDEX.TS
     // Get products from vendor
     const { data, error, isLoading } = useQuery(
         ['categories', categorySelect], // Use a unique key here to identify the query
         async () => {
+            const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${2000}&price_lo=${0}`;
             const response = await axios.get(multiUrl);
             return response.data; // Return the data from the response
         }

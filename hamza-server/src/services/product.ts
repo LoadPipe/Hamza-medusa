@@ -544,8 +544,8 @@ class ProductService extends MedusaProductService {
      */
     async getFilteredProducts(
         categories: string[], // Array of strings representing category names
-        upperPrice: number = 0, // Number representing the upper price limit
-        lowerPrice: number = 0, // Number representing the lower price limit
+        upperPrice: number,
+        lowerPrice: number,
         storeId?: string
     ) {
         try {
