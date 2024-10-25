@@ -42,9 +42,6 @@ const ProductInfo = () => {
         useWishlistMutations();
     const { authData } = useCustomerAuthStore();
     const { preferred_currency_code } = useCustomerAuthStore();
-    //console.log('user preferred currency code: ', preferred_currency_code);
-
-    const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
     const [selectedVariant, setSelectedVariant] = useState<null | Variant>(
         null
     );
@@ -91,16 +88,10 @@ const ProductInfo = () => {
                     (p: any) =>
                         p.currency_code === (preferred_currency_code ?? 'usdc')
                 );
-            setSelectedPrice(price?.amount ?? 0);
         }
     }, [productData, variantId]);
 
     const isLoading = !productData || Object.keys(productData).length === 0;
-
-    // console.log(`PRODUCT ${JSON.stringify(productData)}`);
-
-    // console.log('ratinggggg ccc', ratingCounter);
-    // console.log('ratinggggg ccc', ratingAverage);
 
     if (isLoading) {
         return (
