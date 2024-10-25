@@ -10,11 +10,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         'cart_id',
     ]);
 
-    console.log(
-        'Handler initialized with cart_id:',
-        handler.inputParams.cart_id
-    );
-
     await handler.handle(async () => {
         // Check if cart_id is present
         if (!handler.requireParam('cart_id')) {
@@ -36,11 +31,6 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
     const handler = new RouteHandler(req, res, 'PUT', '/custom/cart/shipping', [
         'cart_id',
     ]);
-
-    console.log(
-        'Handler initialized with cart_id:',
-        handler.inputParams.cart_id
-    );
 
     await handler.handle(async () => {
         // Check if cart_id is present
