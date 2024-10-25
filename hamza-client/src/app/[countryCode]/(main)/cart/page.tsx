@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 const fetchCart = async () => {
-    const cart = await retrieveCart().then(
+    const cart = await retrieveCart(null, true).then(
         (cart) => cart as CartWithCheckoutStep
     );
 

@@ -6,7 +6,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     let cartService: CartService = req.scope.resolve('cartService');
 
     const handler = new RouteHandler(req, res, 'GET', '/custom/cart', [
-        'cart_id', 'create'
+        'cart_id', 'create', 'update_shipping'
     ]);
 
     await handler.handle(async () => {
@@ -14,8 +14,18 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         if (!handler.requireParam('cart_id')) return;
         const { cart_id, create } = handler.inputParams;
 
+        //force update shipping method
+        if (handler.hasParam('update_shipping') && handler.inputParams.update_shipping) {
+            console.log('************************* AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH ***********************')
+            await cartService.addDefaultShippingMethod(cart_id, true);
+        }
+
         //check for existence
-        const cart = await cartService.retrieve(cart_id, { relations: ['items.variant.prices', 'region'] });
+        const cart = await cartService.retrieve(
+            cart_id,
+            { relations: ['items.variant.prices', 'region'] }
+        );
+
         if (!cart)
             return handler.returnStatusWithMessage(404, `Cart ${cart_id} not found`);
 

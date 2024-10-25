@@ -8,7 +8,7 @@ import DiscountCode from '@modules/checkout/components/discount-code';
 
 const PaymentSummary = async (params: any) => {
     const cartId = params.cartId;
-    const cart = await retrieveCart(cartId).then((cart) => cart);
+    const cart = await retrieveCart(cartId, true).then((cart) => cart);
 
     if (!cart) {
         console.log('cart not found');

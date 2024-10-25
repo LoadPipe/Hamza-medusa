@@ -154,6 +154,8 @@ export default class BuckydropService extends TransactionBaseService {
         let currency = 'usdc';
         let gotPrice = false;
 
+        console.log('------------------------------------------ CALCULATING SHIPPING PRICE ------------------------------------------------')
+
         try {
             //this subtotal is calculated to compare with the shipping cost
             let subtotal = 0;
@@ -181,6 +183,7 @@ export default class BuckydropService extends TransactionBaseService {
 
             currency = cart.customer.preferred_currency_id;
 
+            /*
             //calculate prices
             const input: IBuckyShippingCostRequest = {
                 lang: 'en',
