@@ -377,7 +377,31 @@ const CryptoPaymentButton = ({
 
     return (
         <>
-            {loaderVisible && <HamzaLogoLoader />}
+            {loaderVisible && <HamzaLogoLoader
+              messages={[
+                  'Processing order',
+                  'Charging the flux capacitor',
+                  'Running on caffeine and code',
+                  'Double-checking everything twice',
+                  'Getting things just right',
+                  'Aligning all the stars',
+                  'Calibrating awesomeness',
+                  'Fetching some digital magic',
+                  'Crossing the t’s and dotting the i’s',
+                  'Waking up the hamsters on the wheel',
+                  'Cooking up something great',
+                  'Dusting off the keyboard',
+                  'Wrangling code into shape',
+                  'Consulting the manual (just kidding)',
+                  'Building something epic',
+                  'Gearing up for greatness',
+                  'Rehearsing our victory dance',
+                  'Making sure it’s perfect for you',
+                  'Channeling good vibes into the code',
+                  'Stretching out some last-minute bugs',
+                  'Preparing the finishing touches'
+              ]}
+            />}
             <Button
                 borderRadius={'full'}
                 height={{ base: '42px', md: '58px' }}
