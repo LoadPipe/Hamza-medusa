@@ -169,6 +169,10 @@ export default class BuckydropService extends TransactionBaseService {
 
             if (!cart) throw new Error(`Cart with id ${cartId} not found`);
 
+            if (!cart?.items?.length) {
+                return 0;
+            }
+
             if (!cart.customer) {
                 cart.customer = await this.customerService_.retrieve(
                     cart.customer_id
@@ -177,6 +181,7 @@ export default class BuckydropService extends TransactionBaseService {
 
             currency = cart.customer.preferred_currency_id;
 
+            /*
             //calculate prices
             const input: IBuckyShippingCostRequest = {
                 lang: 'en',

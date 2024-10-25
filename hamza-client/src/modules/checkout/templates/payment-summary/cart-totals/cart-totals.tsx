@@ -3,10 +3,11 @@
 import Image from 'next/image';
 import { Cart, Order, LineItem } from '@medusajs/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { Flex, Text, Divider } from '@chakra-ui/react';
 import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
+import { addDefaultShippingMethod } from '@lib/data';
 
 type CartTotalsProps = {
     data: Omit<Cart, 'refundable_amount' | 'refunded_total'> | Order;
@@ -27,7 +28,11 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
     } = data;
 
     const { preferred_currency_code } = useCustomerAuthStore();
-
+    useEffect(() => {
+        if (data) {
+            addDefaultShippingMethod(data.id);
+        }
+    }, [data.items]); // Trigger re-calculation when the cart items change
     //TODO: this can be replaced later by extending the cart, if necessary
     const getCartSubtotal = (cart: any, currencyCode: string) => {
         const subtotals: { [key: string]: number } = {};
@@ -72,6 +77,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
     );
 
     const shippingCost = shipping_total ?? 0;
+    const usdShippingCost = shippingCost ? 500 : 0; //TODO: hard-coded for now
     const taxTotal = tax_total ?? 0;
     const grandTotal = (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
     const displayCurrency = finalSubtotal?.currency?.length
@@ -83,9 +89,8 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
     let usdGrandTotal: number = 0;
     if (preferred_currency_code === 'eth') {
         usdSubtotal = getCartSubtotal(data, 'usdc');
-        usdGrandTotal = (usdSubtotal.amount ?? 0) + shippingCost + taxTotal;
+        usdGrandTotal = (usdSubtotal.amount ?? 0) + usdShippingCost + taxTotal;
     }
-
     // console.log(grandTotal);
     return (
         <>
@@ -144,21 +149,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                         </Text>
                     </Flex>
                 ) : (
-                    <Flex justifyContent={'space-between'}>
-                        <Text
-                            alignSelf={'center'}
-                            fontSize={{ base: '14px', md: '16px' }}
-                        >
-                            Shipping Fee
-                        </Text>
-
-                        <Text
-                            fontSize={{ base: '14px', md: '16px' }}
-                            alignSelf="center"
-                        >
-                            0.00
-                        </Text>
-                    </Flex>
+                    <Flex mt="-1rem" justifyContent={'space-between'}></Flex>
                 )}
 
                 <Flex justifyContent={'space-between'}>

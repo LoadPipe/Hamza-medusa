@@ -36,6 +36,7 @@ const OrderSummary = ({
             {isCartEmpty ? (
                 // Empty cart template
                 <Flex
+                    mt="1rem"
                     width={'100%'}
                     flexDir={'column'}
                     justifyContent={'center'}

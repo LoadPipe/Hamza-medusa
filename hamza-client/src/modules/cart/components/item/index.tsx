@@ -12,6 +12,7 @@ import LocalizedClientLink from '@modules/common/components/localized-client-lin
 import { Flex, Text, Divider } from '@chakra-ui/react';
 import toast from 'react-hot-toast';
 import { debounce } from 'lodash';
+import { addDefaultShippingMethod } from '@lib/data';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -22,6 +23,7 @@ type ItemProps = {
     region: Region;
     type?: 'full' | 'preview';
     currencyCode?: string;
+    cart_id: string;
 };
 
 const debouncedChangeQuantity = debounce(
@@ -32,7 +34,7 @@ const debouncedChangeQuantity = debounce(
     2000
 );
 
-const Item = ({ item, region }: ItemProps) => {
+const Item = ({ item, region, cart_id }: ItemProps) => {
     const [quantity, setQuantity] = useState(item.quantity);
     const setIsUpdating = useCartStore((state) => state.setIsUpdating);
 
@@ -66,6 +68,7 @@ const Item = ({ item, region }: ItemProps) => {
             })
             .finally(() => {
                 setIsUpdating(false);
+                addDefaultShippingMethod(cart_id);
             });
 
         if (message) {

@@ -41,7 +41,6 @@ const ProductCardGroup = () => {
     // Determine which URL to use based on whether the filter is active
     // const fetchUrl = isFilterActive ? filterUrl : defaultUrl;
 
-    console.log(categorySelect);
     // Fetch products independently, will use cached data from hydration...
     const { data, error, isLoading } = useQuery(
         [
