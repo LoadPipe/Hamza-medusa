@@ -6,16 +6,16 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     let cartService: CartService = req.scope.resolve('cartService');
 
     const handler = new RouteHandler(req, res, 'GET', '/custom/cart/recover', [
-        'customer_id',
+        'customer_id', 'cart_id'
     ]);
 
     await handler.handle(async () => {
         //validate
         if (!handler.requireParam('customer_id')) return;
-        const { customer_id } = handler.inputParams;
+        const { customer_id, cart_id } = handler.inputParams;
 
         //check for existence
-        const cart = await cartService.recover(customer_id);
+        const cart = await cartService.recover(customer_id, cart_id);
         if (!cart)
             return handler.returnStatusWithMessage(404, `Cart for customer ${customer_id} not found`);
 
