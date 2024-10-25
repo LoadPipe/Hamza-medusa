@@ -14,6 +14,7 @@ import { createLogger, ILogger } from '../utils/logging/logger';
 import ShippingOptionRepository from '@medusajs/medusa/dist/repositories/shipping-option';
 import { CartEmailRepository } from 'src/repositories/cart-email';
 import { IsNull, Not } from 'typeorm';
+import { isNumberObject } from 'util/types';
 
 export default class CartService extends MedusaCartService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
@@ -148,14 +149,25 @@ export default class CartService extends MedusaCartService {
     async recover(customerId: string, cartId: string): Promise<Cart> {
         //get last cart
         const carts = await this.cartRepository_.find({
-            where: { customer_id: customerId, id: Not(cartId) },
+            where: {
+                customer_id: customerId,
+                id: Not(cartId),
+                completed_at: IsNull(),
+                deleted_at: IsNull()
+            },
             order: { updated_at: 'DESC' },
             take: 1,
         });
 
         //is there also a non-logged-in cart from cookies? 
         const existingCart = await this.cartRepository_.findOne(
-            { where: { id: cartId } }
+            {
+                where: {
+                    id: cartId,
+                    completed_at: IsNull(),
+                    deleted_at: IsNull()
+                }
+            }
         );
 
         //only return if the most recent one is not completed
