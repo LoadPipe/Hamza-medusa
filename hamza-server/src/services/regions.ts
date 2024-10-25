@@ -29,18 +29,15 @@ class RegionService extends MedusaRegionService {
     }
 
     async retrieve(regionId: string, config?: FindConfig<Region>): Promise<Region | never> {
-        console.log('*(*************************** WJP FAVOD (*(((((((((((((((((((((((');
         return super.retrieve(regionId, config);
     }
 
     async retrieveByCountryCode(code: Country['iso_2'], config?: FindConfig<Region>): Promise<Region | never> {
-        console.log('*(*************************** WJP FAVOD (*(((((((((((((((((((((((');
         return super.retrieve(code, config);
     }
 
     async list(selector?: Selector<Region>, config?: FindConfig<Region>): Promise<Region[]> {
         const regions = await super.list(selector, config);
-        console.log('*(*************************** WJP FAVOD (*(((((((((((((((((((((((');
         for (let r of regions) {
             r.countries = r.countries.filter(c => c.iso_2 != 'en')
         }
@@ -48,7 +45,6 @@ class RegionService extends MedusaRegionService {
     }
 
     async listAndCount(selector?: Selector<Region> & { q?: string; }, config?: FindConfig<Region>): Promise<[Region[], number]> {
-        console.log('*(*************************** WJP FAVOD (*(((((((((((((((((((((((')
         return super.listAndCount(selector, config);
     }
 }
