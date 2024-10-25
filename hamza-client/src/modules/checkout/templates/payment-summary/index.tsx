@@ -1,8 +1,8 @@
 import React from 'react';
-import { Flex, Text, Divider, Button } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { LineItem } from '@medusajs/medusa';
-import CartTotals from './cart-totals/cart-totals';
+import CartTotals from '@modules/common/components/cart-totals';
 import PaymentButton from '@modules/checkout/components/payment-button';
 import DiscountCode from '@modules/checkout/components/discount-code';
 
@@ -43,7 +43,7 @@ const PaymentSummary = async (params: any) => {
                 Payment Summary
             </Text>
 
-            <CartTotals data={cart} />
+            <CartTotals data={cart} useCartStyle={true} />
 
             <Flex mt="auto" flexDir={'column'} gap={5}>
                 <DiscountCode cart={cart} />

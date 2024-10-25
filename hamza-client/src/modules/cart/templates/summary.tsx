@@ -35,7 +35,7 @@ const Summary = ({ cart }: SummaryProps) => {
             >
                 Summary
             </Text>
-            <CartTotals data={cart} />
+            <CartTotals data={cart} useCartStyle={false} />
             <DiscountCode cart={cart} />
             <LocalizedClientLink href={'/checkout?step=' + cart.checkout_step}>
                 <Button
