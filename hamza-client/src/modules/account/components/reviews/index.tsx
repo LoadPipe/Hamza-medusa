@@ -187,10 +187,10 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                     flexDirection="column"
                                     width="100%"
                                     key={review.id}
-                                    my={'20px'}
+                                    my="20px"
                                 >
                                     <Flex
-                                        direction={'row'}
+                                        direction="row"
                                         fontSize={{
                                             base: '14px',
                                             md: '16px',
@@ -207,9 +207,9 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                         )}
                                     </Flex>
                                     <Flex
-                                        flexDirection={'row'}
+                                        flexDirection="row"
                                         width="100%"
-                                        gap={2}
+                                        gap={4} // Adjusted gap to make spacing between image and title smaller
                                     >
                                         <Link
                                             href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${review.product.handle}`}
@@ -229,27 +229,27 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                         </Link>
                                         <Text
                                             maxWidth="100%"
+                                            whiteSpace="normal" // Allows text to wrap to multiple lines
                                             fontSize={{
                                                 base: '14px',
                                                 md: '18px',
                                             }}
                                             fontWeight="bold"
                                             textTransform="uppercase"
-                                            isTruncated
                                         >
                                             {review.title}
                                         </Text>
                                     </Flex>
                                     <Flex
-                                        width={'100%'}
-                                        mb={'16px'}
+                                        width="100%"
+                                        mb="16px"
                                         flexDirection={{
                                             base: 'column',
                                             md: 'row',
                                         }}
                                     >
                                         <Flex
-                                            width={'100%'}
+                                            width="100%"
                                             direction={{
                                                 base: 'column',
                                                 md: 'row',
@@ -284,7 +284,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                 base: 'column',
                                                 md: 'row',
                                             }}
-                                            width={'100%'}
+                                            width="100%"
                                             mt={{ base: 4, md: 0 }}
                                         >
                                             {review.order_id && (
@@ -308,14 +308,14 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                     </Flex>
 
                                     <Text
-                                        width={'100%'}
+                                        width="100%"
                                         rounded="lg"
                                         fontSize={{
                                             base: '12px',
                                             md: 'sm',
                                         }}
                                         bg="black"
-                                        p={'16px'}
+                                        p="16px"
                                     >
                                         {review.content}
                                     </Text>
@@ -371,7 +371,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                         border={'1px solid orange'}
                                     >
                                         <Flex
-                                            direction={'row'}
+                                            flexDirection={'row'}
                                             fontSize={{
                                                 base: '14px',
                                                 md: '16px',
@@ -397,76 +397,88 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                             </Text>
                                         </Flex>
 
-                                        <Flex
-                                            flexDirection={{
-                                                base: 'column',
-                                                md: 'row',
-                                            }}
-                                            width="100%"
-                                            gap={2}
-                                            border={'8px solid brown'}
-                                        >
-                                            <Link
-                                                href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${item.variant.product.handle}`}
-                                            >
-                                                <Image
-                                                    rounded="lg"
-                                                    width={{
-                                                        base: '72px',
-                                                        md: '100px',
-                                                    }}
-                                                    height={{
-                                                        base: '72px',
-                                                        md: '100px',
-                                                    }}
-                                                    src={item.thumbnail}
-                                                />
-                                            </Link>
-
+                                        <Flex flexDirection={{ base: 'row' }}>
                                             <Flex
                                                 flexDirection={{
                                                     base: 'column',
-                                                    md: 'row',
+                                                    md: 'column',
                                                 }}
                                                 width="100%"
-                                                gap={2}
-                                                border={'8px solid brown'}
+                                                border={'8px solid purple'}
                                             >
-                                                <Text
-                                                    fontSize={{
-                                                        base: '14px',
-                                                        md: '18px',
-                                                    }}
-                                                    maxWidth="100%"
-                                                    fontWeight="bold"
-                                                    textTransform="uppercase"
-                                                    isTruncated
+                                                <Link
+                                                    href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${item.variant.product.handle}`}
                                                 >
-                                                    {item.title}
-                                                </Text>
+                                                    <Image
+                                                        rounded="lg"
+                                                        width={{
+                                                            base: '72px',
+                                                            md: '100px',
+                                                        }}
+                                                        height={{
+                                                            base: '72px',
+                                                            md: '100px',
+                                                        }}
+                                                        src={item.thumbnail}
+                                                    />
+                                                </Link>
                                             </Flex>
                                             <Flex
-                                                direction={{
-                                                    base: 'row',
-                                                    md: 'row',
+                                                flexDirection={{
+                                                    base: 'column',
                                                 }}
-                                                color={'rgba(85, 85, 85, 1.0)'}
                                             >
-                                                <Text
-                                                    fontSize={{ base: '16px' }}
-                                                    mr={1}
+                                                <Flex
+                                                    flexDirection={{
+                                                        base: 'column',
+                                                        md: 'row',
+                                                    }}
+                                                    width="100%"
+                                                    gap={2}
+                                                    border={'8px solid brown'}
                                                 >
-                                                    Variation:
-                                                </Text>
-                                                <Text
-                                                    noOfLines={2}
-                                                    fontSize="16px"
+                                                    <Text
+                                                        fontSize={{
+                                                            base: '14px',
+                                                            md: '18px',
+                                                        }}
+                                                        maxWidth="100%"
+                                                        fontWeight="bold"
+                                                        textTransform="uppercase"
+                                                        isTruncated
+                                                    >
+                                                        {item.title}
+                                                    </Text>
+                                                </Flex>
+                                                <Flex
+                                                    direction={{
+                                                        base: 'row',
+                                                        md: 'row',
+                                                    }}
+                                                    color={
+                                                        'rgba(85, 85, 85, 1.0)'
+                                                    }
                                                 >
-                                                    {item.description}
-                                                </Text>
+                                                    <Text
+                                                        fontSize={{
+                                                            base: '16px',
+                                                        }}
+                                                        mr={1}
+                                                    >
+                                                        Variation:
+                                                    </Text>
+                                                    <Text
+                                                        noOfLines={2}
+                                                        fontSize="16px"
+                                                    >
+                                                        {item.description}
+                                                    </Text>
+                                                </Flex>
                                             </Flex>
                                             <Flex
-                                                flexDirection={{ md: 'column' }}
+                                                flexDirection={{
+                                                    base: 'column',
+                                                }}
                                                 width="100%"
                                                 border={'5px solid orange'}
                                                 justifyContent={'flex-end'}
@@ -542,14 +554,6 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                 </Flex>
                                             </Flex>
                                         </Flex>
-                                        <Flex
-                                            width={'100%'}
-                                            mb={'16px'}
-                                            flexDirection={{
-                                                base: 'column',
-                                                md: 'row',
-                                            }}
-                                        ></Flex>
                                     </Flex>
                                 ))
                             )}
