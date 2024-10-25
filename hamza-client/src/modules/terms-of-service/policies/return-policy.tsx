@@ -7,7 +7,7 @@ import {
 } from '@chakra-ui/react';
 import React from 'react';
 
-const ReturnPolicy = ({ is_checkout }: { is_checkout: boolean }) => {
+const ReturnPolicy = ({ is_checkout = false }: { is_checkout?: boolean }) => {
     return is_checkout ? (
         <Flex
             flexDirection="column"
@@ -16,7 +16,7 @@ const ReturnPolicy = ({ is_checkout }: { is_checkout: boolean }) => {
             p={{ base: 4, md: 6 }}
             textAlign="left"
         >
-            ReturnContent
+            <ReturnContent />
         </Flex>
     ) : (
         <TabPanel
@@ -25,7 +25,7 @@ const ReturnPolicy = ({ is_checkout }: { is_checkout: boolean }) => {
             p={{ base: 4, md: 6 }}
             textAlign="left"
         >
-            ReturnContent
+            <ReturnContent />
         </TabPanel>
     );
 };
@@ -36,7 +36,7 @@ const ReturnContent = () => (
     <>
         {/* Return Policy (Rules) */}
         <Text fontWeight="bold" fontSize={{ base: '18px', md: '20px' }} mb={4}>
-            Return Policy (Rules)
+            Return Policy
         </Text>
         <UnorderedList ml={8} mb={4}>
             <ListItem>No returns</ListItem>
