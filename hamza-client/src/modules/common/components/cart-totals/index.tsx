@@ -163,7 +163,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                     <Flex mt="-1rem" justifyContent={'space-between'}></Flex>
                 )}
 
-                {/* final total */}
+                {/* final total 
                 <Flex justifyContent={'space-between'}>
                     <Text
                         alignSelf={'center'}
@@ -181,7 +181,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                             displayCurrency
                         ).toString()}
                     </Text>
-                </Flex>
+                </Flex>*/}
             </Flex>
             {/* <div className="h-px w-full border-b border-gray-200 mt-4" /> */}
             {!useCartStyle ? (
