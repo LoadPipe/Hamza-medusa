@@ -282,7 +282,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 setOptions(initialOptions);
             }
         }
-    }, [productData]);
+    }, [productData.id]);
 
     const convertToPriceDictionary = (selectedVariant: Variant | null) => {
         const output: { [key: string]: number } = {};
