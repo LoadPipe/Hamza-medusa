@@ -16,7 +16,7 @@ import { useAccount, useConnect, WindowProvider, useWalletClient } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
 import { ethers, BigNumberish } from 'ethers';
 import { useCompleteCart, useUpdateCart } from 'medusa-react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import { clearCart, finalizeCheckout, getCheckoutData } from '@lib/data';
 import toast from 'react-hot-toast';
@@ -357,25 +357,64 @@ const CryptoPaymentButton = ({
         }
     };
 
+    const searchParams = useSearchParams();
+    const step = searchParams.get('step');
+    const isCartEmpty = cart?.items.length === 0;
+    const isMissingAddress = !cart?.shipping_address;
+    const isMissingShippingDetails = cart?.shipping_methods?.length === 0;
+    const disableButton =
+        step !== 'review' ||
+        isCartEmpty ||
+        isMissingAddress ||
+        isMissingShippingDetails;
+
+    const getButtonText = () => {
+        if (isCartEmpty) return 'Add products to order';
+        if (isMissingAddress) return 'Add address to order';
+        if (isMissingShippingDetails) return 'No shipping option selected';
+        return 'Confirm Order';
+    };
+
     return (
         <>
-            {loaderVisible && <HamzaLogoLoader />}
+            {loaderVisible && <HamzaLogoLoader
+              messages={[
+                  'Processing order',
+                  'Charging the flux capacitor',
+                  'Running on caffeine and code',
+                  'Double-checking everything twice',
+                  'Getting things just right',
+                  'Aligning all the stars',
+                  'Calibrating awesomeness',
+                  'Fetching some digital magic',
+                  'Crossing the t’s and dotting the i’s',
+                  'Waking up the hamsters on the wheel',
+                  'Cooking up something great',
+                  'Dusting off the keyboard',
+                  'Wrangling code into shape',
+                  'Consulting the manual (just kidding)',
+                  'Building something epic',
+                  'Gearing up for greatness',
+                  'Rehearsing our victory dance',
+                  'Making sure it’s perfect for you',
+                  'Channeling good vibes into the code',
+                  'Stretching out some last-minute bugs',
+                  'Preparing the finishing touches'
+              ]}
+            />}
             <Button
-                height="52px"
-                color="white"
+                borderRadius={'full'}
+                height={{ base: '42px', md: '58px' }}
+                opacity={1}
+                color={'white'}
+                _hover={{ opacity: 0.5 }}
                 backgroundColor={'primary.indigo.900'}
-                className="mt-6 py-3 px-6 "
                 isLoading={submitting}
-                disabled={notReady}
+                isDisabled={disableButton}
                 onClick={handlePayment}
-                _hover={{
-                    backgroundColor: 'white',
-                    color: 'black',
-                }}
             >
-                Place Order
+                {getButtonText()}
             </Button>
-            <ErrorMessage error={errorMessage} />
         </>
     );
 };

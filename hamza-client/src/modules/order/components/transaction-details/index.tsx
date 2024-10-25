@@ -20,12 +20,8 @@ type ExtendedLineItem = LineItem & {
 
 const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
     const {
-        subtotal,
-        discount_total,
-        gift_card_total,
         tax_total,
         shipping_total,
-        total,
     } = data;
 
     const { preferred_currency_code } = useCustomerAuthStore();
@@ -104,10 +100,10 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                     </Flex>
                 </Flex>
 
-                {/* Shipping Cost */}
+                {/* Shipping Fee */}
                 <Flex color="#555555" justifyContent={'space-between'}>
                     <Text fontSize={{ base: '14px', md: '16px' }}>
-                        Shipping Cost
+                        Shipping Fee
                     </Text>
 
                     <Flex>

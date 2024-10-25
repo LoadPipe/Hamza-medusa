@@ -18,7 +18,7 @@ import CartPopup from '../../../cart-popup';
 import { getAverageRatings, getStore, getReviewCount } from '@lib/data';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import Spinner from '@modules/common/icons/spinner';
-import TermsOfService from '../terms-of-service/product-details-tos';
+import TermsOfService from '@/modules/terms-of-service/product-details-tos';
 import { renderStars } from '@modules/products/components/review-stars';
 import { BiHeart, BiSolidHeart } from 'react-icons/bi';
 import useWishlistStore, {
@@ -282,7 +282,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 setOptions(initialOptions);
             }
         }
-    }, [productData]);
+    }, [productData.id]);
 
     const convertToPriceDictionary = (selectedVariant: Variant | null) => {
         const output: { [key: string]: number } = {};
@@ -417,7 +417,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     color="white"
                 >
                     {preferred_currency_code === 'eth'
-                        ? `$ ${formatCryptoPrice(parseFloat(usdPrice!), 'usdc')}`
+                        ? `≅ $ ${formatCryptoPrice(parseFloat(usdPrice!), 'usdc')}`
                         : `${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} ${preferred_currency_code?.toUpperCase() ?? 'USDC'}`}
                 </Heading>
                 {reviewCount > 0 ? (

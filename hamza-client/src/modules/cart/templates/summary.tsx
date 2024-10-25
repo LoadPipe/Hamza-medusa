@@ -7,6 +7,7 @@ import DiscountCode from '@modules/checkout/components/discount-code';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import Spinner from '@modules/common/icons/spinner';
 import { useCartStore } from '@store/cart-store/cart-store'; // Import Zustand store
+import { useEffect, useState } from 'react';
 
 type SummaryProps = {
     cart: CartWithCheckoutStep;
@@ -34,7 +35,7 @@ const Summary = ({ cart }: SummaryProps) => {
             >
                 Summary
             </Text>
-            <CartTotals data={cart} />
+            <CartTotals data={cart} useCartStyle={false} />
             <DiscountCode cart={cart} />
             <LocalizedClientLink href={'/checkout?step=' + cart.checkout_step}>
                 <Button

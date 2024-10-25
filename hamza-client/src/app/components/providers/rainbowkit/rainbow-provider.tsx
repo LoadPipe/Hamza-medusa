@@ -15,7 +15,7 @@ import {
     SwitchNetwork,
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-
+import { HnsClient } from '@/web3/contracts/hns-client';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { SiweMessage } from 'siwe';
 import {
@@ -76,12 +76,46 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         setCustomerAuthData,
         setCustomerPreferredCurrency,
         setWhitelistConfig,
+        setHnsAvatar,
+        setHnsName,
     } = useCustomerAuthStore();
     const router = useRouter();
     const [customer_id, setCustomerId] = useState('');
     const { loadWishlist } = useWishlistStore((state) => state);
 
     let clientWallet = walletAddress;
+
+    const hnsClient = new HnsClient(10);
+
+    useEffect(() => {
+        let retries = 0;
+        const maxRetries = 2; // Set a max retry limit
+
+        const getHnsClient = async () => {
+            try {
+                const { name, avatar } =
+                    await hnsClient.getNameAndAvatar(walletAddress);
+                setHnsName(name);
+                setHnsAvatar(avatar);
+            } catch (err) {
+                if (retries < maxRetries) {
+                    retries++;
+                    // console.log(
+                    //     `Retrying to fetch HNS data. Retry count: ${retries}`
+                    // );
+                    setTimeout(getHnsClient, 1000); // Retry after 1 second
+                } else {
+                    console.error(
+                        'Max retries reached. Could not connect to RPC.'
+                    );
+                }
+            }
+        };
+
+        if (walletAddress && authData.status === 'authenticated') {
+            getHnsClient();
+        }
+    }, [authData.status]);
 
     useEffect(() => {
         if (authData.status === 'authenticated' && customer_id) {
@@ -106,14 +140,14 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         console.log('Saved wallet address', clientWallet);
         if (clientWallet?.length) {
             getHamzaCustomer().then((hamzaCustomer) => {
-                console.log('Hamza Customer: ', hamzaCustomer);
                 getCustomer().then((customer) => {
-                    console.log('Medusa Customer: ', customer);
                     if (
                         !customer ||
                         !hamzaCustomer ||
                         customer?.id !== hamzaCustomer?.id
                     ) {
+                        console.log('Hamza Customer: ', hamzaCustomer);
+                        console.log('Medusa Customer: ', customer);
                         clearLogin();
                     }
                 });
@@ -129,9 +163,6 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         },
 
         createMessage: ({ nonce, address, chainId }) => {
-            console.log(
-                `Creating message with nonce: ${nonce}, address: ${address}, chainId: ${chainId}`
-            );
             const message = new SiweMessage({
                 domain: window.location.host,
                 address,

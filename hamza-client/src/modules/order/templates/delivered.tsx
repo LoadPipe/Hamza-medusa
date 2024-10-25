@@ -11,6 +11,7 @@ import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import { OrdersData } from './all';
 import { useOrderTabStore } from '@store/order-tab-state';
+import Link from 'next/link';
 
 const Delivered = ({
     customer,
@@ -34,15 +35,16 @@ const Delivered = ({
     const deliveredOrder = data?.Delivered || [];
 
     //TODO: Refactor to a mutation
-    const handleReorder = async (order: any) => {
+    const handleReorder = async (item: any, country_code: string) => {
         try {
+            // console.log(item.variant_id, item.quantity, country_code);
             await addToCart({
-                variantId: order.variant_id,
-                countryCode: countryCode,
-                quantity: order.quantity,
+                variantId: item.variant_id,
+                countryCode: country_code,
+                quantity: item.quantity,
             });
         } catch (e) {
-            toast.error(`Product with name ${order.title} could not be added`);
+            toast.error(`Product with name ${item.title} could not be added`);
         }
 
         router.push('/checkout');
@@ -186,31 +188,41 @@ const Delivered = ({
                                                         }}
                                                         onClick={() =>
                                                             handleReorder(
-                                                                order || []
+                                                                item,
+                                                                order
+                                                                    .shipping_address
+                                                                    .country_code
                                                             )
                                                         }
                                                     >
                                                         Buy Again
                                                     </Button>
-                                                    <Button
-                                                        variant="outline"
-                                                        colorScheme="white"
-                                                        borderRadius={'37px'}
-                                                        ml={{
-                                                            base: 0,
-                                                            md: 2,
-                                                        }}
-                                                        mt={{
-                                                            base: 2,
-                                                            md: 0,
-                                                        }}
-                                                        width={{
-                                                            base: '100%',
-                                                            md: 'auto',
-                                                        }}
+                                                    <Link
+                                                        href="https://support.hamza.market/help/1568263160"
+                                                        target="_blank"
                                                     >
-                                                        Return/Refund
-                                                    </Button>
+                                                        <Button
+                                                            variant="outline"
+                                                            colorScheme="white"
+                                                            borderRadius={
+                                                                '37px'
+                                                            }
+                                                            ml={{
+                                                                base: 0,
+                                                                md: 2,
+                                                            }}
+                                                            mt={{
+                                                                base: 2,
+                                                                md: 0,
+                                                            }}
+                                                            width={{
+                                                                base: '100%',
+                                                                md: 'auto',
+                                                            }}
+                                                        >
+                                                            Return/Refund
+                                                        </Button>
+                                                    </Link>
                                                 </Flex>
                                             </Flex>
                                         </div>
