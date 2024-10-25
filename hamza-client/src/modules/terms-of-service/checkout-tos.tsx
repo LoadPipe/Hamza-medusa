@@ -83,12 +83,12 @@ const CheckoutTermsOfService = () => {
                         <ModalBody>
                             {/* Render All Policies */}
                             <DisclaimerPolicy />
-                            <ShippingPolicy />
-                            <PaymentPolicy />
+                            <ShippingPolicy is_checkout={true} />
+                            <PaymentPolicy is_checkout={true} />
                             {/*<ReturnPolicy />*/}
                             <BuyerSellerProtection />
                             <LimitationOfLiability />
-                            <PrivacyPolicy />
+                            <PrivacyPolicy is_checkout={true} />
                             <IntellectualProperty />
                             <TerminationAndSuspension />
                             <ComplianceWithCryptoRegulations />
