@@ -175,12 +175,12 @@ export default class CartService extends MedusaCartService {
         return cart;
     }
 
-    async addDefaultShippingMethod(cartId: string): Promise<void> {
+    async addDefaultShippingMethod(cartId: string, force: boolean = false): Promise<void> {
         const cart = await super.retrieve(cartId, {
             relations: ['shipping_methods'],
         });
 
-        if (cart && cart.shipping_methods.length === 0) {
+        if (cart && (force || cart.shipping_methods.length === 0)) {
             this.logger.debug(
                 `Auto-adding shipping method for cart ${cart.id}`
             );

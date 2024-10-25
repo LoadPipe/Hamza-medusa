@@ -3,8 +3,6 @@ import CartService from '../../../../services/cart';
 import { RouteHandler } from '../../../route-handler';
 
 export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
-    console.log('PUT /custom/cart/shipping request received');
-
     let cartService: CartService = req.scope.resolve('cartService');
 
     const handler = new RouteHandler(req, res, 'PUT', '/custom/cart/shipping', [
@@ -57,9 +55,7 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
         }
 
         // Add default shipping method and log the result
-        console.log('Adding default shipping method for cart:', cartId);
-        await cartService.addDefaultShippingMethod(cartId);
-        console.log('Successfully added shipping method to cart:', cartId);
+        await cartService.addDefaultShippingMethod(cartId, true);
 
         return handler.returnStatusWithMessage(
             200,

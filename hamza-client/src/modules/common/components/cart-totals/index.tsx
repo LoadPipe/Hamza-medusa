@@ -78,13 +78,13 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
 
         return subtotals[itemCurrencyCode]
             ? {
-                  currency: itemCurrencyCode,
-                  amount: subtotals[itemCurrencyCode],
-              }
+                currency: itemCurrencyCode,
+                amount: subtotals[itemCurrencyCode],
+            }
             : {
-                  currency: itemCurrencyCode,
-                  amount: subtotals[itemCurrencyCode],
-              };
+                currency: itemCurrencyCode,
+                amount: subtotals[itemCurrencyCode],
+            };
     };
 
     const finalSubtotal = getCartSubtotal(
@@ -115,7 +115,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                 my="2rem"
                 gap={{ base: 2, md: 4 }}
             >
-                {subtotal && (
+                {finalSubtotal && (
                     <Flex justifyContent={'space-between'}>
                         <Text
                             alignSelf={'center'}
@@ -266,7 +266,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                                         fontWeight={600}
                                         textAlign="right"
                                     >
-                                        {`Approx. $ ${formatCryptoPrice(usdGrandTotal, 'usdc')} USDC`}
+                                        {`≅ $ ${formatCryptoPrice(usdGrandTotal, 'usdc')} USDC`}
                                     </Text>
                                 </Flex>
                             ))}

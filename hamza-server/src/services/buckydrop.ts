@@ -181,6 +181,7 @@ export default class BuckydropService extends TransactionBaseService {
 
             currency = cart.customer.preferred_currency_id;
 
+            /*
             //calculate prices
             const input: IBuckyShippingCostRequest = {
                 lang: 'en',
