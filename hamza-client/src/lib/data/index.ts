@@ -719,6 +719,13 @@ export async function clearCart() {
     cookies().delete('_medusa_cart_id');
 }
 
+export async function getCartShippingCost() {
+    const cart_id = cookies().get('_medusa_cart_id')?.value;
+    return getSecure('/custom/cart/shipping', {
+        cart_id,
+    });
+}
+
 // Order actions
 export async function retrieveOrder(id: string) {
     const headers = getMedusaHeaders(['order']);

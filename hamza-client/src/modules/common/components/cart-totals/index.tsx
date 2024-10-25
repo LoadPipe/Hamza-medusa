@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { Flex, Text, Divider } from '@chakra-ui/react';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
-import { addDefaultShippingMethod } from '@lib/data';
+import { getCartShippingCost } from '@lib/data';
 import { useCartShippingOptions } from 'medusa-react';
 
 type CartTotalsProps = {
@@ -32,18 +32,11 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const [shippingCost, setShippingCost] = useState<number>(0);
     const { shipping_options, isLoading } = useCartShippingOptions(data.id);
-    const getBuckyShippingOption = (options: any) => {
-        return options.find(
-            (option: any) => option.provider_id === 'bucky-fulfillment'
-        );
-    };
+
     useEffect(() => {
-        if (!isLoading && shipping_options && shipping_options.length > 0) {
-            const bucky_shipping = getBuckyShippingOption(shipping_options);
-            if (bucky_shipping) {
-                setShippingCost(bucky_shipping.amount);
-            }
-        }
+        getCartShippingCost().then((cost) => {
+            setShippingCost(cost?.amount ?? 0);
+        });
     }, [shipping_options, isLoading]);
 
     //TODO: this can be replaced later by extending the cart, if necessary
