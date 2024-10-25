@@ -1,98 +1,179 @@
-import { TabPanel, Text } from '@chakra-ui/react';
+import {
+    ListItem,
+    TabPanel,
+    Text,
+    UnorderedList,
+    Flex,
+} from '@chakra-ui/react';
 import React from 'react';
 
-const ReturnPolicy = () => {
-    return (
-        <TabPanel fontSize={{ base: '14px', md: '16px' }}>
-            <Text fontWeight="bold">Returns and Refunds</Text>
-
-            <Text mt={4} fontWeight="bold">
-                1. Return Eligibility
-            </Text>
-            <Text mt={2}>
-                • Most items purchased on Hamza can be returned within 30 days
-                of delivery, provided they are in original condition, unused,
-                and in the original packaging.
-            </Text>
-            <Text mt={2}>
-                • Certain items, such as digital products, perishable goods, or
-                customized products, may not be eligible for return. These
-                exceptions will be indicated on the product page.
-            </Text>
-
-            <Text mt={4} fontWeight="bold">
-                2. How to Initiate a Return
-            </Text>
-            <Text mt={2}>
-                • Contact the seller directly through the Hamza platform within
-                the 30-day return window.
-            </Text>
-            <Text mt={2}>
-                • Provide the order number, reason for return, and any relevant
-                photos or documentation.
-            </Text>
-            <Text mt={2}>
-                • The seller will provide further instructions on how to return
-                the item, including the return address and shipping method.
-            </Text>
-
-            <Text mt={4} fontWeight="bold">
-                3. Return Shipping Costs
-            </Text>
-            <Text mt={2}>
-                • Buyers are responsible for covering the return shipping costs
-                unless the item was damaged, defective, or incorrectly
-                delivered.
-            </Text>
-            <Text mt={2}>
-                • If the return is due to an error on the seller’s part, such as
-                sending the wrong item or a damaged product, the seller will
-                typically cover the return shipping costs.
-            </Text>
-
-            <Text mt={4} fontWeight="bold">
-                4. Refund Process
-            </Text>
-            <Text mt={2}>
-                • Once the seller receives and inspects the returned item, a
-                refund will be issued in the original form of payment or as
-                store credit within 5-7 business days.
-            </Text>
-            <Text mt={2}>
-                • For payments made with cryptocurrency, the refund will be
-                processed based on the market value of the cryptocurrency at the
-                time of purchase or as agreed upon by the buyer and seller.
-            </Text>
-            <Text mt={2}>
-                • Buyers will receive a notification once the refund is
-                processed.
-            </Text>
-
-            <Text mt={4} fontWeight="bold">
-                5. Non-Refundable Items
-            </Text>
-            <Text mt={2}>
-                • Items marked as final sale or non-returnable (such as digital
-                products, perishable goods, or personalized items) cannot be
-                returned or refunded unless they arrive damaged or defective.
-            </Text>
-
-            <Text mt={4} fontWeight="bold">
-                6. Damaged or Defective Items
-            </Text>
-            <Text mt={2}>
-                • If you receive an item that is damaged, defective, or not as
-                described, contact the seller within 7 days of receiving the
-                product to report the issue.
-            </Text>
-            <Text mt={2}>
-                • Provide clear photos of the damage or defect to facilitate the
-                return process. The seller will work with you to resolve the
-                issue, either by offering a replacement, refund, or other
-                solution.
-            </Text>
+const ReturnPolicy = ({ is_checkout }: { is_checkout: boolean }) => {
+    return is_checkout ? (
+        <Flex
+            flexDirection="column"
+            fontSize={{ base: '14px', md: '16px' }}
+            lineHeight={{ base: '1.6', md: '1.8' }}
+            p={{ base: 4, md: 6 }}
+            textAlign="left"
+        >
+            ReturnContent
+        </Flex>
+    ) : (
+        <TabPanel
+            fontSize={{ base: '14px', md: '16px' }}
+            lineHeight={{ base: '1.6', md: '1.8' }}
+            p={{ base: 4, md: 6 }}
+            textAlign="left"
+        >
+            ReturnContent
         </TabPanel>
     );
 };
 
 export default ReturnPolicy;
+
+const ReturnContent = () => (
+    <>
+        {/* Return Policy (Rules) */}
+        <Text fontWeight="bold" fontSize={{ base: '18px', md: '20px' }} mb={4}>
+            Return Policy (Rules)
+        </Text>
+        <UnorderedList ml={8} mb={4}>
+            <ListItem>No returns</ListItem>
+            <ListItem>14-day buyer-paid returns</ListItem>
+            <ListItem>14-day free returns</ListItem>
+            <ListItem>30-day buyer-paid returns</ListItem>
+            <ListItem>30-day free returns</ListItem>
+        </UnorderedList>
+        <Text mb={4}>
+            Note: All returned items may be subject to full or partial refunds
+            based on what the buyer and seller agree or what Hamza determines on
+            a case-by-case manner.
+        </Text>
+
+        {/* Buyer and Seller Protection */}
+        <Text fontWeight="bold" mb={4}>
+            Buyer and Seller Protection
+        </Text>
+        <Text mb={4}>
+            We strive to protect both buyers and sellers on our marketplace
+            through the use of a smart contract escrow system, a defined
+            inspection period, and clear processes for refunds and returns.
+        </Text>
+
+        {/* Escrow System */}
+        <Text fontWeight="bold" mb={4}>
+            1. Escrow System
+        </Text>
+        <Text mb={4}>
+            Our platform uses a smart contract escrow system to ensure security
+            for both buyers and sellers. When a buyer makes a payment, the funds
+            are held in escrow by the smart contract. These funds are not
+            released to the seller until the buyer confirms within the 7 day
+            inspection period that they have received the goods and are
+            satisfied with the purchase.
+        </Text>
+        <Text mb={4}>
+            Sellers are protected by receiving the funds from the escrow as soon
+            as the buyer confirms receipt of the goods or the inspection period
+            has ended without a dispute.
+        </Text>
+
+        {/* Inspection Period */}
+        <Text fontWeight="bold" mb={4}>
+            2. Inspection Period
+        </Text>
+        <Text mb={4}>
+            Buyers have an inspection period of <strong>seven (7) days</strong>{' '}
+            from the date the item is marked as delivered to verify the goods
+            they received. During this time, buyers should carefully inspect the
+            items to ensure they match the listing description and are free from
+            defects.
+        </Text>
+        <Text mb={4}>
+            If an item has been lost in transit, arrives in defective condition,
+            or if incorrect goods were shipped, the buyer must contact the
+            seller directly explaining the issue. The seller will have{' '}
+            <strong>48 hours</strong> to respond to the buyer.
+        </Text>
+        <Text mb={4}>
+            If the seller does not respond within the 48-hour period, the buyer
+            will receive a full refund, and the funds will be returned from
+            escrow immediately.
+        </Text>
+
+        {/* Refunds and Returns */}
+        <Text fontWeight="bold" mb={4}>
+            3. Refunds and Returns
+        </Text>
+        <Text mb={4}>
+            Buyers may request a refund from the seller under the following
+            circumstances:
+        </Text>
+        <UnorderedList ml={8} mb={4}>
+            <ListItem>The item never arrived.</ListItem>
+            <ListItem>
+                The item arrived after the estimated delivery date.
+            </ListItem>
+            <ListItem>The item arrived damaged.</ListItem>
+            <ListItem>
+                The item does not match the listing description.
+            </ListItem>
+            <ListItem>
+                The seller offered a return without a specific reason.
+            </ListItem>
+            <ListItem>
+                The request is within the 7-day Inspection period or as provided
+                by applicable law, whichever is longer. Beyond this period,
+                based on the Seller’s policy and applicable law, the Seller’s
+                consent may be required.
+            </ListItem>
+        </UnorderedList>
+
+        <Text mb={4}>
+            There are <strong>three possible outcomes</strong> for a refund
+            request:
+        </Text>
+        <UnorderedList ml={8} mb={4}>
+            <ListItem>
+                <strong>Seller Accepts the Request:</strong> If the seller
+                accepts the refund request, the buyer will receive instructions
+                from the seller on how to return the item. Depending on the
+                terms agreed upon at the time of purchase:
+                <UnorderedList ml={8} mt={2}>
+                    <ListItem>
+                        The seller will issue a refund after receiving and
+                        inspecting the returned item.
+                    </ListItem>
+                    <ListItem>
+                        The seller may issue a refund without requiring the item
+                        to be returned.
+                    </ListItem>
+                    <ListItem>
+                        A partial refund may be offered if the seller and buyer
+                        agree to that outcome.
+                    </ListItem>
+                </UnorderedList>
+            </ListItem>
+            <ListItem>
+                <strong>
+                    Seller Does Not Respond Within the Given Time Frame:
+                </strong>{' '}
+                If the seller does not respond within <strong>48 hours</strong>,
+                the buyer’s refund request will be automatically approved, and
+                the funds will be refunded to the buyer’s wallet in the same
+                cryptocurrency used for the purchase.
+            </ListItem>
+            <ListItem>
+                <strong>Seller Disputes the Refund Request:</strong> If the
+                seller disputes the refund request, either the buyer or seller
+                can open a case. At this point, our platform's mediation team
+                will step in to mediate the situation. Hamza may request
+                additional evidence from both the buyer and the seller, such as
+                photos of the item, proof of delivery, or communication records,
+                in order to come to a fair resolution. The decision made by
+                Hamza will be final and binding.
+            </ListItem>
+        </UnorderedList>
+    </>
+);

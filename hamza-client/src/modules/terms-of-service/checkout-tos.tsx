@@ -84,6 +84,7 @@ const CheckoutTermsOfService = () => {
                             {/* Render All Policies */}
                             <DisclaimerPolicy />
                             <ShippingPolicy is_checkout={true} />
+                            <ReturnPolicy is_checkout={true} />
                             <PaymentPolicy is_checkout={true} />
                             {/*<ReturnPolicy />*/}
                             <BuyerSellerProtection />
