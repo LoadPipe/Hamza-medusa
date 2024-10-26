@@ -172,7 +172,7 @@ const AddressSelect = ({ addresses, cart, onSelect }: AddressSelectProps) => {
                                             </Text>
                                         )}
                                         <Text fontSize="sm" mt={2}>
-                                            {address.address_1}
+                                            {address.address_1}{' '}
                                             {address.address_2 && (
                                                 <span>
                                                     , {address.address_2}
