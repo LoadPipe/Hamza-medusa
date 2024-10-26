@@ -25,7 +25,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             <head>
                 <script
                     type="text/javascript"
-                    src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=W8Yntv"
+                    src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=S4Nw9L"
                 ></script>
             </head>
             <body>
