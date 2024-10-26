@@ -182,6 +182,7 @@ export default class BuckydropService extends TransactionBaseService {
                 }
             }
 
+            //get currency from customer, or cart if there is no customer
             currency = cart.customer ?
                 cart.customer.preferred_currency_id :
                 cart?.items[0]?.currency_code ?? 'usdc';
