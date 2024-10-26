@@ -94,7 +94,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
                     )}
                     <Text className="flex flex-col text-left text-base-regular mt-2">
                         <span>
-                            {address.address_1}
+                            {address.address_1}{' '}
                             {address.address_2 && (
                                 <span>, {address.address_2}</span>
                             )}
