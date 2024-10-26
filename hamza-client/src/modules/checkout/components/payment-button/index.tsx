@@ -42,10 +42,10 @@ declare global {
 const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
     const notReady =
         !cart ||
-        !cart.shipping_address ||
-        !cart.billing_address ||
-        !cart.email ||
-        cart.shipping_methods.length < 1
+            !cart.shipping_address ||
+            !cart.billing_address ||
+            !cart.email ||
+            cart.shipping_methods.length < 1
             ? true
             : false;
 
@@ -303,7 +303,7 @@ const CryptoPaymentButton = ({
                 updateCart.mutate(
                     { context: {} },
                     {
-                        onSuccess: ({}) => {
+                        onSuccess: ({ }) => {
                             //this calls the CartCompletion routine
                             completeCart.mutate(void 0, {
                                 onSuccess: async ({ data, type }) => {
@@ -378,29 +378,44 @@ const CryptoPaymentButton = ({
     return (
         <>
             {loaderVisible && <HamzaLogoLoader
-              messages={[
-                  'Processing order',
-                  'Charging the flux capacitor',
-                  'Running on caffeine and code',
-                  'Double-checking everything twice',
-                  'Getting things just right',
-                  'Aligning all the stars',
-                  'Calibrating awesomeness',
-                  'Fetching some digital magic',
-                  'Crossing the t’s and dotting the i’s',
-                  'Waking up the hamsters on the wheel',
-                  'Cooking up something great',
-                  'Dusting off the keyboard',
-                  'Wrangling code into shape',
-                  'Consulting the manual (just kidding)',
-                  'Building something epic',
-                  'Gearing up for greatness',
-                  'Rehearsing our victory dance',
-                  'Making sure it’s perfect for you',
-                  'Channeling good vibes into the code',
-                  'Stretching out some last-minute bugs',
-                  'Preparing the finishing touches'
-              ]}
+                messages={[
+                    'Processing order',
+                    'Charging the flux capacitor',
+                    'Running on caffeine and code',
+                    'Double-checking everything twice',
+                    'Getting things just right',
+                    'Aligning all the stars',
+                    'Calibrating awesomeness',
+                    'Fetching some digital magic',
+                    'Crossing the t’s and dotting the i’s',
+                    'Waking up the hamsters on the wheel',
+                    'Cooking up something great',
+                    'Dusting off the keyboard',
+                    'Wrangling code into shape',
+                    'Consulting the manual (just kidding)',
+                    'Building something epic',
+                    'Gearing up for greatness',
+                    'Rehearsing our victory dance',
+                    'Making sure it’s perfect for you',
+                    'Channeling good vibes into the code',
+                    'Stretching out some last-minute bugs',
+                    'Preparing the finishing touches',
+                    'Wow this is taking a long time',
+                    'Person, woman, man, camera... TV',
+                    'What’s for dinner tonight?',
+                    'Sending a message to the Mayor of Blockchain',
+                    'Contacting the blockchain',
+                    'Ein, zwei, drei',
+                    'Finalizing your purchase',
+                    'Preparing your receipt',
+                    'Nearly done',
+                    'Randomizing whimsical checkout messages',
+                    'Preparing you a glass of maple syrup',
+                    'Patience is the companion of wisdom',
+                    'Have patience with all things but first of all with yourself',
+                    'It’s nice to be able to buy normal stuff with crypto',
+                    'Hamza was born in 2024',
+                ]}
             />}
             <Button
                 borderRadius={'full'}
