@@ -172,6 +172,18 @@ export default async function Footer() {
                                 Request a Product
                             </Text>
                         </a>
+
+                        <a
+                            href="https://blog.hamza.market/tos/"
+                            target="_blank"
+                        >
+                            <Text
+                                fontSize={{ base: '14px', md: '16px' }}
+                                className="text-base font-bold"
+                            >
+                                Terms of Service
+                            </Text>
+                        </a>
                     </Flex>
                 </Flex>
 

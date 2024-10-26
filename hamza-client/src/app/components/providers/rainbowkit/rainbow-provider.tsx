@@ -93,8 +93,11 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
 
         const getHnsClient = async () => {
             try {
+                console.log('attempting to retrieve HNS name & avatar');
                 const { name, avatar } =
                     await hnsClient.getNameAndAvatar(walletAddress);
+                console.log('HNS name & avatar:', name, avatar);
+
                 setHnsName(name);
                 setHnsAvatar(avatar);
             } catch (err) {
