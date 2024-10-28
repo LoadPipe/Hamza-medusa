@@ -13,9 +13,15 @@ type ItemsTemplateProps = {
     items?: Omit<ExtendedLineItem, 'beforeInsert'>[];
     region?: Region;
     currencyCode: string;
+    cart_id: string;
 };
 
-const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
+const ItemsTemplate = ({
+    items,
+    region,
+    currencyCode,
+    cart_id,
+}: ItemsTemplateProps) => {
     return (
         <Flex
             flexDir={'column'}
@@ -52,6 +58,7 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
                               return (
                                   <Item
                                       key={item.id}
+                                      cart_id={cart_id}
                                       item={item}
                                       region={region}
                                       currencyCode={currencyCode}

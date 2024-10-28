@@ -3,20 +3,23 @@
 import Image from 'next/image';
 import { Cart, Order, LineItem } from '@medusajs/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { Flex, Text, Divider } from '@chakra-ui/react';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
+import { getCartShippingCost } from '@lib/data';
+import { useCartShippingOptions } from 'medusa-react';
 
 type CartTotalsProps = {
     data: Omit<Cart, 'refundable_amount' | 'refunded_total'> | Order;
+    useCartStyle: boolean;
 };
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
 };
 
-const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
+const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
     const {
         subtotal,
         discount_total,
@@ -27,6 +30,14 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
     } = data;
 
     const { preferred_currency_code } = useCustomerAuthStore();
+    const [shippingCost, setShippingCost] = useState<number>(0);
+    const { shipping_options, isLoading } = useCartShippingOptions(data.id);
+
+    useEffect(() => {
+        getCartShippingCost().then((cost) => {
+            setShippingCost(cost?.amount ?? 0);
+        });
+    }, [shipping_options, isLoading]);
 
     //TODO: this can be replaced later by extending the cart, if necessary
     const getCartSubtotal = (cart: any, currencyCode: string) => {
@@ -58,8 +69,11 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
             }
         }
 
-        return subtotals[currencyCode]
-            ? { currency: currencyCode, amount: subtotals[currencyCode] }
+        return subtotals[itemCurrencyCode]
+            ? {
+                currency: itemCurrencyCode,
+                amount: subtotals[itemCurrencyCode],
+            }
             : {
                 currency: itemCurrencyCode,
                 amount: subtotals[itemCurrencyCode],
@@ -71,7 +85,6 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
         preferred_currency_code ?? 'usdc'
     );
 
-    const shippingCost = shipping_total ?? 0;
     const usdShippingCost = shippingCost ? 500 : 0; //TODO: hard-coded for now
     const taxTotal = tax_total ?? 0;
     const grandTotal = (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
@@ -86,21 +99,16 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
         usdSubtotal = getCartSubtotal(data, 'usdc');
         usdGrandTotal = (usdSubtotal.amount ?? 0) + usdShippingCost + taxTotal;
     }
-
-    // console.log(grandTotal);
     return (
-        <div>
-            <hr
-                style={{
-                    color: 'red',
-                    width: '100%',
-                    borderTop: '2px solid #3E3E3E',
-                    marginBottom: '1rem',
-                }}
-            />
+        <>
             {/* amounts */}
-            <Flex flexDirection={'column'} color="white">
-                {subtotal && (
+            <Flex
+                flexDirection={'column'}
+                color="white"
+                my="2rem"
+                gap={{ base: 2, md: 4 }}
+            >
+                {finalSubtotal && (
                     <Flex justifyContent={'space-between'}>
                         <Text
                             alignSelf={'center'}
@@ -122,17 +130,17 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                 )}
 
                 {!!discount_total && (
-                    <div className="flex items-center justify-between">
+                    <Text fontSize={{ base: '14px', md: '16px' }}>
                         <span>Discount</span>
-                    </div>
+                    </Text>
                 )}
                 {!!gift_card_total && (
-                    <div className="flex items-center justify-between">
-                        <span>Gift card</span>
-                    </div>
+                    <Text fontSize={{ base: '14px', md: '16px' }}>
+                        Gift Card
+                    </Text>
                 )}
 
-                {shippingCost ?
+                {shippingCost ? (
                     <Flex justifyContent={'space-between'}>
                         <Text
                             alignSelf={'center'}
@@ -151,10 +159,11 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                             ).toString()}
                         </Text>
                     </Flex>
-                    : <Flex></Flex>
-                }
+                ) : (
+                    <Flex mt="-1rem" justifyContent={'space-between'}></Flex>
+                )}
 
-                {/* final total */}
+                {/* final total 
                 <Flex justifyContent={'space-between'}>
                     <Text
                         alignSelf={'center'}
@@ -172,69 +181,96 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data }) => {
                             displayCurrency
                         ).toString()}
                     </Text>
-                </Flex>
-            </Flex>
+                </Flex>*/}
+            </Flex >
             {/* <div className="h-px w-full border-b border-gray-200 mt-4" /> */}
-            <hr
-                style={{
-                    color: 'red',
-                    width: '100%',
-                    borderTop: '2px dashed #3E3E3E',
-                    marginTop: '1rem',
-                    marginBottom: '1rem',
-                }}
-            />
-            {finalSubtotal?.currency && (
-                <Flex
-                    color={'white'}
-                    justifyContent={'space-between'}
-                    alignItems="center"
-                >
-                    <Text
-                        alignSelf="center"
-                        fontSize={{ base: '15px', md: '16px' }}
+            {
+                !useCartStyle ? (
+                    <hr
+                        style={{
+                            color: 'red',
+                            width: '100%',
+                            borderTop: '2px dashed #3E3E3E',
+                            marginTop: '1rem',
+                            marginBottom: '1rem',
+                        }}
+                    />
+                ) : (
+                    <Divider
+                        my={{ base: '1rem', md: '1rem' }}
+                        borderWidth={'1px'}
+                        borderColor={'#3E3E3E'}
+                    />
+                )
+            }
+
+            {
+                finalSubtotal?.currency && (
+                    <Flex
+                        color={'white'}
+                        justifyContent={'space-between'}
+                        alignItems="center"
                     >
-                        Total
-                    </Text>
-                    <Flex flexDirection="column" alignItems="flex-end">
-                        <Flex flexDirection={'row'} alignItems="center">
-                            <Flex alignItems={'center'}>
-                                <Image
-                                    className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
-                                    src={currencyIcons[displayCurrency]}
-                                    alt={displayCurrency}
-                                />
-                            </Flex>
-                            <Text
-                                ml={{ base: '0.4rem', md: '0.5rem' }}
-                                fontSize={{ base: '15px', md: '24px' }}
-                                fontWeight={700}
-                                lineHeight="1.1" // Fine-tune line height
-                                position="relative" // Allows for slight adjustments with top
-                                top="1px" // Adjust to fine-tune alignment
-                            >
-                                {formatCryptoPrice(grandTotal, displayCurrency)}
-                            </Text>
-                        </Flex>
-                        {preferred_currency_code === 'eth' && (
-                            <Flex justifyContent="flex-end" width="100%">
+                        <Text
+                            alignSelf="center"
+                            fontSize={{ base: '15px', md: '16px' }}
+                        >
+                            Total
+                        </Text>
+                        <Flex flexDirection="column" alignItems="flex-end">
+                            <Flex flexDirection={'row'} alignItems="center">
+                                <Flex alignItems={'center'}>
+                                    <Image
+                                        className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
+                                        src={currencyIcons[displayCurrency]}
+                                        alt={displayCurrency}
+                                    />
+                                </Flex>
                                 <Text
-                                    as="h3"
-                                    variant="semibold"
-                                    color="white"
-                                    mt={2}
-                                    fontSize={{ base: '15px', md: '18px' }}
+                                    ml={{ base: '0.4rem', md: '0.5rem' }}
+                                    fontSize={{ base: '15px', md: '24px' }}
                                     fontWeight={700}
-                                    textAlign="right"
+                                    lineHeight="1.1"
+                                    position="relative"
+                                    top="1px"
                                 >
-                                    {`≅ $ ${formatCryptoPrice(usdGrandTotal, 'usdc')} USDC`}
+                                    {formatCryptoPrice(grandTotal, displayCurrency)}
                                 </Text>
                             </Flex>
-                        )}
-                    </Flex>
-                </Flex>
-            )}
-        </div>
+                            {preferred_currency_code === 'eth' &&
+                                (!useCartStyle ? (
+                                    <Flex justifyContent="flex-end" width="100%">
+                                        <Text
+                                            as="h3"
+                                            variant="semibold"
+                                            color="white"
+                                            mt={2}
+                                            fontSize={{ base: '15px', md: '18px' }}
+                                            fontWeight={700}
+                                            textAlign="right"
+                                        >
+                                            {`≅ $ ${formatCryptoPrice(usdGrandTotal, 'usdc')} USDC`}
+                                        </Text>
+                                    </Flex>
+                                ) : (
+                                    <Flex justifyContent="flex-end" width="100%">
+                                        <Text
+                                            as="h3"
+                                            color="white"
+                                            mt={2}
+                                            fontSize={{ base: '14px', md: '16px' }}
+                                            fontWeight={600}
+                                            textAlign="right"
+                                        >
+                                            {`≅ $ ${formatCryptoPrice(usdGrandTotal, 'usdc')} USDC`}
+                                        </Text>
+                                    </Flex>
+                                ))}
+                        </Flex >
+                    </Flex >
+                )
+            }
+        </>
     );
 };
 

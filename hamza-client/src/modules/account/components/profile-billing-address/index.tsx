@@ -66,7 +66,7 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
                 </span>
                 <span>{customer.billing_address.company}</span>
                 <span>
-                    {customer.billing_address.address_1}
+                    {customer.billing_address.address_1}{' '}
                     {customer.billing_address.address_2
                         ? `, ${customer.billing_address.address_2}`
                         : ''}

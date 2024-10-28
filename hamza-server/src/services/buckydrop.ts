@@ -143,9 +143,6 @@ export default class BuckydropService extends TransactionBaseService {
             [salesChannelId]
         );
 
-        console.log(input);
-        return [];
-
         //import if mapped
         return input
             ? await this.productService_.bulkImportProducts(storeId, [input])
@@ -172,14 +169,25 @@ export default class BuckydropService extends TransactionBaseService {
 
             if (!cart) throw new Error(`Cart with id ${cartId} not found`);
 
-            if (!cart.customer) {
-                cart.customer = await this.customerService_.retrieve(
-                    cart.customer_id
-                );
+            if (!cart?.items?.length) {
+                return 0;
             }
 
-            currency = cart.customer.preferred_currency_id;
+            //get customer if there is one
+            if (!cart.customer) {
+                if (cart.customer_id?.length) {
+                    cart.customer = await this.customerService_.retrieve(
+                        cart.customer_id
+                    );
+                }
+            }
 
+            //get currency from customer, or cart if there is no customer
+            currency = cart.customer ?
+                cart.customer.preferred_currency_id :
+                cart?.items[0]?.currency_code ?? 'usdc';
+
+            /*
             //calculate prices
             const input: IBuckyShippingCostRequest = {
                 lang: 'en',
@@ -278,13 +286,6 @@ export default class BuckydropService extends TransactionBaseService {
         return output;
     }
 
-    async calculateShippingPriceForProduct(
-        cart: Cart,
-        product: Product
-    ): Promise<number> {
-        return 0;
-    }
-
     async processPendingOrder(orderId: string): Promise<Order> {
         const order: Order = await this.orderRepository_.findOne({
             where: { id: orderId },
@@ -331,7 +332,7 @@ export default class BuckydropService extends TransactionBaseService {
                 province: cart.billing_address.province ?? '',
                 city: cart.billing_address.city ?? '',
                 detailAddress:
-                    `${cart.billing_address.address_1 ?? ''} ${cart.billing_address.address_2 ?? ''}`.trim(),
+                    `${cart.billing_address.address_1 ?? ''}{' '}${cart.billing_address.address_2 ?? ''}`.trim(),
                 postCode: cart.billing_address.postal_code,
                 contactName:
                     `${cart.billing_address.first_name ?? ''} ${cart.billing_address.last_name ?? ''}`.trim(),
@@ -363,7 +364,7 @@ export default class BuckydropService extends TransactionBaseService {
     async reconcileOrderStatus(orderId: string): Promise<Order> {
         try {
             //get order & metadata
-            const order: Order = await this.orderService_.retrieve(orderId);
+            let order: Order = await this.orderService_.retrieve(orderId);
             const buckyData: any = order.bucky_metadata;
 
             if (order && (buckyData?.data?.shopOrderNo || buckyData?.shopOrderNo)) {
@@ -372,86 +373,85 @@ export default class BuckydropService extends TransactionBaseService {
                     buckyData.data.shopOrderNo ?? buckyData.shopOrderNo
                 );
 
-                const setOrderStatus = (status: OrderStatus, fulfillmentStatus: FulfillmentStatus) => {
-                    if (order.status != status || order.fulfillment_status != fulfillmentStatus) {
-                        order.status = status;
-                        order.fulfillment_status = fulfillmentStatus;
-                        return true;
-                    }
-                    return false;
-                };
-
-                let changed: boolean = false;
-
                 //get the order status
                 if (orderDetail) {
                     const status =
                         orderDetail?.data?.poOrderList[0]?.orderStatus;
-                    if (status) {
-                        //translate the status
-                        switch (parseInt(status)) {
-                            case 0:
-                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED);
-                                break;
-                            case 1:
-                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED);
-                                break;
-                            case 2:
-                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED);
-                                break;
-                            case 3:
-                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED);
-                                break;
-                            case 4:
-                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED);
-                                break;
-                            case 5:
-                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED);
-                                break;
-                            case 6:
-                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.SHIPPED);
-                                break;
-                            case 7:
-                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.SHIPPED);
-                                break;
-                            case 8:
-                                changed = setOrderStatus(OrderStatus.CANCELED, FulfillmentStatus.CANCELED);
-                                break;
-                            case 9:
-                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.SHIPPED);
-                                break;
-                            case 10:
-                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.SHIPPED);
-                                break;
-                            case 11:
-                                changed = setOrderStatus(OrderStatus.PENDING, FulfillmentStatus.SHIPPED);
-                                break;
-                            case 10:
-                                changed = setOrderStatus(OrderStatus.COMPLETED, FulfillmentStatus.FULFILLED);
-                                break;
-                        }
-                    }
-
-                    //send emails
-                    //TODO: this should follow medusa events 
-                    if (changed) {
-                        if (order.fulfillment_status == FulfillmentStatus.SHIPPED) {
-                            this.orderService_.sendShippedEmail(order);
-                        }
-                        if (order.fulfillment_status == FulfillmentStatus.FULFILLED) {
-                            this.orderService_.sendDeliveredEmail(order);
-                        }
-                        if (order.status == OrderStatus.CANCELED) {
-                            this.orderService_.sendCancelledEmail(order);
-                        }
-                    }
 
                     //save the tracking data
                     buckyData.tracking = orderDetail;
                     order.bucky_metadata = buckyData;
 
-                    //save the order
-                    await this.orderRepository_.save(order);
+                    if (status) {
+                        //translate the status
+                        switch (parseInt(status)) {
+                            case 0:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED, null, orderDetail
+                                );
+                                break;
+                            case 1:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED, null, orderDetail
+                                );
+                                break;
+                            case 2:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED, null, orderDetail
+                                );
+                                break;
+                            case 3:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED, null, orderDetail
+                                );
+                                break;
+                            case 4:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED, null, orderDetail
+                                );
+                                break;
+                            case 5:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED, null, orderDetail
+                                );
+                                break;
+                            case 6:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED, null, orderDetail
+                                );
+                                break;
+                            case 7:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED, null, orderDetail
+                                );
+                                break;
+                            case 8:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.CANCELED, FulfillmentStatus.CANCELED, null, orderDetail
+                                );
+                                break;
+                            case 9:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED, null, orderDetail
+                                );
+                                break;
+                            case 10:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED, null, orderDetail
+                                );
+                                break;
+                            case 11:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED, null, orderDetail
+                                );
+                                break;
+                            case 10:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.COMPLETED, FulfillmentStatus.FULFILLED, null, orderDetail
+                                );
+                                break;
+                        }
+                    }
                 }
             }
 

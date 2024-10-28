@@ -35,15 +35,16 @@ const Delivered = ({
     const deliveredOrder = data?.Delivered || [];
 
     //TODO: Refactor to a mutation
-    const handleReorder = async (order: any) => {
+    const handleReorder = async (item: any, country_code: string) => {
         try {
+            // console.log(item.variant_id, item.quantity, country_code);
             await addToCart({
-                variantId: order.variant_id,
-                countryCode: countryCode,
-                quantity: order.quantity,
+                variantId: item.variant_id,
+                countryCode: country_code,
+                quantity: item.quantity,
             });
         } catch (e) {
-            toast.error(`Product with name ${order.title} could not be added`);
+            toast.error(`Product with name ${item.title} could not be added`);
         }
 
         router.push('/checkout');
@@ -187,17 +188,25 @@ const Delivered = ({
                                                         }}
                                                         onClick={() =>
                                                             handleReorder(
-                                                                order || []
+                                                                item,
+                                                                order
+                                                                    .shipping_address
+                                                                    .country_code
                                                             )
                                                         }
                                                     >
                                                         Buy Again
                                                     </Button>
-                                                    <Link href='https://support.hamza.market/help/1568263160' target='_blank'>
+                                                    <Link
+                                                        href="https://support.hamza.market/help/1568263160"
+                                                        target="_blank"
+                                                    >
                                                         <Button
                                                             variant="outline"
                                                             colorScheme="white"
-                                                            borderRadius={'37px'}
+                                                            borderRadius={
+                                                                '37px'
+                                                            }
                                                             ml={{
                                                                 base: 0,
                                                                 md: 2,
@@ -214,9 +223,9 @@ const Delivered = ({
                                                             Return/Refund
                                                         </Button>
                                                     </Link>
-                                                </Flex>
-                                            </Flex>
-                                        </div>
+                                                </Flex >
+                                            </Flex >
+                                        </div >
                                     )
                                 )}
 
@@ -229,12 +238,12 @@ const Delivered = ({
                                         mb: 8,
                                     }}
                                 />
-                            </Flex>
+                            </Flex >
                         );
                     })}
-                </Flex>
+                </Flex >
             ) : null}
-        </div>
+        </div >
     );
 };
 

@@ -2,6 +2,8 @@ import MedusaCTA from '@modules/layout/components/medusa-cta';
 import React from 'react';
 import Nav from '@modules/layout/templates/nav';
 import Footer from '@modules/layout/templates/footer';
+import { Flex } from '@chakra-ui/react';
+import ForceWalletConnect from '@/app/components/loaders/force-wallet-connect';
 
 export default function CheckoutLayout({
     children,
@@ -9,12 +11,25 @@ export default function CheckoutLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="w-full bg-black relative small:min-h-screen py-8 justify-center">
+        <div
+            style={{
+                background:
+                    'linear-gradient(to bottom, #020202 20vh, #2C272D 40vh)',
+            }}
+        >
             <Nav />
-            <div className="relative">{children}</div>
-            <div className="py-4 w-full flex items-center justify-center">
+            <Flex
+                justifyContent="center"
+                style={{
+                    background:
+                        'linear-gradient(to bottom, #020202 20vh, #2C272D 40vh)',
+                }}
+            >
+                {children}
+            </Flex>
+            {/* <div className="py-4 w-full flex items-center justify-center">
                 <MedusaCTA />
-            </div>
+            </div> */}
             <Footer />
         </div>
     );

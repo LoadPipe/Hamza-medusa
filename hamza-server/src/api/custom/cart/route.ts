@@ -15,7 +15,11 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         const { cart_id, create } = handler.inputParams;
 
         //check for existence
-        const cart = await cartService.retrieve(cart_id, { relations: ['items.variant.prices', 'region'] });
+        const cart = await cartService.retrieve(
+            cart_id,
+            { relations: ['items.variant.prices', 'region'] }
+        );
+
         if (!cart)
             return handler.returnStatusWithMessage(404, `Cart ${cart_id} not found`);
 

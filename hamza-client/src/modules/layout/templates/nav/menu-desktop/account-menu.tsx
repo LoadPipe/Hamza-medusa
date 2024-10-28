@@ -53,7 +53,7 @@ const AccountMenu = () => {
                         transition: 'border-color 0.3s ease-in-out',
                     }}
                 >
-                    <ProfileImage />
+                    <ProfileImage centered={true} />
                     {totalItems > 0 && (
                         <Flex
                             position="absolute"

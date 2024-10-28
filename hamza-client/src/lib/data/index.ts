@@ -536,7 +536,8 @@ export async function setCartEmail(cart_id: string, email_address: string) {
 }
 
 export async function recoverCart(customer_id: string) {
-    const output = await getSecure('/custom/cart/recover', { customer_id });
+    const cart_id = cookies().get('_medusa_cart_id')?.value;
+    const output = await getSecure('/custom/cart/recover', { customer_id, cart_id });
     if (output?.cart) {
         cookies().set('_medusa_cart_id', output.cart.id);
     }
@@ -716,6 +717,13 @@ export async function completeCart(cartId: string) {
 
 export async function clearCart() {
     cookies().delete('_medusa_cart_id');
+}
+
+export async function getCartShippingCost() {
+    const cart_id = cookies().get('_medusa_cart_id')?.value;
+    return getSecure('/custom/cart/shipping', {
+        cart_id,
+    });
 }
 
 // Order actions
