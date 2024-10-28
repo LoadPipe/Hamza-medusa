@@ -29,7 +29,7 @@ async function main() {
         console.log(miscSetup);
 
         const storeResponse = await fetch(
-            `http://localhost:${port}/admin/custom/setup/user?email=goblinvendor@hamza.com&password=password`,
+            `http://localhost:${port}/admin/custom/setup/user`,
             {
                 method: 'POST',
                 headers: {
@@ -42,6 +42,7 @@ async function main() {
             }
         );
         console.log(storeResponse);
+        console.log(await storeResponse.json());
 
         //await fetch(`http://localhost:${port}/admin/custom/massmarket`, {
         //    method: 'GET',
