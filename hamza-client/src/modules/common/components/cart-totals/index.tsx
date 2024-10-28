@@ -140,28 +140,30 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                     </Text>
                 )}
 
-                {shippingCost ? (
-                    <Flex justifyContent={'space-between'}>
-                        <Text
-                            alignSelf={'center'}
-                            fontSize={{ base: '14px', md: '16px' }}
-                        >
-                            Shipping
-                        </Text>
+                {
+                    shippingCost ? (
+                        <Flex justifyContent={'space-between'}>
+                            <Text
+                                alignSelf={'center'}
+                                fontSize={{ base: '14px', md: '16px' }}
+                            >
+                                Shipping
+                            </Text>
 
-                        <Text
-                            fontSize={{ base: '14px', md: '16px' }}
-                            alignSelf="center"
-                        >
-                            {formatCryptoPrice(
-                                shippingCost!,
-                                displayCurrency
-                            ).toString()}
-                        </Text>
-                    </Flex>
-                ) : (
-                    <Flex mt="-1rem" justifyContent={'space-between'}></Flex>
-                )}
+                            <Text
+                                fontSize={{ base: '14px', md: '16px' }}
+                                alignSelf="center"
+                            >
+                                {formatCryptoPrice(
+                                    shippingCost!,
+                                    displayCurrency
+                                ).toString()}
+                            </Text>
+                        </Flex>
+                    ) : (
+                        <Flex mt="-1rem" justifyContent={'space-between'}></Flex>
+                    )
+                }
 
                 {/* final total 
                 <Flex justifyContent={'space-between'}>
@@ -237,7 +239,8 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                                     {formatCryptoPrice(grandTotal, displayCurrency)}
                                 </Text>
                             </Flex>
-                            {preferred_currency_code === 'eth' &&
+                            {
+                                preferred_currency_code === 'eth' &&
                                 (!useCartStyle ? (
                                     <Flex justifyContent="flex-end" width="100%">
                                         <Text
@@ -265,7 +268,8 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                                             {`≅ $ ${formatCryptoPrice(usdGrandTotal, 'usdc')} USDC`}
                                         </Text>
                                     </Flex>
-                                ))}
+                                ))
+                            }
                         </Flex >
                     </Flex >
                 )
