@@ -52,7 +52,6 @@
         "@types/ejs": "^3.1.5",
         "@types/jsonwebtoken": "^9.0.6",
         "@types/nodemailer": "^6.4.15",
-        "aws-sdk": "^2.1691.0",
         "body-parser": "^1.19.0",
         "cookies-next": "^4.1.1",
         "cors": "^2.8.5",
