@@ -49,7 +49,7 @@ const PaymentSummary = async (params: any) => {
             <Flex mt="auto" flexDir={'column'} gap={5}>
                 <DiscountCode cart={cart} />
                 <PaymentButton cart={cart} />
-                <Text
+                {/* <Text
                     textAlign="center"
                     fontSize={{ base: '10px', md: '12px' }}
                     maxW={'236px'}
@@ -57,7 +57,7 @@ const PaymentSummary = async (params: any) => {
                 >
                     By clicking on confirm order, you agree to these{' '}
                     <CheckoutTermsOfService />
-                </Text>
+                </Text> */}
             </Flex>
         </Flex>
     );
