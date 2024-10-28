@@ -11,7 +11,7 @@ Content-Type: application/json
 
 // Multi-Vendor Create Button (Creates 3 Users && sets store_id for products)
 // Note: This should likely be a POST request if it modifies server state.
-GET http://localhost:9000/admin/custom/user
+POST http://localhost:9000/admin/custom/setup/user
 Content-Type: application/json
 
 
