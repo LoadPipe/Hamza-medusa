@@ -223,9 +223,9 @@ const Delivered = ({
                                                             Return/Refund
                                                         </Button>
                                                     </Link>
-                                                </Flex>
-                                            </Flex>
-                                        </div>
+                                                </Flex >
+                                            </Flex >
+                                        </div >
                                     )
                                 )}
 
@@ -238,12 +238,12 @@ const Delivered = ({
                                         mb: 8,
                                     }}
                                 />
-                            </Flex>
+                            </Flex >
                         );
                     })}
-                </Flex>
+                </Flex >
             ) : null}
-        </div>
+        </div >
     );
 };
 

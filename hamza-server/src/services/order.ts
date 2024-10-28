@@ -557,9 +557,9 @@ export default class OrderService extends MedusaOrderService {
 
         return relevantItems?.length
             ? {
-                  variants: relevantItems.map((i) => i.variant),
-                  quantities: relevantItems.map((i) => i.quantity),
-              }
+                variants: relevantItems.map((i) => i.variant),
+                quantities: relevantItems.map((i) => i.quantity),
+            }
             : { variants: [], quantities: [] };
     }
 
@@ -629,7 +629,7 @@ export default class OrderService extends MedusaOrderService {
                     : null;
             const to_fulfillment_status: FulfillmentStatus | null =
                 fulfillmentStatus &&
-                order.fulfillment_status != fulfillmentStatus
+                    order.fulfillment_status != fulfillmentStatus
                     ? fulfillmentStatus
                     : null;
 
