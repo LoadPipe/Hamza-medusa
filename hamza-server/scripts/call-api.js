@@ -17,13 +17,28 @@ async function main() {
 
         console.log(authData);
 
-        const storeResponse = await fetch(
-            `http://localhost:${port}/admin/custom/user?email=goblinvendor@hamza.com&password=password`,
+        const miscSetup = await fetch(
+            `http://localhost:${port}/admin/custom/setup`,
             {
-                method: 'GET',
+                method: 'POST',
                 headers: {
                     Cookie: authCookie.substring(0, authCookie.indexOf(';')),
                 },
+            }
+        );
+        console.log(miscSetup);
+
+        const storeResponse = await fetch(
+            `http://localhost:${port}/admin/custom/setup/user?email=goblinvendor@hamza.com&password=password`,
+            {
+                method: 'POST',
+                headers: {
+                    Cookie: authCookie.substring(0, authCookie.indexOf(';')),
+                },
+                body: JSON.stringify({
+                    email: 'goblinvendor@hamza.com',
+                    password: 'password'
+                })
             }
         );
         console.log(storeResponse);
@@ -57,6 +72,7 @@ async function main() {
         );
         console.log(buckyResponse);
 
+        /*
         const whitelistResponse = await fetch(
             `http://localhost:${port}/admin/custom/whitelist?store=Hamza Official`,
             {
@@ -67,6 +83,7 @@ async function main() {
             }
         );
         console.log(whitelistResponse);
+        */
     } catch (e) {
         console.error(e);
     }
