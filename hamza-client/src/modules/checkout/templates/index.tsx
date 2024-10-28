@@ -4,14 +4,14 @@ import PaymentSummary from './payment-summary';
 import CheckoutDetails from './checkout-details';
 import { Flex } from '@chakra-ui/react';
 import { Cart, Customer } from '@medusajs/medusa';
+import ForceWalletConnect from '@/app/components/loaders/force-wallet-connect';
+import { useAccount } from 'wagmi';
 
 const CheckoutTemplate = ({
     cart,
-    customer,
     cartId,
 }: {
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | null;
-    customer: Omit<Customer, 'password_hash'> | null;
     cartId: any;
 }) => {
     return (

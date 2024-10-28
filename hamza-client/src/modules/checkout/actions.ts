@@ -150,25 +150,9 @@ export async function setAddresses(
     }
 
     try {
-        await addDefaultShippingMethod(cartId);
-    } catch (error: any) {
-        return error.toString();
-    }
-
-    try {
         await setPaymentMethod('crypto');
     } catch (error: any) {
         return error.toString();
-    }
-
-    if (addressActionType === 'add') {
-        redirect(
-            `/${
-                process.env.NEXT_PUBLIC_FORCE_COUNTRY
-                    ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
-                    : formData.get('shipping_address.country_code')
-            }/checkout?step=review&cart=${cartId}`
-        );
     }
 }
 

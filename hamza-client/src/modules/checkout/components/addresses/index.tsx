@@ -52,13 +52,6 @@ const Addresses = ({
                 : true
         );
 
-    // Run once when component mounts to check if address already set and push to next step
-    useEffect(() => {
-        if (cart?.shipping_address) {
-            router.push('/checkout?step=review');
-        }
-    }, []);
-
     return (
         <div>
             <Flex mt="2rem" width={'100%'} flexDir={'row'}>
