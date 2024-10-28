@@ -36,7 +36,7 @@ const CheckoutSummary = async (params: any) => {
                     In your Cart
                 </Heading>
 
-                <CartTotals data={cart} />
+                <CartTotals data={cart} useCartStyle={false} />
                 <ItemsPreviewTemplate
                     region={cart?.region}
                     items={cart?.items}
