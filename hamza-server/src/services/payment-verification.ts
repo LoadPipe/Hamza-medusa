@@ -99,6 +99,8 @@ export default class PaymentVerificationService extends TransactionBaseService {
 
             //TODO: set the payments status to captured
 
+            //TODO: set the payments status to captured
+
             for (let p of order.payments) {
                 output.push({ order: order, payment: p });
             }
