@@ -36,6 +36,7 @@ const AddressSelect = ({ addresses, cart, onSelect }: AddressSelectProps) => {
                 console.log('Matching Address Found:', matchingAddress);
                 setSelectedId(matchingAddress.id);
             } else {
+                setSelectedId('');
                 console.log('No matching address found');
             }
         }
