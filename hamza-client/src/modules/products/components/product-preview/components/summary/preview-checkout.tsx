@@ -18,7 +18,7 @@ import CartPopup from '../../../cart-popup';
 import { getAverageRatings, getStore, getReviewCount } from '@lib/data';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import Spinner from '@modules/common/icons/spinner';
-import TermsOfService from '../terms-of-service/product-details-tos';
+import TermsOfService from '@/modules/terms-of-service/product-details-tos';
 import { renderStars } from '@modules/products/components/review-stars';
 import { BiHeart, BiSolidHeart } from 'react-icons/bi';
 import useWishlistStore, {
@@ -234,7 +234,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             console.log('white list config ', whitelist_config);
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                whitelist_config.whitelisted_stores.includes(data.data)
+                    whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -282,7 +282,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 setOptions(initialOptions);
             }
         }
-    }, [productData]);
+    }, [productData.id]);
 
     const convertToPriceDictionary = (selectedVariant: Variant | null) => {
         const output: { [key: string]: number } = {};
@@ -604,8 +604,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     {!inStock && isWhitelisted
                         ? 'Add to cart'
                         : inStock
-                          ? 'Add to Cart'
-                          : 'Out of Stock'}
+                            ? 'Add to Cart'
+                            : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs text-white px-4 py-2">

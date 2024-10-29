@@ -252,7 +252,8 @@ export async function getWishlist(customer_id: string) {
 export async function getAllProducts(
     categorySelect: string[] | null = ['all'],
     priceHigh: number = 5000000,
-    priceLow: number = 0
+    priceLow: number = 0,
+    currencyCode: string = 'usdt'
 ) {
     const categoryString =
         categorySelect && categorySelect.length > 0
@@ -265,6 +266,7 @@ export async function getAllProducts(
         category_name: categoryString,
         price_hi: priceHigh,
         price_lo: priceLow,
+        currency_code: currencyCode
     });
 }
 
@@ -536,7 +538,8 @@ export async function setCartEmail(cart_id: string, email_address: string) {
 }
 
 export async function recoverCart(customer_id: string) {
-    const output = await getSecure('/custom/cart/recover', { customer_id });
+    const cart_id = cookies().get('_medusa_cart_id')?.value;
+    const output = await getSecure('/custom/cart/recover', { customer_id, cart_id });
     if (output?.cart) {
         cookies().set('_medusa_cart_id', output.cart.id);
     }
@@ -716,6 +719,13 @@ export async function completeCart(cartId: string) {
 
 export async function clearCart() {
     cookies().delete('_medusa_cart_id');
+}
+
+export async function getCartShippingCost() {
+    const cart_id = cookies().get('_medusa_cart_id')?.value;
+    return getSecure('/custom/cart/shipping', {
+        cart_id,
+    });
 }
 
 // Order actions

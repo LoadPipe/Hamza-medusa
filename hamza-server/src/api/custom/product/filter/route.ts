@@ -43,18 +43,16 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             : handler.inputParams.category_name?.split(',') || [];
 
         //make sure these are cast as numbers
-        const upperPrice = Number(handler.inputParams.price_hi) ?? 0;
-        const lowerPrice = Number(handler.inputParams.price_lo) ?? 0;
-
-        console.log('route params upper', upperPrice);
-        console.log('route params lower', lowerPrice);
+        const upperPrice = handler.inputParams.price_hi ?? 0;
+        const lowerPrice = handler.inputParams.price_lo ?? 0;
+        const currencyCode = handler.inputParams.currency_code ?? 'usdc';
 
         //call productService.getFilteredProducts to get the products, then return them
-        //HAD TO COMMENT OUT AND PASS ZEROS, BECAUSE FILTER WAS CAUSING SOME PRODUCTS TO NOT SHOW UP -JK (I can explain more)
         const products = await productService.getFilteredProducts(
             categories,
-            Number(20000000000000),
-            lowerPrice
+            upperPrice,
+            lowerPrice,
+            currencyCode
         );
 
         return handler.returnStatus(200, { products }, 200);

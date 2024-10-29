@@ -21,7 +21,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         const wishlist = await wishlistService.createOrRetrieve(customerId);
         handler.logger.debug(JSON.stringify(wishlist));
-        handler.returnStatus(200, wishlist);
+        handler.returnStatus(200, wishlist, 100);
     });
 };
 

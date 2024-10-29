@@ -1,20 +1,14 @@
 import { MedusaRequest, MedusaResponse } from '@medusajs/medusa';
 import CartService from '../../../../services/cart';
 import { RouteHandler } from '../../../route-handler';
+import BuckydropService from '../../../../services/buckydrop';
 
-export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
-    console.log('PUT /custom/cart/shipping request received');
+export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
+    let buckyService: BuckydropService = req.scope.resolve('buckydropService');
 
-    let cartService: CartService = req.scope.resolve('cartService');
-
-    const handler = new RouteHandler(req, res, 'PUT', '/custom/cart/shipping', [
+    const handler = new RouteHandler(req, res, 'GET', '/custom/cart/shipping', [
         'cart_id',
     ]);
-
-    console.log(
-        'Handler initialized with cart_id:',
-        handler.inputParams.cart_id
-    );
 
     await handler.handle(async () => {
         // Check if cart_id is present
@@ -25,7 +19,28 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
 
         // Log cart ID being retrieved
         const cartId = handler.inputParams.cart_id;
-        console.log('Retrieving cart with cartId:', cartId);
+        const amount = await buckyService.calculateShippingPriceForCart(cartId);
+
+        return handler.returnStatus(200, { amount });
+    });
+};
+
+export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
+    let cartService: CartService = req.scope.resolve('cartService');
+
+    const handler = new RouteHandler(req, res, 'PUT', '/custom/cart/shipping', [
+        'cart_id',
+    ]);
+
+    await handler.handle(async () => {
+        // Check if cart_id is present
+        if (!handler.requireParam('cart_id')) {
+            console.error('cart_id parameter missing in request');
+            return;
+        }
+
+        // Log cart ID being retrieved
+        const cartId = handler.inputParams.cart_id;
 
         // Check for cart existence
         const cart = await cartService.retrieve(cartId);
@@ -57,9 +72,7 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
         }
 
         // Add default shipping method and log the result
-        console.log('Adding default shipping method for cart:', cartId);
-        await cartService.addDefaultShippingMethod(cartId);
-        console.log('Successfully added shipping method to cart:', cartId);
+        await cartService.addDefaultShippingMethod(cartId, true);
 
         return handler.returnStatusWithMessage(
             200,

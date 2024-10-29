@@ -544,8 +544,9 @@ class ProductService extends MedusaProductService {
      */
     async getFilteredProducts(
         categories: string[], // Array of strings representing category names
-        upperPrice: number,
-        lowerPrice: number,
+        upperPrice: number = 0, // Number representing the upper price limit
+        lowerPrice: number = 0, // Number representing the lower price limit
+        filterCurrencyCode: string = 'usdc',
         storeId?: string
     ) {
         try {
@@ -570,6 +571,7 @@ class ProductService extends MedusaProductService {
                 categoryNames: normalizedCategoryNames,
                 upperPrice,
                 lowerPrice,
+                filterCurrencyCode,
                 convertProductPrices: async (prods) => {
                     return this.convertProductPrices(prods);
                 },
@@ -793,27 +795,15 @@ class ProductFilterCache extends SeamlessCache {
         }
 
         if (params.upperPrice !== 0 && params.lowerPrice >= 0) {
-            // Filter products by price using upper and lower price limits
-            console.log('Upper price cache', params.upperPrice);
-            console.log('lower price cache', params.lowerPrice);
-
-            console.log('PRODUCTTSSS before filter', products);
-
-            // TODO: pass down preferred currency .prices[0] should be .prices.find(p => p == preferred_currency)
-
             products = products.filter((product) => {
-                const price = product.variants[0]?.prices[0]?.amount ?? 0;
-                console.log('price variant', price);
-
+                const price = product.variants[0]?.prices.find(p => p.currency_code == params.filterCurrencyCode)?.amount ?? 0;
                 return price >= params.lowerPrice && price <= params.upperPrice;
             });
 
-            console.log('PRODUCTTSSS after filter', products);
-
             // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
             products = products.sort((a, b) => {
-                const priceA = a.variants[0]?.prices[0]?.amount ?? 0;
-                const priceB = b.variants[0]?.prices[0]?.amount ?? 0;
+                const priceA = a.variants[0]?.prices.find(p => p.currency_code == params.filterCurrencyCode)?.amount ?? 0;
+                const priceB = b.variants[0]?.prices.find(p => p.currency_code == params.filterCurrencyCode)?.amount ?? 0;
                 return priceA - priceB; // Ascending order
             });
         }

@@ -38,28 +38,33 @@ const CartItems = ({
                     )
                 );
 
-                const restrictedVariants = [];
-                for (let item of variantsWithGeoRestriction) {
-                    const tags = item.variant.product.tags.filter((t: any) =>
-                        t.id.startsWith('geo-restriction')
-                    );
-                    for (let tag of tags) {
-                        if (tag.metadata.country) {
-                            if (
-                                cart?.shipping_address.country_code !=
-                                tag.metadata.country.toLowerCase()
-                            ) {
-                                restrictedVariants.push(item);
+                if (variantsWithGeoRestriction?.length) {
+                    const restrictedVariants = [];
+                    for (let item of variantsWithGeoRestriction ?? []) {
+                        const tags =
+                            item?.variant?.product?.tags?.filter((t: any) =>
+                                t?.id?.startsWith('geo-restriction')
+                            ) ?? [];
+                        for (let tag of tags) {
+                            if (tag?.metadata?.country) {
+                                if (
+                                    cart?.shipping_address?.country_code?.toLowerCase() !==
+                                    tag.metadata.country.toLowerCase()
+                                ) {
+                                    restrictedVariants.push(item);
+                                }
                             }
                         }
                     }
-                }
 
-                setRegionLockedItems(restrictedVariants as ExtendedLineItem[]);
+                    setRegionLockedItems(
+                        restrictedVariants as ExtendedLineItem[]
+                    );
 
-                // If there are region-locked items, show the modal
-                if (restrictedVariants.length > 0) {
-                    onOpen();
+                    // If there are region-locked items, show the modal
+                    if (restrictedVariants.length > 0) {
+                        onOpen();
+                    }
                 }
             }
         }

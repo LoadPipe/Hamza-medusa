@@ -4,6 +4,8 @@ import { Config } from '../../../../config';
 import WhiteListService from '../../../../services/whitelist';
 import StoreService from '../../../../services/store';
 
+//DEPRECATED
+
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const userService = req.scope.resolve('userService');
     const storeService: StoreService = req.scope.resolve('storeService');
