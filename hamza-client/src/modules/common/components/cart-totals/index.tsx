@@ -140,28 +140,30 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                     </Text>
                 )}
 
-                {shippingCost ? (
-                    <Flex justifyContent={'space-between'}>
-                        <Text
-                            alignSelf={'center'}
-                            fontSize={{ base: '14px', md: '16px' }}
-                        >
-                            Shipping
-                        </Text>
+                {
+                    shippingCost ? (
+                        <Flex justifyContent={'space-between'}>
+                            <Text
+                                alignSelf={'center'}
+                                fontSize={{ base: '14px', md: '16px' }}
+                            >
+                                Shipping
+                            </Text>
 
-                        <Text
-                            fontSize={{ base: '14px', md: '16px' }}
-                            alignSelf="center"
-                        >
-                            {formatCryptoPrice(
-                                shippingCost!,
-                                displayCurrency
-                            ).toString()}
-                        </Text>
-                    </Flex>
-                ) : (
-                    <Flex mt="-1rem" justifyContent={'space-between'}></Flex>
-                )}
+                            <Text
+                                fontSize={{ base: '14px', md: '16px' }}
+                                alignSelf="center"
+                            >
+                                {formatCryptoPrice(
+                                    shippingCost!,
+                                    displayCurrency
+                                ).toString()}
+                            </Text>
+                        </Flex>
+                    ) : (
+                        <Flex mt="-1rem" justifyContent={'space-between'}></Flex>
+                    )
+                }
 
                 {/* final total 
                 <Flex justifyContent={'space-between'}>
@@ -182,90 +184,96 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                         ).toString()}
                     </Text>
                 </Flex>*/}
-            </Flex>
+            </Flex >
             {/* <div className="h-px w-full border-b border-gray-200 mt-4" /> */}
-            {!useCartStyle ? (
-                <hr
-                    style={{
-                        color: 'red',
-                        width: '100%',
-                        borderTop: '2px dashed #3E3E3E',
-                        marginTop: '1rem',
-                        marginBottom: '1rem',
-                    }}
-                />
-            ) : (
-                <Divider
-                    my={{ base: '1rem', md: '1rem' }}
-                    borderWidth={'1px'}
-                    borderColor={'#3E3E3E'}
-                />
-            )}
+            {
+                !useCartStyle ? (
+                    <hr
+                        style={{
+                            color: 'red',
+                            width: '100%',
+                            borderTop: '2px dashed #3E3E3E',
+                            marginTop: '1rem',
+                            marginBottom: '1rem',
+                        }}
+                    />
+                ) : (
+                    <Divider
+                        my={{ base: '1rem', md: '1rem' }}
+                        borderWidth={'1px'}
+                        borderColor={'#3E3E3E'}
+                    />
+                )
+            }
 
-            {finalSubtotal?.currency && (
-                <Flex
-                    color={'white'}
-                    justifyContent={'space-between'}
-                    alignItems="center"
-                >
-                    <Text
-                        alignSelf="center"
-                        fontSize={{ base: '15px', md: '16px' }}
+            {
+                finalSubtotal?.currency && (
+                    <Flex
+                        color={'white'}
+                        justifyContent={'space-between'}
+                        alignItems="center"
                     >
-                        Total
-                    </Text>
-                    <Flex flexDirection="column" alignItems="flex-end">
-                        <Flex flexDirection={'row'} alignItems="center">
-                            <Flex alignItems={'center'}>
-                                <Image
-                                    className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
-                                    src={currencyIcons[displayCurrency]}
-                                    alt={displayCurrency}
-                                />
+                        <Text
+                            alignSelf="center"
+                            fontSize={{ base: '15px', md: '16px' }}
+                        >
+                            Total
+                        </Text>
+                        <Flex flexDirection="column" alignItems="flex-end">
+                            <Flex flexDirection={'row'} alignItems="center">
+                                <Flex alignItems={'center'}>
+                                    <Image
+                                        className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
+                                        src={currencyIcons[displayCurrency]}
+                                        alt={displayCurrency}
+                                    />
+                                </Flex>
+                                <Text
+                                    ml={{ base: '0.4rem', md: '0.5rem' }}
+                                    fontSize={{ base: '15px', md: '24px' }}
+                                    fontWeight={700}
+                                    lineHeight="1.1"
+                                    position="relative"
+                                    top="1px"
+                                >
+                                    {formatCryptoPrice(grandTotal, displayCurrency)}
+                                </Text>
                             </Flex>
-                            <Text
-                                ml={{ base: '0.4rem', md: '0.5rem' }}
-                                fontSize={{ base: '15px', md: '24px' }}
-                                fontWeight={700}
-                                lineHeight="1.1"
-                                position="relative"
-                                top="1px"
-                            >
-                                {formatCryptoPrice(grandTotal, displayCurrency)}
-                            </Text>
-                        </Flex>
-                        {preferred_currency_code === 'eth' &&
-                            (!useCartStyle ? (
-                                <Flex justifyContent="flex-end" width="100%">
-                                    <Text
-                                        as="h3"
-                                        variant="semibold"
-                                        color="white"
-                                        mt={2}
-                                        fontSize={{ base: '15px', md: '18px' }}
-                                        fontWeight={700}
-                                        textAlign="right"
-                                    >
-                                        {`≅ $ ${formatCryptoPrice(usdGrandTotal, 'usdc')} USDC`}
-                                    </Text>
-                                </Flex>
-                            ) : (
-                                <Flex justifyContent="flex-end" width="100%">
-                                    <Text
-                                        as="h3"
-                                        color="white"
-                                        mt={2}
-                                        fontSize={{ base: '14px', md: '16px' }}
-                                        fontWeight={600}
-                                        textAlign="right"
-                                    >
-                                        {`≅ $ ${formatCryptoPrice(usdGrandTotal, 'usdc')} USDC`}
-                                    </Text>
-                                </Flex>
-                            ))}
-                    </Flex>
-                </Flex>
-            )}
+                            {
+                                preferred_currency_code === 'eth' &&
+                                (!useCartStyle ? (
+                                    <Flex justifyContent="flex-end" width="100%">
+                                        <Text
+                                            as="h3"
+                                            variant="semibold"
+                                            color="white"
+                                            mt={2}
+                                            fontSize={{ base: '15px', md: '18px' }}
+                                            fontWeight={700}
+                                            textAlign="right"
+                                        >
+                                            {`≅ $ ${formatCryptoPrice(usdGrandTotal, 'usdc')} USDC`}
+                                        </Text>
+                                    </Flex>
+                                ) : (
+                                    <Flex justifyContent="flex-end" width="100%">
+                                        <Text
+                                            as="h3"
+                                            color="white"
+                                            mt={2}
+                                            fontSize={{ base: '14px', md: '16px' }}
+                                            fontWeight={600}
+                                            textAlign="right"
+                                        >
+                                            {`≅ $ ${formatCryptoPrice(usdGrandTotal, 'usdc')} USDC`}
+                                        </Text>
+                                    </Flex>
+                                ))
+                            }
+                        </Flex >
+                    </Flex >
+                )
+            }
         </>
     );
 };

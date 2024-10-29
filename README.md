@@ -10,17 +10,24 @@
 3. Install Packages with yarn
 4. Install the Medusa CLI
 5. Set up the Database
-6. Run medusa seed & migrations
-7. Run the Server
-8. Run the Client
+6. Run the Currency Conversion API 
+7. Run medusa seed & migrations
+8. Run the Server
+9. Run the Client
 
 **1. Clone this Repository**
 
-**2. Create the .env file in both the project root, and in ./hamza-server**
+git clone
+
+**2. Create the .env files**
+
 ./hamza-server/.env
+./hamza-server/scripts/.env
 ./hamza-client/.env.local
 
-See .env.example.
+See /hamza-server/.env.example 
+See /hamza-server/scripts/.env.example 
+See /hamza-client/scripts/.env.local.example 
 
 **3. Install Packages with yarn**
 
@@ -28,6 +35,10 @@ See .env.example.
 cd ./hamza-server
 yarn install
 cd ../hamza-client
+yarn install
+cd ../currency-conversion
+yarn install
+cd ../hamza-server/scripts
 yarn install
 ```
 
@@ -41,7 +52,16 @@ yarn global add @medusajs/medusa-cli
 
 Setup will do this for you in the next step. Just make sure that you are not running anything (e.g. postgres) on the default postgresql port (5432), nor on the default redis port .
 
-**6. Set up and Run the Server**
+**6. Run the Currency Conversion API**
+
+```
+cd ./currency-conversion
+yarn start
+#just leave it running
+```
+
+
+**7. Set up and Run the Server**
 
 ```
 cd ./hamza-server
@@ -51,11 +71,9 @@ yarn setup-1
 # at this point, you can shut the server down if you wish
 ```
 
-**7. Just Run the Server (if not already running) **
-
 ```
 cd ./hamza-server
-yarn dev
+yarn start
 ```
 
 **8. Run the Client**
@@ -64,8 +82,9 @@ yarn dev
 
 ```
 cd ./hamza-client
-./scripts/import-currencies.sh #only needs to be done once, until node_modules is cleaned
-yarn dev
+yarn import-currencies  #only needs to be done once, until node_modules is cleaned
+yarn build
+yarn start
 ```
 
 **9. Other Helpful Scripts**
