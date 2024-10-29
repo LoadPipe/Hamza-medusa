@@ -6,6 +6,7 @@ import AddressSelect from '../address-select';
 import CountrySelect from '../country-select';
 import { Container } from '@medusajs/ui';
 
+// This is the Checkout Shipping Form
 const ShippingAddress = ({
     customer,
     cart,
@@ -23,6 +24,7 @@ const ShippingAddress = ({
         'shipping_address.first_name': cart?.shipping_address?.first_name || '',
         'shipping_address.last_name': cart?.shipping_address?.last_name || '',
         'shipping_address.address_1': cart?.shipping_address?.address_1 || '',
+        'shipping_address.address_2': cart?.shipping_address?.address_2 || '',
         'shipping_address.company': cart?.shipping_address?.company || '',
         'shipping_address.postal_code':
             cart?.shipping_address?.postal_code || '',
@@ -58,6 +60,8 @@ const ShippingAddress = ({
                 cart?.shipping_address?.last_name || '',
             'shipping_address.address_1':
                 cart?.shipping_address?.address_1 || '',
+            'shipping_address.address_2':
+                cart?.shipping_address?.address_2 || '',
             'shipping_address.company': cart?.shipping_address?.company || '',
             'shipping_address.postal_code':
                 cart?.shipping_address?.postal_code || '',
@@ -83,7 +87,7 @@ const ShippingAddress = ({
 
     return (
         <>
-            {customer && (addressesInRegion?.length || 0) > 0 && (
+            {customer && (customer?.shipping_addresses?.length ?? 0) && (addressesInRegion?.length || 0) > 0 && (
                 <Container className="mb-6 flex flex-col gap-y-4 p-5">
                     <p className="text-small-regular">
                         {`Hi ${customer.first_name}, do you want to use one of your saved addresses?`}
@@ -102,6 +106,7 @@ const ShippingAddress = ({
                         autoComplete="given-name"
                         value={formData['shipping_address.first_name']}
                         onChange={handleChange}
+                        maxLength={50}
                         required
                     />
                     <Input
@@ -110,6 +115,7 @@ const ShippingAddress = ({
                         autoComplete="family-name"
                         value={formData['shipping_address.last_name']}
                         onChange={handleChange}
+                        maxLength={50}
                         required
                     />
                     <Input
@@ -121,11 +127,20 @@ const ShippingAddress = ({
                         required
                     />
                     <Input
+                        label="Apartment, suite, etc"
+                        name="shipping_address.address_2"
+                        autoComplete="address-line2"
+                        value={formData['shipping_address.address_2']}
+                        onChange={handleChange}
+                        maxLength={50}
+                    />
+                    <Input
                         label="Company"
                         name="shipping_address.company"
                         value={formData['shipping_address.company']}
                         onChange={handleChange}
                         autoComplete="organization"
+                        maxLength={50}
                     />
                     <Input
                         label="Postal code"
@@ -133,6 +148,7 @@ const ShippingAddress = ({
                         autoComplete="postal-code"
                         value={formData['shipping_address.postal_code']}
                         onChange={handleChange}
+                        maxLength={50}
                         required
                     />
                     <Input
@@ -141,6 +157,7 @@ const ShippingAddress = ({
                         autoComplete="address-level2"
                         value={formData['shipping_address.city']}
                         onChange={handleChange}
+                        maxLength={50}
                         required
                     />
                     <CountrySelect
@@ -158,6 +175,8 @@ const ShippingAddress = ({
                         autoComplete="address-level1"
                         value={formData['shipping_address.province']}
                         onChange={handleChange}
+                        maxLength={50}
+                        required
                     />
                 </div>
             </div>
@@ -182,6 +201,7 @@ const ShippingAddress = ({
                             : formData.email
                     }
                     onChange={handleChange}
+                    maxLength={50}
                     required
                 />
                 <Input
@@ -190,6 +210,7 @@ const ShippingAddress = ({
                     autoComplete="tel"
                     value={formData['shipping_address.phone']}
                     onChange={handleChange}
+                    maxLength={50}
                 />
             </div>
         </>

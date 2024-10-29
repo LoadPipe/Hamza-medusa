@@ -1,10 +1,6 @@
-import { formatAmount } from '@lib/util/prices';
-import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { Box, Flex, Text, Button, Image } from '@chakra-ui/react';
-import { FaCheckCircle } from 'react-icons/fa';
-import React, { useEffect, useState } from 'react';
-import { getStore } from '@lib/data';
-import Link from 'next/link';
+import { Flex, Text } from '@chakra-ui/react';
+import React from 'react';
+import OrderLeftColumn from '@modules/order/templates/order-left-column';
 
 type OrderDetails = {
     thumbnail: string;
@@ -26,6 +22,9 @@ type Order = {
     description: string;
     variant: {
         product_id: string;
+        metadata: {
+            imgUrl?: string;
+        };
     };
     region: {
         id: string;
@@ -35,150 +34,59 @@ type Order = {
 
 type OrderCardProps = {
     order: Order;
-    handle: any;
+    handle: string;
+    storeName: string;
+    icon: string;
 };
 
-const RefundCard = ({ order, handle }: OrderCardProps) => {
-    const [vendor, setVendor] = useState('');
+const RefundCard = ({ order, handle, storeName, icon }: OrderCardProps) => {
     const orderString = typeof order.currency_code;
-    // console.log(
-    //     `Order Card details ${JSON.stringify(order.variant.product_id)}`
-    // );
-    // console.log(`Product details ${JSON.stringify(handle)} `);
-
-    useEffect(() => {
-        // Fetch Vendor Name from product.id
-        const fetchVendor = async () => {
-            try {
-                const data = await getStore(order.variant.product_id as string);
-                // console.log(`Vendor: ${data}`);
-                setVendor(data.name);
-            } catch (error) {
-                console.error('Error fetching vendor: ', error);
-            }
-        };
-
-        fetchVendor();
-    }, [order]);
 
     if (!order) {
         return <div>Loading...</div>; // Display loading message if order is undefined
     }
+
     return (
-        <Box
-            // bg={'#272727'}
+        <Flex
+            my={4}
             color={'white'}
-            p={4}
-            rounded="lg"
-            shadow="base"
-            maxWidth="1000px"
-            m="auto"
-            mt={2}
+            justifyContent="space-between"
+            width="100%"
+            gap={4}
+            flexDirection={{ base: 'column', md: 'row' }}
         >
-            <Flex alignItems="center" mb={2}>
-                <Text
-                    fontSize={{ base: '14px', md: '24px' }}
-                    fontWeight="bold"
-                    noOfLines={1}
-                >
-                    {vendor}
-                </Text>
-                <Flex
-                    display={{ base: 'none', md: 'flex' }}
-                    ml={2}
-                    alignItems="center"
-                >
-                    <FaCheckCircle color="#3196DF" />
+            <OrderLeftColumn
+                order={order}
+                handle={handle}
+                storeName={storeName}
+                icon={icon}
+                showDate={true}
+            />
+
+            {/* Right Side: Courier and Address */}
+            <Flex
+                justifyContent={'center'}
+                direction={{ base: 'column', md: 'column' }}
+                gap={2}
+            >
+                <Flex direction={{ base: 'column', md: 'column' }}>
+                    <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
+                        Status{' '}
+                    </Text>
+                    <Text color={'white'} fontSize="16px">
+                        Under review
+                    </Text>
+                </Flex>
+                <Flex direction={{ base: 'column', md: 'column' }}>
+                    <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
+                        Return Reason
+                    </Text>
+                    <Text color={'white'} fontSize="16px">
+                        Received the wrong product
+                    </Text>
                 </Flex>
             </Flex>
-
-            <Flex justifyContent="space-between">
-                {/* Left Side: Existing Content */}
-                <Flex
-                    alignItems="center"
-                    justifyContent="space-between"
-                    flex="1"
-                >
-                    <Link href={`/us/products/${handle}`}>
-                        <Image
-                            borderRadius="lg"
-                            width={{ base: '60px', md: '120px' }}
-                            src={order.thumbnail}
-                            alt={`Thumbnail of ${order.title}`}
-                            mr={4}
-                        />
-                    </Link>
-
-                    <Box flex="1">
-                        <Flex justifyContent="space-between" direction="row">
-                            <Flex direction="column">
-                                <Text
-                                    color={'rgba(85, 85, 85, 1.0)'}
-                                    fontSize="16px"
-                                >
-                                    Item Name
-                                </Text>
-                                <Text fontWeight="bold" fontSize="18px">
-                                    {order.title}
-                                </Text>
-                                <Flex direction="row" alignItems="center">
-                                    <Text
-                                        color={'rgba(85, 85, 85, 1.0)'}
-                                        fontSize="16px"
-                                        mr={1} // Add some space between "Variation:" and the description
-                                    >
-                                        Variation:
-                                    </Text>
-                                    <Text fontSize="14px">
-                                        {order.description}
-                                    </Text>
-                                </Flex>
-                            </Flex>
-                        </Flex>
-
-                        <Flex direction="column" mt={2}>
-                            <Text
-                                color={'rgba(85, 85, 85, 1.0)'}
-                                fontSize="16px"
-                            >
-                                Order Date
-                            </Text>
-                            <Text color={'white'} fontSize="16px">
-                                {new Date(
-                                    order.created_at
-                                ).toLocaleDateString()}
-                            </Text>
-                        </Flex>
-                    </Box>
-                </Flex>
-
-                {/* Right Side: Courier and Address */}
-                <Flex
-                    direction="column"
-                    ml={4}
-                    minWidth="200px"
-                    maxWidth="300px"
-                >
-                    <Box mb={4}>
-                        <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
-                            Status
-                        </Text>
-                        <Text color={'white'} fontSize="16px">
-                            Under review
-                        </Text>
-                    </Box>
-
-                    <Box>
-                        <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
-                            Return Reason
-                        </Text>
-                        <Text color={'white'} fontSize="16px">
-                            Received the wrong product
-                        </Text>
-                    </Box>
-                </Flex>
-            </Flex>
-        </Box>
+        </Flex>
     );
 };
 

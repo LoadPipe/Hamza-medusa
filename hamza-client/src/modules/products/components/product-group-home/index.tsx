@@ -8,57 +8,60 @@ import {
     Grid,
     GridItem,
     Flex,
-    Button,
+    Text,
 } from '@chakra-ui/react';
-import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import ProductCardHome from './component/home-product-card';
-import SkeletonProductGrid from '@modules/skeletons/components/skeleton-product-grid';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
+import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
+import { getAllProducts } from '@lib/data';
 
 const ProductCardGroup = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const { categorySelect } = useHomeProductsPage();
+    const { homeModalLowerPriceFilterSelect, homeModalUpperPriceFilterSelect } =
+        useHomeModalFilter();
     const [visibleProductsCount, setVisibleProductsCount] = useState(16); // State to manage visible products count (4 rows, 16 items)
 
     // State for filters
     const [isFilterActive, setIsFilterActive] = useState(true); // To check if the filter is applied
     const [upperPrice, setUpperPrice] = useState(10000); // Upper price filter
     const [lowerPrice, setLowerPrice] = useState(0); // Lower price filter
-    const [category, setCategory] = useState(''); // Filter by category
+    const [category, setCategory] = useState(['']); // Filter by category
 
-    // URL for default product fetching by category
-    const defaultUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/category/products?category_name=${['Home', 'Fashion'].join(',').toLowerCase()}`;
-
-    // URL for filtered product fetching
-    const filterUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?categories=${category}&price_lo=${lowerPrice}&price_hi=${upperPrice}`;
+    // TODO: Please review the code, whatever I commented out below should I assume be removed.... @Jonny
+    // // URL for default product fetching by category
+    // const defaultUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/category/products?category_name=${['Home', 'Fashion'].join(',').toLowerCase()}`;
+    //
+    // // URL for filtered product fetching
+    // const filterUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?categories=${category}&price_lo=${lowerPrice}&price_hi=${upperPrice}`;
 
     // Determine which URL to use based on whether the filter is active
-    const fetchUrl = isFilterActive ? filterUrl : defaultUrl;
+    // const fetchUrl = isFilterActive ? filterUrl : defaultUrl;
 
-    //TODO: MOVE TO INDEX.TS
-    // Get products from vendor
+    // Fetch products independently, will use cached data from hydration...
     const { data, error, isLoading } = useQuery(
-        ['categories', categorySelect, isFilterActive, lowerPrice, upperPrice], // Use a unique key here to identify the query
-        async () => {
-            const response = await axios.get(fetchUrl);
-            return response.data; // Return the data from the response
+        [
+            'homeProducts',
+            categorySelect,
+            homeModalLowerPriceFilterSelect,
+            homeModalUpperPriceFilterSelect,
+        ],
+        () =>
+            getAllProducts(
+                categorySelect,
+                homeModalUpperPriceFilterSelect,
+                homeModalLowerPriceFilterSelect
+            ),
+        {
+            staleTime: 60 * 1000,
+            cacheTime: 2 * 60 * 1000,
         }
     );
 
-    console.log('response data from home', data);
-
-    const productsAll = data?.products || [];
-    console.log('response data from home', productsAll);
-
-    // const handleViewMore = () => {
-    //     // Increase the visible products count by 16 (4 rows of 4 products)
-    //     setVisibleProductsCount((prevCount) => prevCount + 16);
-    // };
-
-    // const visibleProducts = productsAll.slice(0, visibleProductsCount);
+    const productsAll = data?.products ?? [];
 
     if (isLoading) {
         return (
@@ -139,14 +142,26 @@ const ProductCardGroup = () => {
                     const productPricing =
                         variant?.prices?.find(
                             (price: any) =>
-                                price.currency_code === preferred_currency_code
+                                price.currency_code ===
+                                (preferred_currency_code ?? 'usdc')
                         )?.amount ||
                         variant?.prices?.[0]?.amount ||
                         0;
+
                     const formattedPrice = formatCryptoPrice(
                         productPricing ?? 0,
                         preferred_currency_code as string
                     );
+
+                    const reviewCounter = product.reviews.length;
+                    const totalRating = product.reviews.reduce(
+                        (acc: number, review: any) => acc + review.rating,
+                        0
+                    );
+                    const avgRating = reviewCounter
+                        ? totalRating / reviewCounter
+                        : 0;
+                    const roundedAvgRating = parseFloat(avgRating.toFixed(2));
 
                     return (
                         <GridItem
@@ -157,9 +172,9 @@ const ProductCardGroup = () => {
                         >
                             <ProductCardHome
                                 key={index}
+                                reviewCount={reviewCounter}
+                                totalRating={roundedAvgRating}
                                 productHandle={product.handle}
-                                reviewCount={product.review}
-                                totalRating={10}
                                 variantID={variant?.id}
                                 countryCode={product.origin_country}
                                 productName={product.title}

@@ -31,7 +31,7 @@ const ProductCardGroup = ({ vendorName, category }: Props) => {
     console.log(data);
 
     const { authData, preferred_currency_code } = useCustomerAuthStore();
-    console.log('user preferred currency code: ', preferred_currency_code);
+    //console.log('user preferred currency code: ', preferred_currency_code);
 
     if (isLoading) {
         return <SkeletonProductGrid />;
@@ -64,7 +64,7 @@ const ProductCardGroup = ({ vendorName, category }: Props) => {
                             (acc: number, review: any) => acc + review.rating,
                             0
                         );
-                        const avgRating = totalRating / reviewCounter;
+                        const avgRating = reviewCounter ? totalRating / reviewCounter : 0;
                         const productPricing = formatCryptoPrice(
                             variantPrices.find(
                                 (p: any) =>

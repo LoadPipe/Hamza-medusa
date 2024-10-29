@@ -3,20 +3,16 @@ import { TransactionBaseService } from '@medusajs/medusa';
 import { CustomerNotificationRepository } from '../repositories/customer-notification';
 import { NotificationTypeRepository } from '../repositories/notification-type';
 import { createLogger, ILogger } from '../utils/logging/logger';
+import { CustomerNotification } from 'src/models/customer-notification';
 
-const notificationTypes = [
-    { name: 'order_shipped' },
-    { name: ' posted a new product' },
-    { name: 'order status changed' },
-    { name: 'promotions/discounts' },
-    { name: ' survey_update' },
-    { name: 'sms' },
-    { name: 'email' },
-    { name: 'LINE' },
-    { name: 'whatsapp' },
-];
+//TODO: get this enum to work
+//export declare enum NotificationType {
+//    OrderShipped = 'orderShipped',
+//    OrderStatusChanged = 'orderStatusChanged',
+//    Email = 'email'
+//}
 
-class CustomerNotificationSerivce extends TransactionBaseService {
+class CustomerNotificationService extends TransactionBaseService {
     static LIFE_TIME = Lifetime.SCOPED;
     protected readonly logger: ILogger;
     protected readonly customerNotificationRepository: typeof CustomerNotificationRepository;
@@ -30,42 +26,7 @@ class CustomerNotificationSerivce extends TransactionBaseService {
         this.notificationTypeRepository = container.notificationTypeRepository;
     }
 
-    // TODO: Will this be useful for the full implementation when we have two tables later?
-
-    // async createNotificationTypes(): Promise<NotificationType[]> {
-    //     const notificationTypes = [
-    //         { name: 'order_shipped' },
-    //         { name: 'posted a new product' },
-    //         { name: 'order status changed' },
-    //         { name: 'promotions/discounts' },
-    //         { name: 'survey_update' },
-    //         { name: 'sms' },
-    //         { name: 'email' },
-    //         { name: 'LINE' },
-    //         { name: 'whatsapp' },
-    //     ];
-    //
-    //     const createdNotificationTypes: NotificationType[] = [];
-    //
-    //     try {
-    //         for (const type of notificationTypes) {
-    //             const notificationType =
-    //                 this.notificationTypeRepository.create(type);
-    //             const savedNotificationType =
-    //                 await this.notificationTypeRepository.save(
-    //                     notificationType
-    //                 );
-    //             createdNotificationTypes.push(savedNotificationType);
-    //         }
-    //     } catch (e) {
-    //         this.logger.error(`Error creating notification types: ${e}`);
-    //         throw e;
-    //     }
-    //
-    //     return createdNotificationTypes;
-    // }
-
-    async getNotifications(customerId: string) {
+    async getNotificationTypes(customerId: string): Promise<string[]> {
         try {
             const notification =
                 await this.customerNotificationRepository.findOne({
@@ -87,8 +48,8 @@ class CustomerNotificationSerivce extends TransactionBaseService {
 
     async addOrUpdateNotification(
         customerId: string,
-        notificationType: string
-    ) {
+        notificationType: string //TODO should be an array
+    ): Promise<CustomerNotification> {
         try {
             const existingNotification =
                 await this.customerNotificationRepository.findOne({
@@ -124,7 +85,7 @@ class CustomerNotificationSerivce extends TransactionBaseService {
         }
     }
 
-    async removeNotification(customerId: string) {
+    async removeNotification(customerId: string): Promise<boolean> {
         try {
             const existingNotification =
                 await this.customerNotificationRepository.findOne({
@@ -145,6 +106,23 @@ class CustomerNotificationSerivce extends TransactionBaseService {
             throw e;
         }
     }
+
+    async hasNotification(customerId: string, notificationType: string): Promise<boolean> {
+        return this.hasNotifications(customerId, [notificationType]);
+    }
+
+    async hasNotifications(customerId: string, notificationTypes: string[]): Promise<boolean> {
+        const notifications: string[] = await this.getNotificationTypes(customerId);
+        for (let nt of notificationTypes) {
+            if (!notifications.includes(nt))
+                return false;
+        }
+        return true;
+    }
+
+    async setDefaultNotifications(customerId: string): Promise<void> {
+        await this.addOrUpdateNotification(customerId, 'email,orderShipped,orderStatusChanged');
+    }
 }
 
-export default CustomerNotificationSerivce;
+export default CustomerNotificationService;

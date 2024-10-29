@@ -5,20 +5,12 @@ import {
 } from '@medusajs/medusa/dist/types/pricing';
 import { clx } from '@medusajs/ui';
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import {
-    TiStarOutline,
-    TiStarFullOutline,
-    TiStarHalfOutline,
-} from 'react-icons/ti';
 import { useRouter } from 'next/navigation';
-import {
-    formatCryptoPrice,
-    getProductPrice,
-} from '@lib/util/get-product-price';
-import { RegionInfo } from 'types/global';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
+import { RegionInfo } from '@/types/global';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import { getAverageRatings, getReviewCount, getStore } from '@lib/data';
+import { renderStars } from '../review-stars';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -32,7 +24,7 @@ export default function ProductPrice({
     region: RegionInfo;
 }) {
     const { preferred_currency_code, authData } = useCustomerAuthStore();
-    console.log('user preferred currency code: ', preferred_currency_code);
+    //console.log('user preferred currency code: ', preferred_currency_code);
 
     const selectedPrices = variant
         ? variant.prices
@@ -80,7 +72,9 @@ export default function ProductPrice({
     }, [product.id]);
 
     const navigateToVendor = () => {
-        router.push(`/us/vendor/${storeName}`);
+        router.push(
+            `/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/vendor/${storeName}`
+        );
     };
 
     let preferredPrice =
@@ -91,36 +85,6 @@ export default function ProductPrice({
     if (!selectedPrices) {
         return <div className="block w-32 h-9 bg-gray-100 animate-pulse" />;
     }
-
-    const renderStars = (rating: any) => {
-        const fullStars = Math.floor(rating);
-        const halfStar = rating % 1 >= 0.5;
-        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
-
-        return (
-            <div className="flex">
-                {Array(fullStars)
-                    .fill(null)
-                    .map((_, index) => (
-                        <TiStarFullOutline
-                            key={`full-${index}`}
-                            className="text-yellow-500 text-2xl"
-                        />
-                    ))}
-                {halfStar && (
-                    <TiStarHalfOutline className="text-yellow-500 text-2xl" />
-                )}
-                {Array(emptyStars)
-                    .fill(null)
-                    .map((_, index) => (
-                        <TiStarOutline
-                            key={`empty-${index}`}
-                            className="text-yellow-500 text-2xl"
-                        />
-                    ))}
-            </div>
-        );
-    };
 
     return (
         <div className="flex flex-col space-y-1 text-ui-fg-base text-white">

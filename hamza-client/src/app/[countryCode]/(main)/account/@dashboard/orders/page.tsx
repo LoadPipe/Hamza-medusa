@@ -1,33 +1,46 @@
 import { Metadata } from 'next';
-
 import OrderOverview from '@modules/account/components/order-overview';
-import { listCustomerOrders } from '@lib/data';
+import { getHamzaCustomer, getOrderBucket } from '@lib/data';
 import { notFound } from 'next/navigation';
-import { Box, Text } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
+import getQueryClient from '@/getQueryClient';
+import { dehydrate } from '@tanstack/react-query';
+
 export const metadata: Metadata = {
     title: 'Orders',
     description: 'Overview of your previous orders.',
 };
 
 export default async function Orders() {
-    const orders = await listCustomerOrders();
+    const customer = await getHamzaCustomer();
 
-    if (!orders) {
+    const queryClient = getQueryClient();
+    await queryClient.prefetchQuery({
+        queryKey: ['batchOrders'],
+        queryFn: () => {
+            return getOrderBucket(customer.id);
+        },
+    });
+
+    const dehydratedOrders = dehydrate(queryClient);
+
+    if (!customer) {
         notFound();
     }
-    // 121212
     return (
-        <Box width="full" bg="#121212" color="white" rounded={'lg'}>
-            <Box display="flex" flexDirection="column">
-                {/*<Text fontWeight={'bold'} fontSize="lg">*/}
-                {/*    Orders*/}
-                {/*</Text>*/}
-                {/*<p className="text-base-regular">*/}
-                {/*    View your previous orders and their status. You can also*/}
-                {/*    create returns or exchanges for your orders if needed.*/}
-                {/*</p>*/}
-                <OrderOverview orders={orders} />
-            </Box>
-        </Box>
+        <Flex
+            maxW={{ md: '600px', lg: '927px' }}
+            width="100%"
+            backgroundColor={'#121212'}
+            flexDirection={'column'}
+            color="white"
+            p={6}
+            rounded="lg"
+        >
+            <OrderOverview
+                customer={customer}
+                dehydratedState={dehydratedOrders}
+            />
+        </Flex>
     );
 }

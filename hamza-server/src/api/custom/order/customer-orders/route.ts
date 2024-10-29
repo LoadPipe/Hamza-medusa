@@ -37,16 +37,18 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                     404,
                     `Customer id ${customerId} not found`
                 );
+            }
+
+            const checkBuckets = handler.inputParams.check_buckets;
+            console.log(`CHECK BUCKETS: ${checkBuckets}`);
+
+            if (handler.inputParams.buckets) {
+                const orders =
+                    await orderService.getCustomerOrderBuckets(customerId);
+                handler.returnStatus(200, { orders: orders });
             } else {
-                if (handler.inputParams.buckets) {
-                    const orders =
-                        await orderService.getCustomerOrderBuckets(customerId);
-                    handler.returnStatus(200, { orders: orders });
-                } else {
-                    const orders =
-                        await orderService.getCustomerOrders(customerId);
-                    handler.returnStatus(200, { orders: orders });
-                }
+                const orders = await orderService.getCustomerOrders(customerId);
+                handler.returnStatus(200, { orders: orders });
             }
         }
     });

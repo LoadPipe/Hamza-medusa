@@ -1,18 +1,21 @@
 'use client';
 
-import { Heading } from '@medusajs/ui';
-import { Button, Box, Text, Flex } from '@chakra-ui/react';
+import { Button, Text, Flex } from '@chakra-ui/react';
 import CartTotals from '@modules/common/components/cart-totals';
-import Divider from '@modules/common/components/divider';
-import { CartWithCheckoutStep } from 'types/global';
+import { CartWithCheckoutStep } from '@/types/global';
 import DiscountCode from '@modules/checkout/components/discount-code';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
+import Spinner from '@modules/common/icons/spinner';
+import { useCartStore } from '@store/cart-store/cart-store'; // Import Zustand store
+import { useEffect, useState } from 'react';
 
 type SummaryProps = {
     cart: CartWithCheckoutStep;
 };
 
 const Summary = ({ cart }: SummaryProps) => {
+    const isUpdating = useCartStore((state) => state.isUpdating);
+
     return (
         <Flex
             flexDir={'column'}
@@ -32,7 +35,7 @@ const Summary = ({ cart }: SummaryProps) => {
             >
                 Summary
             </Text>
-            <CartTotals data={cart} />
+            <CartTotals data={cart} useCartStyle={false} />
             <DiscountCode cart={cart} />
             <LocalizedClientLink href={'/checkout?step=' + cart.checkout_step}>
                 <Button
@@ -43,13 +46,13 @@ const Summary = ({ cart }: SummaryProps) => {
                     height={{ base: '42px', md: '52px' }}
                     borderRadius={'full'}
                     fontSize={{ base: '14px', md: '16px' }}
-                    isDisabled={cart.items.length === 0 ? true : false}
+                    isDisabled={cart.items.length === 0 || isUpdating}
                     _hover={{
                         backgroundColor: 'white',
                         color: 'black',
                     }}
                 >
-                    Checkout Now
+                    {isUpdating ? <Spinner /> : 'Checkout Now'}
                 </Button>
             </LocalizedClientLink>
         </Flex>

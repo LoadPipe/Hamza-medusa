@@ -1,9 +1,9 @@
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 
 import { formatAmount } from '@lib/util/prices';
-import { RegionInfo } from 'types/global';
-import { CalculatedVariant } from 'types/medusa';
-import { getCurrencyPrecision } from 'currency.config';
+import { RegionInfo } from '@/types/global';
+import { CalculatedVariant } from '@/types/medusa';
+import { getCurrencyPrecision } from '@/currency.config';
 
 export function getProductPrice({
     product,
@@ -108,11 +108,18 @@ export function formatCryptoPrice(
         const displayPrecision = getCurrencyPrecision(currencyCode).db ?? 2;
         amount = amount / 10 ** displayPrecision;
 
-        let output = displayPrecision <= 2
-            ? Number(amount).toFixed(2)
-            : parseFloat(Number(amount).toFixed(displayPrecision));
+        let output =
+            displayPrecision <= 2
+                ? Number(amount).toFixed(2)
+                : parseFloat(Number(amount).toFixed(displayPrecision));
 
-        output = displayPrecision <= 2 ? output : limitPrecision(parseFloat(output.toString()), getCurrencyPrecision(currencyCode).display);
+        output =
+            displayPrecision <= 2
+                ? output
+                : limitPrecision(
+                      parseFloat(output.toString()),
+                      getCurrencyPrecision(currencyCode).display
+                  );
 
         return output;
     } catch (e) {

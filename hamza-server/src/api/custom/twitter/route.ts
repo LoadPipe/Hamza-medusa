@@ -1,5 +1,11 @@
 import axios from 'axios';
 import { Request, Response } from 'express';
+import { RouteHandler } from '../../route-handler';
+import CustomerRepository from '../../../repositories/customer';
+import { ILogger } from '../../../utils/logging/logger';
+import jwt from 'jsonwebtoken';
+import { redirectToOauthLandingPage } from '../../../utils/oauth';
+import { Not } from 'typeorm';
 
 // add your client id and secret here:
 const TWITTER_OAUTH_CLIENT_ID = process.env.TWITTER_ACCESS_KEY!;
@@ -30,10 +36,12 @@ type TwitterTokenResponse = {
     scope: string;
 };
 
-//TODO: is it possble to have Logger on this page?
 
 // the main step 1 function, getting the access token from twitter using the code that the twitter sent us
-export async function getTwitterOAuthToken(code: string) {
+export async function getTwitterOAuthToken(
+    code: string,
+    logger?: ILogger
+) {
     try {
         // POST request to the token url to get the access token
         const res = await axios.post<TwitterTokenResponse>(
@@ -52,6 +60,7 @@ export async function getTwitterOAuthToken(code: string) {
 
         return res.data;
     } catch (err) {
+        logger?.error('Error getting twitter oauth token', err);
         return null;
     }
 }
@@ -65,12 +74,13 @@ export interface TwitterUser {
 
 // getting the twitter user from access token
 export async function getTwitterUser(
-    accessToken: string
+    accessToken: string,
+    logger?: ILogger
 ): Promise<TwitterUser | null> {
     try {
         // request GET https://api.twitter.com/2/users/me
         const res = await axios.get<{ data: TwitterUser }>(
-            'https://api.twitter.com/2/users/me',
+            'https://api.twitter.com/2/users/me?user.fields=username,name,id,email',
             {
                 headers: {
                     'Content-type': 'application/json',
@@ -82,6 +92,7 @@ export async function getTwitterUser(
 
         return res.data.data ?? null;
     } catch (err) {
+        logger?.error('Error getting twitter oauth token', err);
         return null;
     }
 }
@@ -91,32 +102,83 @@ export async function GET(
     req: Request<any, any, any, { code: string }>,
     res: Response
 ) {
-    try {
+    const customerRepository: typeof CustomerRepository = req.scope.resolve('customerRepository');
+    const handler: RouteHandler = new RouteHandler(req, res, 'GET', '/custom/twitter');
+
+    handler.onError = (err: any) => {
+        redirectToOauthLandingPage(res, 'twitter', false, 'An unknown error has occurred');
+    };
+
+    await handler.handle(async () => {
         const code = req.query.code;
 
+        handler.logger.debug(`twitter oauth cookies: ${JSON.stringify(req.cookies)}`);
+        let decoded: any = jwt.decode(req.cookies['_medusa_jwt']);
+        handler.logger.debug(
+            `twitter oauth decoded _medusa_jwt: ${JSON.stringify(decoded)}`
+        );
+        handler.logger.debug(`twitter oauth req.params: ${JSON.stringify(req.params)}`);
+
+        //throw error if anything wrong with the cookie
+        if (!decoded)
+            return redirectToOauthLandingPage(res, 'twitter', false, 'Unable to get the JWT cookie');
+
         // 1. get the access token with the code
-        const twitterOAuthToken = await getTwitterOAuthToken(code);
+        const twitterOAuthToken = await getTwitterOAuthToken(code, handler.logger);
         if (!twitterOAuthToken) {
             // redirect if no auth token
-            return res.redirect(process.env.STORE_URL);
+            return redirectToOauthLandingPage(res, 'twitter', false, 'Unable to get the X OAUTH token');
         }
 
         // 2. get the twitter user using the access token
         const twitterUser = await getTwitterUser(
-            twitterOAuthToken.access_token
+            twitterOAuthToken.access_token,
+            handler.logger
         );
 
-        if (!twitterUser) {
-            // redirect if no twitter user
-            return res.redirect(process.env.STORE_URL);
+        handler.logger.debug(`Twitter user: ${JSON.stringify(twitterUser)}`);
+
+        // redirect if no twitter user
+        if (!twitterUser)
+            return redirectToOauthLandingPage(res, 'twitter', false, 'Unable to get the X OAUTH user');
+
+        //split firstname/lastname 
+        let first_name = '';
+        let last_name = '';
+        if (twitterUser?.name) {
+            const fullName = twitterUser.name.split(' ');
+            first_name = fullName[0];
+            if (fullName.length > 1) {
+                last_name = fullName.slice(1).join(' ');
+            }
         }
 
-        // 5. finally redirect to the client
-        return res.redirect(`${process.env.STORE_URL}/account?verify=true`);
-    } catch (e) {
-        console.log('error ', e);
-        return res.redirect(
-            `${process.env.STORE_URL}/account?verify=false&error=true`
+        //redirect if no email address available
+        return redirectToOauthLandingPage(res, 'twitter', false, 'Unable to retrieve email address');
+
+        const customerId = decoded.customer_id;
+        const email = ''; //no way to get twitter email
+
+        //check that email isn't already taken
+        const existingCustomer = await customerRepository.findOne({
+            where: { id: Not(decoded.customer_id), email: email }
+        });
+        if (existingCustomer) {
+            return redirectToOauthLandingPage(res, 'google', false, `The email address ${email} is already taken by another account.`);
+        }
+
+        //update the user record if all good
+        await customerRepository.update(
+            { id: customerId },
+            {
+                email: email,
+                is_verified: true,
+                first_name,
+                last_name,
+            }
         );
-    }
+
+        // 5. finally redirect to the client
+        return redirectToOauthLandingPage(res, 'twitter');
+    });
 }

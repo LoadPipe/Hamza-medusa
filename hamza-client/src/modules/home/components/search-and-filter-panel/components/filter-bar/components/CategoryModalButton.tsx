@@ -5,26 +5,49 @@ import useModalFilter from '@store/store-page/filter-modal';
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
 import categoryIcons from '@modules/shop/data/category-icons';
 interface CategoryButtonProps {
-    categoryName: string;
-    categoryType: string;
+    categoryName: string; // Single category name per button
+
+    url: string;
 }
 
 const CategoryModalButton: React.FC<CategoryButtonProps> = ({
     categoryName,
-    categoryType,
+    url,
 }) => {
-    const {
-        homeModalCategoryFilterSelect,
-        setHomeModalCategoryFilterSelect,
-        setHomeModalCategoryTypeFilterSelect,
-    } = useHomeModalFilter();
+    const { homeModalCategoryFilterSelect, setHomeModalCategoryFilterSelect } =
+        useHomeModalFilter();
+
+    const toggleCategorySelection = (category: string) => {
+        const currentCategorySelection = homeModalCategoryFilterSelect || [];
+
+        // If the category is already selected, we remove it along with its type
+        if (currentCategorySelection.includes(category)) {
+            const updatedCategorySelection = currentCategorySelection.filter(
+                (selectedCategory) => selectedCategory !== category
+            );
+
+            setHomeModalCategoryFilterSelect(
+                updatedCategorySelection.length ? updatedCategorySelection : []
+            );
+        } else {
+            // If the category is not selected, we add both the category and type
+            const updatedCategorySelection = currentCategorySelection.filter(
+                (cat) => cat !== 'All'
+            );
+
+            setHomeModalCategoryFilterSelect([
+                ...updatedCategorySelection,
+                category,
+            ]);
+        }
+    };
 
     return (
         <Flex>
             <Flex
                 borderColor={'secondary.davy.900'}
                 backgroundColor={
-                    homeModalCategoryFilterSelect === categoryName
+                    homeModalCategoryFilterSelect?.includes(categoryName)
                         ? 'white'
                         : 'transparent'
                 }
@@ -36,7 +59,7 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                 height={'42px'}
                 cursor="pointer"
                 color={
-                    homeModalCategoryFilterSelect === categoryName
+                    homeModalCategoryFilterSelect?.includes(categoryName)
                         ? 'black'
                         : 'white'
                 }
@@ -46,15 +69,10 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                     background: 'white',
                     color: 'black',
                 }}
-                onClick={() => {
-                    setHomeModalCategoryFilterSelect(categoryName),
-                        setHomeModalCategoryTypeFilterSelect(categoryType);
-                }}
+                onClick={() => toggleCategorySelection(categoryName)}
             >
-                <Image
-                    src={categoryIcons[categoryName.toLowerCase()]}
-                    alt={categoryName}
-                />
+                <Image src={url} alt={categoryName} width={18} height={18} />
+
                 <Text ml="10px" fontSize={{ base: '14px', md: '16px' }}>
                     {categoryName}
                 </Text>

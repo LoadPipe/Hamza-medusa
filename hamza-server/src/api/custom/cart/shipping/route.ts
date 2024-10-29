@@ -1,6 +1,29 @@
 import { MedusaRequest, MedusaResponse } from '@medusajs/medusa';
 import CartService from '../../../../services/cart';
 import { RouteHandler } from '../../../route-handler';
+import BuckydropService from '../../../../services/buckydrop';
+
+export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
+    let buckyService: BuckydropService = req.scope.resolve('buckydropService');
+
+    const handler = new RouteHandler(req, res, 'GET', '/custom/cart/shipping', [
+        'cart_id',
+    ]);
+
+    await handler.handle(async () => {
+        // Check if cart_id is present
+        if (!handler.requireParam('cart_id')) {
+            console.error('cart_id parameter missing in request');
+            return;
+        }
+
+        // Log cart ID being retrieved
+        const cartId = handler.inputParams.cart_id;
+        const amount = await buckyService.calculateShippingPriceForCart(cartId);
+
+        return handler.returnStatus(200, { amount });
+    });
+};
 
 export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
     let cartService: CartService = req.scope.resolve('cartService');
@@ -10,22 +33,50 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
     ]);
 
     await handler.handle(async () => {
-        if (!handler.requireParam('cart_id')) return;
+        // Check if cart_id is present
+        if (!handler.requireParam('cart_id')) {
+            console.error('cart_id parameter missing in request');
+            return;
+        }
 
-        //check for cart existence
+        // Log cart ID being retrieved
         const cartId = handler.inputParams.cart_id;
+
+        // Check for cart existence
         const cart = await cartService.retrieve(cartId);
         if (!cart) {
+            console.error(`Cart ${cartId} not found`);
             return handler.returnStatusWithMessage(
                 404,
                 `Cart ${cartId} not found`
             );
         }
 
-        //enforce security
-        if (!handler.enforceCustomerId(cart.customer_id)) return;
+        // Log retrieved cart details
+        console.log('Cart retrieved:', cart);
 
-        await cartService.addDefaultShippingMethod(cartId);
-        return handler.returnStatusWithMessage(200, 'Successfully added shipping method');
+        // Check if customer_id exists
+        if (!cart.customer_id) {
+            console.error('Cart has no customer_id:', cart);
+            return handler.returnStatusWithMessage(
+                400,
+                'Customer ID missing from cart'
+            );
+        }
+
+        console.log('Enforcing customer ID:', cart.customer_id);
+        // Enforce customer ID security
+        if (!handler.enforceCustomerId(cart.customer_id)) {
+            console.error('Customer ID enforcement failed');
+            return;
+        }
+
+        // Add default shipping method and log the result
+        await cartService.addDefaultShippingMethod(cartId, true);
+
+        return handler.returnStatusWithMessage(
+            200,
+            'Successfully added shipping method'
+        );
     });
 };

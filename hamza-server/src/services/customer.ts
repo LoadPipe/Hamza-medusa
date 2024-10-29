@@ -7,6 +7,7 @@ import { Lifetime } from 'awilix';
 import { CustomerRepository } from '../repositories/customer';
 import CustomerWalletAddressRepository from '../repositories/customer-wallet-address';
 import { createLogger, ILogger } from '../utils/logging/logger';
+import CustomerNotificationService from './customer-notification';
 
 interface CustomCustomerInput extends CreateCustomerInput {
     wallet_address: string;
@@ -16,11 +17,13 @@ export default class CustomerService extends MedusaCustomerService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
 
     protected customerRepository_: typeof CustomerRepository;
+    protected customerNotificationService_: CustomerNotificationService;
     protected logger: ILogger;
 
     constructor(container) {
         super(container);
         this.customerRepository_ = container.customerRepository;
+        this.customerNotificationService_ = container.customerNotificationService;
         this.logger = createLogger(container, 'CustomerService');
     }
 
@@ -28,6 +31,12 @@ export default class CustomerService extends MedusaCustomerService {
         this.logger.debug(
             `CustomerService.create() method running with input; ${input}`
         );
+
+        if (input?.wallet_address)
+            input.wallet_address = input.wallet_address.trim().toLowerCase();
+
+        if (input?.email)
+            input.email = input.email.trim().toLowerCase();
 
         let existingWalletAddress =
             await CustomerWalletAddressRepository.findOne({
@@ -54,19 +63,29 @@ export default class CustomerService extends MedusaCustomerService {
         this.logger.debug(
             `creating Customer with input ${JSON.stringify(input)}`
         );
+
         try {
+            //create customer
             const _customer: any = await super.create(input);
+
+            //save customer wallet 
             const _customerWalletAddress =
                 await CustomerWalletAddressRepository.save({
                     customer: { id: _customer.id },
                     wallet_address: input.wallet_address,
                 });
+
+            //save preferred currency 
             let _customerPreferredCurrency =
                 await this.customerRepository_.findOne({
                     where: { id: _customer.id },
                     relations: { preferred_currency: true },
                     select: { id: true },
                 });
+
+            //set default notification types 
+            this.customerNotificationService_.setDefaultNotifications(_customer.id);
+
             this.logger.debug(
                 `Extending Customer with wallet address: ${_customer.wallet_address}`
             );

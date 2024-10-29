@@ -47,13 +47,13 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         const lowerPrice = handler.inputParams.price_lo ?? 0;
 
         //call productService.getFilteredProducts to get the products, then return them
-        const products = await productService.getFilteredProductsByCategory(
+        const products = await productService.getFilteredProducts(
             categories,
             upperPrice,
             lowerPrice
         );
 
-        return handler.returnStatus(200, { products });
+        return handler.returnStatus(200, { products }, 200);
     });
 };
 

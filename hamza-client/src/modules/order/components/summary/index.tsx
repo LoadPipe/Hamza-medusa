@@ -11,73 +11,15 @@ import { getOrderSummary } from '@lib/data/index';
 import { Cart, Order } from '@medusajs/medusa';
 
 type SummaryProps = {
-    cart_id: string;
     cart: Cart;
-    order: Order;
 };
 
-interface Product {
-    store_id: string;
-    massmarket_prod_id: string;
-    id: string;
-    created_at: string;
-    updated_at: string;
-    deleted_at: string | null;
-    title: string;
-    subtitle: string | null;
-    description: string;
-    handle: string;
-    is_giftcard: boolean;
-    store_name: string;
-    unit_price: number;
-    currency_code: string;
-    order_id: string;
-    status: string;
-    thumbnail: string;
-    weight: number;
-    length: number | null;
-    height: number | null;
-    width: number | null;
-    hs_code: string | null;
-    origin_country: string | null;
-    mid_code: string | null;
-    material: string | null;
-    collection_id: string | null;
-    type_id: string | null;
-    discountable: boolean;
-    external_id: string | null;
-    metadata: Record<string, any> | null;
-}
-
-const Summary: React.FC<SummaryProps> = ({ cart_id, cart, order }) => {
-    const [products, setProducts] = useState<Product[]>([]);
-
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await getOrderSummary(cart_id);
-                // Assuming the response contains the products array in `response.data.products`
-                const fetchedProducts: Product[] = response.items || [];
-                console.log(`Fetched products: ${JSON.stringify(response)}`);
-                setProducts(fetchedProducts);
-            } catch (error) {
-                console.error('Error fetching products:', error);
-                setProducts([]); // Ensure products is always an array
-            }
-        };
-
-        fetchProducts();
-    }, [cart_id]);
-
-    console.log(products);
-    console.log('this is cart', cart.items);
-    console.log('this is order', order);
-
+const Summary: React.FC<SummaryProps> = ({ cart }) => {
     return (
         <Flex direction="column" width={'100%'}>
             <Text fontWeight={600}>Your Order</Text>
-            {products.map((product, index) => (
-                <Flex key={product.id} width={'100%'} flexDir={'column'}>
+            {cart.items.map((item, index) => (
+                <Flex key={item.id} width={'100%'} flexDir={'column'}>
                     <Divider
                         mt="1rem"
                         mb="0.5rem"
@@ -87,11 +29,11 @@ const Summary: React.FC<SummaryProps> = ({ cart_id, cart, order }) => {
                     <Flex mt="1rem" height={'70px'} width={'100%'}>
                         <Flex flexDir={'column'}>
                             <LocalizedClientLink
-                                href={`/products/${product.handle}`}
+                                href={`/products/${item.variant.product.handle}`}
                             >
                                 <Flex width={'55px'} height={'55px'}>
                                     <Thumbnail
-                                        thumbnail={product.thumbnail}
+                                        thumbnail={item.thumbnail}
                                         images={[]}
                                         size="small"
                                     />
@@ -106,7 +48,7 @@ const Summary: React.FC<SummaryProps> = ({ cart_id, cart, order }) => {
                             fontSize={{ base: '14px', md: '16px' }}
                             noOfLines={2}
                         >
-                            {product.title}
+                            {item.title}
                         </Text>
 
                         <Flex ml="auto">
@@ -117,8 +59,12 @@ const Summary: React.FC<SummaryProps> = ({ cart_id, cart, order }) => {
                             >
                                 <Image
                                     className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                                    src={currencyIcons[product.currency_code]}
-                                    alt={product.currency_code}
+                                    src={
+                                        currencyIcons[
+                                            item.currency_code ?? 'usdc'
+                                        ]
+                                    }
+                                    alt={item.currency_code ?? 'usdc'}
                                 />
                             </Flex>
                             <Flex
@@ -132,48 +78,28 @@ const Summary: React.FC<SummaryProps> = ({ cart_id, cart, order }) => {
                                     fontSize={{ base: '14px', md: '16px' }}
                                 >
                                     {formatCryptoPrice(
-                                        cart.items[index].quantity *
-                                            product.unit_price,
-                                        product.currency_code
+                                        item.quantity * item.unit_price,
+                                        item.currency_code
                                     )}
                                 </Text>
                             </Flex>
                         </Flex>
                     </Flex>
+
                     {/* Twitter and Quantity */}
                     <Flex alignItems={'center'} height={'50px'} width={'100%'}>
                         <Flex alignSelf={'center'}>
                             <Tweet
-                                productHandle={product.handle}
+                                productHandle={item.variant.product.handle}
                                 isPurchased={true}
                             />
                         </Flex>
                         <Text ml="1rem" fontSize={{ base: '14px', md: '16px' }}>
-                            Quantity: {cart.items[index].quantity}
+                            Quantity: {item.quantity}
                         </Text>
                     </Flex>
                 </Flex>
             ))}
-            {/* {subtotals[currencyCode] && (
-                <Flex justifyContent={'space-between'}>
-                    <Text
-                        alignSelf={'center'}
-                        fontSize={{ base: '14px', md: '16px' }}
-                    >
-                        Subtotal
-                    </Text>
-
-                    <Text
-                        fontSize={{ base: '14px', md: '16px' }}
-                        alignSelf="center"
-                    >
-                        {formatCryptoPrice(
-                            subtotals[currencyCode],
-                            currencyCode
-                        )}
-                    </Text>
-                </Flex>
-            )} */}
         </Flex>
     );
 };

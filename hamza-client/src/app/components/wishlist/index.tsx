@@ -28,7 +28,7 @@ const Wishlist: React.FC<WishlistPopoverItemProps> = () => {
             fontWeight={'600'}
             px="1rem"
             color={'white'}
-            backgroundColor={'black'}
+            backgroundColor={'transparent'}
             _hover={{
                 '.wishlist-text, .wishlist-icon': {
                     color: 'primary.green.900',

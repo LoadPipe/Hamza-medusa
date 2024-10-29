@@ -28,7 +28,7 @@ export class CurrencyConversionClient {
      */
     async checkStatus(): Promise<boolean> {
         try {
-            const response = await this.client.get('/');
+            const response = await this.client.get('/health');
             return response.status === 200;
         } catch (error) {
             console.error('Error checking status:', error.message);
@@ -36,11 +36,6 @@ export class CurrencyConversionClient {
         }
     }
 
-    /**
-     * Checks the status of the rest api server.
-     *
-     * @returns boolean, true if a-ok
-     */
     async getExchangeRate(
         baseCurrency: string,
         toCurrency: string
@@ -53,7 +48,7 @@ export class CurrencyConversionClient {
 
             if (process.env.CURRENCY_CONVERSION_REST_URL) {
                 const response = await this.client.get(url);
-                return response.status === 200 ? response.data : 1;
+                return response.status === 200 ? response.data : 0;
             }
 
             //default: hard-coded rates
@@ -79,7 +74,7 @@ export class CurrencyConversionClient {
             }
         } catch (error) {
             console.error('Error getting exchange rate:', error.message);
-            return 1;
+            return 0;
         }
     }
 }

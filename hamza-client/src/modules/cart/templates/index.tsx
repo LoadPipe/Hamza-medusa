@@ -2,7 +2,7 @@
 import React from 'react';
 import ItemsTemplate from './items';
 import Summary from './summary';
-import { CartWithCheckoutStep } from 'types/global';
+import { CartWithCheckoutStep } from '@/types/global';
 import SignInPrompt from '../components/sign-in-prompt';
 import Divider from '@modules/common/components/divider';
 import { Customer } from '@medusajs/medusa';
@@ -62,13 +62,16 @@ const CartTemplate = ({
                     <ItemsTemplate
                         region={cart?.region}
                         items={cart?.items}
+                        cart_id={cart?.id as string}
                         currencyCode={preferred_currency_code ?? undefined}
                     />
                     {/* Shipping Address */}
                     {/* <CartShippingAddress customer={customer} /> */}
                 </Flex>
 
-                {cart && cart.region && <Summary cart={cart} />}
+                {cart?.items?.length !== 0 && cart?.region && (
+                    <Summary cart={cart} />
+                )}
             </Flex>
         </Flex>
     );

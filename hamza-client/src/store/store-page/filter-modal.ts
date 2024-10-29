@@ -1,36 +1,52 @@
 import { create } from 'zustand';
 
+interface CategoryItem {
+    categoryName: string;
+    urlLink: string;
+}
+
 // Define the state and associated actions in an interface
 interface ModalFilterState {
-    modalFilterSelected: boolean;
-    modalCategoryFilterSelect: string | null;
-    modalCategoryTypeFilterSelect: string | null;
-    modalCurrencyFilterSelect: string | null;
+    selectCategoryStoreModalFilter: string[];
+    categoryItemStoreModalFilter: CategoryItem[];
     modalReviewFilterSelect: string | null;
-    setModalCategoryFilterSelect: (item: string | null) => void;
-    setModalCategoryTypeFilterSelect: (item: string | null) => void;
-    setModalCurrencyFilterSelect: (item: string | null) => void;
+    setSelectCategoryModalFilter: (
+        items: string[] | ((prev: string[]) => string[])
+    ) => void;
+    setCategoryItemStoreModalFilter: (
+        items: CategoryItem[] | ((prev: CategoryItem[]) => CategoryItem[])
+    ) => void;
     setModalReviewFilterSelect: (stars: string | null) => void;
-    setModalFilterSelected: (selected: boolean) => void;
 }
 
 // Create the Zustand store
 const useModalFilter = create<ModalFilterState>((set) => ({
-    modalFilterSelected: false,
-    modalCategoryFilterSelect: null,
-    modalCategoryTypeFilterSelect: null,
-    modalCurrencyFilterSelect: null,
-    modalReviewFilterSelect: null,
-    setModalCategoryFilterSelect: (item: string | null) =>
-        set({ modalCategoryFilterSelect: item }),
-    setModalCategoryTypeFilterSelect: (item: string | null) =>
-        set({ modalCategoryTypeFilterSelect: item }),
-    setModalCurrencyFilterSelect: (item: string | null) =>
-        set({ modalCurrencyFilterSelect: item }),
+    selectCategoryStoreModalFilter: [], // Initialized to an empty array
+    categoryItemStoreModalFilter: [], // Initialized to an empty array
+    modalReviewFilterSelect: null, // Remains nullable since it's a single value
+
+    setSelectCategoryModalFilter: (
+        items: string[] | ((prev: string[]) => string[])
+    ) =>
+        set((state) => ({
+            selectCategoryStoreModalFilter:
+                typeof items === 'function'
+                    ? items(state.selectCategoryStoreModalFilter)
+                    : items,
+        })),
+
+    setCategoryItemStoreModalFilter: (
+        items: CategoryItem[] | ((prev: CategoryItem[]) => CategoryItem[])
+    ) =>
+        set((state) => ({
+            categoryItemStoreModalFilter:
+                typeof items === 'function'
+                    ? items(state.categoryItemStoreModalFilter)
+                    : items,
+        })),
+
     setModalReviewFilterSelect: (stars: string | null) =>
         set({ modalReviewFilterSelect: stars }),
-    setModalFilterSelected: (selected: boolean) =>
-        set({ modalFilterSelected: selected }),
 }));
 
 export default useModalFilter;

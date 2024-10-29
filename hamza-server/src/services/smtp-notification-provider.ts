@@ -1,5 +1,6 @@
 import {
     AbstractNotificationService,
+    CartService,
     Logger,
     OrderService,
 } from '@medusajs/medusa';
@@ -7,17 +8,23 @@ import NotificationDataService from './notification-data-handler';
 import SmtpMailService from './smtp-mail';
 import ordersDataParser from '../utils/notification/order-data-handler';
 import { createLogger, ILogger } from '../utils/logging/logger';
+import CustomerNotificationSerivce from './customer-notification';
 
 class SmtpNotificationService extends AbstractNotificationService {
     static identifier = 'smtp-notification';
-    notificationDataService: NotificationDataService;
-    smtpMailService: SmtpMailService;
-    logger: ILogger;
-    orderService_: OrderService;
+    private notificationDataService: NotificationDataService;
+    private customerNotificationService_: CustomerNotificationSerivce;
+    private cartService_: CartService;
+    private smtpMailService: SmtpMailService;
+    private logger: ILogger;
+    private orderService_: OrderService;
 
     constructor(container) {
         super(container);
         this.notificationDataService = new NotificationDataService(container);
+        this.customerNotificationService_ =
+            container.customerNotificationService;
+        this.cartService_ = container.cartService;
         this.smtpMailService = new SmtpMailService();
         this.logger = createLogger(container, 'SmtpNotificationService');
         this.orderService_ = container.orderService;
@@ -34,7 +41,17 @@ class SmtpNotificationService extends AbstractNotificationService {
     }> {
         switch (event) {
             case 'order.placed':
-                if (this.logger) console.log('sending email to ', data);
+                const customerId = data.customerId;
+                if (
+                    !this.customerNotificationService_.hasNotifications(
+                        customerId,
+                        ['email', 'orderStatusChanged']
+                    )
+                ) {
+                    return;
+                }
+
+                this.logger.info(`sending email to ${JSON.stringify(data)}`);
 
                 let ordersData = await Promise.all(
                     data.orderIds.map(async (orderId: string) => {
@@ -72,21 +89,26 @@ class SmtpNotificationService extends AbstractNotificationService {
                 );
 
                 let parsedOrdersData = ordersDataParser(ordersData);
-                if (
-                    ordersData[0].customer &&
-                    ordersData[0].customer.is_verified == true
-                ) {
+                const customer = ordersData[0]?.customer;
+                const cart = await this.cartService_.retrieve(
+                    ordersData[0]?.cart_id
+                );
+
+                const toEmail = customer?.is_verified
+                    ? customer.email
+                    : cart?.email;
+                this.logger.info(`sending email to recipient ${toEmail}`);
+
+                if (toEmail) {
                     await this.smtpMailService.sendMail({
                         from: process.env.SMTP_FROM,
-                        subject: 'Order Placed',
+                        subject: 'Order Placed on Hamza.market',
                         mailData: parsedOrdersData,
-                        to:
-                            ordersData[0].customer &&
-                            ordersData[0].customer.email,
+                        to: toEmail,
                         templateName: 'order-placed',
                     });
                     return {
-                        to: ordersData[0].customer.email,
+                        to: toEmail,
                         status: 'success',
                         data: data,
                     };

@@ -11,11 +11,11 @@ export const metadata: Metadata = {
 
 export default async function OverviewTemplate() {
     const customer = await getHamzaCustomer().catch(() => null);
-    const orders = (await listCustomerOrders().catch(() => null)) || null;
+
     if (!customer) {
         notFound();
     }
-    redirect('/account/profile');
+    // redirect('/account/profile');
 
     return <></>;
 }

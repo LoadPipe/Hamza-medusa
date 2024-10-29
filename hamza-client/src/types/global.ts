@@ -1,53 +1,61 @@
-import { Cart, ProductCategory, ProductVariant, Region } from "@medusajs/medusa"
-import { PricedProduct } from "@medusajs/medusa/dist/types/pricing"
-import { ProductCollection } from "@medusajs/product"
+import {
+    Cart,
+    ProductCategory,
+    ProductVariant,
+    Region,
+} from '@medusajs/medusa';
+import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
+import { ProductCollection } from '@medusajs/product';
 
 export type FeaturedProduct = {
-  id: string
-  title: string
-  handle: string
-  thumbnail?: string
-}
+    id: string;
+    title: string;
+    handle: string;
+    thumbnail?: string;
+};
 
 export type ProductPreviewType = {
-  id: string
-  title: string
-  handle: string | null
-  thumbnail: string | null
-  created_at?: Date
-  prices?: { currency_code: string, amount: number }[]
-  isFeatured?: boolean
-}
+    id: string;
+    title: string;
+    handle: string | null;
+    thumbnail: string | null;
+    created_at?: Date;
+    prices?: { currency_code: string; amount: number }[];
+    isFeatured?: boolean;
+};
 
 export type ProductCollectionWithPreviews = Omit<
-  ProductCollection,
-  "products"
+    ProductCollection,
+    'products'
 > & {
-  products: ProductPreviewType[]
-}
+    products: ProductPreviewType[];
+};
 
 export type InfiniteProductPage = {
-  response: {
-    products: PricedProduct[]
-    count: number
-  }
-}
+    response: {
+        products: PricedProduct[];
+        count: number;
+    };
+};
 
-export type ProductVariantInfo = Pick<ProductVariant, "prices">
+export type ProductVariantInfo = Pick<ProductVariant, 'prices'>;
 
-export type RegionInfo = Pick<Region, "currency_code" | "tax_code" | "tax_rate">
+export type RegionInfo = Pick<
+    Region,
+    'currency_code' | 'tax_code' | 'tax_rate'
+>;
 
 export type CartWithCheckoutStep = Omit<
-  Cart,
-  "beforeInsert" | "beforeUpdate" | "afterUpdateOrLoad"
+    Cart,
+    'beforeInsert' | 'beforeUpdate' | 'afterUpdateOrLoad'
 > & {
-  checkout_step: "address" | "delivery" | "payment"
-}
+    checkout_step: 'address' | 'review' | 'payment';
+};
 
 export type ProductCategoryWithChildren = Omit<
-  ProductCategory,
-  "category_children"
+    ProductCategory,
+    'category_children'
 > & {
-  category_children: ProductCategory[]
-  category_parent?: ProductCategory
-}
+    category_children: ProductCategory[];
+    category_parent?: ProductCategory;
+};

@@ -37,19 +37,22 @@ export default function NotFound() {
                     We're sorry, the page you requested could not be found.
                     Please go back to the home page
                 </Text>
-                <Flex
-                    mt="1rem"
-                    width={'190px'}
-                    height={'50px'}
-                    backgroundColor={'primary.indigo.900'}
-                    justifyContent={'center'}
-                    alignItems={'center'}
-                    borderRadius={'full'}
+                <a
+                    href="/"
+                    style={{ textDecoration: 'none', color: 'inherit' }}
                 >
-                    <a href="/">
+                    <Flex
+                        mt="1rem"
+                        width={'190px'}
+                        height={'50px'}
+                        backgroundColor={'primary.indigo.900'}
+                        justifyContent={'center'}
+                        alignItems={'center'}
+                        borderRadius={'full'}
+                    >
                         <Text>Go Home</Text>
-                    </a>
-                </Flex>
+                    </Flex>
+                </a>
             </Flex>
         </Flex>
     );

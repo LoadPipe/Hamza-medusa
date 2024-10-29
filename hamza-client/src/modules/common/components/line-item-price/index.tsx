@@ -3,7 +3,7 @@ import { LineItem, Region } from '@medusajs/medusa';
 import { clx } from '@medusajs/ui';
 import Image from 'next/image';
 import { getPercentageDiff } from '@lib/util/get-precentage-diff';
-import { CalculatedVariant } from 'types/medusa';
+import { CalculatedVariant } from '@/types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { Flex, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
@@ -29,13 +29,15 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
         undefined
     );
 
+    // console.log("CART ITEM IS", item);
+
     useEffect(() => {
         const fetchCustomerPreferredCurrency = async () => {
             try {
                 const customer = await getHamzaCustomer().catch(() => null);
                 if (customer) {
                     const response = await axios.get(
-                        'http://localhost:9000/custom/customer/preferred-currency',
+                        `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/customer/preferred-currency`,
                         {
                             params: {
                                 customer_id: customer.id,
@@ -59,7 +61,8 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
 
     useEffect(() => {
         const originalTotal = item.original_total ?? null;
-        const totalItemAmount = item.subtotal ?? null;
+        const totalItemAmount =
+            item.subtotal ?? item.unit_price * item.quantity;
         const discountTotal = item.discount_total ?? null;
         setPrice(totalItemAmount);
         setReducedPrice(reducedPrice);
@@ -99,8 +102,8 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                         <Flex alignItems={'center'}>
                             <Image
                                 className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
-                                src={currencyIcons[currencyCode]}
-                                alt={currencyCode}
+                                src={currencyIcons[currencyCode ?? 'usdc']}
+                                alt={currencyCode ?? 'usdc'}
                             />
                         </Flex>
                         <Text

@@ -23,13 +23,19 @@ type ItemsTemplateProps = {
     items?: Omit<ExtendedLineItem, 'beforeInsert'>[];
     region?: Region;
     currencyCode?: string;
+    cart_id: string;
 };
 
-const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
+const ItemsTemplate = ({
+    items,
+    region,
+    currencyCode,
+    cart_id,
+}: ItemsTemplateProps) => {
     return (
         <Flex
             flexDir={'column'}
-            maxW={'830px'}
+            maxW={items && items.length > 0 ? '830px' : '100%'}
             width={'100%'}
             height={'auto'}
             alignSelf={'self-start'}
@@ -49,12 +55,7 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
                     Product Details
                 </Text>
             </Flex>
-            <Box
-                mt="1rem"
-                maxHeight={{ base: '170px', md: '400px' }}
-                overflow={'hidden'}
-                overflowY={'scroll'}
-            >
+            <Box mt="1rem" minHeight={{ base: '170px', md: '400px' }}>
                 {items && items.length > 0 && region ? (
                     items
                         .sort((a, b) => {
@@ -66,19 +67,24 @@ const ItemsTemplate = ({ items, region, currencyCode }: ItemsTemplateProps) => {
                                     key={item.id}
                                     item={item}
                                     region={region}
+                                    cart_id={cart_id}
                                     currencyCode={currencyCode}
                                 />
                             );
                         })
                 ) : (
-                    <Flex width={'100%'} flexDir={'column'}>
+                    <Flex
+                        width={'100%'}
+                        flexDir={'column'}
+                        justifyContent={'center'}
+                        alignItems={'center'}
+                    >
                         <Divider borderColor="#3E3E3E" borderWidth={'1px'} />
                         <Flex
-                            mt={{ base: '0', md: '1.5rem' }}
+                            mt={{ base: '0', md: '3.5rem' }}
                             maxW={'329px'}
                             height={{ base: '170px', md: '273px' }}
                             width={'100%'}
-                            mx="auto"
                             flexDir={'column'}
                             gap={{ base: 3, md: 30 }}
                             justifyContent={'center'}

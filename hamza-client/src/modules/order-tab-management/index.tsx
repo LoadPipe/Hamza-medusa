@@ -1,7 +1,7 @@
 export const TABS = {
     ALL: 'All Orders',
     PROCESSING: 'Processing',
-    SHIPPED: 'Shipped',
+    SHIPPED: 'In Transit',
     DELIVERED: 'Delivered',
     CANCELLED: 'Cancelled',
     REFUND: 'Refund',

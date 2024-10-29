@@ -20,16 +20,12 @@ type ExtendedLineItem = LineItem & {
 
 const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
     const {
-        subtotal,
-        discount_total,
-        gift_card_total,
         tax_total,
         shipping_total,
-        total,
     } = data;
 
     const { preferred_currency_code } = useCustomerAuthStore();
-    console.log('user preferred currency code: ', preferred_currency_code);
+    //console.log('user preferred currency code: ', preferred_currency_code);
 
     //TODO: this can be replaced later by extending the cart, if necessary
     const getCartSubtotals = (cart: any) => {
@@ -76,16 +72,16 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                             <Flex>
                                 <Image
                                     className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                                    src={currencyIcons[currencyCode]}
-                                    alt={currencyCode}
+                                    src={currencyIcons[currencyCode ?? 'usdc']}
+                                    alt={currencyCode ?? 'usdc'}
                                 />
                                 <Text
                                     ml="0.4rem"
                                     fontSize={{ base: '14px', md: '16px' }}
                                 >
                                     {formatCryptoPrice(
-                                        subtotals[currencyCode],
-                                        currencyCode
+                                        subtotals[currencyCode ?? 'usdc'],
+                                        currencyCode ?? 'usdc'
                                     )}
                                 </Text>
                             </Flex>
@@ -104,17 +100,17 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                     </Flex>
                 </Flex>
 
-                {/* Shipping Cost */}
+                {/* Shipping Fee */}
                 <Flex color="#555555" justifyContent={'space-between'}>
                     <Text fontSize={{ base: '14px', md: '16px' }}>
-                        Shipping Cost
+                        Shipping Fee
                     </Text>
 
                     <Flex>
                         <Image
                             className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                            src={currencyIcons[currencyCode]}
-                            alt={currencyCode}
+                            src={currencyIcons[currencyCode ?? 'usdc']}
+                            alt={currencyCode ?? 'usdc'}
                         />
                         <Text
                             ml="0.4rem"
@@ -135,8 +131,8 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                     <Flex>
                         <Image
                             className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                            src={currencyIcons[currencyCode]}
-                            alt={currencyCode}
+                            src={currencyIcons[currencyCode ?? 'usdc']}
+                            alt={currencyCode ?? 'usdc'}
                         />
                         <Text
                             ml="0.4rem"
@@ -160,8 +156,8 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                 <Flex>
                     <Image
                         className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                        src={currencyIcons[currencyCode]}
-                        alt={currencyCode}
+                        src={currencyIcons[currencyCode ?? 'usdc']}
+                        alt={currencyCode ?? 'usdc'}
                     />
                     <Text ml="0.4rem">
                         {formatCryptoPrice(grandTotal, currencyCode)}

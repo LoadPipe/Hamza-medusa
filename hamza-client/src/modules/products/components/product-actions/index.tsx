@@ -41,14 +41,12 @@ export default function ProductActions({
     const [options, setOptions] = useState<Record<string, string>>({});
     const [isAdding, setIsAdding] = useState(false);
     const [buyNowLoader, setBuyNowLoader] = useState(false);
-    const { addWishlistItemMutation, removeWishlistItemMutation } =
-        useWishlistMutations();
     const [inventoryCount, setInventoryCount] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     let countryCode = useParams().countryCode as string;
-    if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY)
-        countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY;
+    if (process.env.NEXT_PUBLIC_FORCE_COUNTRY)
+        countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY;
     const { whitelist_config, authData } = useCustomerAuthStore();
     const [isWhitelisted, setIsWhitelisted] = useState(false);
     const { wishlist } = useWishlistStore();
@@ -155,11 +153,11 @@ export default function ProductActions({
             variantId: variant.id,
             quantity: 1,
             countryCode: countryCode,
-            currencyCode: 'eth', //variant.prices[0].currency_code,
         });
         setIsAdding(false);
     };
 
+    //TODO: is this used, and why is eth hard-coded?
     //Add to card and buy now
     //FYI: If user clicks buy now and then navigates back to the product preview and clicks again it will increase quanitity again
     const handleBuyNow = async () => {
@@ -169,30 +167,9 @@ export default function ProductActions({
             variantId: variant.id,
             quantity: 1,
             countryCode: countryCode,
-            currencyCode: 'eth', //variant.prices[0].currency_code,
         });
         setBuyNowLoader(false);
     };
-
-    // add product to wishlist-dropdown
-    // const toggleWishlist = async () => {
-    //     // console.log('toggle wishlist-dropdown item', product);
-    //     wishlist.products.find((a) => a.id == product.id)
-    //         ? removeWishlistItemMutation.mutate({
-    //               id: product.id!,
-    //               description: product.description!,
-    //               handle: product.handle!,
-    //               thumbnail: product.thumbnail!,
-    //               title: product.title!,
-    //           })
-    //         : addWishlistItemMutation.mutate({
-    //               id: product.id!,
-    //               description: product.description!,
-    //               handle: product.handle!,
-    //               thumbnail: product.thumbnail!,
-    //               title: product.title!,
-    //           });
-    // };
 
     const whitelistedProductHandler = async () => {
         //TODO: MOVE TO INDEX.TS
@@ -202,7 +179,7 @@ export default function ProductActions({
         if (data.status == true) {
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                whitelist_config.whitelisted_stores.includes(data.data)
+                    whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -271,10 +248,10 @@ export default function ProductActions({
                     {!variant
                         ? 'Select variant'
                         : !inStock && isWhitelisted
-                          ? 'Add to Cart'
-                          : inStock
                             ? 'Add to Cart'
-                            : 'Out of Stock'}
+                            : inStock
+                                ? 'Add to Cart'
+                                : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs">

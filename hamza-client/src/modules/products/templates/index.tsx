@@ -9,17 +9,19 @@ import LocalizedClientLink from '@modules/common/components/localized-client-lin
 // import ProductInfo from '@modules/products/templates/product-info';
 import { notFound } from 'next/navigation';
 import { Box, Flex, Divider, Text } from '@chakra-ui/react';
-import PreviewGallery from '../components/product-preview/components/preview-gallery';
-import ProductInfo from '../components/product-preview/components/product-info';
-import PreviewCheckout from '../components/product-preview/components/preview-checkout';
+import PreviewGallery from '../components/product-preview/components/image-gallery/image-display/preview-gallery';
+import ProductInfo from '../components/product-preview/components/product-info/product-info';
+import PreviewCheckout from '../components/product-preview/components/summary/preview-checkout';
 import ProductReview from '../components/product-preview/components/product-review';
 import ProductReviewMobile from '../components/product-preview/components/product-review-mobile';
 import useProductPreview from '@store/product-preview/product-preview';
-import StoreBanner from '../components/product-preview/components/store-banner';
+import StoreBanner from '../components/product-preview/components/store-banner/store-banner';
 import SearchBar from '../components/product-preview/components/mobile-search';
 import Tweet from '@/components/tweet';
 import { MdChevronLeft } from 'react-icons/md';
 import { getStore } from '@lib/data';
+import { BiBorderRadius } from 'react-icons/bi';
+import { FaArrowLeftLong } from 'react-icons/fa6';
 
 type ProductTemplateProps = {
     product: PricedProduct;
@@ -42,6 +44,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
 
     const [store, setStore] = useState('');
     const [icon, setIcon] = useState('');
+    const [selectedVariantImage, setSelectedVariantImage] = useState('');
 
     // Only update product data when `product` changes
     useEffect(() => {
@@ -91,128 +94,111 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
     return (
         <Flex
             flexDirection="column"
-            justifyContent="center"
-            alignItems="center"
-            mx="1rem"
+            justifyContent={'center'}
+            alignItems={'center'}
+            maxW="1280px"
+            width={'100vw'}
+            mx="auto"
         >
             <Flex
-                mt="1rem"
-                mb="-1rem"
-                maxWidth="1280px"
-                height={'52px'}
-                width="100%"
-                flexDirection={'row'}
+                maxW="1280px"
+                width={'calc(100% - 2rem)'}
+                mx="rem"
+                flexDirection="column"
             >
-                <LocalizedClientLink href="/shop">
-                    <Flex
-                        ml="-0.5rem"
-                        height={'52px'}
-                        flexDirection={'row'}
-                        justifyContent={'center'}
-                        alignItems={'center'}
-                        mt={'auto'}
-                        color="white"
-                        _hover={{
-                            color: 'primary.green.900',
-                            transition: 'color 0.2s ease-in-out',
+                <Flex
+                    mt={{ base: '0', md: '1rem' }}
+                    mb="-1rem"
+                    height={'52px'}
+                    width="100%"
+                    flexDirection={'row'}
+                    display={{ base: 'none', md: 'flex' }}
+                >
+                    <LocalizedClientLink
+                        style={{
+                            display: 'flex',
+                            backgroundColor: '#121212',
+                            alignItems: 'center',
+                            padding: '0 16px',
+                            color: 'white',
+                            justifyContent: 'center',
+                            borderColor: '#3E3E3E',
+                            borderWidth: '1px',
+                            borderRadius: '16px',
+                            height: '52px',
                         }}
+                        className="ml-auto"
                     >
-                        <Flex
-                            alignSelf={'center'}
-                            flexDirection={'row'}
-                            my="auto"
-                        >
-                            <MdChevronLeft size={40} />
-                            <Text
+                        <Flex width={'30px'} height={'40px'}>
+                            <Flex
+                                width={'20px'}
+                                height={'20px'}
                                 alignSelf={'center'}
-                                display={{ base: 'none', md: 'block' }}
                             >
-                                Back to products
-                            </Text>
+                                <FaArrowLeftLong
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        alignSelf: 'center',
+                                    }}
+                                />
+                            </Flex>
                         </Flex>
-                    </Flex>
-                </LocalizedClientLink>
-
-                <SearchBar />
-            </Flex>
-            <Flex mt="2rem" mb={{ base: '-1rem', md: '0' }}>
-                <PreviewGallery />
-            </Flex>
-            <Flex
-                maxWidth="1280px"
-                width="100%"
-                my="2rem"
-                gap="26px"
-                justifyContent="center"
-                flexDirection={{ base: 'column', md: 'row' }}
-            >
-                <Flex flex="1" order={{ base: 2, md: 1 }}>
-                    <Flex flexDirection="column">
-                        <ProductInfo />
-                        <Box mt="1.5rem">
-                            <Tweet
-                                productHandle={product.handle as string}
-                                isPurchased={false}
-                            />
-                        </Box>
-                    </Flex>
+                        <Text>Back to results</Text>
+                    </LocalizedClientLink>
                 </Flex>
                 <Flex
-                    maxW={{ base: '100%', md: '504px' }}
-                    width="100%"
-                    flex="0 0 auto"
-                    justifyContent="center"
-                    order={{ base: 1, md: 2 }}
-                    alignSelf="flex-start"
+                    mt={{ base: '1rem', md: '2rem' }}
+                    mb={{ base: '-1rem', md: '0' }}
                 >
-                    <PreviewCheckout productId={product.id as string} />
+                    <PreviewGallery
+                        selectedVariantImage={selectedVariantImage}
+                    />
                 </Flex>
+                <Flex
+                    maxWidth="1280px"
+                    width="100%"
+                    my="2rem"
+                    gap="26px"
+                    justifyContent="center"
+                    flexDirection={{ base: 'column', md: 'row' }}
+                >
+                    <Flex flex="1" order={{ base: 2, md: 1 }}>
+                        <Flex flexDirection="column">
+                            <ProductInfo />
+                            <Box mt="1.5rem">
+                                <Tweet
+                                    productHandle={product.handle as string}
+                                    isPurchased={false}
+                                />
+                            </Box>
+                        </Flex>
+                    </Flex>
+                    <Flex
+                        maxW={{ base: '100%', md: '504px' }}
+                        width="100%"
+                        flex="0 0 auto"
+                        justifyContent="center"
+                        order={{ base: 1, md: 2 }}
+                        alignSelf="flex-start"
+                    >
+                        <PreviewCheckout
+                            selectedVariantImage={selectedVariantImage}
+                            setSelectedVariantImage={setSelectedVariantImage}
+                            productId={product.id as string}
+                        />
+                    </Flex>
+                </Flex>
+                <StoreBanner store={store} icon={icon} />
+                <Divider
+                    color="#555555"
+                    display={{ base: 'block', md: 'none' }}
+                    mt="2rem"
+                />
+                <ProductReview />
             </Flex>
-            <StoreBanner store={store} icon={icon} />
-            <Divider
-                color="#555555"
-                display={{ base: 'block', md: 'none' }}
-                mt="2rem"
-            />
-            <ProductReview productId={product.id as string} />
         </Flex>
     );
 };
 
 export default ProductTemplate;
-
-{
-    /* <div className="content-container flex flex-col small:flex-row small:items-start py-6 relative bg-black">
-<div className="flex flex-col small:sticky small:top-48 small:py-0 small:max-w-[300px] w-full py-8 gap-y-6">
-    <ProductInfo product={product} />
-    <ProductTabs product={product} />
-</div>
-<div className="block w-full relative">
-    <ImageGallery images={product?.images || []} />
-</div>
-<div className="flex flex-col small:sticky small:top-48 small:py-0 small:max-w-[300px] w-full py-8 gap-y-12">
-    <ProductOnboardingCta />
-    <Suspense
-        fallback={
-            <ProductActions product={product} region={region} />
-        }
-    >
-        <ProductActionsWrapper
-            id={product.id}
-            region={region}
-        />
-    </Suspense>
-</div>
-</div>
-<div className="content-container py-16 small:py-32 bg-black">
-<ProductReview product={product} countryCode={countryCode} />
-</div>
-<div className="content-container py-16 small:py-32 bg-black">
-<Suspense fallback={<SkeletonRelatedProducts />}>
-    <RelatedProducts
-        product={product}
-        countryCode={countryCode}
-    />
-</Suspense>
-</div> */
-}

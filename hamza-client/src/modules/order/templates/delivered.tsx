@@ -1,115 +1,249 @@
-import React, { useEffect, useState } from 'react';
-import { getSingleBucket } from '@lib/data';
-import { Box } from '@chakra-ui/react';
-
+import { Box, Divider, Text, Flex, Button } from '@chakra-ui/react';
+import Spinner from '@modules/common/icons/spinner';
+import { addToCart } from '@modules/cart/actions';
+import toast from 'react-hot-toast';
 import DeliveredCard from '@modules/account/components/delivered-card';
 import EmptyState from '@modules/order/components/empty-state';
-import { formatCryptoPrice } from '@lib/util/get-product-price';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import React, { useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
+import OrderTotalAmount from '@modules/order/templates/order-total-amount';
+import { OrdersData } from './all';
+import { useOrderTabStore } from '@store/order-tab-state';
+import Link from 'next/link';
 
 const Delivered = ({
-    orders,
+    customer,
     isEmpty,
 }: {
-    orders: any[];
+    customer: string;
     isEmpty?: boolean;
 }) => {
-    const [customerOrder, setCustomerOrder] = useState<any[]>([]);
-    const [customerId, setCustomerId] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
+    let countryCode = useParams().countryCode as string;
+    if (process.env.NEXT_PUBLIC_FORCE_COUNTRY)
+        countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY;
 
-    // console.log(`ORDERS ARE ${JSON.stringify(orders)}`);
-    useEffect(() => {
-        // console.log('Orders received in Cancelled:', orders);
-        if (orders && orders.length > 0) {
-            const customer_id = orders[0]?.customer_id;
-            // console.log(
-            //     `Running fetchAllOrders with customerID ${customer_id}`
-            // );
-            fetchAllOrders(customer_id);
-            setCustomerId(customer_id);
-        }
-    }, [orders]);
+    const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
+    const queryClient = useQueryClient();
 
-    const getAmount = (
-        amount?: number | null,
-        currency_code?: string | null
-    ) => {
-        if (amount === null || amount === undefined) {
-            return;
-        }
+    const { data, isLoading, isError, refetch, isStale } = useQuery<OrdersData>(
+        ['batchOrders']
+    );
 
-        return formatCryptoPrice(amount, currency_code || 'USDC');
-    };
+    const deliveredOrder = data?.Delivered || [];
 
-    const fetchAllOrders = async (customerId: string) => {
-        setIsLoading(true);
+    //TODO: Refactor to a mutation
+    const handleReorder = async (item: any, country_code: string) => {
         try {
-            const bucket = await getSingleBucket(customerId, 3);
-
-            if (bucket === undefined || bucket === null) {
-                console.error('Bucket is undefined or null');
-                setCustomerOrder([]); // Set empty state
-                setIsLoading(false);
-                return;
-            }
-
-            if (Array.isArray(bucket)) {
-                setCustomerOrder(bucket);
-            } else {
-                console.error('Expected an array but got:', bucket);
-                setCustomerOrder([]);
-            }
-        } catch (error) {
-            console.error('Error fetching processing orders:', error);
-            setCustomerOrder([]);
+            // console.log(item.variant_id, item.quantity, country_code);
+            await addToCart({
+                variantId: item.variant_id,
+                countryCode: country_code,
+                quantity: item.quantity,
+            });
+        } catch (e) {
+            toast.error(`Product with name ${item.title} could not be added`);
         }
-        setIsLoading(false);
+
+        router.push('/checkout');
     };
 
-    if (isEmpty && customerOrder && customerOrder?.length == 0) {
+    // manually trigger a refetch if its stale
+    useEffect(() => {
+        const retryFetch = async () => {
+            if (isStale && deliveredOrder == undefined) {
+                for (let i = 0; i < 3; i++) {
+                    if (deliveredOrder == undefined) {
+                        queryClient.resetQueries(['fetchDeliveredOrder']);
+                        queryClient.invalidateQueries(['fetchDeliveredOrder']);
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, 100)
+                        );
+                    }
+                }
+            }
+        };
+        retryFetch();
+    }, [isStale]);
+
+    if (isEmpty && deliveredOrder && deliveredOrder?.length == 0) {
         return <EmptyState />;
     }
 
     return (
-        <div>
-            {/* Processing-specific content */}
-            {customerOrder && customerOrder.length > 0 ? (
-                <>
-                    <h1>Delivered Orders</h1>
+        <div style={{ width: '100%' }}>
+            {isLoading ? (
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    textAlign="center"
+                    py={5}
+                >
+                    <Text color="white" fontSize="lg" mb={8}>
+                        Loading Delivered orders...
+                    </Text>
+                    <Spinner size={80} />
+                </Box>
+            ) : isError && orderActiveTab !== 'All Orders' ? (
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    textAlign="center"
+                    py={5}
+                >
+                    <Text color="red.500" fontSize="lg" mb={8}>
+                        Error fetching delivered orders.
+                    </Text>
+                </Box>
+            ) : deliveredOrder && deliveredOrder.length > 0 ? (
+                <Flex width={'100%'} flexDirection="column">
+                    {deliveredOrder.map((order: any) => {
+                        const totalPrice = order.items.reduce(
+                            (acc: number, item: any) =>
+                                acc + item.unit_price * item.quantity,
+                            0
+                        );
+                        return (
+                            <Flex
+                                key={order.id}
+                                direction="column"
+                                width="100%"
+                            >
+                                {order.items?.map(
+                                    (item: any, index: number) => (
+                                        <div key={item.id}>
+                                            {index === 0 ? (
+                                                <DynamicOrderStatus
+                                                    paymentStatus={
+                                                        order.payment_status
+                                                    }
+                                                    paymentType={'Delivered'}
+                                                />
+                                            ) : null}
+                                            <DeliveredCard
+                                                key={item.id}
+                                                order={item}
+                                                storeName={order.store.name}
+                                                icon={order.store.icon}
+                                                handle={
+                                                    item.variant?.product
+                                                        ?.handle || 'N/A'
+                                                }
+                                            />
+                                            <Flex
+                                                direction={{
+                                                    base: 'column',
+                                                    md: 'row',
+                                                }}
+                                                justifyContent={{
+                                                    base: 'flex-start',
+                                                    md: 'space-between',
+                                                }}
+                                                alignItems={{
+                                                    base: 'flex-start',
+                                                    md: 'center',
+                                                }}
+                                                mb={5}
+                                            >
+                                                <OrderTotalAmount
+                                                    totalPrice={totalPrice}
+                                                    currencyCode={
+                                                        item.currency_code
+                                                    }
+                                                    index={index}
+                                                    itemCount={
+                                                        order.items.length - 1
+                                                    }
+                                                />
+                                                <Flex
+                                                    direction={{
+                                                        base: 'column',
+                                                        md: 'row',
+                                                    }}
+                                                    justifyContent={'flex-end'}
+                                                    mt={{ base: 4, md: 0 }}
+                                                    width="100%"
+                                                >
+                                                    <Button
+                                                        variant="outline"
+                                                        colorScheme="white"
+                                                        borderRadius={'37px'}
+                                                        ml={{
+                                                            base: 0,
+                                                            md: 2,
+                                                        }}
+                                                        mt={{
+                                                            base: 2,
+                                                            md: 0,
+                                                        }}
+                                                        width={{
+                                                            base: '100%',
+                                                            md: 'auto',
+                                                        }}
+                                                        onClick={() =>
+                                                            handleReorder(
+                                                                item,
+                                                                order
+                                                                    .shipping_address
+                                                                    .country_code
+                                                            )
+                                                        }
+                                                    >
+                                                        Buy Again
+                                                    </Button>
+                                                    <Link
+                                                        href="https://support.hamza.market/help/1568263160"
+                                                        target="_blank"
+                                                    >
+                                                        <Button
+                                                            variant="outline"
+                                                            colorScheme="white"
+                                                            borderRadius={
+                                                                '37px'
+                                                            }
+                                                            ml={{
+                                                                base: 0,
+                                                                md: 2,
+                                                            }}
+                                                            mt={{
+                                                                base: 2,
+                                                                md: 0,
+                                                            }}
+                                                            width={{
+                                                                base: '100%',
+                                                                md: 'auto',
+                                                            }}
+                                                        >
+                                                            Return/Refund
+                                                        </Button>
+                                                    </Link>
+                                                </Flex >
+                                            </Flex >
+                                        </div >
+                                    )
+                                )}
 
-                    {customerOrder.map((order) => (
-                        <div
-                            key={order.id} // Changed from cart_id to id since it's more reliable and unique
-                            className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
-                        >
-                            {order.items?.map(
-                                (
-                                    item: any // Adjusting the map to the correct path
-                                ) => (
-                                    <Box
-                                        key={item.id}
-                                        bg="rgba(39, 39, 39, 0.3)"
-                                        p={4}
-                                        m={2}
-                                        rounded="lg"
-                                    >
-                                        {/*item: {item.id} <br />*/}
-                                        <DeliveredCard
-                                            key={item.id}
-                                            order={item}
-                                            handle={
-                                                item.variant?.product?.handle ||
-                                                'N/A'
-                                            }
-                                        />
-                                    </Box>
-                                )
-                            )}
-                        </div>
-                    ))}
-                </>
+                                <Divider
+                                    width="90%" // Line takes up 90% of the screen width
+                                    borderBottom="0.2px solid"
+                                    borderColor="#D9D9D9"
+                                    pr={'1rem'}
+                                    _last={{
+                                        mb: 8,
+                                    }}
+                                />
+                            </Flex >
+                        );
+                    })}
+                </Flex >
             ) : null}
-        </div>
+        </div >
     );
 };
 

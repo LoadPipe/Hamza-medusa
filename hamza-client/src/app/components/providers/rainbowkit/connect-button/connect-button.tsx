@@ -65,7 +65,10 @@ export const WalletConnectButton = () => {
                                 );
                             }
                             //if (chain && chain.unsupported) {
-                            if (chain && chain.id != getAllowedChainsFromConfig()[0]) {
+                            if (
+                                chain &&
+                                chain.id != getAllowedChainsFromConfig()[0]
+                            ) {
                                 return (
                                     <button
                                         onClick={openChainModal}

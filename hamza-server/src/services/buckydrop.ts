@@ -5,14 +5,15 @@ import {
     Cart,
     OrderStatus,
     FulfillmentStatus,
-    CustomerService
+    CustomerService,
+    PaymentStatus
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
 import OrderService from '../services/order';
 import { BuckyLogRepository } from '../repositories/bucky-log';
 import { Product } from '../models/product';
 import { Order } from '../models/order';
-import { PriceConverter } from '../strategies/price-selection';
+import { PriceConverter } from '../utils/price-conversion';
 import {
     BuckyClient,
     IBuckyShippingCostRequest,
@@ -21,11 +22,15 @@ import {
 import { CreateProductProductVariantInput, CreateProductInput as MedusaCreateProductInput, ProductOptionInput } from '@medusajs/medusa/dist/types/product';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import { createLogger, ILogger } from '../utils/logging/logger';
-import { IsNull, Not, FindManyOptions } from 'typeorm';
+import { IsNull, Not, FindManyOptions, FindOptionsWhere as TypeormFindOptionsWhere, In } from 'typeorm';
 
 type CreateProductInput = MedusaCreateProductInput & {
     store_id: string;
     bucky_metadata?: Record<string, unknown>;
+};
+
+type FindOptionsWhere<Order> = TypeormFindOptionsWhere<Order> & {
+    bucky_metadata?: any;
 };
 
 const SHIPPING_COST_MIN: number = parseInt(
@@ -56,7 +61,10 @@ export default class BuckydropService extends TransactionBaseService {
         this.orderService_ = container.orderService;
         this.customerService_ = container.customerService;
         this.logger = createLogger(container, 'BuckydropService');
-        this.priceConverter = new PriceConverter(this.logger);
+        this.priceConverter = new PriceConverter(
+            this.logger,
+            container.cachedExchangeRateRepository
+        );
         this.buckyLogRepository = container.buckyLogRepository;
         this.buckyClient = new BuckyClient(this.buckyLogRepository);
     }
@@ -161,14 +169,25 @@ export default class BuckydropService extends TransactionBaseService {
 
             if (!cart) throw new Error(`Cart with id ${cartId} not found`);
 
-            if (!cart.customer) {
-                cart.customer = await this.customerService_.retrieve(
-                    cart.customer_id
-                );
+            if (!cart?.items?.length) {
+                return 0;
             }
 
-            currency = cart.customer.preferred_currency_id;
+            //get customer if there is one
+            if (!cart.customer) {
+                if (cart.customer_id?.length) {
+                    cart.customer = await this.customerService_.retrieve(
+                        cart.customer_id
+                    );
+                }
+            }
 
+            //get currency from customer, or cart if there is no customer
+            currency = cart.customer ?
+                cart.customer.preferred_currency_id :
+                cart?.items[0]?.currency_code ?? 'usdc';
+
+            /*
             //calculate prices
             const input: IBuckyShippingCostRequest = {
                 lang: 'en',
@@ -200,37 +219,39 @@ export default class BuckydropService extends TransactionBaseService {
                 }
             }
 
-            if (subtotal > 0) {
-                const estimate =
-                    await this.buckyClient.getShippingCostEstimate(input);
+            //if (subtotal > 0) {
+            /*
+            const estimate =
+                await this.buckyClient.getShippingCostEstimate(input);
 
-                //convert to usd first
-                if (estimate?.data?.total) {
-                    output = await this.priceConverter.convertPrice(
-                        estimate.data.total,
-                        'cny',
-                        'usdc'
-                    );
-                    gotPrice = true;
-                }
-
-                output = subtotal;
-                output =
-                    output < SHIPPING_COST_MIN ? SHIPPING_COST_MIN : output;
-                output =
-                    output > SHIPPING_COST_MAX ? SHIPPING_COST_MAX : output;
-
-                //convert to final currency
-                if (currency != 'usdc')
-                    output = await this.priceConverter.convertPrice(
-                        estimate.data.total,
-                        'usdc',
-                        currency
-                    );
+            //convert to usd first
+            if (estimate?.data?.total) {
+                output = await this.priceConverter.convertPrice(
+                    estimate.data.total,
+                    'cny',
+                    'usdc'
+                );
+                gotPrice = true;
             }
+            */
+
+            output = SHIPPING_COST_MAX; // subtotal;
+            output =
+                output < SHIPPING_COST_MIN ? SHIPPING_COST_MIN : output;
+            output =
+                output > SHIPPING_COST_MAX ? SHIPPING_COST_MAX : output;
+
+            //convert to final currency
+            if (currency != 'usdc')
+                output = await this.priceConverter.convertPrice(
+                    output, //estimate.data.total,
+                    'usdc',
+                    currency
+                );
+            // }
 
             //if price was not yet converted, or nothing came back, do it now
-            if (!gotPrice) {
+            /*if (!gotPrice) {
                 //this needs to be converted to USDC in order to compare
                 if (output <= 0 && subtotal > 0) {
                     subtotal = await this.priceConverter.convertPrice(
@@ -253,6 +274,7 @@ export default class BuckydropService extends TransactionBaseService {
                     currency
                 );
             }
+            */
         } catch (e) {
             this.logger.error(
                 `Error calculating shipping costs in BuckydropService`,
@@ -262,13 +284,6 @@ export default class BuckydropService extends TransactionBaseService {
         }
 
         return output;
-    }
-
-    async calculateShippingPriceForProduct(
-        cart: Cart,
-        product: Product
-    ): Promise<number> {
-        return 0;
     }
 
     async processPendingOrder(orderId: string): Promise<Order> {
@@ -317,7 +332,7 @@ export default class BuckydropService extends TransactionBaseService {
                 province: cart.billing_address.province ?? '',
                 city: cart.billing_address.city ?? '',
                 detailAddress:
-                    `${cart.billing_address.address_1 ?? ''} ${cart.billing_address.address_2 ?? ''}`.trim(),
+                    `${cart.billing_address.address_1 ?? ''}{' '}${cart.billing_address.address_2 ?? ''}`.trim(),
                 postCode: cart.billing_address.postal_code,
                 contactName:
                     `${cart.billing_address.first_name ?? ''} ${cart.billing_address.last_name ?? ''}`.trim(),
@@ -332,7 +347,10 @@ export default class BuckydropService extends TransactionBaseService {
 
             //save the output
             order.bucky_metadata = output;
+
+            order.status = (output?.success) ? OrderStatus.PENDING : OrderStatus.REQUIRES_ACTION;
             await this.orderRepository_.save(order);
+
             this.logger.info(`Saved order ${orderId}`);
         } else {
             this.logger.warn(
@@ -346,10 +364,10 @@ export default class BuckydropService extends TransactionBaseService {
     async reconcileOrderStatus(orderId: string): Promise<Order> {
         try {
             //get order & metadata
-            const order: Order = await this.orderService_.retrieve(orderId);
+            let order: Order = await this.orderService_.retrieve(orderId);
             const buckyData: any = order.bucky_metadata;
 
-            if (order && buckyData) {
+            if (order && (buckyData?.data?.shopOrderNo || buckyData?.shopOrderNo)) {
                 //get order details from buckydrop
                 const orderDetail = await this.buckyClient.getOrderDetails(
                     buckyData.data.shopOrderNo ?? buckyData.shopOrderNo
@@ -359,83 +377,81 @@ export default class BuckydropService extends TransactionBaseService {
                 if (orderDetail) {
                     const status =
                         orderDetail?.data?.poOrderList[0]?.orderStatus;
-                    if (status) {
-                        //translate the status
-                        switch (parseInt(status)) {
-                            case 0:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.NOT_FULFILLED;
-                                break;
-                            case 1:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.NOT_FULFILLED;
-                                break;
-                            case 2:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.NOT_FULFILLED;
-                                break;
-                            case 3:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.NOT_FULFILLED;
-                                break;
-                            case 4:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.NOT_FULFILLED;
-                                break;
-                            case 5:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.NOT_FULFILLED;
-                                break;
-                            case 6:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.SHIPPED;
-                                break;
-                            case 7:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.SHIPPED;
-                                break;
-                            case 8:
-                                order.status = OrderStatus.CANCELED;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.CANCELED;
-                                break;
-                            case 9:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.SHIPPED;
-                                break;
-                            case 10:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.SHIPPED;
-                                break;
-                            case 11:
-                                order.status = OrderStatus.PENDING;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.SHIPPED;
-                                break;
-                            case 10:
-                                order.status = OrderStatus.COMPLETED;
-                                order.fulfillment_status =
-                                    FulfillmentStatus.FULFILLED;
-                                break;
-                        }
-                    }
 
                     //save the tracking data
                     buckyData.tracking = orderDetail;
                     order.bucky_metadata = buckyData;
 
-                    //save the order
-                    await this.orderRepository_.save(order);
+                    if (status) {
+                        //translate the status
+                        switch (parseInt(status)) {
+                            case 0:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED, null, orderDetail
+                                );
+                                break;
+                            case 1:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED, null, orderDetail
+                                );
+                                break;
+                            case 2:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED, null, orderDetail
+                                );
+                                break;
+                            case 3:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED, null, orderDetail
+                                );
+                                break;
+                            case 4:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED, null, orderDetail
+                                );
+                                break;
+                            case 5:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.NOT_FULFILLED, null, orderDetail
+                                );
+                                break;
+                            case 6:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED, null, orderDetail
+                                );
+                                break;
+                            case 7:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED, null, orderDetail
+                                );
+                                break;
+                            case 8:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.CANCELED, FulfillmentStatus.CANCELED, null, orderDetail
+                                );
+                                break;
+                            case 9:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED, null, orderDetail
+                                );
+                                break;
+                            case 10:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED, null, orderDetail
+                                );
+                                break;
+                            case 11:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.PENDING, FulfillmentStatus.SHIPPED, null, orderDetail
+                                );
+                                break;
+                            case 10:
+                                order = await this.orderService_.setOrderStatus(
+                                    order, OrderStatus.COMPLETED, FulfillmentStatus.FULFILLED, null, orderDetail
+                                );
+                                break;
+                        }
+                    }
                 }
             }
 
@@ -520,16 +536,67 @@ export default class BuckydropService extends TransactionBaseService {
         }
     }
 
-    async getPendingOrders(): Promise<Order[]> {
+    async getOrdersToVerify(): Promise<Order[]> {
+        const where: FindOptionsWhere<Order> = {
+            bucky_metadata: Not(IsNull()),
+            status: OrderStatus.PENDING,
+
+            payment_status: PaymentStatus.AWAITING,
+            fulfillment_status: FulfillmentStatus.NOT_FULFILLED,
+        };
+
+        let orders: Order[] = await this.orderRepository_.find({
+            where: where
+        });
+
+        orders = orders?.filter(o => {
+            const tzOffset = o.updated_at.getTimezoneOffset();
+            console.log('timezone offset', tzOffset);
+            const localDate = new Date(o.updated_at.getTime() - tzOffset * 60000);
+
+            //order must be at least two hours old
+            return Math.floor(localDate.getTime() / 1000) < (
+                Math.floor(Date.now() / 1000) - (
+                    60 * parseInt(process.env.VERIFY_ORDER_PAYMENT_DELAY_MINUTES ?? '120')
+                )
+            );
+        }) ?? [];
+
+        orders = orders?.filter((o) => o.bucky_metadata?.status === 'pending') ?? [];
+
+        return orders;
+    }
+
+    async getOrdersToProcess(): Promise<Order[]> {
         const options: FindManyOptions<Order> = {
             where: {
                 status: OrderStatus.PENDING,
+                payment_status: PaymentStatus.CAPTURED,
+                fulfillment_status: FulfillmentStatus.NOT_FULFILLED,
                 bucky_metadata: Not(IsNull()),
             },
         };
         const orders: Order[] = await this.orderRepository_.find(options);
         return (
             orders?.filter((o) => o.bucky_metadata?.status === 'pending') ?? []
+        );
+    }
+
+    async getOrdersToTrack(): Promise<Order[]> {
+        const options: FindManyOptions<Order> = {
+            where: {
+                status: OrderStatus.PENDING,
+                payment_status: PaymentStatus.CAPTURED,
+                fulfillment_status: Not(In([
+                    FulfillmentStatus.CANCELED,
+                    FulfillmentStatus.RETURNED
+                ])),
+                bucky_metadata: Not(IsNull()),
+            },
+        };
+        const orders: Order[] = await this.orderRepository_.find(options);
+        return (
+            orders?.filter((o) => o.bucky_metadata?.status !== 'pending') ?? []
         );
     }
 
@@ -672,6 +739,14 @@ export default class BuckydropService extends TransactionBaseService {
 
             const optionNames = this.getUniqueProductOptionNames(productDetails);
             const tagName = productDetails.data.goodsCatName;
+            const variants = await this.mapVariants(productDetails, optionNames);
+
+            //add variant images to the main product images
+            const images = productDetails?.data?.mainItemImgs ?? [];
+            for (const v of variants) {
+                if (v.metadata?.imgUrl && !images.find(i => i === v.metadata.imgUrl))
+                    images.push(v.metadata.imgUrl);
+            }
 
             const output = {
                 title: item?.goodsName ?? productDetails?.data?.goodsName,
@@ -682,7 +757,7 @@ export default class BuckydropService extends TransactionBaseService {
                 status: status as ProductStatus,
                 thumbnail:
                     item?.picUrl ?? productDetails?.data?.mainItemImgs[0],
-                images: productDetails?.data?.mainItemImgs,
+                images,
                 collection_id: collectionId,
                 weight: Math.round(item?.weight ?? 100),
                 discountable: true,
@@ -696,7 +771,7 @@ export default class BuckydropService extends TransactionBaseService {
                     [],
                 bucky_metadata: metadata,
                 options: optionNames.map(o => { return { title: o } }),
-                variants: await this.mapVariants(productDetails, optionNames),
+                variants,
             };
 
             if (!output.variants?.length)
@@ -767,7 +842,8 @@ export default class BuckydropService extends TransactionBaseService {
                 inventory_quantity: variant.quantity,
                 allow_backorder: false,
                 manage_inventory: true,
-                bucky_metadata: JSON.stringify({ skuCode: variant.skuCode }),
+                bucky_metadata: variant,
+                metadata: { imgUrl: variant.imgUrl },
                 prices,
                 options: options
             });

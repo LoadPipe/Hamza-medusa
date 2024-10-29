@@ -1,8 +1,11 @@
 'use client';
-
-import { Order } from '@medusajs/medusa';
-import { TABS } from 'modules/order-tab-management';
-import { Button, ButtonGroup, Box } from '@chakra-ui/react';
+import { TABS } from '@/modules/order-tab-management';
+import {
+    ButtonGroup,
+    Button,
+    useBreakpointValue,
+    Flex,
+} from '@chakra-ui/react';
 import All from '@modules/order/templates/all';
 import Processing from '@modules/order/templates/processing';
 import Shipped from '@modules/order/templates/shipped';
@@ -10,10 +13,13 @@ import Delivered from '@modules/order/templates/delivered';
 import Cancelled from '@modules/order/templates/cancelled';
 import Refund from '@modules/order/templates/refund';
 import { useOrderTabStore } from '@store/order-tab-state';
+import React from 'react';
+import { Hydrate } from '@tanstack/react-query';
 
 const commonButtonStyles = {
     borderRadius: '8px',
-    width: '146px',
+    width: '100%',
+    maxWidth: '146px',
     height: '56px',
     padding: '16px',
     bg: 'gray.900',
@@ -32,7 +38,13 @@ const commonButtonStyles = {
     },
 };
 
-const OrderOverview = ({ orders }: { orders: Order[] }) => {
+const OrderOverview = ({
+    customer,
+    dehydratedState,
+}: {
+    customer: any;
+    dehydratedState: any;
+}) => {
     const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
     const setOrderActiveTab = useOrderTabStore(
@@ -45,46 +57,54 @@ const OrderOverview = ({ orders }: { orders: Order[] }) => {
         }
     };
 
+    const isMobile = useBreakpointValue({ base: true, md: false });
+
     const renderTabContent = () => {
         switch (orderActiveTab) {
             case TABS.PROCESSING:
-                return <Processing orders={orders} isEmpty={true} />;
+                return <Processing customer={customer.id} isEmpty={true} />;
             case TABS.SHIPPED:
-                return <Shipped orders={orders} isEmpty={true} />;
+                return <Shipped customer={customer.id} isEmpty={true} />;
             case TABS.DELIVERED:
-                return <Delivered orders={orders} isEmpty={true} />;
+                return <Delivered customer={customer.id} isEmpty={true} />;
             case TABS.CANCELLED:
-                return <Cancelled orders={orders} isEmpty={true} />;
+                return <Cancelled customer={customer.id} isEmpty={true} />;
             case TABS.REFUND:
-                return <Refund orders={orders} isEmpty={true} />;
+                return <Refund customer={customer.id} isEmpty={true} />;
             default:
-                return <All orders={orders} />;
+                return <All customer={customer.id} />;
         }
     };
 
     return (
-        <Box
-            display="flex"
+        <Flex
             flexDirection="column"
-            gap="4"
-            width="full"
+            justifyContent="center"
+            alignItems="center"
             color="white"
-            p="8"
+            width={'100%'}
         >
-            <ButtonGroup isAttached justifyContent="center">
-                {Object.values(TABS).map((tab) => (
-                    <Button
-                        key={tab}
-                        onClick={() => handleTabChange(tab)}
-                        {...commonButtonStyles}
-                        isActive={orderActiveTab === tab}
-                    >
-                        {tab}
-                    </Button>
-                ))}
-            </ButtonGroup>
-            {renderTabContent()}
-        </Box>
+            {isMobile ? null : (
+                <ButtonGroup
+                    width={'100%'}
+                    isAttached
+                    justifyContent="center"
+                    mb={4}
+                >
+                    {Object.values(TABS).map((tab) => (
+                        <Button
+                            key={tab}
+                            onClick={() => handleTabChange(tab)}
+                            {...commonButtonStyles}
+                            isActive={orderActiveTab === tab}
+                        >
+                            {tab}
+                        </Button>
+                    ))}
+                </ButtonGroup>
+            )}
+            <Hydrate state={dehydratedState}>{renderTabContent()}</Hydrate>
+        </Flex>
     );
 };
 

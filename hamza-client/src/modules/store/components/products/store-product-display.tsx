@@ -1,11 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
-import ProductCardGroup from '@modules/products/components/product-group-vendor';
+import ProductCardGroup from '@modules/products/components/product-group-store';
 import { Flex } from '@chakra-ui/react';
 import SearchBar from '@modules/home/components/search-and-filter-panel/components/SearchBar';
 import StoreSearch from './store-search';
-import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 
 type Props = {
     storeName: string;

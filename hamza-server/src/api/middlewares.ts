@@ -3,6 +3,7 @@ import {
     type User,
     type UserService,
     type MedusaNextFunction,
+    type CustomerService,
     type MedusaRequest,
     type MedusaResponse,
     authenticateCustomer,
@@ -54,6 +55,123 @@ const registerLoggedInCustomer = async (
         sessionStorage.sessionId = '';
         next();
     });
+};
+
+const restrictLoggedInCart = async (
+    req: MedusaRequest,
+    res: MedusaResponse,
+    next: MedusaNextFunction
+) => {
+    let authorized = false;
+    const logger = req.scope.resolve('logger');
+
+    const cart_id = req.query.id || req.headers.id || req.url.split('/')[1]; // Assuming cart_id is the 4th part of the URL
+    let cartService;
+    let cart;
+    if (cart_id) {
+        cartService = req.scope.resolve('cartService');
+        cart = await cartService.retrieve(cart_id);
+        if (cart.email === null && cart.customer_id === null) {
+            next();
+            authorized = true;
+        }
+    }
+    // Check for LOGGED IN
+    if (req.headers.authorization) {
+        const jwtToken: any = jwt.decode(
+            req.headers.authorization.replace('Bearer ', '')
+        );
+        const customerId = jwtToken?.customer_id;
+
+        logger.debug(`cart_id ${cart_id}`);
+        if (cart_id) {
+            const cartService = req.scope.resolve('cartService');
+            const cart = await cartService.retrieve(cart_id);
+
+            // Check if NOT anonymous cart first...
+            if (cart.email !== null) {
+                if (cart_id === cart.id && customerId === cart.customer_id) {
+                    next();
+                    authorized = true;
+                }
+            }
+        }
+    }
+
+    if (!authorized) {
+        res.status(401).json({ status: false });
+        return;
+    }
+};
+
+const restrictLoggedInCustomerById = async (
+    req: MedusaRequest,
+    res: MedusaResponse,
+    next: MedusaNextFunction
+) => {
+    if (req.url.includes('/token')) {
+        return next(); // Skip the middleware if the URL is /token
+    }
+    let authorized = false;
+    if (req.headers.authorization) {
+        const logger = req.scope.resolve('logger');
+        const jwtToken: any = jwt.decode(
+            req.headers.authorization.replace('Bearer ', '')
+        );
+        const customerId = jwtToken?.customer_id;
+        logger.debug(`customer id in store/auth route is ${customerId}`);
+
+        const email = req.query.email || req.headers.email || req.url;
+        logger.debug(`email ${email}`);
+        if (email && customerId?.length) {
+            const customerService = req.scope.resolve('customerService');
+            const customer = await customerService.retrieve(customerId);
+
+            if (customer?.id === customerId && email === customer.email) {
+                authorized = true;
+                return res.status(200).json({ exists: true });
+            }
+        }
+    }
+
+    if (!authorized) {
+        res.status(401).json({ status: false });
+        return;
+    }
+};
+
+const restrictCustomerOrders = async (
+    req: MedusaRequest,
+    res: MedusaResponse,
+    next: MedusaNextFunction
+) => {
+    let authorized = false;
+    if (req.headers.authorization) {
+        const logger = req.scope.resolve('logger');
+        const jwtToken: any = jwt.decode(
+            req.headers.authorization.replace('Bearer ', '')
+        );
+        const customerId = jwtToken?.customer_id;
+        logger.debug(`customer id in store/orders route is ${customerId}`);
+
+        const orderId = req.url.replace('/', '');
+        if (orderId && orderId.startsWith('order_') && customerId?.length) {
+            const orderService = req.scope.resolve('orderService');
+            const order = await orderService.retrieve(orderId);
+            logger.debug(
+                `order customer id in store/orders route is ${order?.customer_id}`
+            );
+            if (order?.customer_id === customerId) {
+                next();
+                authorized = true;
+            }
+        }
+    }
+
+    if (!authorized) {
+        res.status(401).json({ status: false });
+        return;
+    }
 };
 
 export const permissions = async (
@@ -149,7 +267,7 @@ export const config: MiddlewaresConfig = {
                     origin: [STORE_CORS],
                     credentials: true,
                 }),
-                registerLoggedInCustomer
+                registerLoggedInCustomer,
             ],
         },
         {
@@ -161,6 +279,68 @@ export const config: MiddlewaresConfig = {
                 }),
             ],
         },
+        {
+            matcher: '/store/orders',
+            middlewares: [
+                cors({
+                    origin: [STORE_CORS],
+                    credentials: true,
+                }),
+                restrictCustomerOrders,
+            ],
+        },
+
+        {
+            matcher: '/store/order-edits',
+            middlewares: [
+                cors({
+                    origin: [STORE_CORS],
+                    credentials: true,
+                }),
+                restrictCustomerOrders,
+            ],
+        },
+        {
+            matcher: '/store/payment-collection',
+            middlewares: [
+                cors({
+                    origin: [STORE_CORS],
+                    credentials: true,
+                }),
+                restrictCustomerOrders,
+            ],
+        },
+        {
+            matcher: '/store/returns',
+            middlewares: [
+                cors({
+                    origin: [STORE_CORS],
+                    credentials: true,
+                }),
+                restrictCustomerOrders,
+            ],
+        },
+        {
+            matcher: '/store/auth',
+            middlewares: [
+                cors({
+                    origin: [STORE_CORS],
+                    credentials: true,
+                }),
+                restrictLoggedInCustomerById,
+            ],
+        },
+
+        // {
+        //     matcher: '/store/carts',
+        //     middlewares: [
+        //         cors({
+        //             origin: [STORE_CORS],
+        //             credentials: true,
+        //         }),
+        //         restrictLoggedInCart,
+        //     ],
+        // },
 
         // {
         //     matcher: '/custom/confirmation-token/generate',

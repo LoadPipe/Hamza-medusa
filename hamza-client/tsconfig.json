@@ -15,15 +15,18 @@
     "jsx": "preserve",
     "incremental": true,
     "types": ["cypress"],
-    "baseUrl": "./src",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["/*"],
-      "@/components/*": ["app/components/*"],
-      "@lib/*": ["lib/*"],
-      "@modules/*": ["modules/*"],
-      "@pages/*": ["pages/*"],
-      "@services/*": ["services/*"],
-      "@store/*": ["store/*"],
+      "@/*": ["src/*"],
+      "@/account/*": ["src/app/[countryCode]/(main)/account/*"],
+      "@/components/*": ["src/app/components/*"],
+      "@/getQueryClient": ["src/app/getQueryClient"],
+      "@lib/*": ["src/lib/*"],
+      "@/images/*": ["public/images/*"],
+      "@modules/*": ["src/modules/*"],
+      "@pages/*": ["src/pages/*"],
+      "@services/*": ["src/services/*"],
+      "@store/*": ["src/store/*"]
     },
     "plugins": [
       {

@@ -13,17 +13,21 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         res,
         'POST',
         '/custom/wishlist/item',
-        ['customer_id', 'product_id']
+        ['customer_id', 'variant_id']
     );
 
     await handler.handle(async () => {
-        if (!handler.requireParams(['customer_id', 'product_id'])) return;
 
+        //validate 
+        if (!handler.requireParams(['customer_id', 'variant_id'])) return;
+
+        //enforce identity
         if (!handler.enforceCustomerId(handler.inputParams.customer_id)) return;
 
+        //add item
         const wishlist = await wishlistService.addWishItem(
             handler.inputParams.customer_id,
-            handler.inputParams.product_id
+            handler.inputParams.variant_id
         );
         handler.returnStatus(200, wishlist);
     });
@@ -38,19 +42,23 @@ export const DELETE = async (req: MedusaRequest, res: MedusaResponse) => {
         res,
         'DELETE',
         '/custom/wishlist/item',
-        ['customer_id', 'product_id']
+        ['customer_id', 'variant_id']
     );
 
     await handler.handle(async () => {
-        if (!handler.requireParams(['customer_id', 'product_id'])) return;
 
+        //validate 
+        if (!handler.requireParams(['customer_id', 'variant_id'])) return;
+
+        //enforce identity
         if (!handler.enforceCustomerId(handler.inputParams.customer_id)) return;
 
-        // Call removeWishItem instead of addWishItem
+        //remove variant 
         const wishlist = await wishlistService.removeWishItem(
             handler.inputParams.customer_id,
-            handler.inputParams.product_id
+            handler.inputParams.variant_id
         );
+
         handler.returnStatus(200, wishlist);
     });
 };

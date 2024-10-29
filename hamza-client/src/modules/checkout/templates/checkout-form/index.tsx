@@ -9,7 +9,7 @@ import {
 } from '@lib/data';
 import { cookies } from 'next/headers';
 import { Button, Flex, Text } from '@chakra-ui/react';
-import { CartWithCheckoutStep } from 'types/global';
+import { CartWithCheckoutStep } from '@/types/global';
 import { getCheckoutStep } from '@lib/util/get-checkout-step';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import ChevronDown from '@modules/common/icons/chevron-down';

@@ -1,15 +1,19 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { GoArrowLeft, GoArrowRight } from 'react-icons/go';
-import ReviewCard, { renderStars } from './review-card';
-import ReviewCardMobile from './review-card-mobile';
+import ReviewCard from './review-card';
 
 import { allReviews } from '@lib/data';
+import { renderStars } from '../../review-stars';
+import useProductPreview from '@store/product-preview/product-preview';
 
-const ProductReview = ({ productId }: { productId: string }) => {
+const ProductReview = () => {
     const [startIndex, setStartIndex] = useState(0);
     const reviewsToShow = 2;
     const [reviews, setReviews] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    const { productId } = useProductPreview();
 
     const handleNext = () => {
         if (reviews.length > 2) {
@@ -30,39 +34,57 @@ const ProductReview = ({ productId }: { productId: string }) => {
         startIndex + reviewsToShow
     );
 
-    const reviewDataFetcher = async () => {
-        try {
-            let res = await allReviews(productId);
-            if (res) {
-                setReviews(
-                    res.map((a: any) => ({
-                        id: a.id,
-                        name:
-                            `${a.customer.first_name} ${a.customer.last_name}` ||
-                            'Anonymous Customer',
-                        location: 'US',
-                        review: a.content,
-                        stars: a.rating,
-                    }))
-                );
-            }
-        } catch (error) {
-            console.error('Failed to fetch reviews:', error);
-        }
-    };
-
     useEffect(() => {
+        console.log('Product ID:', productId); // Check if productId is valid
+
+        if (!productId) {
+            return;
+        }
+        const fetchReviews = async () => {
+            try {
+                let res = await allReviews(productId);
+                console.log('Fetched Reviews:', res); // Log to ensure data is correct
+
+                if (res) {
+                    setReviews(
+                        res.map((a: any) => ({
+                            id: a.id,
+                            name:
+                                `${a.customer.first_name} ${a.customer.last_name}` ||
+                                'Anonymous Customer',
+                            location: 'US',
+                            review: a.content,
+                            stars: a.rating,
+                        }))
+                    );
+                }
+            } catch (error) {
+                console.error('Failed to fetch reviews:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         if (productId) {
-            reviewDataFetcher();
+            setLoading(true);
+            fetchReviews();
         }
     }, [productId]);
+
+    if (loading) {
+        return (
+            <Flex justifyContent="center" alignItems="center" height="450px">
+                <Text color="white">Loading reviews...</Text>
+            </Flex>
+        );
+    }
 
     return reviews.length > 0 ? (
         <Flex
             maxW="1280px"
             my="2rem"
             width={'100%'}
-            height="450.57px"
+            height="450px"
             display={{ base: 'none', md: 'flex' }}
             overflow={'hidden'}
         >

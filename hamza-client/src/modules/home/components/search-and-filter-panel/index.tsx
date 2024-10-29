@@ -6,17 +6,13 @@ import { Flex } from '@chakra-ui/react';
 import SearchBar from './components/SearchBar';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import FilterBar from './components/filter-bar/FilterBar';
+import { Hydrate } from '@tanstack/react-query';
 
-const SearchAndFilterPanel = () => {
-    const { categorySelect } = useHomeProductsPage();
-    const [vendorName, setVendorName] = useState('All');
-
-    useEffect(() => {
-        if (categorySelect) {
-            setVendorName(categorySelect);
-        }
-    }, [categorySelect]);
-
+const SearchAndFilterPanel = ({
+    dehydratedState,
+}: {
+    dehydratedState: any;
+}) => {
     return (
         <Flex
             mx={'auto'}
@@ -28,7 +24,9 @@ const SearchAndFilterPanel = () => {
         >
             <SearchBar />
             <FilterBar />
-            <ProductCardGroup />
+            <Hydrate state={dehydratedState}>
+                <ProductCardGroup />
+            </Hydrate>
         </Flex>
     );
 };

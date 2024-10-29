@@ -60,8 +60,6 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
     //Auth states
     const { authData, whitelist_config, setWhitelistConfig } =
         useCustomerAuthStore();
-    const { addWishlistItemMutation, removeWishlistItemMutation } =
-        useWishlistMutations();
 
     //Wishlist store
     const { wishlist } = useWishlistStore();
@@ -76,20 +74,19 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
         await addToCart({
             variantId: variantID ?? '',
             quantity: 1,
-            countryCode: countryCode ?? '',
-            currencyCode: 'eth',
+            countryCode: countryCode ?? ''
         });
         setLoadingAddToCard(false);
     };
 
+    //TODO: is this used, and why is eth hard-coded?
     // Buy now
     const handleBuyNow = async () => {
         setLoadingBuy(true);
         await addToCart({
             variantId: variantID ?? '',
             quantity: 1,
-            countryCode: countryCode ?? '',
-            currencyCode: 'eth',
+            countryCode: countryCode ?? ''
         });
         setLoadingBuy(false);
     };
@@ -98,7 +95,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
     const whitelistedProductHandler = async () => {
         const whitelistedProduct =
             whitelist_config.is_whitelisted &&
-            whitelist_config.whitelisted_stores.includes(storeId)
+                whitelist_config.whitelisted_stores.includes(storeId)
                 ? true
                 : false;
 
@@ -122,7 +119,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
         >
             <LocalizedClientLink href={`/products/${productHandle}`}>
                 <Box
-                    onClick={() => console.log('hello')}
+                    onClick={() => { }}
                     h="240px"
                     width="100%"
                     display="flex"

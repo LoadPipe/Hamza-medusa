@@ -5,6 +5,7 @@ import { Heading, Text, clx } from '@medusajs/ui';
 import PaymentButton from '../payment-button';
 import { useSearchParams } from 'next/navigation';
 import { Cart } from '@medusajs/medusa';
+import HamzaLogoLoader from '@/components/loaders/hamza-logo-loader';
 
 const Review = ({
     cart,
@@ -19,6 +20,9 @@ const Review = ({
         cart.shipping_address &&
         cart.shipping_methods.length > 0 &&
         cart.payment_session;
+
+    console.log('****** shipping methods *****', cart.shipping_methods);
+    console.log('****** shipping methods *****', cart);
 
     return (
         <div className="bg-black">
@@ -49,6 +53,7 @@ const Review = ({
                             </Text>
                         </div>
                     </div>
+
                     <PaymentButton cart={cart} />
                 </>
             )}

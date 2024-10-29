@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { cancelOrder, getOrderStatus, getSingleBucket } from '@lib/data';
+import { cancelOrder, getSingleBucket } from '@lib/data';
 import {
     Box,
     Button,
@@ -13,7 +13,6 @@ import {
     TabPanels,
     Tab,
     TabPanel,
-    Icon,
     ModalOverlay,
     ModalContent,
     ModalHeader,
@@ -24,35 +23,132 @@ import {
     FormErrorMessage,
     ModalFooter,
     Modal,
+    Icon,
+    Divider,
 } from '@chakra-ui/react';
-import { BsCircleFill } from 'react-icons/bs';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import EmptyState from '@modules/order/components/empty-state';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import Spinner from '@modules/common/icons/spinner';
 
 import ProcessingOrderCard from '@modules/account/components/processing-order-card';
+import { BsCircleFill } from 'react-icons/bs';
+import Image from 'next/image';
+import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
+import OrderTotalAmount from '@modules/order/templates/order-total-amount';
+import { OrdersData } from './all';
+import { useOrderTabStore } from '@store/order-tab-state';
+/**
+ * The Processing component displays and manages the customer's processing orders, allowing users to view order details,
+ * collapse or expand order views, and request cancellations of individual orders.
+ *
+ * @Author: Garo Nazarian
+ *
+ * Features:
+ * - Fetches the customer's processing orders using `useQuery` from Tanstack React Query.
+ * - Allows users to view individual order details by expanding the order view.
+ * - Provides the option to request an order cancellation, with a modal for submitting the cancellation reason.
+ * - Utilizes `useMutation` for handling the cancellation of orders and ensures the page refreshes after a successful cancellation.
+ * - Refetches the order data after a cancellation request via query invalidation to ensure the UI is up-to-date.
+ * - Displays loading spinners and handles error states during order data fetching and cancellations.
+ *
+ * Usage:
+ * This component is used in the account section of the web app to display and manage orders that are still being processed.
+ * It interacts with a backend via React Query's `useQuery` and `useMutation` for asynchronous data management.
+ *
+ * Main Workflow:
+ * 1. Fetch processing orders for the logged-in customer on component load.
+ * 2. Allow users to expand/collapse order views and see order details.
+ * 3. Present a modal for submitting a cancellation reason when a user requests cancellation of an order.
+ * 4. Automatically refetch the list of orders after a successful cancellation to keep the UI in sync with the backend.
+ *
+ * Key Components:
+ * - `useQuery`: Fetches processing orders for the customer.
+ * - `useMutation`: Handles order cancellation and invalidates the query to refetch data.
+ * - Chakra UI components (e.g., Modal, Collapse, Tabs, Buttons) are used to structure the UI and interactions.
+ * - `Spinner`: Displays a loading indicator while processing orders are being fetched.
+ *
+ * Edge Cases:
+ * - Handles scenarios where no orders are available (shows an empty state).
+ * - Ensures the cancellation modal doesn't close prematurely unless the cancellation succeeds.
+ */
 
 const Processing = ({
-    orders,
+    customer,
+    // onSuccess,
     isEmpty,
 }: {
-    orders: any[];
+    customer: string;
+    // onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
-    const [customerId, setCustomerId] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
     const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [cancelReason, setCancelReason] = useState('');
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
     const [expandViewOrder, setExpandViewOrder] = useState(false);
-    const [orderStatuses, setOrderStatuses] = useState<{
-        [key: string]: string;
-    }>({});
-    const [customerOrder, setCustomerOrder] = useState<any[]>([]);
+    const [shouldFetch, setShouldFetch] = useState(false);
 
-    // console.log(`ORDER FOR PROCESSING ${JSON.stringify(orders)}`);
+    const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
+
+    const queryClient = useQueryClient();
+
+    const {
+        data,
+        isLoading: processingOrdersLoading,
+        isError: processingOrdersError,
+        refetch,
+    } = useQuery<OrdersData>(['batchOrders']);
+
+    const processingOrder = data?.Processing || [];
+
+    const mutation = useMutation(
+        ({
+            order_id,
+            cancel_reason,
+        }: {
+            order_id: string;
+            cancel_reason: string;
+        }) => cancelOrder(order_id, cancel_reason),
+        {
+            onSuccess: async () => {
+                try {
+                    // Refetch orders after a successful cancellation
+                    await queryClient.invalidateQueries([
+                        'fetchAllOrders',
+                        customer,
+                    ]);
+                    refetch();
+
+                    setIsModalOpen(false);
+                    setSelectedOrderId(null);
+                } catch (error) {
+                    console.error('Error invalidating queries:', error);
+                }
+            },
+            onError: (error) => {
+                console.error('Error cancelling order: ', error);
+            },
+        }
+    );
+
+    const handleCancel = async () => {
+        if (!cancelReason) {
+            setIsAttemptedSubmit(true);
+            return;
+        }
+        if (!selectedOrderId) return;
+
+        // Pass both order_id and cancel_reason to the mutation
+        mutation.mutate({
+            order_id: selectedOrderId,
+            cancel_reason: cancelReason,
+        });
+    };
+
     const openModal = (orderId: string) => {
         setSelectedOrderId(orderId);
+        setCancelReason(''); // Ensure cancel reason is cleared here
         setIsModalOpen(true);
     };
     const closeModal = () => {
@@ -65,26 +161,6 @@ const Processing = ({
         setExpandViewOrder(expandViewOrder === orderId ? null : orderId);
     };
 
-    const handleCancel = async () => {
-        if (!cancelReason) {
-            setIsAttemptedSubmit(true);
-            return;
-        }
-        if (!selectedOrderId) return;
-
-        console.log(`selectedORDER ID ${selectedOrderId}`);
-        try {
-            await cancelOrder(selectedOrderId);
-            setOrderStatuses((prevStatuses) => ({
-                ...prevStatuses,
-                [selectedOrderId]: 'canceled',
-            }));
-            setIsModalOpen(false);
-        } catch (error) {
-            console.error('Error cancelling order: ', error);
-        }
-    };
-
     const getAmount = (amount?: number | null, currency_code?: string) => {
         if (amount === null || amount === undefined) {
             return;
@@ -93,151 +169,177 @@ const Processing = ({
         return formatCryptoPrice(amount, currency_code || 'USDC');
     };
 
-    useEffect(() => {
-        console.log('Orders received in Processing:', orders);
-        if (orders && orders.length > 0) {
-            const customer_id = orders[0]?.customer_id;
-            console.log(
-                `Running fetchAllOrders with customerID ${customer_id}`
-            );
-            fetchAllOrders(customer_id);
-            setCustomerId(customer_id);
-        }
-    }, [orders]);
-
-    const fetchAllOrders = async (customerId: string) => {
-        setIsLoading(true);
-        try {
-            const bucket = await getSingleBucket(customerId, 1);
-
-            if (bucket === undefined || bucket === null) {
-                console.error('Bucket is undefined or null');
-                setCustomerOrder([]); // Set empty state
-                setIsLoading(false);
-                return;
-            }
-
-            if (Array.isArray(bucket)) {
-                setCustomerOrder(bucket);
-                console.log(`BUCKETS ${JSON.stringify(bucket)}`);
-            } else {
-                console.error('Expected an array but got:', bucket);
-                setCustomerOrder([]);
-            }
-        } catch (error) {
-            console.error('Error fetching processing orders:', error);
-            setCustomerOrder([]);
-        }
-        setIsLoading(false);
-    };
-
-    useEffect(() => {
-        const fetchStatuses = async () => {
-            if (!customerOrder || customerOrder.length === 0) return;
-
-            console.log(`Customer Order ${JSON.stringify(customerOrder)}`);
-
-            const statuses = await Promise.allSettled(
-                customerOrder.map(async (order) => {
-                    try {
-                        const statusRes = await getOrderStatus(order.id);
-                        console.log(
-                            `Fetching status for order ${order.id} StatusResponse ${statusRes.order}`
-                        );
-                        return {
-                            orderId: order.id,
-                            status: statusRes.order,
-                        };
-                    } catch (error) {
-                        console.error(
-                            `Error fetching status for order ${order.id}:`,
-                            error
-                        );
-                        return {
-                            orderId: order.id,
-                            status: 'unknown',
-                        };
-                    }
-                })
-            );
-
-            const statusMap: { [key: string]: any } = {};
-            statuses.forEach((result) => {
-                if (result.status === 'fulfilled') {
-                    const { orderId, status } = result.value;
-                    statusMap[orderId] = status;
-                } else {
-                    console.error(
-                        `Failed to fetch status for order: ${result.reason}`
-                    );
-                }
-            });
-
-            console.log(
-                `Fetching status for MAP: ${JSON.stringify(statusMap)}`
-            );
-
-            setOrderStatuses(statusMap);
-            console.log('Order statuses: ', statusMap);
-        };
-
-        fetchStatuses();
-    }, [customerOrder]);
-
-    if (isEmpty && customerOrder && customerOrder?.length == 0) {
+    if (isEmpty && processingOrder?.length === 0) {
         return <EmptyState />;
     }
 
     return (
-        <div>
-            {/* Processing-specific content */}
-            {customerOrder && customerOrder.length > 0 ? (
-                <>
-                    <h1>Processing Orders</h1>
-
-                    {customerOrder.map((order) => (
-                        <>
-                            <div
-                                key={order.id} // Changed from cart_id to id since it's more reliable and unique
-                            >
+        <div style={{ width: '100%' }}>
+            {processingOrdersLoading ? (
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    textAlign="center"
+                >
+                    <Text color="white" fontSize="lg" mb={8}>
+                        Loading Processing orders...
+                    </Text>
+                    <Spinner size={80} />
+                </Box>
+            ) : processingOrdersError && orderActiveTab !== 'All Orders' ? (
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    textAlign="center"
+                    py={5}
+                >
+                    <Text>Error fetching processing orders</Text>
+                </Box>
+            ) : processingOrdersError && orderActiveTab === 'All Orders' ? (
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    textAlign="center"
+                    py={5}
+                >
+                    <Text>Error Fetching Orders, please refresh</Text>
+                </Box>
+            ) : processingOrder && processingOrder.length > 0 ? (
+                <Flex width={'100%'} flexDirection="column">
+                    {processingOrder.map((order: any) => {
+                        const totalPrice = order.items.reduce(
+                            (acc: number, item: any) =>
+                                acc + item.unit_price * item.quantity,
+                            0
+                        );
+                        return (
+                            <div key={order.id}>
                                 {order.items?.map(
-                                    (
-                                        item: any // Adjusting the map to the correct path
-                                    ) => (
-                                        <Box
-                                            key={item.id}
-                                            bg="rgba(39, 39, 39, 0.3)"
-                                            p={4}
-                                            m={2}
-                                            rounded="lg"
-                                        >
+                                    (item: any, index: number) => (
+                                        <div key={item.id}>
+                                            {index === 0 ? (
+                                                <DynamicOrderStatus
+                                                    paymentStatus={
+                                                        order.payment_status
+                                                    }
+                                                    paymentType={'Processing'}
+                                                />
+                                            ) : null}
                                             {/*item: {item.id} <br />*/}
                                             <ProcessingOrderCard
                                                 key={item.id}
                                                 order={item}
-                                                vendorName={order.store.name}
+                                                storeName={order.store.name}
+                                                icon={order.store.icon}
                                                 address={order.shipping_address}
                                                 handle={
                                                     item.variant?.product
                                                         ?.handle || 'N/A'
                                                 }
                                             />
-
-                                            <div className="flex justify-end pr-4">
-                                                <Box
-                                                    color={'primary.green.900'}
-                                                    cursor="pointer"
-                                                    _hover={{
-                                                        textDecoration:
-                                                            'underline',
-                                                    }}
-                                                    onClick={() =>
-                                                        toggleViewOrder(item.id)
+                                            <Flex
+                                                direction={{
+                                                    base: 'column',
+                                                    md: 'row',
+                                                }}
+                                                justifyContent={{
+                                                    base: 'flex-start',
+                                                    md: 'center',
+                                                }}
+                                                alignItems={{
+                                                    base: 'flex-start',
+                                                    md: 'center',
+                                                }}
+                                                mb={5}
+                                            >
+                                                {/* Left-aligned text */}
+                                                <OrderTotalAmount
+                                                    totalPrice={totalPrice}
+                                                    currencyCode={
+                                                        item.currency_code
                                                     }
+                                                    index={index}
+                                                    itemCount={
+                                                        order.items.length - 1
+                                                    }
+                                                />
+
+                                                {/* Right-aligned buttons */}
+                                                <Flex
+                                                    direction={{
+                                                        base: 'column',
+                                                        md: 'row',
+                                                    }}
+                                                    justifyContent={'flex-end'}
+                                                    gap={2}
+                                                    mt={{ base: 4, md: 0 }}
+                                                    width="100%"
                                                 >
-                                                    View Order
-                                                </Box>
-                                            </div>
+                                                    <Button
+                                                        variant="outline"
+                                                        colorScheme="white"
+                                                        borderRadius="37px"
+                                                        cursor="pointer"
+                                                        ml={{
+                                                            base: 0,
+                                                            md: 2,
+                                                        }}
+                                                        mt={{
+                                                            base: 2,
+                                                            md: 0,
+                                                        }}
+                                                        width={{
+                                                            base: '100%',
+                                                            md: 'auto',
+                                                        }}
+                                                        _hover={{
+                                                            textDecoration:
+                                                                'underline',
+                                                        }}
+                                                        onClick={() =>
+                                                            toggleViewOrder(
+                                                                item.id
+                                                            )
+                                                        }
+                                                    >
+                                                        View Order
+                                                    </Button>
+                                                    {index ===
+                                                    order.items.length - 1 ? (
+                                                        order.status ===
+                                                        'canceled' ? (
+                                                            <Button
+                                                                colorScheme="red"
+                                                                isDisabled
+                                                            >
+                                                                Cancellation
+                                                                Requested
+                                                            </Button>
+                                                        ) : (
+                                                            <Button
+                                                                variant="outline"
+                                                                colorScheme="white"
+                                                                borderRadius="37px"
+                                                                onClick={() =>
+                                                                    openModal(
+                                                                        order.id
+                                                                    )
+                                                                }
+                                                            >
+                                                                Request
+                                                                Cancellation
+                                                            </Button>
+                                                        )
+                                                    ) : null}
+                                                </Flex>
+                                            </Flex>
+
                                             {/* Collapsible Section */}
                                             <Collapse
                                                 in={expandViewOrder === item.id}
@@ -274,11 +376,12 @@ const Processing = ({
                                                         </TabList>
 
                                                         <TabPanels>
-                                                            {/* Order History Panel */}
+                                                            Order History Panel
                                                             <TabPanel>
                                                                 <VStack
                                                                     align="start"
                                                                     spacing={4}
+                                                                    flexWrap="wrap"
                                                                     p={4}
                                                                     borderRadius="lg"
                                                                     w="100%"
@@ -297,61 +400,91 @@ const Processing = ({
                                                                         {/* Example timeline event */}
                                                                         {[
                                                                             {
-                                                                                status: `Shipment Status: \t ${item.has_shipping ? 'Item has shipped' : 'Item has not shipped yet'}`,
-                                                                                date: '18/07/2024 | 6:12 pm',
-                                                                                trackingNumber:
-                                                                                    '5896-0991-7811',
+                                                                                status: `Shipment Status:  ${order.fulfillment_status}`,
+                                                                                date: order
+                                                                                    .bucky_metadata
+                                                                                    ?.tracking
+                                                                                    ?.data
+                                                                                    ?.soOrderInfo
+                                                                                    ?.createTime
+                                                                                    ? new Date(
+                                                                                          order.bucky_metadata.tracking.data.soOrderInfo.createTime
+                                                                                      ).toLocaleString(
+                                                                                          undefined,
+                                                                                          {
+                                                                                              year: 'numeric',
+                                                                                              month: 'long',
+                                                                                              day: 'numeric',
+                                                                                              hour: '2-digit',
+                                                                                              minute: '2-digit',
+                                                                                              second: '2-digit',
+                                                                                          }
+                                                                                      )
+                                                                                    : 'Date not available',
+                                                                                shopOrderNo:
+                                                                                    order
+                                                                                        .bucky_metadata
+                                                                                        ?.data
+                                                                                        ?.shopOrderNo ||
+                                                                                    'N/A',
                                                                                 warehouse:
-                                                                                    'Manila Logistics',
+                                                                                    order
+                                                                                        .bucky_metadata
+                                                                                        ?.tracking
+                                                                                        ?.data
+                                                                                        ?.poOrderList[0]
+                                                                                        ?.warehouseName ||
+                                                                                    'N/A',
+
                                                                                 courier:
                                                                                     'DHL Express',
                                                                             },
-                                                                            {
-                                                                                status: 'Product Packaging',
-                                                                                date: '18/07/2024 | 5:12 pm',
-                                                                                trackingNumber:
-                                                                                    '5896-0991-7811',
-                                                                                warehouse:
-                                                                                    'Manila Logistics',
-                                                                                courier:
-                                                                                    'DHL Express',
-                                                                            },
+                                                                            // {
+                                                                            //     status: 'Product Packaging',
+                                                                            //     date: '18/07/2024 | 5:12 pm',
+                                                                            //     trackingNumber:
+                                                                            //         '5896-0991-7811',
+                                                                            //     warehouse:
+                                                                            //         'Manila Logistics',
+                                                                            //     courier:
+                                                                            //         'DHL Express',
+                                                                            // },
                                                                             {
                                                                                 status: `Order Confirmation: \t ${order.status}`,
-                                                                                date: `${new Date(
-                                                                                    order.created_at
-                                                                                ).toLocaleDateString(
-                                                                                    undefined,
-                                                                                    {
-                                                                                        year: 'numeric',
-                                                                                        month: '2-digit',
-                                                                                        day: '2-digit',
-                                                                                        hour: '2-digit',
-                                                                                        minute: '2-digit',
-                                                                                        second: '2-digit',
-                                                                                        hour12: true,
-                                                                                    }
-                                                                                )}`,
+                                                                                // date: `${new Date(
+                                                                                //     order.created_at
+                                                                                // ).toLocaleDateString(
+                                                                                //     undefined,
+                                                                                //     {
+                                                                                //         year: 'numeric',
+                                                                                //         month: '2-digit',
+                                                                                //         day: '2-digit',
+                                                                                //         hour: '2-digit',
+                                                                                //         minute: '2-digit',
+                                                                                //         second: '2-digit',
+                                                                                //         hour12: true,
+                                                                                //     }
+                                                                                // )}`,
                                                                             },
                                                                             {
                                                                                 status: `Payment Status: \t${order.payment_status}`,
-                                                                                date: `${new Date(
-                                                                                    order.created_at
-                                                                                ).toLocaleDateString(
-                                                                                    undefined,
-                                                                                    {
-                                                                                        year: 'numeric',
-                                                                                        month: '2-digit',
-                                                                                        day: '2-digit',
-                                                                                        hour: '2-digit',
-                                                                                        minute: '2-digit',
-                                                                                        second: '2-digit',
-                                                                                        hour12: true,
-                                                                                    }
-                                                                                )}`,
+                                                                                // date: `${new Date(
+                                                                                //     order.created_at
+                                                                                // ).toLocaleDateString(
+                                                                                //     undefined,
+                                                                                //     {
+                                                                                //         year: 'numeric',
+                                                                                //         month: '2-digit',
+                                                                                //         day: '2-digit',
+                                                                                //         hour: '2-digit',
+                                                                                //         minute: '2-digit',
+                                                                                //         second: '2-digit',
+                                                                                //         hour12: true,
+                                                                                //     }
+                                                                                // )}`,
                                                                                 paymentDetails: `Paid with ${item.currency_code.toUpperCase()}. Total payment: ${getAmount(item.unit_price, item.currency_code)} ${item.currency_code.toUpperCase()}`,
-                                                                                receiptLink:
-                                                                                    'View receipt',
+                                                                                // receiptLink:
+                                                                                //     'View receipt',
                                                                             },
 
                                                                             {
@@ -415,15 +548,16 @@ const Processing = ({
                                                                                                 event.date
                                                                                             }
                                                                                         </Text>
-                                                                                        {event.trackingNumber && (
+                                                                                        {event.shopOrderNo && (
                                                                                             <Text
                                                                                                 fontSize="sm"
                                                                                                 color="gray.400"
                                                                                             >
-                                                                                                Tracking
+                                                                                                Shop
+                                                                                                Order
                                                                                                 Number:{' '}
                                                                                                 {
-                                                                                                    event.trackingNumber
+                                                                                                    event.shopOrderNo
                                                                                                 }
                                                                                             </Text>
                                                                                         )}
@@ -438,17 +572,17 @@ const Processing = ({
                                                                                                 }
                                                                                             </Text>
                                                                                         )}
-                                                                                        {event.courier && (
-                                                                                            <Text
-                                                                                                fontSize="sm"
-                                                                                                color="gray.400"
-                                                                                            >
-                                                                                                Courier:{' '}
-                                                                                                {
-                                                                                                    event.courier
-                                                                                                }
-                                                                                            </Text>
-                                                                                        )}
+                                                                                        {/*{event.courier && (*/}
+                                                                                        {/*    <Text*/}
+                                                                                        {/*        fontSize="sm"*/}
+                                                                                        {/*        color="gray.400"*/}
+                                                                                        {/*    >*/}
+                                                                                        {/*        Courier:{' '}*/}
+                                                                                        {/*        {*/}
+                                                                                        {/*            event.courier*/}
+                                                                                        {/*        }*/}
+                                                                                        {/*    </Text>*/}
+                                                                                        {/*)}*/}
                                                                                         {event.paymentDetails && (
                                                                                             <Text
                                                                                                 fontSize="sm"
@@ -459,16 +593,16 @@ const Processing = ({
                                                                                                 }
                                                                                             </Text>
                                                                                         )}
-                                                                                        {event.receiptLink && (
-                                                                                            <Text
-                                                                                                fontSize="sm"
-                                                                                                color="primary.green.900"
-                                                                                            >
-                                                                                                {
-                                                                                                    event.receiptLink
-                                                                                                }
-                                                                                            </Text>
-                                                                                        )}
+                                                                                        {/*{event.receiptLink && (*/}
+                                                                                        {/*    <Text*/}
+                                                                                        {/*        fontSize="sm"*/}
+                                                                                        {/*        color="primary.green.900"*/}
+                                                                                        {/*    >*/}
+                                                                                        {/*        {*/}
+                                                                                        {/*            event.receiptLink*/}
+                                                                                        {/*        }*/}
+                                                                                        {/*    </Text>*/}
+                                                                                        {/*)}*/}
                                                                                     </VStack>
                                                                                 </HStack>
                                                                             )
@@ -476,7 +610,6 @@ const Processing = ({
                                                                     </VStack>
                                                                 </VStack>
                                                             </TabPanel>
-
                                                             {/* Order Details Panel */}
                                                             <TabPanel>
                                                                 <VStack
@@ -486,10 +619,6 @@ const Processing = ({
                                                                     borderRadius="lg"
                                                                     w="100%"
                                                                 >
-                                                                    <Text fontWeight="bold">
-                                                                        Order
-                                                                        Details
-                                                                    </Text>
                                                                     <HStack
                                                                         w="100%"
                                                                         justifyContent="space-between"
@@ -538,11 +667,29 @@ const Processing = ({
                                                                                     Item
                                                                                     ID:
                                                                                 </Text>
-                                                                                <Text fontWeight="bold">
-                                                                                    {
-                                                                                        item.id
-                                                                                    }
+                                                                                <Flex flexWrap="wrap">
+                                                                                    <Text fontWeight="bold">
+                                                                                        {
+                                                                                            item.id
+                                                                                        }
+                                                                                    </Text>
+                                                                                </Flex>
+                                                                            </Box>
+                                                                            <Box>
+                                                                                <Text
+                                                                                    fontSize="sm"
+                                                                                    color="gray.400"
+                                                                                >
+                                                                                    Order
+                                                                                    ID:
                                                                                 </Text>
+                                                                                <Flex flexWrap="wrap">
+                                                                                    <Text fontWeight="bold">
+                                                                                        {
+                                                                                            order.id
+                                                                                        }
+                                                                                    </Text>
+                                                                                </Flex>
                                                                             </Box>
                                                                             <Box>
                                                                                 <Text
@@ -609,46 +756,46 @@ const Processing = ({
                                                                                 4
                                                                             }
                                                                         >
-                                                                            <Box>
-                                                                                <Text
-                                                                                    fontSize="sm"
-                                                                                    color="gray.400"
-                                                                                >
-                                                                                    Courier:
-                                                                                </Text>
-                                                                                <Text fontWeight="bold">
-                                                                                    DHL
-                                                                                    Express
-                                                                                </Text>
-                                                                            </Box>
-                                                                            <Box>
-                                                                                <Text
-                                                                                    fontSize="sm"
-                                                                                    color="gray.400"
-                                                                                >
-                                                                                    Tracking
-                                                                                    Number:
-                                                                                </Text>
-                                                                                <Text fontWeight="bold">
-                                                                                    2856374190
-                                                                                </Text>
-                                                                            </Box>
-                                                                            <Box>
-                                                                                <Text
-                                                                                    fontSize="sm"
-                                                                                    color="gray.400"
-                                                                                >
-                                                                                    Estimated
-                                                                                    Time
-                                                                                    of
-                                                                                    Arrival:
-                                                                                </Text>
-                                                                                <Text fontWeight="bold">
-                                                                                    July
-                                                                                    27-31,
-                                                                                    2024
-                                                                                </Text>
-                                                                            </Box>
+                                                                            {/*<Box>*/}
+                                                                            {/*    <Text*/}
+                                                                            {/*        fontSize="sm"*/}
+                                                                            {/*        color="gray.400"*/}
+                                                                            {/*    >*/}
+                                                                            {/*        Courier:*/}
+                                                                            {/*    </Text>*/}
+                                                                            {/*    <Text fontWeight="bold">*/}
+                                                                            {/*        DHL*/}
+                                                                            {/*        Express*/}
+                                                                            {/*    </Text>*/}
+                                                                            {/*</Box>*/}
+                                                                            {/*<Box>*/}
+                                                                            {/*    <Text*/}
+                                                                            {/*        fontSize="sm"*/}
+                                                                            {/*        color="gray.400"*/}
+                                                                            {/*    >*/}
+                                                                            {/*        Tracking*/}
+                                                                            {/*        Number:*/}
+                                                                            {/*    </Text>*/}
+                                                                            {/*    <Text fontWeight="bold">*/}
+                                                                            {/*        2856374190*/}
+                                                                            {/*    </Text>*/}
+                                                                            {/*</Box>*/}
+                                                                            {/*<Box>*/}
+                                                                            {/*    <Text*/}
+                                                                            {/*        fontSize="sm"*/}
+                                                                            {/*        color="gray.400"*/}
+                                                                            {/*    >*/}
+                                                                            {/*        Estimated*/}
+                                                                            {/*        Time*/}
+                                                                            {/*        of*/}
+                                                                            {/*        Arrival:*/}
+                                                                            {/*    </Text>*/}
+                                                                            {/*    <Text fontWeight="bold">*/}
+                                                                            {/*        July*/}
+                                                                            {/*        27-31,*/}
+                                                                            {/*        2024*/}
+                                                                            {/*    </Text>*/}
+                                                                            {/*</Box>*/}
                                                                             <Box>
                                                                                 <Text
                                                                                     fontSize="sm"
@@ -660,28 +807,28 @@ const Processing = ({
                                                                                 <Text fontWeight="bold">
                                                                                     {
                                                                                         order
-                                                                                            .shipping_address
-                                                                                            .address_1
+                                                                                            ?.shipping_address
+                                                                                            ?.address_1
                                                                                     }{' '}
                                                                                     {
                                                                                         order
-                                                                                            .shipping_address
-                                                                                            .city
+                                                                                            ?.shipping_address
+                                                                                            ?.city
                                                                                     }{' '}
                                                                                     {
                                                                                         order
-                                                                                            .shipping_address
-                                                                                            .province
+                                                                                            ?.shipping_address
+                                                                                            ?.province
                                                                                     }{' '}
                                                                                     {
                                                                                         order
-                                                                                            .shipping_address
-                                                                                            .postal_code
+                                                                                            ?.shipping_address
+                                                                                            ?.postal_code
                                                                                     }{' '}
                                                                                     {
                                                                                         order
-                                                                                            .shipping_address
-                                                                                            .country_code
+                                                                                            ?.shipping_address
+                                                                                            ?.country_code
                                                                                     }
                                                                                 </Text>
                                                                             </Box>
@@ -696,30 +843,30 @@ const Processing = ({
                                                                                 <Text fontWeight="bold">
                                                                                     {
                                                                                         order
-                                                                                            .shipping_address
-                                                                                            .first_name
-                                                                                    }
+                                                                                            ?.shipping_address
+                                                                                            ?.first_name
+                                                                                    }{' '}
                                                                                     {
                                                                                         order
-                                                                                            .shipping_address
-                                                                                            .last_name
+                                                                                            ?.shipping_address
+                                                                                            ?.last_name
                                                                                     }
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
                                                                                     {
                                                                                         order
-                                                                                            .shipping_address
-                                                                                            .phone
+                                                                                            ?.shipping_address
+                                                                                            ?.phone
                                                                                     }
                                                                                 </Text>
                                                                                 <Text fontWeight="bold">
-                                                                                    {order.customer.email.endsWith(
+                                                                                    {order.customer?.email?.endsWith(
                                                                                         '@evm.blockchain'
                                                                                     )
                                                                                         ? ''
                                                                                         : order
-                                                                                              .customer
-                                                                                              .email}
+                                                                                              ?.customer
+                                                                                              ?.email}
                                                                                 </Text>
                                                                             </Box>
                                                                         </VStack>
@@ -730,50 +877,22 @@ const Processing = ({
                                                     </Tabs>
                                                 </Box>
                                             </Collapse>
-                                        </Box>
+                                        </div>
                                     )
                                 )}
+
+                                <Divider
+                                    width="90%" // Line takes up 90% of the screen width
+                                    borderBottom="0.2px solid"
+                                    borderColor="#D9D9D9"
+                                    pr={'1rem'}
+                                    _last={{
+                                        mb: 8,
+                                    }}
+                                />
                             </div>
-                            <>
-                                {order.items && order.items.length > 0 && (
-                                    <Flex
-                                        justifyContent="flex-end"
-                                        my={8}
-                                        gap={'4'}
-                                        borderBottom="1px solid"
-                                        borderColor="gray.200"
-                                        pb={6}
-                                        _last={{
-                                            pb: 0,
-                                            borderBottom: 'none',
-                                        }}
-                                    >
-                                        {orderStatuses[order.id] ===
-                                        'canceled' ? (
-                                            <Button
-                                                colorScheme="red"
-                                                ml={4}
-                                                isDisabled
-                                            >
-                                                Cancellation Requested
-                                            </Button>
-                                        ) : (
-                                            <Button
-                                                variant="solid"
-                                                colorScheme="blue"
-                                                ml={4}
-                                                onClick={() =>
-                                                    openModal(order.id)
-                                                }
-                                            >
-                                                Request Cancellation
-                                            </Button>
-                                        )}
-                                    </Flex>
-                                )}
-                            </>
-                        </>
-                    ))}
+                        );
+                    })}
                     <Modal isOpen={isModalOpen} onClose={closeModal}>
                         <ModalOverlay />
                         <ModalContent>
@@ -807,12 +926,19 @@ const Processing = ({
                                 </FormControl>
                             </ModalBody>
                             <ModalFooter>
-                                <Button variant="ghost" onClick={closeModal}>
+                                <Button
+                                    variant="solid"
+                                    borderColor={'primary.indigo.900'}
+                                    color={'primary.indigo.900'}
+                                    width={'180px'}
+                                    height={'47px'}
+                                    borderRadius={'37px'}
+                                    onClick={closeModal}
+                                >
                                     Cancel
                                 </Button>
                                 <Box
                                     as="button"
-                                    mt={4}
                                     borderRadius={'37px'}
                                     backgroundColor={
                                         cancelReason.trim().length < 50
@@ -833,7 +959,7 @@ const Processing = ({
                             </ModalFooter>
                         </ModalContent>
                     </Modal>
-                </>
+                </Flex>
             ) : null}
         </div>
     );

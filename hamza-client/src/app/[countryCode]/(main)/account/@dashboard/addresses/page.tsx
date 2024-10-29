@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import AddressBook from '@modules/account/components/address-book';
 import { getHamzaCustomer } from '@lib/data';
-import { getRegion } from 'app/actions';
+import { getRegion } from '@/app/actions';
 import { headers } from 'next/headers';
 
 import { Flex, Text, Box } from '@chakra-ui/react';
@@ -14,8 +14,8 @@ export const metadata: Metadata = {
 
 export default async function Addresses() {
     const nextHeaders = headers();
-    const countryCode = process.env.NEXT_PUBLIC_FORCE_US_COUNTRY
-        ? 'us'
+    const countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY
+        ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
         : nextHeaders.get('next-url')?.split('/')[1] || '';
     const customer = await getHamzaCustomer();
     const region = await getRegion(countryCode);

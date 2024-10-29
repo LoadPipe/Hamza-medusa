@@ -1,29 +1,53 @@
 import React, { useEffect, useState } from 'react';
 import { getSingleBucket } from '@lib/data';
-import { Box, Collapse, HStack, Icon, Text, VStack } from '@chakra-ui/react';
+import {
+    Flex,
+    Box,
+    Collapse,
+    HStack,
+    Icon,
+    Text,
+    VStack,
+    Button,
+} from '@chakra-ui/react';
 import { BsCircleFill } from 'react-icons/bs';
 import RefundCard from '@modules/account/components/refund-card';
 import EmptyState from '@modules/order/components/empty-state';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import Spinner from '@modules/common/icons/spinner';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { debounce, upperCase } from 'lodash';
+import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
+import OrderTotalAmount from '@modules/order/templates/order-total-amount';
+import { OrdersData } from './all';
+import { useOrderTabStore } from '@store/order-tab-state';
 
-const Refund = ({ orders, isEmpty }: { orders: any[]; isEmpty?: boolean }) => {
-    const [customerOrder, setCustomerOrder] = useState<any[]>([]);
-    const [customerId, setCustomerId] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+const Refund = ({
+    customer,
+    // chainEnabled,
+    // onSuccess,
+    isEmpty,
+}: {
+    customer: string;
+    // chainEnabled?: boolean;
+    // onSuccess?: () => void;
+    isEmpty?: boolean;
+}) => {
     const [courierInfo, setCourierInfo] = useState(false);
+    const [shouldFetch, setShouldFetch] = useState(false);
+    const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
-    // console.log(`ORDERS ARE ${JSON.stringify(orders)}`);
-    useEffect(() => {
-        // console.log('Orders received in Cancelled:', orders);
-        if (orders && orders.length > 0) {
-            const customer_id = orders[0]?.customer_id;
-            // console.log(
-            //     `Running fetchAllOrders with customerID ${customer_id}`
-            // );
-            fetchAllOrders(customer_id);
-            setCustomerId(customer_id);
-        }
-    }, [orders]);
+    // const debouncedOnSuccess = debounce(() => {
+    //     onSuccess && onSuccess();
+    // }, 1000);
+
+    const queryClient = useQueryClient();
+
+    const { data, isLoading, isError, refetch, isStale } = useQuery<OrdersData>(
+        ['batchOrders']
+    );
+
+    const refundOrder = data?.Refunded || [];
 
     const toggleRefundInfo = (orderId: any) => {
         setCourierInfo(courierInfo === orderId ? null : orderId);
@@ -40,145 +64,184 @@ const Refund = ({ orders, isEmpty }: { orders: any[]; isEmpty?: boolean }) => {
         return formatCryptoPrice(amount, currency_code || 'USDC');
     };
 
-    const fetchAllOrders = async (customerId: string) => {
-        setIsLoading(true);
-        try {
-            const bucket = await getSingleBucket(customerId, 5);
-
-            if (bucket === undefined || bucket === null) {
-                console.error('Bucket is undefined or null');
-                setCustomerOrder([]); // Set empty state
-                setIsLoading(false);
-                return;
-            }
-
-            if (Array.isArray(bucket)) {
-                setCustomerOrder(bucket);
-            } else {
-                console.error('Expected an array but got:', bucket);
-                setCustomerOrder([]);
-            }
-        } catch (error) {
-            console.error('Error fetching processing orders:', error);
-            setCustomerOrder([]);
-        }
-        setIsLoading(false);
-    };
-
-    if (isEmpty && customerOrder && customerOrder?.length == 0) {
+    if (isEmpty && refundOrder && refundOrder?.length == 0) {
         return <EmptyState />;
     }
 
     return (
-        <div>
-            {/* Processing-specific content */}
-            {customerOrder && customerOrder.length > 0 ? (
-                <>
-                    <h1>Refund Orders</h1>
-
-                    {customerOrder.map((order) => (
-                        <div
-                            key={order.id} // Changed from cart_id to id since it's more reliable and unique
-                            className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
-                        >
-                            {order.items?.map(
-                                (
-                                    item: any // Adjusting the map to the correct path
-                                ) => (
-                                    <Box
-                                        key={item.id}
-                                        bg="rgba(39, 39, 39, 0.3)"
-                                        p={4}
-                                        m={2}
-                                        rounded="lg"
-                                    >
-                                        {/*item: {item.id} <br />*/}
-                                        <RefundCard
-                                            key={item.id}
-                                            order={item}
-                                            handle={
-                                                item.variant?.product?.handle ||
-                                                'N/A'
-                                            }
-                                        />
-                                        <div className="flex justify-end pr-4">
-                                            <Box
-                                                color={'primary.green.900'}
-                                                cursor="pointer"
-                                                _hover={{
-                                                    textDecoration: 'underline',
-                                                }}
-                                                onClick={() =>
-                                                    toggleRefundInfo(item.id)
+        <div style={{ width: '100%' }}>
+            {isLoading ? (
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    textAlign="center"
+                >
+                    <Text color="white" fontSize="lg" mb={8}>
+                        Loading Refunded orders...
+                    </Text>
+                    <Spinner size={80} />
+                </Box>
+            ) : isError && orderActiveTab !== 'All Orders' ? (
+                <Text>Error fetching refunded orders</Text>
+            ) : refundOrder && refundOrder.length > 0 ? (
+                <Flex width={'100%'} flexDirection="column">
+                    {refundOrder.map((order: any) => {
+                        const totalPrice = order.items.reduce(
+                            (acc: number, item: any) =>
+                                acc + item.unit_price * item.quantity,
+                            0
+                        );
+                        return (
+                            <Flex
+                                key={order.id}
+                                direction="column"
+                                width="100%"
+                            >
+                                {order.items?.map(
+                                    (item: any, index: number) => (
+                                        <div key={item.id}>
+                                            {index === 0 ? (
+                                                <DynamicOrderStatus
+                                                    paymentStatus={
+                                                        order.payment_status
+                                                    }
+                                                    paymentType={'Refund'}
+                                                />
+                                            ) : null}
+                                            {/*item: {item.id} <br />*/}
+                                            <RefundCard
+                                                key={item.id}
+                                                order={item}
+                                                storeName={order.store.name}
+                                                icon={order.store.icon}
+                                                handle={
+                                                    item.variant?.product
+                                                        ?.handle || 'N/A'
                                                 }
+                                            />
+
+                                            <Flex
+                                                direction={{
+                                                    base: 'column',
+                                                    md: 'row',
+                                                }}
+                                                justifyContent={{
+                                                    base: 'flex-start',
+                                                    md: 'space-between',
+                                                }}
+                                                alignItems={{
+                                                    base: 'flex-start',
+                                                    md: 'center',
+                                                }}
+                                                mb={5}
                                             >
-                                                Refund Details
-                                            </Box>
-                                        </div>
-                                        <Collapse
-                                            in={courierInfo === item.id}
-                                            animateOpacity
-                                        >
-                                            <Box mt={4}>
-                                                <Text
-                                                    fontSize="24px"
-                                                    fontWeight="semibold"
+                                                <OrderTotalAmount
+                                                    totalPrice={totalPrice}
+                                                    currencyCode={
+                                                        item.currency_code
+                                                    }
+                                                    index={index}
+                                                    itemCount={
+                                                        order.items.length - 1
+                                                    }
+                                                />
+                                                <Flex
+                                                    direction={{
+                                                        base: 'column',
+                                                        md: 'row',
+                                                    }}
+                                                    justifyContent={'flex-end'}
+                                                    gap={2}
+                                                    mt={{ base: 4, md: 0 }}
+                                                    width="100%"
                                                 >
-                                                    {getAmount(
-                                                        order.unit_price,
-                                                        order.currency_code
-                                                    )}{' '}
-                                                    {order.currency_code}
-                                                </Text>
-                                                <HStack
-                                                    align="start"
-                                                    spacing={3}
-                                                    w="100%"
-                                                >
-                                                    {' '}
-                                                    {/* Align icon and text block horizontally */}
-                                                    {/* Left Column: Icon */}
-                                                    <Icon
-                                                        as={BsCircleFill}
-                                                        color="primary.green.900"
-                                                        boxSize={3} // Adjust size as needed
-                                                        mt={1} // Optional: Adjust this to vertically center the icon with the text
-                                                    />
-                                                    {/* Right Column: Text */}
-                                                    <VStack
+                                                    <Button
+                                                        variant="outline"
+                                                        colorScheme="white"
+                                                        borderRadius="37px"
+                                                        cursor="pointer"
+                                                        _hover={{
+                                                            textDecoration:
+                                                                'underline',
+                                                        }}
+                                                        onClick={() =>
+                                                            toggleRefundInfo(
+                                                                item.id
+                                                            )
+                                                        }
+                                                    >
+                                                        Refund Details
+                                                    </Button>
+                                                </Flex>
+                                            </Flex>
+                                            <Collapse
+                                                in={courierInfo === item.id}
+                                                animateOpacity
+                                            >
+                                                <Flex mt={4} width="100%">
+                                                    <Text
+                                                        fontSize="24px"
+                                                        fontWeight="semibold"
+                                                    >
+                                                        {getAmount(
+                                                            item?.unit_price,
+                                                            item?.currency_code
+                                                        )}{' '}
+                                                        {upperCase(
+                                                            item?.currency_code
+                                                        )}
+                                                    </Text>
+                                                    <HStack
                                                         align="start"
-                                                        spacing={2}
+                                                        spacing={3}
+                                                        w="100%"
                                                     >
                                                         {' '}
-                                                        {/* Stack text vertically */}
-                                                        <Text fontWeight="bold">
-                                                            Your request is now
-                                                            under review
-                                                        </Text>
-                                                        <Text
-                                                            fontSize="sm"
-                                                            color="gray.500"
+                                                        <Icon
+                                                            as={BsCircleFill}
+                                                            color="primary.green.900"
+                                                            boxSize={3}
+                                                            mt={1}
+                                                        />
+                                                        {/* Right Column: Text */}
+                                                        <VStack
+                                                            align="start"
+                                                            spacing={2}
                                                         >
-                                                            Your request for a
-                                                            refund is now under
-                                                            review. We will
-                                                            update you on the
-                                                            status of your
-                                                            request within 3-5
-                                                            business days. Thank
-                                                            you for your
-                                                            patience.
-                                                        </Text>
-                                                    </VStack>
-                                                </HStack>
-                                            </Box>
-                                        </Collapse>
-                                    </Box>
-                                )
-                            )}
-                        </div>
-                    ))}
-                </>
+                                                            {' '}
+                                                            {/* Stack text vertically */}
+                                                            <Text fontWeight="bold">
+                                                                Your request is
+                                                                now under review
+                                                            </Text>
+                                                            <Text
+                                                                fontSize="sm"
+                                                                color="gray.500"
+                                                            >
+                                                                Your request for
+                                                                a refund is now
+                                                                under review. We
+                                                                will update you
+                                                                on the status of
+                                                                your request
+                                                                within 3-5
+                                                                business days.
+                                                                Thank you for
+                                                                your patience.
+                                                            </Text>
+                                                        </VStack>
+                                                    </HStack>
+                                                </Flex>
+                                            </Collapse>
+                                        </div>
+                                    )
+                                )}
+                            </Flex>
+                        );
+                    })}
+                </Flex>
             ) : null}
         </div>
     );

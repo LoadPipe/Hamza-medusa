@@ -11,20 +11,17 @@ import {
 } from '@lib/data';
 import { Region } from '@medusajs/medusa';
 import ProductTemplate from '@modules/products/templates';
-import { getRegion } from 'app/actions';
+import { getRegion } from '@/app/actions';
 
 type Props = {
     params: { countryCode: string; handle: string };
 };
 
 export async function generateStaticParams() {
-    const countryCodes = await listRegions().then((regions) =>
-        regions?.map((r) => r.countries.map((c) => c.iso_2)).flat()
-    );
-
-    if (!countryCodes) {
-        return null;
-    }
+    //const countryCodes = await listRegions().then((regions) =>
+    //    regions?.map((r) => r.countries.map((c) => c.iso_2)).flat()
+    //);
+    const countryCodes = [process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'];
 
     const products = await Promise.all(
         countryCodes.map((countryCode) => {

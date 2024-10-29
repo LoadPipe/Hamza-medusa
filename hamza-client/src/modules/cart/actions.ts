@@ -15,7 +15,7 @@ import {
     updateCart,
     updateItem,
 } from '@lib/data';
-import { getRegion } from 'app/actions';
+import { getRegion } from '@/app/actions';
 
 /**
  * Retrieves the cart based on the cartId cookie
@@ -77,22 +77,18 @@ export async function addToCart({
     variantId,
     quantity,
     countryCode,
-    currencyCode,
 }: {
     variantId: string;
     quantity: number;
     countryCode: string;
-    currencyCode: string;
 }) {
     console.log('addToCart function called with parameters:');
     console.log('variantId:', variantId);
     console.log('quantity:', quantity);
     console.log('countryCode:', countryCode);
-    console.log('currencyCode:', currencyCode);
 
-    if (process.env.NEXT_PUBLIC_FORCE_US_COUNTRY) {
-        countryCode = 'us';
-        console.log('Country code forced to US:', countryCode);
+    if (process.env.NEXT_PUBLIC_FORCE_COUNTRY) {
+        countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY;
     }
 
     const cart = await getOrSetCart(countryCode).then((cart) => {
@@ -115,14 +111,12 @@ export async function addToCart({
             cartId: cart.id,
             variantId,
             quantity,
-            currencyCode,
         });
 
         await addItem({
             cartId: cart.id,
             variantId,
             quantity,
-            currencyCode,
         });
 
         console.log('Item added to cart successfully');

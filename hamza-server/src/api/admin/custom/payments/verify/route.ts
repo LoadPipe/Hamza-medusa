@@ -1,4 +1,4 @@
-import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
+import { type MedusaRequest, type MedusaResponse, type Logger, OrderStatus, FulfillmentStatus } from '@medusajs/medusa';
 import { RouteHandler } from '../../../../route-handler';
 import { Order } from '../../../../../models/order';
 import { Payment } from '../../../../../models/payment';
@@ -17,14 +17,18 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         const buckydropService: BuckydropService = req.scope.resolve('buckydropService')
 
         //me minana banana
-        if (handler.hasParam('order_id'))
+        if (handler.hasParam('order_id')) {
+            handler.logger.info(`Verifying payments for ${handler.inputParams.order_id}...`);
             orderPayments = await paymentVerificationService.verifyPayments(handler.inputParams.order_id);
-        else
+        }
+        else {
+            handler.logger.info(`Verifying payments...`);
             orderPayments = await paymentVerificationService.verifyPayments();
+        }
 
         //if orders are bucky orders, we gotta do something
         for (let item of orderPayments) {
-            if (item.order.bucky_metadata) {
+            if (item.order.bucky_metadata && item.order.bucky_metadata.status === 'pending') {
                 item.order = await buckydropService.processPendingOrder(item.order.id);
             }
         }

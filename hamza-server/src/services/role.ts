@@ -34,7 +34,7 @@ class RoleService extends TransactionBaseService {
         // however, it's best to supply the relations
         // as an optional method parameter
         const roleRepo = this.manager_.withRepository(this.roleRpository_);
-        return await roleRepo.findOne({
+        return roleRepo.findOne({
             where: {
                 id,
             },

@@ -43,7 +43,7 @@ const QuantityButton = () => {
 
     //TODO:Get varient id and update quantity.
     return (
-        <Flex flexDirection="column" mb="1rem">
+        <Flex flexDirection="column" my="1rem">
             <Flex>
                 <Heading
                     as="h3"

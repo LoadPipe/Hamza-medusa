@@ -2,16 +2,30 @@ import { BigNumberish } from 'ethers';
 import { LiteSwitchClient } from './contracts/lite-switch';
 
 
-export async function verifyPaymentForOrder(chainId: number, orderId: string, amount: BigNumberish): Promise<boolean> {
+export async function verifyPaymentForOrder(
+    chainId: number,
+    transactionId: string,
+    orderId: string,
+    amount: BigNumberish
+): Promise<boolean> {
+    const total: bigint = await getAmountPaidForOrder(chainId, transactionId, orderId, amount);
+    return (total >= BigInt(amount));
+}
+
+export async function getAmountPaidForOrder(
+    chainId: number,
+    transactionId: string,
+    orderId: string,
+    amount: BigNumberish
+): Promise<bigint> {
     const switchClient = new LiteSwitchClient(chainId);
-    const events = await switchClient.findPaymentEvents(orderId);
-    console.log('events: ', events);
+    const events = await switchClient.findPaymentEvents(orderId, transactionId);
+    //console.log('events: ', events);
 
     let total: bigint = BigInt(0);
     if (events.length) {
-        events.map(e => total = total + BigInt(e.args.amount.toString()));
+        events.map(e => total = total + BigInt(e.amount.toString()));
     }
 
-    console.log('total vs. amount: ', total, amount); //TODO: amount must be adjusted for currency
-    return (BigInt(total) >= BigInt(amount));
+    return (BigInt(total));
 }

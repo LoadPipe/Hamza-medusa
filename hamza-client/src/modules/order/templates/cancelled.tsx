@@ -1,97 +1,222 @@
-import React, { useEffect, useState } from 'react';
-import { getSingleBucket } from '@lib/data';
-import { Box, Button } from '@chakra-ui/react';
+import { Box, Divider, Text, Flex, Button } from '@chakra-ui/react';
 import CancelCard from '@modules/account/components/cancel-card';
 import EmptyState from '@modules/order/components/empty-state';
+import { useQuery } from '@tanstack/react-query';
+import Spinner from '@modules/common/icons/spinner';
+import React, { useState } from 'react';
+import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
+import OrderTotalAmount from '@modules/order/templates/order-total-amount';
+import CancellationModal from '@modules/order/templates/cancelled-modal';
+import { OrdersData } from './all';
+import { useOrderTabStore } from '@store/order-tab-state';
 
 const Cancelled = ({
-    orders,
+    customer,
+    // chainEnabled,
+    // onSuccess,
     isEmpty,
 }: {
-    orders: any[];
+    customer: string;
+    // chainEnabled?: boolean;
+    // onSuccess?: () => void;
     isEmpty?: boolean;
 }) => {
-    const [customerOrder, setCustomerOrder] = useState<any[]>([]);
-    const [customerId, setCustomerId] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [activeOrder, setActiveOrder] = useState<string | null>(null); // State to track the active order's modal
+    const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
-    useEffect(() => {
-        console.log('Orders received in Cancelled:', orders);
-        if (orders && orders.length > 0) {
-            const customer_id = orders[0]?.customer_id;
-            console.log(
-                `Running fetchAllOrders with customerID ${customer_id}`
-            );
-            fetchAllOrders(customer_id);
-            setCustomerId(customer_id);
-        }
-    }, [orders]);
+    const {
+        data,
+        isLoading: cancelIsLoading,
+        isError: cancelIsError,
+    } = useQuery<OrdersData>(['batchOrders']);
 
-    const fetchAllOrders = async (customerId: string) => {
-        setIsLoading(true);
-        try {
-            const bucket = await getSingleBucket(customerId, 4);
-            if (bucket === undefined || bucket === null) {
-                console.error('Bucket is undefined or null');
-                setCustomerOrder([]); // Set empty state
-                setIsLoading(false);
-                return;
-            }
-            if (Array.isArray(bucket)) {
-                setCustomerOrder(bucket);
-            } else {
-                console.error('Expected an array but got:', bucket);
-                setCustomerOrder([]);
-            }
-        } catch (error) {
-            console.error('Error fetching processing orders:', error);
-            setCustomerOrder([]);
-        }
-        setIsLoading(false);
-    };
-
-    if (isEmpty && customerOrder && customerOrder?.length == 0) {
+    const canceledOrder = data?.Cancelled || [];
+    if (isEmpty && canceledOrder && canceledOrder?.length == 0) {
         return <EmptyState />;
     }
 
     return (
-        <div>
-            {/* Processing-specific content */}
-            {customerOrder && customerOrder.length > 0 ? (
-                <>
-                    <h1>Cancelled Orders</h1>
+        <div style={{ width: '100%' }}>
+            {cancelIsLoading ? (
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    textAlign="center"
+                    py={5}
+                >
+                    <Text color="white" fontSize="lg" mb={8}>
+                        Loading Cancelled orders...
+                    </Text>
+                    <Spinner size={80} />
+                </Box>
+            ) : cancelIsError && orderActiveTab !== 'All Orders' ? (
+                <Box
+                    display="flex"
+                    flexDirection="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    textAlign="center"
+                    py={5}
+                >
+                    <Text color="red.500" fontSize="lg" mb={8}>
+                        Error fetching delivered orders.
+                    </Text>
+                </Box>
+            ) : canceledOrder && canceledOrder.length > 0 ? (
+                <Flex width={'100%'} flexDirection="column">
+                    {canceledOrder.map((order: any) => {
+                        const totalPrice = order.items.reduce(
+                            (acc: number, item: any) =>
+                                acc + item.unit_price * item.quantity,
+                            0
+                        );
 
-                    {customerOrder.map((order) => (
-                        <div
-                            key={order.id} // Changed from cart_id to id since it's more reliable and unique
-                            className="border-b border-gray-200 pb-6 last:pb-0 last:border-none"
-                        >
-                            {order.items?.map(
-                                (
-                                    item: any // Adjusting the map to the correct path
-                                ) => (
-                                    <Box
-                                        key={item.id}
-                                        bg="rgba(39, 39, 39, 0.3)"
-                                        p={4}
-                                        m={2}
-                                        rounded="lg"
-                                    >
-                                        {/*item: {item.id} <br />*/}
-                                        <CancelCard
-                                            key={item.id}
-                                            order={item}
-                                            handle={
-                                                item.variant?.product?.handle ||
-                                                'N/A'
-                                            }
-                                        />
-                                    </Box>
-                                )
-                            )}
-                        </div>
-                    ))}
-                </>
+                        return (
+                            <Flex
+                                key={order.id}
+                                direction="column"
+                                width="100%"
+                            >
+                                {order.items?.map(
+                                    (item: any, index: number) => (
+                                        <div key={item.id}>
+                                            {index === 0 ? (
+                                                <DynamicOrderStatus
+                                                    paymentStatus={
+                                                        order.payment_status
+                                                    }
+                                                    paymentType={'Cancelled'}
+                                                />
+                                            ) : null}
+                                            <CancelCard
+                                                order={item}
+                                                storeName={order.store.name}
+                                                icon={order.store.icon}
+                                                handle={
+                                                    item.variant?.product
+                                                        ?.handle || 'N/A'
+                                                }
+                                            />
+                                            <Flex
+                                                direction={{
+                                                    base: 'column',
+                                                    md: 'row',
+                                                }}
+                                                justifyContent={{
+                                                    base: 'flex-start',
+                                                    md: 'space-between',
+                                                }}
+                                                alignItems={{
+                                                    base: 'flex-start',
+                                                    md: 'center',
+                                                }}
+                                                mb={5}
+                                            >
+                                                <OrderTotalAmount
+                                                    totalPrice={totalPrice}
+                                                    currencyCode={
+                                                        item.currency_code
+                                                    }
+                                                    index={index}
+                                                    itemCount={
+                                                        order.items.length - 1
+                                                    }
+                                                />
+                                                <Flex
+                                                    direction={'row'}
+                                                    justifyContent={'flex-end'}
+                                                >
+                                                    <Text
+                                                        fontSize="16px"
+                                                        fontWeight="semibold"
+                                                    >
+                                                        {/*{getAmount(*/}
+                                                        {/*    order.unit_price*/}
+                                                        {/*)}{' '}*/}
+                                                        {/*{upperCase(*/}
+                                                        {/*    order.currency_code*/}
+                                                        {/*)}*/}
+                                                    </Text>
+                                                </Flex>
+                                                <Flex
+                                                    direction={{
+                                                        base: 'column',
+                                                        md: 'row',
+                                                    }}
+                                                    justifyContent={'flex-end'}
+                                                    gap={2}
+                                                    mt={{ base: 4, md: 0 }}
+                                                    width="100%"
+                                                >
+                                                    <Button
+                                                        variant="outline"
+                                                        colorScheme="white"
+                                                        borderRadius={'37px'}
+                                                        onClick={() =>
+                                                            setActiveOrder(
+                                                                order.id
+                                                            )
+                                                        } // Set active order on click
+                                                        width={{
+                                                            base: '100%',
+                                                            md: 'auto',
+                                                        }}
+                                                    >
+                                                        View Cancellation
+                                                        Details
+                                                    </Button>
+                                                    <a
+                                                        href="https://blog.hamza.market/contact/"
+                                                        target="_blank"
+                                                    >
+                                                        <Button
+                                                            ml={{
+                                                                base: 0,
+                                                                md: 2,
+                                                            }}
+                                                            mt={{
+                                                                base: 2,
+                                                                md: 0,
+                                                            }}
+                                                            variant="outline"
+                                                            colorScheme="white"
+                                                            borderRadius={
+                                                                '37px'
+                                                            }
+                                                            width={{
+                                                                base: '100%',
+                                                                md: 'auto',
+                                                            }}
+                                                        >
+                                                            Contact Seller
+                                                        </Button>
+                                                    </a>
+                                                </Flex>
+                                            </Flex>
+                                        </div>
+                                    )
+                                )}
+                                <CancellationModal
+                                    isOpen={activeOrder === order.id}
+                                    onClose={() => setActiveOrder(null)}
+                                    cancelReason={order.metadata?.cancel_reason}
+                                    canceledAt={order.canceled_at}
+                                />
+                                <Divider
+                                    width="90%"
+                                    borderBottom="0.2px solid"
+                                    borderColor="#D9D9D9"
+                                    pr={'1rem'}
+                                    _last={{
+                                        mb: 8,
+                                    }}
+                                />
+                            </Flex>
+                        );
+                    })}
+                </Flex>
             ) : null}
         </div>
     );

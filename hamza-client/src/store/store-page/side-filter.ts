@@ -1,31 +1,49 @@
 import { create } from 'zustand';
 
+interface CategoryItem {
+    categoryName: string;
+    urlLink: string;
+}
+
 // Define the state and associated actions in an interface
-interface FilterState {
-    categoryFilterSelect: string | null;
-    categoryTypeFilterSelect: string | null;
-    currencyFilterSelect: string | null;
-    reviewFilterSelect: string | null;
-    setCategoryFilterSelect: (item: string | null) => void;
-    setCategoryTypeFilterSelect: (item: string | null) => void;
-    setCurrencyFilterSelect: (item: string | null) => void;
-    setReviewFilterSelect: (stars: string | null) => void;
+interface StoreFilterState {
+    selectCategoryStoreFilter: string[];
+    categoryItemSideFilter: CategoryItem[];
+    reviewStarsSelect: string | null;
+    setSelectCategoryStoreFilter: (
+        items: string[] | ((prev: string[]) => string[])
+    ) => void;
+    setCategoryItemSideFilter: (
+        items: CategoryItem[] | ((prev: CategoryItem[]) => CategoryItem[])
+    ) => void;
+    setReviewStarsSelect: (stars: string | null) => void;
 }
 
 // Create the Zustand store
-const useSideFilter = create<FilterState>((set) => ({
-    categoryFilterSelect: null,
-    currencyFilterSelect: null,
-    reviewFilterSelect: null,
-    categoryTypeFilterSelect: null,
-    setCurrencyFilterSelect: (item: string | null) =>
-        set({ currencyFilterSelect: item }),
-    setCategoryFilterSelect: (item: string | null) =>
-        set({ categoryFilterSelect: item }),
-    setCategoryTypeFilterSelect: (item: string | null) =>
-        set({ categoryTypeFilterSelect: item }),
-    setReviewFilterSelect: (stars: string | null) =>
-        set({ reviewFilterSelect: stars }),
+const useSideFilter = create<StoreFilterState>((set) => ({
+    selectCategoryStoreFilter: [], // Initialized to a default array
+    categoryItemSideFilter: [], // Initialized to an empty array
+    reviewStarsSelect: null, // Remains nullable since it's a single value
+    setSelectCategoryStoreFilter: (
+        items: string[] | ((prev: string[]) => string[])
+    ) =>
+        set((state) => ({
+            selectCategoryStoreFilter:
+                typeof items === 'function'
+                    ? items(state.selectCategoryStoreFilter)
+                    : items,
+        })),
+    setCategoryItemSideFilter: (
+        items: CategoryItem[] | ((prev: CategoryItem[]) => CategoryItem[])
+    ) =>
+        set((state) => ({
+            categoryItemSideFilter:
+                typeof items === 'function'
+                    ? items(state.categoryItemSideFilter)
+                    : items,
+        })),
+    setReviewStarsSelect: (stars: string | null) =>
+        set({ reviewStarsSelect: stars }),
 }));
 
 export default useSideFilter;

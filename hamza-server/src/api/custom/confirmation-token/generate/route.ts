@@ -3,17 +3,6 @@ import ConfirmationTokenService from '../../../../services/confirmation-token';
 import { readRequestBody } from '../../../../utils/request-body';
 import { RouteHandler } from '../../../route-handler';
 
-/*
-checklist: 
-- check if route is used 
-- check route name 
-- check route verb 
-- remove commented code 
-- add securty if needed 
-- add validation 
-- remove req.query 
-*/
-
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     let confirmationTokenService: ConfirmationTokenService = req.scope.resolve(
         'confirmationTokenService'
@@ -35,10 +24,18 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         if (!handler.enforceCustomerId(handler.inputParams.customer_id)) return;
 
         //do the thing
-        await confirmationTokenService.createConfirmationToken({
+        const result = await confirmationTokenService.createConfirmationToken({
             customer_id: handler.inputParams.customer_id,
             email: handler.inputParams.email,
         });
+
+        if (result.status === 'error') {
+            console.log('Email conflict detected, returning 409');
+            return handler.returnStatusWithMessage(
+                200,
+                '409: Email already exists'
+            );
+        }
 
         return handler.returnStatusWithMessage(
             200,

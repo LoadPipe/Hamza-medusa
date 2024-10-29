@@ -1,12 +1,13 @@
-import { Box, Flex, Text, Image } from '@chakra-ui/react';
-import { FaCheckCircle } from 'react-icons/fa';
+import { Flex } from '@chakra-ui/react';
 import React from 'react';
+
 type OrderDetails = {
     thumbnail: string;
     title: string;
     description: string;
 };
-import Link from 'next/link';
+import OrderLeftColumn from '@modules/order/templates/order-left-column';
+import OrderRightAddress from '@modules/order/templates/order-right-address';
 
 type Order = {
     id: string;
@@ -22,6 +23,9 @@ type Order = {
     description: string;
     variant: {
         product_id: string;
+        metadata: {
+            imgUrl?: string;
+        };
     };
     region: {
         id: string;
@@ -31,138 +35,44 @@ type Order = {
 
 type OrderCardProps = {
     order: Order;
-    handle: any;
-    vendorName: string;
+    handle: string;
+    storeName: string;
+    icon: string;
     address: any;
 };
 
 const ProcessingOrderCard = ({
     order,
     handle,
-    vendorName,
+    storeName,
+    icon,
     address,
 }: OrderCardProps) => {
     if (!order) {
         return <div>Loading...</div>; // Display loading message if order is undefined
     }
 
-    console.log(`HANDLE ${handle}`);
     return (
-        <Box
-            // bg={'#272727'}
+        <Flex
+            mb={4}
             color={'white'}
-            p={4}
-            rounded="lg"
-            shadow="base"
-            maxWidth="1000px"
-            m="auto"
-            mt={2}
+            justifyContent="space-between"
+            maxWidth="100%"
+            flexDirection={{ base: 'column', md: 'row' }}
         >
-            <Flex alignItems="center" mb={2}>
-                <Text
-                    fontSize={{ base: '14px', md: '24px' }}
-                    fontWeight="bold"
-                    noOfLines={1}
-                >
-                    {vendorName}
-                </Text>
-                <Flex
-                    display={{ base: 'none', md: 'flex' }}
-                    ml={2}
-                    alignItems="center"
-                >
-                    <FaCheckCircle color="#3196DF" />
-                </Flex>
-            </Flex>
+            {/* Left Side: Default  */}
 
-            <Flex justifyContent="space-between">
-                {/* Left Side: Existing Content */}
-                <Flex
-                    alignItems="center"
-                    justifyContent="space-between"
-                    flex="1"
-                >
-                    <Link href={`/us/products/${handle}`}>
-                        <Image
-                            borderRadius="lg"
-                            width={{ base: '60px', md: '120px' }}
-                            src={order.thumbnail}
-                            alt={`Thumbnail of ${order.title}`}
-                            mr={4}
-                        />
-                    </Link>
+            <OrderLeftColumn
+                order={order}
+                handle={handle}
+                storeName={storeName}
+                icon={icon}
+                showDate={false}
+            />
 
-                    <Box flex="1">
-                        <Flex justifyContent="space-between" direction="row">
-                            <Flex direction="column">
-                                <Text
-                                    color={'rgba(85, 85, 85, 1.0)'}
-                                    fontSize="16px"
-                                >
-                                    Item Name
-                                </Text>
-                                <Text fontWeight="bold" fontSize="18px">
-                                    {order.title}
-                                </Text>
-                                <Flex direction="row" alignItems="center">
-                                    <Text
-                                        color={'rgba(85, 85, 85, 1.0)'}
-                                        fontSize="16px"
-                                        mr={1} // Add some space between "Variation:" and the description
-                                    >
-                                        Variation:
-                                    </Text>
-                                    <Text fontSize="14px">
-                                        {order.description}
-                                    </Text>
-                                </Flex>
-                            </Flex>
-                        </Flex>
-
-                        <Flex direction="column" mt={2}>
-                            <Text
-                                color={'rgba(85, 85, 85, 1.0)'}
-                                fontSize="16px"
-                            >
-                                Order Date
-                            </Text>
-                            <Text color={'white'} fontSize="16px">
-                                {new Date(
-                                    order.created_at
-                                ).toLocaleDateString()}
-                            </Text>
-                        </Flex>
-                    </Box>
-                </Flex>
-
-                {/* Right Side: Courier and Address */}
-                <Flex
-                    direction="column"
-                    ml={4}
-                    minWidth="200px"
-                    maxWidth="300px"
-                >
-                    <Box mb={4}>
-                        <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
-                            Courier
-                        </Text>
-                        <Text color={'white'} fontSize="16px">
-                            DHL Express
-                        </Text>
-                    </Box>
-
-                    <Box>
-                        <Text color={'rgba(85, 85, 85, 1.0)'} fontSize="16px">
-                            Address
-                        </Text>
-                        <Text color={'white'} fontSize="16px">
-                            {address.address_1} {address.city}{' '}
-                            {address.province} {address.postal_code}
-                        </Text>
-                    </Box>
-                </Flex>
-            </Flex>
-        </Box>
+            {/* Right Side: Address */}
+            <OrderRightAddress address={address} />
+        </Flex>
     );
 };
 

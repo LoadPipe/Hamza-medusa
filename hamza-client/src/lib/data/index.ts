@@ -18,12 +18,16 @@ import { decode } from 'jsonwebtoken';
 import sortProducts from '@lib/util/sort-products';
 import transformProductPreview from '@lib/util/transform-product-preview';
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
-import { ProductCategoryWithChildren, ProductPreviewType } from 'types/global';
+import {
+    ProductCategoryWithChildren,
+    ProductPreviewType,
+} from '@/types/global';
 import { medusaClient } from '../config';
 import medusaError from '@lib/util/medusa-error';
 import axios from 'axios';
 
 import { cookies } from 'next/headers';
+import { next } from 'sucrase/dist/types/parser/tokenizer';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -42,7 +46,8 @@ async function axiosCall(
     verb: 'get' | 'post' | 'patch' | 'put' | 'delete',
     path: string,
     payload: any,
-    requiresSecurity: boolean = false
+    requiresSecurity: boolean = false,
+    returnRaw: boolean = false
 ): Promise<any> {
     try {
         console.log(
@@ -52,11 +57,12 @@ async function axiosCall(
         if (!url.startsWith('/')) url = '/' + url;
         url = `${BACKEND_URL}${url}`;
 
-        let config = undefined;
+        let config: any = {
+            cache: false,
+            headers: { 'Cache-Control': 'no-cache, no-store' },
+        };
         if (requiresSecurity) {
-            config = {
-                headers: { authorization: cookies().get('_medusa_jwt')?.value },
-            };
+            config.headers.authorization = cookies().get('_medusa_jwt')?.value;
         }
 
         let response = { data: undefined };
@@ -66,6 +72,9 @@ async function axiosCall(
                     const input: any = {};
                     if (payload) input.params = payload;
                     if (requiresSecurity) input.headers = config?.headers;
+                    if (!input.cache) {
+                        input.cache = false;
+                    }
 
                     response = await axios.get(url, input);
                 }
@@ -75,6 +84,9 @@ async function axiosCall(
                     const input: any = {};
                     if (payload) input.data = payload;
                     if (requiresSecurity) input.headers = config?.headers;
+                    if (!input.cache) {
+                        input.cache = false;
+                    }
 
                     response = await axios.delete(url, input);
                 }
@@ -90,73 +102,98 @@ async function axiosCall(
                 break;
         }
 
-        return response.data;
-    } catch (error) {
+        if (returnRaw) {
+            console.log(response);
+        }
+        return returnRaw ? response : response.data;
+    } catch (error: any) {
         console.error(
             `${verb.toUpperCase()} ${path} ${JSON.stringify(payload) ?? ''} error: `,
             error
         );
+        //return returnRaw ? error : error.data;
     }
 }
 
 async function get(
     url: string,
     params: any = null,
-    requiresSecurity: boolean = false
+    requiresSecurity: boolean = false,
+    returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('get', url, params, requiresSecurity);
+    return axiosCall('get', url, params, requiresSecurity, returnRaw);
 }
 
 async function post(
     url: string,
     payload: any,
-    requiresSecurity: boolean = false
+    requiresSecurity: boolean = false,
+    returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('post', url, payload, requiresSecurity);
+    return axiosCall('post', url, payload, requiresSecurity, returnRaw);
 }
 
 async function put(
     url: string,
     payload: any,
-    requiresSecurity: boolean = false
+    requiresSecurity: boolean = false,
+    returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('put', url, payload, requiresSecurity);
+    return axiosCall('put', url, payload, requiresSecurity, returnRaw);
 }
 
 async function del(
     url: string,
     payload: any,
-    requiresSecurity: boolean = false
+    requiresSecurity: boolean = false,
+    returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('delete', url, payload, requiresSecurity);
+    return axiosCall('delete', url, payload, requiresSecurity, returnRaw);
 }
 
 async function patch(
     url: string,
     payload: any,
-    requiresSecurity: boolean = false
+    requiresSecurity: boolean = false,
+    returnRaw: boolean = false
 ): Promise<any> {
-    return await axiosCall('patch', url, payload, requiresSecurity);
+    return axiosCall('patch', url, payload, requiresSecurity, returnRaw);
 }
 
-async function getSecure(url: string, params: any) {
-    return await get(url, params, true);
+async function getSecure(url: string, params: any, returnRaw: boolean = false) {
+    return get(url, params, true, returnRaw);
 }
 
-async function postSecure(url: string, payload: any) {
-    return await post(url, payload, true);
+async function postSecure(
+    url: string,
+    payload: any,
+    returnRaw: boolean = false
+) {
+    return post(url, payload, true, returnRaw);
 }
 
-async function putSecure(url: string, payload: any) {
-    return await put(url, payload, true);
+async function putSecure(
+    url: string,
+    payload: any,
+    returnRaw: boolean = false
+) {
+    return put(url, payload, true, returnRaw);
 }
 
-async function delSecure(url: string, payload: any) {
-    return await del(url, payload, true);
+async function delSecure(
+    url: string,
+    payload: any,
+    returnRaw: boolean = false
+) {
+    return del(url, payload, true, returnRaw);
 }
 
-async function patchSecure(url: string, payload: any) {
-    return await patch(url, payload, true);
+async function patchSecure(
+    url: string,
+    payload: any,
+    returnRaw: boolean = false
+) {
+    return patch(url, payload, true, returnRaw);
 }
 
 /**
@@ -179,18 +216,20 @@ const getMedusaHeaders = (tags: string[] = []) => {
     if (token) {
         headers.authorization = `Bearer ${token}`;
     }
+    //headers.cache = false;
+    headers['Cache-Control'] = 'no-cache, no-store';
 
     return headers;
 };
 
 // Get Vendors
 export async function getStores() {
-    return await get('/custom/store');
+    return get('/custom/store');
 }
 
 // Get Vendor Store by slug
 export async function getVendorStoreBySlug(store_name: string) {
-    return await get('/custom/store', {
+    return get('/custom/store', {
         store_name,
     });
 }
@@ -199,13 +238,33 @@ export async function getVendorStoreBySlug(store_name: string) {
 
 // Set a review
 export async function createReview(data: any) {
-    return await postSecure('/custom/review', data);
+    return postSecure('/custom/review', data);
 }
 
 // Get Wishlist
 export async function getWishlist(customer_id: string) {
-    return await getSecure('/custom/wishlist', {
+    return getSecure('/custom/wishlist', {
         customer_id,
+    });
+}
+
+// Get all home products by default
+export async function getAllProducts(
+    categorySelect: string[] | null = ['all'],
+    priceHigh: number = 5000000,
+    priceLow: number = 0
+) {
+    const categoryString =
+        categorySelect && categorySelect.length > 0
+            ? categorySelect.length === 1
+                ? categorySelect[0]
+                : categorySelect.join(',')
+            : '';
+
+    return getSecure('/custom/product/filter', {
+        category_name: categoryString,
+        price_hi: priceHigh,
+        price_lo: priceLow,
     });
 }
 
@@ -214,7 +273,7 @@ export async function deleteWishlistItem(
     customer_id: string,
     product_id: string
 ) {
-    return await delSecure('/custom/wishlist/item', {
+    return delSecure('/custom/wishlist/item', {
         customer_id,
         product_id,
     });
@@ -222,61 +281,61 @@ export async function deleteWishlistItem(
 
 // Get Vendor Products
 export async function getProductsByStoreName(storeName: string) {
-    return await get('/custom/store/products', {
+    return get('/custom/store/products', {
         store_name: storeName,
     });
 }
 
 // Get All Vendor Products
 export async function getAllVendorProducts() {
-    return await get('/store/products');
+    return get('/store/products');
 }
 
 // Get All Store Names
 export async function getAllStoreNames() {
-    return await get('/custom/store/name');
+    return get('/custom/store/name');
 }
 
 // Get All Product reviews
+// TODO: There's no reason to await getSecure, we're returning a promise anyways and we're adding more things
+// to the event loop for no reason
 export async function getAllProductReviews(customer_id: string) {
-    return await getSecure('/custom/review', {
-        customer_id: customer_id,
-    });
+    return getSecure('/custom/review', { customer_id });
 }
 
 export async function checkReviewsExistence(order_id: string) {
-    return await get('/custom/review', { order_id: order_id });
+    return get('/custom/review', { order_id: order_id });
 }
 
 export async function checkCustomerReviewExistence(
     order_id: string,
     variant_id: string
 ) {
-    return await getSecure('/custom/review/existing', {
+    return getSecure('/custom/review/existing', {
         order_id: order_id,
         variant_id: variant_id,
     });
 }
 
 export async function getStoreCategories(store_name: string) {
-    return await get('/custom/store/categories', { store_name });
+    return get('/custom/store/categories', { store_name });
 }
 
 export async function verifyToken(token: string) {
-    return await getSecure('/custom/confirmation-token/verify', { token });
+    return getSecure('/custom/confirmation-token/verify', { token });
 }
 
 //TODO: rename? cause it's not really clear what this does
 export async function getOrderSummary(cart_id: string) {
-    return await get('/custom/order/order-summary', { cart_id });
+    return get('/custom/order/order-summary', { cart_id });
 }
 
 export async function getNotReviewed(customer_id: string) {
-    return await getSecure('/custom/review/not-reviewed', { customer_id });
+    return getSecure('/custom/review/not-reviewed', { customer_id });
 }
 
 export async function allReviews(product_id: string) {
-    return await getSecure('/custom/review', { product_id });
+    return getSecure('/custom/review', { product_id });
 }
 
 export async function getNotifications(customer_id: string) {
@@ -287,39 +346,47 @@ export async function getNotifications(customer_id: string) {
 }
 
 export async function getServerConfig() {
-    return await get('/custom/config');
+    return get('/custom/config');
 }
 
 export async function deleteNotifications(customer_id: string) {
-    return await delSecure('/custom/customer/notification', {
+    return delSecure('/custom/customer/notification', {
         customer_id: customer_id,
         notification_type: 'none',
     });
 }
 
 export async function cancelOrderCart(cart_id: string) {
-    return await postSecure('/custom/cart/cancel', { cart_id });
+    return postSecure('/custom/cart/cancel', { cart_id });
 }
 
-export async function verifyEmail(customer_id: string, email: string) {
-    return await postSecure('/custom/confirmation-token/generate', {
-        customer_id,
-        email,
-    });
+export async function verifyEmail(
+    customer_id: string,
+    email: string,
+    returnRaw: boolean = false
+) {
+    return postSecure(
+        '/custom/confirmation-token/generate',
+        {
+            customer_id,
+            email,
+        },
+        returnRaw
+    );
 }
 
 export async function addNotifications(
     customer_id: string,
     notification_type: string
 ) {
-    return await postSecure('/custom/customer/notification', {
+    return postSecure('/custom/customer/notification', {
         customer_id: customer_id,
         notification_type: notification_type,
     });
 }
 
 export async function getOrderInformation(cart_id: string) {
-    return await getSecure('/custom/order', {
+    return getSecure('/custom/order', {
         cart_id,
     });
 }
@@ -351,33 +418,37 @@ export async function getSingleBucket(customer_id: string, bucket: number) {
 }
 
 export async function getNotReviewedOrders(customer_id: string) {
-    return await getSecure('/custom/review/not-reviewed', {
+    return getSecure('/custom/review/not-reviewed', {
         customer_id,
     });
 }
 
 export async function getOrderStatus(order_id: string) {
-    return await getSecure('/custom/order/status', {
+    return getSecure('/custom/order/status', {
         order_id: order_id,
     });
 }
 
-export async function cancelOrder(order_id: string) {
-    return await putSecure('/custom/order/cancel', { order_id });
+export async function cancelOrder(order_id: string, cancel_reason: string) {
+    return putSecure('/custom/order/cancel', { order_id, cancel_reason });
+}
+
+export async function putOAuth(code: string, type: string) {
+    return putSecure('/custom/oauth', { code, type });
 }
 
 export async function getVerificationStatus(customer_id: string) {
-    return await getSecure('/custom/customer/verification-status', {
+    return getSecure('/custom/customer/verification-status', {
         customer_id,
     });
 }
 
 export async function getAverageRatings(product_id: string) {
-    return await get('/custom/review/average', { product_id });
+    return get('/custom/review/average', { product_id });
 }
 
 export async function getReviewCount(product_id: string) {
-    return await get('/custom/review/count', { product_id });
+    return get('/custom/review/count', { product_id });
 }
 
 export async function updateProductReview(
@@ -387,7 +458,7 @@ export async function updateProductReview(
     customer_id: string,
     order_id: string
 ) {
-    return await putSecure('/custom/review', {
+    return putSecure('/custom/review', {
         product_id: product_id,
         review_updates: review,
         rating_updates: rating,
@@ -397,11 +468,11 @@ export async function updateProductReview(
 }
 
 export async function getInventoryCount(variant_id: string) {
-    return await get('/custom/variant/count', { variant_id });
+    return get('/custom/variant/count', { variant_id });
 }
 
 export async function getStore(product_id: string) {
-    return await getSecure('/custom/store', { product_id });
+    return getSecure('/custom/store', { product_id });
 }
 
 export async function getStoreIdByName(store_name: string) {
@@ -413,26 +484,26 @@ export async function setCurrency(
     preferred_currency: string,
     customer_id: string
 ) {
-    return await putSecure('/custom/customer/preferred-currency', {
+    return putSecure('/custom/customer/preferred-currency', {
         customer_id,
         preferred_currency,
     });
 }
 
 export async function getStoreProducts(store_id: string) {
-    return await get('/custom/store/products', {
+    return get('/custom/store/products', {
         store_id,
     });
 }
 
 export async function getStoreReviews(store_id: string) {
-    return await get('/custom/store/reviews', {
+    return get('/custom/store/reviews', {
         store_id,
     });
 }
 
 export async function getCheckoutData(cart_id: string) {
-    return await getSecure('/custom/checkout', {
+    return getSecure('/custom/checkout', {
         cart_id,
     });
 }
@@ -441,31 +512,43 @@ export async function finalizeCheckout(
     cart_id: string,
     transaction_id: string,
     payer_address: string,
-    escrow_contract_address: string,
+    receiver_address: string,
+    escrow_address: string,
     chain_id: number
     //cart_products: any
 ) {
-    return await postSecure('/custom/checkout', {
-        //cart_products: JSON.stringify(cart_products ?? {}),
+    return postSecure('/custom/checkout', {
         cart_id,
         transaction_id,
         payer_address,
-        escrow_contract_address,
-        chain_id
+        receiver_address,
+        escrow_address,
+        chain_id,
     });
+}
+
+export async function getCartEmail(cart_id: string) {
+    return getSecure('/custom/cart/email', { cart_id });
+}
+
+export async function setCartEmail(cart_id: string, email_address: string) {
+    return putSecure('/custom/cart/email', { cart_id, email_address });
+}
+
+export async function recoverCart(customer_id: string) {
+    const cart_id = cookies().get('_medusa_cart_id')?.value;
+    const output = await getSecure('/custom/cart/recover', { customer_id, cart_id });
+    if (output?.cart) {
+        cookies().set('_medusa_cart_id', output.cart.id);
+    }
+    return output?.cart;
 }
 
 // Cart actions
 export async function createCart(data = {}) {
     const headers = getMedusaHeaders(['cart']);
 
-    return medusaClient.carts
-        .create(data, headers)
-        .then(({ cart }) => cart)
-        .catch((err) => {
-            console.log(err);
-            return null;
-        });
+    return postSecure('/custom/cart', { data });
 }
 
 export async function updateCart(cartId: string, data: StorePostCartsCartReq) {
@@ -477,28 +560,33 @@ export async function updateCart(cartId: string, data: StorePostCartsCartReq) {
         .catch((error) => medusaError(error));
 }
 
-export async function getCart(cartId: string) {
-    const headers = getMedusaHeaders(['cart']);
+export async function getCart(cart_id: string) {
+    const token = cookies().get('_medusa_jwt')?.value;
 
-    return medusaClient.carts
-        .retrieve(cartId, headers)
-        .then(({ cart }) => cart)
-        .catch((err) => {
-            console.log(err);
-            return null;
-        });
+    //if we have a token, it's safe to get the possibly-cached cart
+    if (token?.length) {
+        const headers = getMedusaHeaders(['cart']);
+        return medusaClient.carts
+            .retrieve(cart_id, headers)
+            .then(({ cart }) => cart)
+            .catch((err) => {
+                console.log(err);
+                return null;
+            });
+    }
+
+    //otherwise, play it safe and get the definitely non-cached
+    return getSecure('/custom/cart', { cart_id });
 }
 
 export async function addItem({
     cartId,
     variantId,
     quantity,
-    currencyCode,
 }: {
     cartId: string;
     variantId: string;
     quantity: number;
-    currencyCode: string;
 }) {
     const headers = getMedusaHeaders(['cart']);
 
@@ -568,7 +656,7 @@ export async function updatePaymentSession(
     providerId: string
 ) {
     if (paymentSessionId) {
-        return await putSecure('/custom/payment-session', {
+        return putSecure('/custom/payment-session', {
             cart_id: cartId,
             payment_session_id: paymentSessionId,
         });
@@ -576,7 +664,7 @@ export async function updatePaymentSession(
 }
 
 export async function addDefaultShippingMethod(cart_id: string) {
-    return await putSecure('/custom/cart/shipping', {
+    return putSecure('/custom/cart/shipping', {
         cart_id,
     });
 }
@@ -629,6 +717,13 @@ export async function completeCart(cartId: string) {
 
 export async function clearCart() {
     cookies().delete('_medusa_cart_id');
+}
+
+export async function getCartShippingCost() {
+    const cart_id = cookies().get('_medusa_cart_id')?.value;
+    return getSecure('/custom/cart/shipping', {
+        cart_id,
+    });
 }
 
 // Order actions
@@ -729,13 +824,47 @@ export async function getHamzaCustomer(includeAddresses: boolean = true) {
         customer_id: '',
     };
     const customer_id: string = token?.customer_id ?? '';
+    let response = null;
 
-    const response = await getSecure('/custom/customer', {
-        customer_id,
-        include_addresses: includeAddresses ? 'true' : 'false',
-    });
+    if (customer_id?.length) {
+        response = await getSecure('/custom/customer', {
+            customer_id,
+            include_addresses: includeAddresses ? 'true' : 'false',
+        });
+    }
 
     return response ?? {};
+}
+
+export async function getNonSecureCustomer(includedAddresses: boolean = true) {
+    const token: any = decode(cookies().get('_medusa_jwt')?.value ?? '') ?? {
+        customer_id: '',
+    };
+    const customer_id: string = token?.customer_id ?? '';
+    return get('/custom/customer', {
+        customer_id,
+        include_addresses: includedAddresses ? 'true' : 'false',
+    });
+}
+
+export async function clearAuthCookie() {
+    try {
+        cookies().set('_medusa_jwt', '', {
+            maxAge: -1,
+        });
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+export async function clearCartCookie() {
+    try {
+        cookies().set('_medusa_cart_id', '', {
+            maxAge: -1,
+        });
+    } catch (e) {
+        console.error(e);
+    }
 }
 
 // Customer actions
@@ -870,7 +999,7 @@ export const getRegion = cache(async function (countryCode: string) {
 
         const region = countryCode
             ? regionMap.get(countryCode)
-            : regionMap.get('us');
+            : regionMap.get('en');
 
         return region;
     } catch (e: any) {
@@ -960,7 +1089,7 @@ export async function getProductsList({
                 // region_id: region.id,
                 ...queryParams,
             },
-            { next: { tags: ['products'] } }
+            { next: { revalidate: 300, tags: ['products'] } }
         )
         .then((res) => res)
         .catch((err) => {
@@ -1078,7 +1207,10 @@ export async function getCollectionsList(
     limit: number = 100
 ): Promise<{ collections: ProductCollection[]; count: number }> {
     const collections = await medusaClient.collections
-        .list({ limit, offset }, { next: { tags: ['collections'] } })
+        .list(
+            { limit, offset },
+            { next: { revalidate: 300, tags: ['collections'] } }
+        )
         .then(({ collections }) => collections)
         .catch((err) => {
             throw err;

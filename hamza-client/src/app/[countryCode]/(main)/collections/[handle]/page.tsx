@@ -28,9 +28,7 @@ export async function generateStaticParams() {
         return [];
     }
 
-    const countryCodes = await listRegions().then((regions) =>
-        regions?.map((r) => r.countries.map((c) => c.iso_2)).flat()
-    );
+    const countryCodes = [process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'];
 
     const collectionHandles = collections.map(
         (collection) => collection.handle
