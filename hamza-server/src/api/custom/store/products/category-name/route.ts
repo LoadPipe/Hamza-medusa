@@ -30,7 +30,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         // Fetch the products by store ID
         const products = await productService.getFilteredProducts(
             categories,
-            0, 0,
+            0, 0, null,
             storeData.id.toString()
         );
 

@@ -53,7 +53,8 @@ const ProductCardGroup = () => {
             getAllProducts(
                 categorySelect,
                 homeModalUpperPriceFilterSelect,
-                homeModalLowerPriceFilterSelect
+                homeModalLowerPriceFilterSelect,
+                preferred_currency_code ?? 'usdc'
             ),
         {
             staleTime: 60 * 1000,
