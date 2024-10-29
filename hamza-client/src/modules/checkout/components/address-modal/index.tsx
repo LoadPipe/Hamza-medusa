@@ -33,7 +33,6 @@ interface AddressModalProps {
     toggleSameAsBilling: () => void;
     countryCode: string;
     selectedAddressId: string;
-    addressActionType: 'add' | 'edit';
 }
 
 const AddressModal: React.FC<AddressModalProps> = ({
@@ -43,7 +42,6 @@ const AddressModal: React.FC<AddressModalProps> = ({
     cart,
     countryCode,
     selectedAddressId,
-    addressActionType,
 }) => {
     // Save address to address book if radio button clicked
     const [saveAddress, setSaveAddress] = useState(false);
@@ -126,7 +124,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
         const formPayload = new FormData(e.currentTarget);
 
         // Continue to set the addresses as usual
-        await setAddresses(addressActionType, formPayload);
+        await setAddresses(formPayload);
         // If "Save shipping address" checkbox is checked, save the address for the customer
         if (saveAddress) {
             try {
