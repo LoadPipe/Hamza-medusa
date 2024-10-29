@@ -33,7 +33,6 @@ interface AddressModalProps {
     toggleSameAsBilling: () => void;
     countryCode: string;
     selectedAddressId: string;
-    addressActionType: 'add' | 'edit';
 }
 
 const AddressModal: React.FC<AddressModalProps> = ({
@@ -43,7 +42,6 @@ const AddressModal: React.FC<AddressModalProps> = ({
     cart,
     countryCode,
     selectedAddressId,
-    addressActionType,
 }) => {
     // Save address to address book if radio button clicked
     const [saveAddress, setSaveAddress] = useState(false);
@@ -126,7 +124,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
         const formPayload = new FormData(e.currentTarget);
 
         // Continue to set the addresses as usual
-        await setAddresses(addressActionType, formPayload);
+        await setAddresses(formPayload);
         // If "Save shipping address" checkbox is checked, save the address for the customer
         if (saveAddress) {
             try {
@@ -174,20 +172,31 @@ const AddressModal: React.FC<AddressModalProps> = ({
 
                 //if existing selected, update instead of adding new
                 if (selectedAddressId?.length) {
+                    console.log('update customer shipping addy');
                     await updateCustomerShippingAddress(
                         { addressId: selectedAddressId },
                         shippingAddressData
                     );
                 } else {
-                    //otherwise, add new
+                    console.log('add customer shipping address');
                     await addCustomerShippingAddress({}, shippingAddressData);
                 }
             } catch (error) {
                 console.error('Failed to save shipping address:', error);
             }
         }
+    };
 
-        onClose();
+    const handleSubmitAndClose = async (
+        e: React.FormEvent<HTMLFormElement>
+    ) => {
+        e.preventDefault(); // Prevent the default form submission
+
+        try {
+            await handleFormSubmit(e);
+        } finally {
+            onClose();
+        }
     };
 
     return (
@@ -199,7 +208,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                 p="6"
                 bgColor={'#121212'}
             >
-                <form onSubmit={handleFormSubmit}>
+                <form onSubmit={handleSubmitAndClose}>
                     <ModalHeader
                         color={'primary.green.900'}
                         textAlign={'center'}
