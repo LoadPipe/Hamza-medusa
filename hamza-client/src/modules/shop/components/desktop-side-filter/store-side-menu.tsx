@@ -42,9 +42,6 @@ const SideMenu = () => {
         priceLo,
     } = useSideFilter();
 
-    console.log(priceHi);
-    console.log(priceLo);
-
     const isDisabled = selectCategoryStoreFilter?.length === 0;
 
     // Fetching categories data
@@ -60,10 +57,10 @@ const SideMenu = () => {
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-              name: category.name,
-              id: category.id,
-              metadata: category.metadata,
-          }))
+            name: category.name,
+            id: category.id,
+            metadata: category.metadata,
+        }))
         : [];
 
     // Skeletons for loading state
@@ -112,12 +109,12 @@ const SideMenu = () => {
                     {isLoading
                         ? skeletonButtons // Show skeletons while loading
                         : uniqueCategories.map((category, index) => (
-                              <CategoryButton
-                                  key={index}
-                                  categoryName={category.name}
-                                  url={category.metadata?.icon_url}
-                              />
-                          ))}
+                            <CategoryButton
+                                key={index}
+                                categoryName={category.name}
+                                url={category.metadata?.icon_url}
+                            />
+                        ))}
                 </Flex>
             </Box>
 
@@ -149,14 +146,18 @@ const SideMenu = () => {
                                 categoryItemSideFilter?.length > 0) ||
                             range.length > 0
                         ) {
-                            setPriceLo(range[0]),
-                                setPriceHi(range[1]),
-                                setCategorySelect(selectCategoryStoreFilter);
+                            console.log('range 0:', range[0]);
+                            console.log('range 1:', range[1]);
+                            setPriceLo(range[0]);
+                            setPriceHi(range[1]);
+                            console.log('price lo:', priceLo);
+                            console.log('price hi:', priceHi);
+                            setCategorySelect(selectCategoryStoreFilter);
                             setCategoryItem(categoryItemSideFilter);
                             // Reset side menu states
                             setSelectCategoryStoreFilter([]);
                             setCategoryItemSideFilter([]);
-                            setRange([0, 2000]);
+                            setRange([range[0], range[1]]);
                         }
 
                         // Scroll to the top of the page
