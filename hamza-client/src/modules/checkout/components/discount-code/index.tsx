@@ -1,21 +1,12 @@
 'use client';
 
-import { InformationCircleSolid } from '@medusajs/icons';
-import { Cart } from '@medusajs/medusa';
-import { Heading, Label, Text, Tooltip } from '@medusajs/ui';
 import React, { useMemo } from 'react';
 import { useFormState } from 'react-dom';
-
-// import Input from '@modules/common/components/input';
+import { Cart } from '@medusajs/medusa';
+import { Button, Flex, Input, Box, Text } from '@chakra-ui/react';
 import Trash from '@modules/common/icons/trash';
 import ErrorMessage from '@modules/checkout/components/error-message';
-import { SubmitButton } from '@modules/checkout/components/submit-button';
-import { Button, Flex, Box, Input } from '@chakra-ui/react';
-import {
-    removeDiscount,
-    removeGiftCard,
-    submitDiscountForm,
-} from '@modules/checkout/actions';
+import { submitDiscountForm, removeDiscount } from '@modules/checkout/actions';
 import { formatAmount } from '@lib/util/prices';
 
 type DiscountCodeProps = {
@@ -23,63 +14,68 @@ type DiscountCodeProps = {
 };
 
 const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
-    const [isOpen, setIsOpen] = React.useState(false);
-
-    const { discounts, gift_cards, region } = cart;
+    const { discounts, region } = cart;
 
     const appliedDiscount = useMemo(() => {
-        if (!discounts || !discounts.length) {
-            return undefined;
-        }
+        if (!discounts || !discounts.length) return undefined;
 
         switch (discounts[0].rule.type) {
             case 'percentage':
                 return `${discounts[0].rule.value}%`;
-            case 'fixed':
-                return `- ${formatAmount({
-                    amount: discounts[0].rule.value,
-                    region: region,
-                    currency_code: '',
-                })}`;
-
+            // case 'fixed':
+            //     return `- ${formatAmount({ amount: discounts[0].rule.value, region })}`;
             default:
                 return 'Free shipping';
         }
     }, [discounts, region]);
 
-    const removeGiftCardCode = async (code: string) => {
-        await removeGiftCard(code, gift_cards);
-    };
+    const [message, formAction] = useFormState(submitDiscountForm, null);
 
     const removeDiscountCode = async () => {
         await removeDiscount(discounts[0].code);
     };
 
-    const [message, formAction] = useFormState(submitDiscountForm, null);
-
     return (
-        <Flex mt="1rem">
-            <Input
-                borderLeftRadius={'12px'}
-                height={{ base: '50px', md: '52px' }}
-                width={'100%'}
-                fontSize={{ base: '15px', md: '16px' }}
-                backgroundColor={'black'}
-                borderWidth={'0'}
-                placeholder="Discount Code"
-            />
-            <Button
-                borderLeftRadius={'0'}
-                borderRightRadius={'12px'}
-                height={{ base: '50px', md: '52px' }}
-                width={'82px'}
-                fontSize={{ base: '15px', md: '16px' }}
-                backgroundColor={'primary.green.900'}
-                color={'black'}
-            >
-                Apply
-            </Button>
-        </Flex>
+        <Box mt="1rem">
+            {appliedDiscount ? (
+                <Flex align="center" justify="space-between">
+                    <Box>
+                        <Text fontWeight="bold">Discount applied:</Text>
+                        <Text>
+                            Code: {discounts[0].code} ({appliedDiscount})
+                        </Text>
+                    </Box>
+                    <Button variant="ghost" onClick={removeDiscountCode}>
+                        <Trash size={14} />
+                        <span className="sr-only">Remove discount</span>
+                    </Button>
+                </Flex>
+            ) : (
+                <form action={formAction} className="w-full">
+                    <Flex>
+                        <Input
+                            borderLeftRadius="16px"
+                            height="52px"
+                            placeholder="Discount Code"
+                            backgroundColor="#121212"
+                            borderWidth="0"
+                            name="code"
+                            type="text"
+                        />
+                        <Button
+                            height="52px"
+                            backgroundColor="primary.green.900"
+                            color="black"
+                            type="submit"
+                            borderRightRadius="12px"
+                        >
+                            Apply
+                        </Button>
+                    </Flex>
+                    <ErrorMessage error={message} />
+                </form>
+            )}
+        </Box>
     );
 };
 
@@ -104,7 +100,7 @@ export default DiscountCode;
                                 </Text>
                                 <Text className="font-semibold">
                                     {formatAmount({
-                                        region: region,
+                                        reion: region,
                                         amount: gc.balance,
                                         includeTaxes: false,
                                         currency_code: '',

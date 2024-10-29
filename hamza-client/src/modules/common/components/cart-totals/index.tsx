@@ -23,11 +23,32 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
     const {
         subtotal,
         discount_total,
+        raw_discount_total,
         gift_card_total,
         tax_total,
         shipping_total,
         total,
     } = data;
+
+    const discounts = data.discounts;
+
+    console.log(`$$$$ RAW: ${raw_discount_total}`);
+    console.log(`$$$$ DISCOUNTS: ${JSON.stringify(data)}`);
+    console.log(`$$$$ DISCOUNTS: ${JSON.stringify(data.discounts)}`);
+
+    let discountDetails;
+    if (discounts && discounts.length > 0) {
+        discountDetails = discounts.map((discount) => ({
+            code: discount.code, // Discount code, e.g., "BYE"
+            type: discount.rule.type, // Discount type, e.g., "percentage"
+            value: discount.rule.value, // Discount value, e.g., 10%
+            description: discount.rule.description, // Description, e.g., "10% off for selected products"
+        }));
+
+        console.log('Discount Details:', discountDetails);
+    } else {
+        console.log('No discounts applied.');
+    }
 
     const { preferred_currency_code } = useCustomerAuthStore();
     const [shippingCost, setShippingCost] = useState<number>(0);
@@ -38,6 +59,8 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
             setShippingCost(cost?.amount ?? 0);
         });
     }, [shipping_options, isLoading]);
+
+    console.log(`DISCOUNT ${discount_total}`);
 
     //TODO: this can be replaced later by extending the cart, if necessary
     const getCartSubtotal = (cart: any, currencyCode: string) => {
@@ -71,13 +94,13 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
 
         return subtotals[itemCurrencyCode]
             ? {
-                currency: itemCurrencyCode,
-                amount: subtotals[itemCurrencyCode],
-            }
+                  currency: itemCurrencyCode,
+                  amount: subtotals[itemCurrencyCode],
+              }
             : {
-                currency: itemCurrencyCode,
-                amount: subtotals[itemCurrencyCode],
-            };
+                  currency: itemCurrencyCode,
+                  amount: subtotals[itemCurrencyCode],
+              };
     };
 
     const finalSubtotal = getCartSubtotal(
@@ -129,16 +152,30 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                     </Flex>
                 )}
 
-                {!!discount_total && (
+                {!!data.discounts && (
                     <Text fontSize={{ base: '14px', md: '16px' }}>
-                        <span>Discount</span>
+                        <Flex justifyContent={'space-between'}>
+                            <Text
+                                alignSelf={'center'}
+                                fontSize={{ base: '14px', md: '16px' }}
+                            >
+                                Discount
+                            </Text>
+
+                            <Text
+                                fontSize={{ base: '14px', md: '16px' }}
+                                alignSelf="center"
+                            >
+                                {/*{discountDetails.value}*/}
+                            </Text>
+                        </Flex>
                     </Text>
                 )}
-                {!!gift_card_total && (
-                    <Text fontSize={{ base: '14px', md: '16px' }}>
-                        Gift Card
-                    </Text>
-                )}
+                {/*{!!gift_card_total && (*/}
+                {/*    <Text fontSize={{ base: '14px', md: '16px' }}>*/}
+                {/*        Discount Code*/}
+                {/*    </Text>*/}
+                {/*)}*/}
 
                 {shippingCost ? (
                     <Flex justifyContent={'space-between'}>
