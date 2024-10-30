@@ -38,7 +38,7 @@ const RangeSliderModal: React.FC<RangeSliderModalProps> = ({
     };
 
     return (
-        <Box my="1rem">
+        <Box my="1rem" px={'1rem'}>
             <Box mx="0.5rem">
                 <RangeSlider
                     // eslint-disable-next-line jsx-a11y/aria-proptypes
@@ -48,7 +48,7 @@ const RangeSliderModal: React.FC<RangeSliderModalProps> = ({
                         homeModalUpperPriceFilterSelect,
                     ]}
                     min={0}
-                    max={11000}
+                    max={350}
                     onChange={handleRangeChange}
                     onChangeEnd={handleChangeEnd} // Update Zustand values when range changes
                     colorScheme="blue"

@@ -17,13 +17,13 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import ProductCard from '@modules/shop/components/product-card';
 import useStorePage from '@store/store-page/store-page';
-import useSideFilter from '@/store/store-page/side-filter';
+import useShopFilter from '@/store/store-page/shop-filter';
 
 const ProductCardGroup = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const { categorySelect } = useStorePage();
     const [visibleProductsCount, setVisibleProductsCount] = useState(15); // State to manage visible products count (4 rows, 16 items)
-    const { priceHi, priceLo } = useSideFilter();
+    const { priceHi, priceLo } = useShopFilter();
     console.log('This is the categorySelect from Store Page', categorySelect);
     //TODO: MOVE TO INDEX.TS
     // Get products from vendor

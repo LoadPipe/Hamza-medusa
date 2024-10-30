@@ -12,6 +12,7 @@ import Image from 'next/image';
 import FilterIcon from '../../assets/filter-button.svg';
 import useStorePage from '@store/store-page/store-page';
 import useSideFilter from '@store/store-page/side-filter';
+import useShopFilter from '@/store/store-page/shop-filter';
 import All from '@/images/categories/all.svg';
 
 interface Category {
@@ -41,7 +42,7 @@ const SideMenu = () => {
         setPriceLo,
         priceHi,
         priceLo,
-    } = useSideFilter();
+    } = useShopFilter();
 
     const isDisabled = selectCategoryStoreFilter?.length === 0;
 

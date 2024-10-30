@@ -22,6 +22,7 @@ import useModalFilter from '@store/store-page/filter-modal';
 import RangeSliderModal from './range-slider-modal';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import useShopFilter from '@/store/store-page/shop-filter';
 
 const USE_PRICE_FILTER: boolean = false;
 
@@ -43,14 +44,19 @@ type RangeType = [number, number];
 const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
     // Zustand States
     const { setCategorySelect, setCategoryItem } = useStorePage();
-    const {
-        setSelectCategoryModalFilter,
-        setCategoryItemStoreModalFilter,
-        selectCategoryStoreModalFilter,
-        categoryItemStoreModalFilter,
-    } = useModalFilter();
 
-    const [range, setRange] = useState<RangeType>([0, 10000]);
+    const {
+        setSelectCategoryStoreFilter,
+        setCategoryItemSideFilter,
+        selectCategoryStoreFilter,
+        categoryItemSideFilter,
+        setPriceHi,
+        setPriceLo,
+        priceHi,
+        priceLo,
+    } = useShopFilter();
+
+    const [range, setRange] = useState<RangeType>([0, 350]);
 
     // Fetching categories data
     const { data, isLoading } = useQuery<Category[]>(
@@ -71,7 +77,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
           }))
         : [];
 
-    const isDisabled = selectCategoryStoreModalFilter?.length === 0;
+    const isDisabled = selectCategoryStoreFilter?.length === 0;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -87,6 +93,9 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                 </ModalHeader>
 
                 <ModalCloseButton color={'white'} />
+
+                <RangeSliderModal range={range} setRange={setRange} />
+
                 <ModalBody padding={'1rem'}>
                     <Text fontWeight={'600'} fontSize={'16px'} color="white">
                         Category
@@ -166,7 +175,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         color={'white'}
                         backgroundColor={'transparent'}
                         onClick={() => {
-                            setSelectCategoryModalFilter([]);
+                            setSelectCategoryStoreFilter([]);
                             onClose();
                         }}
                         mr="auto"
@@ -181,16 +190,22 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
 
                             // Update settings
                             if (
-                                selectCategoryStoreModalFilter?.length > 0 &&
-                                categoryItemStoreModalFilter?.length > 0
+                                (selectCategoryStoreFilter?.length > 0 &&
+                                    categoryItemSideFilter?.length > 0) ||
+                                range.length > 0
                             ) {
-                                setCategorySelect(
-                                    selectCategoryStoreModalFilter
-                                );
-                                setCategoryItem(categoryItemStoreModalFilter);
-                                // Reset side modal states
-                                setSelectCategoryModalFilter([]);
-                                setCategoryItemStoreModalFilter([]);
+                                console.log('range 0:', range[0]);
+                                console.log('range 1:', range[1]);
+                                setPriceLo(range[0]);
+                                setPriceHi(range[1]);
+                                console.log('price lo:', priceLo);
+                                console.log('price hi:', priceHi);
+                                setCategorySelect(selectCategoryStoreFilter);
+                                setCategoryItem(categoryItemSideFilter);
+                                // Reset side menu states
+                                // setSelectCategoryStoreFilter([]);
+                                setCategoryItemSideFilter([]);
+                                setRange([range[0], range[1]]);
                             }
 
                             onClose();
