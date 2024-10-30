@@ -12,6 +12,8 @@ import Image from 'next/image';
 import FilterIcon from '../../assets/filter-button.svg';
 import useStorePage from '@store/store-page/store-page';
 import useSideFilter from '@store/store-page/side-filter';
+import useShopFilter from '@/store/store-page/shop-filter';
+import All from '@/images/categories/all.svg';
 
 interface Category {
     id: string;
@@ -26,23 +28,23 @@ const USE_PRICE_FILTER: boolean = false;
 type RangeType = [number, number];
 
 const SideMenu = () => {
-    const [range, setRange] = useState<RangeType>([0, 2000]);
+    const [range, setRange] = useState<RangeType>([0, 350]);
 
     // Use Zustand shop to handle filter object
     const { setCategorySelect, setCategoryItem } = useStorePage();
 
     const {
-        selectCategoryStoreFilter,
-        setSelectCategoryStoreFilter,
-        setCategoryItemSideFilter,
-        categoryItemSideFilter,
+        selectCategoryShopFilter,
+        setSelectCategoryShopFilter,
+        setCategoryItemShopFilter,
+        categoryItemShopFilter,
         setPriceHi,
         setPriceLo,
         priceHi,
         priceLo,
-    } = useSideFilter();
+    } = useShopFilter();
 
-    const isDisabled = selectCategoryStoreFilter?.length === 0;
+    const isDisabled = selectCategoryShopFilter?.length === 0;
 
     // Fetching categories data
     const { data, isLoading } = useQuery<Category[]>(
@@ -57,10 +59,10 @@ const SideMenu = () => {
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-            name: category.name,
-            id: category.id,
-            metadata: category.metadata,
-        }))
+              name: category.name,
+              id: category.id,
+              metadata: category.metadata,
+          }))
         : [];
 
     // Skeletons for loading state
@@ -109,12 +111,12 @@ const SideMenu = () => {
                     {isLoading
                         ? skeletonButtons // Show skeletons while loading
                         : uniqueCategories.map((category, index) => (
-                            <CategoryButton
-                                key={index}
-                                categoryName={category.name}
-                                url={category.metadata?.icon_url}
-                            />
-                        ))}
+                              <CategoryButton
+                                  key={index}
+                                  categoryName={category.name}
+                                  url={category.metadata?.icon_url}
+                              />
+                          ))}
                 </Flex>
             </Box>
 
@@ -142,8 +144,8 @@ const SideMenu = () => {
 
                         // Update settings
                         if (
-                            (selectCategoryStoreFilter?.length > 0 &&
-                                categoryItemSideFilter?.length > 0) ||
+                            (selectCategoryShopFilter?.length > 0 &&
+                                categoryItemShopFilter?.length > 0) ||
                             range.length > 0
                         ) {
                             console.log('range 0:', range[0]);
@@ -152,11 +154,11 @@ const SideMenu = () => {
                             setPriceHi(range[1]);
                             console.log('price lo:', priceLo);
                             console.log('price hi:', priceHi);
-                            setCategorySelect(selectCategoryStoreFilter);
-                            setCategoryItem(categoryItemSideFilter);
+                            setCategorySelect(selectCategoryShopFilter);
+                            setCategoryItem(categoryItemShopFilter);
                             // Reset side menu states
-                            setSelectCategoryStoreFilter([]);
-                            setCategoryItemSideFilter([]);
+                            // setSelectCategoryStoreFilter([]);
+                            setCategoryItemShopFilter([]);
                             setRange([range[0], range[1]]);
                         }
 

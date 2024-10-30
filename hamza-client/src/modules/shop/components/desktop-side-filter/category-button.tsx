@@ -4,6 +4,7 @@ import Image from 'next/image';
 import useSideFilter from '@store/store-page/side-filter';
 import useModalFilter from '@store/store-page/filter-modal';
 import categoryIcons from '../../data/category-icons';
+import useShopFilter from '@/store/store-page/shop-filter';
 
 interface CategoryButtonProps {
     categoryName: string;
@@ -15,13 +16,13 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
     url,
 }) => {
     const {
-        selectCategoryStoreFilter,
-        setSelectCategoryStoreFilter,
-        setCategoryItemSideFilter,
-    } = useSideFilter();
+        selectCategoryShopFilter,
+        setSelectCategoryShopFilter,
+        setCategoryItemShopFilter,
+    } = useShopFilter();
 
     const toggleCategorySelection = (category: string) => {
-        const currentCategorySelection = selectCategoryStoreFilter || [];
+        const currentCategorySelection = selectCategoryShopFilter || [];
 
         // If the category is already selected, we remove it along with its type
         if (currentCategorySelection.includes(category)) {
@@ -29,11 +30,11 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
                 (selectedCategory) => selectedCategory !== category
             );
 
-            setSelectCategoryStoreFilter(
+            setSelectCategoryShopFilter(
                 updatedCategorySelection.length ? updatedCategorySelection : []
             );
 
-            setCategoryItemSideFilter(
+            setCategoryItemShopFilter(
                 (prev) =>
                     prev?.filter((item) => item.categoryName !== category) ||
                     null
@@ -44,12 +45,12 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
                 (cat) => cat !== 'All'
             );
 
-            setSelectCategoryStoreFilter([
+            setSelectCategoryShopFilter([
                 ...updatedCategorySelection,
                 category,
             ]);
 
-            setCategoryItemSideFilter((prev) => [
+            setCategoryItemShopFilter((prev) => [
                 ...(prev || []),
                 { categoryName: category, urlLink: url },
             ]);
@@ -61,7 +62,7 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
             <Flex
                 borderColor={'secondary.davy.900'}
                 backgroundColor={
-                    selectCategoryStoreFilter?.includes(categoryName)
+                    selectCategoryShopFilter?.includes(categoryName)
                         ? 'white'
                         : 'transparent'
                 }
@@ -73,7 +74,7 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
                 height={'60px'}
                 cursor="pointer"
                 color={
-                    selectCategoryStoreFilter?.includes(categoryName)
+                    selectCategoryShopFilter?.includes(categoryName)
                         ? 'black'
                         : 'white'
                 }

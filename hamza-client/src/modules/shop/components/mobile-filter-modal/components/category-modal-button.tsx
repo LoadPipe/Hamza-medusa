@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import Image from 'next/image';
 import useModalFilter from '@store/store-page/filter-modal';
+import useShopFilter from '@/store/store-page/shop-filter';
 import categoryIcons from '@modules/shop/data/category-icons';
 import useStorePage from '@store/store-page/store-page';
 
@@ -16,13 +17,13 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
     url,
 }) => {
     const {
-        selectCategoryStoreModalFilter,
-        setSelectCategoryModalFilter,
-        setCategoryItemStoreModalFilter,
-    } = useModalFilter();
+        selectCategoryShopFilter,
+        setSelectCategoryShopFilter,
+        setCategoryItemShopFilter,
+    } = useShopFilter();
 
     const toggleCategorySelection = (category: string) => {
-        const currentCategorySelection = selectCategoryStoreModalFilter || [];
+        const currentCategorySelection = selectCategoryShopFilter || [];
 
         // If the category is already selected, we remove it along with its type
         if (currentCategorySelection.includes(category)) {
@@ -30,11 +31,11 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                 (selectedCategory) => selectedCategory !== category
             );
 
-            setSelectCategoryModalFilter(
+            setSelectCategoryShopFilter(
                 updatedCategorySelection.length ? updatedCategorySelection : []
             );
 
-            setCategoryItemStoreModalFilter(
+            setCategoryItemShopFilter(
                 (prev) =>
                     prev?.filter((item) => item.categoryName !== category) ||
                     null
@@ -45,12 +46,12 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                 (cat) => cat !== 'All'
             );
 
-            setSelectCategoryModalFilter([
+            setSelectCategoryShopFilter([
                 ...updatedCategorySelection,
                 category,
             ]);
 
-            setCategoryItemStoreModalFilter((prev) => [
+            setCategoryItemShopFilter((prev) => [
                 ...(prev || []),
                 { categoryName: category, urlLink: url },
             ]);
@@ -62,7 +63,7 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
             <Flex
                 borderColor={'secondary.davy.900'}
                 backgroundColor={
-                    selectCategoryStoreModalFilter?.includes(categoryName)
+                    selectCategoryShopFilter?.includes(categoryName)
                         ? 'white'
                         : 'transparent'
                 }
@@ -74,7 +75,7 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                 height={'42px'}
                 cursor="pointer"
                 color={
-                    selectCategoryStoreModalFilter?.includes(categoryName)
+                    selectCategoryShopFilter?.includes(categoryName)
                         ? 'black'
                         : 'white'
                 }
