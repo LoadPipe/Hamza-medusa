@@ -24,6 +24,8 @@ import { In, IsNull, Not } from 'typeorm';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import { SeamlessCache } from '../utils/cache/seamless-cache';
 import { filterDuplicatesById } from '../utils/filter-duplicates';
+import { PriceConverter } from 'src/utils/price-conversion';
+import { getCurrencyPrecision } from 'src/currency.config';
 
 export type BulkImportProductInput = CreateProductInput;
 
@@ -65,6 +67,7 @@ class ProductService extends MedusaProductService {
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly cacheExchangeRateRepository: typeof CachedExchangeRateRepository;
     protected readonly customerService_: CustomerService;
+    protected readonly priceConverter_: PriceConverter;
 
     constructor(container) {
         super(container);
@@ -74,6 +77,7 @@ class ProductService extends MedusaProductService {
         this.cacheExchangeRateRepository =
             container.cachedExchangeRateRepository;
         this.customerService_ = container.customerService;
+        this.priceConverter_ = new PriceConverter(this.logger, this.cacheExchangeRateRepository);
     }
 
     async updateProduct(
@@ -562,12 +566,14 @@ class ProductService extends MedusaProductService {
 
             const key = normalizedCategoryNames.sort().join(',');
 
-            upperPrice = upperPrice * 100;
-            lowerPrice = lowerPrice * 100;
-
-            console.log('Uppper price', upperPrice);
-            console.log('Lower price', lowerPrice);
-            console.log('filterCurrencyCode', filterCurrencyCode);
+            if (filterCurrencyCode === 'eth') {
+                upperPrice = await this.priceConverter_.convertPrice(upperPrice, 'usdc', 'eth');
+                lowerPrice = await this.priceConverter_.convertPrice(upperPrice, 'usdc', 'eth');
+            } else {
+                const factor = Math.pow(10, getCurrencyPrecision(filterCurrencyCode).db);
+                upperPrice = upperPrice * factor;
+                lowerPrice = lowerPrice * factor;
+            }
 
             //retrieve products from cache
             let products = await productFilterCache.retrieveWithKey(key, {
