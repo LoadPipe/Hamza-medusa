@@ -24,8 +24,8 @@ import { In, IsNull, Not } from 'typeorm';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import { SeamlessCache } from '../utils/cache/seamless-cache';
 import { filterDuplicatesById } from '../utils/filter-duplicates';
-import { PriceConverter } from 'src/utils/price-conversion';
-import { getCurrencyPrecision } from 'src/currency.config';
+import { PriceConverter } from '../utils/price-conversion';
+import { getCurrencyPrecision } from '../currency.config';
 
 export type BulkImportProductInput = CreateProductInput;
 
