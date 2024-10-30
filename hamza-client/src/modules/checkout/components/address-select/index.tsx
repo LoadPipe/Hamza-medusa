@@ -1,19 +1,7 @@
-import {
-    Box,
-    Button,
-    IconButton,
-    Flex,
-    VStack,
-    Text,
-    Radio,
-    RadioGroup,
-} from '@chakra-ui/react';
+import { Box, Button, VStack, Text, Radio, RadioGroup } from '@chakra-ui/react';
 import { ChevronUpDown } from '@medusajs/icons';
-import { Address, AddressPayload, Cart } from '@medusajs/medusa';
-import { omit } from 'lodash';
-import { useState, useMemo, useEffect } from 'react';
-
-import { cartUpdate } from '@modules/checkout/actions';
+import { Address, Cart } from '@medusajs/medusa';
+import { useState, useEffect } from 'react';
 import compareSelectedAddress from '@/lib/util/compare-address-select';
 
 type AddressSelectProps = {
@@ -67,19 +55,6 @@ const AddressSelect = ({
                 'shipping_address.province': selectedAddress.province,
                 'shipping_address.phone': selectedAddress.phone,
             });
-
-            // // Update cart and UI state
-            // cartUpdate({
-            //     shipping_address: omit(selectedAddress, [
-            //         'id',
-            //         'created_at',
-            //         'updated_at',
-            //         'country',
-            //         'deleted_at',
-            //         'metadata',
-            //         'customer_id',
-            //     ]) as AddressPayload,
-            // });
 
             setSelectedId(id); // Set the selected address ID
             setIsOpen(false); // Close the dropdown after selection
