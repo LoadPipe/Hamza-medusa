@@ -12,6 +12,7 @@ import Image from 'next/image';
 import FilterIcon from '../../assets/filter-button.svg';
 import useStorePage from '@store/store-page/store-page';
 import useSideFilter from '@store/store-page/side-filter';
+import All from '@/images/categories/all.svg';
 
 interface Category {
     id: string;
@@ -26,7 +27,7 @@ const USE_PRICE_FILTER: boolean = false;
 type RangeType = [number, number];
 
 const SideMenu = () => {
-    const [range, setRange] = useState<RangeType>([0, 2000]);
+    const [range, setRange] = useState<RangeType>([0, 350]);
 
     // Use Zustand shop to handle filter object
     const { setCategorySelect, setCategoryItem } = useStorePage();
@@ -155,7 +156,7 @@ const SideMenu = () => {
                             setCategorySelect(selectCategoryStoreFilter);
                             setCategoryItem(categoryItemSideFilter);
                             // Reset side menu states
-                            setSelectCategoryStoreFilter([]);
+                            // setSelectCategoryStoreFilter([]);
                             setCategoryItemSideFilter([]);
                             setRange([range[0], range[1]]);
                         }
