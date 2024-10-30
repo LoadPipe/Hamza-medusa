@@ -30,7 +30,7 @@ const ProductCardGroup = () => {
     //TODO: MOVE TO INDEX.TS
     // Get products from vendor
     const { data, error, isLoading } = useQuery(
-        ['categories', categorySelect, priceHi, priceLo], // Use a unique key here to identify the query
+        ['categories', categorySelect, priceHi, priceLo, preferred_currency_code], // Use a unique key here to identify the query
         async () => {
             const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${priceHi}&price_lo=${priceLo}&currency_code=${preferred_currency_code ?? 'usdc'}`;
             const response = await axios.get(multiUrl);
