@@ -123,19 +123,6 @@ const Addresses = ({
                             >
                                 Edit Shipping Address
                             </Button>
-
-                            {(customer?.shipping_addresses?.length ?? 0) >
-                                0 && (
-                                <AddressSelect
-                                    cart={cart}
-                                    addresses={
-                                        customer?.shipping_addresses ?? []
-                                    }
-                                    onSelect={(addrId) =>
-                                        setSelectedAddressId(addrId)
-                                    }
-                                />
-                            )}
                         </Flex>
                     </Flex>
                 ) : (
@@ -173,7 +160,6 @@ const Addresses = ({
                 cart={cart}
                 isOpen={isOpen}
                 onClose={onClose}
-                selectedAddressId={selectedAddressId}
             />
         </div>
     );

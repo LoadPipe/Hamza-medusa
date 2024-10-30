@@ -20,9 +20,17 @@ type AddressSelectProps = {
     addresses: Address[];
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | null;
     onSelect?: (addr: string) => void;
+    formData: any;
+    setFormData: React.Dispatch<React.SetStateAction<any>>;
 };
 
-const AddressSelect = ({ addresses, cart, onSelect }: AddressSelectProps) => {
+const AddressSelect = ({
+    addresses,
+    cart,
+    onSelect,
+    formData,
+    setFormData,
+}: AddressSelectProps) => {
     const [isOpen, setIsOpen] = useState(false); // State to manage dropdown open/close
     const [selectedId, setSelectedId] = useState<string | null>(null); // State for selected address id
 
@@ -43,19 +51,36 @@ const AddressSelect = ({ addresses, cart, onSelect }: AddressSelectProps) => {
     }, [cart?.shipping_address, addresses]);
 
     const handleSelect = (id: string) => {
-        const savedAddress = addresses.find((a) => a.id === id);
-        if (savedAddress) {
-            cartUpdate({
-                shipping_address: omit(savedAddress, [
-                    'id',
-                    'created_at',
-                    'updated_at',
-                    'country',
-                    'deleted_at',
-                    'metadata',
-                    'customer_id',
-                ]) as AddressPayload,
+        const selectedAddress = addresses.find((a) => a.id === id);
+        if (selectedAddress) {
+            // Update form data in AddressModal with selected address details
+            setFormData({
+                ...formData,
+                'shipping_address.first_name': selectedAddress.first_name,
+                'shipping_address.last_name': selectedAddress.last_name,
+                'shipping_address.address_1': selectedAddress.address_1,
+                'shipping_address.address_2': selectedAddress.address_2,
+                'shipping_address.company': selectedAddress.company,
+                'shipping_address.postal_code': selectedAddress.postal_code,
+                'shipping_address.city': selectedAddress.city,
+                'shipping_address.country_code': selectedAddress.country_code,
+                'shipping_address.province': selectedAddress.province,
+                'shipping_address.phone': selectedAddress.phone,
             });
+
+            // // Update cart and UI state
+            // cartUpdate({
+            //     shipping_address: omit(selectedAddress, [
+            //         'id',
+            //         'created_at',
+            //         'updated_at',
+            //         'country',
+            //         'deleted_at',
+            //         'metadata',
+            //         'customer_id',
+            //     ]) as AddressPayload,
+            // });
+
             setSelectedId(id); // Set the selected address ID
             setIsOpen(false); // Close the dropdown after selection
 

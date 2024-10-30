@@ -24,6 +24,7 @@ import {
     updateCustomerShippingAddress,
 } from '@/modules/account/actions';
 import { custom } from 'viem';
+import AddressSelect from '../address-select';
 
 interface AddressModalProps {
     isOpen: boolean;
@@ -32,7 +33,6 @@ interface AddressModalProps {
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | null;
     toggleSameAsBilling: () => void;
     countryCode: string;
-    selectedAddressId: string;
 }
 
 const AddressModal: React.FC<AddressModalProps> = ({
@@ -41,8 +41,9 @@ const AddressModal: React.FC<AddressModalProps> = ({
     customer,
     cart,
     countryCode,
-    selectedAddressId,
 }) => {
+    const [selectedAddressId, setSelectedAddressId] = useState<string>('');
+
     // Save address to address book if radio button clicked
     const [saveAddress, setSaveAddress] = useState(false);
     const [saveAddressButtonText, setSaveAddressButtonText] =
@@ -431,6 +432,16 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                     />
                                 </FormControl>
                             </Flex>
+
+                            <AddressSelect
+                                cart={cart}
+                                addresses={customer?.shipping_addresses ?? []}
+                                onSelect={(addrId) =>
+                                    setSelectedAddressId(addrId)
+                                }
+                                formData={formData}
+                                setFormData={setFormData}
+                            />
 
                             {/* Checkbox for Default Address */}
                             <Flex alignItems="center" my="3" color={'white'}>
