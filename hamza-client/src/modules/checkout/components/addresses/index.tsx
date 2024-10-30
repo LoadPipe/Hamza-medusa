@@ -4,13 +4,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { Cart, Customer } from '@medusajs/medusa';
 import { useToggleState } from '@medusajs/ui';
 import { Flex, Text, useDisclosure, Button } from '@chakra-ui/react';
-
 import compareAddresses from '@lib/util/compare-addresses';
 import { BiPencil } from 'react-icons/bi';
 import AddressModal from '../address-modal';
 import { IoLocationOutline } from 'react-icons/io5';
-import AddressSelect from '../address-select';
-import { useEffect, useState } from 'react';
 
 const Addresses = ({
     cart,
@@ -20,8 +17,6 @@ const Addresses = ({
     customer: Omit<Customer, 'password_hash'> | null;
 }) => {
     const router = useRouter();
-
-    const [selectedAddressId, setSelectedAddressId] = useState<string>('');
 
     // Hooks to open and close address modal
     const { isOpen, onOpen, onClose } = useDisclosure();
