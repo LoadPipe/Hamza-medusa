@@ -102,6 +102,7 @@ export default class CartService extends MedusaCartService {
                     });
                 }
                 item.unit_price = newPrice;
+                item.discount_total = newPrice * 0.05;
                 item.currency_code = userPreferredCurrency;
 
                 //if EITHER currency OR price has changed, the item will beupdated
