@@ -34,17 +34,17 @@ const SideMenu = () => {
     const { setCategorySelect, setCategoryItem } = useStorePage();
 
     const {
-        selectCategoryStoreFilter,
-        setSelectCategoryStoreFilter,
-        setCategoryItemSideFilter,
-        categoryItemSideFilter,
+        selectCategoryShopFilter,
+        setSelectCategoryShopFilter,
+        setCategoryItemShopFilter,
+        categoryItemShopFilter,
         setPriceHi,
         setPriceLo,
         priceHi,
         priceLo,
     } = useShopFilter();
 
-    const isDisabled = selectCategoryStoreFilter?.length === 0;
+    const isDisabled = selectCategoryShopFilter?.length === 0;
 
     // Fetching categories data
     const { data, isLoading } = useQuery<Category[]>(
@@ -144,8 +144,8 @@ const SideMenu = () => {
 
                         // Update settings
                         if (
-                            (selectCategoryStoreFilter?.length > 0 &&
-                                categoryItemSideFilter?.length > 0) ||
+                            (selectCategoryShopFilter?.length > 0 &&
+                                categoryItemShopFilter?.length > 0) ||
                             range.length > 0
                         ) {
                             console.log('range 0:', range[0]);
@@ -154,11 +154,11 @@ const SideMenu = () => {
                             setPriceHi(range[1]);
                             console.log('price lo:', priceLo);
                             console.log('price hi:', priceHi);
-                            setCategorySelect(selectCategoryStoreFilter);
-                            setCategoryItem(categoryItemSideFilter);
+                            setCategorySelect(selectCategoryShopFilter);
+                            setCategoryItem(categoryItemShopFilter);
                             // Reset side menu states
                             // setSelectCategoryStoreFilter([]);
-                            setCategoryItemSideFilter([]);
+                            setCategoryItemShopFilter([]);
                             setRange([range[0], range[1]]);
                         }
 

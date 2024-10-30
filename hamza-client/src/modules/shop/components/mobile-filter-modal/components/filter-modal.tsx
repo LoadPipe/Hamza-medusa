@@ -46,10 +46,10 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
     const { setCategorySelect, setCategoryItem } = useStorePage();
 
     const {
-        setSelectCategoryStoreFilter,
-        setCategoryItemSideFilter,
-        selectCategoryStoreFilter,
-        categoryItemSideFilter,
+        setSelectCategoryShopFilter,
+        setCategoryItemShopFilter,
+        selectCategoryShopFilter,
+        categoryItemShopFilter,
         setPriceHi,
         setPriceLo,
         priceHi,
@@ -77,7 +77,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
           }))
         : [];
 
-    const isDisabled = selectCategoryStoreFilter?.length === 0;
+    const isDisabled = selectCategoryShopFilter?.length === 0;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -175,7 +175,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         color={'white'}
                         backgroundColor={'transparent'}
                         onClick={() => {
-                            setSelectCategoryStoreFilter([]);
+                            setSelectCategoryShopFilter([]);
                             onClose();
                         }}
                         mr="auto"
@@ -190,8 +190,8 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
 
                             // Update settings
                             if (
-                                (selectCategoryStoreFilter?.length > 0 &&
-                                    categoryItemSideFilter?.length > 0) ||
+                                (selectCategoryShopFilter?.length > 0 &&
+                                    categoryItemShopFilter?.length > 0) ||
                                 range.length > 0
                             ) {
                                 console.log('range 0:', range[0]);
@@ -200,11 +200,11 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                                 setPriceHi(range[1]);
                                 console.log('price lo:', priceLo);
                                 console.log('price hi:', priceHi);
-                                setCategorySelect(selectCategoryStoreFilter);
-                                setCategoryItem(categoryItemSideFilter);
+                                setCategorySelect(selectCategoryShopFilter);
+                                setCategoryItem(categoryItemShopFilter);
                                 // Reset side menu states
                                 // setSelectCategoryStoreFilter([]);
-                                setCategoryItemSideFilter([]);
+                                setCategoryItemShopFilter([]);
                                 setRange([range[0], range[1]]);
                             }
 
