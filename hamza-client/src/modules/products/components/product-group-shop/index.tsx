@@ -32,7 +32,7 @@ const ProductCardGroup = () => {
     const { data, error, isLoading } = useQuery(
         ['categories', categorySelect, priceHi, priceLo], // Use a unique key here to identify the query
         async () => {
-            const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${200000000000}&price_lo=${Number(0)}`;
+            const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${200000000000}&price_lo=${Number(0)}&currency_code=${preferred_currency_code ?? 'usdc'}`;
             const response = await axios.get(multiUrl);
             return response.data; // Return the data from the response
         }
