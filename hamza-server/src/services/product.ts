@@ -567,8 +567,9 @@ class ProductService extends MedusaProductService {
             const key = normalizedCategoryNames.sort().join(',');
 
             if (filterCurrencyCode === 'eth') {
-                upperPrice = await this.priceConverter_.convertPrice(upperPrice, 'usdc', 'eth');
-                lowerPrice = await this.priceConverter_.convertPrice(upperPrice, 'usdc', 'eth');
+                const factor = Math.pow(10, getCurrencyPrecision(filterCurrencyCode).db);
+                upperPrice = await this.priceConverter_.convertPrice(upperPrice, 'usdc', 'eth') * factor;
+                lowerPrice = await this.priceConverter_.convertPrice(lowerPrice, 'usdc', 'eth');
             } else {
                 const factor = Math.pow(10, getCurrencyPrecision(filterCurrencyCode).db);
                 upperPrice = upperPrice * factor;
