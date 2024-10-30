@@ -562,8 +562,12 @@ class ProductService extends MedusaProductService {
 
             const key = normalizedCategoryNames.sort().join(',');
 
+            upperPrice = upperPrice * 100;
+            lowerPrice = lowerPrice * 100;
+
             console.log('Uppper price', upperPrice);
             console.log('Lower price', lowerPrice);
+            console.log('filterCurrencyCode', filterCurrencyCode);
 
             //retrieve products from cache
             let products = await productFilterCache.retrieveWithKey(key, {
@@ -761,7 +765,24 @@ class ProductFilterCache extends SeamlessCache {
     }
 
     async retrieveWithKey(key?: string, params?: any): Promise<Product[]> {
-        return super.retrieveWithKey(key, params);
+        let products = await super.retrieveWithKey(key, params);
+
+        if (params.upperPrice !== 0 && params.lowerPrice >= 0) {
+            products = products.filter((product) => {
+                const price = product.variants[0]?.prices.find(p => p.currency_code === params.filterCurrencyCode)?.amount ?? 0;
+                console.log(params.lowerPrice, price, params.upperPrice);
+                return price >= params.lowerPrice && price <= params.upperPrice;
+            });
+
+            // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
+            products = products.sort((a, b) => {
+                const priceA = a.variants[0]?.prices.find(p => p.currency_code === params.filterCurrencyCode)?.amount ?? 0;
+                const priceB = b.variants[0]?.prices.find(p => p.currency_code === params.filterCurrencyCode)?.amount ?? 0;
+                return priceA - priceB; // Ascending order
+            });
+        }
+
+        return products;
     }
 
     protected async getData(params: any): Promise<any> {
@@ -792,20 +813,6 @@ class ProductFilterCache extends SeamlessCache {
                     (p) => p.status === ProductStatus.PUBLISHED && p.store_id
                 )
             );
-        }
-
-        if (params.upperPrice !== 0 && params.lowerPrice >= 0) {
-            products = products.filter((product) => {
-                const price = product.variants[0]?.prices.find(p => p.currency_code == params.filterCurrencyCode)?.amount ?? 0;
-                return price >= params.lowerPrice && price <= params.upperPrice;
-            });
-
-            // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
-            products = products.sort((a, b) => {
-                const priceA = a.variants[0]?.prices.find(p => p.currency_code == params.filterCurrencyCode)?.amount ?? 0;
-                const priceB = b.variants[0]?.prices.find(p => p.currency_code == params.filterCurrencyCode)?.amount ?? 0;
-                return priceA - priceB; // Ascending order
-            });
         }
 
         //remove duplicates
