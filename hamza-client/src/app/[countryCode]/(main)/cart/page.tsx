@@ -6,8 +6,9 @@ import CartTemplate from '@modules/cart/templates';
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { getCheckoutStep } from '@lib/util/get-checkout-step';
 import { CartWithCheckoutStep } from '@/types/global';
-import { getHamzaCustomer } from '@lib/data';
+import { getHamzaCustomer, getCartTwo } from '@lib/data';
 import Loading from './loading';
+import { cookies } from 'next/headers';
 
 export const metadata: Metadata = {
     title: 'Cart',
@@ -15,6 +16,10 @@ export const metadata: Metadata = {
 };
 
 const fetchCart = async () => {
+    let cartId = cookies().get('_medusa_cart_id')?.value;
+
+    await getCartTwo(cartId);
+
     const cart = await retrieveCart().then(
         (cart) => cart as CartWithCheckoutStep
     );
@@ -38,6 +43,7 @@ const fetchCart = async () => {
 
 export default async function Cart() {
     const cart = await fetchCart();
+    console.log(`$$$$ CART ${JSON.stringify(cart)}`);
     const customer = await getHamzaCustomer();
 
     return <CartTemplate cart={cart} customer={customer} />;

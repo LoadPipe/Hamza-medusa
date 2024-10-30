@@ -42,7 +42,8 @@ export default class CartService extends MedusaCartService {
         cartId: string,
         options?: FindConfig<Cart>,
         totalsConfig?: { force_taxes?: boolean },
-        saveLineItems: boolean = false
+        saveLineItems: boolean = false,
+        save: boolean = false
     ): Promise<Cart> {
         //add items & variant prices, and store (for default currency)
         if (options?.relations) {
@@ -83,6 +84,7 @@ export default class CartService extends MedusaCartService {
                 const originalCurrency = item.currency_code;
                 let originalPrice = item.unit_price;
 
+                console.log(`$$$$STORE ${storeCurrency}`);
                 item.currency_code = storeCurrency;
 
                 //now detect if price has changed
@@ -125,7 +127,8 @@ export default class CartService extends MedusaCartService {
 
             //if any items to update, update them asynchronously
             try {
-                if (saveLineItems && itemsToSave?.length) {
+                // if (saveLineItems && itemsToSave?.length) {
+                if ((saveLineItems && itemsToSave?.length) || save) {
                     await this.lineItemRepository_.save(itemsToSave);
                 }
             } catch (error) {
@@ -153,10 +156,10 @@ export default class CartService extends MedusaCartService {
             take: 1,
         });
 
-        //is there also a non-logged-in cart from cookies? 
-        const existingCart = await this.cartRepository_.findOne(
-            { where: { id: cartId } }
-        );
+        //is there also a non-logged-in cart from cookies?
+        const existingCart = await this.cartRepository_.findOne({
+            where: { id: cartId },
+        });
 
         //only return if the most recent one is not completed
         let cart = null;
@@ -166,8 +169,7 @@ export default class CartService extends MedusaCartService {
 
         if (!cart && existingCart) {
             cart = existingCart;
-        }
-        else if (cart && existingCart) {
+        } else if (cart && existingCart) {
             //merge carts
             cart = await this.mergeCarts(cart, existingCart);
         }
@@ -175,7 +177,10 @@ export default class CartService extends MedusaCartService {
         return cart;
     }
 
-    async addDefaultShippingMethod(cartId: string, force: boolean = false): Promise<void> {
+    async addDefaultShippingMethod(
+        cartId: string,
+        force: boolean = false
+    ): Promise<void> {
         const cart = await super.retrieve(cartId, {
             relations: ['shipping_methods'],
         });
@@ -258,27 +263,28 @@ export default class CartService extends MedusaCartService {
 
     private async mergeCarts(cart1: Cart, cart2: Cart): Promise<Cart> {
         try {
-            //make sure both carts contain items 
+            //make sure both carts contain items
             if (!cart2?.items) {
-                cart2 = await this.cartRepository_.findOne(
-                    { where: { id: cart2.id }, relations: ['items'] }
-                );
+                cart2 = await this.cartRepository_.findOne({
+                    where: { id: cart2.id },
+                    relations: ['items'],
+                });
             }
 
             if (cart2?.items.length) {
                 if (!cart1.items) {
-                    cart1 = await this.cartRepository_.findOne(
-                        { where: { id: cart1.id }, relations: ['items'] }
-                    );
+                    cart1 = await this.cartRepository_.findOne({
+                        where: { id: cart1.id },
+                        relations: ['items'],
+                    });
                 }
 
                 //move cart 2's line items to cart 1
-                await this.addOrUpdateLineItems(
-                    cart1.id, cart2.items, { validateSalesChannels: false }
-                );
+                await this.addOrUpdateLineItems(cart1.id, cart2.items, {
+                    validateSalesChannels: false,
+                });
             }
-        }
-        catch (e) {
+        } catch (e) {
             this.logger.error('Error merging carts', e);
         }
 

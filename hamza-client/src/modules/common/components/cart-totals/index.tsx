@@ -23,18 +23,15 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
     const {
         subtotal,
         discount_total,
-        raw_discount_total,
         gift_card_total,
         tax_total,
         shipping_total,
         total,
     } = data;
-
     const discounts = data.discounts;
 
-    console.log(`$$$$ RAW: ${raw_discount_total}`);
-    console.log(`$$$$ DISCOUNTS: ${JSON.stringify(data)}`);
-    console.log(`$$$$ DISCOUNTS: ${JSON.stringify(data.discounts)}`);
+    // console.log(`$$$$ DISCOUNTS: ${JSON.stringify(data)}`);
+    console.log(`$$$$ subtotal: ${subtotal}`);
 
     let discountDetails;
     if (discounts && discounts.length > 0) {
@@ -50,7 +47,17 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
         console.log('No discounts applied.');
     }
 
+    const discountPercentage = discountDetails?.[0]?.value ?? 0; // Assuming one discount applies
+
     const { preferred_currency_code } = useCustomerAuthStore();
+
+    const discountAmount = formatCryptoPrice(
+        (subtotal * discountPercentage) / 100,
+        preferred_currency_code ?? 'usdc'
+    );
+
+    console.log(`DISCOUNT AMOUNT ${discountAmount}`);
+
     const [shippingCost, setShippingCost] = useState<number>(0);
     const { shipping_options, isLoading } = useCartShippingOptions(data.id);
 
@@ -60,7 +67,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
         });
     }, [shipping_options, isLoading]);
 
-    console.log(`DISCOUNT ${discount_total}`);
+    console.log(`$$$$ DISCOUNT ${discount_total}`);
 
     //TODO: this can be replaced later by extending the cart, if necessary
     const getCartSubtotal = (cart: any, currencyCode: string) => {
@@ -77,6 +84,9 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
             );
             const itemPrice = variantPrice.amount;
 
+            console.log(`ITEM DISCOUNT ${item.discount_total}`);
+            console.log(`ITEM variantPrice ${JSON.stringify(variantPrice)}`);
+
             console.log(
                 `itemCurrencyCode ${itemCurrencyCode} item Price: ${itemPrice}`
             );
@@ -85,7 +95,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                     subtotals[itemCurrencyCode] = 0;
                 }
                 const itemTotal =
-                    itemPrice * item.quantity - (item.discount_total ?? 0);
+                    itemPrice * item.quantity - (Number(discountAmount) ?? 0);
                 subtotals[itemCurrencyCode] += itemTotal;
             } else {
                 console.log('Currency is missing or invalid for item:', item);
@@ -110,7 +120,11 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
 
     const usdShippingCost = shippingCost ? 500 : 0; //TODO: hard-coded for now
     const taxTotal = tax_total ?? 0;
-    const grandTotal = (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
+    const grandTotal =
+        (finalSubtotal.amount ?? 0) +
+        shippingCost +
+        taxTotal -
+        Number(discountAmount);
     const displayCurrency = finalSubtotal?.currency?.length
         ? finalSubtotal.currency
         : preferred_currency_code ?? 'usdc';
@@ -120,7 +134,11 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
     let usdGrandTotal: number = 0;
     if (preferred_currency_code === 'eth') {
         usdSubtotal = getCartSubtotal(data, 'usdc');
-        usdGrandTotal = (usdSubtotal.amount ?? 0) + usdShippingCost + taxTotal;
+        usdGrandTotal =
+            (usdSubtotal.amount ?? 0) +
+            usdShippingCost +
+            taxTotal -
+            Number(discountAmount);
     }
     return (
         <>
