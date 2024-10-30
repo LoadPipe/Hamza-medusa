@@ -584,6 +584,7 @@ export async function getCart(cart_id: string) {
 
 export async function getCartTwo(cart_id: string) {
     //otherwise, play it safe and get the definitely non-cached
+    console.log(`$$$$RUNNING`);
     return getSecure('/custom/cart', { cart_id, save: true });
 }
 

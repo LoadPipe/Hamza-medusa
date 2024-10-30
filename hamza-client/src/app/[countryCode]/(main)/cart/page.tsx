@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 const fetchCart = async () => {
     let cartId = cookies().get('_medusa_cart_id')?.value;
 
-    await getCartTwo(cartId);
+    await getCartTwo(cartId as string);
 
     const cart = await retrieveCart().then(
         (cart) => cart as CartWithCheckoutStep
