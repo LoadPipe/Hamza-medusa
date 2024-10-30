@@ -107,9 +107,9 @@ const ProductCardGroup = () => {
         <Box maxW={'941px'} w="100%">
             {productsAll.length === 0 ? (
                 <Text
-                    mt="4rem"
+                    mt={{ base: '2rem', md: '4rem' }}
                     textAlign="center"
-                    fontSize={'18px'}
+                    fontSize={{ base: '14px', md: '16px' }}
                     fontWeight={600}
                     color="white"
                 >
