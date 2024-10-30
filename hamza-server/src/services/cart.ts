@@ -43,8 +43,7 @@ export default class CartService extends MedusaCartService {
         cartId: string,
         options?: FindConfig<Cart>,
         totalsConfig?: { force_taxes?: boolean },
-        saveLineItems: boolean = false,
-        save: boolean = false
+        saveLineItems: boolean = false
     ): Promise<Cart> {
         //add items & variant prices, and store (for default currency)
         if (options?.relations) {
@@ -130,7 +129,7 @@ export default class CartService extends MedusaCartService {
             //if any items to update, update them asynchronously
             try {
                 // if (saveLineItems && itemsToSave?.length) {
-                if ((saveLineItems && itemsToSave?.length) || save) {
+                if (saveLineItems && itemsToSave?.length) {
                     await this.lineItemRepository_.save(itemsToSave);
                 }
             } catch (error) {
