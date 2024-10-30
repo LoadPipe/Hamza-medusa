@@ -57,10 +57,10 @@ const SideMenu = () => {
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-            name: category.name,
-            id: category.id,
-            metadata: category.metadata,
-        }))
+              name: category.name,
+              id: category.id,
+              metadata: category.metadata,
+          }))
         : [];
 
     // Skeletons for loading state
@@ -109,12 +109,12 @@ const SideMenu = () => {
                     {isLoading
                         ? skeletonButtons // Show skeletons while loading
                         : uniqueCategories.map((category, index) => (
-                            <CategoryButton
-                                key={index}
-                                categoryName={category.name}
-                                url={category.metadata?.icon_url}
-                            />
-                        ))}
+                              <CategoryButton
+                                  key={index}
+                                  categoryName={category.name}
+                                  url={category.metadata?.icon_url}
+                              />
+                          ))}
                 </Flex>
             </Box>
 

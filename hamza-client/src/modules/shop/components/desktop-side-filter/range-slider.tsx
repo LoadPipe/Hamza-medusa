@@ -36,7 +36,7 @@ const RangeSliderComponent: React.FC<RangeSliderProps> = ({
                     aria-label={['min', 'max']}
                     defaultValue={range}
                     min={0}
-                    max={2000}
+                    max={350}
                     onChange={handleRangeChange}
                     colorScheme="blue"
                 >
