@@ -32,6 +32,8 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
 
     // console.log(`$$$$ DISCOUNTS: ${JSON.stringify(data)}`);
     console.log(`$$$$ subtotal: ${subtotal}`);
+    console.log(`$$$$ discount total: ${discount_total}`);
+    console.log(`$$$$ total: ${total}`);
 
     let discountDetails;
     if (discounts && discounts.length > 0) {
@@ -52,7 +54,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
 
     const discountAmount = formatCryptoPrice(
-        (subtotal * discountPercentage) / 100,
+        ((subtotal ?? 0) * discountPercentage) / 100,
         preferred_currency_code ?? 'usdc'
     );
 
@@ -104,13 +106,13 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
 
         return subtotals[itemCurrencyCode]
             ? {
-                  currency: itemCurrencyCode,
-                  amount: subtotals[itemCurrencyCode],
-              }
+                currency: itemCurrencyCode,
+                amount: subtotals[itemCurrencyCode],
+            }
             : {
-                  currency: itemCurrencyCode,
-                  amount: subtotals[itemCurrencyCode],
-              };
+                currency: itemCurrencyCode,
+                amount: subtotals[itemCurrencyCode],
+            };
     };
 
     const finalSubtotal = getCartSubtotal(
@@ -124,7 +126,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
         (finalSubtotal.amount ?? 0) +
         shippingCost +
         taxTotal -
-        Number(discountAmount);
+        Number(discount_total ?? 0);
     const displayCurrency = finalSubtotal?.currency?.length
         ? finalSubtotal.currency
         : preferred_currency_code ?? 'usdc';
@@ -184,7 +186,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                                 fontSize={{ base: '14px', md: '16px' }}
                                 alignSelf="center"
                             >
-                                {/*{discountDetails.value}*/}
+                                {formatCryptoPrice(discount_total ?? 0, preferred_currency_code ?? 'usdc')}
                             </Text>
                         </Flex>
                     </Text>
