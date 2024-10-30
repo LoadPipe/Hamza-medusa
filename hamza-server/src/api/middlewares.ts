@@ -331,16 +331,16 @@ export const config: MiddlewaresConfig = {
             ],
         },
 
-        // {
-        //     matcher: '/store/carts',
-        //     middlewares: [
-        //         cors({
-        //             origin: [STORE_CORS],
-        //             credentials: true,
-        //         }),
-        //         restrictLoggedInCart,
-        //     ],
-        // },
+        {
+            matcher: '/store/carts',
+            middlewares: [
+                cors({
+                    origin: [STORE_CORS],
+                    credentials: true,
+                }),
+                restrictLoggedInCart,
+            ],
+        },
 
         // {
         //     matcher: '/custom/confirmation-token/generate',
