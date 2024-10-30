@@ -14,6 +14,7 @@ import { createLogger, ILogger } from '../utils/logging/logger';
 import ShippingOptionRepository from '@medusajs/medusa/dist/repositories/shipping-option';
 import { CartEmailRepository } from 'src/repositories/cart-email';
 import { IsNull, Not } from 'typeorm';
+import { isNumberObject } from 'util/types';
 
 export default class CartService extends MedusaCartService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
@@ -151,30 +152,53 @@ export default class CartService extends MedusaCartService {
     async recover(customerId: string, cartId: string): Promise<Cart> {
         //get last cart
         const carts = await this.cartRepository_.find({
-            where: { customer_id: customerId, id: Not(cartId) },
+            where: {
+                customer_id: customerId
+            },
             order: { updated_at: 'DESC' },
             take: 1,
         });
 
-        //is there also a non-logged-in cart from cookies?
-        const existingCart = await this.cartRepository_.findOne({
-            where: { id: cartId },
-        });
+        let previousCart = carts?.length ? carts[0] : null;
 
-        //only return if the most recent one is not completed
+        //don't consider previous cart if completed or deleted
+        if (previousCart) {
+            if (previousCart.deleted_at || previousCart.completed_at)
+                previousCart = null;
+        }
+
+        //is there also a non-logged-in cart from cookies? 
+        let anonCart = null;
+        if (cartId?.length && cartId != previousCart?.id) {
+            anonCart = await this.cartRepository_.findOne(
+                {
+                    where: {
+                        id: cartId,
+                        completed_at: IsNull(),
+                        deleted_at: IsNull()
+                    }
+                }
+            );
+        }
+
+
+        //if only anon cart, use that 
         let cart = null;
-        if (carts.length > 0) {
-            if (!carts[0].completed_at) cart = carts[0];
+        if (!previousCart && anonCart) {
+            cart = anonCart;
         }
+        else {
+            //use previous user cart by default
+            cart = previousCart;
 
-        if (!cart && existingCart) {
-            cart = existingCart;
-        } else if (cart && existingCart) {
-            //merge carts
-            cart = await this.mergeCarts(cart, existingCart);
+            //and if there's an anon cart too, merge it in
+            if (anonCart) {
+                //merge carts
+                cart = await this.mergeCarts(previousCart, anonCart);
+            }
+
+            return cart;
         }
-
-        return cart;
     }
 
     async addDefaultShippingMethod(

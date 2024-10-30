@@ -4,9 +4,10 @@ import { notFound } from 'next/navigation';
 import { LineItem } from '@medusajs/medusa';
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { Flex } from '@chakra-ui/react';
-import CheckoutDetails from '@/modules/checkout/templates/checkout-details';
-import OrderSummary from '@/modules/checkout/templates/order-summary';
-import PaymentSummary from '@/modules/checkout/templates/payment-summary';
+import ForceWalletConnect from '@/app/components/loaders/force-wallet-connect';
+import CheckoutTemplate from '@/modules/checkout/templates';
+import ConnectionStatusCheck from './components/ConnectionStatusCheck';
+import { SwitchNetwork } from '@/app/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 
 export const metadata: Metadata = {
     title: 'Checkout',
@@ -49,26 +50,26 @@ export default async function Checkout(params: any) {
         return notFound();
     }
 
+    if (cart?.items.length) {
+        const enrichedItems = await enrichLineItems(
+            cart?.items,
+            cart?.region_id
+        );
+        cart.items = enrichedItems as LineItem[];
+    }
+
+    // State to track wallet connection status
+    const connected = params.searchParams.connected === 'true';
+
+    console.log('params connected', params.searchParams.connected);
+
     return (
         <Flex flexDir="row" maxW={'1280px'} width={'100%'}>
-            <Flex
-                maxW={'1258px'}
-                width={'100%'}
-                mx="1rem"
-                my="2rem"
-                flexDir={{ base: 'column', md: 'row' }}
-                gap={{ base: 3, md: 5 }}
-            >
-                <Flex
-                    width={'100%'}
-                    flexDir={'column'}
-                    gap={{ base: 3, md: '41px' }}
-                >
-                    <CheckoutDetails cartId={cartId} />
-                    <OrderSummary cart={cart} />
-                </Flex>
-                <PaymentSummary />
-            </Flex>
+            <ConnectionStatusCheck cart={cart} />
+
+            <CheckoutTemplate cart={cart} cartId={cartId} />
+            {/* Conditionally render based on connection status and step */}
+            {!connected && <ForceWalletConnect />}
         </Flex>
     );
 }

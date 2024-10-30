@@ -173,13 +173,19 @@ export default class BuckydropService extends TransactionBaseService {
                 return 0;
             }
 
+            //get customer if there is one
             if (!cart.customer) {
-                cart.customer = await this.customerService_.retrieve(
-                    cart.customer_id
-                );
+                if (cart.customer_id?.length) {
+                    cart.customer = await this.customerService_.retrieve(
+                        cart.customer_id
+                    );
+                }
             }
 
-            currency = cart.customer.preferred_currency_id;
+            //get currency from customer, or cart if there is no customer
+            currency = cart.customer ?
+                cart.customer.preferred_currency_id :
+                cart?.items[0]?.currency_code ?? 'usdc';
 
             /*
             //calculate prices
@@ -326,7 +332,7 @@ export default class BuckydropService extends TransactionBaseService {
                 province: cart.billing_address.province ?? '',
                 city: cart.billing_address.city ?? '',
                 detailAddress:
-                    `${cart.billing_address.address_1 ?? ''} ${cart.billing_address.address_2 ?? ''}`.trim(),
+                    `${cart.billing_address.address_1 ?? ''}{' '}${cart.billing_address.address_2 ?? ''}`.trim(),
                 postCode: cart.billing_address.postal_code,
                 contactName:
                     `${cart.billing_address.first_name ?? ''} ${cart.billing_address.last_name ?? ''}`.trim(),

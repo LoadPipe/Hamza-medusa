@@ -20,10 +20,7 @@ const Addresses = ({
     customer: Omit<Customer, 'password_hash'> | null;
 }) => {
     const router = useRouter();
-    // Set whether we are adding or editing address
-    const [addressActionType, setActionAddressType] = useState<'add' | 'edit'>(
-        'add'
-    );
+
     const [selectedAddressId, setSelectedAddressId] = useState<string>('');
 
     // Hooks to open and close address modal
@@ -51,13 +48,6 @@ const Addresses = ({
                   )
                 : true
         );
-
-    // Run once when component mounts to check if address already set and push to next step
-    useEffect(() => {
-        if (cart?.shipping_address) {
-            router.push('/checkout?step=review');
-        }
-    }, []);
 
     return (
         <div>
@@ -129,7 +119,6 @@ const Addresses = ({
                                 }}
                                 onClick={() => {
                                     onOpen();
-                                    setActionAddressType('edit');
                                 }}
                             >
                                 Edit Shipping Address
@@ -170,7 +159,6 @@ const Addresses = ({
                             }}
                             onClick={() => {
                                 onOpen();
-                                setActionAddressType('add');
                             }}
                         >
                             Add Shipping Address
@@ -181,7 +169,6 @@ const Addresses = ({
             <AddressModal
                 customer={customer}
                 countryCode={countryCode}
-                addressActionType={addressActionType}
                 toggleSameAsBilling={toggleSameAsBilling}
                 cart={cart}
                 isOpen={isOpen}

@@ -1,18 +1,13 @@
-import { formatAmount } from '@lib/util/prices';
-import { LineItem, Region } from '@medusajs/medusa';
-import { clx } from '@medusajs/ui';
+import { LineItem } from '@medusajs/medusa';
 import Image from 'next/image';
 import { getPercentageDiff } from '@lib/util/get-precentage-diff';
-import { CalculatedVariant } from '@/types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { Flex, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { useCustomerProfileStore } from '@store/customer-profile/customer-profile';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import { getHamzaCustomer } from '@lib/data';
-import axios from 'axios';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 
+// TODO: Can this be removed?
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
 };
@@ -25,39 +20,8 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
     const [price, setPrice] = useState<number | null>(null);
     const [reducedPrice, setReducedPrice] = useState<number | null>(null);
     const [hasReducedPrice, setHasReducedPrice] = useState<boolean>(false);
-    const [currencyCode, setCurrencyCode] = useState<string | undefined>(
-        undefined
-    );
 
-    // console.log("CART ITEM IS", item);
-
-    useEffect(() => {
-        const fetchCustomerPreferredCurrency = async () => {
-            try {
-                const customer = await getHamzaCustomer().catch(() => null);
-                if (customer) {
-                    const response = await axios.get(
-                        `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/custom/customer/preferred-currency`,
-                        {
-                            params: {
-                                customer_id: customer.id,
-                            },
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        }
-                    );
-
-                    const customerCurrency = response.data;
-                    setCurrencyCode(customerCurrency.preferred_currency);
-                }
-            } catch (error) {
-                console.error('Error fetching customer currency:', error);
-            }
-        };
-
-        fetchCustomerPreferredCurrency();
-    }, []);
+    const { preferred_currency_code } = useCustomerAuthStore();
 
     useEffect(() => {
         const originalTotal = item.original_total ?? null;
@@ -86,8 +50,11 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                             </span>
 
                             <span className="line-through text-ui-fg-muted">
-                                {formatCryptoPrice(reducedPrice, currencyCode)}{' '}
-                                {currencyCode?.toUpperCase()}
+                                {formatCryptoPrice(
+                                    reducedPrice,
+                                    preferred_currency_code ?? 'usdt'
+                                )}{' '}
+                                {preferred_currency_code?.toUpperCase()}
                             </span>
                         </p>
 
@@ -97,13 +64,17 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                     </>
                 )}
 
-                {price && currencyCode && (
+                {price && (
                     <Flex flexDirection={'row'} alignItems="center">
                         <Flex alignItems={'center'}>
                             <Image
                                 className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
-                                src={currencyIcons[currencyCode ?? 'usdc']}
-                                alt={currencyCode ?? 'usdc'}
+                                src={
+                                    currencyIcons[
+                                        preferred_currency_code ?? 'usdc'
+                                    ]
+                                }
+                                alt={preferred_currency_code ?? 'usdc'}
                             />
                         </Flex>
                         <Text
@@ -115,7 +86,10 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                             top="1px" // Adjust to fine-tune alignment
                             color={'white'}
                         >
-                            {formatCryptoPrice(price, currencyCode)}
+                            {formatCryptoPrice(
+                                price,
+                                preferred_currency_code ?? 'usdt'
+                            )}
                         </Text>
                     </Flex>
                 )}
