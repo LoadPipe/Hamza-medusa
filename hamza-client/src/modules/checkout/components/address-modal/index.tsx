@@ -124,11 +124,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
         e.preventDefault();
         const formPayload = new FormData(e.currentTarget);
 
-        // Continue to set the addresses as usual
-        await setAddresses(formPayload);
-        // If "Save shipping address" checkbox is checked, save the address for the customer
-        if (saveAddress) {
-            try {
+        try {
+            if (saveAddress) {
                 const shippingAddressData = new FormData();
                 shippingAddressData.append(
                     'first_name',
@@ -182,21 +179,13 @@ const AddressModal: React.FC<AddressModalProps> = ({
                     console.log('add customer shipping address');
                     await addCustomerShippingAddress({}, shippingAddressData);
                 }
-            } catch (error) {
-                console.error('Failed to save shipping address:', error);
             }
-        }
-    };
-
-    const handleSubmitAndClose = async (
-        e: React.FormEvent<HTMLFormElement>
-    ) => {
-        e.preventDefault(); // Prevent the default form submission
-
-        try {
-            await handleFormSubmit(e);
+        } catch (error) {
+            console.error('Failed to save shipping address:', error);
         } finally {
             onClose();
+
+            await setAddresses(formPayload);
         }
     };
 
@@ -209,7 +198,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                 p="6"
                 bgColor={'#121212'}
             >
-                <form onSubmit={handleSubmitAndClose}>
+                <form onSubmit={handleFormSubmit}>
                     <ModalHeader
                         color={'primary.green.900'}
                         textAlign={'center'}
