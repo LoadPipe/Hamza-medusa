@@ -70,41 +70,39 @@ const AddressModal: React.FC<AddressModalProps> = ({
     // Reset the checkbox state to false when the modal opens
     useEffect(() => {
         if (isOpen) {
+            if (cart?.shipping_address) {
+                setFormData((prevData) => ({
+                    ...prevData,
+                    'shipping_address.first_name':
+                        cart.shipping_address.first_name || '',
+                    'shipping_address.last_name':
+                        cart.shipping_address.last_name || '',
+                    'shipping_address.address_1':
+                        cart.shipping_address.address_1 || '',
+                    'shipping_address.address_2':
+                        cart.shipping_address.address_2 || '',
+                    'shipping_address.company':
+                        cart.shipping_address.company || '',
+                    'shipping_address.postal_code':
+                        cart.shipping_address.postal_code || '',
+                    'shipping_address.city': cart.shipping_address.city || '',
+                    'shipping_address.country_code':
+                        cart.shipping_address.country_code || countryCode || '',
+                    'shipping_address.province':
+                        cart.shipping_address.province || '',
+                    email: cart.email || '',
+                    'shipping_address.phone': cart.shipping_address.phone || '',
+                }));
+            }
             setSaveAddress(false);
             setOverwriteAddress(false);
             setSaveAddressButtonText(
                 addressType === 'add' ? 'Add Address' : 'Edit Address'
             );
         }
-    }, [isOpen]);
+    }, [isOpen, cart]);
 
     useEffect(() => {
-        // Populate formData with cart data for both add and edit modes
-        if (cart?.shipping_address) {
-            setFormData((prevData) => ({
-                ...prevData,
-                'shipping_address.first_name':
-                    cart.shipping_address.first_name || '',
-                'shipping_address.last_name':
-                    cart.shipping_address.last_name || '',
-                'shipping_address.address_1':
-                    cart.shipping_address.address_1 || '',
-                'shipping_address.address_2':
-                    cart.shipping_address.address_2 || '',
-                'shipping_address.company': cart.shipping_address.company || '',
-                'shipping_address.postal_code':
-                    cart.shipping_address.postal_code || '',
-                'shipping_address.city': cart.shipping_address.city || '',
-                'shipping_address.country_code':
-                    cart.shipping_address.country_code || countryCode || '',
-                'shipping_address.province':
-                    cart.shipping_address.province || '',
-                email: cart.email || '',
-                'shipping_address.phone': cart.shipping_address.phone || '',
-            }));
-        }
-
-        // Set savedAddressID only if in edit mode
         if (addressType === 'edit' && customer?.shipping_addresses) {
             const matchingAddress = customer.shipping_addresses.find((addr) =>
                 compareSelectedAddress(addr, cart?.shipping_address)
