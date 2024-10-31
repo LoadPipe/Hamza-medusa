@@ -15,7 +15,7 @@ import {
     ModalCloseButton,
     Text,
 } from '@chakra-ui/react';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Cart, Customer } from '@medusajs/medusa';
 import { setAddresses } from '../../actions';
 import CountrySelect from '@modules/checkout/components/country-select';
@@ -23,7 +23,6 @@ import {
     addCustomerShippingAddress,
     updateCustomerShippingAddress,
 } from '@/modules/account/actions';
-import { custom } from 'viem';
 import AddressSelect from '../address-select';
 import compareSelectedAddress from '@/lib/util/compare-address-select';
 
@@ -47,8 +46,9 @@ const AddressModal: React.FC<AddressModalProps> = ({
 }) => {
     // Save address to address book if radio button clicked
     const [saveAddress, setSaveAddress] = useState(false);
-    const [saveAddressButtonText, setSaveAddressButtonText] =
-        useState('Set Address');
+    const [saveAddressButtonText, setSaveAddressButtonText] = useState(
+        addressType === 'add' ? 'Add Address' : 'Edit Address'
+    );
     const [overwriteAddress, setOverwriteAddress] = useState(false);
     const [savedAddressID, setSavedAddressId] = useState('');
     const [selectedAddressId, setSelectedAddressId] = useState<string>('');
@@ -72,6 +72,9 @@ const AddressModal: React.FC<AddressModalProps> = ({
         if (isOpen) {
             setSaveAddress(false);
             setOverwriteAddress(false);
+            setSaveAddressButtonText(
+                addressType === 'add' ? 'Add Address' : 'Edit Address'
+            );
         }
     }, [isOpen]);
 
@@ -106,9 +109,11 @@ const AddressModal: React.FC<AddressModalProps> = ({
             const matchingAddress = customer.shipping_addresses.find((addr) =>
                 compareSelectedAddress(addr, cart?.shipping_address)
             );
-            setSavedAddressId(matchingAddress?.id || '');
+            setSavedAddressId(
+                matchingAddress?.id ? matchingAddress.id : selectedAddressId
+            );
         }
-    }, [cart, countryCode, addressType, customer]);
+    }, [cart, countryCode, addressType, customer, selectedAddressId]);
 
     const handleChange = (
         e: React.ChangeEvent<
@@ -125,7 +130,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         setSaveAddress(e.target.checked);
-
+        console.log('saved clicked', e.target.checked);
         if (e.target.checked) setSaveAddressButtonText('Save Address');
         else setSaveAddressButtonText('Edit Address');
     };
@@ -134,6 +139,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         setOverwriteAddress(e.target.checked);
+        console.log('overwrite clicked', e.target.checked);
         if (e.target.checked) setSaveAddressButtonText('Overwrite');
         else setSaveAddressButtonText('Save Address');
     };
