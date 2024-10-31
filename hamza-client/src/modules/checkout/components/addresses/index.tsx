@@ -8,6 +8,7 @@ import compareAddresses from '@lib/util/compare-addresses';
 import { BiPencil } from 'react-icons/bi';
 import AddressModal from '../address-modal';
 import { IoLocationOutline } from 'react-icons/io5';
+import { useState } from 'react';
 
 const Addresses = ({
     cart,
@@ -20,6 +21,9 @@ const Addresses = ({
 
     // Hooks to open and close address modal
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const [shippingAddressType, setShippingAddressType] = useState<
+        'add' | 'edit'
+    >('add');
 
     // Get country code
     const params = useParams();
@@ -43,6 +47,16 @@ const Addresses = ({
                   )
                 : true
         );
+
+    const handleAddAddress = () => {
+        setShippingAddressType('add');
+        onOpen();
+    };
+
+    const handleEditAddress = () => {
+        setShippingAddressType('edit');
+        onOpen();
+    };
 
     return (
         <div>
@@ -112,9 +126,7 @@ const Addresses = ({
                                 _hover={{
                                     opacity: 0.5,
                                 }}
-                                onClick={() => {
-                                    onOpen();
-                                }}
+                                onClick={handleEditAddress}
                             >
                                 Edit Shipping Address
                             </Button>
@@ -139,9 +151,7 @@ const Addresses = ({
                             _hover={{
                                 opacity: 0.5,
                             }}
-                            onClick={() => {
-                                onOpen();
-                            }}
+                            onClick={handleAddAddress}
                         >
                             Add Shipping Address
                         </Button>
@@ -155,6 +165,7 @@ const Addresses = ({
                 cart={cart}
                 isOpen={isOpen}
                 onClose={onClose}
+                addressType={shippingAddressType}
             />
         </div>
     );

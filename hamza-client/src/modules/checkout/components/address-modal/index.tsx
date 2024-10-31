@@ -25,6 +25,7 @@ import {
 } from '@/modules/account/actions';
 import { custom } from 'viem';
 import AddressSelect from '../address-select';
+import compareSelectedAddress from '@/lib/util/compare-address-select';
 
 interface AddressModalProps {
     isOpen: boolean;
@@ -33,6 +34,7 @@ interface AddressModalProps {
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | null;
     toggleSameAsBilling: () => void;
     countryCode: string;
+    addressType: 'add' | 'edit';
 }
 
 const AddressModal: React.FC<AddressModalProps> = ({
@@ -41,6 +43,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
     customer,
     cart,
     countryCode,
+    addressType,
 }) => {
     const [selectedAddressId, setSelectedAddressId] = useState<string>('');
 
@@ -48,6 +51,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
     const [saveAddress, setSaveAddress] = useState(false);
     const [saveAddressButtonText, setSaveAddressButtonText] =
         useState('Set Address');
+    const [overwriteAddress, setOverwriteAddress] = useState(false);
+    const [savedAddressID, setSavedAddressId] = useState('');
 
     const [formData, setFormData] = useState({
         'shipping_address.first_name': '',
@@ -87,12 +92,29 @@ const AddressModal: React.FC<AddressModalProps> = ({
                 'shipping_address.phone': cart?.shipping_address?.phone || '',
             });
         }
-    }, [cart, countryCode]);
+
+        console.log('addressType', addressType);
+        if (addressType === 'edit') {
+            console.log('matching address baby');
+
+            const matchingAddress = customer?.shipping_addresses.find(
+                (address) =>
+                    compareSelectedAddress(address, cart?.shipping_address)
+            );
+
+            if (matchingAddress) {
+                setSavedAddressId(matchingAddress.id);
+            }
+
+            console.log('savedAddressID', savedAddressID);
+        }
+    }, [cart, countryCode, addressType]);
 
     // Reset the checkbox state to false when the modal opens
     useEffect(() => {
         if (isOpen) {
             setSaveAddress(false);
+            setOverwriteAddress(false);
         }
     }, [isOpen]);
 
@@ -117,7 +139,13 @@ const AddressModal: React.FC<AddressModalProps> = ({
             setSaveAddressButtonText(
                 selectedAddressId?.length ? 'Edit Address' : 'Add Address'
             );
-        else setSaveAddressButtonText('Set Address');
+        else setSaveAddressButtonText('Submit');
+    };
+
+    const handleOverwriteAddressChange = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setOverwriteAddress(e.target.checked);
     };
 
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -168,11 +196,16 @@ const AddressModal: React.FC<AddressModalProps> = ({
                     formData['shipping_address.phone']
                 );
 
+                console.log(savedAddressID);
+
                 //if existing selected, update instead of adding new
-                if (selectedAddressId?.length) {
-                    console.log('update customer shipping addy');
+                if (customer?.shipping_addresses && overwriteAddress === true) {
+                    console.log(
+                        'update customer shipping addy',
+                        savedAddressID
+                    );
                     await updateCustomerShippingAddress(
-                        { addressId: selectedAddressId },
+                        { addressId: savedAddressID },
                         shippingAddressData
                     );
                 } else {
@@ -440,6 +473,21 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                     onChange={handleSaveAddressChange}
                                 />
                                 <Text alignSelf={'center'}>Save address</Text>
+                                {saveAddress && (
+                                    <>
+                                        <Checkbox
+                                            ml="4"
+                                            mr="2"
+                                            isChecked={overwriteAddress}
+                                            onChange={
+                                                handleOverwriteAddressChange
+                                            }
+                                        />
+                                        <Text alignSelf={'center'}>
+                                            Overwrite existing address
+                                        </Text>
+                                    </>
+                                )}
                             </Flex>
                         </Flex>
                     </ModalBody>
