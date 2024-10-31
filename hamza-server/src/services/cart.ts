@@ -14,7 +14,6 @@ import { createLogger, ILogger } from '../utils/logging/logger';
 import ShippingOptionRepository from '@medusajs/medusa/dist/repositories/shipping-option';
 import { CartEmailRepository } from 'src/repositories/cart-email';
 import { IsNull, Not } from 'typeorm';
-import { isNumberObject } from 'util/types';
 
 export default class CartService extends MedusaCartService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
