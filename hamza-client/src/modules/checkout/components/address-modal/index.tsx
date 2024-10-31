@@ -15,7 +15,7 @@ import {
     ModalCloseButton,
     Text,
 } from '@chakra-ui/react';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Cart, Customer } from '@medusajs/medusa';
 import { setAddresses } from '../../actions';
 import CountrySelect from '@modules/checkout/components/country-select';
@@ -23,7 +23,8 @@ import {
     addCustomerShippingAddress,
     updateCustomerShippingAddress,
 } from '@/modules/account/actions';
-import { custom } from 'viem';
+import AddressSelect from '../address-select';
+import compareSelectedAddress from '@/lib/util/compare-address-select';
 
 interface AddressModalProps {
     isOpen: boolean;
@@ -32,7 +33,7 @@ interface AddressModalProps {
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | null;
     toggleSameAsBilling: () => void;
     countryCode: string;
-    selectedAddressId: string;
+    addressType: 'add' | 'edit';
 }
 
 const AddressModal: React.FC<AddressModalProps> = ({
@@ -41,12 +42,16 @@ const AddressModal: React.FC<AddressModalProps> = ({
     customer,
     cart,
     countryCode,
-    selectedAddressId,
+    addressType,
 }) => {
     // Save address to address book if radio button clicked
     const [saveAddress, setSaveAddress] = useState(false);
-    const [saveAddressButtonText, setSaveAddressButtonText] =
-        useState('Set Address');
+    const [saveAddressButtonText, setSaveAddressButtonText] = useState(
+        addressType === 'add' ? 'Add Address' : 'Edit Address'
+    );
+    const [overwriteAddress, setOverwriteAddress] = useState(false);
+    const [savedAddressID, setSavedAddressId] = useState('');
+    const [selectedAddressId, setSelectedAddressId] = useState<string>('');
 
     const [formData, setFormData] = useState({
         'shipping_address.first_name': '',
@@ -62,38 +67,53 @@ const AddressModal: React.FC<AddressModalProps> = ({
         'shipping_address.phone': '',
     });
 
-    useEffect(() => {
-        if (cart) {
-            setFormData({
-                'shipping_address.first_name':
-                    cart?.shipping_address?.first_name || '',
-                'shipping_address.last_name':
-                    cart?.shipping_address?.last_name || '',
-                'shipping_address.address_1':
-                    cart?.shipping_address?.address_1 || '',
-                'shipping_address.address_2':
-                    cart?.shipping_address?.address_2 || '',
-                'shipping_address.company':
-                    cart?.shipping_address?.company || '',
-                'shipping_address.postal_code':
-                    cart?.shipping_address?.postal_code || '',
-                'shipping_address.city': cart?.shipping_address?.city || '',
-                'shipping_address.country_code':
-                    cart?.shipping_address?.country_code || countryCode || '',
-                'shipping_address.province':
-                    cart?.shipping_address?.province || '',
-                email: cart?.email || '',
-                'shipping_address.phone': cart?.shipping_address?.phone || '',
-            });
-        }
-    }, [cart, countryCode]);
-
     // Reset the checkbox state to false when the modal opens
     useEffect(() => {
         if (isOpen) {
+            if (cart?.shipping_address) {
+                setFormData((prevData) => ({
+                    ...prevData,
+                    'shipping_address.first_name':
+                        cart.shipping_address.first_name || '',
+                    'shipping_address.last_name':
+                        cart.shipping_address.last_name || '',
+                    'shipping_address.address_1':
+                        cart.shipping_address.address_1 || '',
+                    'shipping_address.address_2':
+                        cart.shipping_address.address_2 || '',
+                    'shipping_address.company':
+                        cart.shipping_address.company || '',
+                    'shipping_address.postal_code':
+                        cart.shipping_address.postal_code || '',
+                    'shipping_address.city': cart.shipping_address.city || '',
+                    'shipping_address.country_code':
+                        cart.shipping_address.country_code || countryCode || '',
+                    'shipping_address.province':
+                        cart.shipping_address.province || '',
+                    email: cart.email || '',
+                    'shipping_address.phone': cart.shipping_address.phone || '',
+                }));
+            }
             setSaveAddress(false);
+            setOverwriteAddress(false);
+            setSaveAddressButtonText(
+                addressType === 'add' ? 'Add Address' : 'Edit Address'
+            );
         }
-    }, [isOpen]);
+    }, [isOpen, cart]);
+
+    useEffect(() => {
+        // If in edit mode and customer has addresses, compare current address to address book
+        if (addressType === 'edit' && customer?.shipping_addresses) {
+            const matchingAddress = customer.shipping_addresses.find((addr) =>
+                compareSelectedAddress(addr, cart?.shipping_address)
+            );
+            // if matching address set address id or set selected addressId
+            setSavedAddressId(
+                matchingAddress?.id ? matchingAddress.id : selectedAddressId
+            );
+        }
+    }, [cart, countryCode, addressType, customer, selectedAddressId]);
 
     const handleChange = (
         e: React.ChangeEvent<
@@ -106,28 +126,30 @@ const AddressModal: React.FC<AddressModalProps> = ({
         });
     };
 
-    // When clicked save address on submit
     const handleSaveAddressChange = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         setSaveAddress(e.target.checked);
+        console.log('saved clicked', e.target.checked);
+        if (e.target.checked) setSaveAddressButtonText('Save Address');
+        else setSaveAddressButtonText('Edit Address');
+    };
 
-        if (e.target.checked)
-            setSaveAddressButtonText(
-                selectedAddressId?.length ? 'Overwrite Address' : 'Add Address'
-            );
-        else setSaveAddressButtonText('Set Address');
+    const handleOverwriteAddressChange = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setOverwriteAddress(e.target.checked);
+        console.log('overwrite clicked', e.target.checked);
+        if (e.target.checked) setSaveAddressButtonText('Overwrite');
+        else setSaveAddressButtonText('Save Address');
     };
 
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formPayload = new FormData(e.currentTarget);
 
-        // Continue to set the addresses as usual
-        await setAddresses(formPayload);
-        // If "Save shipping address" checkbox is checked, save the address for the customer
-        if (saveAddress) {
-            try {
+        try {
+            if (saveAddress) {
                 const shippingAddressData = new FormData();
                 shippingAddressData.append(
                     'first_name',
@@ -171,44 +193,31 @@ const AddressModal: React.FC<AddressModalProps> = ({
                 );
 
                 //if existing selected, update instead of adding new
-                if (selectedAddressId?.length) {
-                    console.log('update customer shipping addy');
+                if (customer?.shipping_addresses && overwriteAddress === true) {
+                    console.log('Update existing address', savedAddressID);
                     await updateCustomerShippingAddress(
-                        { addressId: selectedAddressId },
+                        { addressId: savedAddressID },
                         shippingAddressData
                     );
                 } else {
-                    console.log('add customer shipping address');
+                    console.log('Add new shipping address');
                     await addCustomerShippingAddress({}, shippingAddressData);
                 }
-            } catch (error) {
-                console.error('Failed to save shipping address:', error);
             }
-        }
-    };
-
-    const handleSubmitAndClose = async (
-        e: React.FormEvent<HTMLFormElement>
-    ) => {
-        e.preventDefault(); // Prevent the default form submission
-
-        try {
-            await handleFormSubmit(e);
+        } catch (error) {
+            console.error('Failed to save shipping address:', error);
         } finally {
             onClose();
+
+            await setAddresses(formPayload);
         }
     };
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="lg">
             <ModalOverlay />
-            <ModalContent
-                maxW="737px"
-                maxH={{ base: 'auto', md: '775px' }}
-                p="6"
-                bgColor={'#121212'}
-            >
-                <form onSubmit={handleSubmitAndClose}>
+            <ModalContent maxW="737px" p="6" bgColor={'#121212'}>
+                <form onSubmit={handleFormSubmit}>
                     <ModalHeader
                         color={'primary.green.900'}
                         textAlign={'center'}
@@ -432,6 +441,21 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                 </FormControl>
                             </Flex>
 
+                            {(customer?.shipping_addresses?.length ?? 0) >
+                                0 && (
+                                <AddressSelect
+                                    cart={cart}
+                                    addresses={
+                                        customer?.shipping_addresses ?? []
+                                    }
+                                    onSelect={(addrId) =>
+                                        setSelectedAddressId(addrId)
+                                    }
+                                    formData={formData}
+                                    setFormData={setFormData}
+                                />
+                            )}
+
                             {/* Checkbox for Default Address */}
                             <Flex alignItems="center" my="3" color={'white'}>
                                 <Checkbox
@@ -440,6 +464,21 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                     onChange={handleSaveAddressChange}
                                 />
                                 <Text alignSelf={'center'}>Save address</Text>
+                                {saveAddress && savedAddressID && (
+                                    <>
+                                        <Checkbox
+                                            ml="4"
+                                            mr="2"
+                                            isChecked={overwriteAddress}
+                                            onChange={
+                                                handleOverwriteAddressChange
+                                            }
+                                        />
+                                        <Text alignSelf={'center'}>
+                                            Overwrite address
+                                        </Text>
+                                    </>
+                                )}
                             </Flex>
                         </Flex>
                     </ModalBody>
