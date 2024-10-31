@@ -37,7 +37,6 @@ const AccountMenu = () => {
                 <MenuButton
                     width={'60px'}
                     height={'57px'}
-                    px="1rem"
                     borderRadius={'full'}
                     borderColor={'white'}
                     borderWidth={'1px'}
