@@ -103,10 +103,12 @@ const AddressModal: React.FC<AddressModalProps> = ({
     }, [isOpen, cart]);
 
     useEffect(() => {
+        // If in edit mode and customer has addresses, compare current address to address book
         if (addressType === 'edit' && customer?.shipping_addresses) {
             const matchingAddress = customer.shipping_addresses.find((addr) =>
                 compareSelectedAddress(addr, cart?.shipping_address)
             );
+            // if matching address set address id or set selected addressId
             setSavedAddressId(
                 matchingAddress?.id ? matchingAddress.id : selectedAddressId
             );
