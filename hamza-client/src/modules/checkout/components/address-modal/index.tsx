@@ -134,7 +134,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         setOverwriteAddress(e.target.checked);
-        if (e.target.checked) setSaveAddressButtonText('Edit Address');
+        if (e.target.checked) setSaveAddressButtonText('Overwrite');
         else setSaveAddressButtonText('Save Address');
     };
 
@@ -458,7 +458,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                     onChange={handleSaveAddressChange}
                                 />
                                 <Text alignSelf={'center'}>Save address</Text>
-                                {saveAddress && (
+                                {savedAddressID && (
                                     <>
                                         <Checkbox
                                             ml="4"
@@ -469,7 +469,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                             }
                                         />
                                         <Text alignSelf={'center'}>
-                                            Overwrite existing address
+                                            Overwrite address
                                         </Text>
                                     </>
                                 )}
