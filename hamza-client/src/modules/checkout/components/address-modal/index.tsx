@@ -433,15 +433,20 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                 </FormControl>
                             </Flex>
 
-                            <AddressSelect
-                                cart={cart}
-                                addresses={customer?.shipping_addresses ?? []}
-                                onSelect={(addrId) =>
-                                    setSelectedAddressId(addrId)
-                                }
-                                formData={formData}
-                                setFormData={setFormData}
-                            />
+                            {(customer?.shipping_addresses?.length ?? 0) >
+                                0 && (
+                                <AddressSelect
+                                    cart={cart}
+                                    addresses={
+                                        customer?.shipping_addresses ?? []
+                                    }
+                                    onSelect={(addrId) =>
+                                        setSelectedAddressId(addrId)
+                                    }
+                                    formData={formData}
+                                    setFormData={setFormData}
+                                />
+                            )}
 
                             {/* Checkbox for Default Address */}
                             <Flex alignItems="center" my="3" color={'white'}>
