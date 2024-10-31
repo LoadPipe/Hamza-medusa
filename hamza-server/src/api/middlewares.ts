@@ -66,15 +66,16 @@ const restrictLoggedInCart = async (
     const logger = req.scope.resolve('logger');
 
     const cart_id = req.query.id || req.headers.id || req.url.split('/')[1]; // Assuming cart_id is the 4th part of the URL
-    let cartService;
-    let cart;
-    if (cart_id) {
-        cartService = req.scope.resolve('cartService');
-        cart = await cartService.retrieve(cart_id);
-        if (cart.email === null && cart.customer_id === null) {
-            next();
-            authorized = true;
-        }
+    const cartService = req.scope.resolve('cartService');
+    if (!cart_id) {
+        res.status(401).json({ status: false });
+        return;
+    }
+
+    const cart = await cartService.retrieve(cart_id);
+    if (cart.customer_id === null) {
+        next();
+        authorized = true;
     }
     // Check for LOGGED IN
     if (req.headers.authorization) {
@@ -83,17 +84,11 @@ const restrictLoggedInCart = async (
         );
         const customerId = jwtToken?.customer_id;
 
-        logger.debug(`cart_id ${cart_id}`);
         if (cart_id) {
-            const cartService = req.scope.resolve('cartService');
-            const cart = await cartService.retrieve(cart_id);
-
             // Check if NOT anonymous cart first...
-            if (cart.email !== null) {
-                if (cart_id === cart.id && customerId === cart.customer_id) {
-                    next();
-                    authorized = true;
-                }
+            if (cart_id === cart.id && customerId === cart.customer_id) {
+                next();
+                authorized = true;
             }
         }
     }
