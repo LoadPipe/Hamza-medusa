@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import React from 'react';
 import '@/styles/globals.css';
+import { cookies } from 'next/headers';
+
 const BASE_URL =
     process.env.NEXT_PUBLIC_MEDUSA_CLIENT_URL || 'https://localhost:8000';
 import MedusaProvider from '@/components/providers/medusa/medusa-provider'; // Import MedusaProvider
@@ -20,6 +22,9 @@ const sora = Sora({
 });
 
 export default function RootLayout(props: { children: React.ReactNode }) {
+    // Retrieve token server-side
+    const token = cookies().get('_medusa_jwt')?.value;
+
     return (
         <html lang="en" data-mode="dark">
             <head>
@@ -30,7 +35,9 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             </head>
             <body>
                 <div>
-                    <MedusaProvider>
+                    <MedusaProvider token={token}>
+                        {' '}
+                        {/* Pass token as prop */}
                         <RainbowWrapper>
                             <ChakraProvider theme={theme}>
                                 <main className={sora.className}>
