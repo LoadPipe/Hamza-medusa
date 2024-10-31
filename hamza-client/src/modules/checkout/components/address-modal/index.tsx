@@ -45,14 +45,13 @@ const AddressModal: React.FC<AddressModalProps> = ({
     countryCode,
     addressType,
 }) => {
-    const [selectedAddressId, setSelectedAddressId] = useState<string>('');
-
     // Save address to address book if radio button clicked
     const [saveAddress, setSaveAddress] = useState(false);
     const [saveAddressButtonText, setSaveAddressButtonText] =
         useState('Set Address');
     const [overwriteAddress, setOverwriteAddress] = useState(false);
     const [savedAddressID, setSavedAddressId] = useState('');
+    const [selectedAddressId, setSelectedAddressId] = useState<string>('');
 
     const [formData, setFormData] = useState({
         'shipping_address.first_name': '',
@@ -68,48 +67,6 @@ const AddressModal: React.FC<AddressModalProps> = ({
         'shipping_address.phone': '',
     });
 
-    useEffect(() => {
-        if (cart) {
-            setFormData({
-                'shipping_address.first_name':
-                    cart?.shipping_address?.first_name || '',
-                'shipping_address.last_name':
-                    cart?.shipping_address?.last_name || '',
-                'shipping_address.address_1':
-                    cart?.shipping_address?.address_1 || '',
-                'shipping_address.address_2':
-                    cart?.shipping_address?.address_2 || '',
-                'shipping_address.company':
-                    cart?.shipping_address?.company || '',
-                'shipping_address.postal_code':
-                    cart?.shipping_address?.postal_code || '',
-                'shipping_address.city': cart?.shipping_address?.city || '',
-                'shipping_address.country_code':
-                    cart?.shipping_address?.country_code || countryCode || '',
-                'shipping_address.province':
-                    cart?.shipping_address?.province || '',
-                email: cart?.email || '',
-                'shipping_address.phone': cart?.shipping_address?.phone || '',
-            });
-        }
-
-        console.log('addressType', addressType);
-        if (addressType === 'edit') {
-            console.log('matching address baby');
-
-            const matchingAddress = customer?.shipping_addresses.find(
-                (address) =>
-                    compareSelectedAddress(address, cart?.shipping_address)
-            );
-
-            if (matchingAddress) {
-                setSavedAddressId(matchingAddress.id);
-            }
-
-            console.log('savedAddressID', savedAddressID);
-        }
-    }, [cart, countryCode, addressType]);
-
     // Reset the checkbox state to false when the modal opens
     useEffect(() => {
         if (isOpen) {
@@ -117,6 +74,41 @@ const AddressModal: React.FC<AddressModalProps> = ({
             setOverwriteAddress(false);
         }
     }, [isOpen]);
+
+    useEffect(() => {
+        // Populate formData with cart data for both add and edit modes
+        if (cart?.shipping_address) {
+            setFormData((prevData) => ({
+                ...prevData,
+                'shipping_address.first_name':
+                    cart.shipping_address.first_name || '',
+                'shipping_address.last_name':
+                    cart.shipping_address.last_name || '',
+                'shipping_address.address_1':
+                    cart.shipping_address.address_1 || '',
+                'shipping_address.address_2':
+                    cart.shipping_address.address_2 || '',
+                'shipping_address.company': cart.shipping_address.company || '',
+                'shipping_address.postal_code':
+                    cart.shipping_address.postal_code || '',
+                'shipping_address.city': cart.shipping_address.city || '',
+                'shipping_address.country_code':
+                    cart.shipping_address.country_code || countryCode || '',
+                'shipping_address.province':
+                    cart.shipping_address.province || '',
+                email: cart.email || '',
+                'shipping_address.phone': cart.shipping_address.phone || '',
+            }));
+        }
+
+        // Set savedAddressID only if in edit mode
+        if (addressType === 'edit' && customer?.shipping_addresses) {
+            const matchingAddress = customer.shipping_addresses.find((addr) =>
+                compareSelectedAddress(addr, cart?.shipping_address)
+            );
+            setSavedAddressId(matchingAddress?.id || '');
+        }
+    }, [cart, countryCode, addressType, customer]);
 
     const handleChange = (
         e: React.ChangeEvent<
@@ -129,23 +121,21 @@ const AddressModal: React.FC<AddressModalProps> = ({
         });
     };
 
-    // When clicked save address on submit
     const handleSaveAddressChange = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         setSaveAddress(e.target.checked);
 
-        if (e.target.checked)
-            setSaveAddressButtonText(
-                selectedAddressId?.length ? 'Edit Address' : 'Add Address'
-            );
-        else setSaveAddressButtonText('Submit');
+        if (e.target.checked) setSaveAddressButtonText('Save Address');
+        else setSaveAddressButtonText('Add Address');
     };
 
     const handleOverwriteAddressChange = (
         e: React.ChangeEvent<HTMLInputElement>
     ) => {
         setOverwriteAddress(e.target.checked);
+        if (e.target.checked) setSaveAddressButtonText('Edit Address');
+        else setSaveAddressButtonText('Save Address');
     };
 
     const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -196,20 +186,15 @@ const AddressModal: React.FC<AddressModalProps> = ({
                     formData['shipping_address.phone']
                 );
 
-                console.log(savedAddressID);
-
                 //if existing selected, update instead of adding new
                 if (customer?.shipping_addresses && overwriteAddress === true) {
-                    console.log(
-                        'update customer shipping addy',
-                        savedAddressID
-                    );
+                    console.log('Update existing address', savedAddressID);
                     await updateCustomerShippingAddress(
                         { addressId: savedAddressID },
                         shippingAddressData
                     );
                 } else {
-                    console.log('add customer shipping address');
+                    console.log('Add new shipping address');
                     await addCustomerShippingAddress({}, shippingAddressData);
                 }
             }
