@@ -46,13 +46,11 @@ function shuffleMessages(messages: any[]): any[] {
 const HamzaLogoLoader: React.FC<HamzaLogoLoaderProps> = ({
     message = 'Processing Order',
     messages = [],
-    textAnimOptions = { base_speed: 3500 }
+    textAnimOptions = { base_speed: 4500 }
 }) => {
     // State to track the current message index for rotating text
     const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
     const shuffledMessages = shuffleMessages(messages);
-
-    console.log(shuffledMessages);
 
     // Effect to rotate through the messages
     useEffect(() => {

@@ -52,12 +52,8 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
             );
         }
 
-        // Log retrieved cart details
-        console.log('Cart retrieved:', cart);
-
         // Check if customer_id exists
         if (!cart.customer_id) {
-            console.error('Cart has no customer_id:', cart);
             return handler.returnStatusWithMessage(
                 400,
                 'Customer ID missing from cart'
