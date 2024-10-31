@@ -115,7 +115,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
 
         if (e.target.checked)
             setSaveAddressButtonText(
-                selectedAddressId?.length ? 'Overwrite Address' : 'Add Address'
+                selectedAddressId?.length ? 'Edit Address' : 'Add Address'
             );
         else setSaveAddressButtonText('Set Address');
     };
@@ -192,12 +192,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="lg">
             <ModalOverlay />
-            <ModalContent
-                maxW="737px"
-                maxH={{ base: 'auto', md: '775px' }}
-                p="6"
-                bgColor={'#121212'}
-            >
+            <ModalContent maxW="737px" p="6" bgColor={'#121212'}>
                 <form onSubmit={handleFormSubmit}>
                     <ModalHeader
                         color={'primary.green.900'}
