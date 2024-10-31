@@ -41,7 +41,7 @@ const ItemsTemplate = ({
                     fontSize={'18px'}
                     color="primary.green.900"
                 >
-                    Product Details
+                    Order Summary
                 </Text>
             </Flex>
             <Box
