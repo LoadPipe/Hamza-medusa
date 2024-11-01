@@ -87,17 +87,19 @@ const ShippingAddress = ({
 
     return (
         <>
-            {customer && (customer?.shipping_addresses?.length ?? 0) && (addressesInRegion?.length || 0) > 0 && (
-                <Container className="mb-6 flex flex-col gap-y-4 p-5">
-                    <p className="text-small-regular">
-                        {`Hi ${customer.first_name}, do you want to use one of your saved addresses?`}
-                    </p>
-                    <AddressSelect
+            {customer &&
+                (customer?.shipping_addresses?.length ?? 0) &&
+                (addressesInRegion?.length || 0) > 0 && (
+                    <Container className="mb-6 flex flex-col gap-y-4 p-5">
+                        <p className="text-small-regular">
+                            {`Hi ${customer.first_name}, do you want to use one of your saved addresses?`}
+                        </p>
+                        {/* <AddressSelect
                         addresses={customer.shipping_addresses}
                         cart={cart}
-                    />
-                </Container>
-            )}
+                    /> */}
+                    </Container>
+                )}
             <div className="grid gap-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Input
