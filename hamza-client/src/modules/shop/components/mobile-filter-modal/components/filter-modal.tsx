@@ -193,7 +193,6 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
 
                             // Set filter tags
                             setCategoryItem(categoryItemFilter);
-                            setCategoryItemFilter([]);
 
                             setRange([range[0], range[1]]);
 
