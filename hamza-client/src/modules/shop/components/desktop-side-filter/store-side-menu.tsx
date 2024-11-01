@@ -3,15 +3,12 @@
 import React, { useState } from 'react';
 import { Box, Text, Heading, Flex, Skeleton, Button } from '@chakra-ui/react';
 import CategoryButton from './category-button';
-import ReviewButton from './review-button';
-import FilterButton from './filter-button';
 import RangeSlider from './range-slider';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Image from 'next/image';
 import FilterIcon from '../../assets/filter-button.svg';
 import useStorePage from '@store/store-page/store-page';
-import useSideFilter from '@store/store-page/side-filter';
 import useShopFilter from '@/store/store-page/shop-filter';
 import All from '@/images/categories/all.svg';
 
@@ -34,17 +31,16 @@ const SideMenu = () => {
     const { setCategorySelect, setCategoryItem } = useStorePage();
 
     const {
-        selectCategoryShopFilter,
-        setSelectCategoryShopFilter,
-        setCategoryItemShopFilter,
-        categoryItemShopFilter,
-        setPriceHi,
-        setPriceLo,
-        priceHi,
-        priceLo,
+        selectCategoryFilter,
+        setSelectCategoryFilter,
+        setCategoryItemFilter,
+        categoryItemFilter,
+        setRangeUpper,
+        setRangeLower,
     } = useShopFilter();
 
-    const isDisabled = selectCategoryShopFilter?.length === 0;
+    const isDisabled =
+        selectCategoryFilter.length === 0 && range[0] === 0 && range[1] === 350;
 
     // Fetching categories data
     const { data, isLoading } = useQuery<Category[]>(
@@ -120,47 +116,28 @@ const SideMenu = () => {
                 </Flex>
             </Box>
 
-            {/* Rating */}
-            {/* <Box mt="2rem">
-                <Heading as="h2" size="h2">
-                    Rating
-                </Heading>
-
-                <Flex mt="1rem" flexDirection={'column'} gap="16px">
-                    <ReviewButton title={'All'} value={'All'} />
-                    <ReviewButton title={'4 Stars'} value={'4'} />
-                    <ReviewButton title={'3 Stars'} value={'3'} />
-                    <ReviewButton title={'2 Stars'} value={'2'} />
-                    <ReviewButton title={'1 Star'} value={'1'} />
-                </Flex>
-            </Box> */}
-
             <Box mt="2rem">
                 <Button
                     isDisabled={isDisabled}
                     onClick={() => {
-                        // Delete current settings
-                        setCategorySelect([]);
-
-                        // Update settings
-                        if (
-                            (selectCategoryShopFilter?.length > 0 &&
-                                categoryItemShopFilter?.length > 0) ||
-                            range.length > 0
-                        ) {
-                            console.log('range 0:', range[0]);
-                            console.log('range 1:', range[1]);
-                            setPriceLo(range[0]);
-                            setPriceHi(range[1]);
-                            console.log('price lo:', priceLo);
-                            console.log('price hi:', priceHi);
-                            setCategorySelect(selectCategoryShopFilter);
-                            setCategoryItem(categoryItemShopFilter);
-                            // Reset side menu states
-                            // setSelectCategoryStoreFilter([]);
-                            setCategoryItemShopFilter([]);
-                            setRange([range[0], range[1]]);
+                        // If no category is selected, set default to "All"
+                        if (selectCategoryFilter.length === 0) {
+                            setCategorySelect(['All']);
+                        } else {
+                            setCategorySelect(selectCategoryFilter);
                         }
+
+                        // Update range settings if modified
+                        if (range[0] !== 0 || range[1] !== 350) {
+                            setRangeLower(range[0]);
+                            setRangeUpper(range[1]);
+                        }
+
+                        // Set filter tags
+                        setCategoryItem(categoryItemFilter);
+
+                        // Update range
+                        setRange([range[0], range[1]]);
 
                         // Scroll to the top of the page
                         window.scrollTo({

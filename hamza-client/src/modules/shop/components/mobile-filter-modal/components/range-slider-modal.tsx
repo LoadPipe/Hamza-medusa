@@ -31,7 +31,7 @@ const RangeSliderModal: React.FC<RangeSliderProps> = ({ range, setRange }) => {
                 <RangeSlider
                     // eslint-disable-next-line jsx-a11y/aria-proptypes
                     aria-label={['min', 'max']}
-                    defaultValue={range}
+                    value={range}
                     min={0}
                     max={350}
                     onChange={handleRangeChange}

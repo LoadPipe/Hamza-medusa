@@ -17,8 +17,6 @@ import FilterIcon from '../../../../../../public/images/categories/mobile-filter
 import Image from 'next/image';
 import CategoryModalButton from './category-modal-button';
 import useStorePage from '@store/store-page/store-page';
-import useSideFilter from '@store/store-page/side-filter';
-import useModalFilter from '@store/store-page/filter-modal';
 import RangeSliderModal from './range-slider-modal';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -46,14 +44,14 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
     const { setCategorySelect, setCategoryItem } = useStorePage();
 
     const {
-        setSelectCategoryShopFilter,
-        setCategoryItemShopFilter,
-        selectCategoryShopFilter,
-        categoryItemShopFilter,
-        setPriceHi,
-        setPriceLo,
-        priceHi,
-        priceLo,
+        setSelectCategoryFilter,
+        setCategoryItemFilter,
+        selectCategoryFilter,
+        categoryItemFilter,
+        setRangeUpper,
+        setRangeLower,
+        rangeUpper,
+        rangeLower,
     } = useShopFilter();
 
     const [range, setRange] = useState<RangeType>([0, 350]);
@@ -77,7 +75,8 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
           }))
         : [];
 
-    const isDisabled = selectCategoryShopFilter?.length === 0;
+    const isDisabled =
+        selectCategoryFilter.length === 0 && range[0] === 0 && range[1] === 350;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -93,8 +92,6 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                 </ModalHeader>
 
                 <ModalCloseButton color={'white'} />
-
-                <RangeSliderModal range={range} setRange={setRange} />
 
                 <ModalBody padding={'1rem'}>
                     <Text fontWeight={'600'} fontSize={'16px'} color="white">
@@ -117,31 +114,24 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         )}
                     </Flex>
 
-                    {USE_PRICE_FILTER && (
-                        <>
-                            <Text
-                                mt="1.5rem"
-                                fontWeight={'600'}
-                                fontSize={'16px'}
-                                color="white"
-                            >
-                                Price Range
-                            </Text>
+                    <Text
+                        mt="1.5rem"
+                        fontWeight={'600'}
+                        fontSize={'16px'}
+                        color="white"
+                    >
+                        Price Range
+                    </Text>
 
-                            <Text
-                                mt="0.25rem"
-                                fontSize={'14px'}
-                                color="secondary.davy.900"
-                            >
-                                Prices before fees and taxes
-                            </Text>
+                    <Text
+                        mt="0.25rem"
+                        fontSize={'14px'}
+                        color="secondary.davy.900"
+                    >
+                        Prices before fees and taxes
+                    </Text>
 
-                            <RangeSliderModal
-                                range={range}
-                                setRange={setRange}
-                            />
-                        </>
-                    )}
+                    <RangeSliderModal range={range} setRange={setRange} />
 
                     {/* <Text
                         my="1.5rem"
@@ -175,7 +165,10 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         color={'white'}
                         backgroundColor={'transparent'}
                         onClick={() => {
-                            setSelectCategoryShopFilter([]);
+                            setSelectCategoryFilter([]);
+                            setCategoryItemFilter([]);
+                            setCategorySelect(['All']);
+                            setRange([0, 350]);
                             onClose();
                         }}
                         mr="auto"
@@ -185,28 +178,23 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                     <Button
                         isDisabled={isDisabled}
                         onClick={() => {
-                            // Delete current settings
-                            setCategorySelect([]);
-
-                            // Update settings
-                            if (
-                                (selectCategoryShopFilter?.length > 0 &&
-                                    categoryItemShopFilter?.length > 0) ||
-                                range.length > 0
-                            ) {
-                                console.log('range 0:', range[0]);
-                                console.log('range 1:', range[1]);
-                                setPriceLo(range[0]);
-                                setPriceHi(range[1]);
-                                console.log('price lo:', priceLo);
-                                console.log('price hi:', priceHi);
-                                setCategorySelect(selectCategoryShopFilter);
-                                setCategoryItem(categoryItemShopFilter);
-                                // Reset side menu states
-                                // setSelectCategoryStoreFilter([]);
-                                setCategoryItemShopFilter([]);
-                                setRange([range[0], range[1]]);
+                            // If no category is selected, set default to "All"
+                            if (selectCategoryFilter.length === 0) {
+                                setCategorySelect(['All']);
+                            } else {
+                                setCategorySelect(selectCategoryFilter);
                             }
+
+                            // Update range settings if modified
+                            if (range[0] !== 0 || range[1] !== 350) {
+                                setRangeLower(range[0]);
+                                setRangeUpper(range[1]);
+                            }
+
+                            // Set filter tags
+                            setCategoryItem(categoryItemFilter);
+
+                            setRange([range[0], range[1]]);
 
                             onClose();
                         }}

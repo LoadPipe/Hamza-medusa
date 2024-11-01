@@ -15,7 +15,6 @@ import React, { useState } from 'react';
 import FilterIcon from '../../../../../../../../public/images/categories/mobile-filter.svg';
 import Image from 'next/image';
 import CategoryModalButton from './CategoryModalButton';
-import useSideFilter from '@store/store-page/side-filter';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
 import RangeSliderModal from '@modules/shop/components/mobile-filter-modal/components/range-slider-modal';
@@ -47,10 +46,10 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
     const { setCategorySelect } = useHomeProductsPage();
 
     const {
-        homeModalCategoryFilterSelect,
-        setHomeModalCategoryFilterSelect,
-        setHomeModalLowerPriceFilterSelect,
-        setHomeModalUpperPriceFilterSelect,
+        setSelectCategoryFilter,
+        selectCategoryFilter,
+        setRangeUpper,
+        setRangeLower,
     } = useHomeModalFilter();
 
     // Fetching categories data
@@ -63,7 +62,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
         }
     );
 
-    const [range, setRange] = useState<RangeType>([0, 10000]);
+    const [range, setRange] = useState<RangeType>([0, 350]);
 
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
@@ -74,7 +73,8 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
           }))
         : [];
 
-    const isDisabled = homeModalCategoryFilterSelect?.length === 0;
+    const isDisabled =
+        selectCategoryFilter.length === 0 && range[0] === 0 && range[1] === 350;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -116,31 +116,17 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                             )
                         )}
                     </Flex>
-                    {USE_PRICE_FILTER && (
-                        <>
-                            <Text
-                                mt="1.5rem"
-                                fontWeight={'600'}
-                                fontSize={'16px'}
-                                color="white"
-                            >
-                                Price Range
-                            </Text>
 
-                            <Text
-                                mt="0.25rem"
-                                fontSize={'14px'}
-                                color="secondary.davy.900"
-                            >
-                                Prices before fees and taxes
-                            </Text>
+                    <Text
+                        mt="1.5rem"
+                        fontWeight={'600'}
+                        fontSize={'16px'}
+                        color="white"
+                    >
+                        Price Range
+                    </Text>
 
-                            <RangeSliderModal
-                                range={range}
-                                setRange={setRange}
-                            />
-                        </>
-                    )}
+                    <RangeSliderModal range={range} setRange={setRange} />
 
                     <Divider
                         mt="2rem"
@@ -162,7 +148,10 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                         color={'white'}
                         backgroundColor={'transparent'}
                         onClick={() => {
-                            setHomeModalCategoryFilterSelect([]);
+                            setSelectCategoryFilter([]);
+                            setCategorySelect(['All']);
+                            setRange([0, 350]);
+                            onClose();
                         }}
                     >
                         Clear All
@@ -170,15 +159,22 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                     <Button
                         isDisabled={isDisabled}
                         onClick={() => {
-                            if (homeModalCategoryFilterSelect) {
-                                setCategorySelect(
-                                    homeModalCategoryFilterSelect
-                                );
+                            // If no category is selected, set default to "All"
+                            if (selectCategoryFilter.length === 0) {
+                                setCategorySelect(['All']);
+                            } else {
+                                setCategorySelect(selectCategoryFilter);
                             }
 
-                            setHomeModalCategoryFilterSelect([]);
-                            setHomeModalLowerPriceFilterSelect(range[0]);
-                            setHomeModalUpperPriceFilterSelect(range[1]);
+                            // Update range settings if modified
+                            if (range[0] !== 0 || range[1] !== 350) {
+                                setRangeLower(range[0]);
+                                setRangeUpper(range[1]);
+                            }
+
+                            // Update range
+                            setRange([range[0], range[1]]);
+
                             onClose();
                         }}
                         ml="auto"
