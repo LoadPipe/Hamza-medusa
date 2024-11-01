@@ -184,25 +184,24 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                     <Button
                         isDisabled={isDisabled}
                         onClick={() => {
-                            // Delete current settings
-                            setCategorySelect([]);
+                            // If no category is selected, set default to "All"
+                            if (selectCategoryFilter.length === 0) {
+                                setCategorySelect(['All']);
+                            } else {
+                                setCategorySelect(selectCategoryFilter);
+                            }
 
-                            // Update settings
-                            if (
-                                selectCategoryFilter.length > 0 ||
-                                range[0] !== 0 ||
-                                range[1] !== 350
-                            ) {
+                            // Update range settings if modified
+                            if (range[0] !== 0 || range[1] !== 350) {
                                 setRangeLower(range[0]);
                                 setRangeUpper(range[1]);
-
-                                setCategorySelect(selectCategoryFilter);
-                                setCategoryItem(categoryItemFilter);
-
-                                // Reset side menu states
-                                setCategoryItemFilter([]);
-                                setRange([range[0], range[1]]);
                             }
+
+                            // Set filter tags
+                            setCategoryItem(categoryItemFilter);
+
+                            // Update range
+                            setRange([range[0], range[1]]);
 
                             onClose();
                         }}
