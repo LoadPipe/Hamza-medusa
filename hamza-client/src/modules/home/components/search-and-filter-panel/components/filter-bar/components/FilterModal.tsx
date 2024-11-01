@@ -52,8 +52,6 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
         categoryItemFilter,
         setRangeUpper,
         setRangeLower,
-        rangeUpper,
-        rangeLower,
     } = useHomeModalFilter();
 
     // Fetching categories data
@@ -152,7 +150,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                         backgroundColor={'transparent'}
                         onClick={() => {
                             setSelectCategoryFilter([]);
-                            onClose();
+                            setRange([0, 350]);
                         }}
                     >
                         Clear All
