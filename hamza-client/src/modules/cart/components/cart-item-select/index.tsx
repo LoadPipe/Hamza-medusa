@@ -78,6 +78,7 @@ const CartItemSelect = forwardRef<HTMLInputElement, NativeSelectProps>(
                         ref={innerRef}
                         {...props}
                         textAlign="left"
+                        color={'white'}
                         fontSize={['lg', 'xl']}
                         minW="48px"
                         pl="8px"

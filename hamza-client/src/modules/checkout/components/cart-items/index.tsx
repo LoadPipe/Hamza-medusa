@@ -1,10 +1,10 @@
 import { Box, useDisclosure } from '@chakra-ui/react';
 import { Cart, LineItem, Region } from '@medusajs/medusa';
-import Item from '@modules/cart/components/item-checkout';
 import SkeletonLineItem from '@modules/skeletons/components/skeleton-line-item';
 import RegionLockedModal from './components/region-locked-modal';
 import { useEffect, useState } from 'react';
 import { deleteLineItem } from '@modules/cart/actions';
+import Item from '../../../cart/components/item';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -100,6 +100,7 @@ const CartItems = ({
                                       item={item}
                                       region={region}
                                       currencyCode={currencyCode}
+                                      cart_id={item.cart_id}
                                   />
                               );
                           })
