@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import useStorePage from '@store/store-page/store-page';
+import useShopFilter from '@/store/store-page/shop-filter';
 import FilterTag from './filter-tag';
 import { IoCloseOutline } from 'react-icons/io5';
 

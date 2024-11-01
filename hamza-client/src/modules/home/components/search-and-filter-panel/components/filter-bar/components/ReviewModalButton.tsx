@@ -11,16 +11,14 @@ interface ReviewButtonProps {
 }
 
 const ReviewModalButton: React.FC<ReviewButtonProps> = ({ title, value }) => {
-    const { homeModalReviewFilterSelect, setHomeModalReviewFilterSelect } =
+    const { selectReviewStarsFilter, setSelectReviewStarsFilter } =
         useHomeModalFilter();
     return (
         <Flex>
             <Flex
-                onClick={() => setHomeModalReviewFilterSelect(value)}
+                onClick={() => setSelectReviewStarsFilter(value)}
                 backgroundColor={
-                    homeModalReviewFilterSelect === title
-                        ? 'white'
-                        : 'transparent'
+                    selectReviewStarsFilter === title ? 'white' : 'transparent'
                 }
                 borderColor={'secondary.davy.900'}
                 display={'flex'}
@@ -32,9 +30,7 @@ const ReviewModalButton: React.FC<ReviewButtonProps> = ({ title, value }) => {
                 height={'42px'}
                 width={{ base: '125px', md: '154px' }}
                 style={{ padding: '10px 24px', cursor: 'pointer' }}
-                color={
-                    homeModalReviewFilterSelect === title ? 'black' : 'white'
-                }
+                color={selectReviewStarsFilter === title ? 'black' : 'white'}
                 transition="background 0.1s ease-in-out, color 0.1s ease-in-out"
                 _hover={{
                     background: 'white',

@@ -24,6 +24,8 @@ import { In, IsNull, Not } from 'typeorm';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import { SeamlessCache } from '../utils/cache/seamless-cache';
 import { filterDuplicatesById } from '../utils/filter-duplicates';
+import { PriceConverter } from '../utils/price-conversion';
+import { getCurrencyPrecision } from '../currency.config';
 
 export type BulkImportProductInput = CreateProductInput;
 
@@ -65,6 +67,7 @@ class ProductService extends MedusaProductService {
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly cacheExchangeRateRepository: typeof CachedExchangeRateRepository;
     protected readonly customerService_: CustomerService;
+    protected readonly priceConverter_: PriceConverter;
 
     constructor(container) {
         super(container);
@@ -74,6 +77,7 @@ class ProductService extends MedusaProductService {
         this.cacheExchangeRateRepository =
             container.cachedExchangeRateRepository;
         this.customerService_ = container.customerService;
+        this.priceConverter_ = new PriceConverter(this.logger, this.cacheExchangeRateRepository);
     }
 
     async updateProduct(
@@ -521,7 +525,9 @@ class ProductService extends MedusaProductService {
      */
     async getAllProductCategories(): Promise<ProductCategory[]> {
         try {
-            return await categoryCache.retrieve(this.productCategoryRepository_);
+            return await categoryCache.retrieve(
+                this.productCategoryRepository_
+            );
         } catch (error) {
             this.logger.error(
                 'Error fetching product categories with prices:',
@@ -544,6 +550,7 @@ class ProductService extends MedusaProductService {
         categories: string[], // Array of strings representing category names
         upperPrice: number = 0, // Number representing the upper price limit
         lowerPrice: number = 0, // Number representing the lower price limit
+        filterCurrencyCode: string = 'usdc',
         storeId?: string
     ) {
         try {
@@ -559,12 +566,23 @@ class ProductService extends MedusaProductService {
 
             const key = normalizedCategoryNames.sort().join(',');
 
+            if (filterCurrencyCode === 'eth') {
+                const factor = Math.pow(10, getCurrencyPrecision('usdc').db);
+                upperPrice = await this.priceConverter_.convertPrice(upperPrice * factor, 'usdc', 'eth');
+                lowerPrice = await this.priceConverter_.convertPrice(lowerPrice * factor, 'usdc', 'eth');
+            } else {
+                const factor = Math.pow(10, getCurrencyPrecision(filterCurrencyCode).db);
+                upperPrice = upperPrice * factor;
+                lowerPrice = lowerPrice * factor;
+            }
+
             //retrieve products from cache
             let products = await productFilterCache.retrieveWithKey(key, {
                 categoryRepository: this.productCategoryRepository_,
                 categoryNames: normalizedCategoryNames,
                 upperPrice,
                 lowerPrice,
+                filterCurrencyCode,
                 convertProductPrices: async (prods) => {
                     return this.convertProductPrices(prods);
                 },
@@ -754,12 +772,30 @@ class ProductFilterCache extends SeamlessCache {
     }
 
     async retrieveWithKey(key?: string, params?: any): Promise<Product[]> {
-        return super.retrieveWithKey(key, params);
+        let products = await super.retrieveWithKey(key, params);
+
+        if (params.upperPrice !== 0 && params.lowerPrice >= 0) {
+            products = products.filter((product) => {
+                const price = product.variants[0]?.prices.find(p => p.currency_code === params.filterCurrencyCode)?.amount ?? 0;
+                console.log(params.lowerPrice, price, params.upperPrice);
+                return price >= params.lowerPrice && price <= params.upperPrice;
+            });
+
+            // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
+            products = products.sort((a, b) => {
+                const priceA = a.variants[0]?.prices.find(p => p.currency_code === params.filterCurrencyCode)?.amount ?? 0;
+                const priceB = b.variants[0]?.prices.find(p => p.currency_code === params.filterCurrencyCode)?.amount ?? 0;
+                return priceA - priceB; // Ascending order
+            });
+        }
+
+        return products;
     }
 
     protected async getData(params: any): Promise<any> {
         let products: Product[] = [];
 
+        console.log('params', params);
         //get categories from cache
         const productCategories = await categoryCache.retrieve(
             params.categoryRepository
@@ -784,21 +820,6 @@ class ProductFilterCache extends SeamlessCache {
                     (p) => p.status === ProductStatus.PUBLISHED && p.store_id
                 )
             );
-        }
-
-        if (params.upperPrice !== 0 && params.lowerPrice !== 0) {
-            // Filter products by price using upper and lower price limits
-            products = products.filter((product) => {
-                const price = product.variants[0]?.prices[0]?.amount ?? 0;
-                return price >= params.lowerPrice && price <= params.upperPrice;
-            });
-
-            // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
-            products = products.sort((a, b) => {
-                const priceA = a.variants[0]?.prices[0]?.amount ?? 0;
-                const priceB = b.variants[0]?.prices[0]?.amount ?? 0;
-                return priceA - priceB; // Ascending order
-            });
         }
 
         //remove duplicates

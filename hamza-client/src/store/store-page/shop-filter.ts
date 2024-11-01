@@ -27,7 +27,7 @@ interface ShopFilterState {
 }
 
 // Create the Zustand store
-const useHomeModalFilter = create<ShopFilterState>((set) => ({
+const useShopFilter = create<ShopFilterState>((set) => ({
     range: [0, 350],
     rangeUpper: 0,
     rangeLower: 0,
@@ -59,4 +59,4 @@ const useHomeModalFilter = create<ShopFilterState>((set) => ({
         set({ selectReviewStarsFilter: stars }),
 }));
 
-export default useHomeModalFilter;
+export default useShopFilter;
