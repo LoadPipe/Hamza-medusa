@@ -13,8 +13,6 @@ const FilterTags = () => {
         setCategoryItem,
     } = useStorePage();
 
-    const { setSelectCategoryShopFilter } = useShopFilter();
-
     const filterTags = () => {
         if (categoryItem && Array.isArray(categoryItem)) {
             return categoryItem.map((item, index) => (

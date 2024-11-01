@@ -149,7 +149,9 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                         backgroundColor={'transparent'}
                         onClick={() => {
                             setSelectCategoryFilter([]);
+                            setCategorySelect(['All']);
                             setRange([0, 350]);
+                            onClose();
                         }}
                     >
                         Clear All
