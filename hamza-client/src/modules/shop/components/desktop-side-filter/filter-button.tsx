@@ -3,20 +3,20 @@ import Image from 'next/image';
 import React from 'react';
 import FilterIcon from '../../assets/filter-button.svg';
 import useStorePage from '@store/store-page/store-page';
-import useSideFilter from '@store/store-page/side-filter';
+import useShopFilter from '@/store/store-page/shop-filter';
 
 const FilterButton = () => {
     // Use Zustand shop to handle filter object
     const { setCategorySelect, setCategoryItem } = useStorePage();
 
     const {
-        selectCategoryStoreFilter,
-        setSelectCategoryStoreFilter,
-        setCategoryItemSideFilter,
-        categoryItemSideFilter,
-    } = useSideFilter();
+        selectCategoryFilter,
+        setSelectCategoryFilter,
+        setCategoryItemFilter,
+        categoryItemFilter,
+    } = useShopFilter();
 
-    const isDisabled = selectCategoryStoreFilter?.length === 0;
+    const isDisabled = selectCategoryFilter?.length === 0;
 
     return (
         <Button
@@ -27,14 +27,14 @@ const FilterButton = () => {
 
                 // Update settings
                 if (
-                    selectCategoryStoreFilter?.length > 0 &&
-                    categoryItemSideFilter?.length > 0
+                    selectCategoryFilter?.length > 0 &&
+                    setCategoryItemFilter?.length > 0
                 ) {
-                    setCategorySelect(selectCategoryStoreFilter);
-                    setCategoryItem(categoryItemSideFilter);
+                    setCategorySelect(selectCategoryFilter);
+                    setCategoryItem(categoryItemFilter);
                     // Reset side menu states
-                    setSelectCategoryStoreFilter([]);
-                    setCategoryItemSideFilter([]);
+                    setSelectCategoryFilter([]);
+                    setCategoryItemFilter([]);
                 }
 
                 // Scroll to the top of the page

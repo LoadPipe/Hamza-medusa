@@ -2,7 +2,6 @@ import React from 'react';
 import Image from 'next/image';
 import { Text, Flex } from '@chakra-ui/react';
 import ReviewStar from '../../../../../../public/images/products/review-star.svg';
-import useSideFilter from '@store/store-page/side-filter';
 
 // Define the props type with TypeScript
 interface ReviewButtonProps {
