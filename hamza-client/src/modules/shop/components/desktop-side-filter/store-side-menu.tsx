@@ -1,13 +1,19 @@
 'use client';
 
-import React from 'react';
-import { Box, Text, Heading, Flex, Skeleton } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { Box, Text, Heading, Flex, Skeleton, Button } from '@chakra-ui/react';
 import CategoryButton from './category-button';
 import ReviewButton from './review-button';
 import FilterButton from './filter-button';
 import RangeSlider from './range-slider';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import Image from 'next/image';
+import FilterIcon from '../../assets/filter-button.svg';
+import useStorePage from '@store/store-page/store-page';
+import useSideFilter from '@store/store-page/side-filter';
+import useShopFilter from '@/store/store-page/shop-filter';
+import All from '@/images/categories/all.svg';
 
 interface Category {
     id: string;
@@ -19,7 +25,27 @@ interface Category {
 
 const USE_PRICE_FILTER: boolean = false;
 
+type RangeType = [number, number];
+
 const SideMenu = () => {
+    const [range, setRange] = useState<RangeType>([0, 350]);
+
+    // Use Zustand shop to handle filter object
+    const { setCategorySelect, setCategoryItem } = useStorePage();
+
+    const {
+        selectCategoryShopFilter,
+        setSelectCategoryShopFilter,
+        setCategoryItemShopFilter,
+        categoryItemShopFilter,
+        setPriceHi,
+        setPriceLo,
+        priceHi,
+        priceLo,
+    } = useShopFilter();
+
+    const isDisabled = selectCategoryShopFilter?.length === 0;
+
     // Fetching categories data
     const { data, isLoading } = useQuery<Category[]>(
         ['categories'],
@@ -61,23 +87,19 @@ const SideMenu = () => {
             width={'348.74px'}
             backgroundColor={'secondary.onyx.900'}
         >
-            {USE_PRICE_FILTER && (
-                <>
-                    <Heading as="h2" size="h2">
-                        Price Range
-                    </Heading>
+            <Heading as="h2" size="h2">
+                Price Range
+            </Heading>
 
-                    <Text mt="5px" color="secondary.davy.900">
-                        Prices before fees and taxes
-                    </Text>
+            <Text mt="5px" color="secondary.davy.900">
+                Prices before fees and taxes
+            </Text>
 
-                    {/* Slider  */}
-                    <RangeSlider />
-                    {/* Slider end */}
+            {/* Slider  */}
+            <RangeSlider range={range} setRange={setRange} />
+            {/* Slider end */}
 
-                    {/* Crypto Currencies */}
-                </>
-            )}
+            {/* Crypto Currencies */}
 
             {/* Categories */}
             <Box mt="2rem">
@@ -114,7 +136,63 @@ const SideMenu = () => {
             </Box> */}
 
             <Box mt="2rem">
-                <FilterButton />
+                <Button
+                    isDisabled={isDisabled}
+                    onClick={() => {
+                        // Delete current settings
+                        setCategorySelect([]);
+
+                        // Update settings
+                        if (
+                            (selectCategoryShopFilter?.length > 0 &&
+                                categoryItemShopFilter?.length > 0) ||
+                            range.length > 0
+                        ) {
+                            console.log('range 0:', range[0]);
+                            console.log('range 1:', range[1]);
+                            setPriceLo(range[0]);
+                            setPriceHi(range[1]);
+                            console.log('price lo:', priceLo);
+                            console.log('price hi:', priceHi);
+                            setCategorySelect(selectCategoryShopFilter);
+                            setCategoryItem(categoryItemShopFilter);
+                            // Reset side menu states
+                            // setSelectCategoryStoreFilter([]);
+                            setCategoryItemShopFilter([]);
+                            setRange([range[0], range[1]]);
+                        }
+
+                        // Scroll to the top of the page
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth',
+                        });
+                    }}
+                    backgroundColor={'secondary.onyx.900'}
+                    borderRadius={'56px'}
+                    borderWidth={'1px'}
+                    borderColor={'white'}
+                    width="100%"
+                    h={'3.5rem'}
+                    _hover={{
+                        backgroundColor: isDisabled
+                            ? 'secondary.onyx.900'
+                            : 'secondary.onyx.700',
+                        cursor: isDisabled ? 'not-allowed' : 'pointer',
+                    }}
+                >
+                    <Flex>
+                        <Image
+                            src={FilterIcon}
+                            alt="Filter Button"
+                            width={24}
+                            height={24}
+                        />
+                        <Text ml="1rem" color={'white'} fontSize={'18px'}>
+                            Apply Filter
+                        </Text>
+                    </Flex>
+                </Button>
             </Box>
         </Box>
     );

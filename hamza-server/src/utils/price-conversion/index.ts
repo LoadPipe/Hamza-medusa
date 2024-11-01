@@ -44,6 +44,9 @@ export class PriceConverter {
 
     async getPrice(price: IPrice): Promise<number> {
 
+        if (price.baseAmount === 0)
+            return 0;
+
         //if identity, return as such
         if (price.baseCurrency == price.toCurrency)
             return price.baseAmount;
