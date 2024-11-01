@@ -23,18 +23,18 @@ const ProductCardGroup = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const { categorySelect } = useStorePage();
     const [visibleProductsCount, setVisibleProductsCount] = useState(15); // State to manage visible products count (4 rows, 16 items)
-    const { priceHi, priceLo } = useShopFilter();
+    const { rangeUpper, rangeLower } = useShopFilter();
 
     const { data, error, isLoading } = useQuery(
         [
             'categories',
             categorySelect,
-            priceHi,
-            priceLo,
+            rangeUpper,
+            rangeLower,
             preferred_currency_code,
         ], // Use a unique key here to identify the query
         async () => {
-            const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${priceHi}&price_lo=${priceLo}&currency_code=${preferred_currency_code ?? 'usdc'}`;
+            const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${rangeUpper}&price_lo=${rangeLower}&currency_code=${preferred_currency_code ?? 'usdc'}`;
             const response = await axios.get(multiUrl);
             return response.data; // Return the data from the response
         }
