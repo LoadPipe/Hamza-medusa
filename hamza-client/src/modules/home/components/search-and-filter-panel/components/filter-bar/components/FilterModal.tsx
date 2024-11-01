@@ -151,7 +151,8 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                             setSelectCategoryFilter([]);
                             setCategorySelect(['All']);
                             setRange([0, 350]);
-                            onClose();
+                            setRangeUpper(350), setRangeLower(0), onClose();
+
                         }}
                     >
                         Clear All
