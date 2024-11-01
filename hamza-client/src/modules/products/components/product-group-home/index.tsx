@@ -17,34 +17,45 @@ import ProductCardHome from './component/home-product-card';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
 import { getAllProducts } from '@lib/data';
+import axios from 'axios';
 
 const ProductCardGroup = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const { categorySelect } = useHomeProductsPage();
-    const { priceHi, priceLo } = useHomeModalFilter();
     const [visibleProductsCount, setVisibleProductsCount] = useState(16); // State to manage visible products count (4 rows, 16 items)
 
-    // State for filters
-    const [isFilterActive, setIsFilterActive] = useState(true); // To check if the filter is applied
-    const [upperPrice, setUpperPrice] = useState(10000); // Upper price filter
-    const [lowerPrice, setLowerPrice] = useState(0); // Lower price filter
-    const [category, setCategory] = useState(['']); // Filter by category
+    const { rangeUpper, rangeLower } = useHomeModalFilter();
 
-    // Fetch products independently, will use cached data from hydration...
     const { data, error, isLoading } = useQuery(
-        ['homeProducts', categorySelect, priceHi, priceLo],
-        () =>
-            getAllProducts(
-                categorySelect,
-                priceHi,
-                priceLo,
-                preferred_currency_code ?? 'usdc'
-            ),
-        {
-            staleTime: 60 * 1000,
-            cacheTime: 2 * 60 * 1000,
+        [
+            'categories',
+            categorySelect,
+            rangeUpper,
+            rangeLower,
+            preferred_currency_code,
+        ], // Use a unique key here to identify the query
+        async () => {
+            const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${rangeUpper}&price_lo=${rangeLower}&currency_code=${preferred_currency_code ?? 'usdc'}`;
+            const response = await axios.get(multiUrl);
+            return response.data; // Return the data from the response
         }
     );
+
+    // TODO: GARO
+    // const { data, error, isLoading } = useQuery(
+    //     ['homeProducts', categorySelect, priceHi, priceLo],
+    //     () =>
+    //         getAllProducts(
+    //             categorySelect,
+    //             priceHi,
+    //             priceLo,
+    //             preferred_currency_code ?? 'usdc'
+    //         ),
+    //     {
+    //         staleTime: 60 * 1000,
+    //         cacheTime: 2 * 60 * 1000,
+    //     }
+    // );
 
     const productsAll = data?.products ?? [];
 

@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import Image from 'next/image';
-import useSideFilter from '@store/store-page/side-filter';
-import useModalFilter from '@store/store-page/filter-modal';
 import categoryIcons from '../../data/category-icons';
 import useShopFilter from '@/store/store-page/shop-filter';
 

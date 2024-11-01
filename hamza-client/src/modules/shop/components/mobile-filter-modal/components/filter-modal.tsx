@@ -17,8 +17,6 @@ import FilterIcon from '../../../../../../public/images/categories/mobile-filter
 import Image from 'next/image';
 import CategoryModalButton from './category-modal-button';
 import useStorePage from '@store/store-page/store-page';
-import useSideFilter from '@store/store-page/side-filter';
-import useModalFilter from '@store/store-page/filter-modal';
 import RangeSliderModal from './range-slider-modal';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';

@@ -15,7 +15,6 @@ import React, { useState } from 'react';
 import FilterIcon from '../../../../../../../../public/images/categories/mobile-filter.svg';
 import Image from 'next/image';
 import CategoryModalButton from './CategoryModalButton';
-import useSideFilter from '@store/store-page/side-filter';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
 import RangeSliderModal from '@modules/shop/components/mobile-filter-modal/components/range-slider-modal';
@@ -47,12 +46,14 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
     const { setCategorySelect } = useHomeProductsPage();
 
     const {
-        homeModalCategoryFilterSelect,
-        setHomeModalCategoryFilterSelect,
-        setHomeModalLowerPriceFilterSelect,
-        setHomeModalUpperPriceFilterSelect,
-        setPriceHi,
-        setPriceLo,
+        setSelectCategoryFilter,
+        setCategoryItemFilter,
+        selectCategoryFilter,
+        categoryItemFilter,
+        setRangeUpper,
+        setRangeLower,
+        rangeUpper,
+        rangeLower,
     } = useHomeModalFilter();
 
     // Fetching categories data
@@ -76,7 +77,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
           }))
         : [];
 
-    const isDisabled = homeModalCategoryFilterSelect?.length === 0;
+    const isDisabled = selectCategoryFilter?.length === 0;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -150,7 +151,8 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                         color={'white'}
                         backgroundColor={'transparent'}
                         onClick={() => {
-                            setHomeModalCategoryFilterSelect([]);
+                            setSelectCategoryFilter([]);
+                            onClose();
                         }}
                     >
                         Clear All
@@ -158,15 +160,25 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                     <Button
                         isDisabled={isDisabled}
                         onClick={() => {
-                            if (homeModalCategoryFilterSelect) {
-                                setCategorySelect(
-                                    homeModalCategoryFilterSelect
-                                );
+                            // Delete current settings
+                            setCategorySelect([]);
+
+                            // Update settings
+                            if (
+                                (selectCategoryFilter?.length > 0 &&
+                                    categoryItemFilter?.length > 0) ||
+                                range.length > 0
+                            ) {
+                                setRangeLower(range[0]);
+                                setRangeUpper(range[1]);
+
+                                setCategorySelect(selectCategoryFilter);
+
+                                // Reset side menu states
+                                setCategoryItemFilter([]);
+                                setRange([range[0], range[1]]);
                             }
 
-                            setHomeModalCategoryFilterSelect([]);
-                            setHomeModalLowerPriceFilterSelect(range[0]);
-                            setHomeModalUpperPriceFilterSelect(range[1]);
                             onClose();
                         }}
                         ml="auto"
