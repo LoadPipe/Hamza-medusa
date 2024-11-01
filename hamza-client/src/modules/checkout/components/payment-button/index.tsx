@@ -408,6 +408,13 @@ const CryptoPaymentButton = ({
                         'Have patience with all things but first of all with yourself',
                         'It’s nice to be able to buy normal stuff with crypto',
                         'Hamza was born in 2024',
+                        'Reordering the punch-cards',
+                        'Hacking the Gibson',
+                        'Beuller.... Beuller',
+                        'Waking up and choosing crypto',
+                        '',
+                        'Let there be light...',
+                        'dot dot dot',
                     ]}
                 />
             )}
