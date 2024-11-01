@@ -166,6 +166,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                         backgroundColor={'transparent'}
                         onClick={() => {
                             setSelectCategoryFilter([]);
+                            setCategoryItemFilter([]);
                             setCategorySelect(['All']);
                             setRange([0, 350]);
                             onClose();
@@ -192,8 +193,8 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
 
                             // Set filter tags
                             setCategoryItem(categoryItemFilter);
+                            setCategoryItemFilter([]);
 
-                            // Update range
                             setRange([range[0], range[1]]);
 
                             onClose();
