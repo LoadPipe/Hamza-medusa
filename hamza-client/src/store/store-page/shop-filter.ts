@@ -31,7 +31,7 @@ const useShopFilter = create<ShopFilterState>((set) => ({
     range: [0, 350],
     rangeUpper: 0,
     rangeLower: 0,
-    selectCategoryFilter: ['all'], // Initialized to a default array
+    selectCategoryFilter: [], // Initialized to a default array
     selectReviewStarsFilter: null, // Remains nullable since it's a single value
     categoryItemFilter: [], // Initialized to an empty array
     setRangeUpper: (price: number) => set({ rangeUpper: price }),
