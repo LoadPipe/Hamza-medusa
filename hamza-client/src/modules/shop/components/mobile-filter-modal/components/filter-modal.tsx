@@ -75,7 +75,8 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
           }))
         : [];
 
-    const isDisabled = selectCategoryFilter?.length === 0;
+    const isDisabled =
+        selectCategoryFilter.length === 0 && range[0] === 0 && range[1] === 350;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -188,9 +189,9 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
 
                             // Update settings
                             if (
-                                (selectCategoryFilter?.length > 0 &&
-                                    categoryItemFilter?.length > 0) ||
-                                range.length > 0
+                                selectCategoryFilter.length > 0 ||
+                                range[0] !== 0 ||
+                                range[1] !== 350
                             ) {
                                 setRangeLower(range[0]);
                                 setRangeUpper(range[1]);

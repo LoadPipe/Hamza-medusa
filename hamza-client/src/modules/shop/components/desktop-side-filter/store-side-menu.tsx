@@ -39,7 +39,8 @@ const SideMenu = () => {
         setRangeLower,
     } = useShopFilter();
 
-    const isDisabled = selectCategoryFilter?.length === 0;
+    const isDisabled =
+        selectCategoryFilter.length === 0 && range[0] === 0 && range[1] === 350;
 
     // Fetching categories data
     const { data, isLoading } = useQuery<Category[]>(
@@ -124,9 +125,9 @@ const SideMenu = () => {
 
                         // Update settings
                         if (
-                            (selectCategoryFilter?.length > 0 &&
-                                categoryItemFilter?.length > 0) ||
-                            range.length > 0
+                            selectCategoryFilter.length > 0 ||
+                            range[0] !== 0 ||
+                            range[1] !== 350
                         ) {
                             setRangeLower(range[0]);
                             setRangeUpper(range[1]);
