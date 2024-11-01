@@ -47,9 +47,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
 
     const {
         setSelectCategoryFilter,
-        setCategoryItemFilter,
         selectCategoryFilter,
-        categoryItemFilter,
         setRangeUpper,
         setRangeLower,
     } = useHomeModalFilter();
@@ -75,7 +73,8 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
           }))
         : [];
 
-    const isDisabled = selectCategoryFilter?.length === 0;
+    const isDisabled =
+        selectCategoryFilter.length === 0 && range[0] === 0 && range[1] === 350;
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
@@ -158,24 +157,21 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                     <Button
                         isDisabled={isDisabled}
                         onClick={() => {
-                            // Delete current settings
-                            setCategorySelect([]);
+                            // If no category is selected, set default to "All"
+                            if (selectCategoryFilter.length === 0) {
+                                setCategorySelect(['All']);
+                            } else {
+                                setCategorySelect(selectCategoryFilter);
+                            }
 
-                            // Update settings
-                            if (
-                                (selectCategoryFilter?.length > 0 &&
-                                    categoryItemFilter?.length > 0) ||
-                                range.length > 0
-                            ) {
+                            // Update range settings if modified
+                            if (range[0] !== 0 || range[1] !== 350) {
                                 setRangeLower(range[0]);
                                 setRangeUpper(range[1]);
-
-                                setCategorySelect(selectCategoryFilter);
-
-                                // Reset side menu states
-                                setCategoryItemFilter([]);
-                                setRange([range[0], range[1]]);
                             }
+
+                            // Update range
+                            setRange([range[0], range[1]]);
 
                             onClose();
                         }}
