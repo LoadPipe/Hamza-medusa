@@ -21,8 +21,7 @@ import { getAllProducts } from '@lib/data';
 const ProductCardGroup = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const { categorySelect } = useHomeProductsPage();
-    const { homeModalLowerPriceFilterSelect, homeModalUpperPriceFilterSelect } =
-        useHomeModalFilter();
+    const { priceHi, priceLo } = useHomeModalFilter();
     const [visibleProductsCount, setVisibleProductsCount] = useState(16); // State to manage visible products count (4 rows, 16 items)
 
     // State for filters
@@ -31,29 +30,14 @@ const ProductCardGroup = () => {
     const [lowerPrice, setLowerPrice] = useState(0); // Lower price filter
     const [category, setCategory] = useState(['']); // Filter by category
 
-    // TODO: Please review the code, whatever I commented out below should I assume be removed.... @Jonny
-    // // URL for default product fetching by category
-    // const defaultUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/category/products?category_name=${['Home', 'Fashion'].join(',').toLowerCase()}`;
-    //
-    // // URL for filtered product fetching
-    // const filterUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?categories=${category}&price_lo=${lowerPrice}&price_hi=${upperPrice}`;
-
-    // Determine which URL to use based on whether the filter is active
-    // const fetchUrl = isFilterActive ? filterUrl : defaultUrl;
-
     // Fetch products independently, will use cached data from hydration...
     const { data, error, isLoading } = useQuery(
-        [
-            'homeProducts',
-            categorySelect,
-            homeModalLowerPriceFilterSelect,
-            homeModalUpperPriceFilterSelect,
-        ],
+        ['homeProducts', categorySelect, priceHi, priceLo],
         () =>
             getAllProducts(
                 categorySelect,
-                homeModalUpperPriceFilterSelect,
-                homeModalLowerPriceFilterSelect,
+                priceHi,
+                priceLo,
                 preferred_currency_code ?? 'usdc'
             ),
         {

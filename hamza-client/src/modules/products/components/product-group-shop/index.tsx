@@ -24,12 +24,7 @@ const ProductCardGroup = () => {
     const { categorySelect } = useStorePage();
     const [visibleProductsCount, setVisibleProductsCount] = useState(15); // State to manage visible products count (4 rows, 16 items)
     const { priceHi, priceLo } = useShopFilter();
-    console.log('This is the categorySelect from Store Page', categorySelect);
-    //TODO: MOVE TO INDEX.TS
-    // Get products from vendor
 
-    //TODO: MOVE TO INDEX.TS
-    // Get products from vendor
     const { data, error, isLoading } = useQuery(
         [
             'categories',

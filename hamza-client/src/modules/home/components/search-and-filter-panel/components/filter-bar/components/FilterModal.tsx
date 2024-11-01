@@ -51,6 +51,8 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
         setHomeModalCategoryFilterSelect,
         setHomeModalLowerPriceFilterSelect,
         setHomeModalUpperPriceFilterSelect,
+        setPriceHi,
+        setPriceLo,
     } = useHomeModalFilter();
 
     // Fetching categories data
@@ -63,7 +65,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
         }
     );
 
-    const [range, setRange] = useState<RangeType>([0, 10000]);
+    const [range, setRange] = useState<RangeType>([0, 350]);
 
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
@@ -116,31 +118,17 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                             )
                         )}
                     </Flex>
-                    {USE_PRICE_FILTER && (
-                        <>
-                            <Text
-                                mt="1.5rem"
-                                fontWeight={'600'}
-                                fontSize={'16px'}
-                                color="white"
-                            >
-                                Price Range
-                            </Text>
 
-                            <Text
-                                mt="0.25rem"
-                                fontSize={'14px'}
-                                color="secondary.davy.900"
-                            >
-                                Prices before fees and taxes
-                            </Text>
+                    <Text
+                        mt="1.5rem"
+                        fontWeight={'600'}
+                        fontSize={'16px'}
+                        color="white"
+                    >
+                        Price Range
+                    </Text>
 
-                            <RangeSliderModal
-                                range={range}
-                                setRange={setRange}
-                            />
-                        </>
-                    )}
+                    <RangeSliderModal range={range} setRange={setRange} />
 
                     <Divider
                         mt="2rem"
