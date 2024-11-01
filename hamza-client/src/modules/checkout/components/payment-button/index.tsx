@@ -413,7 +413,7 @@ const CryptoPaymentButton = ({
                         'Beuller.... Beuller',
                         'Waking up and choosing crypto',
                         '',
-                        'Let there be light...',
+                        'Let there be light',
                         'dot dot dot',
                     ]}
                 />
