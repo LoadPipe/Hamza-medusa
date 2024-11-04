@@ -2,7 +2,6 @@ import React from 'react';
 import Image from 'next/image';
 import { Text, Flex } from '@chakra-ui/react';
 import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
-import useSideFilter from '@store/store-page/side-filter';
 
 interface CurrencyButtonPreviewProps {
     currencyName: 'ETH' | 'USDC' | 'USDT';

@@ -37,7 +37,10 @@ function shuffleMessages(messages: any[]): any[] {
 
     for (let i = messagesExFirst.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [messagesExFirst[i], messagesExFirst[j]] = [messagesExFirst[j], messagesExFirst[i]];
+        [messagesExFirst[i], messagesExFirst[j]] = [
+            messagesExFirst[j],
+            messagesExFirst[i],
+        ];
     }
 
     return [messages[0], ...messagesExFirst];
@@ -46,19 +49,19 @@ function shuffleMessages(messages: any[]): any[] {
 const HamzaLogoLoader: React.FC<HamzaLogoLoaderProps> = ({
     message = 'Processing Order',
     messages = [],
-    textAnimOptions = { base_speed: 3500 }
+    textAnimOptions = { base_speed: 10000 },
 }) => {
     // State to track the current message index for rotating text
     const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
     const shuffledMessages = shuffleMessages(messages);
 
-    console.log(shuffledMessages);
-
     // Effect to rotate through the messages
     useEffect(() => {
         if (shuffledMessages.length > 0) {
             const intervalId = setInterval(() => {
-                setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % shuffledMessages.length);
+                setCurrentMessageIndex(
+                    (prevIndex) => (prevIndex + 1) % shuffledMessages.length
+                );
             }, randomizeSpeed(textAnimOptions.base_speed));
 
             return () => clearInterval(intervalId);
@@ -66,7 +69,11 @@ const HamzaLogoLoader: React.FC<HamzaLogoLoaderProps> = ({
     }, [shuffledMessages, textAnimOptions.base_speed]);
 
     // Determine the message to display
-    const displayedMessage = shuffledMessages.length > 0 ? shuffledMessages[currentMessageIndex] : message;
+    const displayedMessage =
+        shuffledMessages.length > 0
+            ? shuffledMessages[currentMessageIndex]
+            : message;
+    shuffledMessages.splice(currentMessageIndex, 1);
 
     // Create an animation based on the keyframes with a smoother infinite loop
     const gradientAnimation = `${moveGradient} 3s ease-in-out infinite`;

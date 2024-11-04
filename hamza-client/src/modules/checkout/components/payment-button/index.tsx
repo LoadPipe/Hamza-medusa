@@ -353,17 +353,17 @@ const CryptoPaymentButton = ({
     const step = searchParams.get('step');
     const isCartEmpty = cart?.items.length === 0;
     const isMissingAddress = !cart?.shipping_address;
-    const isMissingShippingDetails = cart?.shipping_methods?.length === 0;
+    const isMissingShippingMethod = cart?.shipping_methods?.length === 0;
     const disableButton =
         step !== 'review' ||
         isCartEmpty ||
         isMissingAddress ||
-        isMissingShippingDetails;
+        isMissingShippingMethod;
 
     const getButtonText = () => {
         if (isCartEmpty) return 'Add products to order';
         if (isMissingAddress) return 'Add address to order';
-        if (isMissingShippingDetails) return 'No shipping option selected';
+        if (isMissingShippingMethod) return 'No shipping option selected';
         return 'Confirm Order';
     };
 
@@ -408,6 +408,13 @@ const CryptoPaymentButton = ({
                         'Have patience with all things but first of all with yourself',
                         'It’s nice to be able to buy normal stuff with crypto',
                         'Hamza was born in 2024',
+                        'Reordering the punch-cards',
+                        'Hacking the Gibson',
+                        'Beuller.... Beuller',
+                        'Waking up and choosing crypto',
+                        '',
+                        'Let there be light',
+                        'dot dot dot',
                     ]}
                 />
             )}

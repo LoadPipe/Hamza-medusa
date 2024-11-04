@@ -108,10 +108,7 @@ export async function submitDiscountForm(
     }
 }
 
-export async function setAddresses(
-    addressActionType: 'add' | 'edit',
-    formData: FormData
-) {
+export async function setAddresses(formData: FormData) {
     if (!formData) return 'No form data received';
 
     const cartId = cookies().get('_medusa_cart_id')?.value;
@@ -152,99 +149,6 @@ export async function setAddresses(
     try {
         await setPaymentMethod('crypto');
     } catch (error: any) {
-        return error.toString();
-    }
-}
-
-export async function setAddresses2(formData: FormData) {
-    console.log(
-        'setAddresses2 called with formData:',
-        Array.from(formData.entries())
-    );
-
-    if (!formData) {
-        console.error('No form data received');
-        return 'No form data received';
-    }
-
-    const cartId = cookies().get('_medusa_cart_id')?.value;
-    console.log('Retrieved cartId:', cartId);
-
-    if (!cartId) {
-        console.error('No cartId cookie found');
-        return { message: 'No cartId cookie found' };
-    }
-
-    const email = formData.get('email') as string;
-    console.log('Retrieved email:', email);
-
-    const data = {
-        shipping_address: {
-            first_name: formData.get('shipping_address.first_name'),
-            last_name: formData.get('shipping_address.last_name'),
-            address_1: formData.get('shipping_address.address_1'),
-            address_2: formData.get('shipping_address.address_2'),
-            company: formData.get('shipping_address.company'),
-            postal_code: formData.get('shipping_address.postal_code'),
-            city: formData.get('shipping_address.city'),
-            country_code: formData.get('shipping_address.country_code'),
-            province: formData.get('shipping_address.province'),
-            phone: formData.get('shipping_address.phone'),
-        },
-    } as StorePostCartsCartReq;
-
-    console.log('Constructed data object:', data);
-
-    if (email && email.trim() !== '') {
-        data.email = email;
-        console.log('Email added to data:', data.email);
-    }
-
-    data.billing_address = data.shipping_address;
-    console.log(
-        'Billing address set to shipping address:',
-        data.billing_address
-    );
-
-    try {
-        console.log('Updating cart with cartId and data:', cartId, data);
-        await updateCart(cartId, data);
-        console.log('Cart updated successfully');
-
-        if (data.email) {
-            console.log('Setting cart email with cartId:', cartId);
-            await setCartEmail(cartId, data.email);
-            console.log('Cart email set successfully');
-        }
-
-        console.log('Revalidating cart tag');
-        revalidateTag('cart');
-    } catch (error: any) {
-        console.error(
-            'Error during cart update or email setting:',
-            error.toString()
-        );
-        return error.toString();
-    }
-
-    try {
-        console.log('Adding default shipping method for cartId:', cartId);
-        await addDefaultShippingMethod(cartId);
-        console.log('Default shipping method added successfully');
-    } catch (error: any) {
-        console.error(
-            'Error during adding default shipping method:',
-            error.toString()
-        );
-        return error.toString();
-    }
-
-    try {
-        console.log('Setting payment method to crypto for cartId:', cartId);
-        await setPaymentMethod('crypto');
-        console.log('Payment method set successfully');
-    } catch (error: any) {
-        console.error('Error during setting payment method:', error.toString());
         return error.toString();
     }
 }

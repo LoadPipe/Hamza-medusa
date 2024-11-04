@@ -37,7 +37,6 @@ const MobileAccountMenu = () => {
             <MenuButton
                 width={'26px'}
                 height={'26px'}
-                px="5px"
                 borderRadius={'full'}
                 borderColor={'white'}
                 borderWidth={'1px'}

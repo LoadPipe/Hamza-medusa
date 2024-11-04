@@ -13,44 +13,28 @@ import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
 
 // Define a type for the range state
 type RangeType = [number, number];
-interface RangeSliderModalProps {
-    range: RangeType;
-    setRange: React.Dispatch<React.SetStateAction<RangeType>>;
-}
-const RangeSliderModal: React.FC<RangeSliderModalProps> = ({
-    range,
-    setRange,
-}) => {
-    const {
-        homeModalLowerPriceFilterSelect,
-        homeModalUpperPriceFilterSelect,
-        setHomeModalLowerPriceFilterSelect,
-        setHomeModalUpperPriceFilterSelect,
-    } = useHomeModalFilter();
 
+type RangeSliderProps = {
+    range: [number, number];
+    setRange: (range: [number, number]) => void;
+};
+
+const RangeSliderModal: React.FC<RangeSliderProps> = ({ range, setRange }) => {
     const handleRangeChange = (values: number[]) => {
         setRange(values as RangeType);
-    };
-
-    // Function to handle the final change when sliding is done
-    const handleChangeEnd = (val: number[]) => {
-        console.log('Final selected price range:', val);
+        console.log('Range Slider range', range);
     };
 
     return (
-        <Box my="1rem">
+        <Box my="1rem" px={'1rem'}>
             <Box mx="0.5rem">
                 <RangeSlider
                     // eslint-disable-next-line jsx-a11y/aria-proptypes
                     aria-label={['min', 'max']}
-                    defaultValue={[
-                        homeModalLowerPriceFilterSelect,
-                        homeModalUpperPriceFilterSelect,
-                    ]}
+                    value={range}
                     min={0}
-                    max={11000}
+                    max={350}
                     onChange={handleRangeChange}
-                    onChangeEnd={handleChangeEnd} // Update Zustand values when range changes
                     colorScheme="blue"
                 >
                     <RangeSliderTrack bg="secondary.charcoal.900">

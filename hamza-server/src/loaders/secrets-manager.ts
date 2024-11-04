@@ -14,18 +14,20 @@ export default async (container: MedusaContainer): Promise<void> => {
     let response;
 
     try {
-        response = await client.send(
-            new GetSecretValueCommand({
-                SecretId: secret_name,
-                VersionStage: 'AWSCURRENT', // VersionStage defaults to AWSCURRENT if unspecified
-            })
-        );
+        if (process.env.USE_AWS_SECRETS) {
+            response = await client.send(
+                new GetSecretValueCommand({
+                    SecretId: secret_name,
+                    VersionStage: 'AWSCURRENT', // VersionStage defaults to AWSCURRENT if unspecified
+                })
+            );
 
-        const secretData = JSON.parse(response.SecretString);
+            const secretData = JSON.parse(response.SecretString);
 
-        for (let key of Object.keys(secretData)) {
-            if (!process.env[key]?.length)
-                process.env[key] = secretData[key];
+            for (let key of Object.keys(secretData)) {
+                if (!process.env[key]?.length)
+                    process.env[key] = secretData[key];
+            }
         }
     } catch (error) {
         // For a list of exceptions thrown, see
