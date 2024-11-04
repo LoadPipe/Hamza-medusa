@@ -6,7 +6,6 @@ import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { Flex } from '@chakra-ui/react';
 import ForceWalletConnect from '@/app/components/loaders/force-wallet-connect';
 import CheckoutTemplate from '@/modules/checkout/templates';
-import ConnectionStatusCheck from './components/ConnectionStatusCheck';
 import { SwitchNetwork } from '@/app/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 
 export const metadata: Metadata = {

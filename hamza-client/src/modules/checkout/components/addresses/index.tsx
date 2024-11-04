@@ -9,6 +9,7 @@ import { BiPencil } from 'react-icons/bi';
 import AddressModal from '../address-modal';
 import { IoLocationOutline } from 'react-icons/io5';
 import { useEffect, useState } from 'react';
+import { addDefaultShippingMethod } from '@/lib/data';
 
 const Addresses = ({
     cart,
@@ -59,9 +60,23 @@ const Addresses = ({
     };
 
     useEffect(() => {
-        if (cart?.customer_id && cart?.shipping_address) {
-            router.push('/checkout?step=review');
-        }
+        const updateShippingMethod = async () => {
+            if (cart?.customer_id && cart?.shipping_address) {
+                console.log('Checking shipping method in address');
+                console.log('Shipping methods:', cart?.shipping_methods);
+
+                if (!cart?.shipping_methods.length) {
+                    // If no shipping methods, add the default shipping method
+                    console.log('Adding default shipping method');
+                    await addDefaultShippingMethod(cart?.id);
+                }
+
+                // Once the shipping method is added or if it already exists, go to the review step
+                router.push('/checkout?step=review');
+            }
+        };
+
+        updateShippingMethod();
     }, [cart, router]);
 
     return (

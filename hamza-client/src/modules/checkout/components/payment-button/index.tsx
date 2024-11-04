@@ -18,12 +18,7 @@ import { ethers, BigNumberish } from 'ethers';
 import { useCompleteCart, useUpdateCart } from 'medusa-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
-import {
-    addDefaultShippingMethod,
-    clearCart,
-    finalizeCheckout,
-    getCheckoutData,
-} from '@lib/data';
+import { clearCart, finalizeCheckout, getCheckoutData } from '@lib/data';
 import toast from 'react-hot-toast';
 import { getServerConfig } from '@lib/data/index';
 import { getClientCookie } from '@lib/util/get-client-cookies';
@@ -307,7 +302,6 @@ const CryptoPaymentButton = ({
                                     //TODO: data is undefined
                                     try {
                                         //this does wallet payment, and everything after
-                                        addDefaultShippingMethod(cart.id);
                                         completeCheckout(cart.id);
                                     } catch (e) {
                                         console.error(e);
@@ -360,7 +354,10 @@ const CryptoPaymentButton = ({
     const isCartEmpty = cart?.items.length === 0;
     const isMissingAddress = !cart?.shipping_address;
     const isMissingShippingMethod = cart?.shipping_methods?.length === 0;
-    const disableButton = step !== 'review' || isCartEmpty || isMissingAddress;
+    const disableButton =
+        step !== 'review' ||
+        isCartEmpty ||
+        (isMissingAddress && isMissingShippingMethod);
 
     const getButtonText = () => {
         if (isCartEmpty) return 'Add products to order';
