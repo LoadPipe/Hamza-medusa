@@ -6,7 +6,6 @@ import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { Flex } from '@chakra-ui/react';
 import ForceWalletConnect from '@/app/components/loaders/force-wallet-connect';
 import CheckoutTemplate from '@/modules/checkout/templates';
-import ConnectionStatusCheck from './components/ConnectionStatusCheck';
 import { SwitchNetwork } from '@/app/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 
 export const metadata: Metadata = {
@@ -58,18 +57,13 @@ export default async function Checkout(params: any) {
         cart.items = enrichedItems as LineItem[];
     }
 
-    // State to track wallet connection status
-    const connected = params.searchParams.connected === 'true';
-
-    console.log('params connected', params.searchParams.connected);
-
     return (
         <Flex flexDir="row" maxW={'1280px'} width={'100%'}>
-            <ConnectionStatusCheck cart={cart} />
-
-            <CheckoutTemplate cart={cart} cartId={cartId} />
-            {/* Conditionally render based on connection status and step */}
-            {!connected && <ForceWalletConnect />}
+            {!cart.customer_id ? (
+                <ForceWalletConnect />
+            ) : (
+                <CheckoutTemplate cart={cart} cartId={cartId} />
+            )}
         </Flex>
     );
 }
