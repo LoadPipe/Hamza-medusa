@@ -8,7 +8,7 @@ import compareAddresses from '@lib/util/compare-addresses';
 import { BiPencil } from 'react-icons/bi';
 import AddressModal from '../address-modal';
 import { IoLocationOutline } from 'react-icons/io5';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const Addresses = ({
     cart,
@@ -57,6 +57,12 @@ const Addresses = ({
         setShippingAddressType('edit');
         onOpen();
     };
+
+    useEffect(() => {
+        if (cart?.customer_id && cart?.shipping_address) {
+            router.push('/checkout?step=review');
+        }
+    }, [cart, router]);
 
     return (
         <div>

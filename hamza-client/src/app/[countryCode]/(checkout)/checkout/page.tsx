@@ -58,18 +58,13 @@ export default async function Checkout(params: any) {
         cart.items = enrichedItems as LineItem[];
     }
 
-    // State to track wallet connection status
-    const connected = params.searchParams.connected === 'true';
-
-    console.log('params connected', params.searchParams.connected);
-
     return (
         <Flex flexDir="row" maxW={'1280px'} width={'100%'}>
-            <ConnectionStatusCheck cart={cart} />
-
-            <CheckoutTemplate cart={cart} cartId={cartId} />
-            {/* Conditionally render based on connection status and step */}
-            {!connected && <ForceWalletConnect />}
+            {!cart.customer_id ? (
+                <ForceWalletConnect />
+            ) : (
+                <CheckoutTemplate cart={cart} cartId={cartId} />
+            )}
         </Flex>
     );
 }
