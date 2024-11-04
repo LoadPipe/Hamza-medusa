@@ -1,9 +1,10 @@
 import { ProductOption } from '@medusajs/medusa';
-import { clx } from '@medusajs/ui';
+import { Tooltip } from '@medusajs/ui';
 import React from 'react';
 import { Button } from '@chakra-ui/react';
 import { onlyUnique } from '@lib/util/only-unique';
-import { Tooltip } from '@medusajs/ui';
+
+const MINIMUM_CHARACTERS_FOR_TOOLTIP = 20;
 
 type OptionSelectProps = {
   option: ProductOption;
@@ -66,7 +67,7 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
             </Button>
           );
 
-          return v.length > 20 ? (
+          return v.length > MINIMUM_CHARACTERS_FOR_TOOLTIP ? (
             <Tooltip content={v} className="min-w-fit" key={v}>
               {buttonContent}
             </Tooltip>
