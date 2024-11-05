@@ -10,7 +10,7 @@ import Image from 'next/image';
 //import HamzaTitle2 from '../../../../../public/images/logo/nav-logo.svg';
 import HamzaLogo from '../../../../../public/images/logo/hamza-beta.png';
 //  Components
-
+import HnsDisplay from './menu-desktop/hns-display/index';
 import NavSearchBar from './menu-desktop/components/nav-searchbar';
 import MobileMenu from './menu-mobile/menu/mobile-main-menu';
 import MobileNav from './menu-mobile/mobile-nav';
@@ -107,6 +107,7 @@ export default async function Nav() {
 
                     <NavSearchBar />
 
+                    <HnsDisplay />
                     <MainMenu />
 
                     <WalletConnectButton />

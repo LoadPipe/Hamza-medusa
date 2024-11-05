@@ -1,10 +1,10 @@
 import { Box, useDisclosure } from '@chakra-ui/react';
 import { Cart, LineItem, Region } from '@medusajs/medusa';
-import Item from '@modules/cart/components/item-checkout';
 import SkeletonLineItem from '@modules/skeletons/components/skeleton-line-item';
 import RegionLockedModal from './components/region-locked-modal';
 import { useEffect, useState } from 'react';
 import { deleteLineItem } from '@modules/cart/actions';
+import Item from '../../../cart/components/item';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -38,28 +38,33 @@ const CartItems = ({
                     )
                 );
 
-                const restrictedVariants = [];
-                for (let item of variantsWithGeoRestriction) {
-                    const tags = item.variant.product.tags.filter((t: any) =>
-                        t.id.startsWith('geo-restriction')
-                    );
-                    for (let tag of tags) {
-                        if (tag.metadata.country) {
-                            if (
-                                cart?.shipping_address.country_code !=
-                                tag.metadata.country.toLowerCase()
-                            ) {
-                                restrictedVariants.push(item);
+                if (variantsWithGeoRestriction?.length) {
+                    const restrictedVariants = [];
+                    for (let item of variantsWithGeoRestriction ?? []) {
+                        const tags =
+                            item?.variant?.product?.tags?.filter((t: any) =>
+                                t?.id?.startsWith('geo-restriction')
+                            ) ?? [];
+                        for (let tag of tags) {
+                            if (tag?.metadata?.country) {
+                                if (
+                                    cart?.shipping_address?.country_code?.toLowerCase() !==
+                                    tag.metadata.country.toLowerCase()
+                                ) {
+                                    restrictedVariants.push(item);
+                                }
                             }
                         }
                     }
-                }
 
-                setRegionLockedItems(restrictedVariants as ExtendedLineItem[]);
+                    setRegionLockedItems(
+                        restrictedVariants as ExtendedLineItem[]
+                    );
 
-                // If there are region-locked items, show the modal
-                if (restrictedVariants.length > 0) {
-                    onOpen();
+                    // If there are region-locked items, show the modal
+                    if (restrictedVariants.length > 0) {
+                        onOpen();
+                    }
                 }
             }
         }
@@ -95,6 +100,7 @@ const CartItems = ({
                                       item={item}
                                       region={region}
                                       currencyCode={currencyCode}
+                                      cart_id={item.cart_id}
                                   />
                               );
                           })

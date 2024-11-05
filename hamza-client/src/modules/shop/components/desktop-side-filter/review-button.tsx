@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Text, Flex, Box } from '@chakra-ui/react';
 import ReviewStar from '../../../../public/images/products/review-star.svg';
-import useStorePage from '@store/store-page/store-page';
-import useSideFilter from '@store/store-page/side-filter';
 
 // Define the props type with TypeScript
 interface ReviewButtonProps {

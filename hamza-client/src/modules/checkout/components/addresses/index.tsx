@@ -4,13 +4,12 @@ import { useParams, useRouter } from 'next/navigation';
 import { Cart, Customer } from '@medusajs/medusa';
 import { useToggleState } from '@medusajs/ui';
 import { Flex, Text, useDisclosure, Button } from '@chakra-ui/react';
-
 import compareAddresses from '@lib/util/compare-addresses';
 import { BiPencil } from 'react-icons/bi';
 import AddressModal from '../address-modal';
 import { IoLocationOutline } from 'react-icons/io5';
-import AddressSelect from '../address-select';
 import { useEffect, useState } from 'react';
+import { addDefaultShippingMethod } from '@/lib/data';
 
 const Addresses = ({
     cart,
@@ -20,14 +19,12 @@ const Addresses = ({
     customer: Omit<Customer, 'password_hash'> | null;
 }) => {
     const router = useRouter();
-    // Set whether we are adding or editing address
-    const [addressActionType, setActionAddressType] = useState<'add' | 'edit'>(
-        'add'
-    );
-    const [selectedAddressId, setSelectedAddressId] = useState<string>('');
 
     // Hooks to open and close address modal
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const [shippingAddressType, setShippingAddressType] = useState<
+        'add' | 'edit'
+    >('add');
 
     // Get country code
     const params = useParams();
@@ -52,12 +49,35 @@ const Addresses = ({
                 : true
         );
 
-    // Run once when component mounts to check if address already set and push to next step
+    const handleAddAddress = () => {
+        setShippingAddressType('add');
+        onOpen();
+    };
+
+    const handleEditAddress = () => {
+        setShippingAddressType('edit');
+        onOpen();
+    };
+
     useEffect(() => {
-        if (cart?.shipping_address) {
-            router.push('/checkout?step=review');
-        }
-    }, []);
+        const updateShippingMethod = async () => {
+            if (cart?.customer_id && cart?.shipping_address) {
+                console.log('Checking shipping method in address');
+                console.log('Shipping methods:', cart?.shipping_methods);
+
+                if (!cart?.shipping_methods.length) {
+                    // If no shipping methods, add the default shipping method
+                    console.log('Adding default shipping method');
+                    await addDefaultShippingMethod(cart?.id);
+                }
+
+                // Once the shipping method is added or if it already exists, go to the review step
+                router.push('/checkout?step=review');
+            }
+        };
+
+        updateShippingMethod();
+    }, [cart, router]);
 
     return (
         <div>
@@ -127,26 +147,10 @@ const Addresses = ({
                                 _hover={{
                                     opacity: 0.5,
                                 }}
-                                onClick={() => {
-                                    onOpen();
-                                    setActionAddressType('edit');
-                                }}
+                                onClick={handleEditAddress}
                             >
                                 Edit Shipping Address
                             </Button>
-
-                            {(customer?.shipping_addresses?.length ?? 0) >
-                                0 && (
-                                <AddressSelect
-                                    cart={cart}
-                                    addresses={
-                                        customer?.shipping_addresses ?? []
-                                    }
-                                    onSelect={(addrId) =>
-                                        setSelectedAddressId(addrId)
-                                    }
-                                />
-                            )}
                         </Flex>
                     </Flex>
                 ) : (
@@ -168,10 +172,7 @@ const Addresses = ({
                             _hover={{
                                 opacity: 0.5,
                             }}
-                            onClick={() => {
-                                onOpen();
-                                setActionAddressType('add');
-                            }}
+                            onClick={handleAddAddress}
                         >
                             Add Shipping Address
                         </Button>
@@ -181,12 +182,11 @@ const Addresses = ({
             <AddressModal
                 customer={customer}
                 countryCode={countryCode}
-                addressActionType={addressActionType}
                 toggleSameAsBilling={toggleSameAsBilling}
                 cart={cart}
                 isOpen={isOpen}
                 onClose={onClose}
-                selectedAddressId={selectedAddressId}
+                addressType={shippingAddressType}
             />
         </div>
     );

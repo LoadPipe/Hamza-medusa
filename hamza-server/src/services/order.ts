@@ -127,7 +127,7 @@ export default class OrderService extends MedusaOrderService {
 
             //update the cart
             cart.completed_at = new Date();
-            await this.cartService_.update(cart.id, cart);
+            // await this.cartService_.update(cart.id, cart);
 
             return order;
         } catch (e) {

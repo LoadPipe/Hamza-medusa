@@ -1,116 +1,67 @@
-import {
-    Box,
-    Button,
-    IconButton,
-    Flex,
-    VStack,
-    Text,
-    Radio,
-    RadioGroup,
-} from '@chakra-ui/react';
+import { Box, Button, VStack, Text, Radio, RadioGroup } from '@chakra-ui/react';
 import { ChevronUpDown } from '@medusajs/icons';
-import { Address, AddressPayload, Cart } from '@medusajs/medusa';
-import { omit } from 'lodash';
-import { useState, useMemo } from 'react';
-
-import { cartUpdate } from '@modules/checkout/actions';
-import compareAddresses from '@lib/util/compare-addresses';
+import { Address, Cart } from '@medusajs/medusa';
+import { useState, useEffect } from 'react';
+import compareSelectedAddress from '@/lib/util/compare-address-select';
 
 type AddressSelectProps = {
     addresses: Address[];
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | null;
     onSelect?: (addr: string) => void;
+    formData: any;
+    setFormData: React.Dispatch<React.SetStateAction<any>>;
 };
 
-const AddressSelect = ({ addresses, cart, onSelect }: AddressSelectProps) => {
+const AddressSelect = ({
+    addresses,
+    cart,
+    onSelect,
+    formData,
+    setFormData,
+}: AddressSelectProps) => {
     const [isOpen, setIsOpen] = useState(false); // State to manage dropdown open/close
     const [selectedId, setSelectedId] = useState<string | null>(null); // State for selected address id
 
+    useEffect(() => {
+        if (cart?.shipping_address) {
+            const matchingAddress = addresses.find((address) =>
+                compareSelectedAddress(address, cart.shipping_address)
+            );
+
+            if (matchingAddress) {
+                console.log('Matching Address Found:', matchingAddress);
+                setSelectedId(matchingAddress.id);
+            } else {
+                setSelectedId('');
+                console.log('No matching address found');
+            }
+        }
+    }, [cart?.shipping_address, addresses]);
+
     const handleSelect = (id: string) => {
-        const savedAddress = addresses.find((a) => a.id === id);
-        if (savedAddress) {
-            cartUpdate({
-                shipping_address: omit(savedAddress, [
-                    'id',
-                    'created_at',
-                    'updated_at',
-                    'country',
-                    'deleted_at',
-                    'metadata',
-                    'customer_id',
-                ]) as AddressPayload,
+        const selectedAddress = addresses.find((a) => a.id === id);
+        if (selectedAddress) {
+            // Update form data in AddressModal with selected address details
+            setFormData({
+                ...formData,
+                'shipping_address.first_name': selectedAddress.first_name,
+                'shipping_address.last_name': selectedAddress.last_name,
+                'shipping_address.address_1': selectedAddress.address_1,
+                'shipping_address.address_2': selectedAddress.address_2,
+                'shipping_address.company': selectedAddress.company,
+                'shipping_address.postal_code': selectedAddress.postal_code,
+                'shipping_address.city': selectedAddress.city,
+                'shipping_address.country_code': selectedAddress.country_code,
+                'shipping_address.province': selectedAddress.province,
+                'shipping_address.phone': selectedAddress.phone,
             });
+
             setSelectedId(id); // Set the selected address ID
             setIsOpen(false); // Close the dropdown after selection
 
-            if (onSelect)
-                onSelect(id);
+            if (onSelect) onSelect(id);
         }
     };
-
-    /*
-     const handleSelect = async (id: string) => {
-        const savedAddress = addresses.find((a) => a.id === id);
-
-        if (savedAddress) {
-            // Create FormData to match the structure expected by setAddresses
-            const formData = new FormData();
-            formData.append(
-                'shipping_address.first_name',
-                savedAddress.first_name || ''
-            );
-            formData.append(
-                'shipping_address.last_name',
-                savedAddress.last_name || ''
-            );
-            formData.append(
-                'shipping_address.address_1',
-                savedAddress.address_1 || ''
-            );
-            formData.append(
-                'shipping_address.address_2',
-                savedAddress.address_2 || ''
-            );
-            formData.append(
-                'shipping_address.company',
-                savedAddress.company || ''
-            );
-            formData.append(
-                'shipping_address.postal_code',
-                savedAddress.postal_code || ''
-            );
-            formData.append('shipping_address.city', savedAddress.city || '');
-            formData.append(
-                'shipping_address.country_code',
-                savedAddress.country_code || ''
-            );
-            formData.append(
-                'shipping_address.province',
-                savedAddress.province || ''
-            );
-            formData.append('shipping_address.phone', savedAddress.phone || '');
-
-            // Check if the cart already has a shipping address
-            const isAddressEmpty = !cart?.shipping_address;
-
-            if (isAddressEmpty) {
-                // Use 'add' action type if no shipping address exists
-                await setAddresses('add', formData);
-            } else {
-                // Use 'edit' action type if the shipping address already exists
-                await setAddresses('edit', formData);
-            }
-
-            setSelectedId(id); // Set the selected address ID
-            setIsOpen(false); // Close the dropdown after selection
-        }
-    };*/
-
-    const selectedAddress = useMemo(() => {
-        return addresses.find((a) =>
-            compareAddresses(a, cart?.shipping_address)
-        );
-    }, [addresses, cart?.shipping_address]);
 
     return (
         <Box position="relative" flex={1}>
@@ -145,7 +96,7 @@ const AddressSelect = ({ addresses, cart, onSelect }: AddressSelectProps) => {
                 >
                     <RadioGroup
                         onChange={handleSelect}
-                        value={selectedId ?? selectedAddress?.id ?? ''}
+                        value={selectedId ?? ''}
                     >
                         <VStack align="stretch" spacing={1}>
                             {addresses.map((address) => (
@@ -172,7 +123,7 @@ const AddressSelect = ({ addresses, cart, onSelect }: AddressSelectProps) => {
                                             </Text>
                                         )}
                                         <Text fontSize="sm" mt={2}>
-                                            {address.address_1}
+                                            {address.address_1}{' '}
                                             {address.address_2 && (
                                                 <span>
                                                     , {address.address_2}

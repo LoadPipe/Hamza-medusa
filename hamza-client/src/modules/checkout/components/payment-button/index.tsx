@@ -23,6 +23,8 @@ import toast from 'react-hot-toast';
 import { getServerConfig } from '@lib/data/index';
 import { getClientCookie } from '@lib/util/get-client-cookies';
 import HamzaLogoLoader from '@/components/loaders/hamza-logo-loader';
+import { useCartStore } from '@/store/cart-store/cart-store';
+import Spinner from '@/modules/common/icons/spinner';
 
 //TODO: we need a global common function to replace this
 const MEDUSA_SERVER_URL =
@@ -68,19 +70,12 @@ const CryptoPaymentButton = ({
     const { openConnectModal } = useConnectModal();
     const { connector: activeConnector, isConnected } = useAccount();
     const { data: walletClient, isError } = useWalletClient();
+    const { isUpdating } = useCartStore();
     const router = useRouter();
     const { connect, connectors, error, isLoading, pendingConnector } =
         useConnect({
             connector: new InjectedConnector(),
         });
-
-    // useEffect hook to check if connection status changes
-    // if !isConnected, connect to wallet
-    useEffect(() => {
-        if (!isConnected) {
-            if (openConnectModal) openConnectModal();
-        }
-    }, [openConnectModal, isConnected]);
 
     useEffect(() => {
         const fetchChainId = async () => {
@@ -361,47 +356,71 @@ const CryptoPaymentButton = ({
     const step = searchParams.get('step');
     const isCartEmpty = cart?.items.length === 0;
     const isMissingAddress = !cart?.shipping_address;
-    const isMissingShippingDetails = cart?.shipping_methods?.length === 0;
+    const isMissingShippingMethod = cart?.shipping_methods?.length === 0;
     const disableButton =
         step !== 'review' ||
         isCartEmpty ||
-        isMissingAddress ||
-        isMissingShippingDetails;
+        isUpdating ||
+        (isMissingAddress && isMissingShippingMethod);
 
     const getButtonText = () => {
         if (isCartEmpty) return 'Add products to order';
         if (isMissingAddress) return 'Add address to order';
-        if (isMissingShippingDetails) return 'No shipping option selected';
+        if (isUpdating) return <Spinner />;
         return 'Confirm Order';
     };
 
     return (
         <>
-            {loaderVisible && <HamzaLogoLoader
-              messages={[
-                  'Processing order',
-                  'Charging the flux capacitor',
-                  'Running on caffeine and code',
-                  'Double-checking everything twice',
-                  'Getting things just right',
-                  'Aligning all the stars',
-                  'Calibrating awesomeness',
-                  'Fetching some digital magic',
-                  'Crossing the t’s and dotting the i’s',
-                  'Waking up the hamsters on the wheel',
-                  'Cooking up something great',
-                  'Dusting off the keyboard',
-                  'Wrangling code into shape',
-                  'Consulting the manual (just kidding)',
-                  'Building something epic',
-                  'Gearing up for greatness',
-                  'Rehearsing our victory dance',
-                  'Making sure it’s perfect for you',
-                  'Channeling good vibes into the code',
-                  'Stretching out some last-minute bugs',
-                  'Preparing the finishing touches'
-              ]}
-            />}
+            {loaderVisible && (
+                <HamzaLogoLoader
+                    messages={[
+                        'Processing order',
+                        'Charging the flux capacitor',
+                        'Running on caffeine and code',
+                        'Double-checking everything twice',
+                        'Getting things just right',
+                        'Aligning all the stars',
+                        'Calibrating awesomeness',
+                        'Fetching some digital magic',
+                        'Crossing the t’s and dotting the i’s',
+                        'Waking up the hamsters on the wheel',
+                        'Cooking up something great',
+                        'Dusting off the keyboard',
+                        'Wrangling code into shape',
+                        'Consulting the manual (just kidding)',
+                        'Building something epic',
+                        'Gearing up for greatness',
+                        'Rehearsing our victory dance',
+                        'Making sure it’s perfect for you',
+                        'Channeling good vibes into the code',
+                        'Stretching out some last-minute bugs',
+                        'Preparing the finishing touches',
+                        'Wow this is taking a long time',
+                        'Person, woman, man, camera... TV',
+                        'What’s for dinner tonight?',
+                        'Sending a message to the Mayor of Blockchain',
+                        'Contacting the blockchain',
+                        'Ein, zwei, drei',
+                        'Finalizing your purchase',
+                        'Preparing your receipt',
+                        'Nearly done',
+                        'Randomizing whimsical checkout messages',
+                        'Preparing you a glass of maple syrup',
+                        'Patience is the companion of wisdom',
+                        'Have patience with all things but first of all with yourself',
+                        'It’s nice to be able to buy normal stuff with crypto',
+                        'Hamza was born in 2024',
+                        'Reordering the punch-cards',
+                        'Hacking the Gibson',
+                        'Beuller.... Beuller',
+                        'Waking up and choosing crypto',
+                        '',
+                        'Let there be light',
+                        'dot dot dot',
+                    ]}
+                />
+            )}
             <Button
                 borderRadius={'full'}
                 height={{ base: '42px', md: '58px' }}
