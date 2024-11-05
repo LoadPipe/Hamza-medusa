@@ -266,7 +266,7 @@ export async function getAllProducts(
         category_name: categoryString,
         price_hi: priceHigh,
         price_lo: priceLow,
-        currency_code: currencyCode
+        currency_code: currencyCode,
     });
 }
 
@@ -411,10 +411,15 @@ export async function getOrderBucket(customer_id: string) {
 }
 
 //TODO: why is bucket a number?
-export async function getSingleBucket(customer_id: string, bucket: number) {
+export async function getSingleBucket(
+    customer_id: string,
+    bucket: number,
+    cart_id?: string
+) {
     const response = await getSecure('/custom/order/customer-order', {
         customer_id,
         bucket,
+        cart_id,
     });
     return response.orders;
 }

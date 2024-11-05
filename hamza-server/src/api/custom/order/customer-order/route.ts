@@ -16,13 +16,23 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         res,
         'GET',
         '/custom/order/customer-order',
-        ['customer_id', 'bucket']
+        ['customer_id', 'bucket', 'cart_id']
     );
 
     await handler.handle(async () => {
         const orderService: OrderService = req.scope.resolve('orderService');
         const customerService: CustomerService =
             req.scope.resolve('customerService');
+
+        const logger: Logger = req.scope.resolve('logger'); // Resolve the logger service
+
+        // Log cart_id presence
+        const cartId = handler.inputParams.cart_id;
+        if (cartId) {
+            logger.info(`Cart ID provided: ${cartId}`); // Use the logger to log cart_id if available
+        } else {
+            logger.info('No cart ID provided'); // Log that no cart_id was provided
+        }
 
         //validate
         if (!handler.inputParams.customer_id?.length) {
@@ -41,10 +51,18 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
                 if (handler.inputParams.bucket) {
                     const bucketValue = parseInt(handler.inputParams.bucket);
-                    const orders = await orderService.getCustomerOrderBucket(
-                        customerId,
-                        bucketValue
-                    );
+                    // Conditionally pass orderId only if it exists
+                    const orders = cartId
+                        ? await orderService.getCustomerOrderBucket(
+                              customerId,
+                              bucketValue,
+                              cartId
+                          )
+                        : await orderService.getCustomerOrderBucket(
+                              customerId,
+                              bucketValue
+                          );
+
                     handler.returnStatus(200, { orders: orders });
                 } else {
                     const orders =
