@@ -202,7 +202,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                             Purchase Date:{' '}
                                         </Text>
                                         {format(
-                                            new Date(review.created_at),
+                                            new Date(review?.created_at),
                                             'PPP'
                                         )}
                                     </Flex>
@@ -212,7 +212,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                         gap={2}
                                     >
                                         <Link
-                                            href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${review.product.handle}`}
+                                            href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${review?.product?.handle}`}
                                         >
                                             <Image
                                                 rounded="lg"
@@ -224,7 +224,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                     base: '72px',
                                                     md: '100px',
                                                 }}
-                                                src={review.product.thumbnail}
+                                                src={review?.product?.thumbnail}
                                             />
                                         </Link>
                                         <Text
@@ -275,7 +275,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                 }}
                                                 maxWidth="100%"
                                             >
-                                                {renderStars(review.rating)}
+                                                {renderStars(review?.rating)}
                                             </Text>
                                         </Flex>
 
@@ -421,7 +421,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                             base: '72px',
                                                             md: '100px',
                                                         }}
-                                                        src={item.thumbnail}
+                                                        src={item?.thumbnail}
                                                     />
                                                 </Link>
                                             </Flex>
@@ -451,7 +451,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                         textTransform="uppercase"
                                                         whiteSpace="normal" // Allow text to wrap
                                                     >
-                                                        {item.title}
+                                                        {item?.title}
                                                     </Text>
                                                 </Flex>
 
@@ -471,7 +471,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                         fontSize="16px"
                                                         noOfLines={2}
                                                     >
-                                                        {item.description}
+                                                        {item?.description}
                                                     </Text>
                                                 </Flex>
                                             </Flex>
@@ -491,12 +491,12 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                     width="100%"
                                                 >
                                                     <Link
-                                                        href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/store/${review.store.name}`}
+                                                        href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/store/${review?.store?.name}`}
                                                     >
                                                         <Image
                                                             src={
-                                                                review.store
-                                                                    .icon
+                                                                review?.store
+                                                                    ?.icon
                                                             }
                                                             alt="Light Logo"
                                                             boxSize="32px"
@@ -515,7 +515,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                             md: '10px',
                                                         }}
                                                     >
-                                                        {review.store.name}
+                                                        {review?.store?.name}
                                                     </Text>
                                                     <FaCheckCircle color="#3196DF" />
                                                 </Flex>
