@@ -271,73 +271,64 @@ const Processing = ({
                                                 />
 
                                                 {/* Right-aligned buttons */}
-                                                <Flex
-                                                    direction={{
-                                                        base: 'column',
-                                                        md: 'row',
-                                                    }}
-                                                    justifyContent={'flex-end'}
-                                                    gap={2}
-                                                    mt={{ base: 4, md: 0 }}
-                                                    width="100%"
-                                                >
-                                                    <Button
-                                                        variant="outline"
-                                                        colorScheme="white"
-                                                        borderRadius="37px"
-                                                        cursor="pointer"
-                                                        ml={{
-                                                            base: 0,
-                                                            md: 2,
+                                                {index ===
+                                                order.items.length - 1 ? (
+                                                    <Flex
+                                                        direction={{
+                                                            base: 'column',
+                                                            md: 'row',
                                                         }}
-                                                        mt={{
-                                                            base: 2,
-                                                            md: 0,
-                                                        }}
-                                                        width={{
-                                                            base: '100%',
-                                                            md: 'auto',
-                                                        }}
-                                                        _hover={{
-                                                            textDecoration:
-                                                                'underline',
-                                                        }}
-                                                        onClick={() =>
-                                                            toggleViewOrder(
-                                                                item.id
-                                                            )
+                                                        justifyContent={
+                                                            'flex-end'
                                                         }
+                                                        gap={2}
+                                                        mt={{ base: 4, md: 0 }}
+                                                        width="100%"
                                                     >
-                                                        View Order
-                                                    </Button>
-                                                    {index ===
-                                                    order.items.length - 1 ? (
-                                                        order.status ===
-                                                        'canceled' ? (
-                                                            <Button
-                                                                colorScheme="red"
-                                                                isDisabled
-                                                            >
-                                                                Cancellation
-                                                                Requested
-                                                            </Button>
-                                                        ) : (
-                                                            <Button
-                                                                variant="outline"
-                                                                colorScheme="white"
-                                                                borderRadius="37px"
-                                                                onClick={() =>
-                                                                    openModal(
-                                                                        order.id
-                                                                    )
-                                                                }
-                                                            >
-                                                                Request
-                                                                Cancellation
-                                                            </Button>
-                                                        )
-                                                    ) : null}
-                                                </Flex>
+                                                        <Button
+                                                            variant="outline"
+                                                            colorScheme="white"
+                                                            borderRadius="37px"
+                                                            cursor="pointer"
+                                                            ml={{
+                                                                base: 0,
+                                                                md: 2,
+                                                            }}
+                                                            mt={{
+                                                                base: 2,
+                                                                md: 0,
+                                                            }}
+                                                            width={{
+                                                                base: '100%',
+                                                                md: 'auto',
+                                                            }}
+                                                            _hover={{
+                                                                textDecoration:
+                                                                    'underline',
+                                                            }}
+                                                            onClick={() =>
+                                                                toggleViewOrder(
+                                                                    item.id
+                                                                )
+                                                            }
+                                                        >
+                                                            View Order
+                                                        </Button>
+
+                                                        <Button
+                                                            variant="outline"
+                                                            colorScheme="white"
+                                                            borderRadius="37px"
+                                                            onClick={() =>
+                                                                openModal(
+                                                                    order.id
+                                                                )
+                                                            }
+                                                        >
+                                                            Request Cancellation
+                                                        </Button>
+                                                    </Flex>
+                                                ) : null}
                                             </Flex>
 
                                             {/* Collapsible Section */}
@@ -482,7 +473,7 @@ const Processing = ({
                                                                                 //         hour12: true,
                                                                                 //     }
                                                                                 // )}`,
-                                                                                paymentDetails: `Paid with ${item.currency_code.toUpperCase()}. Total payment: ${getAmount(item.unit_price, item.currency_code)} ${item.currency_code.toUpperCase()}`,
+                                                                                paymentDetails: `Paid with ${item.currency_code.toUpperCase()}. Total payment: ${getAmount(totalPrice, item.currency_code)} ${item.currency_code.toUpperCase()}`,
                                                                                 // receiptLink:
                                                                                 //     'View receipt',
                                                                             },
@@ -659,22 +650,22 @@ const Processing = ({
                                                                                     }
                                                                                 </Text>
                                                                             </Box>
-                                                                            <Box>
-                                                                                <Text
-                                                                                    fontSize="sm"
-                                                                                    color="gray.400"
-                                                                                >
-                                                                                    Item
-                                                                                    ID:
-                                                                                </Text>
-                                                                                <Flex flexWrap="wrap">
-                                                                                    <Text fontWeight="bold">
-                                                                                        {
-                                                                                            item.id
-                                                                                        }
-                                                                                    </Text>
-                                                                                </Flex>
-                                                                            </Box>
+                                                                            {/*<Box>*/}
+                                                                            {/*    <Text*/}
+                                                                            {/*        fontSize="sm"*/}
+                                                                            {/*        color="gray.400"*/}
+                                                                            {/*    >*/}
+                                                                            {/*        Item*/}
+                                                                            {/*        ID:*/}
+                                                                            {/*    </Text>*/}
+                                                                            {/*    <Flex flexWrap="wrap">*/}
+                                                                            {/*        <Text fontWeight="bold">*/}
+                                                                            {/*            {*/}
+                                                                            {/*                item.id*/}
+                                                                            {/*            }*/}
+                                                                            {/*        </Text>*/}
+                                                                            {/*    </Flex>*/}
+                                                                            {/*</Box>*/}
                                                                             <Box>
                                                                                 <Text
                                                                                     fontSize="sm"
