@@ -368,7 +368,6 @@ export default class OrderService extends MedusaOrderService {
         customerId: string,
         bucketType: OrderBucketType
     ): Promise<Order[]> {
-        console.log(`CART ID IS ${cart_id}`);
         switch (bucketType) {
             case OrderBucketType.PROCESSING:
                 return this.getCustomerOrdersByStatus(customerId, {
