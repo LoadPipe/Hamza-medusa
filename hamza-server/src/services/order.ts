@@ -366,20 +366,15 @@ export default class OrderService extends MedusaOrderService {
 
     async getCustomerOrderBucket(
         customerId: string,
-        bucketType: OrderBucketType,
-        cart_id?: string | null
+        bucketType: OrderBucketType
     ): Promise<Order[]> {
         console.log(`CART ID IS ${cart_id}`);
         switch (bucketType) {
             case OrderBucketType.PROCESSING:
-                return this.getCustomerOrdersByStatus(
-                    customerId,
-                    {
-                        fulfillmentStatus: FulfillmentStatus.NOT_FULFILLED,
-                        orderStatus: OrderStatus.PENDING,
-                    },
-                    cart_id
-                );
+                return this.getCustomerOrdersByStatus(customerId, {
+                    fulfillmentStatus: FulfillmentStatus.NOT_FULFILLED,
+                    orderStatus: OrderStatus.PENDING,
+                });
             case OrderBucketType.SHIPPED:
                 return this.getCustomerOrdersByStatus(customerId, {
                     fulfillmentStatus: FulfillmentStatus.SHIPPED,
@@ -725,13 +720,10 @@ export default class OrderService extends MedusaOrderService {
             orderStatus?: OrderStatus;
             paymentStatus?: PaymentStatus;
             fulfillmentStatus?: FulfillmentStatus;
-        },
-        cart_id?: string
+        }
     ): Promise<Order[]> {
-        console.log(`$$$$$$$ CART ${cart_id}`);
         const where: {
             customer_id: string;
-            cart_id?: string;
             status?: any;
             payment_status?: any;
             fulfillment_status?: any;
@@ -741,11 +733,6 @@ export default class OrderService extends MedusaOrderService {
                 In([OrderStatus.ARCHIVED, OrderStatus.REQUIRES_ACTION])
             ),
         };
-
-        if (cart_id) {
-            console.log(`$$$$$$ CART ID SHOWING UP`);
-            where.cart_id = cart_id;
-        }
 
         if (statusParams.orderStatus) {
             where.status = statusParams.orderStatus;

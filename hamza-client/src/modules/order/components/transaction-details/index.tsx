@@ -21,6 +21,7 @@ type ExtendedLineItem = LineItem & {
 const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
     const { tax_total, shipping_total } = data;
 
+    console.log(`Shipping Total ${shipping_total}`);
     //console.log('user preferred currency code: ', preferred_currency_code);
 
     //TODO: this can be replaced later by extending the cart, if necessary
