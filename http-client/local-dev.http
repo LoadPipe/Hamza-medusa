@@ -462,3 +462,8 @@ Content-Type: application/json
 
 ### Get vendor from order?
 GET http://localhost:9000/custom/order/store?order_id=order_01J9R821KNNRRS9EWSV2CFW2MH
+Content-Type: application/json
+
+
+
+
