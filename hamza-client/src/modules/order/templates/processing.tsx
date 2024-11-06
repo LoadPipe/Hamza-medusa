@@ -172,7 +172,7 @@ const Processing = ({
     if (isEmpty && processingOrder?.length === 0) {
         return <EmptyState />;
     }
-
+    let shipmentStatus = 'Shipment Status: ';
     return (
         <div style={{ width: '100%' }}>
             {processingOrdersLoading ? (
@@ -218,6 +218,12 @@ const Processing = ({
                                 acc + item.unit_price * item.quantity,
                             0
                         );
+
+                        if (order.fulfillment_status == 'not_fulfilled') {
+                            shipmentStatus = 'Shipment Status: Not Fulfilled';
+                        } else {
+                            shipmentStatus += order.fulfillment_status; // Use the status if it's not 'not_fulfilled'
+                        }
                         return (
                             <div key={order.id}>
                                 {order.items?.map(
@@ -391,7 +397,7 @@ const Processing = ({
                                                                         {/* Example timeline event */}
                                                                         {[
                                                                             {
-                                                                                status: `Shipment Status:  ${order.fulfillment_status}`,
+                                                                                status: `${shipmentStatus}`,
                                                                                 date: order
                                                                                     .bucky_metadata
                                                                                     ?.tracking
