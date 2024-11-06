@@ -420,23 +420,31 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         type="email"
                                         title="Enter a valid email address."
                                         autoComplete="email"
-                                        color={'white'}
+                                        color="white"
                                         _placeholder={{ color: 'white' }}
                                         value={
-                                            formData.email.includes(
-                                                '@evm.blockchain'
-                                            )
-                                                ? ''
-                                                : formData.email
+                                            formData.email
+                                                ? formData.email
+                                                : customer?.email?.includes(
+                                                        '@evm.blockchain'
+                                                    )
+                                                  ? ''
+                                                  : customer?.email || ''
                                         }
                                         onChange={handleChange}
                                         maxLength={50}
-                                        placeholder="Email"
-                                        height={'50px'}
-                                        fontSize={'14px'}
-                                        bgColor={'#040404'}
+                                        placeholder={
+                                            customer?.email?.includes(
+                                                '@evm.blockchain'
+                                            )
+                                                ? 'Email'
+                                                : customer?.email || 'Email'
+                                        }
+                                        height="50px"
+                                        fontSize="14px"
+                                        bgColor="#040404"
                                         borderWidth={0}
-                                        borderRadius={'12px'}
+                                        borderRadius="12px"
                                     />
                                 </FormControl>
                             </Flex>
