@@ -234,7 +234,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             console.log('white list config ', whitelist_config);
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                    whitelist_config.whitelisted_stores.includes(data.data)
+                whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -529,6 +529,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 <QuantityButton />
 
                 <Button
+                    display={{ base: 'none', md: 'flex' }}
                     onClick={async () => {
                         if (isLoading || isNavigating) return; // Prevent SPAMMING the button
 
@@ -572,6 +573,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 )}
 
                 <Button
+                    display={{ base: 'none', md: 'flex' }}
                     disabled={!inStock && !isWhitelisted}
                     onClick={() => {
                         if (!inStock && isWhitelisted) {
@@ -604,8 +606,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     {!inStock && isWhitelisted
                         ? 'Add to cart'
                         : inStock
-                            ? 'Add to Cart'
-                            : 'Out of Stock'}
+                          ? 'Add to Cart'
+                          : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs text-white px-4 py-2">
@@ -616,8 +618,97 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 <Divider
                     color="#555555"
                     display={{ base: 'block', md: 'none' }}
-                    mt="2rem"
+                    mt="1rem"
                 />
+
+                {/* Mobile Sticky Footer */}
+                <Flex
+                    mx="-1rem"
+                    gap={2}
+                    flexDirection={'row'}
+                    position="fixed"
+                    bottom="0"
+                    height="70px"
+                    width="100%"
+                    padding="2"
+                    backgroundColor="black"
+                    zIndex="10"
+                    display={{ base: 'flex', md: 'none' }} // Only show on mobile
+                >
+                    <Button
+                        disabled={!inStock && !isWhitelisted}
+                        onClick={() => {
+                            if (!inStock && isWhitelisted) {
+                                handleAddToCart();
+                                return;
+                            }
+                            if (inStock) {
+                                handleAddToCart();
+                                return;
+                            }
+                            if (!inStock && !isWhitelisted) {
+                                toast.error('Out of stock');
+                            }
+                        }}
+                        width={'100%'}
+                        borderRadius={'6px'}
+                        height={'50px'}
+                        borderWidth={'1px'}
+                        color="white"
+                        border="none"
+                        backgroundColor={'#121212'}
+                        data-cy="add-to-cart-button"
+                        fontSize={{ base: '12px', md: '18px' }}
+                        _hover={{
+                            color: 'black',
+                            bg: 'white',
+                            borderColor: 'white',
+                        }}
+                    >
+                        {!inStock && isWhitelisted
+                            ? 'Add to cart'
+                            : inStock
+                              ? 'Add to Cart'
+                              : 'Out of Stock'}
+                    </Button>
+
+                    <Button
+                        onClick={async () => {
+                            if (isLoading || isNavigating) return; // Prevent SPAMMING the button
+
+                            setIsLoading(true);
+
+                            try {
+                                if (!inStock && isWhitelisted) {
+                                    await handleAddToCart(false);
+                                    router.push('/checkout?step=address');
+                                    setIsNavigating(true);
+                                }
+                                if (inStock) {
+                                    await handleAddToCart(false);
+                                    router.push('/checkout?step=address');
+                                    setIsNavigating(true);
+                                }
+                                if (!inStock && !isWhitelisted) {
+                                    toast.error('Out of stock');
+                                }
+                            } catch (error) {
+                                console.error('Error adding to cart:', error);
+                            } finally {
+                                setIsLoading(false);
+                            }
+                        }}
+                        height={'50px'}
+                        width={'100%'}
+                        borderRadius={'60px'}
+                        backgroundColor={'primary.green.900'}
+                        disabled={isLoading} // Disable button while loading
+                        fontSize={{ base: '12px', md: '18px' }}
+                    >
+                        {isLoading ? <Spinner /> : 'Buy Now'}{' '}
+                        {/* Show spinner when loading */}
+                    </Button>
+                </Flex>
 
                 <CartPopup
                     open={cartModalOpen}
