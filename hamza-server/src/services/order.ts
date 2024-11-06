@@ -31,6 +31,8 @@ import { formatCryptoPrice } from '../utils/price-formatter';
 import OrderHistoryService from './order-history';
 import { OrderHistory } from 'src/models/order-history';
 import ShippingMethodRepository from '@medusajs/medusa/dist/repositories/shipping-method';
+import CartService from './cart';
+import CartRepository from '@medusajs/medusa/dist/repositories/cart';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
 // In medusa we have these 5 DEFAULT order.STATUS's {PENDING, COMPLETED, ARCHIVED, CANCELED, REQUIRES_ACTION}
@@ -55,11 +57,13 @@ export default class OrderService extends MedusaOrderService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
 
     protected lineItemService: LineItemService;
+    protected cartService: CartService;
     protected customerRepository_: typeof CustomerRepository;
     protected orderRepository_: typeof OrderRepository;
     protected lineItemRepository_: typeof LineItemRepository;
     protected productRepository_: typeof ProductRepository;
     protected paymentRepository_: typeof PaymentRepository;
+    protected cartRepository_: typeof CartRepository;
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly buckyLogRepository_: typeof BuckyLogRepository;
@@ -72,6 +76,8 @@ export default class OrderService extends MedusaOrderService {
 
     constructor(container) {
         super(container);
+        this.cartService = container.cartService;
+        this.cartRepository_ = container.cartRepository;
         this.orderRepository_ = container.orderRepository;
         this.customerRepository_ = container.customerRepository;
         this.storeRepository_ = container.storeRepository;
@@ -129,7 +135,7 @@ export default class OrderService extends MedusaOrderService {
             await Promise.all([...lineItemPromise]);
 
             //update the cart
-            cart.completed_at = new Date();
+            //cart.completed_at = new Date();
             // await this.cartService_.update(cart.id, cart);
 
             return order;
@@ -257,6 +263,12 @@ export default class OrderService extends MedusaOrderService {
                 orders[n >= orders.length ? orders.length - 1 : n].id;
         }
 
+        //set cart completion date
+        const cart = await this.cartRepository_.findOne({
+            where: { id: cartId },
+        });
+        cart.completed_at = new Date();
+
         //execute all promises
         try {
             await Promise.all([
@@ -265,6 +277,8 @@ export default class OrderService extends MedusaOrderService {
                 ...orderPromises,
                 this.shippingMethodRepository_.save(shippingMethods),
             ]);
+
+            await this.cartRepository_.save(cart);
         } catch (e) {
             this.logger.error(`Error updating orders/payments: ${e}`);
         }
