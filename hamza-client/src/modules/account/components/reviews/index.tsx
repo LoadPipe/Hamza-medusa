@@ -11,6 +11,7 @@ import {
     Flex,
     Button,
     Image,
+    Divider,
 } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { getAllProductReviews, getNotReviewedOrders } from '@lib/data';
@@ -187,7 +188,6 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                     flexDirection="column"
                                     width="100%"
                                     key={review.id}
-                                    my={'20px'}
                                 >
                                     <Flex
                                         direction={'row'}
@@ -319,6 +319,15 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                     >
                                         {review.content}
                                     </Text>
+                                    <Divider
+                                        my={'20px'}
+                                        width="100%" // Line takes up 90% of the screen width
+                                        borderBottom="0.2px solid"
+                                        borderColor="#D9D9D9"
+                                        _last={{
+                                            mb: 8,
+                                        }}
+                                    />
                                 </Flex>
                             ))}
                         </Flex>
@@ -363,7 +372,6 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                         flexDirection="column"
                                         width="100%"
                                         key={review.id}
-                                        my="20px"
                                     >
                                         <Flex
                                             flexDirection="row"
@@ -390,10 +398,12 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                         </Flex>
 
                                         <Flex
-                                            flexDirection="row"
+                                            flexDirection={{
+                                                base: 'column',
+                                                md: 'row',
+                                            }}
                                             width="100%"
                                             alignItems="center"
-                                            border="5px solid green"
                                         >
                                             <Flex
                                                 flexDirection={'row'}
@@ -467,13 +477,15 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                 justifyContent="flex-end"
                                             >
                                                 <Flex
-                                                    my="10px"
                                                     ml="auto"
                                                     flexDirection="row"
                                                     alignItems="center"
                                                     gap={1.5}
                                                     width="100%"
-                                                    justifyContent="flex-end"
+                                                    justifyContent={{
+                                                        md: 'flex-end',
+                                                    }}
+                                                    mt={{ base: '16px', md: 0 }}
                                                 >
                                                     <Link
                                                         href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/store/${review?.store?.name}`}
@@ -506,7 +518,10 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                 </Flex>
 
                                                 <Flex
-                                                    flexDirection="row"
+                                                    flexDirection={{
+                                                        base: 'column',
+                                                        md: 'row',
+                                                    }}
                                                     width="100%"
                                                     mt="16px"
                                                 >
@@ -518,7 +533,10 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                             )
                                                         }
                                                         variant="outline"
-                                                        ml="auto"
+                                                        ml={{
+                                                            base: 0,
+                                                            md: 'auto',
+                                                        }}
                                                         colorScheme="white"
                                                         borderRadius="37px"
                                                         cursor="pointer"
@@ -536,6 +554,15 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                 </Flex>
                                             </Flex>
                                         </Flex>
+                                        <Divider
+                                            my={'20px'}
+                                            width="100%" // Line takes up 90% of the screen width
+                                            borderBottom="0.2px solid"
+                                            borderColor="#D9D9D9"
+                                            _last={{
+                                                mb: 8,
+                                            }}
+                                        />
                                     </Flex>
                                 ))
                             )}
