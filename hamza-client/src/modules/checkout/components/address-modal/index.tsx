@@ -90,7 +90,11 @@ const AddressModal: React.FC<AddressModalProps> = ({
                         cart.shipping_address.country_code || countryCode || '',
                     'shipping_address.province':
                         cart.shipping_address.province || '',
-                    email: cart.email || '',
+                    email: cart?.email
+                        ? cart.email
+                        : customer?.email?.includes('evm')
+                          ? ''
+                          : customer?.email || '',
                     'shipping_address.phone': cart.shipping_address.phone || '',
                 }));
             }
@@ -420,31 +424,17 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         type="email"
                                         title="Enter a valid email address."
                                         autoComplete="email"
-                                        color="white"
+                                        color={'white'}
                                         _placeholder={{ color: 'white' }}
-                                        value={
-                                            formData.email
-                                                ? formData.email
-                                                : customer?.email?.includes(
-                                                        '@evm.blockchain'
-                                                    )
-                                                  ? ''
-                                                  : customer?.email || ''
-                                        }
+                                        value={formData.email}
+                                        placeholder="Email"
                                         onChange={handleChange}
                                         maxLength={50}
-                                        placeholder={
-                                            customer?.email?.includes(
-                                                '@evm.blockchain'
-                                            )
-                                                ? 'Email'
-                                                : customer?.email || 'Email'
-                                        }
-                                        height="50px"
-                                        fontSize="14px"
-                                        bgColor="#040404"
+                                        height={'50px'}
+                                        fontSize={'14px'}
+                                        bgColor={'#040404'}
                                         borderWidth={0}
-                                        borderRadius="12px"
+                                        borderRadius={'12px'}
                                     />
                                 </FormControl>
                             </Flex>
