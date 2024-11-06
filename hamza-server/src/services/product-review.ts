@@ -94,6 +94,7 @@ class ProductReviewService extends TransactionBaseService {
         const orders = await orderRepository
             .createQueryBuilder('order')
             .leftJoinAndSelect('order.items', 'item')
+            .leftJoinAndSelect('order.store', 'store')
             .leftJoinAndSelect('item.variant', 'variant')
             .leftJoinAndSelect('variant.product', 'product')
             .where('order.customer_id = :customer_id', { customer_id })

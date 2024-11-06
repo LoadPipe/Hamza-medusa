@@ -356,11 +356,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                             </Text>
                         </Flex>
                     ) : pendingReviewsQuery.data?.length > 0 ? (
-                        <Flex
-                            direction={'column'}
-                            width="100%"
-                            border={'1px solid green'}
-                        >
+                        <Flex direction={'column'} width="100%">
                             {pendingReviewsQuery.data.map((review: any) =>
                                 review.items.map((item: any) => (
                                     <Flex
@@ -368,7 +364,6 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                         width="100%"
                                         key={review.id}
                                         my="20px"
-                                        border="1px solid orange"
                                     >
                                         <Flex
                                             flexDirection="row"
@@ -376,16 +371,13 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                 base: '14px',
                                                 md: '16px',
                                             }}
-                                            pb={{ base: 2, md: 4 }}
-                                            gap={2}
-                                            border="3px solid purple"
+                                            pb={'16px'}
                                         >
                                             <Text
                                                 fontSize={{
                                                     base: '14px',
                                                     md: '16px',
                                                 }}
-                                                pb={{ base: 2, md: 4 }}
                                             >
                                                 <Text as="span" color="#555555">
                                                     Purchase Date:{' '}
@@ -398,15 +390,14 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                         </Flex>
 
                                         <Flex
-                                            flexDirection={{ base: 'row' }}
-                                            gap={4}
+                                            flexDirection="row"
+                                            width="100%"
+                                            alignItems="center"
+                                            border="5px solid green"
                                         >
                                             <Flex
-                                                flexDirection={{
-                                                    base: 'column',
-                                                    md: 'column',
-                                                }}
-                                                border="8px solid purple"
+                                                flexDirection={'row'}
+                                                width="100%"
                                             >
                                                 <Link
                                                     href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/products/${item.variant.product.handle}`}
@@ -422,64 +413,57 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                             md: '100px',
                                                         }}
                                                         src={item?.thumbnail}
+                                                        objectFit="cover"
                                                     />
                                                 </Link>
-                                            </Flex>
 
-                                            <Flex
-                                                flexDirection={{
-                                                    base: 'column',
-                                                }}
-                                                justifyContent="space-between"
-                                                flex="1"
-                                            >
                                                 <Flex
-                                                    flexDirection={{
-                                                        base: 'column',
-                                                        md: 'row',
-                                                    }}
-                                                    gap={2}
-                                                    border="8px solid brown"
+                                                    flexDirection="column"
+                                                    flex="1"
+                                                    width="100%"
+                                                    ml={'24px'}
                                                 >
                                                     <Text
                                                         fontSize={{
                                                             base: '14px',
                                                             md: '18px',
                                                         }}
-                                                        maxWidth="100%"
+                                                        pb={'12px'}
                                                         fontWeight="bold"
                                                         textTransform="uppercase"
                                                         whiteSpace="normal" // Allow text to wrap
+                                                        overflow="hidden" // Hide overflowed text
+                                                        textOverflow="ellipsis" // Add ellipsis for overflow
+                                                        textAlign="left" // Ensure title aligns properly with the variation
+                                                        width="100%" // Ensure title takes up full available width
                                                     >
                                                         {item?.title}
                                                     </Text>
-                                                </Flex>
-
-                                                <Flex
-                                                    direction="row"
-                                                    color="rgba(85, 85, 85, 1.0)"
-                                                    alignItems="center"
-                                                    gap={2}
-                                                >
-                                                    <Text
-                                                        fontSize="16px"
-                                                        mr={1}
+                                                    <Flex
+                                                        direction="row"
+                                                        color="rgba(85, 85, 85, 1.0)"
+                                                        alignItems="center"
+                                                        gap={2}
                                                     >
-                                                        Variation:
-                                                    </Text>
-                                                    <Text
-                                                        fontSize="16px"
-                                                        noOfLines={2}
-                                                    >
-                                                        {item?.description}
-                                                    </Text>
+                                                        <Text
+                                                            fontSize="16px"
+                                                            mr={1}
+                                                        >
+                                                            Variation:
+                                                        </Text>
+                                                        <Text
+                                                            fontSize="16px"
+                                                            noOfLines={2}
+                                                        >
+                                                            {item?.description}
+                                                        </Text>
+                                                    </Flex>
                                                 </Flex>
                                             </Flex>
 
                                             <Flex
                                                 flexDirection="column"
                                                 width="100%"
-                                                border="5px solid orange"
                                                 justifyContent="flex-end"
                                             >
                                                 <Flex
@@ -489,6 +473,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                     alignItems="center"
                                                     gap={1.5}
                                                     width="100%"
+                                                    justifyContent="flex-end"
                                                 >
                                                     <Link
                                                         href={`/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}/store/${review?.store?.name}`}
@@ -523,8 +508,10 @@ const ReviewPage = ({ customer }: { customer: any }) => {
                                                 <Flex
                                                     flexDirection="row"
                                                     width="100%"
+                                                    mt="16px"
                                                 >
                                                     <Button
+                                                        mr="24px"
                                                         onClick={() =>
                                                             handlePendingReview(
                                                                 review
