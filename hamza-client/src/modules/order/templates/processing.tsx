@@ -132,6 +132,19 @@ const Processing = ({
         }
     );
 
+    // Utility function to format status values
+    const formatStatus = (prefix: string, status: any) => {
+        if (!status) return `${prefix} Not Available`;
+
+        const formattedStatus = status
+            .replace(/_/g, ' ')
+            .split(' ')
+            .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+
+        return `${prefix} ${formattedStatus}`; // Return the final string with prefix
+    };
+
     const handleCancel = async () => {
         if (!cancelReason) {
             setIsAttemptedSubmit(true);
@@ -172,7 +185,6 @@ const Processing = ({
     if (isEmpty && processingOrder?.length === 0) {
         return <EmptyState />;
     }
-    let shipmentStatus = 'Shipment Status: ';
     return (
         <div style={{ width: '100%' }}>
             {processingOrdersLoading ? (
@@ -219,11 +231,6 @@ const Processing = ({
                             0
                         );
 
-                        if (order.fulfillment_status == 'not_fulfilled') {
-                            shipmentStatus = 'Shipment Status: Not Fulfilled';
-                        } else {
-                            shipmentStatus += order.fulfillment_status; // Use the status if it's not 'not_fulfilled'
-                        }
                         return (
                             <div key={order.id}>
                                 {order.items?.map(
@@ -397,7 +404,7 @@ const Processing = ({
                                                                         {/* Example timeline event */}
                                                                         {[
                                                                             {
-                                                                                status: `${shipmentStatus}`,
+                                                                                status: `${formatStatus('Shipment Status:', order.fulfillment_status)}`,
                                                                                 date: order
                                                                                     .bucky_metadata
                                                                                     ?.tracking
@@ -447,7 +454,7 @@ const Processing = ({
                                                                             //         'DHL Express',
                                                                             // },
                                                                             {
-                                                                                status: `Order Confirmation: \t ${order.status}`,
+                                                                                status: `${formatStatus('Order Confirmation:', order.status)}`,
                                                                                 // date: `${new Date(
                                                                                 //     order.created_at
                                                                                 // ).toLocaleDateString(
@@ -464,7 +471,7 @@ const Processing = ({
                                                                                 // )}`,
                                                                             },
                                                                             {
-                                                                                status: `Payment Status: \t${order.payment_status}`,
+                                                                                status: `${formatStatus('Payment Status:', order.payment_status)}`,
                                                                                 // date: `${new Date(
                                                                                 //     order.created_at
                                                                                 // ).toLocaleDateString(
