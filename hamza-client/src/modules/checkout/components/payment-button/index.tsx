@@ -23,6 +23,8 @@ import toast from 'react-hot-toast';
 import { getServerConfig } from '@lib/data/index';
 import { getClientCookie } from '@lib/util/get-client-cookies';
 import HamzaLogoLoader from '@/components/loaders/hamza-logo-loader';
+import { useCartStore } from '@/store/cart-store/cart-store';
+import Spinner from '@/modules/common/icons/spinner';
 
 //TODO: we need a global common function to replace this
 const MEDUSA_SERVER_URL =
@@ -68,6 +70,7 @@ const CryptoPaymentButton = ({
     const { openConnectModal } = useConnectModal();
     const { connector: activeConnector, isConnected } = useAccount();
     const { data: walletClient, isError } = useWalletClient();
+    const { isUpdating } = useCartStore();
     const router = useRouter();
     const { connect, connectors, error, isLoading, pendingConnector } =
         useConnect({
@@ -357,13 +360,13 @@ const CryptoPaymentButton = ({
     const disableButton =
         step !== 'review' ||
         isCartEmpty ||
-        isMissingAddress ||
-        isMissingShippingMethod;
+        isUpdating ||
+        (isMissingAddress && isMissingShippingMethod);
 
     const getButtonText = () => {
         if (isCartEmpty) return 'Add products to order';
         if (isMissingAddress) return 'Add address to order';
-        if (isMissingShippingMethod) return 'No shipping option selected';
+        if (isUpdating) return <Spinner />;
         return 'Confirm Order';
     };
 
@@ -408,6 +411,13 @@ const CryptoPaymentButton = ({
                         'Have patience with all things but first of all with yourself',
                         'It’s nice to be able to buy normal stuff with crypto',
                         'Hamza was born in 2024',
+                        'Reordering the punch-cards',
+                        'Hacking the Gibson',
+                        'Beuller.... Beuller',
+                        'Waking up and choosing crypto',
+                        '',
+                        'Let there be light',
+                        'dot dot dot',
                     ]}
                 />
             )}

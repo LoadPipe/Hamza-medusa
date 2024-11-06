@@ -45,17 +45,18 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         //make sure these are cast as numbers
         const upperPrice = handler.inputParams.price_hi ?? 0;
         const lowerPrice = handler.inputParams.price_lo ?? 0;
+        const currencyCode = handler.inputParams.currency_code ?? 'usdc';
+
+        console.log("LOW PRICE: ", lowerPrice);
 
         //call productService.getFilteredProducts to get the products, then return them
-        //HAD TO COMMENT OUT AND PASS ZEROS, BECAUSE FILTER WAS CAUSING SOME PRODUCTS TO NOT SHOW UP -JK (I can explain more)
         const products = await productService.getFilteredProducts(
             categories,
-            0, //upperPrice,
-            0, //lowerPrice
+            upperPrice,
+            lowerPrice,
+            currencyCode
         );
 
         return handler.returnStatus(200, { products }, 200);
     });
 };
-
-//1000000

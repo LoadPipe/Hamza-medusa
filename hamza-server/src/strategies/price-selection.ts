@@ -53,7 +53,7 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
 
         //get all relevant variants, including preferred currency (if any)
         return await this.getPricesForVariants(
-            data.map((d) => d.variantId), //variant ids
+            data.map((d) => d.variantId) //variant ids
             //preferredCurrency ?? 'usdc'
         );
     }
@@ -102,12 +102,10 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
         );
 
         //get the variant objects
-        const variants: ProductVariant[] = await variantPriceCache.retrieve(
-            {
-                ids: variantIds,
-                productVariantRepository: this.productVariantRepository_
-            }
-        );
+        const variants: ProductVariant[] = await variantPriceCache.retrieve({
+            ids: variantIds,
+            productVariantRepository: this.productVariantRepository_,
+        });
 
         //get the store
         const store: Store = variants[0].product.store;
@@ -141,13 +139,15 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
                 if (!prices.length) prices = v.prices;
             }*/
 
-            if (!prices.length)
-                throw new Error('Prices.length is zero');
+            if (!prices.length) throw new Error('Prices.length is zero');
 
             //gather and return the output
+            const price = prices.find(
+                (p) => p.currency_code === store.default_currency_code
+            );
             output.set(v.id, {
-                originalPrice: prices.length ? prices[0].amount : 0,
-                calculatedPrice: prices.length ? prices[0].amount : 0,
+                originalPrice: price?.amount ?? 0,
+                calculatedPrice: price?.amount ?? 0,
                 originalPriceIncludesTax: false,
                 prices: prices,
             });
@@ -159,7 +159,11 @@ export default class PriceSelectionStrategy extends AbstractPriceSelectionStrate
 
 class VariantPriceCache extends SeamlessCache {
     constructor() {
-        super(parseInt(process.env.VARIANT_PRICE_CACHE_EXPIRATION_SECONDS ?? '300'));
+        super(
+            parseInt(
+                process.env.VARIANT_PRICE_CACHE_EXPIRATION_SECONDS ?? '300'
+            )
+        );
     }
 
     async retrieve(params?: any): Promise<ProductVariant[]> {
@@ -168,20 +172,16 @@ class VariantPriceCache extends SeamlessCache {
         //choose a way of filtering that best fits the array lengths
         if (variants && params.ids) {
             if (variants.length > params.ids.length) {
-
-                //if short id list, this might be faster 
+                //if short id list, this might be faster
                 const outputVariants: ProductVariant[] = [];
                 for (let id of params.ids) {
-                    const variant = variants.find(v => v.id === id);
-                    if (variant)
-                        outputVariants.push(variant);
+                    const variant = variants.find((v) => v.id === id);
+                    if (variant) outputVariants.push(variant);
                 }
                 variants = outputVariants;
-            }
-            else {
-
+            } else {
                 //if short variants list, this might be better
-                variants = variants.filter(v => params.ids.includes(v.id));
+                variants = variants.filter((v) => params.ids.includes(v.id));
             }
         }
 
@@ -194,7 +194,6 @@ class VariantPriceCache extends SeamlessCache {
         });
     }
 }
-
 
 // GLOBAL CACHES
 const variantPriceCache: VariantPriceCache = new VariantPriceCache();

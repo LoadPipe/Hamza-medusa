@@ -127,7 +127,7 @@ export default class OrderService extends MedusaOrderService {
 
             //update the cart
             cart.completed_at = new Date();
-            await this.cartService_.update(cart.id, cart);
+            // await this.cartService_.update(cart.id, cart);
 
             return order;
         } catch (e) {
@@ -396,55 +396,6 @@ export default class OrderService extends MedusaOrderService {
         return [];
     }
 
-    //TODO: the return type of this is hard to work with
-    async orderSummary(cartId: string): Promise<{
-        cart: Cart;
-        items: any[];
-    }> {
-        const orders = (await this.orderRepository_.find({
-            where: {
-                cart_id: cartId,
-                status: Not(
-                    In([OrderStatus.ARCHIVED, OrderStatus.REQUIRES_ACTION])
-                ),
-            },
-            relations: ['cart.items.variant.product', 'store.owner'],
-        })) as Order[];
-
-        const products = [];
-        let cart: Cart = null;
-
-        console.log('***** ORDER ******', orders);
-        orders.forEach((order) => {
-            cart = order.cart;
-            order.cart.items.forEach((item) => {
-                const product = {
-                    ...item.variant.product,
-                    order_id: order.id,
-                    store_name: order.store.name, // Add store.name to the product
-                    currency_code: item.currency_code,
-                    unit_price: item.unit_price,
-                };
-                products.push(product);
-            });
-        });
-
-        const seen = new Set();
-        const items = [];
-
-        for (const item of products) {
-            if (!seen.has(item.id)) {
-                seen.add(item.id);
-                items.push(item);
-            }
-        }
-
-        return {
-            cart,
-            items,
-        };
-    }
-
     async getNotReviewedOrders(customer_id: string) {
         const orderRepository = this.activeManager_.getRepository(Order);
         const notReviewedOrders = await orderRepository
@@ -557,9 +508,9 @@ export default class OrderService extends MedusaOrderService {
 
         return relevantItems?.length
             ? {
-                variants: relevantItems.map((i) => i.variant),
-                quantities: relevantItems.map((i) => i.quantity),
-            }
+                  variants: relevantItems.map((i) => i.variant),
+                  quantities: relevantItems.map((i) => i.quantity),
+              }
             : { variants: [], quantities: [] };
     }
 
@@ -629,7 +580,7 @@ export default class OrderService extends MedusaOrderService {
                     : null;
             const to_fulfillment_status: FulfillmentStatus | null =
                 fulfillmentStatus &&
-                    order.fulfillment_status != fulfillmentStatus
+                order.fulfillment_status != fulfillmentStatus
                     ? fulfillmentStatus
                     : null;
 
