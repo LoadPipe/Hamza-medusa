@@ -30,6 +30,7 @@ import CustomerNotificationService from './customer-notification';
 import { formatCryptoPrice } from '../utils/price-formatter';
 import OrderHistoryService from './order-history';
 import { OrderHistory } from 'src/models/order-history';
+import ShippingMethodRepository from '@medusajs/medusa/dist/repositories/shipping-method';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
 // In medusa we have these 5 DEFAULT order.STATUS's {PENDING, COMPLETED, ARCHIVED, CANCELED, REQUIRES_ACTION}
@@ -62,6 +63,7 @@ export default class OrderService extends MedusaOrderService {
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly buckyLogRepository_: typeof BuckyLogRepository;
+    protected readonly shippingMethodRepository_: typeof ShippingMethodRepository;
     protected customerNotificationService_: CustomerNotificationService;
     protected smtpMailService_: SmtpMailService = new SmtpMailService();
     protected orderHistoryService_: OrderHistoryService;
@@ -76,6 +78,7 @@ export default class OrderService extends MedusaOrderService {
         this.lineItemRepository_ = container.lineItemRepository;
         this.paymentRepository_ = container.paymentRepository;
         this.productRepository_ = container.productRepository;
+        this.shippingMethodRepository_ = container.shippingMethodRepository;
         this.productVariantRepository_ = container.productVariantRepository;
         this.customerNotificationService_ =
             container.customerNotificationService;
@@ -240,12 +243,19 @@ export default class OrderService extends MedusaOrderService {
         //calls to update orders
         const orderPromises = this.getPostCheckoutUpdateOrderPromises(orders);
 
-        await this.eventBus_.emit('order.placed', {
-            customerId: orders[0].customer_id,
-            orderIds: orderIds,
-            orderId: orderIds[0],
-            ...orders[0],
+        //TODO: all of the following should be in a transaction
+        const shippingMethods = await this.shippingMethodRepository_.find({
+            where: { cart_id: cartId },
         });
+
+        //apply shipping methods to orders
+        //TODO: the problem here is if there is 1 shipping method, but multiple orders
+        // then we'll need to create duplicate shipping methods, one for each order
+        let n = 0;
+        for (let shippingMethod of shippingMethods) {
+            shippingMethod.order_id =
+                orders[n >= orders.length ? orders.length - 1 : n].id;
+        }
 
         //execute all promises
         try {
@@ -253,10 +263,19 @@ export default class OrderService extends MedusaOrderService {
                 //...inventoryPromises,
                 ...paymentPromises,
                 ...orderPromises,
+                this.shippingMethodRepository_.save(shippingMethods),
             ]);
         } catch (e) {
             this.logger.error(`Error updating orders/payments: ${e}`);
         }
+
+        //emit event
+        await this.eventBus_.emit('order.placed', {
+            customerId: orders[0].customer_id,
+            orderIds: orderIds,
+            orderId: orderIds[0],
+            ...orders[0],
+        });
 
         return orders;
     }
