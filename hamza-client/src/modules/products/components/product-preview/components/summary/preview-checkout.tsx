@@ -25,6 +25,7 @@ import useWishlistStore, {
     WishlistProduct,
 } from '@store/wishlist/wishlist-store';
 import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
+import { MdOutlineShoppingCart } from 'react-icons/md';
 
 interface PreviewCheckoutProps {
     productId: string;
@@ -658,18 +659,26 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         border="none"
                         backgroundColor={'#121212'}
                         data-cy="add-to-cart-button"
-                        fontSize={{ base: '12px', md: '18px' }}
+                        fontSize={'12px'}
                         _hover={{
                             color: 'black',
                             bg: 'white',
                             borderColor: 'white',
                         }}
                     >
-                        {!inStock && isWhitelisted
-                            ? 'Add to cart'
-                            : inStock
-                              ? 'Add to Cart'
-                              : 'Out of Stock'}
+                        <Flex
+                            flexDir={'column'}
+                            justifyContent={'center'}
+                            alignItems={'center'}
+                        >
+                            <MdOutlineShoppingCart size={14} />
+
+                            {!inStock && isWhitelisted
+                                ? 'Add to cart'
+                                : inStock
+                                  ? 'Add to Cart'
+                                  : 'Out of Stock'}
+                        </Flex>
                     </Button>
 
                     <Button
@@ -705,8 +714,38 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         disabled={isLoading} // Disable button while loading
                         fontSize={{ base: '12px', md: '18px' }}
                     >
-                        {isLoading ? <Spinner /> : 'Buy Now'}{' '}
-                        {/* Show spinner when loading */}
+                        {isLoading ? (
+                            <Spinner />
+                        ) : (
+                            <Flex flexDir={'column'}>
+                                <Text fontSize={'12px'}>Buy Now</Text>
+                                <Flex flexDir={'row'}>
+                                    <Image
+                                        className="h-[14px] w-[14px] md:h-[24px!important] md:w-[24px!important] self-center mr-1"
+                                        src={
+                                            currencyIcons[
+                                                preferred_currency_code ??
+                                                    'usdc'
+                                            ]
+                                        }
+                                        alt={
+                                            preferred_currency_code?.toUpperCase() ??
+                                            'USDC'
+                                        }
+                                    />
+                                    <Text
+                                        alignSelf={'center'}
+                                        fontSize={'14px'}
+                                        color="black"
+                                    >
+                                        {formatCryptoPrice(
+                                            parseFloat(selectedPrice!),
+                                            preferred_currency_code ?? 'usdc'
+                                        )}
+                                    </Text>
+                                </Flex>
+                            </Flex>
+                        )}
                     </Button>
                 </Flex>
 
