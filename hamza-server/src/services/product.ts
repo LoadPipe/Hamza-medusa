@@ -77,7 +77,10 @@ class ProductService extends MedusaProductService {
         this.cacheExchangeRateRepository =
             container.cachedExchangeRateRepository;
         this.customerService_ = container.customerService;
-        this.priceConverter_ = new PriceConverter(this.logger, this.cacheExchangeRateRepository);
+        this.priceConverter_ = new PriceConverter(
+            this.logger,
+            this.cacheExchangeRateRepository
+        );
     }
 
     async updateProduct(
@@ -164,10 +167,6 @@ class ProductService extends MedusaProductService {
 
             // URL of the Meilisearch API
             const url = 'http://localhost:7700/indexes/products/documents';
-
-            console.log(
-                `Sending ${cleanProducts.length} products to be indexed.`
-            );
 
             // Send products to be indexed
             const indexResponse = await axios.post(url, cleanProducts, config);
@@ -568,10 +567,21 @@ class ProductService extends MedusaProductService {
 
             if (filterCurrencyCode === 'eth') {
                 const factor = Math.pow(10, getCurrencyPrecision('usdc').db);
-                upperPrice = await this.priceConverter_.convertPrice(upperPrice * factor, 'usdc', 'eth');
-                lowerPrice = await this.priceConverter_.convertPrice(lowerPrice * factor, 'usdc', 'eth');
+                upperPrice = await this.priceConverter_.convertPrice(
+                    upperPrice * factor,
+                    'usdc',
+                    'eth'
+                );
+                lowerPrice = await this.priceConverter_.convertPrice(
+                    lowerPrice * factor,
+                    'usdc',
+                    'eth'
+                );
             } else {
-                const factor = Math.pow(10, getCurrencyPrecision(filterCurrencyCode).db);
+                const factor = Math.pow(
+                    10,
+                    getCurrencyPrecision(filterCurrencyCode).db
+                );
                 upperPrice = upperPrice * factor;
                 lowerPrice = lowerPrice * factor;
             }
@@ -776,15 +786,23 @@ class ProductFilterCache extends SeamlessCache {
 
         if (params.upperPrice !== 0 && params.lowerPrice >= 0) {
             products = products.filter((product) => {
-                const price = product.variants[0]?.prices.find(p => p.currency_code === params.filterCurrencyCode)?.amount ?? 0;
-                console.log(params.lowerPrice, price, params.upperPrice);
+                const price =
+                    product.variants[0]?.prices.find(
+                        (p) => p.currency_code === params.filterCurrencyCode
+                    )?.amount ?? 0;
                 return price >= params.lowerPrice && price <= params.upperPrice;
             });
 
             // Sort the products by price (assuming the price is in the first variant and the first price in each variant)
             products = products.sort((a, b) => {
-                const priceA = a.variants[0]?.prices.find(p => p.currency_code === params.filterCurrencyCode)?.amount ?? 0;
-                const priceB = b.variants[0]?.prices.find(p => p.currency_code === params.filterCurrencyCode)?.amount ?? 0;
+                const priceA =
+                    a.variants[0]?.prices.find(
+                        (p) => p.currency_code === params.filterCurrencyCode
+                    )?.amount ?? 0;
+                const priceB =
+                    b.variants[0]?.prices.find(
+                        (p) => p.currency_code === params.filterCurrencyCode
+                    )?.amount ?? 0;
                 return priceA - priceB; // Ascending order
             });
         }
@@ -795,7 +813,6 @@ class ProductFilterCache extends SeamlessCache {
     protected async getData(params: any): Promise<any> {
         let products: Product[] = [];
 
-        console.log('params', params);
         //get categories from cache
         const productCategories = await categoryCache.retrieve(
             params.categoryRepository
