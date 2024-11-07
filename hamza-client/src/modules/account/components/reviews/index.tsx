@@ -98,10 +98,12 @@ const ReviewPage = ({ customer }: { customer: any }) => {
 
     const handleReviewUpdated = async () => {
         await queryClient.resetQueries(['reviewQuery', customer_id]);
+        await queryClient.invalidateQueries(['homeProducts']);
     };
 
     const handlePendingUpdated = async () => {
         await pendingReviewsQuery.refetch();
+        await queryClient.invalidateQueries(['homeProducts']);
     };
 
     const handleReviewEdit = (review: any) => {
