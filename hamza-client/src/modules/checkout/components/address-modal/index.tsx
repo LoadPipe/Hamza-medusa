@@ -124,9 +124,18 @@ const AddressModal: React.FC<AddressModalProps> = ({
             HTMLInputElement | HTMLInputElement | HTMLSelectElement
         >
     ) => {
+        console.log(e.target.value);
         setFormData({
             ...formData,
             [e.target.name]: e.target.value,
+        });
+    };
+
+    const handleCountrySearch = (value: any) => {
+        console.log('search value', value);
+        setFormData({
+            ...formData,
+            'shipping_address.country_code': value,
         });
     };
 
@@ -372,6 +381,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                             ]
                                         }
                                         onChange={handleChange}
+                                        onSearch={handleCountrySearch}
                                         required
                                     />
                                 </FormControl>
