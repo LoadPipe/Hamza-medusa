@@ -106,6 +106,9 @@ const colors = {
             50: '#F2F2F2', // lightest
         },
     },
+    switchBackground: {
+        500: '#4b5669', // switch background color
+    }
 };
 
 const disabledStyles = {
