@@ -1,5 +1,6 @@
 import { ChevronUpDown } from '@medusajs/icons';
 import { clx } from '@medusajs/ui';
+import { Flex } from '@chakra-ui/react';
 import {
     SelectHTMLAttributes,
     forwardRef,
@@ -18,7 +19,7 @@ export type NativeSelectProps = {
     placeholder?: string;
     errors?: Record<string, unknown>;
     touched?: Record<string, unknown>;
-    countryOption: CountryOption[];
+    countryOption?: CountryOption[] | [];
     onSearch?: (value: string) => void;
 } & SelectHTMLAttributes<HTMLSelectElement>;
 
@@ -54,7 +55,7 @@ const NativeSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
         }, [innerRef.current?.value]);
 
         // Filter options based on the query
-        const filteredOptions = countryOption.filter((option) =>
+        const filteredOptions = (countryOption ?? []).filter((option) =>
             option.label.toLowerCase().includes(query.toLowerCase())
         );
 
@@ -72,13 +73,17 @@ const NativeSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
 
         return (
             <div>
-                <div
+                <Flex
                     style={{
                         backgroundColor: '#020202',
                         borderColor: '#555555',
+                        height: '50px',
+                        borderWidth: 0,
+                        borderRadius: '12px',
+                        width: '100%',
                     }}
                     className={clx(
-                        'relative flex items-center text-base-regular border border-ui-border-base bg-ui-bg-subtle rounded-md',
+                        'relative flex items-center text-base-regular border border-ui-border-base bg-ui-bg-subtle',
                         className,
                         {
                             'text-ui-fg-muted': isPlaceholder,
@@ -91,10 +96,11 @@ const NativeSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
                         style={{
-                            color: '#555555',
+                            color: 'white',
                             width: '150px', // Set a reasonable width for the input
                             minWidth: '150px', // Ensure the input does not shrink
                             padding: '8px',
+                            paddingLeft: '1rem',
                         }}
                         className="bg-transparent border-none outline-none"
                     />
@@ -107,7 +113,7 @@ const NativeSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
                             minWidth: '200px', // Minimum width to accommodate long country names
                             padding: '8px',
                         }}
-                        className="appearance-none flex-1 bg-transparent border-none transition-colors duration-150 outline-none"
+                        className="appearance-none border-l-white flex-1 bg-transparent  transition-colors duration-150 outline-none"
                     >
                         <option disabled value="">
                             {placeholder}
@@ -119,9 +125,9 @@ const NativeSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
                         ))}
                     </select>
                     <span className="absolute right-4 inset-y-0 flex items-center pointer-events-none">
-                        <ChevronUpDown />
+                        <ChevronUpDown color="white" />
                     </span>
-                </div>
+                </Flex>
             </div>
         );
     }
