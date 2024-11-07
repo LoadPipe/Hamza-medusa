@@ -2,7 +2,6 @@
 
 import { Box, Text } from '@chakra-ui/react';
 import { keyframes } from '@emotion/react';
-
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import HamzaLogoBlack from '../../../../public/images/logo/hamza-logo-black.svg'; // Ensure this is a transparent image

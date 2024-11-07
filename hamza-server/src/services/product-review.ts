@@ -88,10 +88,13 @@ class ProductReviewService extends TransactionBaseService {
         const productReviewRepository =
             this.activeManager_.getRepository(ProductReview);
 
+        console.log(`$$$$$$$$$$$$$$$$$$$$$$$$$$$$`);
+
         // Fetch all non-archived and non-canceled orders for the customer
         const orders = await orderRepository
             .createQueryBuilder('order')
             .leftJoinAndSelect('order.items', 'item')
+            .leftJoinAndSelect('order.store', 'store')
             .leftJoinAndSelect('item.variant', 'variant')
             .leftJoinAndSelect('variant.product', 'product')
             .where('order.customer_id = :customer_id', { customer_id })
@@ -116,6 +119,8 @@ class ProductReviewService extends TransactionBaseService {
         if (orders.length === 0) {
             return [];
         }
+
+        console.log(`ALL ORDERS ${JSON.stringify(orders)}`);
 
         // Fetch all reviewed product IDs for the customer
         const reviewedProducts = await productReviewRepository
