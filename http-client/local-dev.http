@@ -385,7 +385,7 @@ Content-Type: application/json
 
 
 ### Get Single BUCKET
-GET http://localhost:9000/custom/order/customer-order?customer_id=cus_01J8MD5FK7AT7CRHCXGNVXTB54&bucket=4
+GET http://localhost:9000/custom/order/customer-order?customer_id=cus_01JBJXE06Q3HN9PHKWNJZPY91V&bucket=1&cart_id=cart_01JBVFFFQRC3SKCF1DT6XRF443
 
 ### PUT cart_id to payment_session record 
 PUT http://localhost:9000/custom/payment-session
@@ -463,3 +463,8 @@ Content-Type: application/json
 
 ### Get vendor from order?
 GET http://localhost:9000/custom/order/store?order_id=order_01J9R821KNNRRS9EWSV2CFW2MH
+Content-Type: application/json
+
+
+
+

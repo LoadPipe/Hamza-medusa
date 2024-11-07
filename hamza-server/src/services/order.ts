@@ -30,6 +30,9 @@ import CustomerNotificationService from './customer-notification';
 import { formatCryptoPrice } from '../utils/price-formatter';
 import OrderHistoryService from './order-history';
 import { OrderHistory } from 'src/models/order-history';
+import ShippingMethodRepository from '@medusajs/medusa/dist/repositories/shipping-method';
+import CartService from './cart';
+import CartRepository from '@medusajs/medusa/dist/repositories/cart';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
 // In medusa we have these 5 DEFAULT order.STATUS's {PENDING, COMPLETED, ARCHIVED, CANCELED, REQUIRES_ACTION}
@@ -54,14 +57,17 @@ export default class OrderService extends MedusaOrderService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
 
     protected lineItemService: LineItemService;
+    protected cartService: CartService;
     protected customerRepository_: typeof CustomerRepository;
     protected orderRepository_: typeof OrderRepository;
     protected lineItemRepository_: typeof LineItemRepository;
     protected productRepository_: typeof ProductRepository;
     protected paymentRepository_: typeof PaymentRepository;
+    protected cartRepository_: typeof CartRepository;
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly buckyLogRepository_: typeof BuckyLogRepository;
+    protected readonly shippingMethodRepository_: typeof ShippingMethodRepository;
     protected customerNotificationService_: CustomerNotificationService;
     protected smtpMailService_: SmtpMailService = new SmtpMailService();
     protected orderHistoryService_: OrderHistoryService;
@@ -70,12 +76,15 @@ export default class OrderService extends MedusaOrderService {
 
     constructor(container) {
         super(container);
+        this.cartService = container.cartService;
+        this.cartRepository_ = container.cartRepository;
         this.orderRepository_ = container.orderRepository;
         this.customerRepository_ = container.customerRepository;
         this.storeRepository_ = container.storeRepository;
         this.lineItemRepository_ = container.lineItemRepository;
         this.paymentRepository_ = container.paymentRepository;
         this.productRepository_ = container.productRepository;
+        this.shippingMethodRepository_ = container.shippingMethodRepository;
         this.productVariantRepository_ = container.productVariantRepository;
         this.customerNotificationService_ =
             container.customerNotificationService;
@@ -126,7 +135,7 @@ export default class OrderService extends MedusaOrderService {
             await Promise.all([...lineItemPromise]);
 
             //update the cart
-            cart.completed_at = new Date();
+            //cart.completed_at = new Date();
             // await this.cartService_.update(cart.id, cart);
 
             return order;
@@ -240,12 +249,25 @@ export default class OrderService extends MedusaOrderService {
         //calls to update orders
         const orderPromises = this.getPostCheckoutUpdateOrderPromises(orders);
 
-        await this.eventBus_.emit('order.placed', {
-            customerId: orders[0].customer_id,
-            orderIds: orderIds,
-            orderId: orderIds[0],
-            ...orders[0],
+        //TODO: all of the following should be in a transaction
+        const shippingMethods = await this.shippingMethodRepository_.find({
+            where: { cart_id: cartId },
         });
+
+        //apply shipping methods to orders
+        //TODO: the problem here is if there is 1 shipping method, but multiple orders
+        // then we'll need to create duplicate shipping methods, one for each order
+        let n = 0;
+        for (let shippingMethod of shippingMethods) {
+            shippingMethod.order_id =
+                orders[n >= orders.length ? orders.length - 1 : n].id;
+        }
+
+        //set cart completion date
+        const cart = await this.cartRepository_.findOne({
+            where: { id: cartId },
+        });
+        cart.completed_at = new Date();
 
         //execute all promises
         try {
@@ -253,10 +275,21 @@ export default class OrderService extends MedusaOrderService {
                 //...inventoryPromises,
                 ...paymentPromises,
                 ...orderPromises,
+                this.shippingMethodRepository_.save(shippingMethods),
             ]);
+
+            await this.cartRepository_.save(cart);
         } catch (e) {
             this.logger.error(`Error updating orders/payments: ${e}`);
         }
+
+        //emit event
+        await this.eventBus_.emit('order.placed', {
+            customerId: orders[0].customer_id,
+            orderIds: orderIds,
+            orderId: orderIds[0],
+            ...orders[0],
+        });
 
         return orders;
     }
@@ -394,55 +427,6 @@ export default class OrderService extends MedusaOrderService {
         }
 
         return [];
-    }
-
-    //TODO: the return type of this is hard to work with
-    async orderSummary(cartId: string): Promise<{
-        cart: Cart;
-        items: any[];
-    }> {
-        const orders = (await this.orderRepository_.find({
-            where: {
-                cart_id: cartId,
-                status: Not(
-                    In([OrderStatus.ARCHIVED, OrderStatus.REQUIRES_ACTION])
-                ),
-            },
-            relations: ['cart.items.variant.product', 'store.owner'],
-        })) as Order[];
-
-        const products = [];
-        let cart: Cart = null;
-
-        console.log('***** ORDER ******', orders);
-        orders.forEach((order) => {
-            cart = order.cart;
-            order.cart.items.forEach((item) => {
-                const product = {
-                    ...item.variant.product,
-                    order_id: order.id,
-                    store_name: order.store.name, // Add store.name to the product
-                    currency_code: item.currency_code,
-                    unit_price: item.unit_price,
-                };
-                products.push(product);
-            });
-        });
-
-        const seen = new Set();
-        const items = [];
-
-        for (const item of products) {
-            if (!seen.has(item.id)) {
-                seen.add(item.id);
-                items.push(item);
-            }
-        }
-
-        return {
-            cart,
-            items,
-        };
     }
 
     async getNotReviewedOrders(customer_id: string) {

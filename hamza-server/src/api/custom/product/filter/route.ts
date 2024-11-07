@@ -47,8 +47,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         const lowerPrice = handler.inputParams.price_lo ?? 0;
         const currencyCode = handler.inputParams.currency_code ?? 'usdc';
 
-        console.log("LOW PRICE: ", lowerPrice);
-
         //call productService.getFilteredProducts to get the products, then return them
         const products = await productService.getFilteredProducts(
             categories,
