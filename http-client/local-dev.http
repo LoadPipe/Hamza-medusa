@@ -28,7 +28,7 @@ GET http://localhost:9000/custom/store/products
 Content-Type: application/json
 
 ### GET Vendor Names?
-GET http://localhost:9000/custom/store/categories?store_name=Echo Rift
+GET http://localhost:9000/custom/store/categories?store_name=Medusa Store
 
 
 ### Create a Wishlist
@@ -38,6 +38,10 @@ Content-Type: application/json
 {
   "customer_id": "cus_01J8F1G0DX7X819MKDEVT3HWVF"
 }
+
+### GET STORE PRODUCTS
+GET http://localhost:9000/custom/store/products/category-name?store_name=Medusa Merch&category_name=all
+Content-Type: application/json
 
 
 ###

@@ -149,6 +149,21 @@ const ProductCardGroup = () => {
                         preferred_currency_code as string
                     );
 
+                    let usdcProductPrice: number;
+                    let usdcFormattedPrice: string | number = '';
+                    if (preferred_currency_code === 'eth') {
+                        usdcProductPrice =
+                            variant?.prices?.find(
+                                (price: any) => price.currency_code === 'usdc'
+                            )?.amount ||
+                            variant?.prices?.[0]?.amount ||
+                            0;
+                        usdcFormattedPrice = formatCryptoPrice(
+                            usdcProductPrice ?? 0,
+                            'usdc'
+                        );
+                    }
+
                     const reviewCounter = product.reviews.length;
                     const totalRating = product.reviews.reduce(
                         (acc: number, review: any) => acc + review.rating,
@@ -175,6 +190,7 @@ const ProductCardGroup = () => {
                                 countryCode={product.origin_country}
                                 productName={product.title}
                                 productPrice={formattedPrice}
+                                usdcProductPrice={usdcFormattedPrice}
                                 currencyCode={preferred_currency_code || 'usdc'}
                                 imageSrc={product.thumbnail}
                                 hasDiscount={product.is_giftcard}

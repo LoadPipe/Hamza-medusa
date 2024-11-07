@@ -18,6 +18,7 @@ interface ProductCardProps {
     countryCode: string;
     productName: string;
     productPrice: number | string;
+    usdcProductPrice?: number | string;
     currencyCode: string;
     imageSrc: string;
     hasDiscount: boolean;
@@ -36,6 +37,7 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
     countryCode,
     productName,
     productPrice,
+    usdcProductPrice,
     currencyCode,
     imageSrc,
     hasDiscount,
@@ -98,8 +100,10 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
 
             <Flex
                 p={{ base: '2', md: '4' }}
+                // mb={{ base: '4', md: '0' }}
                 flexDirection={'column'}
-                height={{ base: '109px', md: '161px' }} //161px
+                gap={2}
+                height={{ base: '129px', md: '161px' }} //161px
             >
                 <Flex alignItems="center" flexShrink={0}>
                     <Text
@@ -118,6 +122,7 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
                 </Flex>
 
                 <Flex
+                    gap={2}
                     mt="auto"
                     mb={{ base: '0', md: '5px' }}
                     flexDirection={'column'}
@@ -159,13 +164,42 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
                         )}
                     </Flex>
 
-                    <Flex alignItems="center">
+                    <Flex
+                        flexDirection={{ base: 'column', md: 'row' }}
+                        mt="auto" // This pushes the content to the bottom
+                    >
                         <Flex mb="1px">
                             <Image
                                 className="h-[18px] w-[18px] md:h-[20px] md:w-[20px]"
                                 src={currencyIcons[currencyCode ?? 'usdc']}
                                 alt={currencyCode ?? 'usdc'}
                             />
+                            <Text
+                                display={'flex'}
+                                flexDirection={'row'}
+                                noOfLines={1}
+                                color="white"
+                                ml="2"
+                                fontWeight="700"
+                                fontSize={{ base: '14px', md: '18px' }}
+                            >
+                                {`${productPrice}`}
+                                <Text
+                                    ml="5px"
+                                    as="span"
+                                    display={{
+                                        base: 'none',
+                                        md: 'inline-block',
+                                    }}
+                                    style={{
+                                        fontSize: '12px',
+                                        color: 'white',
+                                        textTransform: 'uppercase',
+                                    }}
+                                >
+                                    {currencyCode?.toUpperCase() || 'USDC'}
+                                </Text>
+                            </Text>
                         </Flex>
 
                         <Text
@@ -173,26 +207,12 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
                             flexDirection={'row'}
                             noOfLines={1}
                             color="white"
-                            ml="2"
-                            fontWeight="700"
-                            fontSize={{ base: '14px', md: '18px' }}
+                            ml="4"
+                            fontWeight="500"
+                            fontSize={{ base: '12px', md: '16px' }}
                         >
-                            {`${productPrice}`}
-                            <Text
-                                ml="5px"
-                                as="span"
-                                display={{
-                                    base: 'none',
-                                    md: 'inline-block',
-                                }}
-                                style={{
-                                    fontSize: '12px',
-                                    color: 'white',
-                                    textTransform: 'uppercase',
-                                }}
-                            >
-                                {currencyCode?.toUpperCase() || 'USDC'}
-                            </Text>
+                            {currencyCode === 'eth' &&
+                                `≅ $${usdcProductPrice} USDC`}
                         </Text>
                     </Flex>
                 </Flex>

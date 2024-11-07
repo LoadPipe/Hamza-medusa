@@ -136,6 +136,24 @@ const ProductCardGroup = () => {
                                         variant?.prices?.[0]?.amount ||
                                         0; // Get the price for the preferred currency or fallback to the first price
 
+                                    let usdcProductPrice: number;
+                                    let usdcFormattedPrice: string | number =
+                                        '';
+                                    if (preferred_currency_code === 'eth') {
+                                        usdcProductPrice =
+                                            variant?.prices?.find(
+                                                (price: any) =>
+                                                    price.currency_code ===
+                                                    'usdc'
+                                            )?.amount ||
+                                            variant?.prices?.[0]?.amount ||
+                                            0;
+                                        usdcFormattedPrice = formatCryptoPrice(
+                                            usdcProductPrice ?? 0,
+                                            'usdc'
+                                        );
+                                    }
+
                                     const formattedPrice = formatCryptoPrice(
                                         productPricing ?? 0,
                                         (preferred_currency_code ??
@@ -183,6 +201,9 @@ const ProductCardGroup = () => {
                                                 }
                                                 productPrice={
                                                     formattedPrice ?? ''
+                                                }
+                                                usdcProductPrice={
+                                                    usdcFormattedPrice
                                                 }
                                                 currencyCode={
                                                     preferred_currency_code ||
