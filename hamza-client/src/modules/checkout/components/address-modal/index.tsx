@@ -240,7 +240,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                     </ModalHeader>
                     <ModalCloseButton color={'white'} />
                     <ModalBody>
-                        <Flex flexDir="column" gap="8">
+                        <Flex flexDir="column" gap={{ base: '5', md: '8' }}>
                             {/* Name Fields */}
                             <Flex
                                 gap="4"
@@ -366,7 +366,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                             </Flex>
 
                             <Flex
-                                gap="4"
+                                gap={'4'}
                                 flexDir={{ base: 'column', md: 'row' }}
                             >
                                 <FormControl isRequired>
