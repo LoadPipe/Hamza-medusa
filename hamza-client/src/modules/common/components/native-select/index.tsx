@@ -38,7 +38,7 @@ const NativeSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
     ) => {
         const innerRef = useRef<HTMLSelectElement>(null);
         const [isPlaceholder, setIsPlaceholder] = useState(false);
-        const [query, setQuery] = useState(''); // State for input query
+        const [query, setQuery] = useState('');
         const previousQuery = useRef(''); // Track the previous query to avoid infinite loops
 
         useImperativeHandle<HTMLSelectElement | null, HTMLSelectElement | null>(
@@ -97,8 +97,7 @@ const NativeSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
                         onChange={(e) => setQuery(e.target.value)}
                         style={{
                             color: 'white',
-                            width: '150px', // Set a reasonable width for the input
-                            minWidth: '150px', // Ensure the input does not shrink
+                            width: '100%', // Set a reasonable width for the input
                             padding: '8px',
                             paddingLeft: '1rem',
                         }}
@@ -110,7 +109,7 @@ const NativeSelect = forwardRef<HTMLSelectElement, NativeSelectProps>(
                         {...props}
                         style={{
                             color: '#555555',
-                            minWidth: '200px', // Minimum width to accommodate long country names
+                            minWidth: '180px', // Minimum width to accommodate long country names
                             padding: '8px',
                         }}
                         className="appearance-none border-l-white flex-1 bg-transparent  transition-colors duration-150 outline-none"
