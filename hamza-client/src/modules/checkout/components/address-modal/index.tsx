@@ -90,7 +90,11 @@ const AddressModal: React.FC<AddressModalProps> = ({
                         cart.shipping_address.country_code || countryCode || '',
                     'shipping_address.province':
                         cart.shipping_address.province || '',
-                    email: cart.email || '',
+                    email: cart?.email
+                        ? cart.email
+                        : customer?.email?.includes('evm')
+                          ? ''
+                          : customer?.email || '',
                     'shipping_address.phone': cart.shipping_address.phone || '',
                 }));
             }
@@ -422,16 +426,10 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         autoComplete="email"
                                         color={'white'}
                                         _placeholder={{ color: 'white' }}
-                                        value={
-                                            formData.email.includes(
-                                                '@evm.blockchain'
-                                            )
-                                                ? ''
-                                                : formData.email
-                                        }
+                                        value={formData.email}
+                                        placeholder="Email"
                                         onChange={handleChange}
                                         maxLength={50}
-                                        placeholder="Email"
                                         height={'50px'}
                                         fontSize={'14px'}
                                         bgColor={'#040404'}
