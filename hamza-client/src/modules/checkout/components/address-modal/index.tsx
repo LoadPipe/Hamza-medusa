@@ -14,6 +14,7 @@ import {
     ModalBody,
     ModalCloseButton,
     Text,
+    Box,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { Cart, Customer } from '@medusajs/medusa';
@@ -243,7 +244,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                         <Flex flexDir="column" gap={{ base: '5', md: '8' }}>
                             {/* Name Fields */}
                             <Flex
-                                gap="4"
+                                gap={{ base: '5', md: '4' }}
                                 flexDir={{ base: 'column', md: 'row' }}
                             >
                                 <FormControl isRequired>
@@ -324,7 +325,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
 
                             {/* City, State, Country, Zip Code */}
                             <Flex
-                                gap="4"
+                                gap={{ base: '5', md: '4' }}
                                 flexDir={{ base: 'column', md: 'row' }}
                             >
                                 <FormControl isRequired>
@@ -366,7 +367,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                             </Flex>
 
                             <Flex
-                                gap={'4'}
+                                gap={{ base: '5', md: '4' }}
                                 flexDir={{ base: 'column', md: 'row' }}
                             >
                                 <FormControl isRequired>
@@ -408,7 +409,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
 
                             {/* Phone and Email Fields */}
                             <Flex
-                                gap="4"
+                                gap={{ base: '5', md: '4' }}
                                 flexDir={{ base: 'column', md: 'row' }}
                             >
                                 <FormControl>
@@ -449,20 +450,22 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                 </FormControl>
                             </Flex>
 
-                            {(customer?.shipping_addresses?.length ?? 0) >
-                                0 && (
-                                <AddressSelect
-                                    cart={cart}
-                                    addresses={
-                                        customer?.shipping_addresses ?? []
-                                    }
-                                    onSelect={(addrId) =>
-                                        setSelectedAddressId(addrId)
-                                    }
-                                    formData={formData}
-                                    setFormData={setFormData}
-                                />
-                            )}
+                            <Box mt={{ base: '5px', md: '0' }}>
+                                {(customer?.shipping_addresses?.length ?? 0) >
+                                    0 && (
+                                    <AddressSelect
+                                        cart={cart}
+                                        addresses={
+                                            customer?.shipping_addresses ?? []
+                                        }
+                                        onSelect={(addrId) =>
+                                            setSelectedAddressId(addrId)
+                                        }
+                                        formData={formData}
+                                        setFormData={setFormData}
+                                    />
+                                )}
+                            </Box>
 
                             {/* Checkbox for Default Address */}
                             <Flex alignItems="center" my="3" color={'white'}>
