@@ -107,6 +107,7 @@ const AddressSelect = ({
                                     cursor="pointer"
                                     display="flex"
                                     alignItems="start"
+                                    onClick={() => handleSelect(address.id)}
                                 >
                                     <Radio value={address.id} />
                                     <Box ml={4}>
