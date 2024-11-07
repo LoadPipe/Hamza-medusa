@@ -41,6 +41,7 @@ const CountrySelect = forwardRef<
                 defaultValue={defaultValue}
                 countryOption={countryOptions}
                 onSearch={onSearch}
+                {...props}
             ></NativeSelect>
         );
     }
