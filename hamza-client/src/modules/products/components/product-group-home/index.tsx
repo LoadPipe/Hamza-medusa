@@ -162,6 +162,7 @@ const ProductCardGroup = () => {
                             minHeight={'243.73px'}
                             height={{ base: '100%', md: '399px' }}
                             width="100%"
+                            my={{ base: '2', md: '0' }}
                         >
                             <ProductCardHome
                                 key={index}
