@@ -167,6 +167,8 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
                     <Flex
                         flexDirection={{ base: 'column', md: 'row' }}
                         mt="auto" // This pushes the content to the bottom
+                        alignItems={{ base: 'flex-start', md: 'center' }}
+                        justifyContent={{ base: 'flex-start', xl: '0' }}
                     >
                         <Flex mb="1px">
                             <Image
@@ -178,6 +180,8 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
                                 display={'flex'}
                                 flexDirection={'row'}
                                 noOfLines={1}
+                                as="span"
+                                whiteSpace="nowrap"
                                 color="white"
                                 ml="2"
                                 fontWeight="700"
@@ -202,18 +206,21 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
                             </Text>
                         </Flex>
 
-                        <Text
-                            display={'flex'}
-                            flexDirection={'row'}
-                            noOfLines={1}
-                            color="white"
-                            ml="4"
-                            fontWeight="500"
-                            fontSize={{ base: '12px', md: '16px' }}
-                        >
-                            {currencyCode === 'eth' &&
-                                `≅ $${usdcProductPrice} USDC`}
-                        </Text>
+                        <Flex>
+                            <Text
+                                textOverflow="ellipsis"
+                                display={'flex'}
+                                flexDirection={'row'}
+                                noOfLines={1}
+                                color="white"
+                                ml="auto"
+                                fontWeight="500"
+                                fontSize={{ base: '14px', md: '16px' }}
+                            >
+                                {currencyCode === 'eth' &&
+                                    `≅ ${usdcProductPrice} USDC`}
+                            </Text>
+                        </Flex>
                     </Flex>
                 </Flex>
             </Flex>
