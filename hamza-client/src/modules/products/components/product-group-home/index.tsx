@@ -8,7 +8,6 @@ import {
     Grid,
     GridItem,
     Flex,
-    Text,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
@@ -17,7 +16,6 @@ import ProductCardHome from './component/home-product-card';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
 import { getAllProducts } from '@lib/data';
-import axios from 'axios';
 
 const ProductCardGroup = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
@@ -27,35 +25,19 @@ const ProductCardGroup = () => {
     const { rangeUpper, rangeLower } = useHomeModalFilter();
 
     const { data, error, isLoading } = useQuery(
-        [
-            'categories',
-            categorySelect,
-            rangeUpper,
-            rangeLower,
-            preferred_currency_code,
-        ], // Use a unique key here to identify the query
-        async () => {
-            const multiUrl = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/filter?category_name=${categorySelect}&price_hi=${rangeUpper}&price_lo=${rangeLower}&currency_code=${preferred_currency_code ?? 'usdc'}`;
-            const response = await axios.get(multiUrl);
-            return response.data; // Return the data from the response
+        ['homeProducts', categorySelect, rangeUpper, rangeLower],
+        () =>
+            getAllProducts(
+                categorySelect,
+                rangeUpper,
+                rangeLower,
+                preferred_currency_code ?? 'usdc'
+            ),
+        {
+            staleTime: 60 * 1000,
+            cacheTime: 2 * 60 * 1000,
         }
     );
-
-    // TODO: GARO
-    // const { data, error, isLoading } = useQuery(
-    //     ['homeProducts', categorySelect, priceHi, priceLo],
-    //     () =>
-    //         getAllProducts(
-    //             categorySelect,
-    //             priceHi,
-    //             priceLo,
-    //             preferred_currency_code ?? 'usdc'
-    //         ),
-    //     {
-    //         staleTime: 60 * 1000,
-    //         cacheTime: 2 * 60 * 1000,
-    //     }
-    // );
 
     const productsAll = data?.products ?? [];
 
