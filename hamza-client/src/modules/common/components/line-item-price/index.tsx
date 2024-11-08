@@ -109,7 +109,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                                     fontWeight={700}
                                     textAlign="right"
                                 >
-                                    {`≅ $ ${formatCryptoPrice(usdcPrice ?? 0, 'usdc')} USDC`}
+                                    {`≅  ${formatCryptoPrice(usdcPrice ?? 0, 'usdc')} USDC`}
                                 </Text>
                             </>
                         )}

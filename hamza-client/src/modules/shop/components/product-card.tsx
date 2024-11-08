@@ -218,7 +218,23 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
                                 fontSize={{ base: '14px', md: '16px' }}
                             >
                                 {currencyCode === 'eth' &&
-                                    `≅ ${usdcProductPrice} USDC`}
+                                    `≅ ${usdcProductPrice}`}
+                                <Text
+                                    textOverflow="ellipsis"
+                                    ml="5px"
+                                    as="span"
+                                    display={{
+                                        base: 'none',
+                                        md: 'inline-block',
+                                    }}
+                                    style={{
+                                        fontSize: '12px',
+                                        color: 'white',
+                                        textTransform: 'uppercase',
+                                    }}
+                                >
+                                    USDC
+                                </Text>
                             </Text>
                         </Flex>
                     </Flex>
