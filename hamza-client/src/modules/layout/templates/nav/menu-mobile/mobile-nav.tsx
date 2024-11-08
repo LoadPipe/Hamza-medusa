@@ -4,7 +4,7 @@ import { Flex, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 import HamzaLogo from '../../../../../../public/images/logo/logo_green.svg';
 //import HamzaTitle from '../../../../../../public/images/logo/hamza-title.svg';
-import HamzaBetaTitle from '@/images/logo/hamza-tite-beta.svg';
+import HamzaBetaTitle from '@/images/logo/hamza-title-beta.svg';
 // import HamzaLogo from '../../../../../../public/images/logo/hamza-beta.png';
 import MobileMainMenu from './menu/mobile-main-menu';
 import { WalletConnectButton } from './connect-wallet/connect-button';
