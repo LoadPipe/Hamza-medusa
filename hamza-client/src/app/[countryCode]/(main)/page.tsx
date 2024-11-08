@@ -4,7 +4,6 @@ import { getRegion } from '@/app/actions';
 import SearchAndFilterPanel from '@modules/home/components/search-and-filter-panel';
 import { Box } from '@chakra-ui/react';
 import HeroBanner from '@modules/home/components/hero-banner';
-import HamzaLogoLoader from '../../components/loaders/hamza-logo-loader';
 import getQueryClient from '@/getQueryClient';
 import { dehydrate } from '@tanstack/react-query';
 

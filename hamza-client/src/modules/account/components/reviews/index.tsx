@@ -17,7 +17,9 @@ import { format } from 'date-fns';
 import { getAllProductReviews, getNotReviewedOrders } from '@lib/data';
 import EditReviewTemplate from '@modules/editreview/[id]/edit-review-template';
 import ReviewTemplate from '@modules/review/[id]/review-template';
-import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueries, useQuery } from '@tanstack/react-query';
+import getQueryClient from '@/getQueryClient';
+
 import Spinner from '@modules/common/icons/spinner';
 
 const commonButtonStyles = {
@@ -82,7 +84,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
     const customer_id = customer.id;
 
     // setup query client
-    const queryClient = useQueryClient();
+    const queryClient = getQueryClient();
 
     const results = useQueries({
         queries: [
@@ -102,10 +104,14 @@ const ReviewPage = ({ customer }: { customer: any }) => {
 
     const handleReviewUpdated = async () => {
         await queryClient.resetQueries(['reviewQuery', customer_id]);
+        await queryClient.resetQueries(['homeProducts']);
+        await queryClient.refetchQueries(['homeProducts']);
     };
 
     const handlePendingUpdated = async () => {
         await pendingReviewsQuery.refetch();
+        await queryClient.resetQueries(['homeProducts']);
+        await queryClient.refetchQueries(['homeProducts']);
     };
 
     const handleReviewEdit = (review: any) => {

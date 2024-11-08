@@ -7,7 +7,10 @@ import {
     listRegions,
     getVerificationStatus,
 } from '@lib/data';
-import ReviewPage from '@/modules/account/components/reviews';
+import getQueryClient from '@/getQueryClient';
+import { dehydrate } from '@tanstack/react-query';
+import ReviewTemplate from '@modules/account/components/reviews/reviews-template';
+import { getAllProductReviews, getNotReviewedOrders } from '@lib/data';
 import React from 'react';
 
 export const metadata: Metadata = {
@@ -28,6 +31,19 @@ export default async function Reviews() {
     if (!verificationStatus.data) {
         return <Error error={'Verify your email to access this page.'} />;
     }
+    const queryClient = getQueryClient();
+
+    await queryClient.prefetchQuery({
+        queryKey: ['pendingReviewsQuery'],
+        queryFn: () => getNotReviewedOrders(customer.id),
+    });
+
+    await queryClient.prefetchQuery({
+        queryKey: ['reviewQuery'],
+        queryFn: () => getAllProductReviews(customer.id),
+    });
+
+    const dehydrateReviews = dehydrate(queryClient);
 
     return (
         <Flex
@@ -39,7 +55,10 @@ export default async function Reviews() {
             p={'24px'}
             rounded="lg"
         >
-            <ReviewPage customer={customer} />
+                <ReviewTemplate
+                    customer={customer}
+                    dehydratedState={dehydrateReviews}
+                />
         </Flex>
     );
 }
