@@ -107,7 +107,7 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                 // mb={{ base: '4', md: '0' }}
                 flexDirection={'column'}
                 gap={2}
-                height={{ base: '129px', md: '171px' }} //161px
+                height={{ base: '129px', md: '161px' }} //161px
             >
                 <Flex alignItems="center" flexShrink={0}>
                     <Text
@@ -169,9 +169,9 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                     </Flex>
 
                     <Flex
-                        flexDirection={{ base: 'column', xl: 'row' }}
+                        flexDirection={{ base: 'column', md: 'row' }}
                         mt="auto" // This pushes the content to the bottom
-                        alignItems={{ base: 'flex-start', xl: 'center' }}
+                        alignItems={{ base: 'flex-start', md: 'center' }}
                         justifyContent={{ base: 'flex-start', xl: '0' }}
                     >
                         <Flex mb="1px">
@@ -189,13 +189,12 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                                 fontWeight="700"
                                 fontSize={{ base: '14px', md: '18px' }}
                             >
-                                {`${productPrice}`}
+                                {productPrice}
                                 <Text
                                     textOverflow="ellipsis"
                                     ml="5px"
                                     as="span"
                                     display={{
-                                        base: 'none',
                                         md: 'inline-block',
                                     }}
                                     style={{
@@ -209,37 +208,37 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                             </Text>
                         </Flex>
 
-                        <Flex>
-                            <Text
-                                textOverflow="ellipsis"
-                                display={'flex'}
-                                flexDirection={'row'}
-                                noOfLines={1}
-                                color="white"
-                                ml="auto"
-                                fontWeight="500"
-                                fontSize={{ base: '14px', md: '16px' }}
-                            >
-                                {currencyCode === 'eth' &&
-                                    `≅ ${usdcProductPrice}`}
+                        {currencyCode === 'eth' && (
+                            <Flex flexDirection="row" mt="auto">
                                 <Text
                                     textOverflow="ellipsis"
-                                    ml="5px"
-                                    as="span"
-                                    display={{
-                                        base: 'none',
-                                        md: 'inline-block',
-                                    }}
-                                    style={{
-                                        fontSize: '12px',
-                                        color: 'white',
-                                        textTransform: 'uppercase',
-                                    }}
+                                    display={'flex'}
+                                    flexDirection={'row'}
+                                    noOfLines={1}
+                                    color="white"
+                                    ml="auto"
+                                    fontWeight="500"
+                                    fontSize={{ base: '14px', md: '16px' }}
                                 >
-                                    USDC
+                                    ≅ {usdcProductPrice}
+                                    <Text
+                                        textOverflow="ellipsis"
+                                        ml="5px"
+                                        as="span"
+                                        display={{
+                                            md: 'inline-block',
+                                        }}
+                                        style={{
+                                            fontSize: '12px',
+                                            color: 'white',
+                                            textTransform: 'uppercase',
+                                        }}
+                                    >
+                                        USDC
+                                    </Text>
                                 </Text>
-                            </Text>
-                        </Flex>
+                            </Flex>
+                        )}
                     </Flex>
                 </Flex>
             </Flex>
