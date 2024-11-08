@@ -17,6 +17,7 @@ interface ProductCardProps {
     countryCode: string;
     productName: string;
     productPrice: number | string;
+    usdcProductPrice?: number | string;
     currencyCode: string;
     imageSrc: string;
     hasDiscount: boolean;
@@ -40,6 +41,7 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
     countryCode,
     productName,
     productPrice,
+    usdcProductPrice,
     currencyCode,
     imageSrc,
     hasDiscount,
@@ -102,8 +104,10 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
 
             <Flex
                 p={{ base: '2', md: '4' }}
+                // mb={{ base: '4', md: '0' }}
                 flexDirection={'column'}
-                height={{ base: '109px', md: '161px' }} //161px
+                gap={2}
+                height={{ base: '129px', md: '171px' }} //161px
             >
                 <Flex alignItems="center" flexShrink={0}>
                     <Text
@@ -122,6 +126,7 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                 </Flex>
 
                 <Flex
+                    gap={2}
                     mt="auto"
                     mb={{ base: '0', md: '5px' }}
                     flexDirection={'column'}
@@ -163,45 +168,78 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                         )}
                     </Flex>
 
-                    <Flex alignItems="center">
+                    <Flex
+                        flexDirection={{ base: 'column', xl: 'row' }}
+                        mt="auto" // This pushes the content to the bottom
+                        alignItems={{ base: 'flex-start', xl: 'center' }}
+                        justifyContent={{ base: 'flex-start', xl: '0' }}
+                    >
                         <Flex mb="1px">
                             <Image
                                 className="h-[18px] w-[18px] md:h-[20px] md:w-[20px]"
-                                src={
-                                    currencyIcons[
-                                        preferred_currency_code || 'usdc'
-                                    ]
-                                }
-                                alt={preferred_currency_code || 'usdc'}
+                                src={currencyIcons[currencyCode ?? 'usdc']}
+                                alt={currencyCode ?? 'usdc'}
                             />
+                            <Text
+                                display={'flex'}
+                                flexDirection={'row'}
+                                noOfLines={1}
+                                color="white"
+                                ml="2"
+                                fontWeight="700"
+                                fontSize={{ base: '14px', md: '18px' }}
+                            >
+                                {`${productPrice}`}
+                                <Text
+                                    textOverflow="ellipsis"
+                                    ml="5px"
+                                    as="span"
+                                    display={{
+                                        base: 'none',
+                                        md: 'inline-block',
+                                    }}
+                                    style={{
+                                        fontSize: '12px',
+                                        color: 'white',
+                                        textTransform: 'uppercase',
+                                    }}
+                                >
+                                    {currencyCode?.toUpperCase() || 'USDC'}
+                                </Text>
+                            </Text>
                         </Flex>
 
-                        <Text
-                            display={'flex'}
-                            flexDirection={'row'}
-                            noOfLines={1}
-                            color="white"
-                            ml="2"
-                            fontWeight="700"
-                            fontSize={{ base: '14px', md: '18px' }}
-                        >
-                            {`${productPrice}`}
+                        <Flex>
                             <Text
-                                ml="5px"
-                                as="span"
-                                display={{
-                                    base: 'none',
-                                    md: 'inline-block',
-                                }}
-                                style={{
-                                    fontSize: '12px',
-                                    color: 'white',
-                                    textTransform: 'uppercase',
-                                }}
+                                textOverflow="ellipsis"
+                                display={'flex'}
+                                flexDirection={'row'}
+                                noOfLines={1}
+                                color="white"
+                                ml="auto"
+                                fontWeight="500"
+                                fontSize={{ base: '14px', md: '16px' }}
                             >
-                                {preferred_currency_code?.toUpperCase() || 'USDC'}
+                                {currencyCode === 'eth' &&
+                                    `≅ ${usdcProductPrice}`}
+                                <Text
+                                    textOverflow="ellipsis"
+                                    ml="5px"
+                                    as="span"
+                                    display={{
+                                        base: 'none',
+                                        md: 'inline-block',
+                                    }}
+                                    style={{
+                                        fontSize: '12px',
+                                        color: 'white',
+                                        textTransform: 'uppercase',
+                                    }}
+                                >
+                                    USDC
+                                </Text>
                             </Text>
-                        </Text>
+                        </Flex>
                     </Flex>
                 </Flex>
             </Flex>
