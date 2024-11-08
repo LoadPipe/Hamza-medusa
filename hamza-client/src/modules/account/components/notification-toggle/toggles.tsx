@@ -120,102 +120,82 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
             <Stack spacing={3}>
                 <Flex>
                     <Switch
-                        value="orderShipped"
-                        isChecked={
-                            Array.isArray(selectedNotifications) &&
-                            selectedNotifications.includes(
-                                'orderShipped' as never
-                            )
-                        }
-                        mr={4}
-                        colorScheme="primary.green"
-                        onChange={handleCheckboxChange}
-                    ></Switch>
-                    <FormLabel>Notify when order shipped</FormLabel>
-                </Flex>
-
-                {/*
-                <Flex>
-                    <Switch
-                        value="newProduct"
-                        isChecked={
-                            Array.isArray(selectedNotifications) &&
-                            selectedNotifications.includes(
-                                'newProduct' as never
-                            )
-                        }
-                        mr={4}
-                        colorScheme="primary.green"
-                        onChange={handleCheckboxChange}
-                    ></Switch>
-                    <FormLabel>
-                        Notify when followed sellers post a new product
-                    </FormLabel>
-                </Flex>
-                */}
-                <Flex>
-                    <Switch
-                        value="orderStatusChanged"
-                        isChecked={
-                            Array.isArray(selectedNotifications) &&
-                            selectedNotifications.includes(
-                                'orderStatusChanged' as never
-                            )
-                        }
-                        mr={4}
-                        colorScheme="primary.green"
-                        onChange={handleCheckboxChange}
-                    ></Switch>
-                    <FormLabel> Notify when order status changed</FormLabel>
+                      id="orderShipped"
+                      value="orderShipped"
+                      isChecked={
+                        Array.isArray(selectedNotifications) &&
+                        selectedNotifications.includes('orderShipped' as never)
+                      }
+                      mr={4}
+                      colorScheme="switchBackground"
+                      onChange={handleCheckboxChange}
+                    />
+                    <FormLabel htmlFor="orderShipped">Notify when order shipped</FormLabel>
                 </Flex>
 
                 <Flex>
                     <Switch
-                        value="promotions"
-                        isChecked={
-                            Array.isArray(selectedNotifications) &&
-                            selectedNotifications.includes(
-                                'promotions' as never
-                            )
-                        }
-                        mr={4}
-                        colorScheme="primary.green"
-                        onChange={handleCheckboxChange}
-                    ></Switch>
-                    <FormLabel>Notify for promotions/discounts</FormLabel>
+                      id="orderStatusChanged"
+                      value="orderStatusChanged"
+                      isChecked={
+                        Array.isArray(selectedNotifications) &&
+                        selectedNotifications.includes('orderStatusChanged' as never)
+                      }
+                      mr={4}
+                      colorScheme="switchBackground"
+                      onChange={handleCheckboxChange}
+                    />
+                    <FormLabel htmlFor="orderStatusChanged">Notify when order status changed</FormLabel>
                 </Flex>
 
                 <Flex>
                     <Switch
-                        value="surveys"
-                        isChecked={
-                            Array.isArray(selectedNotifications) &&
-                            selectedNotifications.includes('surveys' as never)
-                        }
-                        mr={4}
-                        colorScheme="primary.green"
-                        onChange={handleCheckboxChange}
-                    ></Switch>
-                    <FormLabel>Notify for surveys</FormLabel>
+                      id="promotions"
+                      value="promotions"
+                      isChecked={
+                        Array.isArray(selectedNotifications) &&
+                        selectedNotifications.includes('promotions' as never)
+                      }
+                      mr={4}
+                      colorScheme="switchBackground"
+                      onChange={handleCheckboxChange}
+                    />
+                    <FormLabel htmlFor="promotions">Notify for promotions/discounts</FormLabel>
                 </Flex>
 
                 <Flex>
                     <Switch
-                        value="none"
-                        isChecked={
-                            Array.isArray(selectedNotifications) &&
-                            selectedNotifications.includes('none' as never)
-                        }
-                        mr={4}
-                        colorScheme="primary.green"
-                        onChange={handleCheckboxChange}
-                    ></Switch>
-                    <FormLabel>
-                        No notifications (when this is checked, other checkboxes
-                        are cleared)
+                      id="surveys"
+                      value="surveys"
+                      isChecked={
+                        Array.isArray(selectedNotifications) &&
+                        selectedNotifications.includes('surveys' as never)
+                      }
+                      mr={4}
+                      colorScheme="switchBackground"
+                      onChange={handleCheckboxChange}
+                    />
+                    <FormLabel htmlFor="surveys">Notify for surveys</FormLabel>
+                </Flex>
+
+                <Flex>
+                    <Switch
+                      id="none"
+                      value="none"
+                      isChecked={
+                        Array.isArray(selectedNotifications) &&
+                        selectedNotifications.includes('none' as never)
+                      }
+                      mr={4}
+                      colorScheme="switchBackground"
+                      onChange={handleCheckboxChange}
+                    />
+                    <FormLabel htmlFor="none">
+                        No notifications (when this is checked, other checkboxes are cleared)
                     </FormLabel>
                 </Flex>
             </Stack>
+
             <FormLabel
                 fontWeight={'bold'}
                 fontSize="lg"
@@ -236,7 +216,7 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                         Array.isArray(selectedNotifications) &&
                         selectedNotifications.includes('sms' as never)
                     }
-                    colorScheme="primary.green"
+                    colorScheme="switchBackground"
                     onChange={handleCheckboxChange}
                     value="sms"
                 >
@@ -249,7 +229,7 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                         selectedNotifications.includes('email' as never)
                     }
                     onChange={handleCheckboxChange}
-                    colorScheme="primary.green"
+                    colorScheme="switchBackground"
                     value="email"
                 >
                     Email
@@ -261,7 +241,7 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
                         selectedNotifications.includes('line' as never)
                     }
                     onChange={handleCheckboxChange}
-                    colorScheme="primary.green"
+                    colorScheme="switchBackground"
                     value="line"
                 >
                     LINE
