@@ -187,12 +187,11 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
                                 fontWeight="700"
                                 fontSize={{ base: '14px', md: '18px' }}
                             >
-                                {`${productPrice}`}
+                                {productPrice}
                                 <Text
                                     ml="5px"
                                     as="span"
                                     display={{
-                                        base: 'none',
                                         md: 'inline-block',
                                     }}
                                     style={{
@@ -206,37 +205,37 @@ const ProductCardStore: React.FC<ProductCardProps & { productId?: string }> = ({
                             </Text>
                         </Flex>
 
-                        <Flex>
-                            <Text
-                                textOverflow="ellipsis"
-                                display={'flex'}
-                                flexDirection={'row'}
-                                noOfLines={1}
-                                color="white"
-                                ml="auto"
-                                fontWeight="500"
-                                fontSize={{ base: '14px', md: '16px' }}
-                            >
-                                {currencyCode === 'eth' &&
-                                    `≅ ${usdcProductPrice}`}
+                        {currencyCode === 'eth' && (
+                            <Flex flexDirection="row" mt="auto">
                                 <Text
                                     textOverflow="ellipsis"
-                                    ml="5px"
-                                    as="span"
-                                    display={{
-                                        base: 'none',
-                                        md: 'inline-block',
-                                    }}
-                                    style={{
-                                        fontSize: '12px',
-                                        color: 'white',
-                                        textTransform: 'uppercase',
-                                    }}
+                                    display={'flex'}
+                                    flexDirection={'row'}
+                                    noOfLines={1}
+                                    color="white"
+                                    ml="auto"
+                                    fontWeight="500"
+                                    fontSize={{ base: '14px', md: '16px' }}
                                 >
-                                    USDC
+                                    ≅ {usdcProductPrice}
+                                    <Text
+                                        textOverflow="ellipsis"
+                                        ml="5px"
+                                        as="span"
+                                        display={{
+                                            md: 'inline-block',
+                                        }}
+                                        style={{
+                                            fontSize: '12px',
+                                            color: 'white',
+                                            textTransform: 'uppercase',
+                                        }}
+                                    >
+                                        USDC
+                                    </Text>
                                 </Text>
-                            </Text>
-                        </Flex>
+                            </Flex>
+                        )}
                     </Flex>
                 </Flex>
             </Flex>
