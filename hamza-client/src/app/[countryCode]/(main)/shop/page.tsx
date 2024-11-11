@@ -29,7 +29,7 @@ export default async function ShopPage({ searchParams, params }: Params) {
                     'linear-gradient(to bottom, #020202 20vh, #2C272D 70vh)',
             }}
         >
-            <ShopTemplate />{' '}
+            <ShopTemplate />
         </Box>
     );
 }
