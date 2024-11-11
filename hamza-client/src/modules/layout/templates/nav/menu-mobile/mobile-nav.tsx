@@ -3,8 +3,8 @@ import LocalizedClientLink from '@modules/common/components/localized-client-lin
 import { Flex, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 import HamzaLogo from '../../../../../../public/images/logo/logo_green.svg';
-import HamzaTitle from '../../../../../../public/images/logo/hamza-title.svg';
-// import HamzaLogo from '../../../../../../public/images/logo/hamza-beta.png';
+import HamzaBetaTitle from '@/images/logo/hamza-title-beta.svg';
+import HamzaLogo from '../../../../../../public/images/logo/hamza-beta.png';
 import MobileMainMenu from './menu/mobile-main-menu';
 import { WalletConnectButton } from './connect-wallet/connect-button';
 import CartButtonMobile from './components/cart-button';
@@ -35,8 +35,8 @@ export default async function MobileNav() {
                             />
 
                             <Image
-                                src={HamzaTitle}
-                                className="w-[60.73px] h-[11.59px] md:w-[125.42px] md:h-[23.07px] ml-[0.5rem] md:ml-[1rem]"
+                                src={HamzaBetaTitle}
+                                className="w-[64.73px] h-[15.59px]"
                                 style={{
                                     alignSelf: 'center',
                                 }}
