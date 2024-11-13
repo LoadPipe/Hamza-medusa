@@ -1,14 +1,22 @@
-import { BaseEntity, BeforeInsert, Column, Entity, PrimaryColumn } from 'typeorm';
+import {
+    BaseEntity,
+    BeforeInsert,
+    Column,
+    Entity,
+    PrimaryColumn,
+} from 'typeorm';
 import { generateEntityId } from '@medusajs/medusa/dist/utils';
-import { FulfillmentStatus, OrderStatus, PaymentStatus } from '@medusajs/medusa';
+import {
+    FulfillmentStatus,
+    OrderStatus,
+    PaymentStatus,
+} from '@medusajs/medusa';
 
 @Entity()
 export class OrderHistory extends BaseEntity {
-
     constructor() {
         super();
-        if (!this.id)
-            this.beforeInsert();
+        if (!this.id) this.beforeInsert();
     }
 
     @PrimaryColumn()
@@ -21,13 +29,13 @@ export class OrderHistory extends BaseEntity {
     title: string;
 
     @Column({ name: 'to_status' })
-    to_status: OrderStatus;
+    to_status: string;
 
     @Column({ name: 'to_payment_status' })
-    to_payment_status: PaymentStatus;
+    to_payment_status: string;
 
     @Column({ name: 'to_fulfillment_status' })
-    to_fulfillment_status: FulfillmentStatus;
+    to_fulfillment_status: string;
 
     @Column('jsonb')
     metadata?: Record<string, unknown>;
