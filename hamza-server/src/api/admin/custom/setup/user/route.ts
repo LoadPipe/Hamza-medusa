@@ -269,14 +269,10 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             'pcol_01HSGAMXDJD725MR3VSW63LEG0',
             'pcol_01HSGAMXDJD725MR3VSW63B0RD',
             'pcol_01HSGAMXDJD725MR3VSW63W0GE',
-            'pcol_01HSGAMXDJD725MR3VSW631DR0',
-            'pcol_sound',
-            'pcol_gamefi',
-            'pcol_razor',
             'pcol_01HSGAMXDJD725MR3VSW63W0GA',
-            'pcol_shake',
+            //'pcol_shake',
             'pcol_lighting',
-            'pcol_blocks',
+            'pcol_01HSGAMXDJD725MR3VSW63LEG0',
         ];
 
         const storeIds = [
@@ -287,9 +283,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             store4.id,
             store5.id,
             store6.id,
-            store3.id,
             store7.id,
-            store8.id,
+            //store8.id,
             store9.id,
             store10.id,
         ];
