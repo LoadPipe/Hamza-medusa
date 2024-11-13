@@ -66,20 +66,6 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
                         })}
                     </Text>
                 </Flex>
-                <Flex
-                    mt={{ base: '1rem', md: '0' }}
-                    ml={{ base: '0', md: 'auto' }}
-                    flexDir={'column'}
-                    width={'200px'}
-                >
-                    <Text
-                        fontWeight={600}
-                        fontSize={{ base: '14px', md: '16px' }}
-                    >
-                        Payment Method
-                    </Text>
-                    <Text fontSize={{ base: '14px', md: '16px' }}>Crypto</Text>
-                </Flex>
             </Flex>
 
             <Flex
