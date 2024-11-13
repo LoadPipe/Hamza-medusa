@@ -36,6 +36,8 @@ interface AddressModalProps {
     addressType: 'add' | 'edit';
 }
 
+const MAX_ADDRESSES = 10;
+
 const AddressModal: React.FC<AddressModalProps> = ({
     isOpen,
     onClose,
@@ -90,7 +92,11 @@ const AddressModal: React.FC<AddressModalProps> = ({
                         cart.shipping_address.country_code || countryCode || '',
                     'shipping_address.province':
                         cart.shipping_address.province || '',
-                    email: cart.email || '',
+                    email: cart?.email
+                        ? cart.email
+                        : customer?.email?.includes('evm')
+                          ? ''
+                          : customer?.email || '',
                     'shipping_address.phone': cart.shipping_address.phone || '',
                 }));
             }
@@ -422,16 +428,10 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         autoComplete="email"
                                         color={'white'}
                                         _placeholder={{ color: 'white' }}
-                                        value={
-                                            formData.email.includes(
-                                                '@evm.blockchain'
-                                            )
-                                                ? ''
-                                                : formData.email
-                                        }
+                                        value={formData.email}
+                                        placeholder="Email"
                                         onChange={handleChange}
                                         maxLength={50}
-                                        placeholder="Email"
                                         height={'50px'}
                                         fontSize={'14px'}
                                         bgColor={'#040404'}
@@ -457,28 +457,34 @@ const AddressModal: React.FC<AddressModalProps> = ({
                             )}
 
                             {/* Checkbox for Default Address */}
-                            <Flex alignItems="center" my="3" color={'white'}>
-                                <Checkbox
-                                    mr="2"
-                                    isChecked={saveAddress}
-                                    onChange={handleSaveAddressChange}
-                                />
-                                <Text alignSelf={'center'}>Save address</Text>
-                                {saveAddress && savedAddressID && (
-                                    <>
-                                        <Checkbox
-                                            ml="4"
-                                            mr="2"
-                                            isChecked={overwriteAddress}
-                                            onChange={
-                                                handleOverwriteAddressChange
-                                            }
-                                        />
-                                        <Text alignSelf={'center'}>
-                                            Overwrite address
-                                        </Text>
-                                    </>
-                                )}
+                            <Flex alignItems="start" flexDirection="column" my="3" color={'white'}>
+                                <Flex alignItems="center" color={'white'}>
+                                    {((customer?.shipping_addresses?.length ?? 0) < MAX_ADDRESSES) && (
+                                        <>
+                                            <Checkbox
+                                                mr="2"
+                                                isChecked={saveAddress}
+                                                onChange={handleSaveAddressChange}
+                                            />
+                                            <Text alignSelf={'center'}>Save address</Text>
+                                        </>
+                                    )}
+                                    {(savedAddressID && !saveAddress) && (
+                                        <>
+                                            <Checkbox
+                                                ml="4"
+                                                mr="2"
+                                                isChecked={overwriteAddress}
+                                                onChange={
+                                                    handleOverwriteAddressChange
+                                                }
+                                            />
+                                            <Text alignSelf={'center'}>
+                                                Overwrite address
+                                            </Text>
+                                        </>
+                                    )}
+                                </Flex>
                             </Flex>
                         </Flex>
                     </ModalBody>

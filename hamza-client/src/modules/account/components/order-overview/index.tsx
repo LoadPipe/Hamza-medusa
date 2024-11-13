@@ -22,6 +22,8 @@ const commonButtonStyles = {
     maxWidth: '146px',
     height: '56px',
     padding: '16px',
+    fontSize: '12px',
+    fontWeight: 'semibold',
     bg: 'gray.900',
     borderColor: 'transparent',
     color: 'white',

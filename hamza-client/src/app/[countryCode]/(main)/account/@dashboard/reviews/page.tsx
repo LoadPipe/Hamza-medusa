@@ -7,7 +7,10 @@ import {
     listRegions,
     getVerificationStatus,
 } from '@lib/data';
-import ReviewPage from '@/modules/account/components/reviews';
+import getQueryClient from '@/getQueryClient';
+import { dehydrate } from '@tanstack/react-query';
+import ReviewTemplate from '@modules/account/components/reviews/reviews-template';
+import { getAllProductReviews, getNotReviewedOrders } from '@lib/data';
 import React from 'react';
 
 export const metadata: Metadata = {
@@ -28,21 +31,34 @@ export default async function Reviews() {
     if (!verificationStatus.data) {
         return <Error error={'Verify your email to access this page.'} />;
     }
+    const queryClient = getQueryClient();
+
+    await queryClient.prefetchQuery({
+        queryKey: ['pendingReviewsQuery'],
+        queryFn: () => getNotReviewedOrders(customer.id),
+    });
+
+    await queryClient.prefetchQuery({
+        queryKey: ['reviewQuery'],
+        queryFn: () => getAllProductReviews(customer.id),
+    });
+
+    const dehydrateReviews = dehydrate(queryClient);
 
     return (
-        <Box
-            maxW={'927px'}
+        <Flex
+            maxW={{ md: '600px', lg: '927px' }}
             width="100%"
             backgroundColor={'#121212'}
             flexDirection={'column'}
             color="white"
-            rounded={'lg'}
-            justifyContent="center"
-            alignItems="center"
+            p={'24px'}
+            rounded="lg"
         >
-            <Box display="flex" flexDirection="column">
-                <ReviewPage customer={customer} />
-            </Box>
-        </Box>
+                <ReviewTemplate
+                    customer={customer}
+                    dehydratedState={dehydrateReviews}
+                />
+        </Flex>
     );
 }

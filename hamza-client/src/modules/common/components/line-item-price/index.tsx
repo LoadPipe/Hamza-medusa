@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { getPercentageDiff } from '@lib/util/get-precentage-diff';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { Flex, Text } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 
@@ -20,7 +20,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
     const [price, setPrice] = useState<number | null>(null);
     const [reducedPrice, setReducedPrice] = useState<number | null>(null);
     const [hasReducedPrice, setHasReducedPrice] = useState<boolean>(false);
-
+    const [usdcPrice, setUsdcPrice] = useState<number | null>(0);
     const { preferred_currency_code } = useCustomerAuthStore();
 
     useEffect(() => {
@@ -29,6 +29,11 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
             item.subtotal ?? item.unit_price * item.quantity;
         const discountTotal = item.discount_total ?? null;
         setPrice(totalItemAmount);
+        const findUsdcPrice = item?.variant?.prices.find(
+            (p: any) => p?.currency_code?.toLowerCase() === 'usdc'
+        )?.amount;
+        const usdcPrice = findUsdcPrice * item.quantity;
+        setUsdcPrice(usdcPrice);
         setReducedPrice(reducedPrice);
         if (
             discountTotal !== null &&
@@ -40,7 +45,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
     }, [item]);
 
     return (
-        <div className="flex flex-col gap-x-2 text-ui-fg-subtle items-end">
+        <div className="flex flex-col gap-x-1 text-ui-fg-subtle items-end">
             <div className="text-left">
                 {hasReducedPrice && reducedPrice !== null && (
                     <>
@@ -91,6 +96,22 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                                 preferred_currency_code ?? 'usdt'
                             )}
                         </Text>
+                        {preferred_currency_code === 'eth' && (
+                            <>
+                                <Text
+                                    ml={{ base: '8px', md: '16px' }}
+                                    as="h3"
+                                    variant="semibold"
+                                    color="white"
+                                    mt={2}
+                                    fontSize={{ base: '12px', md: '16px' }}
+                                    fontWeight={700}
+                                    textAlign="right"
+                                >
+                                    {`≅  ${formatCryptoPrice(usdcPrice ?? 0, 'usdc')} USDC`}
+                                </Text>
+                            </>
+                        )}
                     </Flex>
                 )}
             </div>

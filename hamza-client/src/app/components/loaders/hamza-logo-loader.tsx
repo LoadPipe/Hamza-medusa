@@ -1,6 +1,7 @@
 'use client';
 
-import { Box, keyframes, Text } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
+import { keyframes } from '@emotion/react';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import HamzaLogoBlack from '../../../../public/images/logo/hamza-logo-black.svg'; // Ensure this is a transparent image
@@ -56,6 +57,7 @@ const HamzaLogoLoader: React.FC<HamzaLogoLoaderProps> = ({
     const shuffledMessages = shuffleMessages(messages);
 
     // Effect to rotate through the messages
+    /*
     useEffect(() => {
         if (shuffledMessages.length > 0) {
             const intervalId = setInterval(() => {
@@ -67,6 +69,7 @@ const HamzaLogoLoader: React.FC<HamzaLogoLoaderProps> = ({
             return () => clearInterval(intervalId);
         }
     }, [shuffledMessages, textAnimOptions.base_speed]);
+    */
 
     // Determine the message to display
     const displayedMessage =

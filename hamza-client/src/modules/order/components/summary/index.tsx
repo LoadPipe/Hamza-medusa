@@ -11,14 +11,14 @@ import { getOrderSummary } from '@lib/data/index';
 import { Cart, Order } from '@medusajs/medusa';
 
 type SummaryProps = {
-    cart: Cart;
+    order: Order;
 };
 
-const Summary: React.FC<SummaryProps> = ({ cart }) => {
+const Summary: React.FC<SummaryProps> = ({ order }) => {
     return (
         <Flex direction="column" width={'100%'}>
             <Text fontWeight={600}>Your Order</Text>
-            {cart.items.map((item, index) => (
+            {order.items.map((item, index) => (
                 <Flex key={item.id} width={'100%'} flexDir={'column'}>
                     <Divider
                         mt="1rem"

@@ -19,12 +19,9 @@ type ExtendedLineItem = LineItem & {
 };
 
 const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
-    const {
-        tax_total,
-        shipping_total,
-    } = data;
+    const { tax_total, shipping_total } = data;
 
-    const { preferred_currency_code } = useCustomerAuthStore();
+    console.log(`Shipping Total ${shipping_total}`);
     //console.log('user preferred currency code: ', preferred_currency_code);
 
     //TODO: this can be replaced later by extending the cart, if necessary
@@ -34,8 +31,7 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
         for (let n = 0; n < cart.items.length; n++) {
             const item: ExtendedLineItem = cart.items[n];
 
-            const currency =
-                preferred_currency_code ?? item.currency_code ?? 'usdc';
+            const currency = item.currency_code ?? 'usdc';
 
             if (currency.length) {
                 subtotals[currency] = subtotals[currency] ?? 0;
@@ -49,7 +45,7 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
     };
 
     const subtotals = getCartSubtotals(data);
-    const currencyCode = preferred_currency_code ?? 'usdc';
+    const currencyCode = data.items[0].currency_code ?? 'usdc';
     const shippingCost = shipping_total ?? 0;
     const taxTotal = tax_total ?? 0;
     const grandTotal = (subtotals[currencyCode] ?? 0) + shippingCost + taxTotal;

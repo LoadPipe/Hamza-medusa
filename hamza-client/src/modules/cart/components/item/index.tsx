@@ -68,7 +68,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
             })
             .finally(() => {
                 setIsUpdating(false);
-                addDefaultShippingMethod(cart_id);
+                // addDefaultShippingMethod(cart_id);
             });
 
         if (message) {

@@ -140,60 +140,67 @@ const Cancelled = ({
                                                         {/*)}*/}
                                                     </Text>
                                                 </Flex>
-                                                <Flex
-                                                    direction={{
-                                                        base: 'column',
-                                                        md: 'row',
-                                                    }}
-                                                    justifyContent={'flex-end'}
-                                                    gap={2}
-                                                    mt={{ base: 4, md: 0 }}
-                                                    width="100%"
-                                                >
-                                                    <Button
-                                                        variant="outline"
-                                                        colorScheme="white"
-                                                        borderRadius={'37px'}
-                                                        onClick={() =>
-                                                            setActiveOrder(
-                                                                order.id
-                                                            )
-                                                        } // Set active order on click
-                                                        width={{
-                                                            base: '100%',
-                                                            md: 'auto',
+                                                {index ===
+                                                order.items.length - 1 ? (
+                                                    <Flex
+                                                        direction={{
+                                                            base: 'column',
+                                                            md: 'row',
                                                         }}
-                                                    >
-                                                        View Cancellation
-                                                        Details
-                                                    </Button>
-                                                    <a
-                                                        href="https://blog.hamza.market/contact/"
-                                                        target="_blank"
+                                                        justifyContent={
+                                                            'flex-end'
+                                                        }
+                                                        gap={2}
+                                                        mt={{ base: 4, md: 0 }}
+                                                        width="100%"
                                                     >
                                                         <Button
-                                                            ml={{
-                                                                base: 0,
-                                                                md: 2,
-                                                            }}
-                                                            mt={{
-                                                                base: 2,
-                                                                md: 0,
-                                                            }}
                                                             variant="outline"
                                                             colorScheme="white"
                                                             borderRadius={
                                                                 '37px'
                                                             }
+                                                            onClick={() =>
+                                                                setActiveOrder(
+                                                                    order.id
+                                                                )
+                                                            } // Set active order on click
                                                             width={{
                                                                 base: '100%',
                                                                 md: 'auto',
                                                             }}
                                                         >
-                                                            Contact Seller
+                                                            View Cancellation
+                                                            Details
                                                         </Button>
-                                                    </a>
-                                                </Flex>
+                                                        <a
+                                                            href="https://blog.hamza.market/contact/"
+                                                            target="_blank"
+                                                        >
+                                                            <Button
+                                                                ml={{
+                                                                    base: 0,
+                                                                    md: 2,
+                                                                }}
+                                                                mt={{
+                                                                    base: 2,
+                                                                    md: 0,
+                                                                }}
+                                                                variant="outline"
+                                                                colorScheme="white"
+                                                                borderRadius={
+                                                                    '37px'
+                                                                }
+                                                                width={{
+                                                                    base: '100%',
+                                                                    md: 'auto',
+                                                                }}
+                                                            >
+                                                                Contact Seller
+                                                            </Button>
+                                                        </a>
+                                                    </Flex>
+                                                ) : null}
                                             </Flex>
                                         </div>
                                     )

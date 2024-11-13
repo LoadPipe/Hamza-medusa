@@ -85,7 +85,7 @@ const EditReviewTemplate = ({
     return (
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
             <ModalOverlay />
-            <ModalContent>
+            <ModalContent bg={'#121212'}>
                 <ModalHeader
                     color={'primary.green.900'}
                     justifyContent={'center'}
@@ -95,14 +95,14 @@ const EditReviewTemplate = ({
                 </ModalHeader>
                 <ModalCloseButton />
                 <ModalBody>
-                    <Box className="flex items-center mb-4">
+                    <Box color={'white'} className="flex items-center mb-4">
                         <Image
                             src={review.product.thumbnail}
                             alt={review.title}
                             boxSize="96px"
                             mr="4"
                         />
-                        <Box>
+                        <Box color={'white'}>
                             <Text fontSize="xl" fontWeight="semibold">
                                 {review.title}
                             </Text>
@@ -133,14 +133,15 @@ const EditReviewTemplate = ({
                                     ★
                                 </button>
                             ))}
-                            <span className="ml-2 text-sm font-medium text-black self-center">
+                            <span className="ml-2 text-sm font-medium text-white self-center">
                                 {ratingDescriptions[rating - 1] || ''}
                             </span>
                         </Box>
-                        <p className="text-black">Review Detail</p>
+                        <p className="text-white">Review Detail</p>
                         <textarea
-                            className="w-full p-2 border rounded text-black"
+                            className="w-full p-2  rounded text-white bg-black"
                             rows={4}
+                            style={{ resize: 'none' }}
                             placeholder="What do you think of this product?"
                             value={currentReview}
                             onChange={(e) => setCurrentReview(e.target.value)}
@@ -157,7 +158,7 @@ const EditReviewTemplate = ({
                             my={'1rem'}
                         >
                             <Button
-                                variant="solid"
+                                variant="outline"
                                 borderColor={'primary.indigo.900'}
                                 color={'primary.indigo.900'}
                                 width={'180px'}
