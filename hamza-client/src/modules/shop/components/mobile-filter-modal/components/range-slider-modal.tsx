@@ -9,7 +9,7 @@ import {
     RangeSliderFilledTrack,
     RangeSliderThumb,
 } from '@chakra-ui/react';
-import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
+import useHomeModalFilter from '@/zustand/home-page/home-filter/home-filter';
 
 // Define a type for the range state
 type RangeType = [number, number];

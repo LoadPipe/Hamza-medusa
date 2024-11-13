@@ -8,8 +8,8 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Image from 'next/image';
 import FilterIcon from '../../assets/filter-button.svg';
-import useStorePage from '@store/store-page/store-page';
-import useShopFilter from '@/store/store-page/shop-filter';
+import useStorePage from '@/zustand/store-page/store-page';
+import useShopFilter from '@/zustand/store-page/shop-filter';
 import All from '@/images/categories/all.svg';
 
 interface Category {

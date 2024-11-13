@@ -27,7 +27,7 @@ import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import { OrdersData } from './all';
-import { useOrderTabStore } from '@store/order-tab-state';
+import { useOrderTabStore } from '@/zustand/order-tab-state';
 
 const Shipped = ({
     customer,

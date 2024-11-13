@@ -4,13 +4,13 @@ import LocalizedClientLink from '@modules/common/components/localized-client-lin
 import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useParams, usePathname } from 'next/navigation';
 
-import useWishlistStore from '@store/wishlist/wishlist-store';
+import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import { Popover, Transition } from '@headlessui/react';
-import { WishlistType } from '@store/wishlist/types/wishlist-types';
+import { WishlistType } from '@/zustand/wishlist/types/wishlist-types';
 import Image from 'next/image';
 import { Button } from '@medusajs/ui';
 import Thumbnail from '@modules/products/components/thumbnail';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { FaRegHeart } from 'react-icons/fa';
 
 interface WishlistPopoverItemProps {
@@ -120,7 +120,7 @@ const WishlistDropdown: React.FC<WishlistPopoverItemProps> = () => {
                                                         key={product.id}
                                                     >
                                                         <Popover.Button>
-                                                            {({ }) =>
+                                                            {({}) =>
                                                                 product ? ( // Check if the product exists
                                                                     <LocalizedClientLink
                                                                         href={`/products/${product.handle}`}

@@ -17,7 +17,7 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { setPaymentMethod } from '@modules/checkout/actions';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { addDefaultShippingMethod } from '@lib/data';
 
 type ShippingProps = {

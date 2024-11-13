@@ -5,8 +5,8 @@ import { clx } from '@medusajs/ui';
 import { getPercentageDiff } from '@lib/util/get-precentage-diff';
 import { CalculatedVariant } from '@/types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import { useCustomerProfileStore } from '@store/customer-profile/customer-profile';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
+import { useCustomerProfileStore } from '@/zustand/customer-profile/customer-profile';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;

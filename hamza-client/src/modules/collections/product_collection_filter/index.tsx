@@ -8,7 +8,7 @@ import axios from 'axios';
 import { SimpleGrid } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { getProductsByStoreName } from '@lib/data';
 
 type Props = {
@@ -83,8 +83,8 @@ const ProductCollections = ({ storeName }: Props) => {
 
                                                 {authData.status ==
                                                     'authenticated' &&
-                                                    preferred_currency_code &&
-                                                    preferredPrice ? (
+                                                preferred_currency_code &&
+                                                preferredPrice ? (
                                                     <>
                                                         {' '}
                                                         {formatCryptoPrice(

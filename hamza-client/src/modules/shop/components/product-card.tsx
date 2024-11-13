@@ -10,7 +10,7 @@ import { IoStar } from 'react-icons/io5';
 import Image from 'next/image';
 import { getObjectFit } from '@modules/get-object-fit';
 import currencyIcons from '../../../../public/images/currencies/crypto-currencies';
-import useProductPreview from '@store/product-preview/product-preview';
+import useProductPreview from '@/zustand/product-preview/product-preview';
 import { useRouter } from 'next/navigation';
 
 interface ProductCardProps {

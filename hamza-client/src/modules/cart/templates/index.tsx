@@ -7,7 +7,7 @@ import SignInPrompt from '../components/sign-in-prompt';
 import Divider from '@modules/common/components/divider';
 import { Customer } from '@medusajs/medusa';
 import { Flex } from '@chakra-ui/react';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 
 const CartTemplate = ({
     cart,

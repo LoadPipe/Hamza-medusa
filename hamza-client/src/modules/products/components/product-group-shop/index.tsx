@@ -14,10 +14,10 @@ import {
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import ProductCard from '@modules/shop/components/product-card';
-import useStorePage from '@store/store-page/store-page';
-import useShopFilter from '@/store/store-page/shop-filter';
+import useStorePage from '@/zustand/store-page/store-page';
+import useShopFilter from '@/zustand/store-page/shop-filter';
 
 const ProductCardGroup = () => {
     const { preferred_currency_code } = useCustomerAuthStore();

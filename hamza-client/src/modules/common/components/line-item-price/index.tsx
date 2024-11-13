@@ -4,7 +4,7 @@ import { getPercentageDiff } from '@lib/util/get-precentage-diff';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { Flex, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 
 // TODO: Can this be removed?

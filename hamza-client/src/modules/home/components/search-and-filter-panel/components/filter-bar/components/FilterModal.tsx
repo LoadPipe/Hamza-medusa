@@ -15,11 +15,11 @@ import React, { useState } from 'react';
 import FilterIcon from '../../../../../../../../public/images/categories/mobile-filter.svg';
 import Image from 'next/image';
 import CategoryModalButton from './CategoryModalButton';
-import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
-import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
 import RangeSliderModal from '@modules/shop/components/mobile-filter-modal/components/range-slider-modal';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
+import useProductGroup from '@/zustand/products/product-group/product-group';
+import useProductFilterModal from '@/zustand/products/filter-modal/product-filter-modal';
 interface FilterModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -43,14 +43,14 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
     onClose,
     categories,
 }) => {
-    const { setCategorySelect } = useHomeProductsPage();
+    const { setCategorySelect } = useProductGroup();
 
     const {
         setSelectCategoryFilter,
         selectCategoryFilter,
         setRangeUpper,
         setRangeLower,
-    } = useHomeModalFilter();
+    } = useProductFilterModal();
 
     // Fetching categories data
     const { data, isLoading } = useQuery<Category[]>(
@@ -152,7 +152,6 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                             setCategorySelect(['All']);
                             setRange([0, 350]);
                             setRangeUpper(350), setRangeLower(0), onClose();
-
                         }}
                     >
                         Clear All

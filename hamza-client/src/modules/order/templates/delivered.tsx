@@ -10,7 +10,7 @@ import { useParams, useRouter } from 'next/navigation';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import { OrdersData } from './all';
-import { useOrderTabStore } from '@store/order-tab-state';
+import { useOrderTabStore } from '@/zustand/order-tab-state';
 import Link from 'next/link';
 
 const Delivered = ({
@@ -223,9 +223,9 @@ const Delivered = ({
                                                             Return/Refund
                                                         </Button>
                                                     </Link>
-                                                </Flex >
-                                            </Flex >
-                                        </div >
+                                                </Flex>
+                                            </Flex>
+                                        </div>
                                     )
                                 )}
 
@@ -238,12 +238,12 @@ const Delivered = ({
                                         mb: 8,
                                     }}
                                 />
-                            </Flex >
+                            </Flex>
                         );
                     })}
-                </Flex >
+                </Flex>
             ) : null}
-        </div >
+        </div>
     );
 };
 

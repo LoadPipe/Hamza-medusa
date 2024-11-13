@@ -11,10 +11,10 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import ProductCardHome from '../product-group/component/product-card';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import useVendor from '@store/store-page/vendor';
+import useVendor from '@/zustand/store-page/vendor';
 
 type Props = {
     storeName: string;

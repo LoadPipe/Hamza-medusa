@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import Image from 'next/image';
-import useProductGroup from '@/store/products/product-group/product-group';
+import useProductGroup from '@/zustand/products/product-group/product-group';
 
 interface CategoryButtonProps {
     categoryName: string;

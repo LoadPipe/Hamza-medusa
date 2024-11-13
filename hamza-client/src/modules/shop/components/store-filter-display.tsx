@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import CategoryTopButton from './filter-carousel/category-top-button';
-import useStorePage from '@store/store-page/store-page';
+import useStorePage from '@/zustand/store-page/store-page';
 import FilterTags from './desktop-filter-tags/filter-tags';
 import { FaGreaterThan } from 'react-icons/fa';
 import { CgChevronRight } from 'react-icons/cg';

@@ -8,7 +8,7 @@ import ProfileImage from './components/customer-icon/profile-image';
 
 import ProfileCurrency from '@modules/account/components/profile-currency';
 import { getVerificationStatus, setCurrency, updateCustomer } from '@lib/data';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 
 const ProfileForm: React.FC<any> = ({ customer }) => {
     // Todo: disable submitting if fields have not been changed

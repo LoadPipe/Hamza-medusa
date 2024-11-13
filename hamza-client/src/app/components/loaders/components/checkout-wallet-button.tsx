@@ -18,7 +18,7 @@ import {
     getAllowedChainsFromConfig,
     getBlockchainNetworkName,
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { useEffect, useState } from 'react';
 import HamzaLogoLoader from '../hamza-logo-loader';
 

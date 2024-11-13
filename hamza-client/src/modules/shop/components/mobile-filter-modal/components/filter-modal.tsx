@@ -16,11 +16,11 @@ import React, { useState } from 'react';
 import FilterIcon from '../../../../../../public/images/categories/mobile-filter.svg';
 import Image from 'next/image';
 import CategoryModalButton from './category-modal-button';
-import useStorePage from '@store/store-page/store-page';
+import useStorePage from '@/zustand/store-page/store-page';
 import RangeSliderModal from './range-slider-modal';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import useShopFilter from '@/store/store-page/shop-filter';
+import useShopFilter from '@/zustand/store-page/shop-filter';
 
 const USE_PRICE_FILTER: boolean = false;
 

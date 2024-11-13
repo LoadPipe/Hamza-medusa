@@ -1,7 +1,8 @@
 import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import Image from 'next/image';
-import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
+import useHomeModalFilter from '@/zustand/home-page/home-filter/home-filter';
+import useProductFilterModal from '@/zustand/products/filter-modal/product-filter-modal';
 interface CategoryButtonProps {
     categoryName: string; // Single category name per button
 
@@ -13,7 +14,7 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
     url,
 }) => {
     const { selectCategoryFilter, setSelectCategoryFilter } =
-        useHomeModalFilter();
+        useProductFilterModal();
 
     const toggleCategorySelection = (category: string) => {
         const currentCategorySelection = selectCategoryFilter || [];

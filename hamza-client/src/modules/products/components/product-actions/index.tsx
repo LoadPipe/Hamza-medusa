@@ -16,10 +16,10 @@ import LocalizedClientLink from '@modules/common/components/localized-client-lin
 import MobileActions from '../mobile-actions';
 import ProductPrice from '../product-price';
 import WishlistIcon from '@/components/wishlist-dropdown/icon/wishlist-icon';
-import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
+import { useWishlistMutations } from '@/zustand/wishlist/mutations/wishlist-mutations';
 import Medusa from '@medusajs/medusa-js';
-import useWishlistStore from '@store/wishlist/wishlist-store';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import useWishlistStore from '@/zustand/wishlist/wishlist-store';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { getInventoryCount, getStore } from '@lib/data';
 
 type ProductActionsProps = {
@@ -179,7 +179,7 @@ export default function ProductActions({
         if (data.status == true) {
             const whitelistedProduct =
                 whitelist_config.is_whitelisted &&
-                    whitelist_config.whitelisted_stores.includes(data.data)
+                whitelist_config.whitelisted_stores.includes(data.data)
                     ? true
                     : false;
 
@@ -248,10 +248,10 @@ export default function ProductActions({
                     {!variant
                         ? 'Select variant'
                         : !inStock && isWhitelisted
+                          ? 'Add to Cart'
+                          : inStock
                             ? 'Add to Cart'
-                            : inStock
-                                ? 'Add to Cart'
-                                : 'Out of Stock'}
+                            : 'Out of Stock'}
                 </Button>
                 {!inStock && isWhitelisted && (
                     <span className="text-xs">

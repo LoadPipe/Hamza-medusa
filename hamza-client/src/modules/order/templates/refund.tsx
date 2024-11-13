@@ -20,7 +20,7 @@ import { debounce, upperCase } from 'lodash';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import { OrdersData } from './all';
-import { useOrderTabStore } from '@store/order-tab-state';
+import { useOrderTabStore } from '@/zustand/order-tab-state';
 
 const Refund = ({
     customer,

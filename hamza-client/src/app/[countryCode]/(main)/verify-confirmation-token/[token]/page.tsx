@@ -1,6 +1,6 @@
 'use client';
 
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';

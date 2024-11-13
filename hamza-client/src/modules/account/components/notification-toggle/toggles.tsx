@@ -12,7 +12,7 @@ import {
     Box,
 } from '@chakra-ui/react';
 import { Region } from '@medusajs/medusa';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import toast from 'react-hot-toast';
 import {
     addNotifications,
@@ -120,78 +120,91 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
             <Stack spacing={3}>
                 <Flex>
                     <Switch
-                      id="orderShipped"
-                      value="orderShipped"
-                      isChecked={
-                        Array.isArray(selectedNotifications) &&
-                        selectedNotifications.includes('orderShipped' as never)
-                      }
-                      mr={4}
-                      colorScheme="switchBackground"
-                      onChange={handleCheckboxChange}
+                        id="orderShipped"
+                        value="orderShipped"
+                        isChecked={
+                            Array.isArray(selectedNotifications) &&
+                            selectedNotifications.includes(
+                                'orderShipped' as never
+                            )
+                        }
+                        mr={4}
+                        colorScheme="switchBackground"
+                        onChange={handleCheckboxChange}
                     />
-                    <FormLabel htmlFor="orderShipped">Notify when order shipped</FormLabel>
+                    <FormLabel htmlFor="orderShipped">
+                        Notify when order shipped
+                    </FormLabel>
                 </Flex>
 
                 <Flex>
                     <Switch
-                      id="orderStatusChanged"
-                      value="orderStatusChanged"
-                      isChecked={
-                        Array.isArray(selectedNotifications) &&
-                        selectedNotifications.includes('orderStatusChanged' as never)
-                      }
-                      mr={4}
-                      colorScheme="switchBackground"
-                      onChange={handleCheckboxChange}
+                        id="orderStatusChanged"
+                        value="orderStatusChanged"
+                        isChecked={
+                            Array.isArray(selectedNotifications) &&
+                            selectedNotifications.includes(
+                                'orderStatusChanged' as never
+                            )
+                        }
+                        mr={4}
+                        colorScheme="switchBackground"
+                        onChange={handleCheckboxChange}
                     />
-                    <FormLabel htmlFor="orderStatusChanged">Notify when order status changed</FormLabel>
+                    <FormLabel htmlFor="orderStatusChanged">
+                        Notify when order status changed
+                    </FormLabel>
                 </Flex>
 
                 <Flex>
                     <Switch
-                      id="promotions"
-                      value="promotions"
-                      isChecked={
-                        Array.isArray(selectedNotifications) &&
-                        selectedNotifications.includes('promotions' as never)
-                      }
-                      mr={4}
-                      colorScheme="switchBackground"
-                      onChange={handleCheckboxChange}
+                        id="promotions"
+                        value="promotions"
+                        isChecked={
+                            Array.isArray(selectedNotifications) &&
+                            selectedNotifications.includes(
+                                'promotions' as never
+                            )
+                        }
+                        mr={4}
+                        colorScheme="switchBackground"
+                        onChange={handleCheckboxChange}
                     />
-                    <FormLabel htmlFor="promotions">Notify for promotions/discounts</FormLabel>
+                    <FormLabel htmlFor="promotions">
+                        Notify for promotions/discounts
+                    </FormLabel>
                 </Flex>
 
                 <Flex>
                     <Switch
-                      id="surveys"
-                      value="surveys"
-                      isChecked={
-                        Array.isArray(selectedNotifications) &&
-                        selectedNotifications.includes('surveys' as never)
-                      }
-                      mr={4}
-                      colorScheme="switchBackground"
-                      onChange={handleCheckboxChange}
+                        id="surveys"
+                        value="surveys"
+                        isChecked={
+                            Array.isArray(selectedNotifications) &&
+                            selectedNotifications.includes('surveys' as never)
+                        }
+                        mr={4}
+                        colorScheme="switchBackground"
+                        onChange={handleCheckboxChange}
                     />
                     <FormLabel htmlFor="surveys">Notify for surveys</FormLabel>
                 </Flex>
 
                 <Flex>
                     <Switch
-                      id="none"
-                      value="none"
-                      isChecked={
-                        Array.isArray(selectedNotifications) &&
-                        selectedNotifications.includes('none' as never)
-                      }
-                      mr={4}
-                      colorScheme="switchBackground"
-                      onChange={handleCheckboxChange}
+                        id="none"
+                        value="none"
+                        isChecked={
+                            Array.isArray(selectedNotifications) &&
+                            selectedNotifications.includes('none' as never)
+                        }
+                        mr={4}
+                        colorScheme="switchBackground"
+                        onChange={handleCheckboxChange}
                     />
                     <FormLabel htmlFor="none">
-                        No notifications (when this is checked, other checkboxes are cleared)
+                        No notifications (when this is checked, other checkboxes
+                        are cleared)
                     </FormLabel>
                 </Flex>
             </Stack>

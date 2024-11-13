@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { Text, Button, Flex, Box, Heading, Divider } from '@chakra-ui/react';
-import useProductPreview from '@store/product-preview/product-preview';
+import useProductPreview from '@/zustand/product-preview/product-preview';
 import QuantityButton from '../quantity-button';
 import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
@@ -10,7 +10,7 @@ import ReviewStar from '../../../../../../../public/images/products/review-star.
 import Image from 'next/image';
 import { Variant } from '@/types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import toast from 'react-hot-toast';
 import OptionSelect from '../../../option-select';
 import { isEqual } from 'lodash';
@@ -23,8 +23,8 @@ import { renderStars } from '@modules/products/components/review-stars';
 import { BiHeart, BiSolidHeart } from 'react-icons/bi';
 import useWishlistStore, {
     WishlistProduct,
-} from '@store/wishlist/wishlist-store';
-import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
+} from '@/zustand/wishlist/wishlist-store';
+import { useWishlistMutations } from '@/zustand/wishlist/mutations/wishlist-mutations';
 import { MdOutlineShoppingCart } from 'react-icons/md';
 
 interface PreviewCheckoutProps {

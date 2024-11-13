@@ -11,12 +11,13 @@ import {
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import ProductCard from '../product-card/product-card';
-import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
-import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
+import useHomeProductsPage from '@/zustand/home-page/product-layout/product-layout';
+import useHomeModalFilter from '@/zustand/home-page/home-filter/home-filter';
 import { getAllProducts } from '@lib/data';
-import useProductGroup from '@/store/products/product-group/product-group';
+import useProductGroup from '@/zustand/products/product-group/product-group';
+import useProductFilterModal from '@/zustand/products/filter-modal/product-filter-modal';
 
 const ProductCardGroup = ({
     columns = { base: 2, lg: 4 },
@@ -31,7 +32,7 @@ const ProductCardGroup = ({
         visibleProductCountInitial
     );
 
-    const { rangeUpper, rangeLower } = useHomeModalFilter();
+    const { rangeUpper, rangeLower } = useProductFilterModal();
 
     const { data, error, isLoading } = useQuery(
         ['Products', categorySelect, rangeUpper, rangeLower],

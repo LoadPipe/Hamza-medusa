@@ -1,5 +1,5 @@
 'use client';
-import { useCartStore } from '@store/cart-store/cart-store'; // Import Zustand store
+import { useCartStore } from '@/zustand/cart-store/cart-store'; // Import Zustand store
 import { LineItem, Region } from '@medusajs/medusa';
 import CartItemSelect from '@modules/cart/components/cart-item-select';
 import DeleteButton from '@modules/common/components/delete-button';
