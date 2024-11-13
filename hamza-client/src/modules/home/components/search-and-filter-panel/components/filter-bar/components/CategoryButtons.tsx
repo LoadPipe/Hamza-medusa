@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
-import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import Image from 'next/image';
+import useProductGroup from '@/store/products/product-group/product-group';
 
 interface CategoryButtonProps {
     categoryName: string;
@@ -12,7 +12,7 @@ const CategoryButtons: React.FC<CategoryButtonProps> = ({
     categoryName,
     url,
 }) => {
-    const { categorySelect, setCategorySelect } = useHomeProductsPage();
+    const { categorySelect, setCategorySelect } = useProductGroup();
 
     const toggleCategorySelection = (category: string) => {
         const currentCategorySelection = categorySelect || [];

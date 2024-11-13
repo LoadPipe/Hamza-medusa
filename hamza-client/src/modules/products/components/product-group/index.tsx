@@ -12,20 +12,29 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import ProductCardHome from './component/home-product-card';
+import ProductCard from '../product-card/product-card';
 import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
 import { getAllProducts } from '@lib/data';
+import useProductGroup from '@/store/products/product-group/product-group';
 
-const ProductCardGroup = () => {
+const ProductCardGroup = ({
+    columns = { base: 2, lg: 4 },
+    gap = { base: '4', md: '25.5px' },
+    skeletonCount = 8,
+    skeletonHeight = { base: '134.73', md: '238px' },
+    visibleProductCountInitial = 16,
+}) => {
     const { preferred_currency_code } = useCustomerAuthStore();
-    const { categorySelect } = useHomeProductsPage();
-    const [visibleProductsCount, setVisibleProductsCount] = useState(16); // State to manage visible products count (4 rows, 16 items)
+    const { categorySelect } = useProductGroup();
+    const [visibleProductsCount, setVisibleProductsCount] = useState(
+        visibleProductCountInitial
+    );
 
     const { rangeUpper, rangeLower } = useHomeModalFilter();
 
     const { data, error, isLoading } = useQuery(
-        ['homeProducts', categorySelect, rangeUpper, rangeLower],
+        ['Products', categorySelect, rangeUpper, rangeLower],
         () =>
             getAllProducts(
                 categorySelect,
@@ -56,12 +65,12 @@ const ProductCardGroup = () => {
                     mx="1rem"
                     width="100%"
                     templateColumns={{
-                        base: 'repeat(2, 1fr)',
-                        lg: 'repeat(4, 1fr)',
+                        base: `repeat(${columns.base}, 1fr)`,
+                        lg: `repeat(${columns.lg}, 1fr)`,
                     }}
-                    gap={{ base: '4', md: '25.5px' }}
+                    gap={gap}
                 >
-                    {Array.from({ length: 8 }).map((_, index) => (
+                    {Array.from({ length: skeletonCount }).map((_, index) => (
                         <GridItem
                             key={index}
                             minHeight="243.73px"
@@ -71,21 +80,13 @@ const ProductCardGroup = () => {
                             overflow="hidden"
                             backgroundColor="#121212"
                         >
-                            <Skeleton
-                                height={{ base: '134.73', md: '238px' }}
-                                width="100%"
-                            />
+                            <Skeleton height={skeletonHeight} width="100%" />
                             <Box p={{ base: '2', md: '4' }}>
                                 <SkeletonText
                                     mt={{ base: '1', md: '4' }}
                                     noOfLines={2}
                                     spacing={{ base: '3', md: '4' }}
                                 />
-                                {/* <SkeletonText
-                                    mt="10"
-                                    noOfLines={2}
-                                    spacing="4"
-                                /> */}
                             </Box>
                         </GridItem>
                     ))}
@@ -109,13 +110,12 @@ const ProductCardGroup = () => {
                 maxWidth={'1256.52px'}
                 width="100%"
                 templateColumns={{
-                    base: 'repeat(2, 1fr)',
-                    lg: 'repeat(4, 1fr)',
+                    base: `repeat(${columns.base}, 1fr)`,
+                    lg: `repeat(${columns.lg}, 1fr)`,
                 }}
-                gap={{ base: '4', md: '25.5px' }}
+                gap={gap}
             >
                 {productsAll.map((product: any, index: number) => {
-                    // Extract product details
                     const variant = product.variants[0];
                     const productPricing =
                         variant?.prices?.find(
@@ -164,7 +164,7 @@ const ProductCardGroup = () => {
                             width="100%"
                             my={{ base: '2', md: '0' }}
                         >
-                            <ProductCardHome
+                            <ProductCard
                                 key={index}
                                 reviewCount={reviewCounter}
                                 totalRating={roundedAvgRating}
@@ -187,20 +187,6 @@ const ProductCardGroup = () => {
                     );
                 })}
             </Grid>
-
-            {/* Show the "View More" button only if there are more products to display */}
-            {/* {visibleProductsCount < productsAll.length && (
-                <Button
-                    mt="2rem"
-                    onClick={handleViewMore}
-                    variant="solid"
-                    borderRadius={'full'}
-                    backgroundColor={'white'}
-                    color="black"
-                >
-                    Show More
-                </Button>
-            )} */}
         </Flex>
     );
 };

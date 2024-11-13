@@ -12,7 +12,7 @@ import {
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import ProductCardHome from '../product-group-home/component/home-product-card';
+import ProductCardHome from '../product-group/component/product-card';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import useVendor from '@store/store-page/vendor';
 
@@ -128,7 +128,9 @@ const ProductCardGroup = ({ storeName }: Props) => {
                         (acc: number, review: any) => acc + review.rating,
                         0
                     );
-                    const avgRating = reviewCounter ? totalRating / reviewCounter : 0;
+                    const avgRating = reviewCounter
+                        ? totalRating / reviewCounter
+                        : 0;
                     const roundedAvgRating = parseFloat(avgRating.toFixed(2));
 
                     return (

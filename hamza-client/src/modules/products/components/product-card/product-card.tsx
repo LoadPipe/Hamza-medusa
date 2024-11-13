@@ -10,7 +10,7 @@ import LocalizedClientLink from '@modules/common/components/localized-client-lin
 import { IoStar } from 'react-icons/io5';
 import Image from 'next/image';
 import { getObjectFit } from '@modules/get-object-fit';
-import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
+import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 
 interface ProductCardProps {
     variantID: string;
@@ -36,7 +36,7 @@ import { getAverageRatings, getReviewCount } from '@lib/data';
 import useProductPreview from '@store/product-preview/product-preview';
 import { useRouter } from 'next/navigation';
 
-const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
+const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
     variantID,
     countryCode,
     productName,
@@ -246,4 +246,4 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
     );
 };
 
-export default ProductCardHome;
+export default ProductCard;
