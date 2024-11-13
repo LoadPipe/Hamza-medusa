@@ -3,6 +3,7 @@ import { Text, Flex } from '@chakra-ui/react';
 import useStorePage from '@/zustand/store-page/store-page';
 import categoryIcons from '../../data/category-icons';
 import Image from 'next/image';
+import useProductGroup from '@/zustand/products/product-group/product-group';
 
 interface CategoryButtonProps {
     categoryName: string;
@@ -14,7 +15,7 @@ const CategoryTopButton: React.FC<CategoryButtonProps> = ({
     url,
 }) => {
     const { categorySelect, setCategorySelect, setCategoryItem } =
-        useStorePage();
+        useProductGroup();
 
     const toggleCategorySelection = (category: string) => {
         const currentCategorySelection = categorySelect || [];

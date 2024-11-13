@@ -20,7 +20,7 @@ import useStorePage from '@/zustand/store-page/store-page';
 import RangeSliderModal from './range-slider-modal';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import useShopFilter from '@/zustand/store-page/shop-filter';
+import useShopFilter from '@/zustand/products/shop-filter/shop-filter';
 
 const USE_PRICE_FILTER: boolean = false;
 

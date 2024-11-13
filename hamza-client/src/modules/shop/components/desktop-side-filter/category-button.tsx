@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import Image from 'next/image';
 import categoryIcons from '../../data/category-icons';
-import useShopFilter from '@/zustand/store-page/shop-filter';
+import useShopFilter from '@/zustand/products/shop-filter/shop-filter';
 
 interface CategoryButtonProps {
     categoryName: string;

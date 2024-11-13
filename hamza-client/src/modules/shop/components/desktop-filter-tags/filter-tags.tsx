@@ -1,9 +1,8 @@
 import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
-import useStorePage from '@/zustand/store-page/store-page';
-import useShopFilter from '@/zustand/store-page/shop-filter';
 import FilterTag from './filter-tag';
 import { IoCloseOutline } from 'react-icons/io5';
+import useProductGroup from '@/zustand/products/product-group/product-group';
 
 const FilterTags = () => {
     const {
@@ -11,7 +10,7 @@ const FilterTags = () => {
         setCategorySelect,
         setReviewStarsSelect,
         setCategoryItem,
-    } = useStorePage();
+    } = useProductGroup();
 
     const filterTags = () => {
         if (categoryItem && Array.isArray(categoryItem)) {

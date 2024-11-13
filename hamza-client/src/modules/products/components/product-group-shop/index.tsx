@@ -17,7 +17,7 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import ProductCard from '@modules/shop/components/product-card';
 import useStorePage from '@/zustand/store-page/store-page';
-import useShopFilter from '@/zustand/store-page/shop-filter';
+import useShopFilter from '@/zustand/products/shop-filter/shop-filter';
 
 const ProductCardGroup = () => {
     const { preferred_currency_code } = useCustomerAuthStore();

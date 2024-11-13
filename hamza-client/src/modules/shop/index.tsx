@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Flex, Box } from '@chakra-ui/react';
-import SideMenu from './components/desktop-side-filter/store-side-menu';
+import SideFilter from './components/desktop-side-filter/side-filter';
 import MobileFilter from '@modules/shop/components/mobile-filter-modal/mobile-filter';
 import ProductCardGroup from '@modules/products/components/product-group';
 import StoreFilterDisplay from '@modules/shop/components/store-filter-display';
@@ -29,7 +29,7 @@ const ShopTemplate = () => {
                     gap={'20px'}
                 >
                     <MobileFilter />
-                    <SideMenu />
+                    <SideFilter />
                     <Flex maxW={'941px'} w="100%" flexDirection={'column'}>
                         <StoreFilterDisplay />
 

@@ -9,8 +9,10 @@ import axios from 'axios';
 import Image from 'next/image';
 import FilterIcon from '../../assets/filter-button.svg';
 import useStorePage from '@/zustand/store-page/store-page';
-import useShopFilter from '@/zustand/store-page/shop-filter';
+import useShopFilter from '@/zustand/products/shop-filter/shop-filter';
 import All from '@/images/categories/all.svg';
+import useProductGroup from '@/zustand/products/product-group/product-group';
+import useProductFilterModal from '@/zustand/products/filter-modal/product-filter-modal';
 
 interface Category {
     id: string;
@@ -24,20 +26,20 @@ const USE_PRICE_FILTER: boolean = false;
 
 type RangeType = [number, number];
 
-const SideMenu = () => {
+const SideFilter = () => {
     const [range, setRange] = useState<RangeType>([0, 350]);
 
     // Use Zustand shop to handle filter object
-    const { setCategorySelect, setCategoryItem } = useStorePage();
+    const { setCategorySelect, setCategoryItem } = useProductGroup();
 
     const {
         selectCategoryFilter,
         setSelectCategoryFilter,
         setCategoryItemFilter,
         categoryItemFilter,
-        setRangeUpper,
-        setRangeLower,
     } = useShopFilter();
+
+    const { setRangeUpper, setRangeLower } = useProductFilterModal();
 
     const isDisabled =
         selectCategoryFilter.length === 0 && range[0] === 0 && range[1] === 350;
@@ -175,4 +177,4 @@ const SideMenu = () => {
     );
 };
 
-export default SideMenu;
+export default SideFilter;

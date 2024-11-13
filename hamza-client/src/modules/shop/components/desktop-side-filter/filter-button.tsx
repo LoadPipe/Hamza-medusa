@@ -3,7 +3,7 @@ import Image from 'next/image';
 import React from 'react';
 import FilterIcon from '../../assets/filter-button.svg';
 import useStorePage from '@/zustand/store-page/store-page';
-import useShopFilter from '@/zustand/store-page/shop-filter';
+import useShopFilter from '@/zustand/products/shop-filter/shop-filter';
 
 const FilterButton = () => {
     // Use Zustand shop to handle filter object

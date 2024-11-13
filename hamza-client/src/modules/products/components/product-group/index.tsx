@@ -35,7 +35,7 @@ const ProductCardGroup = ({
     const { rangeUpper, rangeLower } = useProductFilterModal();
 
     const { data, error, isLoading } = useQuery(
-        ['Products', categorySelect, rangeUpper, rangeLower],
+        ['categories', categorySelect, rangeUpper, rangeLower],
         () =>
             getAllProducts(
                 categorySelect,
