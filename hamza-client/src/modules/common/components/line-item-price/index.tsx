@@ -23,7 +23,6 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
     const [usdcPrice, setUsdcPrice] = useState<number | null>(0);
     const { preferred_currency_code } = useCustomerAuthStore();
 
-    console.log(`$$$$ ITEM PRICE ${JSON.stringify(item)}`);
     useEffect(() => {
         const originalTotal = item.original_total ?? null;
         const totalItemAmount =
@@ -33,7 +32,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
         const findUsdcPrice = item?.variant?.prices.find(
             (p: any) => p?.currency_code?.toLowerCase() === 'usdc'
         )?.amount;
-        const usdcPrice = findUsdcPrice * item.quantity ?? 0;
+        const usdcPrice = findUsdcPrice * item.quantity;
         setUsdcPrice(usdcPrice);
         setReducedPrice(reducedPrice);
         if (
