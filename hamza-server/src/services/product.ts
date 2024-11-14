@@ -549,7 +549,7 @@ class ProductService extends MedusaProductService {
         categories: string[], // Array of strings representing category names
         upperPrice: number = 0, // Number representing the upper price limit
         lowerPrice: number = 0, // Number representing the lower price limit
-        filterCurrencyCode: string = 'usdc',
+        filterCurrencyCode: string,
         storeId?: string
     ) {
         try {
