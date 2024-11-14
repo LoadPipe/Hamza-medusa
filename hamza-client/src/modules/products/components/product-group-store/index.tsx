@@ -39,6 +39,11 @@ const ProductCardGroup = ({ storeName }: Props) => {
         }
     );
 
+    // Log if there's an error
+    if (error) {
+        console.error('Error fetching data:', error);
+    }
+
     // Handle products based on category
     const productsAll = data;
 
@@ -128,7 +133,9 @@ const ProductCardGroup = ({ storeName }: Props) => {
                         (acc: number, review: any) => acc + review.rating,
                         0
                     );
-                    const avgRating = reviewCounter ? totalRating / reviewCounter : 0;
+                    const avgRating = reviewCounter
+                        ? totalRating / reviewCounter
+                        : 0;
                     const roundedAvgRating = parseFloat(avgRating.toFixed(2));
 
                     return (

@@ -565,26 +565,26 @@ class ProductService extends MedusaProductService {
 
             const key = normalizedCategoryNames.sort().join(',');
 
-            if (filterCurrencyCode === 'eth') {
-                const factor = Math.pow(10, getCurrencyPrecision('usdc').db);
-                upperPrice = await this.priceConverter_.convertPrice(
-                    upperPrice * factor,
-                    'usdc',
-                    'eth'
-                );
-                lowerPrice = await this.priceConverter_.convertPrice(
-                    lowerPrice * factor,
-                    'usdc',
-                    'eth'
-                );
-            } else {
-                const factor = Math.pow(
-                    10,
-                    getCurrencyPrecision(filterCurrencyCode).db
-                );
-                upperPrice = upperPrice * factor;
-                lowerPrice = lowerPrice * factor;
-            }
+            // if (filterCurrencyCode === 'eth') {
+            //     const factor = Math.pow(10, getCurrencyPrecision('usdc').db);
+            //     upperPrice = await this.priceConverter_.convertPrice(
+            //         upperPrice * factor,
+            //         'usdc',
+            //         'eth'
+            //     );
+            //     lowerPrice = await this.priceConverter_.convertPrice(
+            //         lowerPrice * factor,
+            //         'usdc',
+            //         'eth'
+            //     );
+            // } else {
+            //     const factor = Math.pow(
+            //         10,
+            //         getCurrencyPrecision(filterCurrencyCode).db
+            //     );
+            //     upperPrice = upperPrice * factor;
+            //     lowerPrice = lowerPrice * factor;
+            // }
 
             //retrieve products from cache
             let products = await productFilterCache.retrieveWithKey(key, {
