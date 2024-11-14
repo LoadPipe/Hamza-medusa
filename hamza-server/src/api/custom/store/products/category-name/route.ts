@@ -27,12 +27,14 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             ? handler.inputParams.category_name
             : handler.inputParams.category_name?.split(',') || [];
 
+        const currencyCode = handler.inputParams.currency_code ?? 'usdc';
+
         // Fetch the products by store ID
         const products = await productService.getFilteredProducts(
             categories,
             0,
             0,
-            'usdc',
+            currencyCode,
             storeData.id.toString()
         );
 

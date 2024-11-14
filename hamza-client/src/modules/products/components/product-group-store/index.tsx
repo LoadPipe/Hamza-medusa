@@ -27,7 +27,7 @@ const ProductCardGroup = ({ storeName }: Props) => {
 
     const { categorySelect } = useVendor();
 
-    const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products/category-name?store_name=${storeName}&category_name=${categorySelect}`;
+    const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products/category-name?store_name=${storeName}&category_name=${categorySelect}&currency_code=${preferred_currency_code}`;
 
     const { data, error, isLoading } = useQuery(
         ['products', categorySelect],
