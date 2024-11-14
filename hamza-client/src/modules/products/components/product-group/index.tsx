@@ -21,10 +21,11 @@ import useProductFilterModal from '@/zustand/products/filter-modal/product-filte
 
 const ProductCardGroup = ({
     columns = { base: 2, lg: 4 },
-    gap = { base: '4', md: '25.5px' },
+    gap = { base: 4, md: '25.5px' },
     skeletonCount = 8,
     skeletonHeight = { base: '134.73', md: '238px' },
     visibleProductCountInitial = 16,
+    layoutPadding = '1rem',
 }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const { categorySelect } = useProductGroup();
@@ -105,7 +106,7 @@ const ProductCardGroup = ({
             flexDir={'column'}
             justifyContent={'center'}
             alignItems={'center'}
-            px="1rem"
+            px={layoutPadding}
         >
             <Grid
                 maxWidth={'1256.52px'}
