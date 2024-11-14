@@ -12,14 +12,19 @@ const CategoryButtons: React.FC<CategoryButtonProps> = ({
     categoryName,
     url,
 }) => {
-    const { categorySelect, setCategorySelect } = useProductGroup();
+    const { categorySelect, setCategorySelect, setCategoryItem } =
+        useProductGroup();
 
     const toggleCategorySelection = (category: string) => {
         const currentCategorySelection = categorySelect || [];
 
         // Check if the selected category is 'All'
         if (category === 'All') {
-            return setCategorySelect(['All']);
+            // Reset category selection to only include 'All'
+            setCategorySelect(['All']);
+            // Reset category items to an empty array
+            setCategoryItem([]);
+            return; // Exit the function to prevent further logic
         }
         // If the category is already selected, we remove it along with its type
         if (currentCategorySelection.includes(category)) {
@@ -32,12 +37,23 @@ const CategoryButtons: React.FC<CategoryButtonProps> = ({
                     ? updatedCategorySelection
                     : ['All']
             );
+
+            setCategoryItem(
+                (prev) =>
+                    prev?.filter((item) => item.categoryName !== category) ||
+                    null
+            );
         } else {
             // If the category is not selected we add it to the array
             const updatedCategorySelection = currentCategorySelection.filter(
                 (cat) => cat !== 'All'
             );
             setCategorySelect([...updatedCategorySelection, category]);
+
+            setCategoryItem((prev) => [
+                ...(prev || []),
+                { categoryName: category, urlLink: url },
+            ]);
         }
     };
     return (
