@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect } from 'react';
-import useWishlistStore from '@store/wishlist/wishlist-store';
+import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import WishlistItem from '@/components/wishlist-dropdown/WishlistItem';
 import { SimpleGrid, Flex, Text, Box } from '@chakra-ui/react';
 

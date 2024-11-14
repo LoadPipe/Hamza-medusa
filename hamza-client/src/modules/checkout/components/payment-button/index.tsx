@@ -23,7 +23,7 @@ import toast from 'react-hot-toast';
 import { getServerConfig } from '@lib/data/index';
 import { getClientCookie } from '@lib/util/get-client-cookies';
 import HamzaLogoLoader from '@/components/loaders/hamza-logo-loader';
-import { useCartStore } from '@/store/cart-store/cart-store';
+import { useCartStore } from '@/zustand/cart-store/cart-store';
 import Spinner from '@/modules/common/icons/spinner';
 
 //TODO: we need a global common function to replace this

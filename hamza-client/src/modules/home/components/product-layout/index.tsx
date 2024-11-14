@@ -6,7 +6,7 @@ import { SimpleGrid, Container } from '@chakra-ui/react';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { addToCart } from '@modules/cart/actions';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import SkeletonProductGrid from '@modules/skeletons/components/skeleton-product-grid';
@@ -64,7 +64,9 @@ const ProductCardGroup = ({ vendorName, category }: Props) => {
                             (acc: number, review: any) => acc + review.rating,
                             0
                         );
-                        const avgRating = reviewCounter ? totalRating / reviewCounter : 0;
+                        const avgRating = reviewCounter
+                            ? totalRating / reviewCounter
+                            : 0;
                         const productPricing = formatCryptoPrice(
                             variantPrices.find(
                                 (p: any) =>

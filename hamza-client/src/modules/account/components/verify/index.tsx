@@ -1,6 +1,6 @@
 'use client';
 
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import getGoogleOAuthURL from '@lib/util/google-url';
@@ -42,11 +42,7 @@ const VerifyAccount = () => {
         const code = searchParams.get('code');
 
         const handleOAuth = async () => {
-            if (
-                (type?.length) &&
-                code &&
-                !oAuthCalled.current
-            ) {
+            if (type?.length && code && !oAuthCalled.current) {
                 oAuthCalled.current = true;
 
                 setLoading(true);

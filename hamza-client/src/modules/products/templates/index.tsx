@@ -14,7 +14,7 @@ import ProductInfo from '../components/product-preview/components/product-info/p
 import PreviewCheckout from '../components/product-preview/components/summary/preview-checkout';
 import ProductReview from '../components/product-preview/components/product-review';
 import ProductReviewMobile from '../components/product-preview/components/product-review-mobile';
-import useProductPreview from '@store/product-preview/product-preview';
+import useProductPreview from '@/zustand/product-preview/product-preview';
 import StoreBanner from '../components/product-preview/components/store-banner/store-banner';
 import SearchBar from '../components/product-preview/components/mobile-search';
 import Tweet from '@/components/tweet';

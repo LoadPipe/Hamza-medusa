@@ -1,7 +1,7 @@
 'use client';
 import { Text, clx } from '@medusajs/ui';
 import { PriceType } from '../product-actions';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 
 export default function PreviewPrice({

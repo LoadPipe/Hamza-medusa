@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { Text, Flex } from '@chakra-ui/react';
 import ReviewStar from '../../../../../../../../public/images/products/review-star.svg';
-import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
+import useHomeModalFilter from '@/zustand/home-page/home-filter/home-filter';
 
 // Define the props type with TypeScript
 interface ReviewButtonProps {

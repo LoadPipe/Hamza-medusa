@@ -3,7 +3,7 @@ import { Flex, Text } from '@chakra-ui/react';
 import Link from 'next/link';
 import { ReactElement } from 'react';
 import { useParams } from 'next/navigation';
-import { useOrderTabStore } from '@store/order-tab-state';
+import { useOrderTabStore } from '@/zustand/order-tab-state';
 
 type AccountNavLinkProps = {
     href: string;

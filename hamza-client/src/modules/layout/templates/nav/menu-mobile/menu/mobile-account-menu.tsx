@@ -18,8 +18,8 @@ import { CgProfile } from 'react-icons/cg';
 import { MdOutlinePersonOutline, MdOutlineShield } from 'react-icons/md';
 import { AiFillSetting } from 'react-icons/ai';
 import { AuthorizedAccount } from '../../menu-desktop/components/authorized-account';
-import useWishlistStore from '@store/wishlist/wishlist-store';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import useWishlistStore from '@/zustand/wishlist/wishlist-store';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import ProfileImage from '@/account/@dashboard/profile/profile-form/components/customer-icon/profile-image';
 
 const MobileAccountMenu = () => {

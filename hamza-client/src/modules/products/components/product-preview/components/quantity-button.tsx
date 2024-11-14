@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { Flex, Text, Heading } from '@chakra-ui/react';
-import useProductPreview from '@store/product-preview/product-preview';
+import useProductPreview from '@/zustand/product-preview/product-preview';
 import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
 
 const QuantityButton = () => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Flex, Text } from '@chakra-ui/react';
-import useVendor from '@store/store-page/vendor';
+import useVendor from '@/zustand/store-page/vendor';
 
 type StoreCatButtonProps = {
     categoryName: string;

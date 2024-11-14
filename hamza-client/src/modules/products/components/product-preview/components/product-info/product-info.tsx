@@ -9,13 +9,13 @@ import {
     SkeletonText,
 } from '@chakra-ui/react';
 import React, { useEffect, useState, useMemo } from 'react';
-import useProductPreview from '@store/product-preview/product-preview';
+import useProductPreview from '@/zustand/product-preview/product-preview';
 import { BiHeart, BiSolidHeart } from 'react-icons/bi';
 import useWishlistStore, {
     WishlistProduct,
-} from '@store/wishlist/wishlist-store';
-import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+} from '@/zustand/wishlist/wishlist-store';
+import { useWishlistMutations } from '@/zustand/wishlist/mutations/wishlist-mutations';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { Variant } from '@/types/medusa';
 import Image from 'next/image';
 import ReviewStar from '../../../../../../../public/images/products/review-star.svg';

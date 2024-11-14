@@ -12,7 +12,7 @@ import Shipped from '@modules/order/templates/shipped';
 import Delivered from '@modules/order/templates/delivered';
 import Cancelled from '@modules/order/templates/cancelled';
 import Refund from '@modules/order/templates/refund';
-import { useOrderTabStore } from '@store/order-tab-state';
+import { useOrderTabStore } from '@/zustand/order-tab-state';
 import React from 'react';
 import { Hydrate } from '@tanstack/react-query';
 

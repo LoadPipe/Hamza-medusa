@@ -14,12 +14,12 @@ import {
 import Image from 'next/image';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { getStore } from '@lib/data';
 import { addToCart } from '@modules/cart/actions';
 import CartPopup from '@modules/products/components/cart-popup';
-import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
-import { WishlistProduct } from '@store/wishlist/wishlist-store';
+import { useWishlistMutations } from '@/zustand/wishlist/mutations/wishlist-mutations';
+import { WishlistProduct } from '@/zustand/wishlist/wishlist-store';
 import { Spinner, Trash } from '@medusajs/icons';
 import axios from 'axios';
 import { useQuery, useQueryClient } from '@tanstack/react-query';

@@ -2,8 +2,8 @@ import { Button, Flex, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 import React from 'react';
 import FilterIcon from '../../assets/filter-button.svg';
-import useStorePage from '@store/store-page/store-page';
-import useShopFilter from '@/store/store-page/shop-filter';
+import useStorePage from '@/zustand/store-page/store-page';
+import useShopFilter from '@/zustand/products/shop-filter/shop-filter';
 
 const FilterButton = () => {
     // Use Zustand shop to handle filter object

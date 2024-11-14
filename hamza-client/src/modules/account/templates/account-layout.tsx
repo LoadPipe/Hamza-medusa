@@ -5,7 +5,7 @@ import UnderlineLink from '@modules/common/components/interactive-link';
 
 import AccountNav from '../components/account-nav';
 import { Customer } from '@medusajs/medusa';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 
 import { Flex, Box, Text } from '@chakra-ui/react';
 import axios from 'axios';

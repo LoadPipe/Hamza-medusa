@@ -2,7 +2,7 @@
 import { Flex, Text, Button, Link, Divider } from '@chakra-ui/react';
 import { Cart } from '@medusajs/medusa';
 import CartItems from '@modules/checkout/components/cart-items';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import React from 'react';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
 

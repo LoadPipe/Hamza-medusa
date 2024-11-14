@@ -10,7 +10,7 @@ import {
     IconButton,
 } from '@chakra-ui/react';
 import { getObjectFit } from '@modules/get-object-fit';
-import useProductPreview from '@store/product-preview/product-preview';
+import useProductPreview from '@/zustand/product-preview/product-preview';
 import React, { useEffect, useState } from 'react';
 import ImageGalleryModal from '../gallery-modal';
 import { FaChevronLeft } from 'react-icons/fa';
