@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Flex, useDisclosure, Skeleton } from '@chakra-ui/react';
-import CategoryButtons from './components/CategoryButtons';
+import CategoryButton from '@/modules/products/components/buttons/category-button';
 import FilterButton from './components/FilterButton';
 import { CgChevronRight, CgChevronLeft } from 'react-icons/cg'; // Import both chevrons
 import FilterModalHome from './components/FilterModal';
@@ -33,10 +33,10 @@ const FilterBar = () => {
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-            name: category.name,
-            id: category.id,
-            metadata: category.metadata,
-        }))
+              name: category.name,
+              id: category.id,
+              metadata: category.metadata,
+          }))
         : [];
 
     // Show more logic for categories (next or previous)
@@ -90,7 +90,7 @@ const FilterBar = () => {
             >
                 <FilterButton onClick={onOpen} />
 
-                <CategoryButtons
+                <CategoryButton
                     categoryName={'All'}
                     url={'https://images.hamza.market/category-icons/all.svg'}
                 />
@@ -126,14 +126,14 @@ const FilterBar = () => {
                     {isLoading
                         ? skeletons // Show skeletons while loading
                         : visibleCategories.map((category, index) => {
-                            return (
-                                <CategoryButtons
-                                    key={index}
-                                    categoryName={category.name}
-                                    url={category.metadata?.icon_url}
-                                />
-                            );
-                        })}
+                              return (
+                                  <CategoryButton
+                                      key={index}
+                                      categoryName={category.name}
+                                      url={category.metadata?.icon_url}
+                                  />
+                              );
+                          })}
                 </Flex>
 
                 {/* Conditional rendering of Chevron */}

@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Text, Flex } from '@chakra-ui/react';
-import CategoryTopButton from './filter-carousel/category-top-button';
 import useStorePage from '@/zustand/store-page/store-page';
 import FilterTags from './desktop-filter-tags/filter-tags';
 import { FaGreaterThan } from 'react-icons/fa';
-import { CgChevronRight } from 'react-icons/cg';
 import FilterBarStore from './filter-carousel/filter-bar-store';
 import useVendors from '@modules/home/components/search-and-filter-panel/data/data';
 

@@ -8,7 +8,7 @@ interface CategoryButtonProps {
     url: string;
 }
 
-const CategoryButtons: React.FC<CategoryButtonProps> = ({
+const CategoryButton: React.FC<CategoryButtonProps> = ({
     categoryName,
     url,
 }) => {
@@ -98,4 +98,4 @@ const CategoryButtons: React.FC<CategoryButtonProps> = ({
     );
 };
 
-export default CategoryButtons;
+export default CategoryButton;
