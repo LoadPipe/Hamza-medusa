@@ -38,7 +38,7 @@ const ShopTemplate = () => {
                                 columns={{ base: 2, lg: 3 }}
                                 skeletonCount={9}
                                 visibleProductCountInitial={16}
-                                layoutPadding={'0'}
+                                padding={{ base: '1rem', md: '0' }}
                             />
                         </Box>
                     </Flex>

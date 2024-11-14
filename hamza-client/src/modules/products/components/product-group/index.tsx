@@ -25,7 +25,7 @@ const ProductCardGroup = ({
     skeletonCount = 8,
     skeletonHeight = { base: '134.73', md: '238px' },
     visibleProductCountInitial = 16,
-    layoutPadding = '1rem',
+    padding = { base: '1rem', md: '1rem' },
 }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const { categorySelect } = useProductGroup();
@@ -106,7 +106,7 @@ const ProductCardGroup = ({
             flexDir={'column'}
             justifyContent={'center'}
             alignItems={'center'}
-            px={layoutPadding}
+            px={{ base: padding.base, md: padding.md }}
         >
             <Grid
                 maxWidth={'1256.52px'}
