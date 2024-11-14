@@ -17,7 +17,7 @@ import useHomeProductsPage from '@/zustand/home-page/product-layout/product-layo
 import useHomeModalFilter from '@/zustand/home-page/home-filter/home-filter';
 import { getAllProducts } from '@lib/data';
 import useProductGroup from '@/zustand/products/product-group/product-group';
-import useProductFilterModal from '@/zustand/products/filter-modal/product-filter-modal';
+import useProductFilterModal from '@/zustand/products/filter/product-filter';
 
 const ProductCardGroup = ({
     columns = { base: 2, lg: 4 },

@@ -8,11 +8,9 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Image from 'next/image';
 import FilterIcon from '../../assets/filter-button.svg';
-import useStorePage from '@/zustand/store-page/store-page';
-import useShopFilter from '@/zustand/products/shop-filter/shop-filter';
 import All from '@/images/categories/all.svg';
 import useProductGroup from '@/zustand/products/product-group/product-group';
-import useProductFilterModal from '@/zustand/products/filter-modal/product-filter-modal';
+import useProductFilter from '@/zustand/products/filter/product-filter';
 
 interface Category {
     id: string;
@@ -34,12 +32,10 @@ const SideFilter = () => {
 
     const {
         selectCategoryFilter,
-        setSelectCategoryFilter,
-        setCategoryItemFilter,
         categoryItemFilter,
-    } = useShopFilter();
-
-    const { setRangeUpper, setRangeLower } = useProductFilterModal();
+        setRangeUpper,
+        setRangeLower,
+    } = useProductFilter();
 
     const isDisabled =
         selectCategoryFilter.length === 0 && range[0] === 0 && range[1] === 350;

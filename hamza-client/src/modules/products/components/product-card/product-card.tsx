@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
     Text,
     Box,
@@ -6,7 +6,6 @@ import {
     Skeleton,
     Image as ChakraImage,
 } from '@chakra-ui/react';
-import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { IoStar } from 'react-icons/io5';
 import Image from 'next/image';
 import { getObjectFit } from '@modules/get-object-fit';

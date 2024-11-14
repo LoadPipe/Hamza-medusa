@@ -14,12 +14,12 @@ import {
 import React, { useState } from 'react';
 import FilterIcon from '../../../../../../../../public/images/categories/mobile-filter.svg';
 import Image from 'next/image';
-import CategoryModalButton from './CategoryModalButton';
+import CategoryButtonModal from '@/modules/products/components/buttons/category-button-modal';
 import RangeSliderModal from '@modules/shop/components/mobile-filter-modal/components/range-slider-modal';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import useProductGroup from '@/zustand/products/product-group/product-group';
-import useProductFilterModal from '@/zustand/products/filter-modal/product-filter-modal';
+import useProductFilterModal from '@/zustand/products/filter/product-filter';
 interface FilterModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -108,7 +108,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                     >
                         {uniqueCategories.map(
                             (category: any, index: number) => (
-                                <CategoryModalButton
+                                <CategoryButtonModal
                                     key={index}
                                     categoryName={category.name}
                                     url={category.metadata?.icon_url}

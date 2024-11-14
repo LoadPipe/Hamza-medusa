@@ -33,7 +33,7 @@ const ShopTemplate = () => {
                     <Flex maxW={'941px'} w="100%" flexDirection={'column'}>
                         <StoreFilterDisplay />
 
-                        <Box mt={{ base: '0', md: '2rem' }}>
+                        <Box mt={{ base: '0', md: '1rem' }}>
                             <ProductCardGroup
                                 columns={{ base: 2, lg: 3 }}
                                 skeletonCount={9}

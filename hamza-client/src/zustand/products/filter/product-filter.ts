@@ -7,7 +7,7 @@ interface CategoryItem {
 
 type RangeType = [number, number];
 // Define the state and associated actions in an interface
-interface ShopFilterState {
+interface ProductFilterState {
     range: RangeType;
     rangeUpper: number;
     rangeLower: number;
@@ -27,7 +27,7 @@ interface ShopFilterState {
 }
 
 // Create the Zustand store
-const useShopFilter = create<ShopFilterState>((set) => ({
+const useProductFilter = create<ProductFilterState>((set) => ({
     range: [0, 350],
     rangeUpper: 0,
     rangeLower: 0,
@@ -59,4 +59,4 @@ const useShopFilter = create<ShopFilterState>((set) => ({
         set({ selectReviewStarsFilter: stars }),
 }));
 
-export default useShopFilter;
+export default useProductFilter;

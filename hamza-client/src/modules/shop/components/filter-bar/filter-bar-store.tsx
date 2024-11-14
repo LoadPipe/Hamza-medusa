@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Flex, Box, Skeleton, Badge } from '@chakra-ui/react';
+import { Flex, Skeleton } from '@chakra-ui/react';
 import CategoryButton from '@/modules/products/components/buttons/category-button';
 import { CgChevronRight } from 'react-icons/cg';
-import useVendors from '@modules/home/components/search-and-filter-panel/data/data';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
