@@ -36,6 +36,7 @@ const ShopTemplate = () => {
                         <Box mt={{ base: '0', md: '1rem' }}>
                             <ProductCardGroup
                                 columns={{ base: 2, lg: 3 }}
+                                gap={{ base: 4, md: '7' }}
                                 skeletonCount={9}
                                 visibleProductCountInitial={16}
                                 padding={{ base: '1rem', md: '0' }}

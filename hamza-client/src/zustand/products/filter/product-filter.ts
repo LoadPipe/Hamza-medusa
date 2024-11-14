@@ -37,6 +37,7 @@ const useProductFilter = create<ProductFilterState>((set) => ({
     setRangeUpper: (price: number) => set({ rangeUpper: price }),
     setRangeLower: (price: number) => set({ rangeLower: price }),
     setRange: (range: RangeType) => set({ range }),
+
     setSelectCategoryFilter: (
         items: string[] | ((prev: string[]) => string[])
     ) =>
