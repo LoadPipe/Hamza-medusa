@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Text,
     Box,
@@ -208,7 +208,11 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
                         </Flex>
 
                         {currencyCode === 'eth' && (
-                            <Flex flexDirection="row" mt="auto">
+                            <Flex
+                                flexDirection="row"
+                                ml="5px"
+                                display={{ base: 'none', md: 'flex' }}
+                            >
                                 <Text
                                     textOverflow="ellipsis"
                                     display={'flex'}
