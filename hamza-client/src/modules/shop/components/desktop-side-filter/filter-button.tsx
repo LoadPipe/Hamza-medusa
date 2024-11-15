@@ -3,7 +3,7 @@ import Image from 'next/image';
 import React from 'react';
 import FilterIcon from '../../assets/filter-button.svg';
 import useStorePage from '@/zustand/store-page/store-page';
-import useShopFilter from '@/zustand/products/shop-filter/shop-filter';
+import useProductFilter from '@/zustand/products/filter/product-filter';
 
 const FilterButton = () => {
     // Use Zustand shop to handle filter object
@@ -14,7 +14,7 @@ const FilterButton = () => {
         setSelectCategoryFilter,
         setCategoryItemFilter,
         categoryItemFilter,
-    } = useShopFilter();
+    } = useProductFilter();
 
     const isDisabled = selectCategoryFilter?.length === 0;
 
