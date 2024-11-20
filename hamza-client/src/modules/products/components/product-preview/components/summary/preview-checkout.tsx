@@ -64,8 +64,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
     const { productData, variantId, quantity, setVariantId } =
         useProductPreview();
-    const [selectedPrice, setSelectedPrice] = useState<number | null>(null);
-    const [usdPrice, setUsdPrice] = useState<number | null>(null);
+    const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
+    const [usdPrice, setUsdPrice] = useState<string | null>(null);
     const [selectedVariant, setSelectedVariant] = useState<null | Variant>(
         null
     );
@@ -333,7 +333,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         color="white"
                     >
                         {formatCryptoPrice(
-                            parseFloat(selectedPrice!.toString()),
+                            parseFloat(selectedPrice!),
                             preferred_currency_code ?? 'usdc'
                         )}
                     </Heading>
@@ -416,8 +416,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     color="white"
                 >
                     {preferred_currency_code === 'eth'
-                        ? `≅ ${formatCryptoPrice(parseFloat(usdPrice!.toString()), 'usdc')} USDC`
-                        : `${formatCryptoPrice(parseFloat(selectedPrice!.toString()), preferred_currency_code ?? 'usdc')} ${preferred_currency_code?.toUpperCase() ?? 'USDC'}`}
+                        ? `≅ ${formatCryptoPrice(parseFloat(usdPrice!), 'usdc')} USDC`
+                        : `${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} ${preferred_currency_code?.toUpperCase() ?? 'USDC'}`}
                 </Heading>
                 {reviewCount > 0 ? (
                     <Flex
@@ -737,9 +737,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                         color="black"
                                     >
                                         {formatCryptoPrice(
-                                            parseFloat(
-                                                selectedPrice!.toString()
-                                            ),
+                                            parseFloat(selectedPrice!),
                                             preferred_currency_code ?? 'usdc'
                                         )}
                                     </Text>
