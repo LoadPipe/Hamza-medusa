@@ -26,6 +26,7 @@ import useWishlistStore, {
 } from '@/zustand/wishlist/wishlist-store';
 import { useWishlistMutations } from '@/zustand/wishlist/mutations/wishlist-mutations';
 import { MdOutlineShoppingCart } from 'react-icons/md';
+import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
 
 interface PreviewCheckoutProps {
     productId: string;
@@ -63,8 +64,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
     const { productData, variantId, quantity, setVariantId } =
         useProductPreview();
-    const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
-    const [usdPrice, setUsdPrice] = useState<string | null>(null);
+    const [selectedPrice, setSelectedPrice] = useState<number | null>(null);
+    const [usdPrice, setUsdPrice] = useState<number | null>(null);
     const [selectedVariant, setSelectedVariant] = useState<null | Variant>(
         null
     );
@@ -178,26 +179,23 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     setSelectedVariant(selectedProductVariant);
 
                     // Find the price for the selected currency or default to the first price available
-                    if (preferred_currency_code === 'eth') {
-                        let price;
-                        try {
-                            price = selectedProductVariant.prices.find(
-                                (p: any) => p.currency_code === 'usdc'
-                            );
-                        } catch (e) {
-                            console.log(e);
-                        }
-                        setUsdPrice(price?.amount ?? 0);
-                    }
-                    const price = selectedProductVariant.prices.find(
-                        (p: any) =>
-                            p.currency_code ===
-                            (preferred_currency_code ?? 'usdc')
+                    const isEthCurrency = preferred_currency_code === 'eth';
+
+                    // Determine the price based on the preferred currency or fallback
+                    const price = getPriceByCurrency(
+                        selectedProductVariant.prices,
+                        isEthCurrency
+                            ? 'usdc'
+                            : preferred_currency_code ?? 'usdc'
                     );
 
-                    // Update the price state
-                    setSelectedPrice(price?.amount ?? 0);
-                    console.log(`Updated Price: ${price?.amount}`);
+                    // Update USD price if the preferred currency is 'eth'
+                    if (isEthCurrency) {
+                        setUsdPrice(price);
+                    }
+
+                    // Update the selected price
+                    setSelectedPrice(price);
                 } else {
                     console.error(`No variant found for ID: ${variantId}`);
                 }
@@ -335,7 +333,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         color="white"
                     >
                         {formatCryptoPrice(
-                            parseFloat(selectedPrice!),
+                            parseFloat(selectedPrice!.toString()),
                             preferred_currency_code ?? 'usdc'
                         )}
                     </Heading>
@@ -418,8 +416,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     color="white"
                 >
                     {preferred_currency_code === 'eth'
-                        ? `≅ ${formatCryptoPrice(parseFloat(usdPrice!), 'usdc')} USDC`
-                        : `${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} ${preferred_currency_code?.toUpperCase() ?? 'USDC'}`}
+                        ? `≅ ${formatCryptoPrice(parseFloat(usdPrice!.toString()), 'usdc')} USDC`
+                        : `${formatCryptoPrice(parseFloat(selectedPrice!.toString()), preferred_currency_code ?? 'usdc')} ${preferred_currency_code?.toUpperCase() ?? 'USDC'}`}
                 </Heading>
                 {reviewCount > 0 ? (
                     <Flex
@@ -739,7 +737,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                                         color="black"
                                     >
                                         {formatCryptoPrice(
-                                            parseFloat(selectedPrice!),
+                                            parseFloat(
+                                                selectedPrice!.toString()
+                                            ),
                                             preferred_currency_code ?? 'usdc'
                                         )}
                                     </Text>
