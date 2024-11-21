@@ -10,6 +10,7 @@ import {
     LineItem,
 } from '@medusajs/medusa';
 import { BuckyLogRepository } from '../repositories/bucky-log';
+import SalesChannelRepository from '@medusajs/medusa/dist/repositories/sales-channel';
 import RegionRepository from '@medusajs/medusa/dist/repositories/region';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
@@ -66,6 +67,7 @@ export default class OrderService extends MedusaOrderService {
     protected paymentRepository_: typeof PaymentRepository;
     protected cartRepository_: typeof CartRepository;
     protected regionRepository_: typeof RegionRepository;
+    protected salesChannelRepository_: typeof SalesChannelRepository;
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly buckyLogRepository_: typeof BuckyLogRepository;
@@ -89,6 +91,7 @@ export default class OrderService extends MedusaOrderService {
         this.shippingMethodRepository_ = container.shippingMethodRepository;
         this.productVariantRepository_ = container.productVariantRepository;
         this.regionRepository_ = container.regionRepository;
+        this.salesChannelRepository_ = container.salesChannelRepository;
         this.customerNotificationService_ =
             container.customerNotificationService;
         this.orderHistoryService_ = container.orderHistoryService;
@@ -865,10 +868,16 @@ export default class OrderService extends MedusaOrderService {
             console.log('Region found:', region);
 
             // Step 3: Get random products
-            const products = await this.productRepository_.find({
-                take: 3,
-                order: { created_at: 'ASC' },
-            });
+            const randomCount = Math.floor(Math.random() * 10) + 1; // Random between 1 and 10
+
+            const products = await this.productRepository_.query(
+                `SELECT * FROM product ORDER BY RANDOM() LIMIT ${randomCount}`
+            );
+
+            console.log(
+                `Retrieved ${products.length} random products`,
+                products
+            );
 
             if (!products.length) {
                 throw new Error('No products found.');
@@ -939,18 +948,31 @@ export default class OrderService extends MedusaOrderService {
             cart.items = lineItems;
             console.log('Line items added to cart:', cart.items);
 
+            // Grab the default sales channel... the first one
+            const salesChannel = await this.salesChannelRepository_.findOne({
+                where: {}, // Empty where clause to find any sales channel
+                order: { created_at: 'ASC' }, // Sort by creation time, oldest first
+            });
+
+            if (!salesChannel) {
+                throw new Error('No sales channels found.');
+            }
+
+            const sales_channel_id = salesChannel.id;
+            console.log('Sales Channel ID:', sales_channel_id);
+
             // Step 7: Create an order using the cart and product's store_id
             let order: Order = new Order();
             order.status = OrderStatus.PENDING;
             order.store_id = storeId; // Use store_id directly from the product
             order.fulfillment_status = FulfillmentStatus.NOT_FULFILLED;
             order.payment_status = PaymentStatus.AWAITING;
-            order.sales_channel_id = 'sc_01JCG0V7EA8T5F1XTMK8QHH3S0';
+            order.sales_channel_id = sales_channel_id;
             order.customer_id = customer.id;
             order.email = customer.email;
             order.cart_id = cart.id;
             order.region_id = cart.region_id;
-            order.currency_code = region.currency_code; // Use the region's currency code
+            order.currency_code = 'usdt';
             order.created_at = new Date();
             order.updated_at = new Date();
 
