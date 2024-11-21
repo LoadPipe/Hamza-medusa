@@ -12,6 +12,7 @@ import {
 import { BuckyLogRepository } from '../repositories/bucky-log';
 import SalesChannelRepository from '@medusajs/medusa/dist/repositories/sales-channel';
 import RegionRepository from '@medusajs/medusa/dist/repositories/region';
+import AddressRepository from '@medusajs/medusa/dist/repositories/address';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 import PaymentRepository from '@medusajs/medusa/dist/repositories/payment';
@@ -68,6 +69,7 @@ export default class OrderService extends MedusaOrderService {
     protected cartRepository_: typeof CartRepository;
     protected regionRepository_: typeof RegionRepository;
     protected salesChannelRepository_: typeof SalesChannelRepository;
+    protected addressRepository_: typeof AddressRepository;
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly buckyLogRepository_: typeof BuckyLogRepository;
@@ -92,6 +94,7 @@ export default class OrderService extends MedusaOrderService {
         this.productVariantRepository_ = container.productVariantRepository;
         this.regionRepository_ = container.regionRepository;
         this.salesChannelRepository_ = container.salesChannelRepository;
+        this.regionRepository_ = container.salesChannelRepository;
         this.customerNotificationService_ =
             container.customerNotificationService;
         this.orderHistoryService_ = container.orderHistoryService;
@@ -934,7 +937,7 @@ export default class OrderService extends MedusaOrderService {
                     title: product.title,
                     description: product.description,
                     thumbnail: product.thumbnail,
-                    unit_price: variant.prices?.[0]?.amount || 1000, // Use the first price or fallback
+                    unit_price: variant.prices?.[0]?.amount || 1000,
                     quantity: Math.floor(Math.random() * 5) + 1,
                     currency_code: region.currency_code,
                     variant_id: variant.id, // Add variant_id here
