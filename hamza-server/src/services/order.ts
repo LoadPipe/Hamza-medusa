@@ -10,6 +10,7 @@ import {
     LineItem,
 } from '@medusajs/medusa';
 import { BuckyLogRepository } from '../repositories/bucky-log';
+import RegionRepository from '@medusajs/medusa/dist/repositories/region';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 import PaymentRepository from '@medusajs/medusa/dist/repositories/payment';
@@ -64,6 +65,7 @@ export default class OrderService extends MedusaOrderService {
     protected productRepository_: typeof ProductRepository;
     protected paymentRepository_: typeof PaymentRepository;
     protected cartRepository_: typeof CartRepository;
+    protected regionRepository_: typeof RegionRepository;
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly buckyLogRepository_: typeof BuckyLogRepository;
@@ -86,6 +88,7 @@ export default class OrderService extends MedusaOrderService {
         this.productRepository_ = container.productRepository;
         this.shippingMethodRepository_ = container.shippingMethodRepository;
         this.productVariantRepository_ = container.productVariantRepository;
+        this.regionRepository_ = container.regionRepository;
         this.customerNotificationService_ =
             container.customerNotificationService;
         this.orderHistoryService_ = container.orderHistoryService;
@@ -833,5 +836,100 @@ export default class OrderService extends MedusaOrderService {
                 payment_status: PaymentStatus.AWAITING,
             });
         });
+    }
+
+    async createMockOrders(): Promise<Order> {
+        try {
+            console.log('Starting mock order creation...');
+
+            // Step 1: Get the first customer
+            const customer = await this.customerRepository_.findOne({
+                where: {},
+                order: { created_at: 'ASC' },
+            });
+
+            if (!customer) {
+                throw new Error('No customers found.');
+            }
+            console.log('Customer found:', customer);
+
+            // Step 2: Get the first region
+            const region = await this.regionRepository_.findOne({
+                where: {},
+                order: { created_at: 'ASC' },
+            });
+
+            if (!region) {
+                throw new Error('No regions found.');
+            }
+            console.log('Region found:', region);
+
+            // Step 3: Create a cart for the customer
+            const cart = await this.cartRepository_.save(
+                this.cartRepository_.create({
+                    customer_id: customer.id,
+                    email: customer.email,
+                    region_id: region.id,
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                })
+            );
+            console.log('Cart created:', cart);
+
+            // Step 4: Add line items to the cart
+            const lineItems = [];
+            for (let i = 0; i < 3; i++) {
+                const lineItem = this.lineItemRepository_.create({
+                    cart_id: cart.id,
+                    title: `Mock Product ${i + 1}`,
+                    description: `Description for Mock Product ${i + 1}`,
+                    unit_price: 1000, // Example price
+                    quantity: Math.floor(Math.random() * 5) + 1,
+                    currency_code: region.currency_code, // Use the region's currency code
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                });
+                const savedLineItem =
+                    await this.lineItemRepository_.save(lineItem);
+                lineItems.push(savedLineItem);
+            }
+            cart.items = lineItems;
+            console.log('Line items added to cart:', cart.items);
+
+            // Step 5: Create an order using the cart
+            const order = await this.orderRepository_.save(
+                this.orderRepository_.create({
+                    status: OrderStatus.PENDING,
+                    fulfillment_status: FulfillmentStatus.NOT_FULFILLED,
+                    payment_status: PaymentStatus.NOT_PAID,
+                    customer_id: customer.id,
+                    email: customer.email,
+                    cart_id: cart.id,
+                    region_id: cart.region_id,
+                    currency_code: region.currency_code, // Use the region's currency code
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                })
+            );
+            console.log('Order created successfully:', order);
+
+            // Step 6: Link line items to the order
+            order.items = cart.items;
+            const lineItemPromises = cart.items.map((item) => {
+                item.order_id = order.id;
+                return this.lineItemRepository_.save(item);
+            });
+
+            await Promise.all(lineItemPromises);
+
+            console.log('Line items linked to order:', order.items);
+
+            this.logger.info(`Mock order created successfully: ${order.id}`);
+            return order;
+        } catch (error) {
+            console.error('Error during mock order creation:', error.message);
+            this.logger.error(`Error creating mock order: ${error.message}`);
+            throw error;
+        }
     }
 }
