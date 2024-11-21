@@ -875,6 +875,26 @@ export default class OrderService extends MedusaOrderService {
             }
             console.log('Products found:', products);
 
+            const variants = await Promise.all(
+                products.map((product) =>
+                    this.productVariantRepository_.findOne({
+                        where: { product_id: product.id },
+                        order: { created_at: 'ASC' }, // Choose the first variant if multiple exist
+                    })
+                )
+            );
+
+            // Validate that each product has at least one variant
+            variants.forEach((variant, index) => {
+                if (!variant) {
+                    throw new Error(
+                        `No variant found for product ${products[index].id}`
+                    );
+                }
+            });
+
+            console.log('Variants found:', variants);
+
             // Step 4: Validate store_id from the first product
             const storeId = products[0]?.store_id;
             if (!storeId) {
@@ -896,15 +916,19 @@ export default class OrderService extends MedusaOrderService {
 
             // Step 6: Add line items to the cart
             const lineItems = [];
-            for (const product of products) {
+            for (let i = 0; i < products.length; i++) {
+                const product = products[i];
+                const variant = variants[i];
+
                 const lineItem = this.lineItemRepository_.create({
                     cart_id: cart.id,
                     title: product.title,
                     description: product.description,
                     thumbnail: product.thumbnail,
-                    unit_price: 1000, // Example price
+                    unit_price: variant.prices?.[0]?.amount || 1000, // Use the first price or fallback
                     quantity: Math.floor(Math.random() * 5) + 1,
-                    currency_code: 'usdc', // Use the region's currency code
+                    currency_code: region.currency_code,
+                    variant_id: variant.id, // Add variant_id here
                     created_at: new Date(),
                     updated_at: new Date(),
                 });
