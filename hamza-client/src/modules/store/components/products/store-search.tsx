@@ -21,10 +21,14 @@ const StoreSearch = ({ storeName }: Props) => {
         }
     );
 
-    // Filter for unique hamdles
-    let categoryNames = data?.data;
-    console.log(data?.data);
+    let categoryNames = [];
 
+    if (data && data.data) {
+        categoryNames = data?.data;
+        console.log(data.data);
+    } else {
+        console.log('No data available');
+    }
     return (
         <Flex flexDir={'column'} width={'100%'}>
             <Flex
