@@ -347,28 +347,22 @@ class ProductService extends MedusaProductService {
         ).filter((p) => p.variants?.length);
     }
 
-    async getCategoriesByStoreId(storeId: string): Promise<ProductCategory[]> {
+    async getCategoriesByStoreId(storeId: string): Promise<string[]> {
         try {
-            const categories = await categoryCache.retrieve(
+            const getAllProducts = await categoryCache.retrieve(
                 this.productCategoryRepository_
             );
-            return categories.filter((c) =>
+            const filterdProductsByStoreId = getAllProducts.filter((c) =>
                 c.products.find((p) => p.store_id === storeId)
             );
-            /*
-            const query = `
-                SELECT pc.*
-                FROM product p
-                JOIN product_category_product pcp ON p.id = pcp.product_id
-                JOIN product_category pc ON pcp.product_category_id = pc.id
-                WHERE p.store_id = $1
-            `;
 
-            const categories = await this.productRepository_.query(query, [
-                storeId,
-            ]);
-            return categories;
-            */
+            const uniqueCategoryNames = Array.from(
+                new Set(
+                    filterdProductsByStoreId.map((category) => category.name)
+                )
+            );
+
+            return uniqueCategoryNames;
         } catch (error) {
             this.logger.error('Error fetching categories by store ID:', error);
             throw new Error(
