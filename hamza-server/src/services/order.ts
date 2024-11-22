@@ -94,7 +94,6 @@ export default class OrderService extends MedusaOrderService {
         this.productVariantRepository_ = container.productVariantRepository;
         this.regionRepository_ = container.regionRepository;
         this.salesChannelRepository_ = container.salesChannelRepository;
-        this.regionRepository_ = container.salesChannelRepository;
         this.customerNotificationService_ =
             container.customerNotificationService;
         this.orderHistoryService_ = container.orderHistoryService;
@@ -860,10 +859,10 @@ export default class OrderService extends MedusaOrderService {
             console.log('Customer found:', customer);
 
             // Step 2: Get the first region
-            const region = await this.regionRepository_.findOne({
-                where: {},
-                order: { created_at: 'ASC' },
-            });
+            const region = await this.regionRepository_
+                .createQueryBuilder('region')
+                .where('LOWER(region.name) = :name', { name: 'na' })
+                .getOne();
 
             if (!region) {
                 throw new Error('No regions found.');
@@ -914,12 +913,31 @@ export default class OrderService extends MedusaOrderService {
             }
             console.log('Store ID found:', storeId);
 
+            // Grab the default sales channel... the first one
+            const salesChannel = await this.salesChannelRepository_.findOne({
+                where: {}, // Empty where clause to find any sales channel
+                order: { created_at: 'ASC' }, // Sort by creation time, oldest first
+            });
+
+            if (!salesChannel) {
+                throw new Error('No sales channels found.');
+            }
+
+            const sales_channel_id = salesChannel.id;
+            console.log('Sales Channel ID:', sales_channel_id);
+
+            console.log('Creating cart with:', {
+                customer_id: customer.id,
+                email: customer.email,
+                region_id: region.id,
+            });
             // Step 5: Create a cart for the customer
             const cart = await this.cartRepository_.save(
                 this.cartRepository_.create({
                     customer_id: customer.id,
                     email: customer.email,
                     region_id: region.id,
+                    sales_channel_id: sales_channel_id,
                     created_at: new Date(),
                     updated_at: new Date(),
                 })
@@ -950,19 +968,6 @@ export default class OrderService extends MedusaOrderService {
             }
             cart.items = lineItems;
             console.log('Line items added to cart:', cart.items);
-
-            // Grab the default sales channel... the first one
-            const salesChannel = await this.salesChannelRepository_.findOne({
-                where: {}, // Empty where clause to find any sales channel
-                order: { created_at: 'ASC' }, // Sort by creation time, oldest first
-            });
-
-            if (!salesChannel) {
-                throw new Error('No sales channels found.');
-            }
-
-            const sales_channel_id = salesChannel.id;
-            console.log('Sales Channel ID:', sales_channel_id);
 
             // Step 7: Create an order using the cart and product's store_id
             let order: Order = new Order();
