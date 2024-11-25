@@ -41,7 +41,7 @@ const StoreSearch = ({ storeName }: Props) => {
             >
                 <StoreCatButton categoryName={'All'} />
 
-                {categoryNames.map((name, index) => (
+                {categoryNames.map((name: any, index: number) => (
                     <StoreCatButton key={index} categoryName={name} />
                 ))}
             </Flex>
