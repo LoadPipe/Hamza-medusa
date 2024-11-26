@@ -16,6 +16,9 @@ export class Store extends MedusaStore {
     owner_id?: string;
 
     @Column()
+    escrow_contract_address?: string;
+
+    @Column()
     massmarket_store_id?: string;
 
     @Column()
