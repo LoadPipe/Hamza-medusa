@@ -268,8 +268,7 @@ const CryptoPaymentButton = ({
                 },
                 {
                     headers: {
-                        authorization:
-                            getClientCookie('_medusa_jwt')('_medusa_jwt'),
+                        authorization: getClientCookie('_medusa_jwt'),
                     },
                 }
             );
