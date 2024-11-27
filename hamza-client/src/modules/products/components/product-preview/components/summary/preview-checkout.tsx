@@ -64,6 +64,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
     const { productData, variantId, quantity, setVariantId } =
         useProductPreview();
+
     const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
     const [usdPrice, setUsdPrice] = useState<string | null>(null);
     const [selectedVariant, setSelectedVariant] = useState<null | Variant>(
@@ -185,7 +186,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     const price = getPriceByCurrency(
                         selectedProductVariant.prices,
                         isEthCurrency
-                            ? 'usdc'
+                            ? 'eth'
                             : preferred_currency_code ?? 'usdc'
                     );
 
