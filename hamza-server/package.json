@@ -1,6 +1,6 @@
 {
     "name": "hamza-server",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "description": "Hamza Medusa server backend",
     "author": "Garo Nazarian, Beau Troxclair, Jonny Bajada, Karan Chugh, John R. Kosinski",
     "license": "MIT",
