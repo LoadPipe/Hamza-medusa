@@ -1,5 +1,6 @@
 import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import { RouteHandler } from '../../../../route-handler';
+import { Config } from '../../../../../config';
 import WhiteListService from '../../../../../services/whitelist';
 import StoreService from '../../../../../services/store';
 import { ProductCollection } from '../../../../../models/product-collection';
@@ -298,6 +299,55 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         }
 
         await Promise.all(promises);
+        /*
+        await Promise.all([
+            productCollectionService.update('pcol_01HRVF8HCVY8B00RF5S54THTPC', {
+                store_id: store0.id,
+            }),
+            productCollectionService.update('pcol_01HSGAM4918EX0DETKY6E662WT', {
+                store_id: store1.id,
+            }),
+            productCollectionService.update('pcol_01HSGAMXDJD725MR3VSW631SN2', {
+                store_id: store2.id,
+            }),
+            productCollectionService.update('pcol_01HSGAMXDJD725MR3VSW631DR0', {
+                store_id: store3.id,
+            }),
+            productCollectionService.update('pcol_01HSGAMXDJD725MR3VSW63LEG0', {
+                store_id: store4.id,
+            }),
+            productCollectionService.update('pcol_01HSGAMXDJD725MR3VSW63B0RD', {
+                store_id: store5.id,
+            }),
+            productCollectionService.update('pcol_01HSGAMXDJD725MR3VSW63W0GE', {
+                store_id: store6.id,
+            }),
+            productCollectionService.update('pcol_drones', {
+                store_id: store3.id,
+            }),
+            productCollectionService.update('pcol_sound', {
+                store_id: store4.id,
+            }),
+            productCollectionService.update('pcol_gamefi', {
+                store_id: store5.id,
+            }),
+            productCollectionService.update('pcol_razor', {
+                store_id: store6.id,
+            }),
+            productCollectionService.update('pcol_01HSGAMXDJD725MR3VSW63W0GA', {
+                store_id: store7.id,
+            }),
+            productCollectionService.update('pcol_shake', {
+                store_id: store8.id,
+            }),
+            productCollectionService.update('pcol_lighting', {
+                store_id: store9.id,
+            }),
+            productCollectionService.update('pcol_blocks', {
+                store_id: store10.id,
+            }),
+        ]);
+        */
 
         //sort the products into their houses of Gryffindor, Hufflepuff, etc.
         for (let collectionId of collectionIds) {
