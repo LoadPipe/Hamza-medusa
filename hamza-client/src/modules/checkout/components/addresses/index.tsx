@@ -10,6 +10,12 @@ import AddressModal from '../address-modal';
 import { IoLocationOutline } from 'react-icons/io5';
 import { useEffect, useState } from 'react';
 import { addDefaultShippingMethod } from '@/lib/data';
+import { getClientCookie } from '@lib/util/get-client-cookies';
+import axios from 'axios';
+
+//TODO: we need a global common function to replace this
+const MEDUSA_SERVER_URL =
+    process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
 
 const Addresses = ({
     cart,
@@ -68,7 +74,17 @@ const Addresses = ({
                 if (!cart?.shipping_methods.length) {
                     // If no shipping methods, add the default shipping method
                     console.log('Adding default shipping method');
-                    await addDefaultShippingMethod(cart?.id);
+                    axios.put(
+                        `${MEDUSA_SERVER_URL}/custom/cart/shipping`,
+                        {
+                            cart_id: cart.id,
+                        },
+                        {
+                            headers: {
+                                authorization: getClientCookie('_medusa_jwt'),
+                            },
+                        }
+                    );
                 }
 
                 // Once the shipping method is added or if it already exists, go to the review step
