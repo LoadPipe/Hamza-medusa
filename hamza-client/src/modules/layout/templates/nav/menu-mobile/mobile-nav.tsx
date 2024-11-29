@@ -37,12 +37,15 @@ export default async function MobileNav() {
 
                             <Image
                                 src={HamzaTitleHoliday}
+                              
+                            {/* <Image
+                                src={HamzaBetaTitle}
                                 className="w-[64.73px] h-[15.59px]"
                                 style={{
                                     alignSelf: 'center',
                                 }}
                                 alt="Hamza"
-                            />
+                            /> */}
                         </Flex>
                     </LocalizedClientLink>
                 </Flex>
