@@ -23,13 +23,14 @@ const HeroBanner = () => {
                     alignItems="center"
                     style={{ opacity: 1, transition: 'opacity 0.5s ease-out' }}
                 >
-                    <Link href="https://blog.hamza.market/beta" isExternal>
+                    <Link href="https://blog.hamza.market/key" isExternal>
                         <Text
                             fontSize={{ base: '12px', md: '16px' }}
                             textAlign={'center'}
                             fontWeight="bold"
                         >
-                            Hamza Beta Ship - Setting Sail. Join Us In The Journey to Decentralize Ecommerce{' '}
+                            Black Friday Flash Opportunity - Founder Keys from
+                            Hamza!{' '}
                             <Text
                                 as="span"
                                 color="cyan.300"
