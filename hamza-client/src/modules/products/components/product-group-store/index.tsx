@@ -11,10 +11,10 @@ import {
 } from '@chakra-ui/react';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
-import ProductCardHome from '../product-group-home/component/home-product-card';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
+import ProductCard from '../product-card/product-card';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import useVendor from '@store/store-page/vendor';
+import useVendor from '@/zustand/store-page/vendor';
 
 type Props = {
     storeName: string;
@@ -27,7 +27,7 @@ const ProductCardGroup = ({ storeName }: Props) => {
 
     const { categorySelect } = useVendor();
 
-    const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products/category-name?store_name=${storeName}&category_name=${categorySelect}`;
+    const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/products/category-name?store_name=${storeName}&category_name=${categorySelect}&currency_code=${preferred_currency_code ?? 'usdc'}`;
 
     const { data, error, isLoading } = useQuery(
         ['products', categorySelect],
@@ -38,6 +38,11 @@ const ProductCardGroup = ({ storeName }: Props) => {
             return response.data;
         }
     );
+
+    // Log if there's an error
+    if (error) {
+        console.error('Error fetching data:', error);
+    }
 
     // Handle products based on category
     const productsAll = data;
@@ -128,7 +133,9 @@ const ProductCardGroup = ({ storeName }: Props) => {
                         (acc: number, review: any) => acc + review.rating,
                         0
                     );
-                    const avgRating = reviewCounter ? totalRating / reviewCounter : 0;
+                    const avgRating = reviewCounter
+                        ? totalRating / reviewCounter
+                        : 0;
                     const roundedAvgRating = parseFloat(avgRating.toFixed(2));
 
                     return (
@@ -139,7 +146,7 @@ const ProductCardGroup = ({ storeName }: Props) => {
                             height={{ base: '100%', md: '399px' }}
                             width="100%"
                         >
-                            <ProductCardHome
+                            <ProductCard
                                 key={index}
                                 reviewCount={reviewCounter}
                                 totalRating={roundedAvgRating}

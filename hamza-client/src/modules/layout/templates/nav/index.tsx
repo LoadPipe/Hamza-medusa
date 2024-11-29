@@ -9,6 +9,7 @@ import Image from 'next/image';
 //import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
 //import HamzaTitle2 from '../../../../../public/images/logo/nav-logo.svg';
 import HamzaLogo from '../../../../../public/images/logo/hamza-beta.png';
+import HamzaHoliday from '@/images/logo/hamza-holiday.svg';
 //  Components
 import HnsDisplay from './menu-desktop/hns-display/index';
 import NavSearchBar from './menu-desktop/components/nav-searchbar';
@@ -99,7 +100,7 @@ export default async function Nav() {
                                 style={{
                                     alignSelf: 'left',
                                 }}
-                                src={HamzaLogo}
+                                src={HamzaHoliday}
                                 alt="Hamza"
                             />
                         </Flex>

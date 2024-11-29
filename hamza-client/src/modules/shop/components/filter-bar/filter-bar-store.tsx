@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Flex, Box, Skeleton, Badge } from '@chakra-ui/react';
-import CategoryTopButton from './category-top-button';
+import { Flex, Skeleton } from '@chakra-ui/react';
+import CategoryButton from '@/modules/products/components/buttons/category-button';
 import { CgChevronRight } from 'react-icons/cg';
-import useVendors from '@modules/home/components/search-and-filter-panel/data/data';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
@@ -29,10 +28,10 @@ const FilterBarStore = () => {
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-            name: category.name,
-            id: category.id,
-            metadata: category.metadata,
-        }))
+              name: category.name,
+              id: category.id,
+              metadata: category.metadata,
+          }))
         : [];
 
     const toggleShowMore = () => {
@@ -85,19 +84,21 @@ const FilterBarStore = () => {
                     overflow={'hidden'}
                     gap={{ base: '12px', md: '20px' }}
                 >
-                    <CategoryTopButton
+                    <CategoryButton
                         categoryName={'All'}
-                        url={'https://images.hamza.market/category-icons/all.svg'}
+                        url={
+                            'https://images.hamza.market/category-icons/all.svg'
+                        }
                     />
                     {isLoading
                         ? skeletons // Show skeletons while loading
                         : visibleCategories.map((category, index) => (
-                            <CategoryTopButton
-                                key={index}
-                                categoryName={category.name}
-                                url={category.metadata?.icon_url}
-                            />
-                        ))}
+                              <CategoryButton
+                                  key={index}
+                                  categoryName={category.name}
+                                  url={category.metadata?.icon_url}
+                              />
+                          ))}
                 </Flex>
                 <Flex
                     w="123px"

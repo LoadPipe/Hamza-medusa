@@ -88,8 +88,6 @@ class ProductReviewService extends TransactionBaseService {
         const productReviewRepository =
             this.activeManager_.getRepository(ProductReview);
 
-        console.log(`$$$$$$$$$$$$$$$$$$$$$$$$$$$$`);
-
         // Fetch all non-archived and non-canceled orders for the customer
         const orders = await orderRepository
             .createQueryBuilder('order')

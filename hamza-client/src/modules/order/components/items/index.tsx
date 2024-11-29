@@ -15,7 +15,7 @@ import {
 import Divider from '@modules/common/components/divider';
 import React, { useState } from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import itemStore, { Item } from '@store/review/review-store';
+import itemStore, { Item } from '@/zustand/review/review-store';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 

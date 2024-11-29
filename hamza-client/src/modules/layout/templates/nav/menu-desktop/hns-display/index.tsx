@@ -1,6 +1,6 @@
 'use client';
 import { MdWallet } from 'react-icons/md';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { Flex, Text, Input } from '@chakra-ui/react';
 import { useState } from 'react';
 

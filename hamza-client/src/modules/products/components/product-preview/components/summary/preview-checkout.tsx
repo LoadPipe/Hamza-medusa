@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { Text, Button, Flex, Box, Heading, Divider } from '@chakra-ui/react';
-import useProductPreview from '@store/product-preview/product-preview';
+import useProductPreview from '@/zustand/product-preview/product-preview';
 import QuantityButton from '../quantity-button';
 import { addToCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
@@ -10,7 +10,7 @@ import ReviewStar from '../../../../../../../public/images/products/review-star.
 import Image from 'next/image';
 import { Variant } from '@/types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import toast from 'react-hot-toast';
 import OptionSelect from '../../../option-select';
 import { isEqual } from 'lodash';
@@ -23,9 +23,10 @@ import { renderStars } from '@modules/products/components/review-stars';
 import { BiHeart, BiSolidHeart } from 'react-icons/bi';
 import useWishlistStore, {
     WishlistProduct,
-} from '@store/wishlist/wishlist-store';
-import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
+} from '@/zustand/wishlist/wishlist-store';
+import { useWishlistMutations } from '@/zustand/wishlist/mutations/wishlist-mutations';
 import { MdOutlineShoppingCart } from 'react-icons/md';
+import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
 
 interface PreviewCheckoutProps {
     productId: string;
@@ -63,6 +64,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
     const { productData, variantId, quantity, setVariantId } =
         useProductPreview();
+
     const [selectedPrice, setSelectedPrice] = useState<string | null>(null);
     const [usdPrice, setUsdPrice] = useState<string | null>(null);
     const [selectedVariant, setSelectedVariant] = useState<null | Variant>(
@@ -178,26 +180,28 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     setSelectedVariant(selectedProductVariant);
 
                     // Find the price for the selected currency or default to the first price available
-                    if (preferred_currency_code === 'eth') {
-                        let price;
-                        try {
-                            price = selectedProductVariant.prices.find(
-                                (p: any) => p.currency_code === 'usdc'
-                            );
-                        } catch (e) {
-                            console.log(e);
-                        }
-                        setUsdPrice(price?.amount ?? 0);
-                    }
-                    const price = selectedProductVariant.prices.find(
-                        (p: any) =>
-                            p.currency_code ===
-                            (preferred_currency_code ?? 'usdc')
+                    const isEthCurrency = preferred_currency_code === 'eth';
+
+                    // Determine the price based on the preferred currency or fallback
+                    const price = getPriceByCurrency(
+                        selectedProductVariant.prices,
+                        isEthCurrency
+                            ? 'eth'
+                            : preferred_currency_code ?? 'usdc'
                     );
 
-                    // Update the price state
-                    setSelectedPrice(price?.amount ?? 0);
-                    console.log(`Updated Price: ${price?.amount}`);
+                    // Update USD price if the preferred currency is 'eth'
+                    if (isEthCurrency) {
+                        setUsdPrice(
+                            getPriceByCurrency(
+                                selectedProductVariant.prices,
+                                'usdc'
+                            )
+                        );
+                    }
+
+                    // Update the selected price
+                    setSelectedPrice(price);
                 } else {
                     console.error(`No variant found for ID: ${variantId}`);
                 }

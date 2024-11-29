@@ -1,25 +1,30 @@
 import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
-import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
 import Image from 'next/image';
+import useProductGroup from '@/zustand/products/product-group/product-group';
 
 interface CategoryButtonProps {
     categoryName: string;
     url: string;
 }
 
-const CategoryButtons: React.FC<CategoryButtonProps> = ({
+const CategoryButton: React.FC<CategoryButtonProps> = ({
     categoryName,
     url,
 }) => {
-    const { categorySelect, setCategorySelect } = useHomeProductsPage();
+    const { categorySelect, setCategorySelect, setCategoryItem } =
+        useProductGroup();
 
     const toggleCategorySelection = (category: string) => {
         const currentCategorySelection = categorySelect || [];
 
         // Check if the selected category is 'All'
         if (category === 'All') {
-            return setCategorySelect(['All']);
+            // Reset category selection to only include 'All'
+            setCategorySelect(['All']);
+            // Reset category items to an empty array
+            setCategoryItem([]);
+            return; // Exit the function to prevent further logic
         }
         // If the category is already selected, we remove it along with its type
         if (currentCategorySelection.includes(category)) {
@@ -32,12 +37,23 @@ const CategoryButtons: React.FC<CategoryButtonProps> = ({
                     ? updatedCategorySelection
                     : ['All']
             );
+
+            setCategoryItem(
+                (prev) =>
+                    prev?.filter((item) => item.categoryName !== category) ||
+                    null
+            );
         } else {
             // If the category is not selected we add it to the array
             const updatedCategorySelection = currentCategorySelection.filter(
                 (cat) => cat !== 'All'
             );
             setCategorySelect([...updatedCategorySelection, category]);
+
+            setCategoryItem((prev) => [
+                ...(prev || []),
+                { categoryName: category, urlLink: url },
+            ]);
         }
     };
     return (
@@ -82,4 +98,4 @@ const CategoryButtons: React.FC<CategoryButtonProps> = ({
     );
 };
 
-export default CategoryButtons;
+export default CategoryButton;

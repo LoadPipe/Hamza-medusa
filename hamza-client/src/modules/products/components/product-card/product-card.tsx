@@ -6,11 +6,10 @@ import {
     Skeleton,
     Image as ChakraImage,
 } from '@chakra-ui/react';
-import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { IoStar } from 'react-icons/io5';
 import Image from 'next/image';
 import { getObjectFit } from '@modules/get-object-fit';
-import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
+import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 
 interface ProductCardProps {
     variantID: string;
@@ -31,12 +30,12 @@ interface ProductCardProps {
     totalRating: number;
 }
 
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { getAverageRatings, getReviewCount } from '@lib/data';
-import useProductPreview from '@store/product-preview/product-preview';
+import useProductPreview from '@/zustand/product-preview/product-preview';
 import { useRouter } from 'next/navigation';
 
-const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
+const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
     variantID,
     countryCode,
     productName,
@@ -209,7 +208,11 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
                         </Flex>
 
                         {currencyCode === 'eth' && (
-                            <Flex flexDirection="row" mt="auto">
+                            <Flex
+                                flexDirection="row"
+                                ml="5px"
+                                display={{ base: 'none', md: 'flex' }}
+                            >
                                 <Text
                                     textOverflow="ellipsis"
                                     display={'flex'}
@@ -246,4 +249,4 @@ const ProductCardHome: React.FC<ProductCardProps & { productId?: string }> = ({
     );
 };
 
-export default ProductCardHome;
+export default ProductCard;

@@ -2,7 +2,7 @@
 import React from 'react';
 import { Text, Box, MenuItem, MenuDivider } from '@chakra-ui/react';
 import NavLink from './nav-link';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 
 const AuthorizedLinks = () => {
     const { authData } = useCustomerAuthStore();

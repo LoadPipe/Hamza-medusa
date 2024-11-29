@@ -7,6 +7,7 @@ import HamzaBetaTitle from '@/images/logo/hamza-title-beta.svg';
 import MobileMainMenu from './menu/mobile-main-menu';
 import { WalletConnectButton } from './connect-wallet/connect-button';
 import CartButtonMobile from './components/cart-button';
+import HamzaHoliday from '@/images/logo/hamza-holiday.svg';
 
 export default async function MobileNav() {
     return (
@@ -28,19 +29,19 @@ export default async function MobileNav() {
                     <LocalizedClientLink href="/">
                         <Flex>
                             <Image
-                                className="w-[22.92px] h-[33px] md:w-[47.34px] md:h-[67px]"
-                                src={HamzaLogo}
+                                className="w-[75.92px] h-[88px] md:w-[47.34px] md:h-[67px]"
+                                src={HamzaHoliday}
                                 alt="Hamza"
                             />
 
-                            <Image
+                            {/* <Image
                                 src={HamzaBetaTitle}
                                 className="w-[64.73px] h-[15.59px]"
                                 style={{
                                     alignSelf: 'center',
                                 }}
                                 alt="Hamza"
-                            />
+                            /> */}
                         </Flex>
                     </LocalizedClientLink>
                 </Flex>

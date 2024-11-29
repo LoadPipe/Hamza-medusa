@@ -10,17 +10,16 @@ import {
     Flex,
     Divider,
     Text,
-    Box,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
 import FilterIcon from '../../../../../../public/images/categories/mobile-filter.svg';
 import Image from 'next/image';
-import CategoryModalButton from './category-modal-button';
-import useStorePage from '@store/store-page/store-page';
+import CategoryButtonModal from '@/modules/products/components/buttons/category-button-modal';
 import RangeSliderModal from './range-slider-modal';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import useShopFilter from '@/store/store-page/shop-filter';
+import useProductFilter from '@/zustand/products/filter/product-filter';
+import useProductGroup from '@/zustand/products/product-group/product-group';
 
 const USE_PRICE_FILTER: boolean = false;
 
@@ -40,8 +39,7 @@ interface Category {
 type RangeType = [number, number];
 
 const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
-    // Zustand States
-    const { setCategorySelect, setCategoryItem } = useStorePage();
+    const { setCategorySelect, setCategoryItem } = useProductGroup();
 
     const {
         setSelectCategoryFilter,
@@ -52,7 +50,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
         setRangeLower,
         rangeUpper,
         rangeLower,
-    } = useShopFilter();
+    } = useProductFilter();
 
     const [range, setRange] = useState<RangeType>([0, 350]);
 
@@ -105,7 +103,7 @@ const FilterModal: React.FC<FilterModalProps> = ({ isOpen, onClose }) => {
                     >
                         {uniqueCategories.map(
                             (category: any, index: number) => (
-                                <CategoryModalButton
+                                <CategoryButtonModal
                                     key={index}
                                     categoryName={category.name}
                                     url={category.metadata?.icon_url}

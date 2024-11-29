@@ -1,9 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import useWishlistStore, {
     WishlistProduct,
-} from '@store/wishlist/wishlist-store';
+} from '@/zustand/wishlist/wishlist-store';
 import { getClientCookie } from '@lib/util/get-client-cookies';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
@@ -30,20 +30,27 @@ export function useWishlistMutations() {
             addWishlistProduct(product);
             // Return the axios post call from the mutation function
             //TODO: MOVE TO INDEX.TS
-            return axios.post(`${BACKEND_URL}/custom/wishlist/item`, {
-                customer_id: customer_id, // Ensure customer_id is handled when null
-                variant_id: product.productVariantId,
-            },
+            return axios.post(
+                `${BACKEND_URL}/custom/wishlist/item`,
+                {
+                    customer_id: customer_id, // Ensure customer_id is handled when null
+                    variant_id: product.productVariantId,
+                },
                 {
                     headers: {
                         authorization: getClientCookie('_medusa_jwt'),
-                    }
-                });
+                    },
+                }
+            );
         },
         {
             onSuccess: (data, product) => {
                 // loadWishlist(customer_id);
-                console.log('Adding Wish list item ', product.productVariantId, ' in DB!');
+                console.log(
+                    'Adding Wish list item ',
+                    product.productVariantId,
+                    ' in DB!'
+                );
             },
             onError: (error, product) => {
                 removeWishlistProduct(product.id ?? '');
@@ -55,7 +62,7 @@ export function useWishlistMutations() {
     const removeWishlistItemMutation = useMutation(
         (product: WishlistProduct) => {
             // Return the axios delete call from the mutation function
-            console.log('removeWishlistProduct', product.id)
+            console.log('removeWishlistProduct', product.id);
             removeWishlistProduct(product.id ?? '');
             //TODO: MOVE TO INDEX.TS
 
@@ -67,7 +74,7 @@ export function useWishlistMutations() {
                 },
                 headers: {
                     authorization: getClientCookie('_medusa_jwt'),
-                }
+                },
             });
         },
         {

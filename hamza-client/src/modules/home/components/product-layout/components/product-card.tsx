@@ -12,10 +12,10 @@ import { addToCart } from '@modules/cart/actions';
 import { IoHeartCircleOutline, IoHeartCircleSharp } from 'react-icons/io5';
 import { IoStar } from 'react-icons/io5';
 import { FaRegHeart, FaHeart } from 'react-icons/fa6';
-import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useWishlistMutations } from '@/zustand/wishlist/mutations/wishlist-mutations';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import axios from 'axios';
-import useWishlistStore from '@store/wishlist/wishlist-store';
+import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
@@ -74,7 +74,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
         await addToCart({
             variantId: variantID ?? '',
             quantity: 1,
-            countryCode: countryCode ?? ''
+            countryCode: countryCode ?? '',
         });
         setLoadingAddToCard(false);
     };
@@ -86,7 +86,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
         await addToCart({
             variantId: variantID ?? '',
             quantity: 1,
-            countryCode: countryCode ?? ''
+            countryCode: countryCode ?? '',
         });
         setLoadingBuy(false);
     };
@@ -95,7 +95,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
     const whitelistedProductHandler = async () => {
         const whitelistedProduct =
             whitelist_config.is_whitelisted &&
-                whitelist_config.whitelisted_stores.includes(storeId)
+            whitelist_config.whitelisted_stores.includes(storeId)
                 ? true
                 : false;
 
@@ -119,7 +119,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
         >
             <LocalizedClientLink href={`/products/${productHandle}`}>
                 <Box
-                    onClick={() => { }}
+                    onClick={() => {}}
                     h="240px"
                     width="100%"
                     display="flex"

@@ -4,8 +4,9 @@ import { getPercentageDiff } from '@lib/util/get-precentage-diff';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { Flex, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
+import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
 
 // TODO: Can this be removed?
 type ExtendedLineItem = LineItem & {
@@ -29,10 +30,12 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
             item.subtotal ?? item.unit_price * item.quantity;
         const discountTotal = item.discount_total ?? null;
         setPrice(totalItemAmount);
-        const findUsdcPrice = item?.variant?.prices.find(
-            (p: any) => p?.currency_code?.toLowerCase() === 'usdc'
-        )?.amount;
-        const usdcPrice = findUsdcPrice * item.quantity;
+
+        // const findUsdcPrice = item?.variant?.prices.find(
+        //     (p: any) => p?.currency_code?.toLowerCase() === 'usdc'
+        // )?.amount;
+        const findUsdcPrice = getPriceByCurrency(item?.variant?.prices, 'usdc');
+        const usdcPrice = Number(findUsdcPrice) * item.quantity;
         setUsdcPrice(usdcPrice);
         setReducedPrice(reducedPrice);
         if (

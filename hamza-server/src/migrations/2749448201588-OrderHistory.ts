@@ -7,9 +7,9 @@ export class OrderHistory2749448201588 implements MigrationInterface {
             "id" character varying NOT NULL,
             "order_id" character varying NOT NULL,
             "title" character varying,
-            "to_status" order_status_enum,
-            "to_payment_status" order_payment_status_enum,
-            "to_fulfillment_status" order_fulfillment_status_enum,
+            "to_status" character varying,
+            "to_payment_status" character varying,
+            "to_fulfillment_status" character varying,
             "metadata" jsonb NOT NULL,
             "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
             CONSTRAINT "PK_gknsjklsfjsfxobwv1r1dgs912" PRIMARY KEY ("id") )`
@@ -24,8 +24,6 @@ export class OrderHistory2749448201588 implements MigrationInterface {
         await queryRunner.query(
             `ALTER TABLE "order_history" DROP CONSTRAINT "FK_Order_History_Order"`
         );
-        await queryRunner.query(
-            `DROP TABLE "order_history"`
-        );
+        await queryRunner.query(`DROP TABLE "order_history"`);
     }
 }

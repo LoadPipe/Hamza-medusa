@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
-import ProductCardGroup from '@modules/products/components/product-group-home';
+import ProductCardGroup from '@/modules/products/components/product-group';
 import { Flex } from '@chakra-ui/react';
 import SearchBar from './components/SearchBar';
-import useHomeProductsPage from '@store/home-page/product-layout/product-layout';
+import useHomeProductsPage from '@/zustand/home-page/product-layout/product-layout';
 import FilterBar from './components/filter-bar/FilterBar';
 import { Hydrate } from '@tanstack/react-query';
 

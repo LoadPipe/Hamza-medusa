@@ -4,8 +4,8 @@ import React from 'react';
 import WishlistIcon from './icon/wishlist-icon';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import Image from 'next/image';
-import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
-import useWishlistStore from '@store/wishlist/wishlist-store';
+import { useWishlistMutations } from '@/zustand/wishlist/mutations/wishlist-mutations';
+import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 
 type WishlistProps = { item: any };
 

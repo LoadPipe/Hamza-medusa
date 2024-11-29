@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import { Flex } from '@chakra-ui/react';
-import SideMenu from './components/desktop-side-filter/store-side-menu';
+import { Flex, Box } from '@chakra-ui/react';
+import SideFilter from './components/desktop-side-filter/side-filter';
 import MobileFilter from '@modules/shop/components/mobile-filter-modal/mobile-filter';
-import ProductCardGroup from '@modules/products/components/product-group-shop';
+import ProductCardGroup from '@modules/products/components/product-group';
 import StoreFilterDisplay from '@modules/shop/components/store-filter-display';
 
 const ShopTemplate = () => {
@@ -29,10 +29,19 @@ const ShopTemplate = () => {
                     gap={'20px'}
                 >
                     <MobileFilter />
-                    <SideMenu />
+                    <SideFilter />
                     <Flex maxW={'941px'} w="100%" flexDirection={'column'}>
                         <StoreFilterDisplay />
-                        <ProductCardGroup />
+
+                        <Box mt={{ base: '0', md: '1rem' }}>
+                            <ProductCardGroup
+                                columns={{ base: 2, lg: 3 }}
+                                gap={{ base: 4, md: '7' }}
+                                skeletonCount={9}
+                                visibleProductCountInitial={16}
+                                padding={{ base: '1rem', md: '0' }}
+                            />
+                        </Box>
                     </Flex>
                 </Flex>
             </Flex>

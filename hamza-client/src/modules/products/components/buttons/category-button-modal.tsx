@@ -1,19 +1,23 @@
 import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import Image from 'next/image';
-import useHomeModalFilter from '@store/home-page/home-filter/home-filter';
-interface CategoryButtonProps {
-    categoryName: string; // Single category name per button
+import useProductFilter from '@/zustand/products/filter/product-filter';
 
+interface CategoryButtonProps {
+    categoryName: string;
     url: string;
 }
 
-const CategoryModalButton: React.FC<CategoryButtonProps> = ({
+const CategoryButtonModal: React.FC<CategoryButtonProps> = ({
     categoryName,
+
     url,
 }) => {
-    const { selectCategoryFilter, setSelectCategoryFilter } =
-        useHomeModalFilter();
+    const {
+        selectCategoryFilter,
+        setSelectCategoryFilter,
+        setCategoryItemFilter,
+    } = useProductFilter();
 
     const toggleCategorySelection = (category: string) => {
         const currentCategorySelection = selectCategoryFilter || [];
@@ -27,6 +31,12 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
             setSelectCategoryFilter(
                 updatedCategorySelection.length ? updatedCategorySelection : []
             );
+
+            setCategoryItemFilter(
+                (prev) =>
+                    prev?.filter((item) => item.categoryName !== category) ||
+                    null
+            );
         } else {
             // If the category is not selected, we add both the category and type
             const updatedCategorySelection = currentCategorySelection.filter(
@@ -34,6 +44,11 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
             );
 
             setSelectCategoryFilter([...updatedCategorySelection, category]);
+
+            setCategoryItemFilter((prev) => [
+                ...(prev || []),
+                { categoryName: category, urlLink: url },
+            ]);
         }
     };
 
@@ -60,14 +75,16 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
                 }
                 padding="10px 24px"
                 transition="background 0.1s ease-in-out, color 0.1s ease-in-out"
-                _hover={{
-                    background: 'white',
-                    color: 'black',
-                }}
                 onClick={() => toggleCategorySelection(categoryName)}
             >
-                <Image src={url} alt={categoryName} width={18} height={18} />
-
+                {url?.length && (
+                    <Image
+                        src={url}
+                        alt={categoryName}
+                        width={18}
+                        height={18}
+                    />
+                )}
                 <Text ml="10px" fontSize={{ base: '14px', md: '16px' }}>
                     {categoryName}
                 </Text>
@@ -76,4 +93,4 @@ const CategoryModalButton: React.FC<CategoryButtonProps> = ({
     );
 };
 
-export default CategoryModalButton;
+export default CategoryButtonModal;

@@ -3,8 +3,8 @@
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import React from 'react';
 import { Flex, Text, MenuItem } from '@chakra-ui/react';
-import useWishlistStore from '@store/wishlist/wishlist-store';
-import { WishlistType } from '@store/wishlist/types/wishlist-types';
+import useWishlistStore from '@/zustand/wishlist/wishlist-store';
+import { WishlistType } from '@/zustand/wishlist/types/wishlist-types';
 import { FaRegHeart } from 'react-icons/fa';
 
 interface WishlistPopoverItemProps {

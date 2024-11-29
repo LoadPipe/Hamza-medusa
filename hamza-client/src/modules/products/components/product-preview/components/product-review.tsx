@@ -5,7 +5,7 @@ import ReviewCard from './review-card';
 
 import { allReviews } from '@lib/data';
 import { renderStars } from '../../review-stars';
-import useProductPreview from '@store/product-preview/product-preview';
+import useProductPreview from '@/zustand/product-preview/product-preview';
 
 const ProductReview = () => {
     const [startIndex, setStartIndex] = useState(0);

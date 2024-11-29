@@ -9,21 +9,14 @@ import {
     SkeletonText,
 } from '@chakra-ui/react';
 import React, { useEffect, useState, useMemo } from 'react';
-import useProductPreview from '@store/product-preview/product-preview';
+import useProductPreview from '@/zustand/product-preview/product-preview';
 import { BiHeart, BiSolidHeart } from 'react-icons/bi';
 import useWishlistStore, {
     WishlistProduct,
-} from '@store/wishlist/wishlist-store';
-import { useWishlistMutations } from '@store/wishlist/mutations/wishlist-mutations';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+} from '@/zustand/wishlist/wishlist-store';
+import { useWishlistMutations } from '@/zustand/wishlist/mutations/wishlist-mutations';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { Variant } from '@/types/medusa';
-import Image from 'next/image';
-import ReviewStar from '../../../../../../../public/images/products/review-star.svg';
-import {
-    TiStarFullOutline,
-    TiStarHalfOutline,
-    TiStarOutline,
-} from 'react-icons/ti';
 import ProductDescription from '../product-description';
 import { renderStars20px } from '@modules/products/components/review-stars';
 
@@ -41,7 +34,6 @@ const ProductInfo = () => {
     const { addWishlistItemMutation, removeWishlistItemMutation } =
         useWishlistMutations();
     const { authData } = useCustomerAuthStore();
-    const { preferred_currency_code } = useCustomerAuthStore();
     const [selectedVariant, setSelectedVariant] = useState<null | Variant>(
         null
     );
@@ -80,14 +72,6 @@ const ProductInfo = () => {
             } else {
                 setSelectedVariantImage(null); // Reset to null if no imgUrl is found
             }
-
-            // variantThumbnail = setSelectedVariant(selectedProductVariant);
-            const price =
-                selectedProductVariant &&
-                selectedProductVariant.prices.find(
-                    (p: any) =>
-                        p.currency_code === (preferred_currency_code ?? 'usdc')
-                );
         }
     }, [productData, variantId]);
 

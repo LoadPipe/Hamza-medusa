@@ -1,6 +1,6 @@
 {
     "name": "hamza-server",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "description": "Hamza Medusa server backend",
     "author": "Garo Nazarian, Beau Troxclair, Jonny Bajada, Karan Chugh, John R. Kosinski",
     "license": "MIT",
@@ -25,6 +25,7 @@
         "test": "cross-env jest",
         "setup-0": "sudo chmod +x ./scripts/setup-0.sh && ./scripts/setup-0.sh",
         "setup-1": "sudo chmod +x ./scripts/setup-1.sh && ./scripts/setup-1.sh",
+        "mock-order": "sudo chmod +x ./scripts/mock-order.sh && ./scripts/mock-order.sh",
         "migrate": "sudo chmod +x ./scripts/create-migration.sh && ./scripts/create-migration.sh",
         "migration": "npx medusa migrations run",
         "seed": "cross-env medusa seed -f data/seed.json",

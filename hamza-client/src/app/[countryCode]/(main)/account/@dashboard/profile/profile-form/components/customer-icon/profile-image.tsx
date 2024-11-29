@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Image, Flex, Avatar } from '@chakra-ui/react';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 
 type ProfileImageProps = {
     centered?: boolean; // Optional prop to control centering, defaults to false

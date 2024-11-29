@@ -17,9 +17,9 @@ import { MdOutlineRateReview } from 'react-icons/md';
 import { Flex, Box, Text, IconButton, Collapse } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
 import NextLink from 'next/link';
-import { useOrderTabStore } from '@store/order-tab-state';
+import { useOrderTabStore } from '@/zustand/order-tab-state';
 
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import NavLink from '../components/nav-link';

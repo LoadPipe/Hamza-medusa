@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import Image from 'next/image';
 import categoryIcons from '../../data/category-icons';
-import useShopFilter from '@/store/store-page/shop-filter';
+import useProductFilter from '@/zustand/products/filter/product-filter';
 
 interface CategoryButtonProps {
     categoryName: string;
@@ -17,7 +17,7 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
         selectCategoryFilter,
         setSelectCategoryFilter,
         setCategoryItemFilter,
-    } = useShopFilter();
+    } = useProductFilter();
 
     const toggleCategorySelection = (category: string) => {
         const currentCategorySelection = selectCategoryFilter || [];

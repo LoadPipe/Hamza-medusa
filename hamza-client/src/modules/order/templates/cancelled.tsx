@@ -8,7 +8,7 @@ import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import CancellationModal from '@modules/order/templates/cancelled-modal';
 import { OrdersData } from './all';
-import { useOrderTabStore } from '@store/order-tab-state';
+import { useOrderTabStore } from '@/zustand/order-tab-state';
 
 const Cancelled = ({
     customer,

@@ -23,7 +23,7 @@ import toast from 'react-hot-toast';
 import { getServerConfig } from '@lib/data/index';
 import { getClientCookie } from '@lib/util/get-client-cookies';
 import HamzaLogoLoader from '@/components/loaders/hamza-logo-loader';
-import { useCartStore } from '@/store/cart-store/cart-store';
+import { useCartStore } from '@/zustand/cart-store/cart-store';
 import Spinner from '@/modules/common/icons/spinner';
 
 //TODO: we need a global common function to replace this
@@ -121,7 +121,7 @@ const CryptoPaymentButton = ({
      * @returns {transaction_id, payer_address, escrow_contract_address, success }
      */
     const doWalletPayment = async (data: any) => {
-        const checkoutMode = await getCheckoutMode();
+        const checkoutMode = 'SWITCH'; //await getCheckoutMode();
         console.log('checkout mode is', checkoutMode);
 
         //select the right handler based on payment mode
@@ -205,7 +205,17 @@ const CryptoPaymentButton = ({
     const completeCheckout = async (cartId: string) => {
         try {
             // Retrieve data (cart id, currencies, amounts, etc.) needed for wallet checkout
-            const data: CheckoutData = await getCheckoutData(cartId);
+            //onst data: CheckoutData = await getCheckoutData(cartId);
+            const checkoutData = await axios.get(
+                `${MEDUSA_SERVER_URL}/custom/checkout`,
+                {
+                    params: { cart_id: cartId },
+                    headers: {
+                        Authorization: `${getClientCookie('_medusa_jwt')}`,
+                    },
+                }
+            );
+            const data = checkoutData.data;
 
             if (data) {
                 // Send the payment to the wallet for on-chain processing
@@ -240,6 +250,7 @@ const CryptoPaymentButton = ({
                         countryCode
                     );
                 } else {
+                    setLoaderVisible(false);
                     displayError(
                         output?.message
                             ? output.message
@@ -248,6 +259,7 @@ const CryptoPaymentButton = ({
                     await cancelOrderFromCart();
                 }
             } else {
+                setLoaderVisible(false);
                 await cancelOrderFromCart();
                 throw new Error('Checkout failed to complete.');
             }
@@ -261,6 +273,7 @@ const CryptoPaymentButton = ({
 
     const cancelOrderFromCart = async () => {
         try {
+            setLoaderVisible(false);
             const response = await axios.post(
                 `${MEDUSA_SERVER_URL}/custom/cart/cancel`,
                 {
@@ -268,8 +281,7 @@ const CryptoPaymentButton = ({
                 },
                 {
                     headers: {
-                        authorization:
-                            getClientCookie('_medusa_jwt')('_medusa_jwt'),
+                        authorization: getClientCookie('_medusa_jwt'),
                     },
                 }
             );
@@ -307,9 +319,9 @@ const CryptoPaymentButton = ({
                                         //this does wallet payment, and everything after
                                         completeCheckout(cart.id);
                                     } catch (e) {
+                                        setLoaderVisible(false);
                                         console.error(e);
                                         setSubmitting(false);
-                                        setLoaderVisible(false);
                                         displayError(
                                             'Checkout was not completed'
                                         );
@@ -317,8 +329,8 @@ const CryptoPaymentButton = ({
                                     }
                                 },
                                 onError: async (e) => {
-                                    setSubmitting(false);
                                     setLoaderVisible(false);
+                                    setSubmitting(false);
                                     console.error(e);
                                     if (
                                         e.message?.indexOf('status code 401') >=
@@ -343,9 +355,9 @@ const CryptoPaymentButton = ({
 
                 return;
             } catch (e) {
+                setLoaderVisible(false);
                 console.error(e);
                 setSubmitting(false);
-                setLoaderVisible(false);
                 displayError('Checkout was not completed');
                 await cancelOrderFromCart();
             }

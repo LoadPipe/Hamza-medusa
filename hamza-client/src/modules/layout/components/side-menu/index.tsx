@@ -8,7 +8,7 @@ import { Fragment, useEffect } from 'react';
 
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import CountrySelect from '../country-select';
-import { useCustomerAuthStore } from '@store/customer-auth/customer-auth';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { MdOutlineMenu } from 'react-icons/md';
 
 const SideMenuItems: any = {
@@ -107,7 +107,8 @@ const SideMenu = ({ regions }: { regions: Region[] | null }) => {
                                             </div>
                                             <Text className="flex justify-between txt-compact-small">
                                                 © {new Date().getFullYear()}{' '}
-                                                Hamza.market. All rights reserved.
+                                                Hamza.market. All rights
+                                                reserved.
                                             </Text>
                                         </div>
                                     </div>
