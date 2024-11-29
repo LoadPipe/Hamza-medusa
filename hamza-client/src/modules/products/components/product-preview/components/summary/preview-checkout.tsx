@@ -763,7 +763,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             </Flex>
 
             {/* TOS */}
-            <TermsOfService />
+            <TermsOfService metadata={productData.metadata} />
         </Flex>
     );
 };
