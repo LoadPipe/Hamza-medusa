@@ -7,6 +7,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     //const globeTopperService: GlobeTopperService =
     //    req.scope.resolve('globeTopperService');
 
+    const gtBearerToken: String = process.env.GLOBETOPPER_API_KEY + ':' + process.env.GLOBETOPPER_SECRET;
+
     const handler: RouteHandler = new RouteHandler(
         req,
         res,
@@ -18,41 +20,42 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         //https://partner.sandbox.globetopper.com/api/v2/catalogue/search-catalogue
 
         const gtProducts = await axios.get(
-            'https://partner.sandbox.globetopper.com/api/v2/products/get-all-products',
+            process.env.GLOBETOPPER_API_URL + '/product/search-all-products',
             {
                 headers: {
                     authorization:
-                        'Bearer Shadstone:dgmer6i9lyrt1ftaftp3h3v56o5uxqh7',
+                        'Bearer ' + gtBearerToken,
                 },
             }
         );
 
         const gtCatalogue = await axios.get(
-            'https://partner.sandbox.globetopper.com/api/v2/catalogue/search-catalogue',
+            process.env.GLOBETOPPER_API_URL + '/catalogue/search-catalogue',
             {
                 headers: {
                     authorization:
-                        'Bearer Shadstone:dgmer6i9lyrt1ftaftp3h3v56o5uxqh7',
+                    'Bearer ' + gtBearerToken,
                 },
             }
         );
 
         var products = [];
 
-        gtProducts.data.records.foreach((record) => {
+        gtProducts.data.records.forEach((record) => {
             products[record.operator.id] = {
                 id: 'gt_' + record.operator.id,
                 title: 'Gift Card: ' + record.name,
                 description: record.description,
                 is_giftcard: false,
                 thumbnail: null,
+                external_id: record.operator.id,
                 variants: [
                     {
                         title: 'Default',
                         'prices': [
                             {
                                 amount: record.min,
-                                currency_code: record.operator.currency.code
+                                currency_code: record.operator.country.currency.code
                             }
                         ]
                     }
@@ -60,18 +63,20 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             }
         });
 
-        gtCatalogue.data.records.foreach((record) => {
+        gtCatalogue.data.records.forEach((record) => {
             let id = record.topup_product_id;
             if (products[id]) {
                 products[id].description = record.brand_description;
-                products[id].thumbnail = record.card_image
+                products[id].thumbnail = record.card_image;
             }
         });
 
+        products = products.filter(Boolean);
+
 
         //console.log(results);
-        console.log(products);
+        console.log(products[0]);
 
-        return handler.returnStatus(200, { status: 'ok' });
+        return handler.returnStatus(200, { status: 'ok', data: products });
     });
 };
