@@ -266,7 +266,6 @@ export default class GlobetopperService extends TransactionBaseService {
                     `No variants were detected for product ${externalId}`
                 );
 
-            console.log('returning', output);
             return output;
         } catch (error) {
             this.logger.error(
@@ -283,8 +282,6 @@ export default class GlobetopperService extends TransactionBaseService {
         optionNames: string[]
     ): Promise<CreateProductProductVariantInput[]> {
         const variants = [];
-
-        if (!productDetail) console.log('product detail is null');
 
         const getVariantDescriptionText = (data: any) => {
             let output: string = '';

@@ -27,8 +27,6 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        //https://partner.sandbox.globetopper.com/api/v2/catalogue/search-catalogue
-
         //require params
         if (!handler.requireParam('store_id')) return;
 
@@ -50,86 +48,52 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             }
         );
 
-        const productInputs: CreateProductInput[] = [];
+        const productInputs: (CreateProductInput & { store_id: string })[] = [];
 
-        const gtRecords = [
-            gtProducts.data.records.sort(
-                (a, b) => (a?.operator?.id ?? 0) < (b?.operator?.id ?? 0)
-            )[3],
-        ];
-        const gtCat = [
-            gtCatalogue.data.records.sort(
-                (a, b) =>
-                    (a?.topup_product_id ?? 0) < (b?.topup_product_id ?? 0)
-            )[3],
-        ];
+        const gtRecords = gtProducts.data.records.sort(
+            (a, b) => (a?.operator?.id ?? 0) < (b?.operator?.id ?? 0)
+        );
+        const gtCat = gtCatalogue.data.records.sort(
+            (a, b) => (a?.topup_product_id ?? 0) < (b?.topup_product_id ?? 0)
+        );
 
         for (let record of gtRecords) {
-            console.log(record.operator.id);
             const productDetails = gtCat.find(
-                (r) => (r.topup_product_id = record.operator.id)
+                (r) => r.topup_product_id == (record?.operator?.id ?? 0)
             );
-            productInputs.push(
-                await globeTopperService.mapDataToProductInput(
-                    record,
-                    productDetails,
-                    ProductStatus.DRAFT,
-                    handler.inputParams.store_id,
-                    'pcat_electronics',
-                    'pcol_X',
-                    []
-                )
-            );
+
+            if (productDetails) {
+                productInputs.push(
+                    await globeTopperService.mapDataToProductInput(
+                        record,
+                        productDetails,
+                        ProductStatus.PUBLISHED,
+                        handler.inputParams.store_id,
+                        handler.inputParams.category_id,
+                        handler.inputParams.collection_id,
+                        [handler.inputParams.sales_channel_id]
+                    )
+                );
+            }
         }
 
-        /*
-        gtRecords.forEach((record) => {
-            productInputs[record.operator.id] = {
-                title: 'Gift Card: ' + record.name,
-                description: record.description,
-                is_giftcard: false,
-                thumbnail: null,
-                handle: record.operator.id, //TODO: create handle from name + id
-                external_id: record.operator.id,
-                variants: [
-                    {
-                        inventory_quantity: 9999,
-                        title: 'Default',
-                        prices: [
-                            {
-                                amount: Math.floor(record.min * 100),
-                                currency_code:
-                                    record.operator.country.currency.code,
-                            },
-                        ],
-                    },
-                ],
-            };
-        });
-
-        gtCat.forEach((record) => {
-            let id = record.topup_product_id;
-            if (productInputs[id]) {
-                productInputs[id].description = record.brand_description;
-                productInputs[id].thumbnail = record.card_image;
-            }
-        });
-        */
-
-        console.log('importing ', productInputs.length, 'products');
-        console.log(productInputs);
+        handler.logger.debug(`importing ${productInputs.length} products`);
 
         const products = await productService.bulkImportProducts(
             handler.inputParams.store_id,
             productInputs
         );
 
-        return handler.returnStatus(200, {
-            status: 'ok',
-            inputs: productInputs,
-            data: products,
-            records: gtRecords,
-            cat: gtCat,
-        });
+        return handler.returnStatus(
+            200,
+            {
+                status: 'ok',
+                inputs: productInputs,
+                data: products,
+                records: gtRecords,
+                cat: gtCat,
+            },
+            100
+        );
     });
 };

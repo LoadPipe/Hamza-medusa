@@ -10,7 +10,7 @@ import {
 } from '@medusajs/medusa';
 import axios from 'axios';
 import {
-    CreateProductInput,
+    CreateProductInput as MedusaCreateProductInput,
     CreateProductProductVariantPriceInput,
 } from '@medusajs/medusa/dist/types/product';
 import { Product } from '../models/product';
@@ -26,6 +26,10 @@ import { SeamlessCache } from '../utils/cache/seamless-cache';
 import { filterDuplicatesById } from '../utils/filter-duplicates';
 import { PriceConverter } from '../utils/price-conversion';
 import { getCurrencyPrecision } from '../currency.config';
+
+type CreateProductInput = MedusaCreateProductInput & {
+    store_id: string;
+};
 
 export type BulkImportProductInput = CreateProductInput;
 
@@ -59,7 +63,6 @@ export type UpdateProductProductVariantDTO = {
 type UpdateProductInput = Omit<Partial<CreateProductInput>, 'variants'> & {
     variants?: UpdateProductProductVariantDTO[];
 };
-
 class ProductService extends MedusaProductService {
     static LIFE_TIME = Lifetime.SCOPED;
     protected readonly logger: ILogger;
