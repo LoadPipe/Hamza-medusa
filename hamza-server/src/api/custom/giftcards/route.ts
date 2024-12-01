@@ -4,10 +4,11 @@ import { RouteHandler } from '../../route-handler';
 import axios from 'axios';
 import ProductService from '../../../services/product';
 import { CreateProductInput } from '@medusajs/medusa/dist/types/product';
+import GlobetopperService from '../../../services/globetopper';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
-    //const globeTopperService: GlobeTopperService =
-    //    req.scope.resolve('globeTopperService');
+    const globeTopperService: GlobetopperService =
+        req.scope.resolve('globetopperService');
     const productService: ProductService = req.scope.resolve('productService');
 
     const gtBearerToken: String =
@@ -52,7 +53,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 description: record.description,
                 is_giftcard: false,
                 thumbnail: null,
-                handle: record.operator.id,
+                handle: record.operator.id, //TODO: create handle from name + id
                 external_id: record.operator.id,
                 variants: [
                     {
