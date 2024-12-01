@@ -21,26 +21,14 @@ const StoreSearch = ({ storeName }: Props) => {
         }
     );
 
-    // Filter for unique hamdles
-    let uniqueHandlesArray: string[] = [];
+    let categoryNames = [];
 
     if (data && data.data) {
-        const uniqueHandles = new Set<string>();
-
-        data.data.forEach((item: any) => {
-            const handle = item?.handle;
-            console.log(item);
-            if (handle) {
-                uniqueHandles.add(handle);
-            }
-        });
-
-        uniqueHandlesArray = Array.from(uniqueHandles);
-        console.log(uniqueHandlesArray);
+        categoryNames = data?.data;
+        console.log(data.data);
     } else {
         console.log('No data available');
     }
-
     return (
         <Flex flexDir={'column'} width={'100%'}>
             <Flex
@@ -53,8 +41,8 @@ const StoreSearch = ({ storeName }: Props) => {
             >
                 <StoreCatButton categoryName={'All'} />
 
-                {uniqueHandlesArray.map((handle, index) => (
-                    <StoreCatButton key={index} categoryName={handle} />
+                {categoryNames.map((name: any, index: number) => (
+                    <StoreCatButton key={index} categoryName={name} />
                 ))}
             </Flex>
 

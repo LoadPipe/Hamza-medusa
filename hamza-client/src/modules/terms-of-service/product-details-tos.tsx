@@ -29,7 +29,11 @@ import { BsBoxSeam } from 'react-icons/bs';
 import { SiBitcoinsv } from 'react-icons/si';
 import { CiBitcoin } from 'react-icons/ci';
 
-const TermsOfService = () => {
+interface TermsOfServiceProps {
+    metadata: any;
+}
+
+const TermsOfService: React.FC<TermsOfServiceProps> = ({ metadata }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedTab, setSelectedTab] = useState(0);
 
@@ -178,10 +182,11 @@ const TermsOfService = () => {
 
                 <UnorderedList color={'white'}>
                     <ListItem fontSize={{ base: '14px', md: '16px' }}>
-                        Ships from Shenzhen, China
+                        Ships from {metadata?.ships_from ?? 'Shenzhen, China'}
                     </ListItem>
                     <ListItem mt="1rem" fontSize={{ base: '14px', md: '16px' }}>
-                        Allow 7-16 business days for delivery
+                        Allow {metadata?.shipping_time ?? '7-16 business days'}{' '}
+                        for delivery
                     </ListItem>
                 </UnorderedList>
 

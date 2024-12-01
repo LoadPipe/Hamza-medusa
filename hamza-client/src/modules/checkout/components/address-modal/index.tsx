@@ -249,7 +249,9 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         borderRadius={'12px'}
                                         name="shipping_address.first_name"
                                         color={'white'}
-                                        _placeholder={{ color: 'white' }}
+                                        _placeholder={{
+                                            color: 'rgba(194, 194, 194, 0.7)',
+                                        }}
                                         value={
                                             formData[
                                                 'shipping_address.first_name'
@@ -268,7 +270,9 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         borderRadius={'12px'}
                                         name="shipping_address.last_name"
                                         color={'white'}
-                                        _placeholder={{ color: 'white' }}
+                                        _placeholder={{
+                                            color: 'rgba(194, 194, 194, 0.7)',
+                                        }}
                                         value={
                                             formData[
                                                 'shipping_address.last_name'
@@ -290,7 +294,9 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                     borderRadius={'12px'}
                                     name="shipping_address.address_1"
                                     color={'white'}
-                                    _placeholder={{ color: 'white' }}
+                                    _placeholder={{
+                                        color: 'rgba(194, 194, 194, 0.7)',
+                                    }}
                                     value={
                                         formData['shipping_address.address_1']
                                     }
@@ -307,7 +313,9 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                     borderRadius={'12px'}
                                     name="shipping_address.address_2"
                                     color={'white'}
-                                    _placeholder={{ color: 'white' }}
+                                    _placeholder={{
+                                        color: 'rgba(194, 194, 194, 0.7)',
+                                    }}
                                     value={
                                         formData['shipping_address.address_2']
                                     }
@@ -330,7 +338,9 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         borderRadius={'12px'}
                                         name="shipping_address.city"
                                         color={'white'}
-                                        _placeholder={{ color: 'white' }}
+                                        _placeholder={{
+                                            color: 'rgba(194, 194, 194, 0.7)',
+                                        }}
                                         value={
                                             formData['shipping_address.city']
                                         }
@@ -347,7 +357,9 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         borderRadius={'12px'}
                                         name="shipping_address.province"
                                         color={'white'}
-                                        _placeholder={{ color: 'white' }}
+                                        _placeholder={{
+                                            color: 'rgba(194, 194, 194, 0.7)',
+                                        }}
                                         value={
                                             formData[
                                                 'shipping_address.province'
@@ -387,7 +399,9 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         borderRadius={'12px'}
                                         name="shipping_address.postal_code"
                                         color={'white'}
-                                        _placeholder={{ color: 'white' }}
+                                        _placeholder={{
+                                            color: 'rgba(194, 194, 194, 0.7)',
+                                        }}
                                         value={
                                             formData[
                                                 'shipping_address.postal_code'
@@ -413,7 +427,9 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         borderRadius={'12px'}
                                         name="shipping_address.phone"
                                         color={'white'}
-                                        _placeholder={{ color: 'white' }}
+                                        _placeholder={{
+                                            color: 'rgba(194, 194, 194, 0.7)',
+                                        }}
                                         value={
                                             formData['shipping_address.phone']
                                         }
@@ -427,7 +443,9 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         title="Enter a valid email address."
                                         autoComplete="email"
                                         color={'white'}
-                                        _placeholder={{ color: 'white' }}
+                                        _placeholder={{
+                                            color: 'rgba(194, 194, 194, 0.7)',
+                                        }}
                                         value={formData.email}
                                         placeholder="Email"
                                         onChange={handleChange}
@@ -457,19 +475,29 @@ const AddressModal: React.FC<AddressModalProps> = ({
                             )}
 
                             {/* Checkbox for Default Address */}
-                            <Flex alignItems="start" flexDirection="column" my="3" color={'white'}>
+                            <Flex
+                                alignItems="start"
+                                flexDirection="column"
+                                my="3"
+                                color={'white'}
+                            >
                                 <Flex alignItems="center" color={'white'}>
-                                    {((customer?.shipping_addresses?.length ?? 0) < MAX_ADDRESSES) && (
+                                    {(customer?.shipping_addresses?.length ??
+                                        0) < MAX_ADDRESSES && (
                                         <>
                                             <Checkbox
                                                 mr="2"
                                                 isChecked={saveAddress}
-                                                onChange={handleSaveAddressChange}
+                                                onChange={
+                                                    handleSaveAddressChange
+                                                }
                                             />
-                                            <Text alignSelf={'center'}>Save address</Text>
+                                            <Text alignSelf={'center'}>
+                                                Save address
+                                            </Text>
                                         </>
                                     )}
-                                    {(savedAddressID && !saveAddress) && (
+                                    {savedAddressID && !saveAddress && (
                                         <>
                                             <Checkbox
                                                 ml="4"

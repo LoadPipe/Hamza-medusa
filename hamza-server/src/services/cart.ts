@@ -89,6 +89,7 @@ export default class CartService extends MedusaCartService {
                 let newPrice = item.variant.prices.find(
                     (p) => p.currency_code === storeCurrency
                 ).amount;
+
                 item.unit_price = newPrice;
 
                 if (storeCurrency != userPreferredCurrency) {

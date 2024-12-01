@@ -11,6 +11,7 @@ import { getCartShippingCost } from '@lib/data';
 import { useCartShippingOptions } from 'medusa-react';
 import axios from 'axios';
 import { getClientCookie } from '@lib/util/get-client-cookies';
+import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
 
 type CartTotalsProps = {
     data: Omit<Cart, 'refundable_amount' | 'refunded_total'> | Order;
@@ -58,11 +59,10 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
             const item: ExtendedLineItem = cart.items[n];
 
             // Find the price for the selected currency....
-
-            const variantPrice = item.variant.prices.find(
-                (p: any) => p.currency_code == itemCurrencyCode
+            const itemPrice = getPriceByCurrency(
+                item.variant.prices,
+                itemCurrencyCode
             );
-            const itemPrice = variantPrice.amount;
 
             console.log(
                 `itemCurrencyCode ${itemCurrencyCode} item Price: ${itemPrice}`
@@ -72,7 +72,8 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                     subtotals[itemCurrencyCode] = 0;
                 }
                 const itemTotal =
-                    itemPrice * item.quantity - (item.discount_total ?? 0);
+                    Number(itemPrice) * item.quantity -
+                    (item.discount_total ?? 0);
                 subtotals[itemCurrencyCode] += itemTotal;
             } else {
                 console.log('Currency is missing or invalid for item:', item);

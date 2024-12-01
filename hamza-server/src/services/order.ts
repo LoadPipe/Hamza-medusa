@@ -10,6 +10,9 @@ import {
     LineItem,
 } from '@medusajs/medusa';
 import { BuckyLogRepository } from '../repositories/bucky-log';
+import SalesChannelRepository from '@medusajs/medusa/dist/repositories/sales-channel';
+import RegionRepository from '@medusajs/medusa/dist/repositories/region';
+import AddressRepository from '@medusajs/medusa/dist/repositories/address';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 import PaymentRepository from '@medusajs/medusa/dist/repositories/payment';
@@ -64,6 +67,9 @@ export default class OrderService extends MedusaOrderService {
     protected productRepository_: typeof ProductRepository;
     protected paymentRepository_: typeof PaymentRepository;
     protected cartRepository_: typeof CartRepository;
+    protected regionRepository_: typeof RegionRepository;
+    protected salesChannelRepository_: typeof SalesChannelRepository;
+    protected addressRepository_: typeof AddressRepository;
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly buckyLogRepository_: typeof BuckyLogRepository;
@@ -86,6 +92,8 @@ export default class OrderService extends MedusaOrderService {
         this.productRepository_ = container.productRepository;
         this.shippingMethodRepository_ = container.shippingMethodRepository;
         this.productVariantRepository_ = container.productVariantRepository;
+        this.regionRepository_ = container.regionRepository;
+        this.salesChannelRepository_ = container.salesChannelRepository;
         this.customerNotificationService_ =
             container.customerNotificationService;
         this.orderHistoryService_ = container.orderHistoryService;
@@ -833,5 +841,169 @@ export default class OrderService extends MedusaOrderService {
                 payment_status: PaymentStatus.AWAITING,
             });
         });
+    }
+
+    async createMockOrders(): Promise<Order> {
+        try {
+            console.log('Starting mock order creation...');
+
+            // Step 1: Get the first customer
+            const customer = await this.customerRepository_.findOne({
+                where: {},
+                order: { created_at: 'ASC' },
+            });
+
+            if (!customer) {
+                throw new Error('No customers found.');
+            }
+            console.log('Customer found:', customer);
+
+            // Step 2: Get the first region
+            const region = await this.regionRepository_
+                .createQueryBuilder('region')
+                .where('LOWER(region.name) = :name', { name: 'na' })
+                .getOne();
+
+            if (!region) {
+                throw new Error('No regions found.');
+            }
+            console.log('Region found:', region);
+
+            // Step 3: Get random products
+            const randomCount = Math.floor(Math.random() * 10) + 1; // Random between 1 and 10
+
+            const products = await this.productRepository_.query(
+                `SELECT * FROM product ORDER BY RANDOM() LIMIT ${randomCount}`
+            );
+
+            console.log(
+                `Retrieved ${products.length} random products`,
+                products
+            );
+
+            if (!products.length) {
+                throw new Error('No products found.');
+            }
+            console.log('Products found:', products);
+
+            const variants = await Promise.all(
+                products.map((product) =>
+                    this.productVariantRepository_.findOne({
+                        where: { product_id: product.id },
+                        order: { created_at: 'ASC' }, // Choose the first variant if multiple exist
+                    })
+                )
+            );
+
+            // Validate that each product has at least one variant
+            variants.forEach((variant, index) => {
+                if (!variant) {
+                    throw new Error(
+                        `No variant found for product ${products[index].id}`
+                    );
+                }
+            });
+
+            console.log('Variants found:', variants);
+
+            // Step 4: Validate store_id from the first product
+            const storeId = products[0]?.store_id;
+            if (!storeId) {
+                throw new Error('Store ID not found in the product.');
+            }
+            console.log('Store ID found:', storeId);
+
+            // Grab the default sales channel... the first one
+            const salesChannel = await this.salesChannelRepository_.findOne({
+                where: {}, // Empty where clause to find any sales channel
+                order: { created_at: 'ASC' }, // Sort by creation time, oldest first
+            });
+
+            if (!salesChannel) {
+                throw new Error('No sales channels found.');
+            }
+
+            const sales_channel_id = salesChannel.id;
+            console.log('Sales Channel ID:', sales_channel_id);
+
+            console.log('Creating cart with:', {
+                customer_id: customer.id,
+                email: customer.email,
+                region_id: region.id,
+            });
+            // Step 5: Create a cart for the customer
+            const cart = await this.cartRepository_.save(
+                this.cartRepository_.create({
+                    customer_id: customer.id,
+                    email: customer.email,
+                    region_id: region.id,
+                    sales_channel_id: sales_channel_id,
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                })
+            );
+            console.log('Cart created:', cart);
+
+            // Step 6: Add line items to the cart
+            const lineItems = [];
+            for (let i = 0; i < products.length; i++) {
+                const product = products[i];
+                const variant = variants[i];
+
+                const lineItem = this.lineItemRepository_.create({
+                    cart_id: cart.id,
+                    title: product.title,
+                    description: product.description,
+                    thumbnail: product.thumbnail,
+                    unit_price: variant.prices?.[0]?.amount || 1000,
+                    quantity: Math.floor(Math.random() * 5) + 1,
+                    currency_code: region.currency_code,
+                    variant_id: variant.id, // Add variant_id here
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                });
+                const savedLineItem =
+                    await this.lineItemRepository_.save(lineItem);
+                lineItems.push(savedLineItem);
+            }
+            cart.items = lineItems;
+            console.log('Line items added to cart:', cart.items);
+
+            // Step 7: Create an order using the cart and product's store_id
+            let order: Order = new Order();
+            order.status = OrderStatus.PENDING;
+            order.store_id = storeId; // Use store_id directly from the product
+            order.fulfillment_status = FulfillmentStatus.NOT_FULFILLED;
+            order.payment_status = PaymentStatus.AWAITING;
+            order.sales_channel_id = sales_channel_id;
+            order.customer_id = customer.id;
+            order.email = customer.email;
+            order.cart_id = cart.id;
+            order.region_id = cart.region_id;
+            order.currency_code = 'usdt';
+            order.created_at = new Date();
+            order.updated_at = new Date();
+
+            order = await this.orderRepository_.save(order);
+            console.log('Order created successfully:', order);
+
+            // Step 8: Link line items to the order
+            order.items = cart.items;
+            const lineItemPromises = cart.items.map((item) => {
+                item.order_id = order.id;
+                return this.lineItemRepository_.save(item);
+            });
+
+            await Promise.all(lineItemPromises);
+
+            console.log('Line items linked to order:', order.items);
+
+            this.logger.info(`Mock order created successfully: ${order.id}`);
+            return order;
+        } catch (error) {
+            console.error('Error during mock order creation:', error.message);
+            this.logger.error(`Error creating mock order: ${error.message}`);
+            throw error;
+        }
     }
 }

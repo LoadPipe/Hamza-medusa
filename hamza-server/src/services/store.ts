@@ -56,18 +56,20 @@ class StoreService extends MedusaStoreService {
         newStore.default_currency_code = 'eth';
         newStore = await storeRepo.save(newStore);
         this.logger.debug('New Store Saved:' + newStore);
-        await this.populateProductsWithStoreId(newStore, collection);
+        //await this.populateProductsWithStoreId(newStore, collection);
         return newStore; // Return the newly created and saved store
     }
 
     async getStores() {
-        return this.storeRepository_.find({ where: { owner_id: Not(IsNull()) } });
+        return this.storeRepository_.find({
+            where: { owner_id: Not(IsNull()) },
+        });
     }
 
     async getStoreNames() {
         const stores = await this.storeRepository_.find({
             select: ['name'],
-            where: { owner_id: Not(IsNull()) }
+            where: { owner_id: Not(IsNull()) },
         });
         return stores.map((store) => store.name);
     }
