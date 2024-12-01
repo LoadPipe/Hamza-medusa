@@ -294,10 +294,7 @@ class ProductService extends MedusaProductService {
             );
             return validProducts;
         } catch (error) {
-            this.logger.error(
-                'Error in adding products from BuckyDrop:',
-                error
-            );
+            this.logger.error('Error in bulk importing products:', error);
             throw error;
         }
     }
