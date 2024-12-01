@@ -1,4 +1,9 @@
-import { Customer, MedusaRequest, MedusaResponse } from '@medusajs/medusa';
+import {
+    Customer,
+    MedusaRequest,
+    MedusaResponse,
+    ProductStatus,
+} from '@medusajs/medusa';
 import CustomerRepository from '../../../repositories/customer';
 import { RouteHandler } from '../../route-handler';
 import axios from 'axios';
@@ -47,7 +52,38 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         const productInputs: CreateProductInput[] = [];
 
-        gtProducts.data.records.forEach((record) => {
+        const gtRecords = [
+            gtProducts.data.records.sort(
+                (a, b) => (a?.operator?.id ?? 0) < (b?.operator?.id ?? 0)
+            )[3],
+        ];
+        const gtCat = [
+            gtCatalogue.data.records.sort(
+                (a, b) =>
+                    (a?.topup_product_id ?? 0) < (b?.topup_product_id ?? 0)
+            )[3],
+        ];
+
+        for (let record of gtRecords) {
+            console.log(record.operator.id);
+            const productDetails = gtCat.find(
+                (r) => (r.topup_product_id = record.operator.id)
+            );
+            productInputs.push(
+                await globeTopperService.mapDataToProductInput(
+                    record,
+                    productDetails,
+                    ProductStatus.DRAFT,
+                    handler.inputParams.store_id,
+                    'pcat_electronics',
+                    'pcol_X',
+                    []
+                )
+            );
+        }
+
+        /*
+        gtRecords.forEach((record) => {
             productInputs[record.operator.id] = {
                 title: 'Gift Card: ' + record.name,
                 description: record.description,
@@ -71,26 +107,29 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             };
         });
 
-        gtCatalogue.data.records.forEach((record) => {
+        gtCat.forEach((record) => {
             let id = record.topup_product_id;
             if (productInputs[id]) {
                 productInputs[id].description = record.brand_description;
                 productInputs[id].thumbnail = record.card_image;
             }
         });
+        */
 
-        console.log(productInputs[0]);
+        console.log('importing ', productInputs.length, 'products');
+        console.log(productInputs);
 
         const products = await productService.bulkImportProducts(
             handler.inputParams.store_id,
-            [productInputs[gtProducts.data.records[0].operator.id]]
+            productInputs
         );
 
         return handler.returnStatus(200, {
             status: 'ok',
+            inputs: productInputs,
             data: products,
-            records: [gtProducts.data.records[0]],
-            inputs: [productInputs[0]],
+            records: gtRecords,
+            cat: gtCat,
         });
     });
 };

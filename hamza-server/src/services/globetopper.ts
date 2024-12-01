@@ -71,9 +71,9 @@ export default class GlobetopperService extends TransactionBaseService {
         );
     }
 
-    public async mapBuckyDataToProductInput(
+    public async mapDataToProductInput(
         item: any,
-        productDetails: any,
+        productDetail: any,
         status: ProductStatus,
         storeId: string,
         categoryId: string,
@@ -82,41 +82,170 @@ export default class GlobetopperService extends TransactionBaseService {
     ): Promise<CreateProductInput> {
         try {
             /*
-            };*/
+        {
+            "name": "Airbnb AU",
+            "description": null,
+            "notes": null,
+            "display": [
+                "100.00"
+            ],
+            "user_display": "100.00",
+            "operator": {
+                "id": 3046,
+                "name": "Airbnb AU",
+                "sku": null,
+                "phone": "1xxxxxxxxxx",
+                "metadata": [],
+                "country": {
+                "iso2": "AU",
+                "iso3": "AUS",
+                "name": "Australia",
+                "dial_code": "+61-x-xxxx-xxxx",
+                "currency": {
+                    "code": "AUD",
+                    "name": "Australian Dollar"
+                }
+                }
+            },
+            "min": "100.00",
+            "max": "100.00",
+            "increment": "0.00",
+            "is_a_range": false,
+            "locval": [67.39],
+            "type": {
+                "id": 2,
+                "name": "Pin"
+            },
+            "category": {
+                "id": 6,
+                "name": "Gift Card",
+                "description": "Digital Gift Cards"
+            },
+            "discount": [
+                {
+                "id": 22983,
+                "display": "100.00",
+                "discount": 0
+                },
+                {
+                "id": "*",
+                "display": "*",
+                "discount": "1.95000"
+                }
+            ],
+            "fees": [],
+            "request_attributes": [
+                {
+                "name": "amount",
+                "label": "Amount",
+                "description": null,
+                "required": true
+                },
+                {
+                "name": "email",
+                "label": "Email Address",
+                "description": null,
+                "required": true
+                },
+                {
+                "name": "first_name",
+                "label": "First Name",
+                "description": null,
+                "required": true
+                },
+                {
+                "name": "last_name",
+                "label": "Last Name",
+                "description": null,
+                "required": true
+                },
+                {
+                "name": "notif_email",
+                "label": "Notification Email",
+                "description": "The email address to which a notification should be sent.",
+                "required": false
+                },
+                {
+                "name": "notif_tele",
+                "label": "Notification SMS",
+                "description": "The telephone number to which a notification should be sent.",
+                "required": false
+                },
+                {
+                "name": "order_id",
+                "label": "Order ID",
+                "description": null,
+                "required": true
+                },
+                {
+                "name": "quantity",
+                "label": "Quantity",
+                "description": null,
+                "required": true
+                }
+            ],
+            "additional_details": [
+                {
+                "id": 22983,
+                "value": "100.00",
+                "meta_data": []
+                }
+            ],
+            "delivered_value": "100.000"
+        };
+      
+      
+      CATALOG: 
+      {
+        "id": 21,
+        "topup_product_id": 1426,
+        "status": "Published",
+        "brand": "Amazon UAE",
+        "reward_format": "Code",
+        "reward_example": null,
+        "card_image": "https://crm.globetopper.com/brandImages/60ede95dd5a4f.jpg",
+        "usage": "Online",
+        "expiration": "10 years from the date of issue",
+        "brand_description": "Amazon Gift Card is the perfect way to give your loved ones exactly what they're hoping for, even if you don't know what it is. Recipients can choose from millions of items storewide. Amazon Gift Card stored value never expires, so they can buy something immediately or wait for that sale of a lifetime.\n\nAmazon Gift Card United Arab Emirates can ONLY be used on www.amazon.ae",
+        "redemption_instruction": "Login into your Amazon Account.\nClick \"Apply a Gift Card to Your Account\".\nEnter your claim code and click \"Apply to Your Account\".",
+        "brand_disclaimer": null,
+        "term_and_conditions": "https://www.amazon.ae/gp/help/customer/display.html?nodeId=201936990",
+        "restriction_and_policies": null,
+        "brand_additional_information": null,
+        "dashboard_display": true,
+        "currency": "Arab Emirates Dirham",
+        "country": "United Arab Emirates",
+        "iso2": "AE",
+        "iso3": "ARE",
+        "value_type": "Variable",
+        "denomination": "50.00 - 1,000.00 by 0.00"
+        }
+      */
 
-            const metadata = item;
-            metadata.detail = productDetails.data;
-            const spuCode = item?.spuCode ?? productDetails?.data?.spuCode;
+            //const metadata = item;
+            //metadata.detail = productDetails.data;
+            const externalId = item?.operator?.id;
 
-            if (!spuCode?.length) throw new Error('SPU code not found');
+            if (!externalId) throw new Error('SPU code not found');
 
-            const optionNames =
-                this.getUniqueProductOptionNames(productDetails);
-            const tagName = productDetails.data.goodsCatName;
+            const optionNames = this.getUniqueProductOptionNames(item);
             const variants = await this.mapVariants(
-                productDetails,
+                item,
+                productDetail,
                 optionNames
             );
 
             //add variant images to the main product images
-            const images = productDetails?.data?.mainItemImgs ?? [];
-            for (const v of variants) {
-                if (
-                    v.metadata?.imgUrl &&
-                    !images.find((i) => i === v.metadata.imgUrl)
-                )
-                    images.push(v.metadata.imgUrl);
-            }
+            const images = []; //TODO: get images
 
             const output = {
-                title: item?.goodsName ?? productDetails?.data?.goodsName,
-                subtitle: item?.goodsName ?? productDetails?.data?.goodsName, //TODO: find a better value
-                handle: spuCode,
-                description: productDetails?.data?.goodsDetailHtml ?? '',
+                title: item?.name,
+                subtitle: productDetail.brand_description, //TODO: find a better value
+                handle: externalId, //TODO: create a better handle
+                description: `${productDetail.brand_description} <br/>${productDetail.redemption_instruction}`, //TODO: make better description
                 is_giftcard: false,
                 status: status as ProductStatus,
-                thumbnail:
-                    item?.picUrl ?? productDetails?.data?.mainItemImgs[0],
+                thumbnail: item?.picUrl ?? productDetail?.card_image,
                 images,
                 collection_id: collectionId,
                 weight: Math.round(item?.weight ?? 100),
@@ -126,8 +255,6 @@ export default class GlobetopperService extends TransactionBaseService {
                 sales_channels: salesChannels.map((sc) => {
                     return { id: sc };
                 }),
-                tags: tagName?.length ? [{ id: tagName, value: tagName }] : [],
-                bucky_metadata: metadata,
                 options: optionNames.map((o) => {
                     return { title: o };
                 }),
@@ -136,9 +263,10 @@ export default class GlobetopperService extends TransactionBaseService {
 
             if (!output.variants?.length)
                 throw new Error(
-                    `No variants were detected for product ${spuCode}`
+                    `No variants were detected for product ${externalId}`
                 );
 
+            console.log('returning', output);
             return output;
         } catch (error) {
             this.logger.error(
@@ -150,10 +278,13 @@ export default class GlobetopperService extends TransactionBaseService {
     }
 
     private async mapVariants(
-        productDetails: any,
+        item: any,
+        productDetail: any,
         optionNames: string[]
     ): Promise<CreateProductProductVariantInput[]> {
         const variants = [];
+
+        if (!productDetail) console.log('product detail is null');
 
         const getVariantDescriptionText = (data: any) => {
             let output: string = '';
@@ -163,16 +294,12 @@ export default class GlobetopperService extends TransactionBaseService {
                 }
                 output = output.trim();
             } else {
-                output = productDetails.data.goodsName;
+                //output = productDetails.data.goodsName;
             }
             return output;
         };
 
-        if (!productDetails.data.skuList?.length) {
-            this.logger.warn('EMPTY SKU LIST');
-        }
-
-        for (const variant of productDetails.data.skuList) {
+        /*for (const variant of productDetails.data.skuList) {
             //get price
             const baseAmount = variant.proPrice
                 ? variant.proPrice.priceCent
@@ -182,14 +309,7 @@ export default class GlobetopperService extends TransactionBaseService {
             const currencies = ['eth', 'usdc', 'usdt'];
             const prices = [];
             for (const currency of currencies) {
-                prices.push({
-                    currency_code: currency,
-                    amount: await this.priceConverter.getPrice({
-                        baseAmount,
-                        baseCurrency: 'cny',
-                        toCurrency: currency,
-                    }),
-                });
+                prices.push();
             }
 
             //get option names/values
@@ -203,24 +323,41 @@ export default class GlobetopperService extends TransactionBaseService {
                     });
                 }
             }
+        }*/
 
-            variants.push({
-                title: getVariantDescriptionText(variant),
-                inventory_quantity: variant.quantity,
-                allow_backorder: false,
-                manage_inventory: true,
-                bucky_metadata: variant,
-                metadata: { imgUrl: variant.imgUrl },
-                prices,
-                options: options,
-            });
-        }
+        variants.push({
+            title: item?.name,
+            inventory_quantity: 9999,
+            allow_backorder: false,
+            manage_inventory: true,
+            metadata: { imgUrl: productDetail?.card_image },
+            prices: [
+                {
+                    currency_code: 'usdc',
+                    amount: Math.floor(item.min * 100),
+                },
+                {
+                    currency_code: 'usdt',
+                    amount: Math.floor(item.min * 100),
+                },
+                {
+                    currency_code: 'eth',
+                    amount: await this.priceConverter.getPrice({
+                        baseAmount: Math.floor(item.min * 100),
+                        baseCurrency: 'usdc',
+                        toCurrency: 'eth',
+                    }),
+                },
+            ],
+            options: [],
+        });
 
         return variants;
     }
 
     private getUniqueProductOptionNames(productDetails: any): string[] {
         const output: string[] = [];
+        return output;
 
         for (const variant of productDetails.data.skuList) {
             for (const prop of variant.props) {
