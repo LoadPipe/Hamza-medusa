@@ -68,7 +68,15 @@ const nextConfig = withStoreConfig({
             {
                 protocol: 'https',
                 hostname: 'static.snapchum.com'
-            }
+            },
+            {
+				protocol: 'https',
+				hostname: 'static.hamza.market'
+			},
+			{
+				protocol: 'https',
+				hostname: 'blog.hamza.market'
+			}
         ],
     },
     async redirects() {
