@@ -30,6 +30,7 @@ export type CheckoutData = {
     order_id: string; //medusa order id
     cart_id: string; //medusa cart id
     receiver_address: string; //wallet address of store owner
+    escrow_contract_address: string;
     currency_code: string; //currency code
     amount: string; //medusa amount
     massmarket_amount: string; //massmarket amount
@@ -357,7 +358,7 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
  * Wallet payment handler for 'switch' checkout strategy, sends payment to the Hamza
  * 'switch' escrow contract.
  */
-export class SwitchWalletPaymentHandler implements IWalletPaymentHandler {
+export class EscrowWalletPaymentHandler implements IWalletPaymentHandler {
     async doWalletPayment(
         provider: ethers.Provider | null,
         signer: ethers.Signer | null,
@@ -365,7 +366,7 @@ export class SwitchWalletPaymentHandler implements IWalletPaymentHandler {
         data: CheckoutData
     ): Promise<WalletPaymentResponse> {
         return {
-            escrow_address: '',
+            escrow_address: data.escrow_contract_address,
             payer_address: '',
             receiver_address: data.receiver_address,
             transaction_id: '',

@@ -3,7 +3,7 @@ import { ISwitchMultiPaymentInput, ITransactionOutput } from '..';
 import { getCurrencyAddress } from '../../currency.config';
 import { EscrowBase } from './escrow-base';
 
-export class LiteSwitchClient extends EscrowBase {
+export class EscrowClient extends EscrowBase {
     constructor(
         provider: ethers.Provider,
         signer: ethers.Signer,

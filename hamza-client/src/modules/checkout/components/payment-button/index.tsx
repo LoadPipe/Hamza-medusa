@@ -6,7 +6,7 @@ import {
     MassmarketWalletPaymentHandler,
     LiteSwitchWalletPaymentHandler,
     DirectWalletPaymentHandler,
-    CheckoutData,
+    EscrowWalletPaymentHandler,
 } from './payment-handlers';
 import { Button } from '@chakra-ui/react';
 import React, { useState, useEffect, useRef } from 'react';
@@ -135,6 +135,9 @@ const CryptoPaymentButton = ({
                 break;
             case 'SWITCH':
                 handler = new LiteSwitchWalletPaymentHandler();
+                break;
+            case 'ESCROW':
+                handler = new EscrowWalletPaymentHandler();
                 break;
         }
 
