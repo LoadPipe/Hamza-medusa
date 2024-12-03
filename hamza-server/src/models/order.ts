@@ -2,7 +2,6 @@ import { Entity, OneToOne, JoinColumn, Column } from 'typeorm';
 import { Order as MedusaOrder } from '@medusajs/medusa';
 import { Payment as MedusaPayment } from '@medusajs/medusa';
 import { Store } from './store';
-import { BigNumberish } from 'ethers';
 
 @Entity()
 export class Order extends MedusaOrder {
