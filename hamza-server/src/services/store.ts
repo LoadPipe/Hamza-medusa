@@ -12,6 +12,7 @@ import { UpdateProductInput as MedusaUpdateProductInput } from '@medusajs/medusa
 import ProductRepository from '@medusajs/medusa/dist/repositories/product';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import { IsNull, Not } from 'typeorm';
+import UserRepository from 'src/repositories/user';
 
 type UpdateStoreInput = MedusaUpdateStoreInput & {
     massmarket_keycard?: string;
@@ -26,11 +27,13 @@ class StoreService extends MedusaStoreService {
     static LIFE_TIME = Lifetime.SCOPED;
     protected readonly productRepository_: typeof ProductRepository;
     protected readonly storeRepository_: typeof StoreRepository;
+    protected readonly userRepository_: typeof UserRepository;
     protected readonly logger: ILogger;
 
     constructor(container) {
         super(container);
         this.storeRepository_ = container.storeRepository;
+        this.userRepository_ = container.userRepository;
         this.productRepository_ = container.productRepository;
         this.logger = createLogger(container, 'StoreService');
     }
@@ -41,9 +44,11 @@ class StoreService extends MedusaStoreService {
         collection: string,
         icon: string,
         store_followers: number,
-        store_description: string
+        store_description: string,
+        escrow_contract_address: string
     ): Promise<Store> {
         let owner_id = user.id;
+
         this.logger.debug('owner_id: ' + owner_id);
         const storeRepo = this.manager_.withRepository(this.storeRepository_);
         let newStore = storeRepo.create();
@@ -54,9 +59,15 @@ class StoreService extends MedusaStoreService {
         newStore.store_followers = store_followers;
         newStore.store_description = store_description;
         newStore.default_currency_code = 'eth';
+        newStore.escrow_contract_address = escrow_contract_address;
         newStore = await storeRepo.save(newStore);
         this.logger.debug('New Store Saved:' + newStore);
-        //await this.populateProductsWithStoreId(newStore, collection);
+
+        //save the store id for the user
+        user.store_id = newStore.id;
+        this.logger.debug(`user ${user.id} getting store ${newStore.id}`);
+        await this.userRepository_.save(user);
+
         return newStore; // Return the newly created and saved store
     }
 
@@ -76,37 +87,6 @@ class StoreService extends MedusaStoreService {
 
     async update(data: UpdateStoreInput) {
         return super.update(data);
-    }
-
-    // TODO: Should I pull this out of the store service? -G
-    async populateProductsWithStoreId(
-        store: Store,
-        collection: String
-    ): Promise<any> {
-        let collectionListUrl = `http://localhost:${process.env.PORT}/store/products?collection_id[]=${collection}`;
-        this.logger.debug(
-            'Fetching products from collection: ' + collectionListUrl
-        );
-        try {
-            // Get a list of products belonging to a collection
-            const collectionListResponse = await axios.get(collectionListUrl);
-            const products = collectionListResponse.data.products;
-
-            // Map `each` product to a `POST` request to update product with `store_id`
-            const updatePromises: Promise<void>[] = products.map((product) => {
-                this.productRepository_.save({
-                    id: product.id,
-                    store_id: store.id,
-                });
-            });
-
-            await Promise.all(updatePromises);
-            this.logger.debug(
-                'All products have been successfully updated with store_id'
-            );
-        } catch (error) {
-            this.logger.error('Error processing products:', error);
-        }
     }
 
     async getStoreByName(store_name: string): Promise<Store> {
