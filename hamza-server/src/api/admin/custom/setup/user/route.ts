@@ -32,7 +32,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                     first_name: 'medusa',
                     last_name: 'Vendor',
                     wallet_address:
-                        '0xb794f5ea0ba39494ce839613fffba74279579268',
+                        '0xb794f5ea0ba39494ce839613fffba74279579268'.toLowerCase(),
                 },
                 'password'
             ),
@@ -42,7 +42,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                     first_name: 'Quality',
                     last_name: 'Vendor',
                     wallet_address:
-                        '0x6A75b412495838621e9352FE72fF5e9191DD5ab1',
+                        '0x6A75b412495838621e9352FE72fF5e9191DD5ab1'.toLowerCase(),
                 },
                 'password'
             ),
@@ -52,7 +52,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                     first_name: 'Headphones',
                     last_name: 'Vendor',
                     wallet_address:
-                        '0x5728C7b8b448332Acda43369afa3a2c25C947D43',
+                        '0x5728C7b8b448332Acda43369afa3a2c25C947D43'.toLowerCase(),
                 },
                 'password'
             ),
@@ -62,7 +62,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                     first_name: 'Indiana',
                     last_name: 'Jones',
                     wallet_address:
-                        '0x56348d548852e72d8c7fB24C89c7Fb1492504738',
+                        '0x56348d548852e72d8c7fB24C89c7Fb1492504738'.toLowerCase(),
                 },
                 'password'
             ),
@@ -72,7 +72,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                     first_name: 'Jarl',
                     last_name: 'Droischevnsky',
                     wallet_address:
-                        '0xc0ffee254729296a45a3885639AC7E10F9d54979',
+                        '0xc0ffee254729296a45a3885639AC7E10F9d54979'.toLowerCase(),
                 },
                 'password'
             ),
@@ -82,7 +82,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                     first_name: 'GameFi',
                     last_name: 'Studios',
                     wallet_address:
-                        '0x999999cf1046e68e36E1aA2E0E07105eDDD1f08E',
+                        '0xb975Bf5ca0b09E17834d0b5A526F8315F82986D4'.toLowerCase(),
                 },
                 'password'
             ),
@@ -93,7 +93,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                     first_name: 'Razors',
                     last_name: 'Edge',
                     wallet_address:
-                        '0xaffa87A79F532Fe0F5eB1aFD299A4199b9502663',
+                        '0xfB20a78fD35D20925af6F7379Ab35Fa6C41e9834'.toLowerCase(),
                 },
                 'password'
             ),
@@ -103,7 +103,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                     first_name: '21',
                     last_name: 'Laptops',
                     wallet_address:
-                        '0xcafd5561F02624D04D55F74297dD04e53f444B92',
+                        '0x9315fe04f0e18AA0F8C92e98f6783177A2156D1F'.toLowerCase(),
                 },
                 'password'
             ),
@@ -113,7 +113,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                     first_name: 'Jack',
                     last_name: 'Black',
                     wallet_address:
-                        '0xcafb8Cd7d8c5574f0c412619A08EC47f2eA1e434',
+                        '0xcafb8Cd7d8c5574f0c412619A08EC47f2eA1e434'.toLowerCase(),
                 },
                 'password'
             ),
@@ -124,7 +124,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                     first_name: 'Jern',
                     last_name: 'Javels',
                     wallet_address:
-                        '0x4fBCF49cC0f91d66Bc5bBbE931913D8709592012',
+                        '0x8bA35513C3F5ac659907D222e3DaB38b20f8F52A'.toLowerCase(),
                 },
                 'password'
             ),
@@ -134,7 +134,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                     first_name: 'Horatio',
                     last_name: 'Turdmuncher',
                     wallet_address:
-                        '0x0000F49cC0f91d66Bc5bBbE931913D8709500003',
+                        '0x0000F49cC0f91d66Bc5bBbE931913D8709500003'.toLowerCase(),
                 },
                 'password'
             ),
