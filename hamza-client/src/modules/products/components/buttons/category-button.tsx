@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, Flex } from '@chakra-ui/react';
 import Image from 'next/image';
 import useProductGroup from '@/zustand/products/product-group/product-group';
+import { useSearchParams } from 'next/navigation';
 
 interface CategoryButtonProps {
     categoryName: string;
@@ -60,11 +61,13 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
         <Flex
             flexShrink={0}
             onClick={() => {
-                toggleCategorySelection(categoryName);
+                toggleCategorySelection(categoryName.toLowerCase());
             }}
             borderColor={'#3E3E3E'}
             backgroundColor={
-                categorySelect?.includes(categoryName) ? 'white' : 'black'
+                categorySelect?.includes(categoryName.toLowerCase())
+                    ? 'white'
+                    : 'black'
             }
             display={'flex'}
             flexDirection={'row'}
@@ -75,7 +78,11 @@ const CategoryButton: React.FC<CategoryButtonProps> = ({
             height={{ base: '42px', md: '63px' }}
             cursor="pointer"
             style={{ padding: '10px 24px' }}
-            color={categorySelect?.includes(categoryName) ? 'black' : 'white'}
+            color={
+                categorySelect?.includes(categoryName.toLowerCase())
+                    ? 'black'
+                    : 'white'
+            }
             transition="background 0.1s ease-in-out, color 0.1s ease-in-out"
             _hover={{
                 color: 'black',
