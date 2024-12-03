@@ -1,6 +1,5 @@
 import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import { RouteHandler } from '../../../../route-handler';
-import { Config } from '../../../../../config';
 import WhiteListService from '../../../../../services/whitelist';
 import StoreService from '../../../../../services/store';
 import { ProductCollection } from '../../../../../models/product-collection';
@@ -162,7 +161,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 'pcol_01HRVF8HCVY8B00RF5S54THTPC',
                 'https://medusa-public-images.s3.eu-west-1.amazonaws.com/sweatpants-gray-front.png',
                 500,
-                'Medusa Merch Store where we sell our Medusa Sweatpants, its a nice store'
+                'Medusa Merch Store where we sell our Medusa Sweatpants, its a nice store',
+                '0xFF0A7A96A5DdDD33976262728Ec62ec05AB0DF6b'
             ),
             storeService.createStore(
                 user1,
@@ -170,7 +170,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 'pcol_01HSGAM4918EX0DETKY6E662WT',
                 'https://images.hamza.market/headphones.webp',
                 200,
-                "We Sell VR Headsets here, the best quality VR headsets you wouldn't believe it"
+                "We Sell VR Headsets here, the best quality VR headsets you wouldn't believe it",
+                '0xFF0A7A96A5DdDD33976262728Ec62ec05AB0DF6b'
             ),
             storeService.createStore(
                 user2,
@@ -178,7 +179,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 'pcol_01HSGAMXDJD725MR3VSW631SN2',
                 'https://images.hamza.market/dalle_vr.webp',
                 450,
-                'Dauntless Store - Where bold and resilient products meet exceptional quality. Perfect for those who seek adventure and durability in every purchase.'
+                'Dauntless Store - Where bold and resilient products meet exceptional quality. Perfect for those who seek adventure and durability in every purchase.',
+                '0xFF0A7A96A5DdDD33976262728Ec62ec05AB0DF6b'
             ),
 
             storeService.createStore(
@@ -187,7 +189,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 'pcol_01HSGAMXDJD725MR3VSW631DR0',
                 'https://images.hamza.market/Drones/dji_mini_4_pro/dji_mini_pro_1.jpg',
                 720,
-                'Drones Store - Your go-to destination for cutting-edge aerial technology. Explore our wide range of high-performance drones perfect for every enthusiast.'
+                'Drones Store - Your go-to destination for cutting-edge aerial technology. Explore our wide range of high-performance drones perfect for every enthusiast.',
+                '0xFF0A7A96A5DdDD33976262728Ec62ec05AB0DF6b'
             ),
 
             storeService.createStore(
@@ -196,7 +199,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 'pcol_01HSGAMXDJD725MR3VSW63LEG0',
                 'https://images.hamza.market/Lego/corvette/corvette_1.jpg',
                 315,
-                'Legos Store - Dive into the world of creativity and building blocks. Find the latest Lego sets and build your imagination with endless possibilities.'
+                'Legos Store - Dive into the world of creativity and building blocks. Find the latest Lego sets and build your imagination with endless possibilities.',
+                '0xFF0A7A96A5DdDD33976262728Ec62ec05AB0DF6b'
             ),
             storeService.createStore(
                 user5,
@@ -204,7 +208,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 'pcol_01HSGAMXDJD725MR3VSW63B0RD',
                 'https://images.hamza.market/Board_Games/dark_souls/souls_1.jpg',
                 860,
-                'Board Games Store - A haven for tabletop enthusiasts. Discover a wide selection of board games, from strategy to family fun, and everything in between.'
+                'Board Games Store - A haven for tabletop enthusiasts. Discover a wide selection of board games, from strategy to family fun, and everything in between.',
+                '0xFF0A7A96A5DdDD33976262728Ec62ec05AB0DF6b'
             ),
             storeService.createStore(
                 user6,
@@ -212,7 +217,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 'pcol_01HSGAMXDJD725MR3VSW63W0GE',
                 'https://images.hamza.market/Workout/dumbbell/dumb_2.jpg',
                 580,
-                'Workout Gear Store - Equip yourself with the best in fitness gear. From weights to apparel, we have everything you need to power your workouts.'
+                'Workout Gear Store - Equip yourself with the best in fitness gear. From weights to apparel, we have everything you need to power your workouts.',
+                '0xFF0A7A96A5DdDD33976262728Ec62ec05AB0DF6b'
             ),
             storeService.createStore(
                 user7,
@@ -220,7 +226,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 'pcol_01HSGAMXDJD725MR3VSW63W0GA',
                 'https://images.hamza.market/gaming_store/6.1.png',
                 930,
-                'Gaming Gear Store - Elevate your gaming experience with top-tier gear. Find the latest peripherals, accessories, and more for the ultimate gaming setup.'
+                'Gaming Gear Store - Elevate your gaming experience with top-tier gear. Find the latest peripherals, accessories, and more for the ultimate gaming setup.',
+                '0xFF0A7A96A5DdDD33976262728Ec62ec05AB0DF6b'
             ),
             storeService.createStore(
                 user8,
@@ -228,7 +235,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 'pcol_shake',
                 'https://images.hamza.market/headphones.webp',
                 290,
-                'Shake Store - Blend your way to a healthier lifestyle. Our store offers a range of premium shakes and blenders for the health-conscious consumer.'
+                'Shake Store - Blend your way to a healthier lifestyle. Our store offers a range of premium shakes and blenders for the health-conscious consumer.',
+                '0xFF0A7A96A5DdDD33976262728Ec62ec05AB0DF6b'
             ),
             storeService.createStore(
                 user9,
@@ -236,7 +244,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 'pcol_lighting',
                 'https://images.hamza.market/Legendary/mood/LLD_mood1.webp',
                 670,
-                'Legendary Light Design Store - Illuminate your space with style. Explore our collection of designer lighting solutions for a touch of elegance and functionality.'
+                'Legendary Light Design Store - Illuminate your space with style. Explore our collection of designer lighting solutions for a touch of elegance and functionality.',
+                '0xFF0A7A96A5DdDD33976262728Ec62ec05AB0DF6b'
             ),
             storeService.createStore(
                 user10,
@@ -244,7 +253,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 'pcol_blocks',
                 'https://images.hamza.market/headphones.webp',
                 410,
-                'Block Store - Specializing in building blocks and construction toys. Let your creativity soar with our range of products designed for endless fun.'
+                'Block Store - Specializing in building blocks and construction toys. Let your creativity soar with our range of products designed for endless fun.',
+                '0xFF0A7A96A5DdDD33976262728Ec62ec05AB0DF6b'
             ),
         ]);
         const [
