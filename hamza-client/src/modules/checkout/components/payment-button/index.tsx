@@ -134,10 +134,11 @@ const CryptoPaymentButton = ({
                 handler = new DirectWalletPaymentHandler();
                 break;
             case 'SWITCH':
+                if (data?.escrow_metadata?.version === '1.0') {
+                    handler = new EscrowWalletPaymentHandler();
+                    break;
+                }
                 handler = new LiteSwitchWalletPaymentHandler();
-                break;
-            case 'ESCROW':
-                handler = new EscrowWalletPaymentHandler();
                 break;
         }
 
