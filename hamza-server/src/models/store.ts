@@ -20,8 +20,8 @@ export class Store extends MedusaStore {
     @Column('owner_id')
     owner_id?: string;
 
-    @Column()
-    escrow_contract_address?: string;
+    @Column('jsonb')
+    escrow_metadata?: Record<string, unknown>;
 
     @Column()
     massmarket_store_id?: string;
