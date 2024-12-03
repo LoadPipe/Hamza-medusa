@@ -1,4 +1,4 @@
-import { Entity, OneToOne, JoinColumn, Column } from 'typeorm';
+import { Entity, OneToOne, JoinColumn, Column, OneToMany } from 'typeorm';
 import { Store as MedusaStore } from '@medusajs/medusa';
 import { User } from './user';
 
@@ -8,12 +8,20 @@ export class Store extends MedusaStore {
     @JoinColumn({ name: 'owner_id' })
     owner?: User;
 
+    @OneToMany(() => User, (user) => user.store, {
+        onDelete: 'CASCADE',
+    })
+    users?: User[];
+
     // Store already has a name field, let's make it unique, such that stores can be identified by their names
     @Column({ unique: true, nullable: false })
     name: string;
 
     @Column('owner_id')
     owner_id?: string;
+
+    @Column()
+    escrow_contract_address?: string;
 
     @Column()
     massmarket_store_id?: string;
