@@ -1,5 +1,8 @@
 import axios from 'axios';
 
+/**
+ * Input data for purchase at point-of-sale; required params only.
+ */
 export type GTPurchaseInputData = {
     productID: string;
     amount: number;
@@ -9,12 +12,18 @@ export type GTPurchaseInputData = {
     order_id: string;
 };
 
+/**
+ * Just a local utility function.
+ */
 function appendQuerystring(url: string, key: string, value: string): string {
     const param = `${key}=${value}`;
     url += url.includes('?') ? `?${param}` : `&${param}`;
     return url;
 }
 
+/**
+ * Wraps the Globetopper API calls that we actually use.
+ */
 export class GlobetopperClient {
     protected readonly baseUrl: string;
     protected readonly bearerAuthHeader: string;
@@ -27,6 +36,16 @@ export class GlobetopperClient {
             process.env.GLOBETOPPER_SECRET;
     }
 
+    /**
+     * Gets some permanent but also some more transient product data (more suitable for
+     * calling to get product updates on existing products). More detailed data than
+     * get catalogue.
+     *
+     * @param productId Optional; pass to get just one specific product.
+     * @param countryCode Optional; filter by associated country (does not guarantee geo-restriction,
+     * or currency, or anything)
+     * @returns Bunch o data
+     */
     public async getCatalog(
         productId?: string,
         countryCode?: string
@@ -43,6 +62,15 @@ export class GlobetopperClient {
         });
     }
 
+    /**
+     * Gets static and non-detailed product data; best for importing.
+     *
+     * @param categoryID Optional; filter by category.
+     * @param typeID Optional; but not sure what this is.
+     * @param countryCode Optional; filter by associated country (does not guarantee geo-restriction,
+     * or currency, or anything)
+     * @returns Bunch o data
+     */
     public async searchProducts(
         countryCode?: string,
         categoryId?: string,
@@ -60,6 +88,12 @@ export class GlobetopperClient {
         });
     }
 
+    /**
+     * Call at point-of-sale to purchase a gift card, after the customer has paid.
+     *
+     * @param data See GTPurchaseInputData
+     * @returns Bunch o data
+     */
     public async purchase(data: GTPurchaseInputData): Promise<any> {
         let url: string = `${this.baseUrl}/product/search-all-products`;
         return axios.post(url, data, {

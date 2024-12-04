@@ -22,6 +22,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         //require params
         if (!handler.requireParam('store_id')) return;
 
+        //TODO: move most of this to service
         const gtProducts = await globetopperClient.searchProducts();
 
         const gtCatalogue = await globetopperClient.getCatalog();
