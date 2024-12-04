@@ -17,18 +17,23 @@ import { Role } from './role';
 // TODO: https://docs.medusajs.com/modules/users/backend/rbac
 @Entity()
 export class User extends MedusaUser {
-    // @OneToMany(() => WalletAddress, walletAddress => walletAddress.user)
-    // walletAddresses?: WalletAddress[];
     @Index()
     @Column({ nullable: true })
     role_id: string | null;
+
+    @Column()
+    store_id: string;
 
     @ManyToOne(() => Role, (role) => role.users)
     @JoinColumn({ name: 'role_id' })
     team_role: Role | null;
 
     @OneToOne(() => Store, (store) => store.owner)
-    store?: Store;
+    owned_store?: Store;
+
+    @ManyToOne(() => Store)
+    @JoinColumn({ name: 'store_id' })
+    store: Store;
 
     @Column()
     wallet_address: string;
