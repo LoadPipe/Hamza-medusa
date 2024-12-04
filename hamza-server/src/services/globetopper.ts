@@ -19,6 +19,8 @@ import {
 } from 'typeorm';
 import { GlobetopperClient } from '../globetopper/globetopper-client';
 
+const PRODUCT_EXTERNAL_SOURCE: string = 'globetopper';
+
 type CreateProductInput = MedusaCreateProductInput & {
     store_id: string;
     external_source: string;
@@ -289,7 +291,7 @@ export default class GlobetopperService extends TransactionBaseService {
                 discountable: true,
                 store_id: storeId,
                 external_id: externalId,
-                external_source: 'globetopper',
+                external_source: PRODUCT_EXTERNAL_SOURCE,
                 external_metadata: productDetail,
                 categories: categoryId?.length ? [{ id: categoryId }] : [],
                 sales_channels: salesChannels.map((sc) => {
@@ -367,7 +369,7 @@ export default class GlobetopperService extends TransactionBaseService {
             inventory_quantity: 9999,
             allow_backorder: false,
             manage_inventory: true,
-            external_source: 'globetopper',
+            external_source: PRODUCT_EXTERNAL_SOURCE,
             metadata: { imgUrl: productDetail?.card_image },
             prices: [
                 {

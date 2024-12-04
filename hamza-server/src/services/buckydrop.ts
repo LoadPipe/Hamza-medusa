@@ -41,6 +41,8 @@ type CreateProductInput = MedusaCreateProductInput & {
     bucky_metadata?: Record<string, unknown>;
 };
 
+const PRODUCT_EXTERNAL_SOURCE: string = 'buckydrop';
+
 type FindOptionsWhere<Order> = TypeormFindOptionsWhere<Order> & {
     bucky_metadata?: any;
 };
@@ -841,7 +843,7 @@ export default class BuckydropService extends TransactionBaseService {
                 weight: Math.round(item?.weight ?? 100),
                 discountable: true,
                 store_id: storeId,
-                external_source: 'buckydrop',
+                external_source: PRODUCT_EXTERNAL_SOURCE,
                 external_id: spuCode,
                 categories: categoryId?.length ? [{ id: categoryId }] : [],
                 sales_channels: salesChannels.map((sc) => {
@@ -933,7 +935,7 @@ export default class BuckydropService extends TransactionBaseService {
                 manage_inventory: true,
                 bucky_metadata: variant,
                 external_metadata: variant,
-                external_source: 'buckydrop',
+                external_source: PRODUCT_EXTERNAL_SOURCE,
                 metadata: { imgUrl: variant.imgUrl },
                 prices,
                 options: options,
