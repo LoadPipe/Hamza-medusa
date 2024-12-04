@@ -1,24 +1,8 @@
-import {
-    TransactionBaseService,
-    ProductStatus,
-    CartService,
-    Cart,
-    OrderStatus,
-    FulfillmentStatus,
-    CustomerService,
-    PaymentStatus,
-} from '@medusajs/medusa';
+import { TransactionBaseService, ProductStatus } from '@medusajs/medusa';
 import ProductService from '../services/product';
 import OrderService from '../services/order';
-import { BuckyLogRepository } from '../repositories/bucky-log';
 import { Product } from '../models/product';
-import { Order } from '../models/order';
 import { PriceConverter } from '../utils/price-conversion';
-import {
-    BuckyClient,
-    IBuckyShippingCostRequest,
-    ICreateBuckyOrderProduct,
-} from '../buckydrop/bucky-client';
 import {
     CreateProductProductVariantInput,
     CreateProductInput as MedusaCreateProductInput,
@@ -36,19 +20,9 @@ import {
 
 type CreateProductInput = MedusaCreateProductInput & {
     store_id: string;
-    bucky_metadata?: Record<string, unknown>;
+    external_source: string;
+    external_metadata?: Record<string, unknown>;
 };
-
-type FindOptionsWhere<Order> = TypeormFindOptionsWhere<Order> & {
-    bucky_metadata?: any;
-};
-
-const SHIPPING_COST_MIN: number = parseInt(
-    process.env.BUCKY_MIN_SHIPPING_COST_US_CENT ?? '1000'
-);
-const SHIPPING_COST_MAX: number = parseInt(
-    process.env.BUCKY_MAX_SHIPPING_COST_US_CENT ?? '4000'
-);
 
 // TODO: I think this code needs comments its difficult to understand.
 
@@ -251,6 +225,9 @@ export default class GlobetopperService extends TransactionBaseService {
                 weight: Math.round(item?.weight ?? 100),
                 discountable: true,
                 store_id: storeId,
+                external_id: externalId,
+                external_source: 'globetopper',
+                external_metadata: productDetail,
                 categories: categoryId?.length ? [{ id: categoryId }] : [],
                 sales_channels: salesChannels.map((sc) => {
                     return { id: sc };
@@ -327,6 +304,7 @@ export default class GlobetopperService extends TransactionBaseService {
             inventory_quantity: 9999,
             allow_backorder: false,
             manage_inventory: true,
+            external_source: 'globetopper',
             metadata: { imgUrl: productDetail?.card_image },
             prices: [
                 {
