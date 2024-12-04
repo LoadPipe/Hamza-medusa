@@ -110,6 +110,8 @@ export default class GlobetopperService extends TransactionBaseService {
         return [];
     }
 
+    public async processPointOfSale(): Promise<void> {}
+
     private async mapDataToProductInput(
         item: any,
         productDetail: any,
