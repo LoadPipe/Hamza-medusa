@@ -37,7 +37,7 @@ const ProductCardGroup = ({
     const { rangeUpper, rangeLower } = useProductFilterModal();
 
     const searchParams = useSearchParams();
-    const categoryFromUrl = searchParams.get('category');
+    const categoryFromUrl = searchParams.get('category')?.replaceAll(' ', '-');
 
     useEffect(() => {
         if (categoryFromUrl) {
