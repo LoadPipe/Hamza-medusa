@@ -6,6 +6,11 @@ import {
 
 @Entity()
 export class ProductVariant extends MedusaProductVariant {
+    @Column()
+    external_source?: string;
+
+    @Column('jsonb')
+    external_metadata?: Record<string, unknown>;
 
     @Column('jsonb')
     bucky_metadata?: Record<string, unknown>;
