@@ -17,6 +17,7 @@ import {
     FindOptionsWhere as TypeormFindOptionsWhere,
     In,
 } from 'typeorm';
+import { GlobetopperClient } from '../globetopper/globetopper-client';
 
 type CreateProductInput = MedusaCreateProductInput & {
     store_id: string;
@@ -32,6 +33,7 @@ export default class GlobetopperService extends TransactionBaseService {
     protected readonly orderService_: OrderService;
     protected readonly orderRepository_: typeof OrderRepository;
     protected readonly priceConverter: PriceConverter;
+    protected readonly apiClient: GlobetopperClient;
 
     constructor(container) {
         super(container);
@@ -43,9 +45,70 @@ export default class GlobetopperService extends TransactionBaseService {
             this.logger,
             container.cachedExchangeRateRepository
         );
+        this.apiClient = new GlobetopperClient();
     }
 
-    public async mapDataToProductInput(
+    public async import(
+        storeId: string,
+        categoryId: string,
+        collectionId: string,
+        salesChannelId: string
+    ): Promise<Product[]> {
+        try {
+            //get products in two API calls
+            const gtProducts = await this.apiClient.searchProducts();
+            const gtCatalogue = await this.apiClient.getCatalog();
+
+            const productInputs: (CreateProductInput & { store_id: string })[] =
+                [];
+
+            //sort the output
+            const gtRecords = gtProducts.data.records.sort(
+                (a, b) => (a?.operator?.id ?? 0) < (b?.operator?.id ?? 0)
+            );
+            const gtCat = gtCatalogue.data.records.sort(
+                (a, b) =>
+                    (a?.topup_product_id ?? 0) < (b?.topup_product_id ?? 0)
+            );
+
+            //create product inputs for each product
+            for (let record of gtRecords) {
+                const productDetails = gtCat.find(
+                    (r) => r.topup_product_id == (record?.operator?.id ?? 0)
+                );
+
+                if (productDetails) {
+                    productInputs.push(
+                        await this.mapDataToProductInput(
+                            record,
+                            productDetails,
+                            ProductStatus.PUBLISHED,
+                            storeId,
+                            categoryId,
+                            collectionId,
+                            [salesChannelId]
+                        )
+                    );
+                }
+            }
+
+            this.logger.debug(`importing ${productInputs.length} products`);
+
+            //insert products into DB
+            const products = await this.productService_.bulkImportProducts(
+                storeId,
+                productInputs
+            );
+
+            return products;
+        } catch (e: any) {
+            this.logger.error('Error importing GlobeTopper products', e);
+        }
+
+        return [];
+    }
+
+    private async mapDataToProductInput(
         item: any,
         productDetail: any,
         status: ProductStatus,

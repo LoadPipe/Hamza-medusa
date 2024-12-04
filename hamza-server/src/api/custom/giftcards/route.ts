@@ -3,7 +3,7 @@ import { RouteHandler } from '../../route-handler';
 import ProductService from '../../../services/product';
 import { CreateProductInput } from '@medusajs/medusa/dist/types/product';
 import GlobetopperService from '../../../services/globetopper';
-import { GlobetopperClient } from 'src/globetopper/globetopper-client';
+import { GlobetopperClient } from '../../../globetopper/globetopper-client';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const globeTopperService: GlobetopperService =
@@ -20,57 +20,29 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     await handler.handle(async () => {
         //require params
-        if (!handler.requireParam('store_id')) return;
+        if (
+            !handler.requireParams([
+                'store_id',
+                'sales_channel_id',
+                'collection_id',
+                'category_id',
+            ])
+        )
+            return;
 
-        //TODO: move most of this to service
-        const gtProducts = await globetopperClient.searchProducts();
-
-        const gtCatalogue = await globetopperClient.getCatalog();
-
-        const productInputs: (CreateProductInput & { store_id: string })[] = [];
-
-        const gtRecords = gtProducts.data.records.sort(
-            (a, b) => (a?.operator?.id ?? 0) < (b?.operator?.id ?? 0)
-        );
-        const gtCat = gtCatalogue.data.records.sort(
-            (a, b) => (a?.topup_product_id ?? 0) < (b?.topup_product_id ?? 0)
-        );
-
-        for (let record of gtRecords) {
-            const productDetails = gtCat.find(
-                (r) => r.topup_product_id == (record?.operator?.id ?? 0)
-            );
-
-            if (productDetails) {
-                productInputs.push(
-                    await globeTopperService.mapDataToProductInput(
-                        record,
-                        productDetails,
-                        ProductStatus.PUBLISHED,
-                        handler.inputParams.store_id,
-                        handler.inputParams.category_id,
-                        handler.inputParams.collection_id,
-                        [handler.inputParams.sales_channel_id]
-                    )
-                );
-            }
-        }
-
-        handler.logger.debug(`importing ${productInputs.length} products`);
-
-        const products = await productService.bulkImportProducts(
+        //import
+        const products = await globeTopperService.import(
             handler.inputParams.store_id,
-            productInputs
+            handler.inputParams.category_id,
+            handler.inputParams.collection_id,
+            handler.inputParams.sales_channel_id
         );
 
         return handler.returnStatus(
             200,
             {
                 status: 'ok',
-                inputs: productInputs,
                 data: products,
-                records: gtRecords,
-                cat: gtCat,
             },
             100
         );
