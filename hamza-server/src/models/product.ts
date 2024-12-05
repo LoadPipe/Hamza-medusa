@@ -28,6 +28,12 @@ export class Product extends MedusaProduct {
     @Column()
     massmarket_prod_id?: string;
 
+    @Column()
+    external_source?: string;
+
+    @Column('jsonb')
+    external_metadata?: Record<string, unknown>;
+
     @Column('jsonb')
     bucky_metadata?: Record<string, unknown>;
 }

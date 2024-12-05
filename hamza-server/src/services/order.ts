@@ -240,6 +240,10 @@ export default class OrderService extends MedusaOrderService {
         if (process.env.BUCKY_ENABLE_PURCHASE)
             await this.processBuckydropOrders(cartId, orders);
 
+        //do buckydrop order creation
+        if (process.env.GLOBETOPPER_ENABLE_PURCHASE)
+            await this.processGlobetopperOrders(cartId, orders);
+
         //calls to update inventory
         //const inventoryPromises =
         //    this.getPostCheckoutUpdateInventoryPromises(cartProductsJson);
@@ -752,6 +756,13 @@ export default class OrderService extends MedusaOrderService {
         } catch (e) {
             this.logger.error(`Failed to create buckydrop order for ${cartId}`);
         }
+    }
+
+    private async processGlobetopperOrders(
+        cartId: string,
+        orders: Order[]
+    ): Promise<void> {
+        //globetopper point of sale here
     }
 
     private async getCustomerOrdersByStatus(

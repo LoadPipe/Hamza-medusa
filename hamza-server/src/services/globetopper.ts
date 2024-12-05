@@ -1,24 +1,8 @@
-import {
-    TransactionBaseService,
-    ProductStatus,
-    CartService,
-    Cart,
-    OrderStatus,
-    FulfillmentStatus,
-    CustomerService,
-    PaymentStatus,
-} from '@medusajs/medusa';
+import { TransactionBaseService, ProductStatus } from '@medusajs/medusa';
 import ProductService from '../services/product';
 import OrderService from '../services/order';
-import { BuckyLogRepository } from '../repositories/bucky-log';
 import { Product } from '../models/product';
-import { Order } from '../models/order';
 import { PriceConverter } from '../utils/price-conversion';
-import {
-    BuckyClient,
-    IBuckyShippingCostRequest,
-    ICreateBuckyOrderProduct,
-} from '../buckydrop/bucky-client';
 import {
     CreateProductProductVariantInput,
     CreateProductInput as MedusaCreateProductInput,
@@ -33,22 +17,15 @@ import {
     FindOptionsWhere as TypeormFindOptionsWhere,
     In,
 } from 'typeorm';
+import { GlobetopperClient } from '../globetopper/globetopper-client';
+
+const PRODUCT_EXTERNAL_SOURCE: string = 'globetopper';
 
 type CreateProductInput = MedusaCreateProductInput & {
     store_id: string;
-    bucky_metadata?: Record<string, unknown>;
+    external_source: string;
+    external_metadata?: Record<string, unknown>;
 };
-
-type FindOptionsWhere<Order> = TypeormFindOptionsWhere<Order> & {
-    bucky_metadata?: any;
-};
-
-const SHIPPING_COST_MIN: number = parseInt(
-    process.env.BUCKY_MIN_SHIPPING_COST_US_CENT ?? '1000'
-);
-const SHIPPING_COST_MAX: number = parseInt(
-    process.env.BUCKY_MAX_SHIPPING_COST_US_CENT ?? '4000'
-);
 
 // TODO: I think this code needs comments its difficult to understand.
 
@@ -58,6 +35,7 @@ export default class GlobetopperService extends TransactionBaseService {
     protected readonly orderService_: OrderService;
     protected readonly orderRepository_: typeof OrderRepository;
     protected readonly priceConverter: PriceConverter;
+    protected readonly apiClient: GlobetopperClient;
 
     constructor(container) {
         super(container);
@@ -69,9 +47,72 @@ export default class GlobetopperService extends TransactionBaseService {
             this.logger,
             container.cachedExchangeRateRepository
         );
+        this.apiClient = new GlobetopperClient();
     }
 
-    public async mapDataToProductInput(
+    public async import(
+        storeId: string,
+        categoryId: string,
+        collectionId: string,
+        salesChannelId: string
+    ): Promise<Product[]> {
+        try {
+            //get products in two API calls
+            const gtProducts = await this.apiClient.searchProducts();
+            const gtCatalogue = await this.apiClient.getCatalog();
+
+            const productInputs: (CreateProductInput & { store_id: string })[] =
+                [];
+
+            //sort the output
+            const gtRecords = gtProducts.data.records.sort(
+                (a, b) => (a?.operator?.id ?? 0) < (b?.operator?.id ?? 0)
+            );
+            const gtCat = gtCatalogue.data.records.sort(
+                (a, b) =>
+                    (a?.topup_product_id ?? 0) < (b?.topup_product_id ?? 0)
+            );
+
+            //create product inputs for each product
+            for (let record of gtRecords) {
+                const productDetails = gtCat.find(
+                    (r) => r.topup_product_id == (record?.operator?.id ?? 0)
+                );
+
+                if (productDetails) {
+                    productInputs.push(
+                        await this.mapDataToProductInput(
+                            record,
+                            productDetails,
+                            ProductStatus.PUBLISHED,
+                            storeId,
+                            categoryId,
+                            collectionId,
+                            [salesChannelId]
+                        )
+                    );
+                }
+            }
+
+            this.logger.debug(`importing ${productInputs.length} products`);
+
+            //insert products into DB
+            const products = await this.productService_.bulkImportProducts(
+                storeId,
+                productInputs
+            );
+
+            return products;
+        } catch (e: any) {
+            this.logger.error('Error importing GlobeTopper products', e);
+        }
+
+        return [];
+    }
+
+    public async processPointOfSale(): Promise<void> {}
+
+    private async mapDataToProductInput(
         item: any,
         productDetail: any,
         status: ProductStatus,
@@ -251,6 +292,9 @@ export default class GlobetopperService extends TransactionBaseService {
                 weight: Math.round(item?.weight ?? 100),
                 discountable: true,
                 store_id: storeId,
+                external_id: externalId,
+                external_source: PRODUCT_EXTERNAL_SOURCE,
+                external_metadata: productDetail,
                 categories: categoryId?.length ? [{ id: categoryId }] : [],
                 sales_channels: salesChannels.map((sc) => {
                     return { id: sc };
@@ -327,6 +371,7 @@ export default class GlobetopperService extends TransactionBaseService {
             inventory_quantity: 9999,
             allow_backorder: false,
             manage_inventory: true,
+            external_source: PRODUCT_EXTERNAL_SOURCE,
             metadata: { imgUrl: productDetail?.card_image },
             prices: [
                 {
