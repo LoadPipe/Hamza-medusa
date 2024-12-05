@@ -36,6 +36,7 @@ import { OrderHistory } from 'src/models/order-history';
 import ShippingMethodRepository from '@medusajs/medusa/dist/repositories/shipping-method';
 import CartService from './cart';
 import CartRepository from '@medusajs/medusa/dist/repositories/cart';
+import GlobetopperService from './globetopper';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
 // In medusa we have these 5 DEFAULT order.STATUS's {PENDING, COMPLETED, ARCHIVED, CANCELED, REQUIRES_ACTION}
@@ -77,6 +78,7 @@ export default class OrderService extends MedusaOrderService {
     protected customerNotificationService_: CustomerNotificationService;
     protected smtpMailService_: SmtpMailService = new SmtpMailService();
     protected orderHistoryService_: OrderHistoryService;
+    protected globetopperService_: GlobetopperService;
     protected readonly logger: ILogger;
     protected buckyClient: BuckyClient;
 
@@ -99,6 +101,7 @@ export default class OrderService extends MedusaOrderService {
         this.orderHistoryService_ = container.orderHistoryService;
         this.logger = createLogger(container, 'OrderService');
         this.buckyLogRepository_ = container.buckyLogRepository;
+        this.globetopperService_ = container.GlobetopperService;
         this.buckyClient = new BuckyClient(container.buckyLogRepository);
     }
 
@@ -219,6 +222,10 @@ export default class OrderService extends MedusaOrderService {
         escrowContractAddress: string,
         chainId: number
     ): Promise<Order[]> {
+        const cart = await this.cartRepository_.findOne({
+            where: { id: cartId },
+        });
+
         //get orders & order ids
         const orders: Order[] = await this.orderRepository_.find({
             where: {
@@ -242,7 +249,7 @@ export default class OrderService extends MedusaOrderService {
 
         //do buckydrop order creation
         if (process.env.GLOBETOPPER_ENABLE_PURCHASE)
-            await this.processGlobetopperOrders(cartId, orders);
+            await this.processGlobetopperOrders(cart, orders);
 
         //calls to update inventory
         //const inventoryPromises =
@@ -276,9 +283,6 @@ export default class OrderService extends MedusaOrderService {
         }
 
         //set cart completion date
-        const cart = await this.cartRepository_.findOne({
-            where: { id: cartId },
-        });
         cart.completed_at = new Date();
 
         //execute all promises
@@ -543,6 +547,7 @@ export default class OrderService extends MedusaOrderService {
         return output;
     }
 
+    //TODO: deprecate; move to use of getExternalProductVariantsFromOrder
     async getBuckyProductVariantsFromOrder(
         order: Order
     ): Promise<{ variants: ProductVariant[]; quantities: number[] }> {
@@ -555,6 +560,23 @@ export default class OrderService extends MedusaOrderService {
             ? {
                   variants: relevantItems.map((i) => i.variant),
                   quantities: relevantItems.map((i) => i.quantity),
+              }
+            : { variants: [], quantities: [] };
+    }
+
+    async getExternalProductVariantsFromOrder(
+        order: Order,
+        externalSource: string
+    ): Promise<{ variants: ProductVariant[]; quantities: number[] }> {
+        const orders: Order[] = await this.getOrdersWithItems([order]);
+        const relevantItems: LineItem[] = orders[0].cart.items.filter(
+            (item) => item.variant.product.external_source == externalSource
+        );
+
+        return relevantItems?.length
+            ? {
+                  variants: relevantItems.map((item) => item.variant),
+                  quantities: relevantItems.map((item) => item.quantity),
               }
             : { variants: [], quantities: [] };
     }
@@ -759,10 +781,31 @@ export default class OrderService extends MedusaOrderService {
     }
 
     private async processGlobetopperOrders(
-        cartId: string,
+        cart: Cart,
         orders: Order[]
     ): Promise<void> {
-        //globetopper point of sale here
+        //TODO: optimize by multithreading
+        for (let order of orders) {
+            try {
+                const output = await this.getExternalProductVariantsFromOrder(
+                    order,
+                    'globetopper'
+                );
+
+                await this.globetopperService_.processPointOfSale(
+                    order.id,
+                    cart.customer.first_name,
+                    cart.customer.last_name,
+                    cart.email,
+                    output.variants,
+                    output.quantities
+                );
+            } catch (e: any) {
+                this.logger.error(
+                    `Error processing globetopper orders for order ${order.id}`
+                );
+            }
+        }
     }
 
     private async getCustomerOrdersByStatus(

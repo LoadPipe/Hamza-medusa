@@ -1,4 +1,8 @@
-import { TransactionBaseService, ProductStatus } from '@medusajs/medusa';
+import {
+    TransactionBaseService,
+    ProductStatus,
+    ProductVariant,
+} from '@medusajs/medusa';
 import ProductService from '../services/product';
 import OrderService from '../services/order';
 import { Product } from '../models/product';
@@ -32,7 +36,6 @@ type CreateProductInput = MedusaCreateProductInput & {
 export default class GlobetopperService extends TransactionBaseService {
     protected readonly logger: ILogger;
     protected readonly productService_: ProductService;
-    protected readonly orderService_: OrderService;
     protected readonly orderRepository_: typeof OrderRepository;
     protected readonly priceConverter: PriceConverter;
     protected readonly apiClient: GlobetopperClient;
@@ -41,7 +44,6 @@ export default class GlobetopperService extends TransactionBaseService {
         super(container);
         this.productService_ = container.productService;
         this.orderRepository_ = container.orderRepository;
-        this.orderService_ = container.orderService;
         this.logger = createLogger(container, 'GlobetopperService');
         this.priceConverter = new PriceConverter(
             this.logger,
@@ -110,7 +112,50 @@ export default class GlobetopperService extends TransactionBaseService {
         return [];
     }
 
-    public async processPointOfSale(): Promise<void> {}
+    public async processPointOfSale(
+        orderId: string,
+        firstName: string,
+        lastName: string,
+        email: string,
+        variants: ProductVariant[],
+        quantities: number[]
+    ): Promise<void> {
+        const promises: Promise<any>[] = [];
+
+        //make a list of promises
+        for (let n = 0; n < variants.length; n++) {
+            const quantity = quantities[n] ?? 1;
+            const variant = variants[n];
+
+            //account for quantity of each
+            for (let i = 0; i < quantity; i++) {
+                /*
+                There is a decision to be made here: if there are 3 $5 XYZ cards, 
+                should we make it just 1 $15 one? I'm going to go with a no for now, 
+                but we can come back to this. 
+                (If they truly are gifts, buyer might intend 3 different ones for 3 different people)
+
+                We could get more granular but then we'd specialize in gift cards. Maybe better to see 
+                how well they sell first
+                */
+                promises.push(
+                    this.apiClient.purchase({
+                        productID: variant.product.external_id,
+                        amount: variant.external_metadata?.amount as number,
+                        first_name: firstName,
+                        last_name: lastName,
+                        email,
+                        order_id: orderId,
+                    })
+                );
+            }
+        }
+
+        //here you have an array of outputs, 1 for each variant
+        const purchaseOutputs = await Promise.all(promises);
+
+        //TODO: what to do with the outputs now?
+    }
 
     private async mapDataToProductInput(
         item: any,
@@ -371,6 +416,7 @@ export default class GlobetopperService extends TransactionBaseService {
             inventory_quantity: 9999,
             allow_backorder: false,
             manage_inventory: true,
+            external_id: item?.operator?.id,
             external_source: PRODUCT_EXTERNAL_SOURCE,
             metadata: { imgUrl: productDetail?.card_image },
             prices: [
