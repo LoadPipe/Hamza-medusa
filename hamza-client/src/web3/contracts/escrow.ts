@@ -2,6 +2,7 @@ import { BigNumberish, ethers } from 'ethers';
 import { ISwitchMultiPaymentInput, ITransactionOutput } from '..';
 import { getCurrencyAddress } from '../../currency.config';
 import { EscrowBase } from './escrow-base';
+import { escrowAbi } from '../abi/escrow-abi';
 
 export class EscrowClient extends EscrowBase {
     constructor(
@@ -9,7 +10,7 @@ export class EscrowClient extends EscrowBase {
         signer: ethers.Signer,
         address: string
     ) {
-        super(provider, signer, address);
+        super(provider, signer, address, escrowAbi);
     }
 
     async placeMultiplePayments(

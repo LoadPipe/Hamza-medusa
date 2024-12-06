@@ -14,6 +14,7 @@ import { erc20abi } from '../../../../web3/abi/erc20-abi';
 import { LiteSwitchClient } from '@/web3/contracts/lite-switch';
 import { ISwitchMultiPaymentInput } from '@/web3';
 import { block } from 'sharp';
+import { EscrowClient } from '@/web3/contracts/escrow';
 
 export type WalletPaymentResponse = {
     transaction_id: string;
@@ -365,13 +366,14 @@ export class EscrowWalletPaymentHandler implements IWalletPaymentHandler {
         chainId: any,
         data: CheckoutData
     ): Promise<WalletPaymentResponse> {
-        const contractAddress = getContractAddress('lite_switch', chainId);
+        const contractAddress = data.orders[0].escrow_metadata.address;
+        console.log('contract address is ', contractAddress);
         let transaction_id = '';
         let payer_address = '';
         let receiver_address = data.receiver_address;
 
         if (provider) {
-            const client: LiteSwitchClient = new LiteSwitchClient(
+            const client: EscrowClient = new EscrowClient(
                 provider,
                 signer,
                 contractAddress

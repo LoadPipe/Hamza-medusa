@@ -10,6 +10,7 @@ export abstract class EscrowBase {
     provider: ethers.Provider;
     signer: ethers.Signer;
     tokens: { [id: string]: ethers.Contract } = {};
+    abi: any;
 
     /**
      * Constructor.
@@ -18,15 +19,17 @@ export abstract class EscrowBase {
     constructor(
         provider: ethers.Provider,
         signer: ethers.Signer,
-        address: string
+        address: string,
+        abi: any
     ) {
         this.provider = provider;
         this.signer = signer;
         this.contractAddress = address;
+        this.abi = abi;
 
         this.contract = new ethers.Contract(
             this.contractAddress,
-            liteSwitchAbi,
+            this.abi,
             signer
         );
     }
