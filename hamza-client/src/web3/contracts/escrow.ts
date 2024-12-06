@@ -1,4 +1,4 @@
-import { BigNumberish, ethers } from 'ethers';
+import { BigNumberish, ethers, keccak256 } from 'ethers';
 import { ISwitchMultiPaymentInput, ITransactionOutput } from '..';
 import { getCurrencyAddress } from '../../currency.config';
 import { EscrowBase } from './escrow-base';
@@ -43,13 +43,18 @@ export class EscrowClient extends EscrowBase {
         const nativeTotal: BigNumberish = this.getNativeTotal(inputs);
         console.log('native amount:', nativeTotal);
 
-        const tx: any = await this.contract.placeMultiPayments(
-            inputs,
-            immediateSweep,
-            {
-                value: nativeTotal,
+        for (let input of inputs) {
+            for (let n = 0; n < input.payments.length; n++) {
+                input.payments[n].id = keccak256(
+                    ethers.toUtf8Bytes(input.payments[n].orderId ?? '')
+                );
+                delete input.payments[n].orderId;
             }
-        );
+        }
+
+        const tx: any = await this.contract.placeMultiPayments(inputs, {
+            value: nativeTotal,
+        });
 
         const transaction_id = tx.hash;
         const receipt = await tx.wait();
