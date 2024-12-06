@@ -101,7 +101,7 @@ export default class OrderService extends MedusaOrderService {
         this.orderHistoryService_ = container.orderHistoryService;
         this.logger = createLogger(container, 'OrderService');
         this.buckyLogRepository_ = container.buckyLogRepository;
-        this.globetopperService_ = container.GlobetopperService;
+        this.globetopperService_ = container.globetopperService;
         this.buckyClient = new BuckyClient(container.buckyLogRepository);
     }
 
