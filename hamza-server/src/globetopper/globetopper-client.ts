@@ -93,6 +93,7 @@ export class GlobetopperClient {
      *
      * @param data See GTPurchaseInputData
      * @returns Bunch o data
+     * @todo (re)implement as a worker
      */
     public async purchase(data: GTPurchaseInputData): Promise<any> {
         let url: string = `${this.baseUrl}/product/search-all-products`;

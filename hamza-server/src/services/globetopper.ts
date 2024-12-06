@@ -120,7 +120,7 @@ export default class GlobetopperService extends TransactionBaseService {
         lastName: string,
         email: string,
         items: LineItem[]
-    ): Promise<void> {
+    ): Promise<any[]> {
         const promises: Promise<any>[] = [];
 
         //make a list of promises
@@ -155,7 +155,43 @@ export default class GlobetopperService extends TransactionBaseService {
         //here you have an array of outputs, 1 for each variant
         const purchaseOutputs = await Promise.all(promises);
 
+        // send email(s)
+        // handle balance - notify site admin if balance is below threshold
+        // update order
+
+        // stub to build email content
+        for (const purchase of purchaseOutputs) {
+            const cardInfo: string[] = [];
+            for (const field of purchase.data.records[0].extra_fields) {
+                let extraFieldContent: string = '';
+                
+                switch (field.attribute.name) {
+                    case 'Barcode Image URL':
+                    case 'Brand Logo':
+                        extraFieldContent = `<img src="${field.content}" />`;
+                    break;
+                    
+                    case 'Redemption URL':
+                    case 'Barcode URL':
+                    case 'Admin Barcode URL':
+                        extraFieldContent = `<a href="${field.content}">`;
+                        extraFieldContent += field.content;
+                        extraFieldContent += '</a>';
+                    default:
+                        extraFieldContent = field.content
+                    //break
+                }
+
+                extraFieldContent = `${field.attribute.label}: ${extraFieldContent}`;
+                cardInfo.push(extraFieldContent);
+            }
+
+            const emailBody: string = cardInfo.join('<br />\n');
+            console.log(`Globetopper gift card email info for order ${orderId}, customer ${email}:\n${emailBody}`);
+        }
+
         //TODO: what to do with the outputs now?
+        return purchaseOutputs ?? [];
     }
 
     private async mapDataToProductInput(
