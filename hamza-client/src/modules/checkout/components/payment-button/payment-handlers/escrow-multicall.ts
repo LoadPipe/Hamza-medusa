@@ -2,7 +2,10 @@
 
 import { ethers, BigNumberish, TransactionResponse } from 'ethers';
 import { getCurrencyPrecision } from '@/currency.config';
-import { EscrowMulticallClient } from '@/web3/contracts/escrow';
+import {
+    EscrowMulticallClient,
+    MulticallPaymentInput,
+} from '@/web3/contracts/escrow';
 import {
     IWalletPaymentHandler,
     CheckoutData,
@@ -34,7 +37,7 @@ export class EscrowWalletPaymentHandler implements IWalletPaymentHandler {
             );
 
             payer_address = await signer.getAddress();
-            const inputs = this.createPaymentInput(
+            const inputs: MulticallPaymentInput[] = this.createPaymentInputs(
                 data,
                 payer_address,
                 chainId
@@ -76,9 +79,14 @@ export class EscrowWalletPaymentHandler implements IWalletPaymentHandler {
         };
     }
 
-    private createPaymentInput(data: any, payer: string, chainId: any) {
+    private createPaymentInputs(
+        data: any,
+        payer: string,
+        chainId: any
+    ): MulticallPaymentInput[] {
+        console.log('ORDERS', data.orders);
         if (data.orders) {
-            const paymentInput: any[] = [];
+            const paymentInputs: any[] = [];
             data.orders.forEach((o: any) => {
                 const input = {
                     currency: o.currency_code,
@@ -94,10 +102,10 @@ export class EscrowWalletPaymentHandler implements IWalletPaymentHandler {
                               chainId
                           ),
                 };
-                paymentInput.push(input);
+                paymentInputs.push(input);
             });
 
-            return paymentInput;
+            return paymentInputs;
         }
         return [];
     }
@@ -113,9 +121,8 @@ export class EscrowWalletPaymentHandler implements IWalletPaymentHandler {
         return ethers.toBigInt(nativeAmount);
     }
 
-    //TODOX: these are all 'any' now
     private groupPaymentsByCurrency(
-        inputs: any[]
+        inputs: MulticallPaymentInput[]
     ): { currency: string; amount: BigInt }[] {
         const output: { currency: string; amount: BigInt }[] = [];
         for (let input of inputs) {

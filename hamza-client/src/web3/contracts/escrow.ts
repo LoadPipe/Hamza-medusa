@@ -4,6 +4,15 @@ import { getCurrencyAddress } from '../../currency.config';
 import { escrowMulticallAbi } from '../abi/escrow-multicall-abi';
 import { erc20abi } from '../abi/erc20-abi';
 
+export type MulticallPaymentInput = {
+    id: string;
+    contractAddress: string;
+    currency: string;
+    receiver: string;
+    payer: string;
+    amount: BigNumberish;
+};
+
 export class EscrowMulticallClient {
     contractAddress: string;
     contract: ethers.Contract;
@@ -53,6 +62,7 @@ export class EscrowMulticallClient {
         //get total native amount
         const nativeTotal: BigNumberish = this.getNativeTotal(inputs);
         console.log('native amount:', nativeTotal);
+        console.log('inputs to contract: ', inputs);
 
         const tx: any = await this.contract.multipay(inputs, {
             value: nativeTotal,
