@@ -226,15 +226,7 @@ export default class OrderService extends MedusaOrderService {
         chainId: number
     ): Promise<Order[]> {
         //get orders & order ids
-        const orders: Order[] = await this.orderRepository_.find({
-            where: {
-                cart_id: cartId,
-                status: OrderStatus.REQUIRES_ACTION,
-            },
-            take: 1,
-            skip: 0,
-            order: { created_at: 'DESC' },
-        });
+        const orders: Order[] = await this.getOrdersForCheckout(cartId);
         const orderIds = orders.map((order) => order.id);
 
         //get payments associated with orders
