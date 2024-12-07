@@ -163,8 +163,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 500,
                 'Medusa Merch Store where we sell our Medusa Sweatpants, its a nice store',
                 {
-                    address: '0x1fFc6ba4FcdfC3Ca72a53c2b64db3807B4A5aec8',
-                    version: 'lite',
+                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                    version: '1.0',
                 }
             ),
             storeService.createStore(
@@ -175,8 +175,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 200,
                 "We Sell VR Headsets here, the best quality VR headsets you wouldn't believe it",
                 {
-                    address: '0x1fFc6ba4FcdfC3Ca72a53c2b64db3807B4A5aec8',
-                    version: 'lite',
+                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                    version: '1.0',
                 }
             ),
             storeService.createStore(
@@ -187,8 +187,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 450,
                 'Dauntless Store - Where bold and resilient products meet exceptional quality. Perfect for those who seek adventure and durability in every purchase.',
                 {
-                    address: '0x1fFc6ba4FcdfC3Ca72a53c2b64db3807B4A5aec8',
-                    version: 'lite',
+                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                    version: '1.0',
                 }
             ),
 
@@ -200,8 +200,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 720,
                 'Drones Store - Your go-to destination for cutting-edge aerial technology. Explore our wide range of high-performance drones perfect for every enthusiast.',
                 {
-                    address: '0x1fFc6ba4FcdfC3Ca72a53c2b64db3807B4A5aec8',
-                    version: 'lite',
+                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                    version: '1.0',
                 }
             ),
 
@@ -213,8 +213,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 315,
                 'Legos Store - Dive into the world of creativity and building blocks. Find the latest Lego sets and build your imagination with endless possibilities.',
                 {
-                    address: '0x1fFc6ba4FcdfC3Ca72a53c2b64db3807B4A5aec8',
-                    version: 'lite',
+                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                    version: '1.0',
                 }
             ),
             storeService.createStore(
