@@ -2,6 +2,7 @@ import {
     TransactionBaseService,
     ProductStatus,
     ProductVariant,
+    LineItem
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
 import OrderService from '../services/order';
@@ -39,6 +40,7 @@ export default class GlobetopperService extends TransactionBaseService {
     protected readonly orderRepository_: typeof OrderRepository;
     protected readonly priceConverter: PriceConverter;
     protected readonly apiClient: GlobetopperClient;
+    public static readonly EXTERNAL_SOURCE: string = PRODUCT_EXTERNAL_SOURCE;
 
     constructor(container) {
         super(container);
@@ -117,15 +119,14 @@ export default class GlobetopperService extends TransactionBaseService {
         firstName: string,
         lastName: string,
         email: string,
-        variants: ProductVariant[],
-        quantities: number[]
+        items: LineItem[]
     ): Promise<void> {
         const promises: Promise<any>[] = [];
 
         //make a list of promises
-        for (let n = 0; n < variants.length; n++) {
-            const quantity = quantities[n] ?? 1;
-            const variant = variants[n];
+        for (let n = 0; n < items.length; n++) {
+            const quantity = items[n].quantity ?? 1;
+            const variant = items[n].variant;
 
             //account for quantity of each
             for (let i = 0; i < quantity; i++) {

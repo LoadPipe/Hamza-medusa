@@ -547,7 +547,10 @@ export default class OrderService extends MedusaOrderService {
         return output;
     }
 
-    //TODO: deprecate; move to use of getExternalProductVariantsFromOrder
+    /**
+     * @deprecated This method is deprecated and will be removed in future versions.
+     * Transition to `getExternalProductItemsFromOrder`.
+     */
     async getBuckyProductVariantsFromOrder(
         order: Order
     ): Promise<{ variants: ProductVariant[]; quantities: number[] }> {
@@ -563,22 +566,24 @@ export default class OrderService extends MedusaOrderService {
               }
             : { variants: [], quantities: [] };
     }
-
-    async getExternalProductVariantsFromOrder(
+    /**
+     * Retrieves a list of line items from the given order associated with the
+     * given external source
+     * 
+     * @param {Order} order 
+     * @param {string} externalSource - the external source label
+     * @returns {LineItem[]}
+     */
+    async getExternalProductItemsFromOrder(
         order: Order,
         externalSource: string
-    ): Promise<{ variants: ProductVariant[]; quantities: number[] }> {
+    ): Promise<LineItem[]> {
         const orders: Order[] = await this.getOrdersWithItems([order]);
         const relevantItems: LineItem[] = orders[0].cart.items.filter(
             (item) => item.variant.product.external_source == externalSource
         );
 
-        return relevantItems?.length
-            ? {
-                  variants: relevantItems.map((item) => item.variant),
-                  quantities: relevantItems.map((item) => item.quantity),
-              }
-            : { variants: [], quantities: [] };
+        return relevantItems ?? [];
     }
 
     async getOrdersWithUnverifiedPayments() {
@@ -787,9 +792,9 @@ export default class OrderService extends MedusaOrderService {
         //TODO: optimize by multithreading
         for (let order of orders) {
             try {
-                const output = await this.getExternalProductVariantsFromOrder(
+                const items: LineItem[] = await this.getExternalProductItemsFromOrder(
                     order,
-                    'globetopper'
+                    GlobetopperService.EXTERNAL_SOURCE
                 );
 
                 await this.globetopperService_.processPointOfSale(
@@ -797,8 +802,7 @@ export default class OrderService extends MedusaOrderService {
                     cart.customer.first_name,
                     cart.customer.last_name,
                     cart.email,
-                    output.variants,
-                    output.quantities
+                    items
                 );
             } catch (e: any) {
                 this.logger.error(

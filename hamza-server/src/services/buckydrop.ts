@@ -66,6 +66,7 @@ export default class BuckydropService extends TransactionBaseService {
     protected readonly priceConverter: PriceConverter;
     protected readonly buckyClient: BuckyClient;
     protected readonly buckyLogRepository: typeof BuckyLogRepository;
+    public static readonly EXTERNAL_SOURCE: string = PRODUCT_EXTERNAL_SOURCE;
 
     constructor(container) {
         super(container);
