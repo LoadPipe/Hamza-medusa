@@ -1,8 +1,6 @@
 import { BigNumberish, ethers } from 'ethers';
-import { liteSwitchAbi } from '../abi/lite-switch-abi';
 import { erc20abi } from '../abi/erc20-abi';
 import { ISwitchMultiPaymentInput, ITransactionOutput } from '..';
-import { getCurrencyAddress } from '../../currency.config';
 
 export abstract class EscrowBase {
     contractAddress: string;
@@ -14,7 +12,7 @@ export abstract class EscrowBase {
 
     /**
      * Constructor.
-     * @param address Address of the LiteSwitch contract
+     * @param address Address of the escrow contract
      */
     constructor(
         provider: ethers.Provider,

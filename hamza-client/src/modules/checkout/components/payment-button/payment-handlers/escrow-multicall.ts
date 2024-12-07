@@ -55,10 +55,8 @@ export class EscrowWalletPaymentHandler implements IWalletPaymentHandler {
                     ))
                 ) {
                     return {
-                        escrow_address: '0x0',
                         transaction_id,
                         payer_address,
-                        receiver_address: '0x0',
                         success: false,
                         chain_id: chainId,
                         message: `Wallet has an insufficient balance in ${currency.toUpperCase()} to pay for this transaction`,
@@ -71,9 +69,7 @@ export class EscrowWalletPaymentHandler implements IWalletPaymentHandler {
         }
 
         return {
-            escrow_address: '0x0', //TODOX: doesn't make sense anymore
             payer_address,
-            receiver_address: '0x0', //TODOX: doesn't make sense anymore
             transaction_id,
             chain_id: chainId,
             success: transaction_id && transaction_id.length ? true : false,

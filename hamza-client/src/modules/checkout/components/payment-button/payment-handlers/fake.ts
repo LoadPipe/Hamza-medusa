@@ -35,10 +35,8 @@ export class FakeWalletPaymentHandler implements IWalletPaymentHandler {
         }
 
         return {
-            escrow_address: '0x0',
             transaction_id,
             payer_address,
-            receiver_address,
             chain_id: chainId,
             success: transaction_id && transaction_id.length ? true : false,
         };

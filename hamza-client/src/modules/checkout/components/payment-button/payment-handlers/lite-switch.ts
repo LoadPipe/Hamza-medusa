@@ -57,10 +57,8 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
                     ))
                 ) {
                     return {
-                        escrow_address: '0x0',
                         transaction_id,
                         payer_address,
-                        receiver_address,
                         success: false,
                         chain_id: chainId,
                         message: `Wallet has an insufficient balance in ${currency.toUpperCase()} to pay for this transaction`,
@@ -73,9 +71,7 @@ export class LiteSwitchWalletPaymentHandler implements IWalletPaymentHandler {
         }
 
         return {
-            escrow_address: contractAddress,
             payer_address,
-            receiver_address,
             transaction_id,
             chain_id: chainId,
             success: transaction_id && transaction_id.length ? true : false,

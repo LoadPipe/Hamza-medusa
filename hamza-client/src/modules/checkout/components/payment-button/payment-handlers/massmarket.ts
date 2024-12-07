@@ -65,8 +65,6 @@ export class MassmarketWalletPaymentHandler implements IWalletPaymentHandler {
         return {
             transaction_id,
             payer_address,
-            receiver_address,
-            escrow_address,
             chain_id: chainId,
             success: transaction_id && transaction_id.length ? true : false,
         };

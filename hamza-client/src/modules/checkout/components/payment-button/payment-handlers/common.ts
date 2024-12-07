@@ -7,8 +7,6 @@ import { BigNumberish, ethers } from 'ethers';
 export type WalletPaymentResponse = {
     transaction_id: string;
     payer_address: string;
-    receiver_address: string;
-    escrow_address: string;
     message?: string;
     chain_id: number;
     success: boolean;
