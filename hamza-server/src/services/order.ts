@@ -246,13 +246,22 @@ export default class OrderService extends MedusaOrderService {
         if (process.env.BUCKY_ENABLE_PURCHASE)
             await this.processBuckydropOrders(cartId, orders);
 
+        //pair orders with payments
+        const paymentOrders: { order: Order; payment: Payment }[] = [];
+        for (let p of payments) {
+            paymentOrders.push({
+                payment: p,
+                order: orders.find((o) => o.id == p.order_id),
+            });
+        }
+
         //calls to update inventory
         //const inventoryPromises =
         //    this.getPostCheckoutUpdateInventoryPromises(cartProductsJson);
 
         //calls to update payments
         const paymentPromises = this.getPostCheckoutUpdatePaymentPromises(
-            payments,
+            paymentOrders,
             transactionId,
             payerAddress,
             chainId
@@ -807,7 +816,7 @@ export default class OrderService extends MedusaOrderService {
     }
 
     private getPostCheckoutUpdatePaymentPromises(
-        payments: Payment[],
+        paymentOrders: { order: Order; payment: Payment }[],
         transactionId: string,
         payerAddress: string,
         chainId: number
@@ -815,14 +824,16 @@ export default class OrderService extends MedusaOrderService {
         const promises: Promise<Order | Payment>[] = [];
 
         //update payments with transaction info
-        payments.forEach((p, i) => {
+        paymentOrders.forEach((po, i) => {
             promises.push(
-                this.updatePaymentAfterTransaction(p.id, {
+                this.updatePaymentAfterTransaction(po.payment.id, {
                     blockchain_data: {
                         transaction_id: transactionId,
                         payer_address: payerAddress,
-                        escrow_address: '', //TODOX: need to get these from store - order.store.escrow_metadata.address
-                        receiver_address: '', //- order.store.wallet_address
+                        escrow_address:
+                            po.order?.store?.escrow_metadata?.address,
+                        receiver_address:
+                            po.order?.store?.owner?.wallet_address,
                         chain_id: chainId,
                     },
                 })
