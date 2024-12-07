@@ -225,7 +225,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 860,
                 'Board Games Store - A haven for tabletop enthusiasts. Discover a wide selection of board games, from strategy to family fun, and everything in between.',
                 {
-                    address: '0xFF0A7A96A5DdDD33976262728Ec62ec05AB0DF6b',
+                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
                     version: '1.0',
                 }
             ),
@@ -237,7 +237,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 580,
                 'Workout Gear Store - Equip yourself with the best in fitness gear. From weights to apparel, we have everything you need to power your workouts.',
                 {
-                    address: '0xFF0A7A96A5DdDD33976262728Ec62ec05AB0DF6b',
+                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
                     version: '1.0',
                 }
             ),
@@ -249,7 +249,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 930,
                 'Gaming Gear Store - Elevate your gaming experience with top-tier gear. Find the latest peripherals, accessories, and more for the ultimate gaming setup.',
                 {
-                    address: '0xFF0A7A96A5DdDD33976262728Ec62ec05AB0DF6b',
+                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
                     version: '1.0',
                 }
             ),
@@ -261,7 +261,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 290,
                 'Shake Store - Blend your way to a healthier lifestyle. Our store offers a range of premium shakes and blenders for the health-conscious consumer.',
                 {
-                    address: '0xFF0A7A96A5DdDD33976262728Ec62ec05AB0DF6b',
+                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
                     version: '1.0',
                 }
             ),
@@ -273,7 +273,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 670,
                 'Legendary Light Design Store - Illuminate your space with style. Explore our collection of designer lighting solutions for a touch of elegance and functionality.',
                 {
-                    address: '0xFF0A7A96A5DdDD33976262728Ec62ec05AB0DF6b',
+                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
                     version: '1.0',
                 }
             ),
@@ -285,7 +285,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 410,
                 'Block Store - Specializing in building blocks and construction toys. Let your creativity soar with our range of products designed for endless fun.',
                 {
-                    address: '0xFF0A7A96A5DdDD33976262728Ec62ec05AB0DF6b',
+                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
                     version: '1.0',
                 }
             ),
