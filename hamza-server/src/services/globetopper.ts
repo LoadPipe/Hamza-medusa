@@ -151,15 +151,8 @@ export default class GlobetopperService extends TransactionBaseService {
             }
         }
 
-        console.log(
-            '::::::::::::::::PROCESSING ',
-            promises.length,
-            ' GT ITEMS::::::::::::::::'
-        );
         //here you have an array of outputs, 1 for each variant
         const purchaseOutputs = await Promise.all(promises);
-
-        console.log('done');
 
         //TODO: what to do with the outputs now?
     }
@@ -173,13 +166,13 @@ export default class GlobetopperService extends TransactionBaseService {
     ): Promise<any> {
         const output = await this.apiClient.purchase({
             productID: variant.product.external_id,
-            amount: variant.external_metadata?.amount as number,
+            amount: variant.external_metadata?.amount?.toString(),
             first_name: firstName,
             last_name: lastName,
             email,
             order_id: orderId,
         });
-        console.log(JSON.parse(JSON.stringify(output.data)));
+        console.log('purchase output: ', output.data);
     }
 
     private async mapDataToProductInput(
@@ -443,6 +436,7 @@ export default class GlobetopperService extends TransactionBaseService {
             manage_inventory: true,
             external_id: item?.operator?.id,
             external_source: PRODUCT_EXTERNAL_SOURCE,
+            external_metadata: { amount: item.min },
             metadata: { imgUrl: productDetail?.card_image },
             prices: [
                 {

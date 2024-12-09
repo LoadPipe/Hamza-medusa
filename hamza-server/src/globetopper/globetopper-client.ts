@@ -5,7 +5,7 @@ import axios from 'axios';
  */
 export type GTPurchaseInputData = {
     productID: string;
-    amount: number;
+    amount: string;
     first_name: string;
     last_name: string;
     email: string;
@@ -101,7 +101,14 @@ export class GlobetopperClient {
 
         //create the post data
         const { email, first_name, last_name, order_id } = input;
-        const data = { email, first_name, last_name, order_id };
+        const data = {
+            email,
+            first_name,
+            last_name,
+            order_id: 12456,
+        };
+
+        console.log(data);
 
         //send request
         return axios.post(url, data, {
