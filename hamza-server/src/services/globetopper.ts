@@ -2,7 +2,7 @@ import {
     TransactionBaseService,
     ProductStatus,
     ProductVariant,
-    LineItem
+    LineItem,
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
 import OrderService from '../services/order';
@@ -140,22 +140,46 @@ export default class GlobetopperService extends TransactionBaseService {
                 how well they sell first
                 */
                 promises.push(
-                    this.apiClient.purchase({
-                        productID: variant.product.external_id,
-                        amount: variant.external_metadata?.amount as number,
-                        first_name: firstName,
-                        last_name: lastName,
+                    this.purchaseItem(
+                        orderId,
+                        firstName,
+                        lastName,
                         email,
-                        order_id: orderId,
-                    })
+                        variant
+                    )
                 );
             }
         }
 
+        console.log(
+            '::::::::::::::::PROCESSING ',
+            promises.length,
+            ' GT ITEMS::::::::::::::::'
+        );
         //here you have an array of outputs, 1 for each variant
         const purchaseOutputs = await Promise.all(promises);
 
+        console.log('done');
+
         //TODO: what to do with the outputs now?
+    }
+
+    private async purchaseItem(
+        orderId: string,
+        firstName: string,
+        lastName: string,
+        email: string,
+        variant: ProductVariant
+    ): Promise<any> {
+        const output = await this.apiClient.purchase({
+            productID: variant.product.external_id,
+            amount: variant.external_metadata?.amount as number,
+            first_name: firstName,
+            last_name: lastName,
+            email,
+            order_id: orderId,
+        });
+        console.log(JSON.parse(JSON.stringify(output.data)));
     }
 
     private async mapDataToProductInput(

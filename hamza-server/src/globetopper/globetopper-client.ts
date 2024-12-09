@@ -94,8 +94,16 @@ export class GlobetopperClient {
      * @param data See GTPurchaseInputData
      * @returns Bunch o data
      */
-    public async purchase(data: GTPurchaseInputData): Promise<any> {
-        let url: string = `${this.baseUrl}/product/search-all-products`;
+    public async purchase(input: GTPurchaseInputData): Promise<any> {
+        console.log('input:', input);
+        let url: string = `${this.baseUrl}/transaction/do-by-product/${input.productID}/${input.amount}`;
+        console.log(url);
+
+        //create the post data
+        const { email, first_name, last_name, order_id } = input;
+        const data = { email, first_name, last_name, order_id };
+
+        //send request
         return axios.post(url, data, {
             headers: {
                 authorization: 'Bearer ' + this.bearerAuthHeader,
