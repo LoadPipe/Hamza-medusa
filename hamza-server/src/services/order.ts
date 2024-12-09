@@ -154,13 +154,21 @@ export default class OrderService extends MedusaOrderService {
     }
 
     async getOrdersForCheckout(cartId: string): Promise<Order[]> {
-        return this.orderRepository_.find({
-            where: { cart_id: cartId, status: OrderStatus.REQUIRES_ACTION },
+        const orders = await this.orderRepository_.find({
+            where: { cart_id: cartId },
             relations: ['store.owner', 'payments'],
             skip: 0,
-            take: 1,
             order: { created_at: 'DESC' },
         });
+
+        //filter out the non-hackers
+        const output: Order[] = [];
+        for (let order of orders) {
+            if (order.status != OrderStatus.REQUIRES_ACTION) break;
+            output.push(order);
+        }
+
+        return output;
     }
 
     async getOrderWithStore(orderId: string): Promise<Order> {
@@ -215,20 +223,10 @@ export default class OrderService extends MedusaOrderService {
         cartId: string,
         transactionId: string,
         payerAddress: string,
-        receiverAddress: string,
-        escrowContractAddress: string,
         chainId: number
     ): Promise<Order[]> {
         //get orders & order ids
-        const orders: Order[] = await this.orderRepository_.find({
-            where: {
-                cart_id: cartId,
-                status: OrderStatus.REQUIRES_ACTION,
-            },
-            take: 1,
-            skip: 0,
-            order: { created_at: 'DESC' },
-        });
+        const orders: Order[] = await this.getOrdersForCheckout(cartId);
         const orderIds = orders.map((order) => order.id);
 
         //get payments associated with orders
@@ -240,17 +238,24 @@ export default class OrderService extends MedusaOrderService {
         if (process.env.BUCKY_ENABLE_PURCHASE)
             await this.processBuckydropOrders(cartId, orders);
 
+        //pair orders with payments
+        const paymentOrders: { order: Order; payment: Payment }[] = [];
+        for (let p of payments) {
+            paymentOrders.push({
+                payment: p,
+                order: orders.find((o) => o.id == p.order_id),
+            });
+        }
+
         //calls to update inventory
         //const inventoryPromises =
         //    this.getPostCheckoutUpdateInventoryPromises(cartProductsJson);
 
         //calls to update payments
         const paymentPromises = this.getPostCheckoutUpdatePaymentPromises(
-            payments,
+            paymentOrders,
             transactionId,
             payerAddress,
-            receiverAddress,
-            escrowContractAddress,
             chainId
         );
 
@@ -392,7 +397,6 @@ export default class OrderService extends MedusaOrderService {
 
     // Just checking if we have orders and returning a boolean
     async checkCustomerOrderBucket(customerId: string): Promise<boolean> {
-        console.log(`WTF`);
         const buckets = await Promise.all([
             this.getCustomerOrderBucket(customerId, OrderBucketType.PROCESSING),
             this.getCustomerOrderBucket(customerId, OrderBucketType.SHIPPED),
@@ -804,24 +808,24 @@ export default class OrderService extends MedusaOrderService {
     }
 
     private getPostCheckoutUpdatePaymentPromises(
-        payments: Payment[],
+        paymentOrders: { order: Order; payment: Payment }[],
         transactionId: string,
         payerAddress: string,
-        receiverAddress: string,
-        escrowAddress: string,
         chainId: number
     ): Promise<Order | Payment>[] {
         const promises: Promise<Order | Payment>[] = [];
 
         //update payments with transaction info
-        payments.forEach((p, i) => {
+        paymentOrders.forEach((po, i) => {
             promises.push(
-                this.updatePaymentAfterTransaction(p.id, {
+                this.updatePaymentAfterTransaction(po.payment.id, {
                     blockchain_data: {
                         transaction_id: transactionId,
                         payer_address: payerAddress,
-                        escrow_address: escrowAddress,
-                        receiver_address: receiverAddress,
+                        escrow_address:
+                            po.order?.store?.escrow_metadata?.address,
+                        receiver_address:
+                            po.order?.store?.owner?.wallet_address,
                         chain_id: chainId,
                     },
                 })
@@ -845,8 +849,6 @@ export default class OrderService extends MedusaOrderService {
 
     async createMockOrders(): Promise<Order> {
         try {
-            console.log('Starting mock order creation...');
-
             // Step 1: Get the first customer
             const customer = await this.customerRepository_.findOne({
                 where: {},
@@ -856,7 +858,6 @@ export default class OrderService extends MedusaOrderService {
             if (!customer) {
                 throw new Error('No customers found.');
             }
-            console.log('Customer found:', customer);
 
             // Step 2: Get the first region
             const region = await this.regionRepository_
@@ -867,7 +868,6 @@ export default class OrderService extends MedusaOrderService {
             if (!region) {
                 throw new Error('No regions found.');
             }
-            console.log('Region found:', region);
 
             // Step 3: Get random products
             const randomCount = Math.floor(Math.random() * 10) + 1; // Random between 1 and 10
@@ -876,15 +876,9 @@ export default class OrderService extends MedusaOrderService {
                 `SELECT * FROM product ORDER BY RANDOM() LIMIT ${randomCount}`
             );
 
-            console.log(
-                `Retrieved ${products.length} random products`,
-                products
-            );
-
             if (!products.length) {
                 throw new Error('No products found.');
             }
-            console.log('Products found:', products);
 
             const variants = await Promise.all(
                 products.map((product) =>
@@ -904,14 +898,11 @@ export default class OrderService extends MedusaOrderService {
                 }
             });
 
-            console.log('Variants found:', variants);
-
             // Step 4: Validate store_id from the first product
             const storeId = products[0]?.store_id;
             if (!storeId) {
                 throw new Error('Store ID not found in the product.');
             }
-            console.log('Store ID found:', storeId);
 
             // Grab the default sales channel... the first one
             const salesChannel = await this.salesChannelRepository_.findOne({
@@ -924,13 +915,7 @@ export default class OrderService extends MedusaOrderService {
             }
 
             const sales_channel_id = salesChannel.id;
-            console.log('Sales Channel ID:', sales_channel_id);
 
-            console.log('Creating cart with:', {
-                customer_id: customer.id,
-                email: customer.email,
-                region_id: region.id,
-            });
             // Step 5: Create a cart for the customer
             const cart = await this.cartRepository_.save(
                 this.cartRepository_.create({
@@ -942,7 +927,6 @@ export default class OrderService extends MedusaOrderService {
                     updated_at: new Date(),
                 })
             );
-            console.log('Cart created:', cart);
 
             // Step 6: Add line items to the cart
             const lineItems = [];
@@ -967,7 +951,6 @@ export default class OrderService extends MedusaOrderService {
                 lineItems.push(savedLineItem);
             }
             cart.items = lineItems;
-            console.log('Line items added to cart:', cart.items);
 
             // Step 7: Create an order using the cart and product's store_id
             let order: Order = new Order();
@@ -985,7 +968,6 @@ export default class OrderService extends MedusaOrderService {
             order.updated_at = new Date();
 
             order = await this.orderRepository_.save(order);
-            console.log('Order created successfully:', order);
 
             // Step 8: Link line items to the order
             order.items = cart.items;
@@ -995,8 +977,6 @@ export default class OrderService extends MedusaOrderService {
             });
 
             await Promise.all(lineItemPromises);
-
-            console.log('Line items linked to order:', order.items);
 
             this.logger.info(`Mock order created successfully: ${order.id}`);
             return order;
