@@ -2,7 +2,7 @@ import {
     TransactionBaseService,
     ProductStatus,
     ProductVariant,
-    LineItem
+    LineItem,
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
 import OrderService from '../services/order';
@@ -140,14 +140,13 @@ export default class GlobetopperService extends TransactionBaseService {
                 how well they sell first
                 */
                 promises.push(
-                    this.apiClient.purchase({
-                        productID: variant.product.external_id,
-                        amount: variant.external_metadata?.amount as number,
-                        first_name: firstName,
-                        last_name: lastName,
+                    this.purchaseItem(
+                        orderId,
+                        firstName,
+                        lastName,
                         email,
-                        order_id: orderId,
-                    })
+                        variant
+                    )
                 );
             }
         }
@@ -164,13 +163,13 @@ export default class GlobetopperService extends TransactionBaseService {
             const cardInfo: string[] = [];
             for (const field of purchase.data.records[0].extra_fields) {
                 let extraFieldContent: string = '';
-                
+
                 switch (field.attribute.name) {
                     case 'Barcode Image URL':
                     case 'Brand Logo':
                         extraFieldContent = `<img src="${field.content}" />`;
-                    break;
-                    
+                        break;
+
                     case 'Redemption URL':
                     case 'Barcode URL':
                     case 'Admin Barcode URL':
@@ -178,7 +177,7 @@ export default class GlobetopperService extends TransactionBaseService {
                         extraFieldContent += field.content;
                         extraFieldContent += '</a>';
                     default:
-                        extraFieldContent = field.content
+                        extraFieldContent = field.content;
                     //break
                 }
 
@@ -187,11 +186,31 @@ export default class GlobetopperService extends TransactionBaseService {
             }
 
             const emailBody: string = cardInfo.join('<br />\n');
-            console.log(`Globetopper gift card email info for order ${orderId}, customer ${email}:\n${emailBody}`);
+            console.log(
+                `Globetopper gift card email info for order ${orderId}, customer ${email}:\n${emailBody}`
+            );
         }
 
         //TODO: what to do with the outputs now?
         return purchaseOutputs ?? [];
+    }
+
+    private async purchaseItem(
+        orderId: string,
+        firstName: string,
+        lastName: string,
+        email: string,
+        variant: ProductVariant
+    ): Promise<any> {
+        const output = await this.apiClient.purchase({
+            productID: variant.product.external_id,
+            amount: variant.external_metadata?.amount?.toString(),
+            first_name: firstName,
+            last_name: lastName,
+            email,
+            order_id: orderId,
+        });
+        console.log('purchase output: ', output.data);
     }
 
     private async mapDataToProductInput(
@@ -455,6 +474,7 @@ export default class GlobetopperService extends TransactionBaseService {
             manage_inventory: true,
             external_id: item?.operator?.id,
             external_source: PRODUCT_EXTERNAL_SOURCE,
+            external_metadata: { amount: item.min },
             metadata: { imgUrl: productDetail?.card_image },
             prices: [
                 {

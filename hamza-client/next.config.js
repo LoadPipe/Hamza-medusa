@@ -63,20 +63,24 @@ const nextConfig = withStoreConfig({
             },
             {
                 protocol: 'https',
-                hostname: 'global-img-cdn.1688.com'
+                hostname: 'global-img-cdn.1688.com',
             },
             {
                 protocol: 'https',
-                hostname: 'static.snapchum.com'
+                hostname: 'static.snapchum.com',
             },
             {
-				protocol: 'https',
-				hostname: 'static.hamza.market'
-			},
-			{
-				protocol: 'https',
-				hostname: 'blog.hamza.market'
-			}
+                protocol: 'https',
+                hostname: 'static.hamza.market',
+            },
+            {
+                protocol: 'https',
+                hostname: 'blog.hamza.market',
+            },
+            {
+                protocol: 'https',
+                hostname: 'crm.globetopper.com',
+            },
         ],
     },
     async redirects() {
@@ -86,8 +90,8 @@ const nextConfig = withStoreConfig({
                 destination: '/en/:path*', // Matches the entire path and redirects to /en/
                 permanent: true, // Use a 301 redirect for SEO
             },
-        ]
-    }
+        ];
+    },
 });
 
 console.log('next.config.js', JSON.stringify(module.exports, null, 2));
