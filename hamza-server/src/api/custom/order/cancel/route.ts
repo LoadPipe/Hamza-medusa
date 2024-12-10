@@ -33,13 +33,6 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
             );
         }
 
-        //normal cancellation
-        // let order = await orderService.cancelOrder(
-        //     handler.inputParams.order_id,
-        //     handler.inputParams.cancel_reason
-        // );
-
-        // Create a cancellation request
         const cancellationRequest =
             await cancellationRequestService.createCancellationRecord(
                 handler.inputParams.order_id,
@@ -60,28 +53,6 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
             `Cancellation request created for order_id: $ handler.inputParams.order_id,}`
         );
 
-        //check customer id
-        // if (!handler.enforceCustomerId(order.customer_id)) return;
-
-        // if (!order) {
-        //     handler.logger.error(
-        //         `Order not found or could not be canceled for order_id: ${handler.inputParams.order_id}`
-        //     );
-        //     return handler.returnStatusWithMessage(
-        //         404,
-        //         'Order not found or could not be canceled'
-        //     );
-        // }
-
-        //buckydrop cancellation
-        // if (order.bucky_metadata)
-        //     order = await buckyService.cancelOrder(
-        //         handler.inputParams.order_id
-        //     );
-
-        // handler.logger.debug(
-        //     `Order ${handler.inputParams.order_id} cancelled.`
-        // );
         handler.returnStatus(200, {
             message: 'Order cancellation request created successfully',
             cancellationRequest,
