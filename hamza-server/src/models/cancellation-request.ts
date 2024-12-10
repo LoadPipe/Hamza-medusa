@@ -6,11 +6,12 @@ import {
     UpdateDateColumn,
     ManyToOne,
     JoinColumn,
+    BaseEntity,
 } from 'typeorm';
 import { Order } from './order';
 
 @Entity('cancellation_requests')
-export class CancellationRequest {
+export class CancellationRequest extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 

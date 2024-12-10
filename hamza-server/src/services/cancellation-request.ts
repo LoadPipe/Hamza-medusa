@@ -1,16 +1,19 @@
 import { Lifetime } from 'awilix';
-import { CancellationRepository } from 'src/repositories/cancellation-request';
+import { CancellationRequestRepository } from '../repositories/cancellation-request';
 import { createLogger, ILogger } from '../utils/logging/logger';
-import { CancellationRequest } from 'src/models/cancellation-request';
+import { CancellationRequest } from '../models/cancellation-request';
+import { TransactionBaseService } from '@medusajs/medusa';
 
-export default class CancellationRequestService {
+export default class CancellationRequestService extends TransactionBaseService {
     static LIFE_TIME = Lifetime.SINGLETON;
 
-    private cancellationRepository_: typeof CancellationRepository;
+    private cancellationRequestRepository: typeof CancellationRequestRepository;
     protected logger: ILogger;
 
     constructor(container) {
-        this.cancellationRepository_ = container.cancellationRepository;
+        super(container);
+        this.cancellationRequestRepository =
+            container.cancellationRequestRepository;
         this.logger = createLogger(container, 'CancellationService');
     }
 
@@ -30,15 +33,18 @@ export default class CancellationRequestService {
         this.logger.info(`Creating cancellation record for order: ${orderId}`);
 
         try {
-            const cancellationRequest = this.cancellationRepository_.create({
-                order_id: orderId,
-                reason,
-                buyer_note: buyerNote || null,
-                status: 'requested',
-            });
+            const cancellationRequest =
+                this.cancellationRequestRepository.create({
+                    order_id: orderId,
+                    reason,
+                    buyer_note: buyerNote || null,
+                    status: 'requested',
+                });
 
             const savedRequest =
-                await this.cancellationRepository_.save(cancellationRequest);
+                await this.cancellationRequestRepository.save(
+                    cancellationRequest
+                );
 
             this.logger.info(
                 `Cancellation record created successfully: ${savedRequest.id}`
