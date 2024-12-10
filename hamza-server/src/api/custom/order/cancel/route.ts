@@ -1,17 +1,12 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
-import OrderService from '../../../../services/order';
 import { RouteHandler } from '../../../route-handler';
-import BuckydropService from '../../../../services/buckydrop';
 import CancellationRequestService from '../../../../services/cancellation-request';
 
 //CANCELs an order, given its order id
 //TODO: does not need to be DELETE (cancelling is not deleting)
 export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
-    const orderService: OrderService = req.scope.resolve('orderService');
     const cancellationRequestService: CancellationRequestService =
         req.scope.resolve('cancellationRequestService');
-    const buckyService: BuckydropService =
-        req.scope.resolve('buckydropService');
 
     const handler: RouteHandler = new RouteHandler(
         req,
