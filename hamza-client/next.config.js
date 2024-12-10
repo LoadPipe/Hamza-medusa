@@ -79,7 +79,7 @@ const nextConfig = withStoreConfig({
             },
             {
                 protocol: 'https',
-                hostname: 'crm.globetopper.com/',
+                hostname: 'crm.globetopper.com',
             },
         ],
     },
