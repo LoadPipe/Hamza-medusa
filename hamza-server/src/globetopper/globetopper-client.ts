@@ -1,4 +1,5 @@
 import axios from 'axios';
+import querystring from 'querystring';
 
 /**
  * Input data for purchase at point-of-sale; required params only.
@@ -93,6 +94,7 @@ export class GlobetopperClient {
      *
      * @param data See GTPurchaseInputData
      * @returns Bunch o data
+     * @todo (re)implement as a worker
      */
     public async purchase(input: GTPurchaseInputData): Promise<any> {
         console.log('input:', input);
@@ -105,14 +107,15 @@ export class GlobetopperClient {
             email,
             first_name,
             last_name,
-            order_id: 12456,
+            order_id: 123456,
         };
 
         console.log(data);
 
         //send request
-        return axios.post(url, data, {
+        return axios.post(url, querystring.stringify(data), {
             headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
                 authorization: 'Bearer ' + this.bearerAuthHeader,
             },
         });

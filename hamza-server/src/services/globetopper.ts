@@ -120,7 +120,7 @@ export default class GlobetopperService extends TransactionBaseService {
         lastName: string,
         email: string,
         items: LineItem[]
-    ): Promise<void> {
+    ): Promise<any[]> {
         const promises: Promise<any>[] = [];
 
         //make a list of promises
@@ -154,7 +154,174 @@ export default class GlobetopperService extends TransactionBaseService {
         //here you have an array of outputs, 1 for each variant
         const purchaseOutputs = await Promise.all(promises);
 
+        // send email(s)
+        // handle balance - notify site admin if balance is below threshold
+        // update order
+
+        /*
+        EXAMPLE OF data.records[n]: 
+        ---------------------------
+        record 0:  {
+            trans_id: 13421585,
+            extra_fields: {
+                'Redemption URL': 'https://spend.playground.runa.io/4fc4edf7-c78e-4e68-b415-bcfc5b0bea17',
+                'Expiration Date': '2025-03-10'
+            },
+            meta_fields: [
+                { attribute: [Object], content: '3.00' },
+                { attribute: [Object], content: 'Todd-Royal' },
+                { attribute: [Object], content: 'Barsoooom' },
+                {
+                attribute: [Object],
+                content: '0x1542612fee591ed35c05a3e980bab325265c06a3@evm.blockchain'
+                },
+                { attribute: [Object], content: '1' },
+                { attribute: [Object], content: '123456' },
+                { attribute: [Object], content: null },
+                { attribute: [Object], content: null }
+            ],
+            operator_transid: null,
+            operator_card_serial: null,
+            operator_card_num: null,
+            operator_card_notes: null,
+            source: 'API',
+            remote_ip: '10.42.216.0',
+            msisdn: '123456',
+            operator: {
+                id: 824,
+                name: 'Google Play UK',
+                sku: null,
+                phone: '1xxxxxxxxxx',
+                metadata: [],
+                country: {
+                iso2: 'GB',
+                iso3: 'GBR',
+                name: 'United Kingdom',
+                dial_code: '+44-xxx-xxx-xxxx',
+                currency: [Object]
+                }
+            },
+            value: {
+                BillerID: 14973,
+                name: 'Google Play UK',
+                description: null,
+                notes: null,
+                currency: { code: 'GBP', name: 'Pound Sterling' },
+                display: '3.00 - 500.00 by 0.10',
+                operator: {
+                id: 824,
+                name: 'Google Play UK',
+                sku: null,
+                phone: '1xxxxxxxxxx',
+                metadata: [],
+                country: [Object]
+                },
+                min: '3.00',
+                max: '500.00',
+                increment: '0.10',
+                is_a_range: true,
+                locval: 3.8305800000000003,
+                type: { id: 2, name: 'Pin' },
+                category: { id: 6, name: 'Gift Card', description: 'Digital Gift Cards' },
+                discount: '5.00000',
+                fees: [],
+                request_attributes: [
+                [Object], [Object],
+                [Object], [Object],
+                [Object], [Object],
+                [Object], [Object]
+                ],
+                additional_details: [],
+                user_display: '3.00 - 500.00 by 0.10',
+                delivered_value: ''
+            },
+            recharge_amount: 3,
+            owner_recharge_amount: '3.00',
+            owner_currency: { code: 'USD', name: 'US Dollar' },
+            exchange_rate: '1.2768600000',
+            final_amount: 3.8305859519644523,
+            final_tax: 0,
+            promo_discount: 0,
+            create_date: '2024-12-10 10:21:12',
+            settle_date: '2024-12-10 10:21:14',
+            status: 0,
+            status_description: 'Success',
+            payment: { id: 8, abbreviation: 'CASH', name: 'Cash' },
+            country: {
+                iso2: 'GB',
+                iso3: 'GBR',
+                name: 'United Kingdom',
+                dial_code: '+44-xxx-xxx-xxxx',
+                currency: { code: 'GBP', name: 'Pound Sterling' }
+            },
+            currency: { code: 'GBP', name: 'Pound Sterling' },
+            user_id: 22803,
+            commissions: [
+                {
+                agent_id: 22803,
+                credit: '0.19153',
+                debit: '0.00000',
+                date: '2024-12-10 10:21:14',
+                type: 'COMMISSION',
+                related_id: '13421585',
+                description: 'Pay Commission',
+                new_balance: '1401.08875',
+                owner_credit: '0.19153',
+                owner_debit: '0.00000',
+                owner_new_balance: '1,401.08875',
+                owner_currency: [Object]
+                }
+            ],
+            ownerFees: [],
+            summary: {
+                TotalFaceValue: 3,
+                TotalSurcharges: 0,
+                TotalFees: 0,
+                TotalDiscounts: 0.19,
+                TotalCustomerCostUSD: 3.64
+            }
+            }
+
+        */
+
+        // stub to build email content
+        for (const purchase of purchaseOutputs) {
+            const cardInfo: string[] = [];
+            const record: any = purchase.records[0];
+            for (const field in record.extra_fields) {
+                let extraFieldContent: string = '';
+                const fieldValue: string = record.extra_fields[field];
+
+                switch (field) {
+                    case 'Barcode Image URL':
+                    case 'Brand Logo':
+                        extraFieldContent = `<img src="${fieldValue}" />`;
+                        break;
+
+                    case 'Redemption URL':
+                    case 'Barcode URL':
+                    case 'Admin Barcode URL':
+                        extraFieldContent = `<a href="${fieldValue}">`;
+                        extraFieldContent += fieldValue;
+                        extraFieldContent += '</a>';
+                        break;
+                    default:
+                        extraFieldContent = fieldValue;
+                    //break
+                }
+
+                extraFieldContent = `${field}: ${extraFieldContent}`;
+                cardInfo.push(extraFieldContent);
+            }
+
+            const emailBody: string = cardInfo.join('<br />\n');
+            console.log(
+                `Globetopper gift card email info for order ${orderId}, customer ${email}:\n${emailBody}`
+            );
+        }
+
         //TODO: what to do with the outputs now?
+        return purchaseOutputs ?? [];
     }
 
     private async purchaseItem(
@@ -172,7 +339,8 @@ export default class GlobetopperService extends TransactionBaseService {
             email,
             order_id: orderId,
         });
-        console.log('purchase output: ', output.data);
+
+        return output.data;
     }
 
     private async mapDataToProductInput(

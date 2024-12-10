@@ -803,13 +803,14 @@ export default class OrderService extends MedusaOrderService {
                         GlobetopperService.EXTERNAL_SOURCE
                     );
 
-                await this.globetopperService_.processPointOfSale(
-                    order.id,
-                    cart.customer.first_name,
-                    cart.customer.last_name,
-                    cart.email,
-                    items
-                );
+                const results: any[] =
+                    await this.globetopperService_.processPointOfSale(
+                        order.id,
+                        cart.customer.first_name,
+                        cart.customer.last_name,
+                        cart.email,
+                        items
+                    );
             } catch (e: any) {
                 this.logger.error(
                     `Error processing globetopper orders for order ${order.id}`,
