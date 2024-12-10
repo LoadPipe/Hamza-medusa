@@ -157,13 +157,21 @@ export default class OrderService extends MedusaOrderService {
     }
 
     async getOrdersForCheckout(cartId: string): Promise<Order[]> {
-        return this.orderRepository_.find({
-            where: { cart_id: cartId, status: OrderStatus.REQUIRES_ACTION },
+        const orders = await this.orderRepository_.find({
+            where: { cart_id: cartId },
             relations: ['store.owner', 'payments'],
             skip: 0,
-            take: 1,
             order: { created_at: 'DESC' },
         });
+
+        //filter out the non-hackers
+        const output: Order[] = [];
+        for (let order of orders) {
+            if (order.status != OrderStatus.REQUIRES_ACTION) break;
+            output.push(order);
+        }
+
+        return output;
     }
 
     async getOrderWithStore(orderId: string): Promise<Order> {
@@ -218,8 +226,6 @@ export default class OrderService extends MedusaOrderService {
         cartId: string,
         transactionId: string,
         payerAddress: string,
-        receiverAddress: string,
-        escrowContractAddress: string,
         chainId: number
     ): Promise<Order[]> {
         const cart = await this.cartRepository_.findOne({
@@ -228,15 +234,7 @@ export default class OrderService extends MedusaOrderService {
         });
 
         //get orders & order ids
-        const orders: Order[] = await this.orderRepository_.find({
-            where: {
-                cart_id: cartId,
-                status: OrderStatus.REQUIRES_ACTION,
-            },
-            take: 1,
-            skip: 0,
-            order: { created_at: 'DESC' },
-        });
+        const orders: Order[] = await this.getOrdersForCheckout(cartId);
         const orderIds = orders.map((order) => order.id);
 
         //get payments associated with orders
@@ -252,17 +250,24 @@ export default class OrderService extends MedusaOrderService {
         if (process.env.GLOBETOPPER_ENABLE_PURCHASE)
             await this.processGlobetopperOrders(cart, orders);
 
+        //pair orders with payments
+        const paymentOrders: { order: Order; payment: Payment }[] = [];
+        for (let p of payments) {
+            paymentOrders.push({
+                payment: p,
+                order: orders.find((o) => o.id == p.order_id),
+            });
+        }
+
         //calls to update inventory
         //const inventoryPromises =
         //    this.getPostCheckoutUpdateInventoryPromises(cartProductsJson);
 
         //calls to update payments
         const paymentPromises = this.getPostCheckoutUpdatePaymentPromises(
-            payments,
+            paymentOrders,
             transactionId,
             payerAddress,
-            receiverAddress,
-            escrowContractAddress,
             chainId
         );
 
@@ -864,24 +869,24 @@ export default class OrderService extends MedusaOrderService {
     }
 
     private getPostCheckoutUpdatePaymentPromises(
-        payments: Payment[],
+        paymentOrders: { order: Order; payment: Payment }[],
         transactionId: string,
         payerAddress: string,
-        receiverAddress: string,
-        escrowAddress: string,
         chainId: number
     ): Promise<Order | Payment>[] {
         const promises: Promise<Order | Payment>[] = [];
 
         //update payments with transaction info
-        payments.forEach((p, i) => {
+        paymentOrders.forEach((po, i) => {
             promises.push(
-                this.updatePaymentAfterTransaction(p.id, {
+                this.updatePaymentAfterTransaction(po.payment.id, {
                     blockchain_data: {
                         transaction_id: transactionId,
                         payer_address: payerAddress,
-                        escrow_address: escrowAddress,
-                        receiver_address: receiverAddress,
+                        escrow_address:
+                            po.order?.store?.escrow_metadata?.address,
+                        receiver_address:
+                            po.order?.store?.owner?.wallet_address,
                         chain_id: chainId,
                     },
                 })
