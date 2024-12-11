@@ -33,37 +33,35 @@ export default class CancellationRequestService extends TransactionBaseService {
         this.logger.info(`Creating cancellation record for order: ${orderId}`);
 
         try {
-            const existing = await this.cancellationRequestRepository.find({
+            const existing = await this.cancellationRequestRepository.findOne({
                 where: { order_id: orderId },
             });
 
             if (existing) {
-                existing[0].reason = reason;
-                if (buyerNote) existing[0].buyer_note = buyerNote;
+                existing.reason = reason;
+                if (buyerNote) existing.buyer_note = buyerNote;
 
-                return await this.cancellationRequestRepository.save(
-                    existing[0]
-                );
-            } else {
-                const cancellationRequest =
-                    this.cancellationRequestRepository.create({
-                        order_id: orderId,
-                        reason,
-                        buyer_note: buyerNote || null,
-                        status: 'requested',
-                    });
-
-                const savedRequest =
-                    await this.cancellationRequestRepository.save(
-                        cancellationRequest
-                    );
-
-                this.logger.info(
-                    `Cancellation record created successfully: ${savedRequest.id}`
-                );
-
-                return savedRequest;
+                return await this.cancellationRequestRepository.save(existing);
             }
+
+            const cancellationRequest =
+                await this.cancellationRequestRepository.create({
+                    order_id: orderId,
+                    reason,
+                    buyer_note: buyerNote || null,
+                    status: 'requested',
+                });
+
+            const savedRequest =
+                await this.cancellationRequestRepository.save(
+                    cancellationRequest
+                );
+
+            this.logger.info(
+                `Cancellation record created successfully: ${savedRequest.id}`
+            );
+
+            return savedRequest;
         } catch (error) {
             this.logger.error(
                 `Error creating cancellation record for order ${orderId}: ${error.message}`
