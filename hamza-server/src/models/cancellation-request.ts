@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Order } from './order';
 
-@Entity('cancellation_requests')
+@Entity('cancellation_request')
 export class CancellationRequest extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;

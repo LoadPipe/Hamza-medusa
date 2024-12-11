@@ -4,7 +4,7 @@ export class CancellationRequest1733812644853 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(
             new Table({
-                name: 'cancellation_requests',
+                name: 'cancellation_request',
                 columns: [
                     {
                         name: 'id',
@@ -66,6 +66,6 @@ export class CancellationRequest1733812644853 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable('cancellation_requests');
+        await queryRunner.dropTable('cancellation_request');
     }
 }
