@@ -153,6 +153,11 @@
             "id": "pcol_lighting",
             "title": "Lighting",
             "handle": "pcol_lighting"
+        },
+        {
+            "id": "pcol_giftcards",
+            "title": "Gift Cards",
+            "handle": "pcol_giftcards"
         }
     ],
     "product_tags": [
