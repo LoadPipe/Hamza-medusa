@@ -1,14 +1,15 @@
 import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
-import OrderService from '../../../../services/order';
 import { RouteHandler } from '../../../route-handler';
-import BuckydropService from '../../../../services/buckydrop';
+import CancellationRequestService from '../../../../services/cancellation-request';
+import { CancellationRequestRepository } from '../../../../repositories/cancellation-request';
 
 //CANCELs an order, given its order id
 //TODO: does not need to be DELETE (cancelling is not deleting)
 export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
-    const orderService: OrderService = req.scope.resolve('orderService');
-    const buckyService: BuckydropService =
-        req.scope.resolve('buckydropService');
+    const cancellationRequestService: CancellationRequestService =
+        req.scope.resolve('cancellationRequestService');
+    const cancellationRequestRepository: typeof CancellationRequestRepository =
+        req.scope.resolve('customerRepository');
 
     const handler: RouteHandler = new RouteHandler(
         req,
@@ -30,34 +31,29 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
             );
         }
 
-        //normal cancellation
-        let order = await orderService.cancelOrder(
-            handler.inputParams.order_id,
-            handler.inputParams.cancel_reason
-        );
+        const cancellationRequest =
+            await cancellationRequestService.createCancellationRecord(
+                handler.inputParams.order_id,
+                handler.inputParams.cancel_reason
+            );
 
-        //check customer id
-        if (!handler.enforceCustomerId(order.customer_id)) return;
-
-        if (!order) {
+        if (!cancellationRequest) {
             handler.logger.error(
-                `Order not found or could not be canceled for order_id: ${handler.inputParams.order_id}`
+                `Failed to create cancellation request for order_id: ${handler.inputParams.order_id}`
             );
             return handler.returnStatusWithMessage(
-                404,
-                'Order not found or could not be canceled'
+                500,
+                'Failed to create cancellation request'
             );
         }
 
-        //buckydrop cancellation
-        if (order.bucky_metadata)
-            order = await buckyService.cancelOrder(
-                handler.inputParams.order_id
-            );
-
         handler.logger.debug(
-            `Order ${handler.inputParams.order_id} cancelled.`
+            `Cancellation request created for order_id: $ handler.inputParams.order_id,}`
         );
-        handler.returnStatus(200, order);
+
+        handler.returnStatus(200, {
+            message: 'Order cancellation request created successfully',
+            cancellationRequest,
+        });
     });
 };
