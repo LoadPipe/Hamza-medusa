@@ -137,6 +137,16 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 },
                 'password'
             ),
+            userService.create(
+                {
+                    email: 'minanas@gmail.org',
+                    first_name: 'Minanas',
+                    last_name: 'Minaninski',
+                    wallet_address:
+                        '0x0000F49cC0f91d66Bc5bBbE931913D8709500008'.toLowerCase(),
+                },
+                'password'
+            ),
         ]);
 
         // Destructing the users array
@@ -152,6 +162,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             user8,
             user9,
             user10,
+            user11,
         ] = users;
 
         const stores = await Promise.all([
@@ -289,6 +300,18 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                     version: '1.0',
                 }
             ),
+            storeService.createStore(
+                user11,
+                'Gift Cards',
+                'pcol_giftcards',
+                'https://images.hamza.market/giftcards.webp',
+                110,
+                'Gift Cards of all kinds & varieties and types and things.',
+                {
+                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                    version: '1.0',
+                }
+            ),
         ]);
         const [
             store0,
@@ -302,6 +325,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             store8,
             store9,
             store10,
+            store11,
         ] = stores;
 
         const collectionIds = [
@@ -330,6 +354,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             //store8.id,
             store9.id,
             store10.id,
+            store11.id,
         ];
 
         const promises = [];
