@@ -4277,6 +4277,16 @@
             "metadata": {
                 "icon_url": "https://images.hamza.market/category-icons/pets.svg"
             }
+        },
+        {
+            "id": "pcat_giftcards",
+            "name": "Gift Cards",
+            "rank": 2,
+            "category_children": [],
+            "handle": "gift_cards",
+            "metadata": {
+                "icon_url": "https://images.hamza.market/category-icons/gift-cards.svg"
+            }
         }
     ],
     "publishable_api_keys": [
