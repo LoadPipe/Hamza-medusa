@@ -5,7 +5,6 @@ import {
     LineItem,
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
-import OrderService from '../services/order';
 import { Product } from '../models/product';
 import { PriceConverter } from '../utils/price-conversion';
 import {
@@ -69,10 +68,11 @@ export default class GlobetopperService extends TransactionBaseService {
                 [];
 
             //sort the output
-            const gtRecords = gtProducts.data.records.sort(
+            const gtRecords = gtProducts.records.sort(
                 (a, b) => (a?.operator?.id ?? 0) < (b?.operator?.id ?? 0)
             );
-            const gtCat = gtCatalogue.data.records.sort(
+
+            const gtCat = gtCatalogue.records.sort(
                 (a, b) =>
                     (a?.topup_product_id ?? 0) < (b?.topup_product_id ?? 0)
             );
@@ -597,37 +597,84 @@ export default class GlobetopperService extends TransactionBaseService {
             }
         }*/
 
-        variants.push({
-            title: item?.name,
-            inventory_quantity: 9999,
-            allow_backorder: false,
-            manage_inventory: true,
-            external_id: item?.operator?.id,
-            external_source: PRODUCT_EXTERNAL_SOURCE,
-            external_metadata: { amount: item.min },
-            metadata: { imgUrl: productDetail?.card_image },
-            prices: [
-                {
-                    currency_code: 'usdc',
-                    amount: Math.floor(item.min * 100),
-                },
-                {
-                    currency_code: 'usdt',
-                    amount: Math.floor(item.min * 100),
-                },
-                {
-                    currency_code: 'eth',
-                    amount: await this.priceConverter.getPrice({
-                        baseAmount: Math.floor(item.min * 100),
-                        baseCurrency: 'usdc',
-                        toCurrency: 'eth',
-                    }),
-                },
-            ],
-            options: [],
-        });
+        const variantPrices = this.getVariantPrices(item);
+
+        for (let variantPrice of variantPrices) {
+            variants.push({
+                title: item?.name,
+                inventory_quantity: 9999,
+                allow_backorder: false,
+                manage_inventory: true,
+                external_id: item?.operator?.id,
+                external_source: PRODUCT_EXTERNAL_SOURCE,
+                external_metadata: { amount: item.min },
+                metadata: { imgUrl: productDetail?.card_image },
+                prices: [
+                    {
+                        currency_code: 'usdc',
+                        amount: Math.floor(variantPrice * 100),
+                    },
+                    {
+                        currency_code: 'usdt',
+                        amount: Math.floor(variantPrice * 100),
+                    },
+                    {
+                        currency_code: 'eth',
+                        amount: await this.priceConverter.getPrice({
+                            baseAmount: Math.floor(variantPrice * 100),
+                            baseCurrency: 'usdc',
+                            toCurrency: 'eth',
+                        }),
+                    },
+                ],
+                options: [],
+            });
+        }
 
         return variants;
+    }
+
+    private getVariantPrices(item: any): number[] {
+        const targetPrices: number[] = [
+            1, 3, 5, 10, 25, 50, 100, 250, 500, 1000,
+        ];
+        const output: number[] = [];
+
+        const findClosest = (
+            target: number,
+            lastNumber: number,
+            increment: number
+        ) => {
+            let current = lastNumber;
+            for (let n = lastNumber; n <= target; n += increment) {
+                current = n;
+            }
+
+            return target - current <= current + increment - target
+                ? current
+                : current + increment;
+        };
+
+        for (let n = 0; n < targetPrices.length; n++) {
+            const price: number = targetPrices[n];
+            if (price < item.min) {
+                if (!output.includes(item.min)) output.push(item.min);
+            }
+
+            const next: any = findClosest(
+                price,
+                output[output.length - 1],
+                item.increment
+            );
+            if (!output.includes(next) && next <= item.max) output.push(next);
+
+            if (price > item.max) {
+                if (!output.includes(item.max)) output.push(item.max);
+                break;
+            }
+        }
+
+        return output;
     }
 
     private getUniqueProductOptionNames(productDetails: any): string[] {
