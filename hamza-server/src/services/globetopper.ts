@@ -488,26 +488,25 @@ export default class GlobetopperService extends TransactionBaseService {
         }
       */
 
-            //const metadata = item;
-            //metadata.detail = productDetails.data;
             const externalId = item?.operator?.id;
 
             if (!externalId) throw new Error('SPU code not found');
-
-            const optionNames: string[] = ['Amount'];
-            const variants = await this.mapVariants(
-                item,
-                productDetail,
-                optionNames
-            );
+            const variants = await this.mapVariants(item, productDetail);
 
             //add variant images to the main product images
             const images = []; //TODO: get images
 
+            let handle = item?.name
+                ?.trim()
+                ?.toLowerCase()
+                ?.replace(/[^a-zA-Z0-9 ]/g, '')
+                ?.replaceAll(' ', '-');
+            handle = `gc-${handle}-${externalId}`;
+
             const output = {
                 title: item?.name,
                 subtitle: productDetail.brand_description, //TODO: find a better value
-                handle: externalId, //TODO: create a better handle
+                handle,
                 description: `${productDetail.brand_description} <br/>${productDetail.redemption_instruction}`, //TODO: make better description
                 is_giftcard: false,
                 status: status as ProductStatus,
@@ -524,9 +523,7 @@ export default class GlobetopperService extends TransactionBaseService {
                 sales_channels: salesChannels.map((sc) => {
                     return { id: sc };
                 }),
-                options: optionNames.map((o) => {
-                    return { title: o };
-                }),
+                options: [{ title: 'Amount' }],
                 variants,
             };
 
@@ -538,7 +535,7 @@ export default class GlobetopperService extends TransactionBaseService {
             return output;
         } catch (error) {
             this.logger.error(
-                'Error mapping Bucky data to product input',
+                'Error mapping Globetopper data to product input',
                 error
             );
             return null;
@@ -547,50 +544,9 @@ export default class GlobetopperService extends TransactionBaseService {
 
     private async mapVariants(
         item: any,
-        productDetail: any,
-        optionNames: string[]
+        productDetail: any
     ): Promise<CreateProductProductVariantInput[]> {
         const variants = [];
-
-        const getVariantDescriptionText = (data: any) => {
-            let output: string = '';
-            if (data.props) {
-                for (let prop of data.props) {
-                    output += prop.valueName + ' ';
-                }
-                output = output.trim();
-            } else {
-                //output = productDetails.data.goodsName;
-            }
-            return output;
-        };
-
-        /*for (const variant of productDetails.data.skuList) {
-            //get price
-            const baseAmount = variant.proPrice
-                ? variant.proPrice.priceCent
-                : variant.price.priceCent;
-
-            //TODO: get from someplace global
-            const currencies = ['eth', 'usdc', 'usdt'];
-            const prices = [];
-            for (const currency of currencies) {
-                prices.push();
-            }
-
-            //get option names/values
-            const options = [];
-            if (variant.props) {
-                for (const opt of optionNames) {
-                    options.push({
-                        value:
-                            variant.props.find((o) => o.propName === opt)
-                                ?.valueName ?? '',
-                    });
-                }
-            }
-        }*/
-
         const variantPrices = this.getVariantPrices(item);
 
         for (let variantPrice of variantPrices) {
@@ -637,8 +593,6 @@ export default class GlobetopperService extends TransactionBaseService {
         const findClosest = (
             target: number,
             lastNumber: number,
-            min: number,
-            max: number,
             increment: number
         ) => {
             let current = lastNumber;
@@ -667,8 +621,6 @@ export default class GlobetopperService extends TransactionBaseService {
             const next: any = findClosest(
                 price,
                 output[output.length - 1],
-                min,
-                max,
                 increment
             );
             if (!output.find((i) => i === next) && next <= max) {
