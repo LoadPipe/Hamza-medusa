@@ -61,7 +61,10 @@ export default class GlobetopperService extends TransactionBaseService {
     ): Promise<Product[]> {
         try {
             //get products in two API calls
-            const gtProducts = await this.apiClient.searchProducts();
+            const gtProducts = await this.apiClient.searchProducts(
+                undefined,
+                'USD'
+            );
             const gtCatalogue = await this.apiClient.getCatalog();
 
             const productInputs: (CreateProductInput & { store_id: string })[] =
@@ -643,9 +646,13 @@ export default class GlobetopperService extends TransactionBaseService {
         const findClosest = (
             target: number,
             lastNumber: number,
+            min: number,
+            max: number,
             increment: number
         ) => {
             let current = lastNumber;
+            if (increment === 0) increment = 0.01;
+
             for (let n = lastNumber; n <= target; n += increment) {
                 current = n;
             }
@@ -655,21 +662,30 @@ export default class GlobetopperService extends TransactionBaseService {
                 : current + increment;
         };
 
+        const min = parseFloat(item.min);
+        const max = parseFloat(item.max);
+        const increment = parseFloat(item.increment);
         for (let n = 0; n < targetPrices.length; n++) {
             const price: number = targetPrices[n];
-            if (price < item.min) {
-                if (!output.includes(item.min)) output.push(item.min);
+            if (price < min) {
+                if (!output.find((i) => i === min)) {
+                    output.push(min);
+                }
             }
 
             const next: any = findClosest(
                 price,
                 output[output.length - 1],
-                item.increment
+                min,
+                max,
+                increment
             );
-            if (!output.includes(next) && next <= item.max) output.push(next);
+            if (!output.find((i) => i === next) && next <= max) {
+                output.push(next.toFixed(2));
+            }
 
-            if (price > item.max) {
-                if (!output.includes(item.max)) output.push(item.max);
+            if (price > max) {
+                if (!output.find((i) => i === max)) output.push(max);
                 break;
             }
         }

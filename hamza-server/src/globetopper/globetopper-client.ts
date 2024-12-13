@@ -56,7 +56,7 @@ export class GlobetopperClient {
             url = appendQuerystring(url, 'countryCode', countryCode);
         if (productId) url = appendQuerystring(url, 'productID', productId);
 
-        const output: any = axios.get(url, {
+        const output: any = await axios.get(url, {
             headers: {
                 authorization: 'Bearer ' + this.bearerAuthHeader,
             },
@@ -85,16 +85,16 @@ export class GlobetopperClient {
             url = appendQuerystring(url, 'countryCode', countryCode);
         if (categoryId) url = appendQuerystring(url, 'categoryID', categoryId);
         if (typeId) url = appendQuerystring(url, 'typeID', typeId);
-        const output: any = axios.get(url, {
+        const output: any = await axios.get(url, {
             headers: {
                 authorization: 'Bearer ' + this.bearerAuthHeader,
             },
         });
 
         let data = output?.data;
-        if (currencyCode && data) {
-            data = data.map(
-                (i) => i?.operator?.currency?.code === currencyCode
+        if (currencyCode && data?.records) {
+            data.records = data.records.filter(
+                (i) => i?.operator?.country?.currency?.code === 'USD'
             );
         }
 
