@@ -94,7 +94,7 @@ export class GlobetopperClient {
         let data = output?.data;
         if (currencyCode && data?.records) {
             data.records = data.records.filter(
-                (i) => i?.operator?.country?.currency?.code === 'USD'
+                (i) => i?.operator?.country?.currency?.code === currencyCode
             );
         }
 
@@ -109,9 +109,7 @@ export class GlobetopperClient {
      * @todo (re)implement as a worker
      */
     public async purchase(input: GTPurchaseInputData): Promise<any> {
-        console.log('input:', input);
         let url: string = `${this.baseUrl}/transaction/do-by-product/${input.productID}/${input.amount}`;
-        console.log(url);
 
         //create the post data
         const { email, first_name, last_name, order_id } = input;

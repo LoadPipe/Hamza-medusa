@@ -10,17 +10,9 @@ import { PriceConverter } from '../utils/price-conversion';
 import {
     CreateProductProductVariantInput,
     CreateProductInput as MedusaCreateProductInput,
-    ProductOptionInput,
 } from '@medusajs/medusa/dist/types/product';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import { createLogger, ILogger } from '../utils/logging/logger';
-import {
-    IsNull,
-    Not,
-    FindManyOptions,
-    FindOptionsWhere as TypeormFindOptionsWhere,
-    In,
-} from 'typeorm';
 import { GlobetopperClient } from '../globetopper/globetopper-client';
 
 const PRODUCT_EXTERNAL_SOURCE: string = 'globetopper';
@@ -30,8 +22,6 @@ type CreateProductInput = MedusaCreateProductInput & {
     external_source: string;
     external_metadata?: Record<string, unknown>;
 };
-
-// TODO: I think this code needs comments its difficult to understand.
 
 export default class GlobetopperService extends TransactionBaseService {
     protected readonly logger: ILogger;
@@ -57,13 +47,14 @@ export default class GlobetopperService extends TransactionBaseService {
         storeId: string,
         categoryId: string,
         collectionId: string,
-        salesChannelId: string
+        salesChannelId: string,
+        currencyCode: string = 'USD'
     ): Promise<Product[]> {
         try {
             //get products in two API calls
             const gtProducts = await this.apiClient.searchProducts(
                 undefined,
-                'USD'
+                currencyCode
             );
             const gtCatalogue = await this.apiClient.getCatalog();
 
@@ -503,7 +494,7 @@ export default class GlobetopperService extends TransactionBaseService {
 
             if (!externalId) throw new Error('SPU code not found');
 
-            const optionNames = this.getUniqueProductOptionNames(item);
+            const optionNames: string[] = ['Amount'];
             const variants = await this.mapVariants(
                 item,
                 productDetail,
@@ -630,7 +621,7 @@ export default class GlobetopperService extends TransactionBaseService {
                         }),
                     },
                 ],
-                options: [{ value: 'anything' }],
+                options: [{ value: variantPrice.toFixed(2) }],
             });
         }
 
@@ -681,27 +672,12 @@ export default class GlobetopperService extends TransactionBaseService {
                 increment
             );
             if (!output.find((i) => i === next) && next <= max) {
-                output.push(next.toFixed(2));
+                output.push(parseFloat(next.toFixed(2)));
             }
 
             if (price > max) {
                 if (!output.find((i) => i === max)) output.push(max);
                 break;
-            }
-        }
-
-        return output;
-    }
-
-    private getUniqueProductOptionNames(productDetails: any): string[] {
-        const output: string[] = ['Default'];
-        return output;
-
-        for (const variant of productDetails.data.skuList) {
-            for (const prop of variant.props) {
-                if (!output.find((p) => p === prop.propName)) {
-                    output.push(prop.propName);
-                }
             }
         }
 
