@@ -630,7 +630,7 @@ export default class GlobetopperService extends TransactionBaseService {
                         }),
                     },
                 ],
-                options: [],
+                options: [{ value: 'anything' }],
             });
         }
 
@@ -694,7 +694,7 @@ export default class GlobetopperService extends TransactionBaseService {
     }
 
     private getUniqueProductOptionNames(productDetails: any): string[] {
-        const output: string[] = [];
+        const output: string[] = ['Default'];
         return output;
 
         for (const variant of productDetails.data.skuList) {
