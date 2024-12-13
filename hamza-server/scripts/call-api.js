@@ -84,6 +84,21 @@ async function main() {
         );
         console.log(whitelistResponse);
         */
+
+        const giftCardsSetup = await fetch(
+            `http://localhost:${port}/admin/custom/setup/giftcards`,
+            {
+                method: 'POST',
+                headers: {
+                    Cookie: authCookie.substring(0, authCookie.indexOf(';')),
+                },
+                body: JSON.stringify({
+                    email: 'goblinvendor@hamza.com',
+                    password: 'password',
+                }),
+            }
+        );
+        console.log(await storeResponse.json());
     } catch (e) {
         console.error(e);
     }
