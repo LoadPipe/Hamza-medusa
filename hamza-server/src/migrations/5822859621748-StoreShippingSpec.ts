@@ -6,7 +6,7 @@ export class StoreShippingSpec5822859621748 implements MigrationInterface {
             `CREATE TABLE "store_shipping_spec" ( 
             "id" character varying NOT NULL,
             "store_id" character varying NOT NULL,
-            "criteria" jsonb NOT NULL,
+            "spec" jsonb NOT NULL,
             "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
             "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
             CONSTRAINT "PK_store_shipping_spec_pk" PRIMARY KEY ("id") )`

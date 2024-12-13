@@ -1,6 +1,7 @@
 import { Entity, OneToOne, JoinColumn, Column, OneToMany } from 'typeorm';
 import { Store as MedusaStore } from '@medusajs/medusa';
 import { User } from './user';
+import { StoreShippingSpec } from './store-shipping-spec';
 
 @Entity()
 export class Store extends MedusaStore {
@@ -12,6 +13,11 @@ export class Store extends MedusaStore {
         onDelete: 'CASCADE',
     })
     users?: User[];
+
+    @OneToMany(() => StoreShippingSpec, (spec) => spec.store, {
+        onDelete: 'CASCADE',
+    })
+    shipping_specs?: StoreShippingSpec[];
 
     // Store already has a name field, let's make it unique, such that stores can be identified by their names
     @Column({ unique: true, nullable: false })
