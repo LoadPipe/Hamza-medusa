@@ -19,10 +19,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
     await handler.handle(async () => {
         const shippingOption = await shippingOptionRepository.findOne({
-            where: { data: { id: 'bucky-fulfillment' } },
+            where: { data: { id: 'store-fulfillment' } },
         });
 
-        shippingOption.provider_id = 'bucky-fulfillment';
+        shippingOption.provider_id = 'store-fulfillment';
         shippingOption.price_type = ShippingOptionPriceType.CALCULATED;
 
         const output = await shippingOptionRepository.save(shippingOption);

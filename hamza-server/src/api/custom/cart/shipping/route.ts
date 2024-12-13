@@ -1,10 +1,12 @@
 import { MedusaRequest, MedusaResponse } from '@medusajs/medusa';
 import CartService from '../../../../services/cart';
 import { RouteHandler } from '../../../route-handler';
-import BuckydropService from '../../../../services/buckydrop';
+import StoreShippingSpecService from '../../../../services/store-shipping-spec';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
-    let buckyService: BuckydropService = req.scope.resolve('buckydropService');
+    const shippingSpecService: StoreShippingSpecService = req.scope.resolve(
+        'storeShippingSpecService'
+    );
 
     const handler = new RouteHandler(req, res, 'GET', '/custom/cart/shipping', [
         'cart_id',
@@ -19,7 +21,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         // Log cart ID being retrieved
         const cartId = handler.inputParams.cart_id;
-        const amount = await buckyService.calculateShippingPriceForCart(cartId);
+        const amount =
+            await shippingSpecService.calculateShippingPriceForCart(cartId);
 
         return handler.returnStatus(200, { amount });
     });
