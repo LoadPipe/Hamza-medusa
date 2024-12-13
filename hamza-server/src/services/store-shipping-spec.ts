@@ -57,7 +57,7 @@ export default class StoreShippingSpecService extends TransactionBaseService {
     private async getCart(cartId: string): Promise<Cart> {
         const cart: Cart = await this.cartService_.retrieve(cartId, {
             relations: [
-                'items.variant.product.store',
+                'items.variant.product.store.shipping_specs',
                 'items.variant.prices', //TODO: we need prices?
                 'customer',
                 'shipping_address.country',
@@ -123,6 +123,14 @@ export default class StoreShippingSpecService extends TransactionBaseService {
     }
 
     private getShippingPriceForStore(store: Store): number {
-        return 1;
+        let output: number = 0;
+        for (let shipspec of store.shipping_specs) {
+            const spec: any = shipspec.spec;
+            if (spec.fixed_price_usd) {
+                output += spec.fixed_price_usd;
+            }
+        }
+
+        return output;
     }
 }
