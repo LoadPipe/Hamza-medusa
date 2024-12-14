@@ -79,7 +79,7 @@
             "region_id": "test-region-na",
             "provider_id": "manual",
             "data": {
-                "id": "bucky-fulfillment"
+                "id": "store-fulfillment"
             },
             "price_type": "flat_rate",
             "is_installed": true,

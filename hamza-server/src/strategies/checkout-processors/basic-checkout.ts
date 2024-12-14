@@ -19,8 +19,8 @@ import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 import WhiteListService from '../../services/whitelist';
 import StoreRepository from '../../repositories/store';
 import { WhiteList } from '../../models/whitelist';
-import BuckydropService from '../../services/buckydrop';
 import { createLogger, ILogger } from '../../utils/logging/logger';
+import StoreShippingSpecService from '../../services/store-shipping-spec';
 
 export interface IPaymentGroupData {
     items: LineItem[];
@@ -36,7 +36,7 @@ export class BasicCheckoutProcessor {
     protected readonly idempotencyKeyService: IdempotencyKeyService;
     protected readonly cartService: CartService;
     protected readonly productService: ProductService;
-    protected readonly buckydropService: BuckydropService;
+    protected readonly shippingSpecService: StoreShippingSpecService;
     protected readonly paymentService: PaymentService;
     protected readonly orderService: OrderService;
     protected readonly whitelistService: WhiteListService;
@@ -57,7 +57,7 @@ export class BasicCheckoutProcessor {
         this.paymentService = container.paymentService;
         this.productService = container.productService;
         this.orderService = container.orderService;
-        this.buckydropService = container.buckydropService;
+        this.shippingSpecService = container.storeShippingSpecService;
         this.paymentRepository = container.paymentRepository;
         this.orderRepository = container.orderRepository;
         this.lineItemRepository = container.lineItemRepository;
@@ -302,7 +302,9 @@ export class BasicCheckoutProcessor {
     ): Promise<Payment[]> {
         //calculate shipping cost
         const shippingCost =
-            await this.buckydropService.calculateShippingPriceForCart(cart.id);
+            await this.shippingSpecService.calculateShippingPriceForCart(
+                cart.id
+            );
 
         //for each unique group, make payment input to create a payment
         const paymentInputs: PaymentDataInput[] = [];

@@ -6,11 +6,6 @@ import {
     PrimaryColumn,
 } from 'typeorm';
 import { generateEntityId } from '@medusajs/medusa/dist/utils';
-import {
-    FulfillmentStatus,
-    OrderStatus,
-    PaymentStatus,
-} from '@medusajs/medusa';
 
 @Entity()
 export class OrderHistory extends BaseEntity {
