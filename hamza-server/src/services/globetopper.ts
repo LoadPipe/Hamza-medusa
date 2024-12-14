@@ -5,23 +5,14 @@ import {
     LineItem,
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
-import OrderService from '../services/order';
 import { Product } from '../models/product';
 import { PriceConverter } from '../utils/price-conversion';
 import {
     CreateProductProductVariantInput,
     CreateProductInput as MedusaCreateProductInput,
-    ProductOptionInput,
 } from '@medusajs/medusa/dist/types/product';
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import { createLogger, ILogger } from '../utils/logging/logger';
-import {
-    IsNull,
-    Not,
-    FindManyOptions,
-    FindOptionsWhere as TypeormFindOptionsWhere,
-    In,
-} from 'typeorm';
 import { GlobetopperClient } from '../globetopper/globetopper-client';
 
 const PRODUCT_EXTERNAL_SOURCE: string = 'globetopper';
@@ -31,8 +22,6 @@ type CreateProductInput = MedusaCreateProductInput & {
     external_source: string;
     external_metadata?: Record<string, unknown>;
 };
-
-// TODO: I think this code needs comments its difficult to understand.
 
 export default class GlobetopperService extends TransactionBaseService {
     protected readonly logger: ILogger;
@@ -58,21 +47,26 @@ export default class GlobetopperService extends TransactionBaseService {
         storeId: string,
         categoryId: string,
         collectionId: string,
-        salesChannelId: string
+        salesChannelId: string,
+        currencyCode: string = 'USD'
     ): Promise<Product[]> {
         try {
             //get products in two API calls
-            const gtProducts = await this.apiClient.searchProducts();
+            const gtProducts = await this.apiClient.searchProducts(
+                undefined,
+                currencyCode
+            );
             const gtCatalogue = await this.apiClient.getCatalog();
 
             const productInputs: (CreateProductInput & { store_id: string })[] =
                 [];
 
             //sort the output
-            const gtRecords = gtProducts.data.records.sort(
+            const gtRecords = gtProducts.records.sort(
                 (a, b) => (a?.operator?.id ?? 0) < (b?.operator?.id ?? 0)
             );
-            const gtCat = gtCatalogue.data.records.sort(
+
+            const gtCat = gtCatalogue.records.sort(
                 (a, b) =>
                     (a?.topup_product_id ?? 0) < (b?.topup_product_id ?? 0)
             );
@@ -494,26 +488,25 @@ export default class GlobetopperService extends TransactionBaseService {
         }
       */
 
-            //const metadata = item;
-            //metadata.detail = productDetails.data;
             const externalId = item?.operator?.id;
 
             if (!externalId) throw new Error('SPU code not found');
-
-            const optionNames = this.getUniqueProductOptionNames(item);
-            const variants = await this.mapVariants(
-                item,
-                productDetail,
-                optionNames
-            );
+            const variants = await this.mapVariants(item, productDetail);
 
             //add variant images to the main product images
             const images = []; //TODO: get images
 
+            let handle = item?.name
+                ?.trim()
+                ?.toLowerCase()
+                ?.replace(/[^a-zA-Z0-9 ]/g, '')
+                ?.replaceAll(' ', '-');
+            handle = `gc-${handle}-${externalId}`;
+
             const output = {
                 title: item?.name,
                 subtitle: productDetail.brand_description, //TODO: find a better value
-                handle: externalId, //TODO: create a better handle
+                handle,
                 description: `${productDetail.brand_description} <br/>${productDetail.redemption_instruction}`, //TODO: make better description
                 is_giftcard: false,
                 status: status as ProductStatus,
@@ -530,9 +523,7 @@ export default class GlobetopperService extends TransactionBaseService {
                 sales_channels: salesChannels.map((sc) => {
                     return { id: sc };
                 }),
-                options: optionNames.map((o) => {
-                    return { title: o };
-                }),
+                options: [{ title: 'Amount' }],
                 variants,
             };
 
@@ -544,7 +535,7 @@ export default class GlobetopperService extends TransactionBaseService {
             return output;
         } catch (error) {
             this.logger.error(
-                'Error mapping Bucky data to product input',
+                'Error mapping Globetopper data to product input',
                 error
             );
             return null;
@@ -553,92 +544,92 @@ export default class GlobetopperService extends TransactionBaseService {
 
     private async mapVariants(
         item: any,
-        productDetail: any,
-        optionNames: string[]
+        productDetail: any
     ): Promise<CreateProductProductVariantInput[]> {
         const variants = [];
+        const variantPrices = this.getVariantPrices(item);
 
-        const getVariantDescriptionText = (data: any) => {
-            let output: string = '';
-            if (data.props) {
-                for (let prop of data.props) {
-                    output += prop.valueName + ' ';
-                }
-                output = output.trim();
-            } else {
-                //output = productDetails.data.goodsName;
-            }
-            return output;
-        };
-
-        /*for (const variant of productDetails.data.skuList) {
-            //get price
-            const baseAmount = variant.proPrice
-                ? variant.proPrice.priceCent
-                : variant.price.priceCent;
-
-            //TODO: get from someplace global
-            const currencies = ['eth', 'usdc', 'usdt'];
-            const prices = [];
-            for (const currency of currencies) {
-                prices.push();
-            }
-
-            //get option names/values
-            const options = [];
-            if (variant.props) {
-                for (const opt of optionNames) {
-                    options.push({
-                        value:
-                            variant.props.find((o) => o.propName === opt)
-                                ?.valueName ?? '',
-                    });
-                }
-            }
-        }*/
-
-        variants.push({
-            title: item?.name,
-            inventory_quantity: 9999,
-            allow_backorder: false,
-            manage_inventory: true,
-            external_id: item?.operator?.id,
-            external_source: PRODUCT_EXTERNAL_SOURCE,
-            external_metadata: { amount: item.min },
-            metadata: { imgUrl: productDetail?.card_image },
-            prices: [
-                {
-                    currency_code: 'usdc',
-                    amount: Math.floor(item.min * 100),
-                },
-                {
-                    currency_code: 'usdt',
-                    amount: Math.floor(item.min * 100),
-                },
-                {
-                    currency_code: 'eth',
-                    amount: await this.priceConverter.getPrice({
-                        baseAmount: Math.floor(item.min * 100),
-                        baseCurrency: 'usdc',
-                        toCurrency: 'eth',
-                    }),
-                },
-            ],
-            options: [],
-        });
+        for (let variantPrice of variantPrices) {
+            variants.push({
+                title: item?.name,
+                inventory_quantity: 9999,
+                allow_backorder: false,
+                manage_inventory: true,
+                external_id: item?.operator?.id,
+                external_source: PRODUCT_EXTERNAL_SOURCE,
+                external_metadata: { amount: item.min },
+                metadata: { imgUrl: productDetail?.card_image },
+                prices: [
+                    {
+                        currency_code: 'usdc',
+                        amount: Math.floor(variantPrice * 100),
+                    },
+                    {
+                        currency_code: 'usdt',
+                        amount: Math.floor(variantPrice * 100),
+                    },
+                    {
+                        currency_code: 'eth',
+                        amount: await this.priceConverter.getPrice({
+                            baseAmount: Math.floor(variantPrice * 100),
+                            baseCurrency: 'usdc',
+                            toCurrency: 'eth',
+                        }),
+                    },
+                ],
+                options: [{ value: variantPrice.toFixed(2) }],
+            });
+        }
 
         return variants;
     }
 
-    private getUniqueProductOptionNames(productDetails: any): string[] {
-        const output: string[] = [];
-        return output;
+    private getVariantPrices(item: any): number[] {
+        const targetPrices: number[] = [
+            1, 3, 5, 10, 25, 50, 100, 250, 500, 1000,
+        ];
+        const output: number[] = [];
 
-        for (const variant of productDetails.data.skuList) {
-            for (const prop of variant.props) {
-                if (!output.find((p) => p === prop.propName)) {
-                    output.push(prop.propName);
+        const findClosest = (
+            target: number,
+            lastNumber: number,
+            increment: number
+        ) => {
+            let current = lastNumber;
+            if (increment === 0) increment = 0.01;
+
+            for (let n = lastNumber; n <= target; n += increment) {
+                current = n;
+            }
+
+            return target - current <= current + increment - target
+                ? current
+                : current + increment;
+        };
+
+        const min = parseFloat(item.min);
+        const max = parseFloat(item.max);
+        const increment = parseFloat(item.increment);
+        for (let n = 0; n < targetPrices.length; n++) {
+            const price: number = targetPrices[n];
+            if (price < min) {
+                if (!output.find((i) => i === min)) {
+                    output.push(min);
                 }
+            }
+
+            const next: any = findClosest(
+                price,
+                output[output.length - 1],
+                increment
+            );
+            if (!output.find((i) => i === next) && next <= max) {
+                output.push(parseFloat(next.toFixed(2)));
+            }
+
+            if (price > max) {
+                if (!output.find((i) => i === max)) output.push(max);
+                break;
             }
         }
 

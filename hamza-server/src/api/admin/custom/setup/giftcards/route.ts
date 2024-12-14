@@ -17,7 +17,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         req,
         res,
         'POST',
-        '/admin/custom/setup/giftcards'
+        '/admin/custom/setup/giftcards',
+        ['currency']
     );
 
     await handler.handle(async () => {
@@ -33,7 +34,10 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             store.id,
             'pcat_giftcards',
             'pcol_giftcards',
-            salesChannel.id
+            salesChannel.id,
+            handler.hasParam('currency') //if currency is provided; otherwise use default
+                ? handler.inputParams('currency')
+                : undefined
         );
 
         return res.json({ products });

@@ -56,11 +56,13 @@ export class GlobetopperClient {
             url = appendQuerystring(url, 'countryCode', countryCode);
         if (productId) url = appendQuerystring(url, 'productID', productId);
 
-        return axios.get(url, {
+        const output: any = await axios.get(url, {
             headers: {
                 authorization: 'Bearer ' + this.bearerAuthHeader,
             },
         });
+
+        return output?.data;
     }
 
     /**
@@ -74,6 +76,7 @@ export class GlobetopperClient {
      */
     public async searchProducts(
         countryCode?: string,
+        currencyCode?: string,
         categoryId?: string,
         typeId?: string
     ): Promise<any> {
@@ -82,11 +85,20 @@ export class GlobetopperClient {
             url = appendQuerystring(url, 'countryCode', countryCode);
         if (categoryId) url = appendQuerystring(url, 'categoryID', categoryId);
         if (typeId) url = appendQuerystring(url, 'typeID', typeId);
-        return axios.get(url, {
+        const output: any = await axios.get(url, {
             headers: {
                 authorization: 'Bearer ' + this.bearerAuthHeader,
             },
         });
+
+        let data = output?.data;
+        if (currencyCode && data?.records) {
+            data.records = data.records.filter(
+                (i) => i?.operator?.country?.currency?.code === currencyCode
+            );
+        }
+
+        return data;
     }
 
     /**
@@ -97,9 +109,7 @@ export class GlobetopperClient {
      * @todo (re)implement as a worker
      */
     public async purchase(input: GTPurchaseInputData): Promise<any> {
-        console.log('input:', input);
         let url: string = `${this.baseUrl}/transaction/do-by-product/${input.productID}/${input.amount}`;
-        console.log(url);
 
         //create the post data
         const { email, first_name, last_name, order_id } = input;
@@ -109,8 +119,6 @@ export class GlobetopperClient {
             last_name,
             order_id: 123456,
         };
-
-        console.log(data);
 
         //send request
         return axios.post(url, querystring.stringify(data), {
