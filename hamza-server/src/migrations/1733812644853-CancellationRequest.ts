@@ -2,66 +2,19 @@ import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
 export class CancellationRequest1733812644853 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.createTable(
-            new Table({
-                name: 'cancellation_request',
-                columns: [
-                    {
-                        name: 'id',
-                        type: 'int',
-                        isPrimary: true,
-                        isGenerated: true,
-                        generationStrategy: 'increment',
-                    },
-                    {
-                        name: 'order_id',
-                        type: 'character varying',
-                        isNullable: false,
-                    },
-                    {
-                        name: 'reason',
-                        type: 'varchar',
-                        length: '255',
-                        isNullable: false,
-                    },
-                    {
-                        name: 'buyer_note',
-                        type: 'text',
-                        isNullable: true,
-                    },
-                    {
-                        name: 'seller_note',
-                        type: 'text',
-                        isNullable: true,
-                    },
-                    {
-                        name: 'status',
-                        type: 'enum',
-                        enum: ['requested', 'accepted', 'rejected'],
-                        default: `'requested'`,
-                    },
-                    {
-                        name: 'created_at',
-                        type: 'timestamp',
-                        default: 'CURRENT_TIMESTAMP',
-                    },
-                    {
-                        name: 'updated_at',
-                        type: 'timestamp',
-                        default: 'CURRENT_TIMESTAMP',
-                        onUpdate: 'CURRENT_TIMESTAMP',
-                    },
-                ],
-                foreignKeys: [
-                    {
-                        columnNames: ['order_id'],
-                        referencedTableName: 'order',
-                        referencedColumnNames: ['id'],
-                        onDelete: 'CASCADE',
-                        onUpdate: 'CASCADE',
-                    },
-                ],
-            })
+        await queryRunner.query(
+            `CREATE TABLE "cancellation_request" (
+            "id" character varying NOT NULL,
+            "order_id" character varying NOT NULL,
+            "reason" character varying NOT NULL,
+            "buyer_note" character varying,
+            "seller_note" character varying,
+            "status" character varying NOT NULL,
+            "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+            "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now())`
+        );
+        await queryRunner.query(
+            `ALTER TABLE "cancellation_request" ADD CONSTRAINT "FK_Cancellation_Request_Order" FOREIGN KEY ("order_id") REFERENCES "order"("id") ON DELETE SET NULL ON UPDATE CASCADE`
         );
     }
 
