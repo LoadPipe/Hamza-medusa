@@ -18,7 +18,7 @@ async function getOrder(id: string) {
         return notFound();
     }
 
-    console.log(`ORDERS ${JSON.stringify(order)}`);
+    // console.log(`ORDERS ${JSON.stringify(order)}`);
 
     const enrichedItems = await enrichLineItems(order.items, order.region_id);
 
@@ -36,6 +36,8 @@ async function retrieveCart(id: string) {
     if (!cart) {
         return notFound();
     }
+
+    console.log(`CART ${JSON.stringify(cart)}`);
 
     const enrichedItems = await enrichLineItems(cart.items, cart.region_id);
 

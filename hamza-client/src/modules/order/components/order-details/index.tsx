@@ -1,9 +1,9 @@
-import { Order } from '@medusajs/medusa';
+import { Order, Cart } from '@medusajs/medusa';
 // import { Text } from '@medusajs/ui';
 import { Box, Text, Flex } from '@chakra-ui/react';
 
 type OrderDetailsProps = {
-    order: Order;
+    cart: Cart;
     showStatus?: boolean;
 };
 
@@ -19,14 +19,14 @@ type OrderDetailsProps = {
       </Text>
       */
 
-const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
+const OrderDetails = ({ cart, showStatus }: OrderDetailsProps) => {
     const formatStatus = (str: string) => {
         const formatted = str.split('_').join(' ');
 
         return formatted.slice(0, 1).toUpperCase() + formatted.slice(1);
     };
 
-    const payment = order.payments[0];
+    // const payment = order.payments[0];
     // console.log(`Order Summary is ${JSON.stringify(order)}`);
 
     return (
@@ -54,7 +54,7 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
                         Transaction Date
                     </Text>
                     <Text fontSize={{ base: '14px', md: '16px' }}>
-                        {new Date(order.created_at).toLocaleString('en-US', {
+                        {new Date(cart.created_at).toLocaleString('en-US', {
                             weekday: 'long',
                             year: 'numeric',
                             month: 'long',
@@ -79,10 +79,10 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
                         fontWeight={600}
                         fontSize={{ base: '14px', md: '16px' }}
                     >
-                        Order ID
+                        CART ID
                     </Text>
                     <Text fontSize={{ base: '14px', md: '16px' }}>
-                        {order.id}
+                        {cart.id}
                     </Text>
                 </Flex>
                 <Flex
@@ -91,15 +91,15 @@ const OrderDetails = ({ order, showStatus }: OrderDetailsProps) => {
                     flexDir={'column'}
                     width={'200px'}
                 >
-                    <Text
-                        fontWeight={600}
-                        fontSize={{ base: '14px', md: '16px' }}
-                    >
-                        Order Number
-                    </Text>
-                    <Text fontSize={{ base: '14px', md: '16px' }}>
-                        {order.display_id}
-                    </Text>
+                    {/*<Text*/}
+                    {/*    fontWeight={600}*/}
+                    {/*    fontSize={{ base: '14px', md: '16px' }}*/}
+                    {/*>*/}
+                    {/*    Order Number*/}
+                    {/*</Text>*/}
+                    {/*<Text fontSize={{ base: '14px', md: '16px' }}>*/}
+                    {/*    {cart.display_id}*/}
+                    {/*</Text>*/}
                 </Flex>
             </Flex>
 
