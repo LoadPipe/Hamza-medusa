@@ -69,11 +69,11 @@ export default function OrderCompletedTemplate({
             </Text>
 
             {/* Order Body */}
-            <OrderDetails order={order} />
+            <OrderDetails cart={cart} />
             <Divider my="2rem" borderColor="#555555" />
-            <Summary order={order} />
+            <Summary cart={cart} />
 
-            <TransactionDetails data={order} />
+            <TransactionDetails data={cart} />
 
             {/* Check Order Button */}
             <Link href="/account/orders" style={{ width: '100%' }}>
