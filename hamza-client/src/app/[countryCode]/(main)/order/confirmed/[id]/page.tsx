@@ -37,8 +37,6 @@ async function retrieveCart(id: string) {
         return notFound();
     }
 
-    console.log(`CART ${JSON.stringify(cart)}`);
-
     const enrichedItems = await enrichLineItems(cart.items, cart.region_id);
 
     return {
