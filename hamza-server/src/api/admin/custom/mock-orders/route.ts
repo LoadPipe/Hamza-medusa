@@ -1,4 +1,4 @@
-import { MedusaRequest, MedusaResponse } from '@medusajs/medusa';
+import type { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import { RouteHandler } from '../../../route-handler';
 import OrderService from '../../../../services/order';
 
@@ -8,12 +8,26 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const handler = new RouteHandler(
         req,
         res,
-        'GET',
-        '/admin/custom/mock-orders'
+        'POST',
+        '/admin/custom/mock-orders',
+        ['count', 'date', 'store_id']
     );
 
     await handler.handle(async () => {
-        const order = await orderService.createMockOrders();
+        let { count, date, store_id } = handler.inputParams;
+
+        if (!count) count = 1;
+
+        // Validate input parameters
+        if (isNaN(parseInt(count, 10)) || parseInt(count, 10) <= 0) {
+            return handler.returnStatusWithMessage(400, 'Invalid count');
+        }
+
+        const order = await orderService.createMockOrders(
+            count,
+            date,
+            store_id
+        );
         if (order === null)
             return handler.returnStatusWithMessage(
                 404,

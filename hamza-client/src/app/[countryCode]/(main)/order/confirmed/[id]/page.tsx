@@ -18,7 +18,7 @@ async function getOrder(id: string) {
         return notFound();
     }
 
-    console.log(`ORDERS ${JSON.stringify(order)}`);
+    // console.log(`ORDERS ${JSON.stringify(order)}`);
 
     const enrichedItems = await enrichLineItems(order.items, order.region_id);
 

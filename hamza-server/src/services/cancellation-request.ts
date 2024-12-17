@@ -2,7 +2,7 @@ import { Lifetime } from 'awilix';
 import { CancellationRequestRepository } from '../repositories/cancellation-request';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import { CancellationRequest } from '../models/cancellation-request';
-import { TransactionBaseService } from '@medusajs/medusa';
+import { generateEntityId, TransactionBaseService } from '@medusajs/medusa';
 
 export default class CancellationRequestService extends TransactionBaseService {
     static LIFE_TIME = Lifetime.SINGLETON;
@@ -51,6 +51,9 @@ export default class CancellationRequestService extends TransactionBaseService {
                     buyer_note: buyerNote || null,
                     status: 'requested',
                 });
+
+            if (!cancellationRequest.id)
+                cancellationRequest.id = generateEntityId('id', 'cancelreq');
 
             const savedRequest =
                 await this.cancellationRequestRepository.save(

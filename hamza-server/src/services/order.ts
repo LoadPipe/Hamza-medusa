@@ -37,6 +37,7 @@ import ShippingMethodRepository from '@medusajs/medusa/dist/repositories/shippin
 import CartService from './cart';
 import CartRepository from '@medusajs/medusa/dist/repositories/cart';
 import GlobetopperService from './globetopper';
+import { randomInt, randomUUID } from 'crypto';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
 // In medusa we have these 5 DEFAULT order.STATUS's {PENDING, COMPLETED, ARCHIVED, CANCELED, REQUIRES_ACTION}
@@ -909,139 +910,240 @@ export default class OrderService extends MedusaOrderService {
         });
     }
 
-    async createMockOrders(): Promise<Order> {
+    async createMockOrders(
+        count: number,
+        date: string = new Date().toDateString(),
+        store_id: string = null
+    ): Promise<Order[]> {
+        console.log(
+            `Parameters - count: ${count}, date: ${date}, store_id: ${store_id}`
+        );
+        if (!count || count <= 0) {
+            count = 1;
+        }
+        const orders: Order[] = []; // To store all created orders
+
+        //if no specified store, do random stores
+        let allStores = [];
+        const randomStores = !store_id;
+        if (randomStores) {
+            console.log('doing random stores');
+            allStores = await this.storeRepository_.find({});
+            console.log('got', allStores.length, 'stores');
+        }
+
+        //get all customers
+        const allCustomers = await this.customerRepository_.find({});
+
+        //create a customer if none exists
+        if (!allCustomers.length) {
+            const customer = this.customerRepository_.create({
+                first_name: `Reynaldo`, // Unique for each order
+                last_name: `Mocktavish`,
+                email: `customer${randomUUID()}@example.com`,
+                created_at: new Date(),
+            });
+
+            await this.customerRepository_.save(customer);
+            allCustomers.push(customer);
+            console.log('New customer created:', customer);
+        }
+
         try {
-            // Step 1: Get the first customer
-            const customer = await this.customerRepository_.findOne({
-                where: {},
-                order: { created_at: 'ASC' },
-            });
+            console.log('Starting mock order creation...');
 
-            if (!customer) {
-                throw new Error('No customers found.');
-            }
+            let actualOrderCount = 0;
+            for (let i = 0; i < count; i++) {
+                console.log(`Creating mock order ${i + 1} of ${count}...`);
 
-            // Step 2: Get the first region
-            const region = await this.regionRepository_
-                .createQueryBuilder('region')
-                .where('LOWER(region.name) = :name', { name: 'na' })
-                .getOne();
+                // Step 1: Get the first customer
+                const customer = allCustomers[randomInt(allCustomers.length)];
 
-            if (!region) {
-                throw new Error('No regions found.');
-            }
-
-            // Step 3: Get random products
-            const randomCount = Math.floor(Math.random() * 10) + 1; // Random between 1 and 10
-
-            const products = await this.productRepository_.query(
-                `SELECT * FROM product ORDER BY RANDOM() LIMIT ${randomCount}`
-            );
-
-            if (!products.length) {
-                throw new Error('No products found.');
-            }
-
-            const variants = await Promise.all(
-                products.map((product) =>
-                    this.productVariantRepository_.findOne({
-                        where: { product_id: product.id },
-                        order: { created_at: 'ASC' }, // Choose the first variant if multiple exist
-                    })
-                )
-            );
-
-            // Validate that each product has at least one variant
-            variants.forEach((variant, index) => {
-                if (!variant) {
-                    throw new Error(
-                        `No variant found for product ${products[index].id}`
-                    );
+                if (!customer) {
+                    throw new Error('No customers found.');
                 }
-            });
+                console.log('Customer found:', customer);
 
-            // Step 4: Validate store_id from the first product
-            const storeId = products[0]?.store_id;
-            if (!storeId) {
-                throw new Error('Store ID not found in the product.');
+                // Step 2: Get the first region
+                const region = await this.regionRepository_
+                    .createQueryBuilder('region')
+                    .where('LOWER(region.name) = :name', { name: 'na' })
+                    .getOne();
+
+                if (!region) {
+                    throw new Error('No regions found.');
+                }
+                console.log('Region found:', region);
+
+                //get random store if necessary
+                if (randomStores) {
+                    console.log(
+                        'getting random store from',
+                        allStores.length,
+                        'stores'
+                    );
+                    store_id = allStores[randomInt(allStores.length)].id;
+                }
+                console.log('store_id is', store_id);
+
+                // Step 3: Get random products
+                const randomCount = randomInt(10) + 1; // Random between 1 and 10
+
+                console.log('getting products');
+                const products = await this.productRepository_.query(
+                    `SELECT *
+                     FROM product
+                     WHERE store_id='${store_id}'
+                     ORDER BY RANDOM()
+                     LIMIT ${randomCount}`
+                );
+
+                console.log(
+                    `Retrieved ${products.length} random products`,
+                    products
+                );
+
+                if (products.length) {
+                    console.log('Products found:', products);
+
+                    const variants = await Promise.all(
+                        products.map((product) =>
+                            this.productVariantRepository_.findOne({
+                                where: { product_id: product.id },
+                                order: { created_at: 'ASC' }, // Choose the first variant if multiple exist
+                            })
+                        )
+                    );
+
+                    // Validate that each product has at least one variant
+                    variants.forEach((variant, index) => {
+                        if (!variant) {
+                            throw new Error(
+                                `No variant found for product ${products[index].id}`
+                            );
+                        }
+                    });
+
+                    console.log('Variants found:', variants);
+
+                    // Step 4: Store Id from params
+                    const storeId = store_id;
+
+                    // Grab the default sales channel... the first one
+                    const salesChannel =
+                        await this.salesChannelRepository_.findOne({
+                            where: {}, // Empty where clause to find any sales channel
+                            order: { created_at: 'ASC' }, // Sort by creation time, oldest first
+                        });
+
+                    if (!salesChannel) {
+                        throw new Error('No sales channels found.');
+                    }
+
+                    const sales_channel_id = salesChannel.id;
+                    console.log('Sales Channel ID:', sales_channel_id);
+
+                    console.log('Creating cart with:', {
+                        customer_id: customer.id,
+                        email: customer.email,
+                        region_id: region.id,
+                    });
+                    // Step 5: Create a cart for the customer
+                    const cart = await this.cartRepository_.save(
+                        this.cartRepository_.create({
+                            customer_id: customer.id,
+                            email: customer.email,
+                            region_id: region.id,
+                            sales_channel_id: sales_channel_id,
+                            created_at: new Date(),
+                            updated_at: new Date(),
+                        })
+                    );
+                    console.log('Cart created:', cart);
+
+                    // Step 6: Add line items to the cart
+                    let orderTotal = 0;
+                    const lineItems = [];
+                    for (let i = 0; i < products.length; i++) {
+                        const product = products[i];
+                        const variant = variants[i];
+
+                        const lineItem = this.lineItemRepository_.create({
+                            cart_id: cart.id,
+                            title: product.title,
+                            description: product.description,
+                            thumbnail: product.thumbnail,
+                            unit_price: variant.prices?.[0]?.amount || 1000,
+                            quantity: Math.floor(Math.random() * 5) + 1,
+                            currency_code: region.currency_code,
+                            variant_id: variant.id, // Add variant_id here
+                            created_at: new Date(),
+                            updated_at: new Date(),
+                        });
+                        orderTotal += lineItem.unit_price * lineItem.quantity;
+                        const savedLineItem =
+                            await this.lineItemRepository_.save(lineItem);
+                        lineItems.push(savedLineItem);
+                    }
+                    cart.items = lineItems;
+                    console.log('Line items added to cart:', cart.items);
+
+                    // Step 7: Create an order using the cart and product's store_id
+                    let order: Order = new Order();
+                    order.status = OrderStatus.PENDING;
+                    order.store_id = storeId; // Use store_id directly from the product
+                    order.fulfillment_status = FulfillmentStatus.NOT_FULFILLED;
+                    order.payment_status = PaymentStatus.AWAITING;
+                    order.sales_channel_id = sales_channel_id;
+                    order.customer_id = customer.id;
+                    order.email = customer.email;
+                    order.cart_id = cart.id;
+                    order.region_id = cart.region_id;
+                    order.currency_code = 'usdt';
+                    order.created_at = new Date(date);
+
+                    order = await this.orderRepository_.save(order);
+                    console.log('Order created successfully:', order);
+
+                    //create a payment
+                    await this.paymentRepository_.save({
+                        id: order.id.replace('order_', 'payment_'),
+                        order_id: order.id,
+                        cart_id: cart.id,
+                        amount: orderTotal,
+                        currency_code: order.currency_code,
+                        provider_id: 'crypto',
+                        data: {},
+                        blockchain_data: {
+                            receiver_address: '',
+                            transaction_id: '',
+                            escrow_address:
+                                '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                        },
+                    });
+
+                    // Step 8: Link line items to the order
+                    order.items = cart.items;
+                    const lineItemPromises = cart.items.map((item) => {
+                        item.order_id = order.id;
+                        return this.lineItemRepository_.save(item);
+                    });
+
+                    await Promise.all(lineItemPromises);
+                    actualOrderCount++;
+
+                    console.log('Line items linked to order:', order.items);
+
+                    orders.push(order); // Add the order to the array
+
+                    console.log(`Order ${i + 1} created successfully:`, order);
+                }
             }
 
-            // Grab the default sales channel... the first one
-            const salesChannel = await this.salesChannelRepository_.findOne({
-                where: {}, // Empty where clause to find any sales channel
-                order: { created_at: 'ASC' }, // Sort by creation time, oldest first
-            });
-
-            if (!salesChannel) {
-                throw new Error('No sales channels found.');
-            }
-
-            const sales_channel_id = salesChannel.id;
-
-            // Step 5: Create a cart for the customer
-            const cart = await this.cartRepository_.save(
-                this.cartRepository_.create({
-                    customer_id: customer.id,
-                    email: customer.email,
-                    region_id: region.id,
-                    sales_channel_id: sales_channel_id,
-                    created_at: new Date(),
-                    updated_at: new Date(),
-                })
+            console.log(
+                `${actualOrderCount} mock orders created successfully.`
             );
-
-            // Step 6: Add line items to the cart
-            const lineItems = [];
-            for (let i = 0; i < products.length; i++) {
-                const product = products[i];
-                const variant = variants[i];
-
-                const lineItem = this.lineItemRepository_.create({
-                    cart_id: cart.id,
-                    title: product.title,
-                    description: product.description,
-                    thumbnail: product.thumbnail,
-                    unit_price: variant.prices?.[0]?.amount || 1000,
-                    quantity: Math.floor(Math.random() * 5) + 1,
-                    currency_code: region.currency_code,
-                    variant_id: variant.id, // Add variant_id here
-                    created_at: new Date(),
-                    updated_at: new Date(),
-                });
-                const savedLineItem =
-                    await this.lineItemRepository_.save(lineItem);
-                lineItems.push(savedLineItem);
-            }
-            cart.items = lineItems;
-
-            // Step 7: Create an order using the cart and product's store_id
-            let order: Order = new Order();
-            order.status = OrderStatus.PENDING;
-            order.store_id = storeId; // Use store_id directly from the product
-            order.fulfillment_status = FulfillmentStatus.NOT_FULFILLED;
-            order.payment_status = PaymentStatus.AWAITING;
-            order.sales_channel_id = sales_channel_id;
-            order.customer_id = customer.id;
-            order.email = customer.email;
-            order.cart_id = cart.id;
-            order.region_id = cart.region_id;
-            order.currency_code = 'usdt';
-            order.created_at = new Date();
-            order.updated_at = new Date();
-
-            order = await this.orderRepository_.save(order);
-
-            // Step 8: Link line items to the order
-            order.items = cart.items;
-            const lineItemPromises = cart.items.map((item) => {
-                item.order_id = order.id;
-                return this.lineItemRepository_.save(item);
-            });
-
-            await Promise.all(lineItemPromises);
-
-            this.logger.info(`Mock order created successfully: ${order.id}`);
-            return order;
+            return orders; // Return all created orders
         } catch (error) {
             console.error('Error during mock order creation:', error.message);
             this.logger.error(`Error creating mock order: ${error.message}`);

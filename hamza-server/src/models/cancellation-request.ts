@@ -1,19 +1,21 @@
 import {
     Entity,
-    PrimaryGeneratedColumn,
     Column,
     CreateDateColumn,
     UpdateDateColumn,
     ManyToOne,
     JoinColumn,
     BaseEntity,
+    PrimaryColumn,
+    BeforeInsert,
 } from 'typeorm';
 import { Order } from './order';
+import { generateEntityId } from '@medusajs/medusa';
 
 @Entity('cancellation_request')
 export class CancellationRequest extends BaseEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryColumn()
+    id: string;
 
     @ManyToOne(() => Order, (order) => order.id, { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'order_id' })
@@ -43,4 +45,9 @@ export class CancellationRequest extends BaseEntity {
 
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt: Date;
+
+    @BeforeInsert()
+    private beforeInsert(): void {
+        this.id = generateEntityId(this.id, 'cancreq');
+    }
 }
