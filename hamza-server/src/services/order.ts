@@ -20,7 +20,7 @@ import { ProductVariantRepository } from '../repositories/product-variant';
 import StoreRepository from '../repositories/store';
 import CustomerRepository from '../repositories/customer';
 import { LineItemService } from '@medusajs/medusa';
-import { Order } from '../models/order';
+import { EscrowStatus, Order } from '../models/order';
 import { Customer } from '../models/customer';
 import { Payment } from '../models/payment';
 import { Lifetime } from 'awilix';
@@ -641,13 +641,15 @@ export default class OrderService extends MedusaOrderService {
         status?: OrderStatus,
         fulfillmentStatus?: FulfillmentStatus,
         paymentStatus?: PaymentStatus,
+        escrowStatus?: string,
         metadata?: Record<string, unknown>
     ): Promise<Order> {
         if (
             (status && order.status != status) ||
             (fulfillmentStatus &&
                 order.fulfillment_status != fulfillmentStatus) ||
-            (paymentStatus && order.payment_status != paymentStatus)
+            (paymentStatus && order.payment_status != paymentStatus) ||
+            (escrowStatus && order.escrow_status != escrowStatus)
         ) {
             //get values to add to history
             const to_status: OrderStatus | null =
@@ -660,6 +662,11 @@ export default class OrderService extends MedusaOrderService {
                 fulfillmentStatus &&
                 order.fulfillment_status != fulfillmentStatus
                     ? fulfillmentStatus
+                    : null;
+
+            const to_escrow_status: string | null =
+                escrowStatus && order.escrow_status != escrowStatus.toString()
+                    ? escrowStatus
                     : null;
 
             if (status) {
@@ -680,16 +687,25 @@ export default class OrderService extends MedusaOrderService {
                     this.sendCancelledEmail(order);
                 }
             }
+            if (escrowStatus) {
+                order.escrow_status = escrowStatus.toString();
+            }
 
             //send emails
             //TODO: this should follow medusa events
 
             //save the order
             await this.orderRepository_.save(order);
+
+            //null metadata not allowed
+            if (!metadata) {
+                metadata = {};
+            }
             await this.orderHistoryService_.create(order, {
                 to_status,
                 to_payment_status,
                 to_fulfillment_status,
+                to_escrow_status,
                 metadata,
             });
         }
@@ -906,6 +922,7 @@ export default class OrderService extends MedusaOrderService {
                 id: o.id,
                 status: OrderStatus.PENDING,
                 payment_status: PaymentStatus.AWAITING,
+                escrow_status: EscrowStatus.IN_ESCROW,
             });
         });
     }

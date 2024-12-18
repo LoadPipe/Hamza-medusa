@@ -32,6 +32,9 @@ export class OrderHistory extends BaseEntity {
     @Column({ name: 'to_fulfillment_status' })
     to_fulfillment_status: string;
 
+    @Column({ name: 'to_escrow_status' })
+    to_escrow_status: string;
+
     @Column('jsonb')
     metadata?: Record<string, unknown>;
 
