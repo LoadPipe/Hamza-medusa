@@ -20,7 +20,7 @@ import { ProductVariantRepository } from '../repositories/product-variant';
 import StoreRepository from '../repositories/store';
 import CustomerRepository from '../repositories/customer';
 import { LineItemService } from '@medusajs/medusa';
-import { Order } from '../models/order';
+import { EscrowStatus, Order } from '../models/order';
 import { Customer } from '../models/customer';
 import { Payment } from '../models/payment';
 import { Lifetime } from 'awilix';
@@ -922,6 +922,7 @@ export default class OrderService extends MedusaOrderService {
                 id: o.id,
                 status: OrderStatus.PENDING,
                 payment_status: PaymentStatus.AWAITING,
+                escrow_status: EscrowStatus.IN_ESCROW,
             });
         });
     }
