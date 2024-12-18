@@ -282,7 +282,7 @@ export default class GlobetopperService extends TransactionBaseService {
         */
 
         // stub to build email content
-        await this.sendPostPurchaseEmail(purchaseOutputs, orderId, email);
+        await this.sendPostPurchaseEmail(purchaseOutputs, email);
 
         //TODO: what to do with the outputs now?
         return purchaseOutputs ?? [];
