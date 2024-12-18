@@ -131,9 +131,9 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
                     flexDirection={'column'}
                 >
                     <Flex alignItems="center" mb={{ base: '2.5px', md: '0' }}>
-                        <IoStar style={{ color: '#FEC84B' }} />
                         {reviewCount > 0 ? (
                             <>
+                                <IoStar style={{ color: '#FEC84B' }} />
                                 <Text
                                     color={'white'}
                                     alignSelf={'center'}

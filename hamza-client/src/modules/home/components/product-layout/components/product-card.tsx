@@ -184,17 +184,17 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
 
                     <Box mt="auto">
                         <Flex mb="1">
-                            <Box mt="1px">
-                                <IoStar
-                                    style={{
-                                        color: '#FEC84B',
-                                        width: '24px',
-                                        height: '24px',
-                                    }}
-                                />
-                            </Box>
                             {reviewCount > 0 ? (
                                 <>
+                                    <Box mt="1px">
+                                        <IoStar
+                                            style={{
+                                                color: '#FEC84B',
+                                                width: '24px',
+                                                height: '24px',
+                                            }}
+                                        />
+                                    </Box>
                                     <Text
                                         color={'white'}
                                         alignSelf={'center'}
