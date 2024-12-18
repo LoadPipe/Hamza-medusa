@@ -216,17 +216,6 @@ const ProductInfo = () => {
                             <Flex flexDirection={'row'} alignSelf={'center'}>
                                 {renderStars20px(ratingAverage)}
                             </Flex>
-
-                            <Text
-                                ml="2"
-                                as="h4"
-                                fontWeight="600"
-                                fontSize={'14px'}
-                                color={'white'}
-                                mt="2px"
-                            >
-                                no reviews yet
-                            </Text>
                         </Flex>
                     </Flex>
                 )}

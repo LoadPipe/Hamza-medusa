@@ -221,7 +221,7 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
                                         textAlign={'center'}
                                     >
                                         {reviewStats.reviewCount === 0
-                                            ? 'No reviews yet'
+                                            ? ''
                                             : 'Average Rating'}
                                     </Text>
                                     {/* <Text>

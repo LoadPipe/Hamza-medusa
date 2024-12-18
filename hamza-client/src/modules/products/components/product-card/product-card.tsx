@@ -161,9 +161,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
                                 fontSize={{ base: '14px', md: '16px' }}
                                 color="white"
                                 ml="2"
-                            >
-                                no reviews yet
-                            </Text>
+                            ></Text>
                         )}
                     </Flex>
 

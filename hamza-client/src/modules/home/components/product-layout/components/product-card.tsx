@@ -215,7 +215,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
                                     </Text>
                                 </>
                             ) : (
-                                <Text color={'white'}> No Reviews Yet </Text>
+                                <></>
                             )}
                         </Flex>
                         <Flex>
