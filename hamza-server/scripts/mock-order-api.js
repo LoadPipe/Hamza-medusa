@@ -16,7 +16,7 @@ async function main() {
         const authCookie = authResponse.headers.get('set-cookie');
 
         const mockOrder = await fetch(
-            `http://localhost:${port}/admin/custom/mock-orders`,
+            `http://localhost:${port}/admin/custom/mock-orders?count=75`,
             {
                 method: 'POST',
                 headers: {

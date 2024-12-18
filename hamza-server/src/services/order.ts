@@ -140,8 +140,10 @@ export default class OrderService extends MedusaOrderService {
             order.items = cart.items;
 
             const lineItemPromise = cart.items.map((item) => {
-                item.order_id = order.id;
-                return this.lineItemRepository_.save(item);
+                if (item.variant.product.store_id === storeId) {
+                    item.order_id = order.id;
+                    return this.lineItemRepository_.save(item);
+                }
             });
 
             await Promise.all([...lineItemPromise]);
