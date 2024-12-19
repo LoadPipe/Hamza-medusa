@@ -149,11 +149,6 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
                                     {/* Display the capitalized slug */}
                                 </Text>
                                 <Flex color="#555555" gap={'7px'}>
-                                    <Text
-                                        fontSize={{ base: '10px', md: '16px' }}
-                                    >
-                                        Flagship Store
-                                    </Text>
                                     <Box
                                         alignSelf={'center'}
                                         width={{ base: '2.53px', md: '7.33px' }}
@@ -212,7 +207,7 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
                                         color="primary.green.900"
                                     >
                                         {reviewStats.reviewCount === 0
-                                            ? 0
+                                            ? ''
                                             : `${reviewStats.avgRating.toFixed(1)}`}
                                     </Text>
                                     <Text
