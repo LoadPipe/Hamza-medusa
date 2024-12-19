@@ -549,7 +549,7 @@ class ProductService extends MedusaProductService {
         try {
             //prepare category names for query
             let normalizedCategoryNames = categories.map((name) =>
-                name.toLowerCase()
+                name.toLowerCase().replace('-', ' ')
             );
             if (
                 normalizedCategoryNames.length > 1 &&

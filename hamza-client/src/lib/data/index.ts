@@ -228,9 +228,9 @@ export async function getStores() {
 }
 
 // Get Vendor Store by slug
-export async function getVendorStoreBySlug(store_name: string) {
+export async function getVendorStoreBySlug(store_handle: string) {
     return get('/custom/store', {
-        store_name,
+        store_handle,
     });
 }
 
@@ -263,7 +263,7 @@ export async function getAllProducts(
             : '';
 
     return getSecure('/custom/product/filter', {
-        category_name: categoryString,
+        category_handles: categoryString,
         price_hi: priceHigh,
         price_lo: priceLow,
         currency_code: currencyCode,
