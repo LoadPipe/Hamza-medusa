@@ -54,6 +54,33 @@ export default class StoreShippingSpecService extends TransactionBaseService {
         return output;
     }
 
+    async calculateShippingPriceForStore(storeId: string): Promise<number> {
+        let output = 0;
+
+        try {
+            const specs = await this.storeShippingSpecRepository_.find({
+                where: { store_id: storeId },
+            });
+
+            let output: number = 0;
+            for (let spec of specs) {
+                output += parseInt(
+                    spec?.spec?.fixed_price_usd?.toString() ?? '0'
+                );
+            }
+
+            return output;
+        } catch (e) {
+            this.logger.error(
+                `Error calculating shipping costs in StoreShippingSpecService for store ${storeId}`,
+                e
+            );
+            output = 0;
+        }
+
+        return output;
+    }
+
     private async getCart(cartId: string): Promise<Cart> {
         const cart: Cart = await this.cartService_.retrieve(cartId, {
             relations: [

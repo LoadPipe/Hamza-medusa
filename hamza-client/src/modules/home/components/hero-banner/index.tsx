@@ -15,7 +15,7 @@ const HeroBanner = () => {
             >
                 <Flex
                     w="100%"
-                    bg="primary.indigo.900"
+                    bg="secondary.charcoal.90"
                     color="white"
                     py={2}
                     mb={4}
@@ -27,7 +27,8 @@ const HeroBanner = () => {
                         <Text
                             fontSize={{ base: '12px', md: '16px' }}
                             textAlign={'center'}
-                            fontWeight="bold"
+                            fontWeight="semi-bold"
+                            textColor={'white'}
                         >
                             Hamza Beta Ship - Setting Sail. Join Us In The
                             Journey to Decentralize Ecommerce{' '}

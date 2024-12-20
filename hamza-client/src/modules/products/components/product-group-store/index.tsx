@@ -15,6 +15,7 @@ import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import ProductCard from '../product-card/product-card';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import useVendor from '@/zustand/store-page/vendor';
+import { formatPriceBetweenCurrencies } from '@/lib/util/prices';
 
 type Props = {
     storeName: string;
@@ -128,6 +129,12 @@ const ProductCardGroup = ({ storeName }: Props) => {
                         (preferred_currency_code ?? 'usdc') as string
                     );
 
+                    const usdcFormattedPrice = formatPriceBetweenCurrencies(
+                        variant?.prices,
+                        preferred_currency_code ?? 'usdc',
+                        'usdc'
+                    );
+
                     const reviewCounter = product.reviews.length;
                     const totalRating = product.reviews.reduce(
                         (acc: number, review: any) => acc + review.rating,
@@ -155,6 +162,7 @@ const ProductCardGroup = ({ storeName }: Props) => {
                                 countryCode={product.countryCode}
                                 productName={product.title}
                                 productPrice={formattedPrice}
+                                usdcProductPrice={usdcFormattedPrice}
                                 currencyCode={preferred_currency_code ?? 'usdc'}
                                 imageSrc={product.thumbnail}
                                 hasDiscount={product.is_giftcard}

@@ -95,6 +95,7 @@ const colors = {
         },
         charcoal: {
             900: '#3E3E3E', // darkest
+            90: '#161B23', // Promotion Banner
             800: '#525252',
             700: '#666666',
             600: '#7A7A7A',
@@ -108,7 +109,7 @@ const colors = {
     },
     switchBackground: {
         500: '#4b5669', // switch background color
-    }
+    },
 };
 
 const disabledStyles = {

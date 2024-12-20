@@ -17,7 +17,7 @@ import ProductReviewMobile from '../components/product-preview/components/produc
 import useProductPreview from '@/zustand/product-preview/product-preview';
 import StoreBanner from '../components/product-preview/components/store-banner/store-banner';
 import SearchBar from '../components/product-preview/components/mobile-search';
-import Tweet from '@/components/tweet';
+// import Tweet from '@/components/tweet';
 import { MdChevronLeft } from 'react-icons/md';
 import { getStore } from '@lib/data';
 import { BiBorderRadius } from 'react-icons/bi';
@@ -166,12 +166,12 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
                     <Flex flex="1" order={{ base: 2, md: 1 }}>
                         <Flex flexDirection="column">
                             <ProductInfo />
-                            <Box mt="1.5rem">
-                                <Tweet
-                                    productHandle={product.handle as string}
-                                    isPurchased={false}
-                                />
-                            </Box>
+                            {/*<Box mt="1.5rem">*/}
+                            {/*    <Tweet*/}
+                            {/*        productHandle={product.handle as string}*/}
+                            {/*        isPurchased={false}*/}
+                            {/*    />*/}
+                            {/*</Box>*/}
                         </Flex>
                     </Flex>
                     <Flex
