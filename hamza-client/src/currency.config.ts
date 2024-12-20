@@ -6,7 +6,7 @@ const chainConfig: any = {
             precision: {
                 db: 2,
                 native: 12,
-                display: 2
+                display: 2,
             },
         },
         usdt: {
@@ -14,7 +14,7 @@ const chainConfig: any = {
             precision: {
                 db: 2,
                 native: 6,
-                display: 2
+                display: 2,
             },
         },
         eth: {
@@ -22,7 +22,7 @@ const chainConfig: any = {
             precision: {
                 db: 8,
                 native: 18,
-                display: 6
+                display: 6,
             },
         },
     },
@@ -33,7 +33,7 @@ const chainConfig: any = {
             precision: {
                 db: 2,
                 native: 12,
-                display: 2
+                display: 2,
             },
         },
         usdt: {
@@ -41,7 +41,7 @@ const chainConfig: any = {
             precision: {
                 db: 2,
                 native: 6,
-                display: 2
+                display: 2,
             },
         },
         eth: {
@@ -49,7 +49,7 @@ const chainConfig: any = {
             precision: {
                 db: 8,
                 native: 18,
-                display: 6
+                display: 6,
             },
         },
     },
@@ -60,7 +60,7 @@ const chainConfig: any = {
             precision: {
                 db: 2,
                 native: 6,
-                display: 2
+                display: 2,
             },
         },
         usdt: {
@@ -68,7 +68,7 @@ const chainConfig: any = {
             precision: {
                 db: 2,
                 native: 6,
-                display: 2
+                display: 2,
             },
         },
         eth: {
@@ -76,7 +76,7 @@ const chainConfig: any = {
             precision: {
                 db: 8,
                 native: 18,
-                display: 6
+                display: 6,
             },
         },
     },
@@ -87,7 +87,7 @@ const chainConfig: any = {
             precision: {
                 db: 2,
                 native: 6,
-                display: 2
+                display: 2,
             },
         },
         usdt: {
@@ -95,7 +95,7 @@ const chainConfig: any = {
             precision: {
                 db: 2,
                 native: 6,
-                display: 2
+                display: 2,
             },
         },
         eth: {
@@ -103,7 +103,7 @@ const chainConfig: any = {
             precision: {
                 db: 8,
                 native: 18,
-                display: 6
+                display: 6,
             },
         },
     },
