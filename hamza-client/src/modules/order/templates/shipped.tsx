@@ -51,46 +51,7 @@ const Shipped = ({
         setCourierInfo(courierInfo === orderId ? null : orderId);
     };
 
-    const { data, isLoading, isError, refetch, isStale } = useQuery<OrdersData>(
-        ['batchOrders']
-    );
-
     const shippedOrder = cachedData?.Shipped || [];
-
-    if (isLoading) {
-        return (
-            <Box
-                display="flex"
-                flexDirection="column"
-                justifyContent="center"
-                alignItems="center"
-                textAlign="center"
-                py={5}
-            >
-                <Text color="white" fontSize="lg" mb={8}>
-                    Loading Shipped orders...
-                </Text>
-                <Spinner size={80} />
-            </Box>
-        );
-    }
-
-    if ((isError && orderActiveTab !== 'All Orders') || !shippedOrder) {
-        return (
-            <Box
-                display="flex"
-                flexDirection="column"
-                justifyContent="center"
-                alignItems="center"
-                textAlign="center"
-                py={5}
-            >
-                <Text color="red.500" fontSize="lg" mb={8}>
-                    Error fetching shipped orders.
-                </Text>
-            </Box>
-        );
-    }
 
     if (isEmpty && shippedOrder?.length === 0) {
         return <EmptyState />;

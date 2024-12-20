@@ -30,10 +30,6 @@ const Delivered = ({
     const cachedData: OrdersData | undefined = queryClient.getQueryData([
         'batchOrders',
     ]);
-    const { data, isLoading, isError, refetch, isStale } = useQuery<OrdersData>(
-        ['batchOrders']
-    );
-
     const deliveredOrder = cachedData?.Delivered || [];
 
     //TODO: Refactor to a mutation
@@ -53,22 +49,22 @@ const Delivered = ({
     };
 
     // manually trigger a refetch if its stale
-    useEffect(() => {
-        const retryFetch = async () => {
-            if (isStale && deliveredOrder == undefined) {
-                for (let i = 0; i < 3; i++) {
-                    if (deliveredOrder == undefined) {
-                        queryClient.resetQueries(['fetchDeliveredOrder']);
-                        queryClient.invalidateQueries(['fetchDeliveredOrder']);
-                        await new Promise((resolve) =>
-                            setTimeout(resolve, 100)
-                        );
-                    }
-                }
-            }
-        };
-        retryFetch();
-    }, [isStale]);
+    // useEffect(() => {
+    //     const retryFetch = async () => {
+    //         if (isStale && deliveredOrder == undefined) {
+    //             for (let i = 0; i < 3; i++) {
+    //                 if (deliveredOrder == undefined) {
+    //                     queryClient.resetQueries(['fetchDeliveredOrder']);
+    //                     queryClient.invalidateQueries(['fetchDeliveredOrder']);
+    //                     await new Promise((resolve) =>
+    //                         setTimeout(resolve, 100)
+    //                     );
+    //                 }
+    //             }
+    //         }
+    //     };
+    //     retryFetch();
+    // }, [isStale]);
 
     if (isEmpty && deliveredOrder && deliveredOrder?.length == 0) {
         return <EmptyState />;
@@ -76,34 +72,7 @@ const Delivered = ({
 
     return (
         <div style={{ width: '100%' }}>
-            {isLoading ? (
-                <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="center"
-                    textAlign="center"
-                    py={5}
-                >
-                    <Text color="white" fontSize="lg" mb={8}>
-                        Loading Delivered orders...
-                    </Text>
-                    <Spinner size={80} />
-                </Box>
-            ) : isError && orderActiveTab !== 'All Orders' ? (
-                <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="center"
-                    textAlign="center"
-                    py={5}
-                >
-                    <Text color="red.500" fontSize="lg" mb={8}>
-                        Error fetching delivered orders.
-                    </Text>
-                </Box>
-            ) : deliveredOrder && deliveredOrder.length > 0 ? (
+            {deliveredOrder && deliveredOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {deliveredOrder.map((order: any) => {
                         const totalPrice = order.items.reduce(

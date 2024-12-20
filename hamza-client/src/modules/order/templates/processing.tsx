@@ -121,7 +121,7 @@ const Processing = ({
                         'fetchAllOrders',
                         customer,
                     ]);
-                    refetch();
+                    // refetch();
 
                     setIsModalOpen(false);
                     setSelectedOrderId(null);
