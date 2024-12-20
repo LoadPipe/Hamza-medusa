@@ -43,11 +43,11 @@ const Refund = ({
 
     const queryClient = useQueryClient();
 
-    const { data, isLoading, isError, refetch, isStale } = useQuery<OrdersData>(
-        ['batchOrders']
-    );
+    const cachedData: OrdersData | undefined = queryClient.getQueryData([
+        'batchOrders',
+    ]);
 
-    const refundOrder = data?.Refunded || [];
+    const refundOrder = cachedData?.Refunded || [];
 
     const toggleRefundInfo = (orderId: any) => {
         setCourierInfo(courierInfo === orderId ? null : orderId);
@@ -70,22 +70,7 @@ const Refund = ({
 
     return (
         <div style={{ width: '100%' }}>
-            {isLoading ? (
-                <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="center"
-                    textAlign="center"
-                >
-                    <Text color="white" fontSize="lg" mb={8}>
-                        Loading Refunded orders...
-                    </Text>
-                    <Spinner size={80} />
-                </Box>
-            ) : isError && orderActiveTab !== 'All Orders' ? (
-                <Text>Error fetching refunded orders</Text>
-            ) : refundOrder && refundOrder.length > 0 ? (
+            {refundOrder && refundOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {refundOrder.map((order: any) => {
                         const totalPrice = order.items.reduce(
