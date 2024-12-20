@@ -31,15 +31,12 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
     const { productData } = useProductPreview();
     const [images, setImages] = useState<string[]>([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [handle, setHanlde] = useState();
     const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 
     useEffect(() => {
         // Construct the initial images array from product data
         let newImages =
             productData?.images?.map((img: ImageType) => img.url) || [];
-
-        setHanlde(newImages);
 
         // Check if a selected variant image is provided and is different from the main image
         if (selectedVariantImage && selectedVariantImage !== newImages[0]) {
@@ -89,10 +86,6 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
         base: 'auto auto', // On mobile, stack the big image on top of the small images
         md: '1fr', // On medium screens and up, 1 row for side-by-side layout
     });
-
-    console.log('gift cards', selectedVariantImage);
-
-    console.log('gift cards', selectedVariantImage.includes('globetopper.com'));
 
     return (
         <Flex maxW={'1280px'} width={'100%'} flexDirection={'column'}>
