@@ -19,6 +19,7 @@ import { getAllProducts } from '@lib/data';
 import useProductGroup from '@/zustand/products/product-group/product-group';
 import useProductFilterModal from '@/zustand/products/filter/product-filter';
 import { useSearchParams } from 'next/navigation';
+import { formatPriceBetweenCurrencies } from '@/lib/util/prices';
 
 const ProductCardGroup = ({
     columns = { base: 2, lg: 4 },
@@ -143,20 +144,11 @@ const ProductCardGroup = ({
                         preferred_currency_code as string
                     );
 
-                    let usdcProductPrice: number;
-                    let usdcFormattedPrice: string | number = '';
-                    if (preferred_currency_code === 'eth') {
-                        usdcProductPrice =
-                            variant?.prices?.find(
-                                (price: any) => price.currency_code === 'usdc'
-                            )?.amount ||
-                            variant?.prices?.[0]?.amount ||
-                            0;
-                        usdcFormattedPrice = formatCryptoPrice(
-                            usdcProductPrice ?? 0,
-                            'usdc'
-                        );
-                    }
+                    const usdcFormattedPrice = formatPriceBetweenCurrencies(
+                        variant?.prices,
+                        preferred_currency_code ?? 'usdc',
+                        'usdc'
+                    );
 
                     const reviewCounter = product.reviews.length;
                     const totalRating = product.reviews.reduce(
