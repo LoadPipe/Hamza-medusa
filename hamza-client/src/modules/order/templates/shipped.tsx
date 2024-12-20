@@ -41,7 +41,10 @@ const Shipped = ({
     isEmpty?: boolean;
 }) => {
     const [courierInfo, setCourierInfo] = useState(false);
-
+    const queryClient = useQueryClient();
+    const cachedData: OrdersData | undefined = queryClient.getQueryData([
+        'batchOrders',
+    ]);
     const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
     const toggleCourierInfo = (orderId: any) => {
@@ -52,7 +55,7 @@ const Shipped = ({
         ['batchOrders']
     );
 
-    const shippedOrder = data?.Shipped || [];
+    const shippedOrder = cachedData?.Shipped || [];
 
     if (isLoading) {
         return (

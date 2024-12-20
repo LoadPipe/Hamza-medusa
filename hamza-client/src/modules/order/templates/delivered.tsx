@@ -27,12 +27,14 @@ const Delivered = ({
 
     const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
     const queryClient = useQueryClient();
-
+    const cachedData: OrdersData | undefined = queryClient.getQueryData([
+        'batchOrders',
+    ]);
     const { data, isLoading, isError, refetch, isStale } = useQuery<OrdersData>(
         ['batchOrders']
     );
 
-    const deliveredOrder = data?.Delivered || [];
+    const deliveredOrder = cachedData?.Delivered || [];
 
     //TODO: Refactor to a mutation
     const handleReorder = async (item: any, country_code: string) => {
