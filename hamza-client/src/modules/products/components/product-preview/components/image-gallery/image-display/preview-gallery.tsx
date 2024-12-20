@@ -31,12 +31,15 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
     const { productData } = useProductPreview();
     const [images, setImages] = useState<string[]>([]);
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const [handle, setHanlde] = useState();
     const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 
     useEffect(() => {
         // Construct the initial images array from product data
         let newImages =
             productData?.images?.map((img: ImageType) => img.url) || [];
+
+        setHanlde(newImages);
 
         // Check if a selected variant image is provided and is different from the main image
         if (selectedVariantImage && selectedVariantImage !== newImages[0]) {
@@ -87,6 +90,10 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
         md: '1fr', // On medium screens and up, 1 row for side-by-side layout
     });
 
+    console.log('gift cards', selectedVariantImage);
+
+    console.log('gift cards', selectedVariantImage.includes('globetopper.com'));
+
     return (
         <Flex maxW={'1280px'} width={'100%'} flexDirection={'column'}>
             <Grid
@@ -97,26 +104,55 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                 {/* Main Square Image on the top (mobile) or left (desktop) */}
                 <GridItem position="relative">
                     <Box position="relative" overflow="hidden">
-                        <AspectRatio
-                            ratio={1}
-                            width={{ base: '100%', md: '100%' }} // Use full width on mobile, fixed on desktop
-                            maxH="600px"
-                            minH="312px"
-                            height="100%"
-                            overflow="hidden"
-                            borderRadius={{ base: '16px', md: '16px 0 0 16px' }}
-                            onClick={() => openGallery(0)}
-                            cursor="pointer"
-                        >
-                            <Image
-                                src={images[0]}
-                                width={'100%'}
-                                height={'100%'}
-                                alt="Main Image"
-                                objectFit="cover"
-                            />
-                        </AspectRatio>
-
+                        {selectedVariantImage.includes('globetopper.com') ? (
+                            <Flex
+                                justifyContent={'center'}
+                                alignItems={'center'}
+                                width={{ base: '100%', md: '100%' }} // Use full width on mobile, fixed on desktop
+                                maxH="600px"
+                                minH="312px"
+                                height="100%"
+                                overflow="hidden"
+                                borderRadius={{
+                                    base: '16px',
+                                    md: '16px 16px 16px 16px',
+                                }}
+                                onClick={() => openGallery(0)}
+                                cursor="pointer"
+                                backgroundColor={'black'}
+                            >
+                                <Image
+                                    src={images[0]}
+                                    maxWidth={'400px'}
+                                    maxHeight={'251px'}
+                                    alt="Main Image"
+                                    objectFit="cover"
+                                />
+                            </Flex>
+                        ) : (
+                            <AspectRatio
+                                ratio={1}
+                                width={{ base: '100%', md: '100%' }} // Use full width on mobile, fixed on desktop
+                                maxH="600px"
+                                minH="312px"
+                                height="100%"
+                                overflow="hidden"
+                                borderRadius={{
+                                    base: '16px',
+                                    md: '16px 0 0 16px',
+                                }}
+                                onClick={() => openGallery(0)}
+                                cursor="pointer"
+                            >
+                                <Image
+                                    src={images[0]}
+                                    width={'100%'}
+                                    height={'100%'}
+                                    alt="Main Image"
+                                    objectFit="cover"
+                                />
+                            </AspectRatio>
+                        )}
                         {/* Back Button (Top Left) */}
                         <IconButton
                             as="button"
