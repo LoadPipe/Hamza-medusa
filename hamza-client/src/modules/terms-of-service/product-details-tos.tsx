@@ -182,7 +182,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ metadata }) => {
 
                 <UnorderedList color={'white'}>
                     <ListItem fontSize={{ base: '14px', md: '16px' }}>
-                        Ships from {metadata?.ships_from ?? 'Shenzhen, China'}
+                        {metadata?.ships_from ?? ''}
                     </ListItem>
                     <ListItem mt="1rem" fontSize={{ base: '14px', md: '16px' }}>
                         Allow {metadata?.shipping_time ?? '7-16 business days'}{' '}
