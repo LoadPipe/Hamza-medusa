@@ -154,13 +154,16 @@ const ProductReview = () => {
             </Flex>
         </Flex>
     ) : (
-        <div>
-            <br />
-            <Text color="white">This product has no reviews or ratings</Text>
-            <br />
-            <br />
-        </div>
+        <Flex mb={4}></Flex>
     );
+    // ) : (
+    //     <div>
+    //         <br />
+    //         <Text color="white">This product has no reviews or ratings</Text>
+    //         <br />
+    //         <br />
+    //     </div>
+    // );
 };
 
 export default ProductReview;
