@@ -5,7 +5,7 @@ import SearchAndFilterPanel from '@modules/home/components/search-and-filter-pan
 import { Box } from '@chakra-ui/react';
 import HeroBanner from '@modules/home/components/hero-banner';
 import getQueryClient from '@/getQueryClient';
-import { dehydrate } from '@tanstack/react-query';
+import { dehydrate, useQueryClient } from '@tanstack/react-query';
 
 /**
  * Author: Garo Nazarian

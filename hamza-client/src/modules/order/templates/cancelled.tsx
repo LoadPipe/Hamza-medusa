@@ -1,7 +1,7 @@
 import { Box, Divider, Text, Flex, Button } from '@chakra-ui/react';
 import CancelCard from '@modules/account/components/cancel-card';
 import EmptyState from '@modules/order/components/empty-state';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
 import React, { useState } from 'react';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
@@ -24,47 +24,53 @@ const Cancelled = ({
     const [activeOrder, setActiveOrder] = useState<string | null>(null); // State to track the active order's modal
     const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
-    const {
-        data,
-        isLoading: cancelIsLoading,
-        isError: cancelIsError,
-    } = useQuery<OrdersData>(['batchOrders']);
+    const queryClient = useQueryClient();
+    const cachedData: OrdersData | undefined = queryClient.getQueryData([
+        'batchOrders',
+    ]);
 
-    const canceledOrder = data?.Cancelled || [];
+    // const {
+    //     data,
+    //     isLoading: cancelIsLoading,
+    //     isError: cancelIsError,
+    // } = useQuery<OrdersData>(['batchOrders']);
+
+    const canceledOrder = cachedData?.Cancelled || [];
     if (isEmpty && canceledOrder && canceledOrder?.length == 0) {
         return <EmptyState />;
     }
 
     return (
         <div style={{ width: '100%' }}>
-            {cancelIsLoading ? (
-                <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="center"
-                    textAlign="center"
-                    py={5}
-                >
-                    <Text color="white" fontSize="lg" mb={8}>
-                        Loading Cancelled orders...
-                    </Text>
-                    <Spinner size={80} />
-                </Box>
-            ) : cancelIsError && orderActiveTab !== 'All Orders' ? (
-                <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="center"
-                    textAlign="center"
-                    py={5}
-                >
-                    <Text color="red.500" fontSize="lg" mb={8}>
-                        Error fetching delivered orders.
-                    </Text>
-                </Box>
-            ) : canceledOrder && canceledOrder.length > 0 ? (
+            {/*{cancelIsLoading ? (*/}
+            {/*    <Box*/}
+            {/*        display="flex"*/}
+            {/*        flexDirection="column"*/}
+            {/*        justifyContent="center"*/}
+            {/*        alignItems="center"*/}
+            {/*        textAlign="center"*/}
+            {/*        py={5}*/}
+            {/*    >*/}
+            {/*        <Text color="white" fontSize="lg" mb={8}>*/}
+            {/*            Loading Cancelled orders...*/}
+            {/*        </Text>*/}
+            {/*        <Spinner size={80} />*/}
+            {/*    </Box>*/}
+            {/*) : cancelIsError && orderActiveTab !== 'All Orders' ? (*/}
+            {/*    <Box*/}
+            {/*        display="flex"*/}
+            {/*        flexDirection="column"*/}
+            {/*        justifyContent="center"*/}
+            {/*        alignItems="center"*/}
+            {/*        textAlign="center"*/}
+            {/*        py={5}*/}
+            {/*    >*/}
+            {/*        <Text color="red.500" fontSize="lg" mb={8}>*/}
+            {/*            Error fetching delivered orders.*/}
+            {/*        </Text>*/}
+            {/*    </Box>*/}
+            {/*) :*/}
+            {canceledOrder && canceledOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {canceledOrder.map((order: any) => {
                         const totalPrice = order.items.reduce(
