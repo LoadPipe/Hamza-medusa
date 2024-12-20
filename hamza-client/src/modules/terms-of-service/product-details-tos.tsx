@@ -185,8 +185,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ metadata }) => {
                         {metadata?.ships_from ?? ''}
                     </ListItem>
                     <ListItem mt="1rem" fontSize={{ base: '14px', md: '16px' }}>
-                        Allow {metadata?.shipping_time ?? '7-16 business days'}{' '}
-                        for delivery
+                        {metadata?.shipping_time ?? ''}{' '}
                     </ListItem>
                 </UnorderedList>
 
