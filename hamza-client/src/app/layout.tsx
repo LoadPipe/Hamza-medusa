@@ -60,7 +60,6 @@ export default function RootLayout(props: { children: React.ReactNode }) {
 
                 <div>
                     <MedusaProvider token={token}>
-                        {' '}
                         {/* Pass token as prop */}
                         <RainbowWrapper>
                             <ChakraProvider theme={theme}>

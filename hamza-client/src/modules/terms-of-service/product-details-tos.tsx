@@ -181,13 +181,19 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ metadata }) => {
                 </Flex>
 
                 <UnorderedList color={'white'}>
-                    <ListItem fontSize={{ base: '14px', md: '16px' }}>
-                        {metadata?.ships_from ?? ''}
-                    </ListItem>
-                    <ListItem mt="1rem" fontSize={{ base: '14px', md: '16px' }}>
-                        Allow {metadata?.shipping_time ?? '7-16 business days'}{' '}
-                        for delivery
-                    </ListItem>
+                    {metadata?.ships_from?.length && (
+                        <ListItem fontSize={{ base: '14px', md: '16px' }}>
+                            {metadata?.ships_from ?? ''}
+                        </ListItem>
+                    )}
+                    {metadata?.shipping_time?.length && (
+                        <ListItem
+                            mt="1rem"
+                            fontSize={{ base: '14px', md: '16px' }}
+                        >
+                            {metadata?.shipping_time ?? ''}{' '}
+                        </ListItem>
+                    )}
                 </UnorderedList>
 
                 {/* Modal with Three Options */}

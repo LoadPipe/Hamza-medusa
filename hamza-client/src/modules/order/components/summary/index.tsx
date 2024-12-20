@@ -3,7 +3,7 @@ import React from 'react';
 import { Flex, Text, Divider } from '@chakra-ui/react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import Thumbnail from '@modules/products/components/thumbnail';
-import Tweet from '@/components/tweet';
+// import Tweet from '@/components/tweet';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import Image from 'next/image';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
@@ -83,12 +83,12 @@ const Summary: React.FC<SummaryProps> = ({ cart }) => {
 
                     {/* Twitter and Quantity */}
                     <Flex alignItems="center" height="50px" width="100%">
-                        <Flex alignSelf="center">
-                            <Tweet
-                                productHandle={item.variant.product.handle}
-                                isPurchased={true}
-                            />
-                        </Flex>
+                        {/*<Flex alignSelf="center">*/}
+                        {/*    <Tweet*/}
+                        {/*        productHandle={item.variant.product.handle}*/}
+                        {/*        isPurchased={true}*/}
+                        {/*    />*/}
+                        {/*</Flex>*/}
                         <Text ml="1rem" fontSize={{ base: '14px', md: '16px' }}>
                             Quantity: {item.quantity}
                         </Text>

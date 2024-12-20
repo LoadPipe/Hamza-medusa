@@ -92,15 +92,18 @@ const Processing = ({
     const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
     const queryClient = useQueryClient();
+    const cachedData: OrdersData | undefined = queryClient.getQueryData([
+        'batchOrders',
+    ]);
 
-    const {
-        data,
-        isLoading: processingOrdersLoading,
-        isError: processingOrdersError,
-        refetch,
-    } = useQuery<OrdersData>(['batchOrders']);
+    // const {
+    //     data,
+    //     isLoading: processingOrdersLoading,
+    //     isError: processingOrdersError,
+    //     refetch,
+    // } = useQuery<OrdersData>(['batchOrders']);
 
-    const processingOrder = data?.Processing || [];
+    const processingOrder = cachedData?.Processing || [];
 
     const mutation = useMutation(
         ({
@@ -118,7 +121,7 @@ const Processing = ({
                         'fetchAllOrders',
                         customer,
                     ]);
-                    refetch();
+                    // refetch();
 
                     setIsModalOpen(false);
                     setSelectedOrderId(null);
@@ -187,42 +190,43 @@ const Processing = ({
     }
     return (
         <div style={{ width: '100%' }}>
-            {processingOrdersLoading ? (
-                <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="center"
-                    textAlign="center"
-                >
-                    <Text color="white" fontSize="lg" mb={8}>
-                        Loading Processing orders...
-                    </Text>
-                    <Spinner size={80} />
-                </Box>
-            ) : processingOrdersError && orderActiveTab !== 'All Orders' ? (
-                <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="center"
-                    textAlign="center"
-                    py={5}
-                >
-                    <Text>Error fetching processing orders</Text>
-                </Box>
-            ) : processingOrdersError && orderActiveTab === 'All Orders' ? (
-                <Box
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="center"
-                    alignItems="center"
-                    textAlign="center"
-                    py={5}
-                >
-                    <Text>Error Fetching Orders, please refresh</Text>
-                </Box>
-            ) : processingOrder && processingOrder.length > 0 ? (
+            {/*{processingOrdersLoading ? (*/}
+            {/*    <Box*/}
+            {/*        display="flex"*/}
+            {/*        flexDirection="column"*/}
+            {/*        justifyContent="center"*/}
+            {/*        alignItems="center"*/}
+            {/*        textAlign="center"*/}
+            {/*    >*/}
+            {/*        <Text color="white" fontSize="lg" mb={8}>*/}
+            {/*            Loading Processing orders...*/}
+            {/*        </Text>*/}
+            {/*        <Spinner size={80} />*/}
+            {/*    </Box>*/}
+            {/*) : processingOrdersError && orderActiveTab !== 'All Orders' ? (*/}
+            {/*    <Box*/}
+            {/*        display="flex"*/}
+            {/*        flexDirection="column"*/}
+            {/*        justifyContent="center"*/}
+            {/*        alignItems="center"*/}
+            {/*        textAlign="center"*/}
+            {/*        py={5}*/}
+            {/*    >*/}
+            {/*        <Text>Error fetching processing orders</Text>*/}
+            {/*    </Box>*/}
+            {/*) : processingOrdersError && orderActiveTab === 'All Orders' ? (*/}
+            {/*    <Box*/}
+            {/*        display="flex"*/}
+            {/*        flexDirection="column"*/}
+            {/*        justifyContent="center"*/}
+            {/*        alignItems="center"*/}
+            {/*        textAlign="center"*/}
+            {/*        py={5}*/}
+            {/*    >*/}
+            {/*        <Text>Error Fetching Orders, please refresh</Text>*/}
+            {/*    </Box>*/}
+            {/*) :*/}
+            {processingOrder && processingOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {processingOrder.map((order: any) => {
                         const totalPrice = order.items.reduce(
