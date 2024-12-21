@@ -31,6 +31,7 @@ export declare module '@medusajs/medusa/dist/models/customer' {
 export declare module '@medusajs/medusa/dist/models/line-item' {
     declare interface LineItem {
         currency_code: string;
+        external_order_id: number;
     }
 }
 

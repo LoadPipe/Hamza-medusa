@@ -14,7 +14,7 @@ export type GTPurchaseInputData = {
     first_name: string;
     last_name: string;
     email: string;
-    order_id: string;
+    order_id: number;
 };
 
 /**
@@ -128,7 +128,7 @@ export class GlobetopperClient {
             email,
             first_name,
             last_name,
-            order_id: 1,
+            order_id,
         };
         this.logger?.debug(`Calling ${url} ${data}`);
 

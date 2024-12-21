@@ -2,7 +2,6 @@ import {
     TransactionBaseService,
     ProductStatus,
     ProductVariant,
-    LineItem,
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
 import { Product } from '../models/product';
@@ -15,6 +14,7 @@ import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import { GlobetopperClient } from '../globetopper/globetopper-client';
 import { ExternalApiLogRepository } from '../repositories/external-api-log';
+import { LineItem } from '../models/line-item';
 
 const PRODUCT_EXTERNAL_SOURCE: string = 'globetopper';
 
@@ -131,6 +131,7 @@ export default class GlobetopperService extends TransactionBaseService {
         for (let n = 0; n < items.length; n++) {
             const quantity = items[n].quantity ?? 1;
             const variant = items[n].variant;
+            const gtOrderId = items[n].external_order_id;
 
             //account for quantity of each
             for (let i = 0; i < quantity; i++) {
@@ -145,7 +146,7 @@ export default class GlobetopperService extends TransactionBaseService {
                 */
                 promises.push(
                     this.purchaseItem(
-                        orderId,
+                        gtOrderId,
                         firstName,
                         lastName,
                         email,
@@ -329,7 +330,7 @@ export default class GlobetopperService extends TransactionBaseService {
     }
 
     private async purchaseItem(
-        orderId: string,
+        orderId: number,
         firstName: string,
         lastName: string,
         email: string,
