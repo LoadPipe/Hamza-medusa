@@ -19,9 +19,15 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     await handler.handle(async () => {
         if (!handler.requireParam('order_id')) return;
 
-        const order: any = orderService.retrieve(handler.inputParams.order_id, {
-            relations: ['items'],
-        });
+        const order: any = await orderService.retrieve(
+            handler.inputParams.order_id,
+            {
+                relations: ['items.variant.product'],
+            }
+        );
+
+        order.items = [order.items[0]];
+        order.items[0].quantity = 1;
 
         //require params
         await globeTopperService.processPointOfSale(

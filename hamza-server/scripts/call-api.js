@@ -98,7 +98,6 @@ async function main() {
                 }),
             }
         );
-        console.log(await storeResponse.json());
 
         const mockOrder = await fetch(
             `http://localhost:${port}/admin/custom/mock-orders?count=75`,
@@ -111,7 +110,6 @@ async function main() {
         );
 
         console.log(mockOrder);
-        console.log(await mockOrder.json());
     } catch (e) {
         console.error(e);
     }

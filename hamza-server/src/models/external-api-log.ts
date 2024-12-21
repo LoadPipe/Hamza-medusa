@@ -12,7 +12,7 @@ import { generateEntityId } from '@medusajs/medusa/dist/utils';
 // - output: jsonb → the response that came back
 // - context: jsonb → optional, leave blank for now. This I expect we will use to indicate from where, for what customer, etc.
 
-@Entity('bucky_logs')
+@Entity('external_api_logs')
 export class ExternalApiLog extends BaseEntity {
     @PrimaryColumn()
     id: string;
@@ -23,10 +23,8 @@ export class ExternalApiLog extends BaseEntity {
     @Column({ name: 'api_source' })
     api_source: string;
 
-    // Storing JSON data in binary format
-    // TS type system doesn't know about `jsonb`
     @Column({ name: 'input', type: 'jsonb' })
-    input: any;
+    input?: any;
 
     @Column({ name: 'output', type: 'jsonb' })
     output?: any;

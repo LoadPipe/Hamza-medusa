@@ -35,12 +35,17 @@ export class GlobetopperClient {
     protected readonly externalApiLogRepository: typeof ExternalApiLogRepository;
     protected readonly logger: ILogger;
 
-    constructor(logger: ILogger) {
+    constructor(
+        logger: ILogger,
+        externalApiLogRepository: typeof ExternalApiLogRepository
+    ) {
         this.baseUrl = process.env.GLOBETOPPER_API_URL;
         this.bearerAuthHeader =
             process.env.GLOBETOPPER_API_KEY +
             ':' +
             process.env.GLOBETOPPER_SECRET;
+        this.logger = logger;
+        this.externalApiLogRepository = externalApiLogRepository;
     }
 
     /**
@@ -125,6 +130,7 @@ export class GlobetopperClient {
             last_name,
             order_id: 1,
         };
+        this.logger?.debug(`Calling ${url} ${data}`);
 
         //save log record before calling
         const logRecord = await this.saveLogInput(url, data);
@@ -139,7 +145,7 @@ export class GlobetopperClient {
             });
 
             //save with output after calling
-            await this.saveLogOutput(logRecord, output);
+            await this.saveLogOutput(logRecord, output?.data);
 
             //and return output
             return output;
@@ -147,7 +153,7 @@ export class GlobetopperClient {
             this.logger?.error(
                 `Error calling purchase api for globetopper: ${e}`
             );
-            await this.saveLogOutput(logRecord, e);
+            await this.saveLogOutput(logRecord, { error: e.toString() });
             return null;
         }
     }
@@ -162,13 +168,13 @@ export class GlobetopperClient {
                 endpoint,
                 api_source: 'globetopper',
                 input,
-                timestamp: Date.now(), // ISO formatted timestamp
                 id: generateEntityId(),
             };
-            this.logger?.info(`saving ${entry}`);
+
             const record = await this.externalApiLogRepository?.save(entry);
             return record;
         } catch (e) {
+            console.error(e);
             this.logger?.error(
                 `Error logging external api input log for globetopper: ${e}`
             );
@@ -185,7 +191,6 @@ export class GlobetopperClient {
     ): Promise<ExternalApiLog> {
         try {
             record.output = output;
-            this.logger?.info(`saving ${record}`);
             await this.externalApiLogRepository?.save(record);
         } catch (e) {
             this.logger?.error(

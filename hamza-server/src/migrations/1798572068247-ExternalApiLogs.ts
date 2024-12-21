@@ -12,8 +12,7 @@ export class ExternalLogs1725491792885 implements MigrationInterface {
                 "context" jsonb, 
                 "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-                "deleted_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-                CONSTRAINT "PK_okumu5lnikxobwv1rhv1dgs912" PRIMARY KEY ("id"))`
+                CONSTRAINT "PK_EXTERNAL_API_LOGS" PRIMARY KEY ("id"))`
         );
     }
 
