@@ -40,7 +40,7 @@ export default class GlobetopperService extends TransactionBaseService {
             this.logger,
             container.cachedExchangeRateRepository
         );
-        this.apiClient = new GlobetopperClient();
+        this.apiClient = new GlobetopperClient(this.logger);
     }
 
     public async import(
