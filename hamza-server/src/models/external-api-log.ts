@@ -13,7 +13,7 @@ import { generateEntityId } from '@medusajs/medusa/dist/utils';
 // - context: jsonb → optional, leave blank for now. This I expect we will use to indicate from where, for what customer, etc.
 
 @Entity('bucky_logs')
-export class SpecialApiLog extends BaseEntity {
+export class ExternalApiLog extends BaseEntity {
     @PrimaryColumn()
     id: string;
 

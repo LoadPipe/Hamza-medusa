@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class SpecialApiLogs1725491792885 implements MigrationInterface {
+export class ExternalLogs1725491792885 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
-            `CREATE TABLE "special_api_logs"(
+            `CREATE TABLE "external_api_logs"(
                 "id" character varying NOT NULL,
                 "api_source" character varying NOT NULL,
                 "endpoint" character varying NOT NULL,
@@ -18,6 +18,6 @@ export class SpecialApiLogs1725491792885 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TABLE "special_api_logs"`);
+        await queryRunner.query(`DROP TABLE "external_api_logs"`);
     }
 }
