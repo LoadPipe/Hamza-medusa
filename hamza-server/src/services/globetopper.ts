@@ -14,6 +14,7 @@ import {
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import { GlobetopperClient } from '../globetopper/globetopper-client';
+import { ExternalApiLogRepository } from '../repositories/external-api-log';
 
 const PRODUCT_EXTERNAL_SOURCE: string = 'globetopper';
 
@@ -29,18 +30,23 @@ export default class GlobetopperService extends TransactionBaseService {
     protected readonly orderRepository_: typeof OrderRepository;
     protected readonly priceConverter: PriceConverter;
     protected readonly apiClient: GlobetopperClient;
+    protected readonly externalApiLogRepository_: typeof ExternalApiLogRepository;
     public static readonly EXTERNAL_SOURCE: string = PRODUCT_EXTERNAL_SOURCE;
 
     constructor(container) {
         super(container);
         this.productService_ = container.productService;
         this.orderRepository_ = container.orderRepository;
+        this.externalApiLogRepository_ = container.externalApiLogRepository;
         this.logger = createLogger(container, 'GlobetopperService');
         this.priceConverter = new PriceConverter(
             this.logger,
             container.cachedExchangeRateRepository
         );
-        this.apiClient = new GlobetopperClient();
+        this.apiClient = new GlobetopperClient(
+            this.logger,
+            this.externalApiLogRepository_
+        );
     }
 
     public async import(
@@ -116,6 +122,10 @@ export default class GlobetopperService extends TransactionBaseService {
         items: LineItem[]
     ): Promise<any[]> {
         const promises: Promise<any>[] = [];
+
+        this.logger.info(
+            `Processing gift cards point of sale for ${orderId} with items ${items?.length}`
+        );
 
         //make a list of promises
         for (let n = 0; n < items.length; n++) {

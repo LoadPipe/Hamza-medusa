@@ -1,5 +1,9 @@
 import axios from 'axios';
 import querystring from 'querystring';
+import { ExternalApiLogRepository } from '../repositories/external-api-log';
+import { ExternalApiLog } from '../models/external-api-log';
+import { generateEntityId } from '@medusajs/medusa';
+import { ILogger } from '../utils/logging/logger';
 
 /**
  * Input data for purchase at point-of-sale; required params only.
@@ -28,13 +32,20 @@ function appendQuerystring(url: string, key: string, value: string): string {
 export class GlobetopperClient {
     protected readonly baseUrl: string;
     protected readonly bearerAuthHeader: string;
+    protected readonly externalApiLogRepository: typeof ExternalApiLogRepository;
+    protected readonly logger: ILogger;
 
-    constructor() {
+    constructor(
+        logger: ILogger,
+        externalApiLogRepository: typeof ExternalApiLogRepository
+    ) {
         this.baseUrl = process.env.GLOBETOPPER_API_URL;
         this.bearerAuthHeader =
             process.env.GLOBETOPPER_API_KEY +
             ':' +
             process.env.GLOBETOPPER_SECRET;
+        this.logger = logger;
+        this.externalApiLogRepository = externalApiLogRepository;
     }
 
     /**
@@ -117,15 +128,77 @@ export class GlobetopperClient {
             email,
             first_name,
             last_name,
-            order_id: 123456,
+            order_id: 1,
         };
+        this.logger?.debug(`Calling ${url} ${data}`);
+
+        //save log record before calling
+        const logRecord = await this.saveLogInput(url, data);
 
         //send request
-        return axios.post(url, querystring.stringify(data), {
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                authorization: 'Bearer ' + this.bearerAuthHeader,
-            },
-        });
+        try {
+            const output = await axios.post(url, querystring.stringify(data), {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    authorization: 'Bearer ' + this.bearerAuthHeader,
+                },
+            });
+
+            //save with output after calling
+            await this.saveLogOutput(logRecord, output?.data);
+
+            //and return output
+            return output;
+        } catch (e: any) {
+            this.logger?.error(
+                `Error calling purchase api for globetopper: ${e}`
+            );
+            await this.saveLogOutput(logRecord, { error: e.toString() });
+            return null;
+        }
+    }
+
+    //TODO: maybe move to its own service
+    private async saveLogInput(
+        endpoint: string,
+        input: any
+    ): Promise<ExternalApiLog> {
+        try {
+            const entry = {
+                endpoint,
+                api_source: 'globetopper',
+                input,
+                id: generateEntityId(),
+            };
+
+            const record = await this.externalApiLogRepository?.save(entry);
+            return record;
+        } catch (e) {
+            console.error(e);
+            this.logger?.error(
+                `Error logging external api input log for globetopper: ${e}`
+            );
+            console.error(e);
+        }
+
+        return null;
+    }
+
+    //TODO: maybe move to its own service
+    private async saveLogOutput(
+        record: ExternalApiLog,
+        output: any
+    ): Promise<ExternalApiLog> {
+        try {
+            record.output = output;
+            await this.externalApiLogRepository?.save(record);
+        } catch (e) {
+            this.logger?.error(
+                `Error logging external api output log for globetopper: ${e}`
+            );
+            console.error(e);
+        }
+
+        return record;
     }
 }

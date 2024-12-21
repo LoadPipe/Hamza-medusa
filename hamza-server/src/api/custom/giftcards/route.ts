@@ -8,8 +8,6 @@ import { GlobetopperClient } from '../../../globetopper/globetopper-client';
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const globeTopperService: GlobetopperService =
         req.scope.resolve('globetopperService');
-    const productService: ProductService = req.scope.resolve('productService');
-    const globetopperClient: GlobetopperClient = new GlobetopperClient();
 
     const handler: RouteHandler = new RouteHandler(
         req,
