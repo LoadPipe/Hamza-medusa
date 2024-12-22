@@ -98,7 +98,18 @@ async function main() {
                 }),
             }
         );
-        console.log(await storeResponse.json());
+
+        const mockOrder = await fetch(
+            `http://localhost:${port}/admin/custom/mock-orders?count=75`,
+            {
+                method: 'POST',
+                headers: {
+                    Cookie: authCookie.substring(0, authCookie.indexOf(';')),
+                },
+            }
+        );
+
+        console.log(mockOrder);
     } catch (e) {
         console.error(e);
     }

@@ -236,7 +236,7 @@ export class BasicCheckoutProcessor {
     ): PaymentDataInput {
         //divide the cart items
         const itemsFromStore = cart.items.filter(
-            (i: LineItem) => i.currency_code === storeGroup.currency_code
+            (i: LineItem) => i.variant.product.store_id === storeGroup.store.id
         );
 
         //get total amount for the items
@@ -301,18 +301,16 @@ export class BasicCheckoutProcessor {
         paymentGroups: IPaymentGroupData[]
     ): Promise<Payment[]> {
         //calculate shipping cost
-        const shippingCost =
-            await this.shippingSpecService.calculateShippingPriceForCart(
-                cart.id
-            );
-
         //for each unique group, make payment input to create a payment
         const paymentInputs: PaymentDataInput[] = [];
-        paymentGroups.forEach((group) => {
+        for (let group of paymentGroups) {
             const input = this.createPaymentInput(cart, group);
-            input.amount += shippingCost;
+            input.amount +=
+                await this.shippingSpecService.calculateShippingPriceForStore(
+                    group.store.id
+                );
             paymentInputs.push(input);
-        });
+        }
 
         //create the payments
         const promises: Promise<Payment>[] = [];

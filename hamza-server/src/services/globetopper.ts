@@ -2,7 +2,6 @@ import {
     TransactionBaseService,
     ProductStatus,
     ProductVariant,
-    LineItem,
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
 import { Product } from '../models/product';
@@ -15,6 +14,8 @@ import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import { GlobetopperClient } from '../globetopper/globetopper-client';
 import SmtpMailService from './smtp-mail';
+import { ExternalApiLogRepository } from '../repositories/external-api-log';
+import { LineItem } from '../models/line-item';
 
 const PRODUCT_EXTERNAL_SOURCE: string = 'globetopper';
 
@@ -31,6 +32,7 @@ export default class GlobetopperService extends TransactionBaseService {
     protected readonly orderRepository_: typeof OrderRepository;
     protected readonly priceConverter: PriceConverter;
     protected readonly apiClient: GlobetopperClient;
+    protected readonly externalApiLogRepository_: typeof ExternalApiLogRepository;
     public static readonly EXTERNAL_SOURCE: string = PRODUCT_EXTERNAL_SOURCE;
 
     constructor(container) {
@@ -38,12 +40,16 @@ export default class GlobetopperService extends TransactionBaseService {
         this.productService_ = container.productService;
         this.orderRepository_ = container.orderRepository;
         this.smtpMailService_ = container.smtpMailService;
+        this.externalApiLogRepository_ = container.externalApiLogRepository;
         this.logger = createLogger(container, 'GlobetopperService');
         this.priceConverter = new PriceConverter(
             this.logger,
             container.cachedExchangeRateRepository
         );
-        this.apiClient = new GlobetopperClient();
+        this.apiClient = new GlobetopperClient(
+            this.logger,
+            this.externalApiLogRepository_
+        );
     }
 
     public async import(
@@ -120,10 +126,15 @@ export default class GlobetopperService extends TransactionBaseService {
     ): Promise<any[]> {
         const promises: Promise<any>[] = [];
 
+        this.logger.info(
+            `Processing gift cards point of sale for ${orderId} with items ${items?.length}`
+        );
+
         //make a list of promises
         for (let n = 0; n < items.length; n++) {
             const quantity = items[n].quantity ?? 1;
             const variant = items[n].variant;
+            const gtOrderId = items[n].external_order_id;
 
             //account for quantity of each
             for (let i = 0; i < quantity; i++) {
@@ -138,7 +149,7 @@ export default class GlobetopperService extends TransactionBaseService {
                 */
                 promises.push(
                     this.purchaseItem(
-                        orderId,
+                        gtOrderId,
                         firstName,
                         lastName,
                         email,
@@ -289,7 +300,7 @@ export default class GlobetopperService extends TransactionBaseService {
     }
 
     private async purchaseItem(
-        orderId: string,
+        orderId: number,
         firstName: string,
         lastName: string,
         email: string,

@@ -174,62 +174,56 @@ const ProductInfo = () => {
                     )}
                 </Flex>
 
-                {ratingCounter > 0 ? (
-                    <Flex
-                        display={{ base: 'none', md: 'flex' }}
-                        gap="5px"
-                        height="20px"
-                    >
-                        <Flex flexDirection={'row'}>
-                            <Flex flexDirection={'row'} alignSelf={'center'}>
-                                {renderStars20px(ratingAverage)}
+                {
+                    ratingCounter > 0 ? (
+                        <Flex
+                            display={{ base: 'none', md: 'flex' }}
+                            gap="5px"
+                            height="20px"
+                        >
+                            <Flex flexDirection={'row'}>
+                                <Flex
+                                    flexDirection={'row'}
+                                    alignSelf={'center'}
+                                >
+                                    {renderStars20px(ratingAverage)}
+                                </Flex>
+                                <Text
+                                    ml="2"
+                                    fontWeight="600"
+                                    fontSize={'20px'}
+                                    color={'white'}
+                                    alignSelf={'center'}
+                                    mt="2px"
+                                >
+                                    {ratingAverage}
+                                </Text>
+                                <Text
+                                    ml="2"
+                                    fontWeight="600"
+                                    fontSize={'14px'}
+                                    color={'white'}
+                                    mt="2px"
+                                >
+                                    ({ratingCounter}{' '}
+                                    {ratingCounter === 1 ? 'review' : 'reviews'}
+                                    )
+                                </Text>
                             </Flex>
-                            <Text
-                                ml="2"
-                                fontWeight="600"
-                                fontSize={'20px'}
-                                color={'white'}
-                                alignSelf={'center'}
-                                mt="2px"
-                            >
-                                {ratingAverage}
-                            </Text>
-                            <Text
-                                ml="2"
-                                fontWeight="600"
-                                fontSize={'14px'}
-                                color={'white'}
-                                mt="2px"
-                            >
-                                ({ratingCounter}{' '}
-                                {ratingCounter === 1 ? 'review' : 'reviews'})
-                            </Text>
                         </Flex>
-                    </Flex>
-                ) : (
-                    <Flex
-                        display={{ base: 'none', md: 'flex' }}
-                        gap="5px"
-                        height="20px"
-                    >
-                        <Flex flexDirection={'row'}>
-                            <Flex flexDirection={'row'} alignSelf={'center'}>
-                                {renderStars20px(ratingAverage)}
-                            </Flex>
-
-                            <Text
-                                ml="2"
-                                as="h4"
-                                fontWeight="600"
-                                fontSize={'14px'}
-                                color={'white'}
-                                mt="2px"
-                            >
-                                no reviews yet
-                            </Text>
-                        </Flex>
-                    </Flex>
-                )}
+                    ) : null
+                    // <Flex
+                    //     display={{ base: 'none', md: 'flex' }}
+                    //     gap="5px"
+                    //     height="20px"
+                    // >
+                    //     <Flex flexDirection={'row'}>
+                    //         <Flex flexDirection={'row'} alignSelf={'center'}>
+                    //             {renderStars20px(ratingAverage)}
+                    //         </Flex>
+                    //     </Flex>
+                    // </Flex>
+                }
             </Flex>
 
             <ProductDescription

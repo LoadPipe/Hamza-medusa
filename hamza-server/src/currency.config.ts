@@ -111,10 +111,13 @@ const chainConfig: any = {
 
 const getCurrencyAddress = (currencyId: string, chainId: number = 1) =>
     chainConfig[chainId]
-        ? chainConfig[chainId][currencyId]?.contract_address ?? ''
+        ? (chainConfig[chainId][currencyId]?.contract_address ?? '')
         : '';
 
-function getCurrencyPrecision(currencyId: string, chainId: number = 1): { native: number, db: number, display: number } {
+function getCurrencyPrecision(
+    currencyId: string,
+    chainId: number = 1
+): { native: number; db: number; display: number } {
     return chainConfig[chainId]
         ? chainConfig[chainId][currencyId]?.precision
         : undefined;

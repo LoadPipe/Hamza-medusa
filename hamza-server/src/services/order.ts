@@ -74,7 +74,6 @@ export default class OrderService extends MedusaOrderService {
     protected addressRepository_: typeof AddressRepository;
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
-    protected readonly buckyLogRepository_: typeof BuckyLogRepository;
     protected readonly shippingMethodRepository_: typeof ShippingMethodRepository;
     protected customerNotificationService_: CustomerNotificationService;
     protected smtpMailService_: SmtpMailService = new SmtpMailService();
@@ -101,7 +100,6 @@ export default class OrderService extends MedusaOrderService {
             container.customerNotificationService;
         this.orderHistoryService_ = container.orderHistoryService;
         this.logger = createLogger(container, 'OrderService');
-        this.buckyLogRepository_ = container.buckyLogRepository;
         this.globetopperService_ = container.globetopperService;
         this.buckyClient = new BuckyClient(container.buckyLogRepository);
     }
@@ -140,8 +138,10 @@ export default class OrderService extends MedusaOrderService {
             order.items = cart.items;
 
             const lineItemPromise = cart.items.map((item) => {
-                item.order_id = order.id;
-                return this.lineItemRepository_.save(item);
+                if (item.variant.product.store_id === storeId) {
+                    item.order_id = order.id;
+                    return this.lineItemRepository_.save(item);
+                }
             });
 
             await Promise.all([...lineItemPromise]);

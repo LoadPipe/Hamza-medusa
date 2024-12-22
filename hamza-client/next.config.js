@@ -78,8 +78,20 @@ const nextConfig = withStoreConfig({
                 hostname: 'blog.hamza.market',
             },
             {
+                protocol: 'http',
+                hostname: 'crm.globetopper.com',
+            },
+            {
+                protocol: 'http',
+                hostname: 'crm.dev.globetopper.com',
+            },
+            {
                 protocol: 'https',
                 hostname: 'crm.globetopper.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'crm.dev.globetopper.com',
             },
         ],
     },
