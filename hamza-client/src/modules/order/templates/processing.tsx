@@ -30,7 +30,7 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import EmptyState from '@modules/order/components/empty-state';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Spinner from '@modules/common/icons/spinner';
-
+import OrderTimeline from '@modules/order/components/order-timeline';
 import ProcessingOrderCard from '@modules/account/components/processing-order-card';
 import { BsCircleFill } from 'react-icons/bs';
 import Image from 'next/image';
@@ -104,6 +104,16 @@ const Processing = ({
     // } = useQuery<OrdersData>(['batchOrders']);
 
     const processingOrder = cachedData?.Processing || [];
+
+    const statusDetails = processingOrder && {
+        status: processingOrder.status,
+        fulfillment_status: processingOrder.fulfillment_status,
+        payment_status: processingOrder.payment_status,
+        created_at: processingOrder.created_at,
+        updated_at: processingOrder.updated_at,
+        histories: processingOrder.histories,
+        refunds: processingOrder.refunds,
+    };
 
     const mutation = useMutation(
         ({
@@ -353,537 +363,540 @@ const Processing = ({
                                                 in={expandViewOrder === item.id}
                                                 animateOpacity
                                             >
-                                                <Box mt={4}>
-                                                    <Tabs
-                                                        variant="unstyled"
-                                                        colorScheme={'green'}
-                                                    >
-                                                        <TabList>
-                                                            <Tab
-                                                                _selected={{
-                                                                    color: 'primary.green.900',
-                                                                    borderBottom:
-                                                                        '2px solid',
-                                                                    borderColor:
-                                                                        'primary.green.900',
-                                                                }}
-                                                            >
-                                                                Order History
-                                                            </Tab>
-                                                            <Tab
-                                                                _selected={{
-                                                                    color: 'primary.green.900',
-                                                                    borderBottom:
-                                                                        '2px solid',
-                                                                    borderColor:
-                                                                        'primary.green.900',
-                                                                }}
-                                                            >
-                                                                Order Details
-                                                            </Tab>
-                                                        </TabList>
+                                                <OrderTimeline
+                                                    orderDetails={order}
+                                                />
+                                                {/*<Box mt={4}>*/}
+                                                {/*    <Tabs*/}
+                                                {/*        variant="unstyled"*/}
+                                                {/*        colorScheme={'green'}*/}
+                                                {/*    >*/}
+                                                {/*        <TabList>*/}
+                                                {/*            <Tab*/}
+                                                {/*                _selected={{*/}
+                                                {/*                    color: 'primary.green.900',*/}
+                                                {/*                    borderBottom:*/}
+                                                {/*                        '2px solid',*/}
+                                                {/*                    borderColor:*/}
+                                                {/*                        'primary.green.900',*/}
+                                                {/*                }}*/}
+                                                {/*            >*/}
+                                                {/*                Order History*/}
+                                                {/*            </Tab>*/}
+                                                {/*            <Tab*/}
+                                                {/*                _selected={{*/}
+                                                {/*                    color: 'primary.green.900',*/}
+                                                {/*                    borderBottom:*/}
+                                                {/*                        '2px solid',*/}
+                                                {/*                    borderColor:*/}
+                                                {/*                        'primary.green.900',*/}
+                                                {/*                }}*/}
+                                                {/*            >*/}
+                                                {/*                Order Details*/}
+                                                {/*            </Tab>*/}
+                                                {/*        </TabList>*/}
 
-                                                        <TabPanels>
-                                                            Order History Panel
-                                                            <TabPanel>
-                                                                <VStack
-                                                                    align="start"
-                                                                    spacing={4}
-                                                                    flexWrap="wrap"
-                                                                    p={4}
-                                                                    borderRadius="lg"
-                                                                    w="100%"
-                                                                >
-                                                                    <Text fontWeight="bold">
-                                                                        Order
-                                                                        History
-                                                                    </Text>
-                                                                    <VStack
-                                                                        align="start"
-                                                                        spacing={
-                                                                            4
-                                                                        }
-                                                                        w="100%"
-                                                                    >
-                                                                        {/* Example timeline event */}
-                                                                        {[
-                                                                            {
-                                                                                status: `${formatStatus('Shipment Status:', order.fulfillment_status)}`,
-                                                                                date: order
-                                                                                    .bucky_metadata
-                                                                                    ?.tracking
-                                                                                    ?.data
-                                                                                    ?.soOrderInfo
-                                                                                    ?.createTime
-                                                                                    ? new Date(
-                                                                                          order.bucky_metadata.tracking.data.soOrderInfo.createTime
-                                                                                      ).toLocaleString(
-                                                                                          undefined,
-                                                                                          {
-                                                                                              year: 'numeric',
-                                                                                              month: 'long',
-                                                                                              day: 'numeric',
-                                                                                              hour: '2-digit',
-                                                                                              minute: '2-digit',
-                                                                                              second: '2-digit',
-                                                                                          }
-                                                                                      )
-                                                                                    : 'Date not available',
-                                                                                shopOrderNo:
-                                                                                    order
-                                                                                        .bucky_metadata
-                                                                                        ?.data
-                                                                                        ?.shopOrderNo ||
-                                                                                    'N/A',
-                                                                                warehouse:
-                                                                                    order
-                                                                                        .bucky_metadata
-                                                                                        ?.tracking
-                                                                                        ?.data
-                                                                                        ?.poOrderList[0]
-                                                                                        ?.warehouseName ||
-                                                                                    'N/A',
+                                                {/*        <TabPanels>*/}
+                                                {/*            Order History Panel*/}
+                                                {/*            <TabPanel>*/}
+                                                {/*                <VStack*/}
+                                                {/*                    align="start"*/}
+                                                {/*                    spacing={4}*/}
+                                                {/*                    flexWrap="wrap"*/}
+                                                {/*                    p={4}*/}
+                                                {/*                    borderRadius="lg"*/}
+                                                {/*                    w="100%"*/}
+                                                {/*                >*/}
+                                                {/*                    <Text fontWeight="bold">*/}
+                                                {/*                        Order*/}
+                                                {/*                        History*/}
+                                                {/*                    </Text>*/}
+                                                {/*                    <VStack*/}
+                                                {/*                        align="start"*/}
+                                                {/*                        spacing={*/}
+                                                {/*                            4*/}
+                                                {/*                        }*/}
+                                                {/*                        w="100%"*/}
+                                                {/*                    >*/}
+                                                {/*                        /!* Example timeline event *!/*/}
+                                                {/*                        {[*/}
+                                                {/*                            {*/}
+                                                {/*                                status: `${formatStatus('Shipment Status:', order.fulfillment_status)}`,*/}
+                                                {/*                                date: order*/}
+                                                {/*                                    .bucky_metadata*/}
+                                                {/*                                    ?.tracking*/}
+                                                {/*                                    ?.data*/}
+                                                {/*                                    ?.soOrderInfo*/}
+                                                {/*                                    ?.createTime*/}
+                                                {/*                                    ? new Date(*/}
+                                                {/*                                          order.bucky_metadata.tracking.data.soOrderInfo.createTime*/}
+                                                {/*                                      ).toLocaleString(*/}
+                                                {/*                                          undefined,*/}
+                                                {/*                                          {*/}
+                                                {/*                                              year: 'numeric',*/}
+                                                {/*                                              month: 'long',*/}
+                                                {/*                                              day: 'numeric',*/}
+                                                {/*                                              hour: '2-digit',*/}
+                                                {/*                                              minute: '2-digit',*/}
+                                                {/*                                              second: '2-digit',*/}
+                                                {/*                                          }*/}
+                                                {/*                                      )*/}
+                                                {/*                                    : 'Date not available',*/}
+                                                {/*                                shopOrderNo:*/}
+                                                {/*                                    order*/}
+                                                {/*                                        .bucky_metadata*/}
+                                                {/*                                        ?.data*/}
+                                                {/*                                        ?.shopOrderNo ||*/}
+                                                {/*                                    'N/A',*/}
+                                                {/*                                warehouse:*/}
+                                                {/*                                    order*/}
+                                                {/*                                        .bucky_metadata*/}
+                                                {/*                                        ?.tracking*/}
+                                                {/*                                        ?.data*/}
+                                                {/*                                        ?.poOrderList[0]*/}
+                                                {/*                                        ?.warehouseName ||*/}
+                                                {/*                                    'N/A',*/}
 
-                                                                                courier:
-                                                                                    'DHL Express',
-                                                                            },
-                                                                            // {
-                                                                            //     status: 'Product Packaging',
-                                                                            //     date: '18/07/2024 | 5:12 pm',
-                                                                            //     trackingNumber:
-                                                                            //         '5896-0991-7811',
-                                                                            //     warehouse:
-                                                                            //         'Manila Logistics',
-                                                                            //     courier:
-                                                                            //         'DHL Express',
-                                                                            // },
-                                                                            {
-                                                                                status: `${formatStatus('Order Confirmation:', order.status)}`,
-                                                                                // date: `${new Date(
-                                                                                //     order.created_at
-                                                                                // ).toLocaleDateString(
-                                                                                //     undefined,
-                                                                                //     {
-                                                                                //         year: 'numeric',
-                                                                                //         month: '2-digit',
-                                                                                //         day: '2-digit',
-                                                                                //         hour: '2-digit',
-                                                                                //         minute: '2-digit',
-                                                                                //         second: '2-digit',
-                                                                                //         hour12: true,
-                                                                                //     }
-                                                                                // )}`,
-                                                                            },
-                                                                            {
-                                                                                status: `${formatStatus('Payment Status:', order.payment_status)}`,
-                                                                                // date: `${new Date(
-                                                                                //     order.created_at
-                                                                                // ).toLocaleDateString(
-                                                                                //     undefined,
-                                                                                //     {
-                                                                                //         year: 'numeric',
-                                                                                //         month: '2-digit',
-                                                                                //         day: '2-digit',
-                                                                                //         hour: '2-digit',
-                                                                                //         minute: '2-digit',
-                                                                                //         second: '2-digit',
-                                                                                //         hour12: true,
-                                                                                //     }
-                                                                                // )}`,
-                                                                                paymentDetails: `Paid with ${item.currency_code.toUpperCase()}. Total payment: ${getAmount(totalPrice, item.currency_code)} ${item.currency_code.toUpperCase()}`,
-                                                                                // receiptLink:
-                                                                                //     'View receipt',
-                                                                            },
+                                                {/*                                courier:*/}
+                                                {/*                                    'DHL Express',*/}
+                                                {/*                            },*/}
+                                                {/*                            // {*/}
+                                                {/*                            //     status: 'Product Packaging',*/}
+                                                {/*                            //     date: '18/07/2024 | 5:12 pm',*/}
+                                                {/*                            //     trackingNumber:*/}
+                                                {/*                            //         '5896-0991-7811',*/}
+                                                {/*                            //     warehouse:*/}
+                                                {/*                            //         'Manila Logistics',*/}
+                                                {/*                            //     courier:*/}
+                                                {/*                            //         'DHL Express',*/}
+                                                {/*                            // },*/}
+                                                {/*                            {*/}
+                                                {/*                                status: `${formatStatus('Order Confirmation:', order.status)}`,*/}
+                                                {/*                                // date: `${new Date(*/}
+                                                {/*                                //     order.created_at*/}
+                                                {/*                                // ).toLocaleDateString(*/}
+                                                {/*                                //     undefined,*/}
+                                                {/*                                //     {*/}
+                                                {/*                                //         year: 'numeric',*/}
+                                                {/*                                //         month: '2-digit',*/}
+                                                {/*                                //         day: '2-digit',*/}
+                                                {/*                                //         hour: '2-digit',*/}
+                                                {/*                                //         minute: '2-digit',*/}
+                                                {/*                                //         second: '2-digit',*/}
+                                                {/*                                //         hour12: true,*/}
+                                                {/*                                //     }*/}
+                                                {/*                                // )}`,*/}
+                                                {/*                            },*/}
+                                                {/*                            {*/}
+                                                {/*                                status: `${formatStatus('Payment Status:', order.payment_status)}`,*/}
+                                                {/*                                // date: `${new Date(*/}
+                                                {/*                                //     order.created_at*/}
+                                                {/*                                // ).toLocaleDateString(*/}
+                                                {/*                                //     undefined,*/}
+                                                {/*                                //     {*/}
+                                                {/*                                //         year: 'numeric',*/}
+                                                {/*                                //         month: '2-digit',*/}
+                                                {/*                                //         day: '2-digit',*/}
+                                                {/*                                //         hour: '2-digit',*/}
+                                                {/*                                //         minute: '2-digit',*/}
+                                                {/*                                //         second: '2-digit',*/}
+                                                {/*                                //         hour12: true,*/}
+                                                {/*                                //     }*/}
+                                                {/*                                // )}`,*/}
+                                                {/*                                paymentDetails: `Paid with ${item.currency_code.toUpperCase()}. Total payment: ${getAmount(totalPrice, item.currency_code)} ${item.currency_code.toUpperCase()}`,*/}
+                                                {/*                                // receiptLink:*/}
+                                                {/*                                //     'View receipt',*/}
+                                                {/*                            },*/}
 
-                                                                            {
-                                                                                status: 'Order Placed',
-                                                                                date: `${new Date(
-                                                                                    item.created_at
-                                                                                ).toLocaleDateString(
-                                                                                    undefined,
-                                                                                    {
-                                                                                        year: 'numeric',
-                                                                                        month: '2-digit',
-                                                                                        day: '2-digit',
-                                                                                        hour: '2-digit',
-                                                                                        minute: '2-digit',
-                                                                                        second: '2-digit',
-                                                                                        hour12: true,
-                                                                                    }
-                                                                                )}`,
-                                                                            },
-                                                                        ].map(
-                                                                            (
-                                                                                event,
-                                                                                index
-                                                                            ) => (
-                                                                                <HStack
-                                                                                    key={
-                                                                                        index
-                                                                                    }
-                                                                                    align="start"
-                                                                                    w="100%"
-                                                                                >
-                                                                                    {/* Circle icon */}
-                                                                                    <Icon
-                                                                                        as={
-                                                                                            BsCircleFill
-                                                                                        }
-                                                                                        color="primary.green.900"
-                                                                                        boxSize={
-                                                                                            3
-                                                                                        } // Adjust size as needed
-                                                                                        position="relative"
-                                                                                        top="6px" // Move the icon down by 4px (adjust this value to align with status text)
-                                                                                    />
+                                                {/*                            {*/}
+                                                {/*                                status: 'Order Placed',*/}
+                                                {/*                                date: `${new Date(*/}
+                                                {/*                                    item.created_at*/}
+                                                {/*                                ).toLocaleDateString(*/}
+                                                {/*                                    undefined,*/}
+                                                {/*                                    {*/}
+                                                {/*                                        year: 'numeric',*/}
+                                                {/*                                        month: '2-digit',*/}
+                                                {/*                                        day: '2-digit',*/}
+                                                {/*                                        hour: '2-digit',*/}
+                                                {/*                                        minute: '2-digit',*/}
+                                                {/*                                        second: '2-digit',*/}
+                                                {/*                                        hour12: true,*/}
+                                                {/*                                    }*/}
+                                                {/*                                )}`,*/}
+                                                {/*                            },*/}
+                                                {/*                        ].map(*/}
+                                                {/*                            (*/}
+                                                {/*                                event,*/}
+                                                {/*                                index*/}
+                                                {/*                            ) => (*/}
+                                                {/*                                <HStack*/}
+                                                {/*                                    key={*/}
+                                                {/*                                        index*/}
+                                                {/*                                    }*/}
+                                                {/*                                    align="start"*/}
+                                                {/*                                    w="100%"*/}
+                                                {/*                                >*/}
+                                                {/*                                    /!* Circle icon *!/*/}
+                                                {/*                                    <Icon*/}
+                                                {/*                                        as={*/}
+                                                {/*                                            BsCircleFill*/}
+                                                {/*                                        }*/}
+                                                {/*                                        color="primary.green.900"*/}
+                                                {/*                                        boxSize={*/}
+                                                {/*                                            3*/}
+                                                {/*                                        } // Adjust size as needed*/}
+                                                {/*                                        position="relative"*/}
+                                                {/*                                        top="6px" // Move the icon down by 4px (adjust this value to align with status text)*/}
+                                                {/*                                    />*/}
 
-                                                                                    <VStack
-                                                                                        align="start"
-                                                                                        spacing={
-                                                                                            1
-                                                                                        }
-                                                                                        pl={
-                                                                                            2
-                                                                                        }
-                                                                                    >
-                                                                                        <Text fontWeight="bold">
-                                                                                            {
-                                                                                                event.status
-                                                                                            }
-                                                                                        </Text>
-                                                                                        <Text fontSize="sm">
-                                                                                            {
-                                                                                                event.date
-                                                                                            }
-                                                                                        </Text>
-                                                                                        {event.shopOrderNo && (
-                                                                                            <Text
-                                                                                                fontSize="sm"
-                                                                                                color="gray.400"
-                                                                                            >
-                                                                                                Shop
-                                                                                                Order
-                                                                                                Number:{' '}
-                                                                                                {
-                                                                                                    event.shopOrderNo
-                                                                                                }
-                                                                                            </Text>
-                                                                                        )}
-                                                                                        {event.warehouse && (
-                                                                                            <Text
-                                                                                                fontSize="sm"
-                                                                                                color="gray.400"
-                                                                                            >
-                                                                                                Warehouse:{' '}
-                                                                                                {
-                                                                                                    event.warehouse
-                                                                                                }
-                                                                                            </Text>
-                                                                                        )}
-                                                                                        {/*{event.courier && (*/}
-                                                                                        {/*    <Text*/}
-                                                                                        {/*        fontSize="sm"*/}
-                                                                                        {/*        color="gray.400"*/}
-                                                                                        {/*    >*/}
-                                                                                        {/*        Courier:{' '}*/}
-                                                                                        {/*        {*/}
-                                                                                        {/*            event.courier*/}
-                                                                                        {/*        }*/}
-                                                                                        {/*    </Text>*/}
-                                                                                        {/*)}*/}
-                                                                                        {event.paymentDetails && (
-                                                                                            <Text
-                                                                                                fontSize="sm"
-                                                                                                color="gray.400"
-                                                                                            >
-                                                                                                {
-                                                                                                    event.paymentDetails
-                                                                                                }
-                                                                                            </Text>
-                                                                                        )}
-                                                                                        {/*{event.receiptLink && (*/}
-                                                                                        {/*    <Text*/}
-                                                                                        {/*        fontSize="sm"*/}
-                                                                                        {/*        color="primary.green.900"*/}
-                                                                                        {/*    >*/}
-                                                                                        {/*        {*/}
-                                                                                        {/*            event.receiptLink*/}
-                                                                                        {/*        }*/}
-                                                                                        {/*    </Text>*/}
-                                                                                        {/*)}*/}
-                                                                                    </VStack>
-                                                                                </HStack>
-                                                                            )
-                                                                        )}
-                                                                    </VStack>
-                                                                </VStack>
-                                                            </TabPanel>
-                                                            {/* Order Details Panel */}
-                                                            <TabPanel>
-                                                                <VStack
-                                                                    align="start"
-                                                                    spacing={4}
-                                                                    p={4}
-                                                                    borderRadius="lg"
-                                                                    w="100%"
-                                                                >
-                                                                    <HStack
-                                                                        w="100%"
-                                                                        justifyContent="space-between"
-                                                                    >
-                                                                        {/* Left Column */}
-                                                                        <VStack
-                                                                            align="start"
-                                                                            spacing={
-                                                                                4
-                                                                            }
-                                                                        >
-                                                                            <Box>
-                                                                                <Text
-                                                                                    fontSize="sm"
-                                                                                    color="gray.400"
-                                                                                >
-                                                                                    Order
-                                                                                    Date:
-                                                                                </Text>
-                                                                                <Text fontWeight="bold">
-                                                                                    {new Date(
-                                                                                        item.created_at
-                                                                                    ).toLocaleDateString()}
-                                                                                </Text>
-                                                                            </Box>
+                                                {/*                                    <VStack*/}
+                                                {/*                                        align="start"*/}
+                                                {/*                                        spacing={*/}
+                                                {/*                                            1*/}
+                                                {/*                                        }*/}
+                                                {/*                                        pl={*/}
+                                                {/*                                            2*/}
+                                                {/*                                        }*/}
+                                                {/*                                    >*/}
+                                                {/*                                        <Text fontWeight="bold">*/}
+                                                {/*                                            {*/}
+                                                {/*                                                event.status*/}
+                                                {/*                                            }*/}
+                                                {/*                                        </Text>*/}
+                                                {/*                                        <Text fontSize="sm">*/}
+                                                {/*                                            {*/}
+                                                {/*                                                event.date*/}
+                                                {/*                                            }*/}
+                                                {/*                                        </Text>*/}
+                                                {/*                                        {event.shopOrderNo && (*/}
+                                                {/*                                            <Text*/}
+                                                {/*                                                fontSize="sm"*/}
+                                                {/*                                                color="gray.400"*/}
+                                                {/*                                            >*/}
+                                                {/*                                                Shop*/}
+                                                {/*                                                Order*/}
+                                                {/*                                                Number:{' '}*/}
+                                                {/*                                                {*/}
+                                                {/*                                                    event.shopOrderNo*/}
+                                                {/*                                                }*/}
+                                                {/*                                            </Text>*/}
+                                                {/*                                        )}*/}
+                                                {/*                                        {event.warehouse && (*/}
+                                                {/*                                            <Text*/}
+                                                {/*                                                fontSize="sm"*/}
+                                                {/*                                                color="gray.400"*/}
+                                                {/*                                            >*/}
+                                                {/*                                                Warehouse:{' '}*/}
+                                                {/*                                                {*/}
+                                                {/*                                                    event.warehouse*/}
+                                                {/*                                                }*/}
+                                                {/*                                            </Text>*/}
+                                                {/*                                        )}*/}
+                                                {/*                                        /!*{event.courier && (*!/*/}
+                                                {/*                                        /!*    <Text*!/*/}
+                                                {/*                                        /!*        fontSize="sm"*!/*/}
+                                                {/*                                        /!*        color="gray.400"*!/*/}
+                                                {/*                                        /!*    >*!/*/}
+                                                {/*                                        /!*        Courier:{' '}*!/*/}
+                                                {/*                                        /!*        {*!/*/}
+                                                {/*                                        /!*            event.courier*!/*/}
+                                                {/*                                        /!*        }*!/*/}
+                                                {/*                                        /!*    </Text>*!/*/}
+                                                {/*                                        /!*)}*!/*/}
+                                                {/*                                        {event.paymentDetails && (*/}
+                                                {/*                                            <Text*/}
+                                                {/*                                                fontSize="sm"*/}
+                                                {/*                                                color="gray.400"*/}
+                                                {/*                                            >*/}
+                                                {/*                                                {*/}
+                                                {/*                                                    event.paymentDetails*/}
+                                                {/*                                                }*/}
+                                                {/*                                            </Text>*/}
+                                                {/*                                        )}*/}
+                                                {/*                                        /!*{event.receiptLink && (*!/*/}
+                                                {/*                                        /!*    <Text*!/*/}
+                                                {/*                                        /!*        fontSize="sm"*!/*/}
+                                                {/*                                        /!*        color="primary.green.900"*!/*/}
+                                                {/*                                        /!*    >*!/*/}
+                                                {/*                                        /!*        {*!/*/}
+                                                {/*                                        /!*            event.receiptLink*!/*/}
+                                                {/*                                        /!*        }*!/*/}
+                                                {/*                                        /!*    </Text>*!/*/}
+                                                {/*                                        /!*)}*!/*/}
+                                                {/*                                    </VStack>*/}
+                                                {/*                                </HStack>*/}
+                                                {/*                            )*/}
+                                                {/*                        )}*/}
+                                                {/*                    </VStack>*/}
+                                                {/*                </VStack>*/}
+                                                {/*            </TabPanel>*/}
+                                                {/*            /!* Order Details Panel *!/*/}
+                                                {/*            <TabPanel>*/}
+                                                {/*                <VStack*/}
+                                                {/*                    align="start"*/}
+                                                {/*                    spacing={4}*/}
+                                                {/*                    p={4}*/}
+                                                {/*                    borderRadius="lg"*/}
+                                                {/*                    w="100%"*/}
+                                                {/*                >*/}
+                                                {/*                    <HStack*/}
+                                                {/*                        w="100%"*/}
+                                                {/*                        justifyContent="space-between"*/}
+                                                {/*                    >*/}
+                                                {/*                        /!* Left Column *!/*/}
+                                                {/*                        <VStack*/}
+                                                {/*                            align="start"*/}
+                                                {/*                            spacing={*/}
+                                                {/*                                4*/}
+                                                {/*                            }*/}
+                                                {/*                        >*/}
+                                                {/*                            <Box>*/}
+                                                {/*                                <Text*/}
+                                                {/*                                    fontSize="sm"*/}
+                                                {/*                                    color="gray.400"*/}
+                                                {/*                                >*/}
+                                                {/*                                    Order*/}
+                                                {/*                                    Date:*/}
+                                                {/*                                </Text>*/}
+                                                {/*                                <Text fontWeight="bold">*/}
+                                                {/*                                    {new Date(*/}
+                                                {/*                                        item.created_at*/}
+                                                {/*                                    ).toLocaleDateString()}*/}
+                                                {/*                                </Text>*/}
+                                                {/*                            </Box>*/}
 
-                                                                            <Box>
-                                                                                <Text
-                                                                                    fontSize="sm"
-                                                                                    color="gray.400"
-                                                                                >
-                                                                                    Order
-                                                                                    Number:
-                                                                                </Text>
-                                                                                <Text fontWeight="bold">
-                                                                                    {
-                                                                                        order.display_id
-                                                                                    }
-                                                                                </Text>
-                                                                            </Box>
-                                                                            {/*<Box>*/}
-                                                                            {/*    <Text*/}
-                                                                            {/*        fontSize="sm"*/}
-                                                                            {/*        color="gray.400"*/}
-                                                                            {/*    >*/}
-                                                                            {/*        Item*/}
-                                                                            {/*        ID:*/}
-                                                                            {/*    </Text>*/}
-                                                                            {/*    <Flex flexWrap="wrap">*/}
-                                                                            {/*        <Text fontWeight="bold">*/}
-                                                                            {/*            {*/}
-                                                                            {/*                item.id*/}
-                                                                            {/*            }*/}
-                                                                            {/*        </Text>*/}
-                                                                            {/*    </Flex>*/}
-                                                                            {/*</Box>*/}
-                                                                            <Box>
-                                                                                <Text
-                                                                                    fontSize="sm"
-                                                                                    color="gray.400"
-                                                                                >
-                                                                                    Order
-                                                                                    ID:
-                                                                                </Text>
-                                                                                <Flex flexWrap="wrap">
-                                                                                    <Text fontWeight="bold">
-                                                                                        {
-                                                                                            order.id
-                                                                                        }
-                                                                                    </Text>
-                                                                                </Flex>
-                                                                            </Box>
-                                                                            <Box>
-                                                                                <Text
-                                                                                    fontSize="sm"
-                                                                                    color="gray.400"
-                                                                                >
-                                                                                    Quantity:
-                                                                                </Text>
-                                                                                <Text fontWeight="bold">
-                                                                                    {
-                                                                                        item.quantity
-                                                                                    }
-                                                                                </Text>
-                                                                            </Box>
-                                                                            <Box>
-                                                                                <Text
-                                                                                    fontSize="sm"
-                                                                                    color="gray.400"
-                                                                                >
-                                                                                    Order
-                                                                                    Status:
-                                                                                </Text>
-                                                                                <Text fontWeight="bold">
-                                                                                    {
-                                                                                        order.status
-                                                                                    }
-                                                                                </Text>
-                                                                            </Box>
-                                                                            <Box>
-                                                                                <Text
-                                                                                    fontSize="sm"
-                                                                                    color="gray.400"
-                                                                                >
-                                                                                    Payment
-                                                                                    Status:
-                                                                                </Text>
-                                                                                <Text fontWeight="bold">
-                                                                                    {
-                                                                                        order.payment_status
-                                                                                    }
-                                                                                </Text>
-                                                                            </Box>
-                                                                            <Box>
-                                                                                <Text
-                                                                                    fontSize="sm"
-                                                                                    color="gray.400"
-                                                                                >
-                                                                                    Vendor:
-                                                                                </Text>
-                                                                                <Text fontWeight="bold">
-                                                                                    {
-                                                                                        order
-                                                                                            .store
-                                                                                            .name
-                                                                                    }
-                                                                                </Text>
-                                                                            </Box>
-                                                                        </VStack>
+                                                {/*                            <Box>*/}
+                                                {/*                                <Text*/}
+                                                {/*                                    fontSize="sm"*/}
+                                                {/*                                    color="gray.400"*/}
+                                                {/*                                >*/}
+                                                {/*                                    Order*/}
+                                                {/*                                    Number:*/}
+                                                {/*                                </Text>*/}
+                                                {/*                                <Text fontWeight="bold">*/}
+                                                {/*                                    {*/}
+                                                {/*                                        order.display_id*/}
+                                                {/*                                    }*/}
+                                                {/*                                </Text>*/}
+                                                {/*                            </Box>*/}
+                                                {/*                            /!*<Box>*!/*/}
+                                                {/*                            /!*    <Text*!/*/}
+                                                {/*                            /!*        fontSize="sm"*!/*/}
+                                                {/*                            /!*        color="gray.400"*!/*/}
+                                                {/*                            /!*    >*!/*/}
+                                                {/*                            /!*        Item*!/*/}
+                                                {/*                            /!*        ID:*!/*/}
+                                                {/*                            /!*    </Text>*!/*/}
+                                                {/*                            /!*    <Flex flexWrap="wrap">*!/*/}
+                                                {/*                            /!*        <Text fontWeight="bold">*!/*/}
+                                                {/*                            /!*            {*!/*/}
+                                                {/*                            /!*                item.id*!/*/}
+                                                {/*                            /!*            }*!/*/}
+                                                {/*                            /!*        </Text>*!/*/}
+                                                {/*                            /!*    </Flex>*!/*/}
+                                                {/*                            /!*</Box>*!/*/}
+                                                {/*                            <Box>*/}
+                                                {/*                                <Text*/}
+                                                {/*                                    fontSize="sm"*/}
+                                                {/*                                    color="gray.400"*/}
+                                                {/*                                >*/}
+                                                {/*                                    Order*/}
+                                                {/*                                    ID:*/}
+                                                {/*                                </Text>*/}
+                                                {/*                                <Flex flexWrap="wrap">*/}
+                                                {/*                                    <Text fontWeight="bold">*/}
+                                                {/*                                        {*/}
+                                                {/*                                            order.id*/}
+                                                {/*                                        }*/}
+                                                {/*                                    </Text>*/}
+                                                {/*                                </Flex>*/}
+                                                {/*                            </Box>*/}
+                                                {/*                            <Box>*/}
+                                                {/*                                <Text*/}
+                                                {/*                                    fontSize="sm"*/}
+                                                {/*                                    color="gray.400"*/}
+                                                {/*                                >*/}
+                                                {/*                                    Quantity:*/}
+                                                {/*                                </Text>*/}
+                                                {/*                                <Text fontWeight="bold">*/}
+                                                {/*                                    {*/}
+                                                {/*                                        item.quantity*/}
+                                                {/*                                    }*/}
+                                                {/*                                </Text>*/}
+                                                {/*                            </Box>*/}
+                                                {/*                            <Box>*/}
+                                                {/*                                <Text*/}
+                                                {/*                                    fontSize="sm"*/}
+                                                {/*                                    color="gray.400"*/}
+                                                {/*                                >*/}
+                                                {/*                                    Order*/}
+                                                {/*                                    Status:*/}
+                                                {/*                                </Text>*/}
+                                                {/*                                <Text fontWeight="bold">*/}
+                                                {/*                                    {*/}
+                                                {/*                                        order.status*/}
+                                                {/*                                    }*/}
+                                                {/*                                </Text>*/}
+                                                {/*                            </Box>*/}
+                                                {/*                            <Box>*/}
+                                                {/*                                <Text*/}
+                                                {/*                                    fontSize="sm"*/}
+                                                {/*                                    color="gray.400"*/}
+                                                {/*                                >*/}
+                                                {/*                                    Payment*/}
+                                                {/*                                    Status:*/}
+                                                {/*                                </Text>*/}
+                                                {/*                                <Text fontWeight="bold">*/}
+                                                {/*                                    {*/}
+                                                {/*                                        order.payment_status*/}
+                                                {/*                                    }*/}
+                                                {/*                                </Text>*/}
+                                                {/*                            </Box>*/}
+                                                {/*                            <Box>*/}
+                                                {/*                                <Text*/}
+                                                {/*                                    fontSize="sm"*/}
+                                                {/*                                    color="gray.400"*/}
+                                                {/*                                >*/}
+                                                {/*                                    Vendor:*/}
+                                                {/*                                </Text>*/}
+                                                {/*                                <Text fontWeight="bold">*/}
+                                                {/*                                    {*/}
+                                                {/*                                        order*/}
+                                                {/*                                            .store*/}
+                                                {/*                                            .name*/}
+                                                {/*                                    }*/}
+                                                {/*                                </Text>*/}
+                                                {/*                            </Box>*/}
+                                                {/*                        </VStack>*/}
 
-                                                                        {/* Right Column */}
-                                                                        <VStack
-                                                                            align="start"
-                                                                            spacing={
-                                                                                4
-                                                                            }
-                                                                        >
-                                                                            {/*<Box>*/}
-                                                                            {/*    <Text*/}
-                                                                            {/*        fontSize="sm"*/}
-                                                                            {/*        color="gray.400"*/}
-                                                                            {/*    >*/}
-                                                                            {/*        Courier:*/}
-                                                                            {/*    </Text>*/}
-                                                                            {/*    <Text fontWeight="bold">*/}
-                                                                            {/*        DHL*/}
-                                                                            {/*        Express*/}
-                                                                            {/*    </Text>*/}
-                                                                            {/*</Box>*/}
-                                                                            {/*<Box>*/}
-                                                                            {/*    <Text*/}
-                                                                            {/*        fontSize="sm"*/}
-                                                                            {/*        color="gray.400"*/}
-                                                                            {/*    >*/}
-                                                                            {/*        Tracking*/}
-                                                                            {/*        Number:*/}
-                                                                            {/*    </Text>*/}
-                                                                            {/*    <Text fontWeight="bold">*/}
-                                                                            {/*        2856374190*/}
-                                                                            {/*    </Text>*/}
-                                                                            {/*</Box>*/}
-                                                                            {/*<Box>*/}
-                                                                            {/*    <Text*/}
-                                                                            {/*        fontSize="sm"*/}
-                                                                            {/*        color="gray.400"*/}
-                                                                            {/*    >*/}
-                                                                            {/*        Estimated*/}
-                                                                            {/*        Time*/}
-                                                                            {/*        of*/}
-                                                                            {/*        Arrival:*/}
-                                                                            {/*    </Text>*/}
-                                                                            {/*    <Text fontWeight="bold">*/}
-                                                                            {/*        July*/}
-                                                                            {/*        27-31,*/}
-                                                                            {/*        2024*/}
-                                                                            {/*    </Text>*/}
-                                                                            {/*</Box>*/}
-                                                                            <Box>
-                                                                                <Text
-                                                                                    fontSize="sm"
-                                                                                    color="gray.400"
-                                                                                >
-                                                                                    Shipping
-                                                                                    Information:
-                                                                                </Text>
-                                                                                <Text fontWeight="bold">
-                                                                                    {
-                                                                                        order
-                                                                                            ?.shipping_address
-                                                                                            ?.address_1
-                                                                                    }{' '}
-                                                                                    {
-                                                                                        order
-                                                                                            ?.shipping_address
-                                                                                            ?.city
-                                                                                    }{' '}
-                                                                                    {
-                                                                                        order
-                                                                                            ?.shipping_address
-                                                                                            ?.province
-                                                                                    }{' '}
-                                                                                    {
-                                                                                        order
-                                                                                            ?.shipping_address
-                                                                                            ?.postal_code
-                                                                                    }{' '}
-                                                                                    {
-                                                                                        order
-                                                                                            ?.shipping_address
-                                                                                            ?.country_code
-                                                                                    }
-                                                                                </Text>
-                                                                            </Box>
-                                                                            <Box>
-                                                                                <Text
-                                                                                    fontSize="sm"
-                                                                                    color="gray.400"
-                                                                                >
-                                                                                    Contact
-                                                                                    Information:
-                                                                                </Text>
-                                                                                <Text fontWeight="bold">
-                                                                                    {
-                                                                                        order
-                                                                                            ?.shipping_address
-                                                                                            ?.first_name
-                                                                                    }{' '}
-                                                                                    {
-                                                                                        order
-                                                                                            ?.shipping_address
-                                                                                            ?.last_name
-                                                                                    }
-                                                                                </Text>
-                                                                                <Text fontWeight="bold">
-                                                                                    {
-                                                                                        order
-                                                                                            ?.shipping_address
-                                                                                            ?.phone
-                                                                                    }
-                                                                                </Text>
-                                                                                <Text fontWeight="bold">
-                                                                                    {order.customer?.email?.endsWith(
-                                                                                        '@evm.blockchain'
-                                                                                    )
-                                                                                        ? ''
-                                                                                        : order
-                                                                                              ?.customer
-                                                                                              ?.email}
-                                                                                </Text>
-                                                                            </Box>
-                                                                        </VStack>
-                                                                    </HStack>
-                                                                </VStack>
-                                                            </TabPanel>
-                                                        </TabPanels>
-                                                    </Tabs>
-                                                </Box>
+                                                {/*                        /!* Right Column *!/*/}
+                                                {/*                        <VStack*/}
+                                                {/*                            align="start"*/}
+                                                {/*                            spacing={*/}
+                                                {/*                                4*/}
+                                                {/*                            }*/}
+                                                {/*                        >*/}
+                                                {/*                            /!*<Box>*!/*/}
+                                                {/*                            /!*    <Text*!/*/}
+                                                {/*                            /!*        fontSize="sm"*!/*/}
+                                                {/*                            /!*        color="gray.400"*!/*/}
+                                                {/*                            /!*    >*!/*/}
+                                                {/*                            /!*        Courier:*!/*/}
+                                                {/*                            /!*    </Text>*!/*/}
+                                                {/*                            /!*    <Text fontWeight="bold">*!/*/}
+                                                {/*                            /!*        DHL*!/*/}
+                                                {/*                            /!*        Express*!/*/}
+                                                {/*                            /!*    </Text>*!/*/}
+                                                {/*                            /!*</Box>*!/*/}
+                                                {/*                            /!*<Box>*!/*/}
+                                                {/*                            /!*    <Text*!/*/}
+                                                {/*                            /!*        fontSize="sm"*!/*/}
+                                                {/*                            /!*        color="gray.400"*!/*/}
+                                                {/*                            /!*    >*!/*/}
+                                                {/*                            /!*        Tracking*!/*/}
+                                                {/*                            /!*        Number:*!/*/}
+                                                {/*                            /!*    </Text>*!/*/}
+                                                {/*                            /!*    <Text fontWeight="bold">*!/*/}
+                                                {/*                            /!*        2856374190*!/*/}
+                                                {/*                            /!*    </Text>*!/*/}
+                                                {/*                            /!*</Box>*!/*/}
+                                                {/*                            /!*<Box>*!/*/}
+                                                {/*                            /!*    <Text*!/*/}
+                                                {/*                            /!*        fontSize="sm"*!/*/}
+                                                {/*                            /!*        color="gray.400"*!/*/}
+                                                {/*                            /!*    >*!/*/}
+                                                {/*                            /!*        Estimated*!/*/}
+                                                {/*                            /!*        Time*!/*/}
+                                                {/*                            /!*        of*!/*/}
+                                                {/*                            /!*        Arrival:*!/*/}
+                                                {/*                            /!*    </Text>*!/*/}
+                                                {/*                            /!*    <Text fontWeight="bold">*!/*/}
+                                                {/*                            /!*        July*!/*/}
+                                                {/*                            /!*        27-31,*!/*/}
+                                                {/*                            /!*        2024*!/*/}
+                                                {/*                            /!*    </Text>*!/*/}
+                                                {/*                            /!*</Box>*!/*/}
+                                                {/*                            <Box>*/}
+                                                {/*                                <Text*/}
+                                                {/*                                    fontSize="sm"*/}
+                                                {/*                                    color="gray.400"*/}
+                                                {/*                                >*/}
+                                                {/*                                    Shipping*/}
+                                                {/*                                    Information:*/}
+                                                {/*                                </Text>*/}
+                                                {/*                                <Text fontWeight="bold">*/}
+                                                {/*                                    {*/}
+                                                {/*                                        order*/}
+                                                {/*                                            ?.shipping_address*/}
+                                                {/*                                            ?.address_1*/}
+                                                {/*                                    }{' '}*/}
+                                                {/*                                    {*/}
+                                                {/*                                        order*/}
+                                                {/*                                            ?.shipping_address*/}
+                                                {/*                                            ?.city*/}
+                                                {/*                                    }{' '}*/}
+                                                {/*                                    {*/}
+                                                {/*                                        order*/}
+                                                {/*                                            ?.shipping_address*/}
+                                                {/*                                            ?.province*/}
+                                                {/*                                    }{' '}*/}
+                                                {/*                                    {*/}
+                                                {/*                                        order*/}
+                                                {/*                                            ?.shipping_address*/}
+                                                {/*                                            ?.postal_code*/}
+                                                {/*                                    }{' '}*/}
+                                                {/*                                    {*/}
+                                                {/*                                        order*/}
+                                                {/*                                            ?.shipping_address*/}
+                                                {/*                                            ?.country_code*/}
+                                                {/*                                    }*/}
+                                                {/*                                </Text>*/}
+                                                {/*                            </Box>*/}
+                                                {/*                            <Box>*/}
+                                                {/*                                <Text*/}
+                                                {/*                                    fontSize="sm"*/}
+                                                {/*                                    color="gray.400"*/}
+                                                {/*                                >*/}
+                                                {/*                                    Contact*/}
+                                                {/*                                    Information:*/}
+                                                {/*                                </Text>*/}
+                                                {/*                                <Text fontWeight="bold">*/}
+                                                {/*                                    {*/}
+                                                {/*                                        order*/}
+                                                {/*                                            ?.shipping_address*/}
+                                                {/*                                            ?.first_name*/}
+                                                {/*                                    }{' '}*/}
+                                                {/*                                    {*/}
+                                                {/*                                        order*/}
+                                                {/*                                            ?.shipping_address*/}
+                                                {/*                                            ?.last_name*/}
+                                                {/*                                    }*/}
+                                                {/*                                </Text>*/}
+                                                {/*                                <Text fontWeight="bold">*/}
+                                                {/*                                    {*/}
+                                                {/*                                        order*/}
+                                                {/*                                            ?.shipping_address*/}
+                                                {/*                                            ?.phone*/}
+                                                {/*                                    }*/}
+                                                {/*                                </Text>*/}
+                                                {/*                                <Text fontWeight="bold">*/}
+                                                {/*                                    {order.customer?.email?.endsWith(*/}
+                                                {/*                                        '@evm.blockchain'*/}
+                                                {/*                                    )*/}
+                                                {/*                                        ? ''*/}
+                                                {/*                                        : order*/}
+                                                {/*                                              ?.customer*/}
+                                                {/*                                              ?.email}*/}
+                                                {/*                                </Text>*/}
+                                                {/*                            </Box>*/}
+                                                {/*                        </VStack>*/}
+                                                {/*                    </HStack>*/}
+                                                {/*                </VStack>*/}
+                                                {/*            </TabPanel>*/}
+                                                {/*        </TabPanels>*/}
+                                                {/*    </Tabs>*/}
+                                                {/*</Box>*/}
                                             </Collapse>
                                         </div>
                                     )
