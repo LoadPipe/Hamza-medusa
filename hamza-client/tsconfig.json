@@ -22,6 +22,7 @@
             "@/components/*": ["src/app/components/*"],
             "@/getQueryClient": ["src/app/getQueryClient"],
             "@lib/*": ["src/lib/*"],
+            "@utils/*": ["src/utils/*"],
             "@/images/*": ["public/images/*"],
             "@modules/*": ["src/modules/*"],
             "@pages/*": ["src/pages/*"],

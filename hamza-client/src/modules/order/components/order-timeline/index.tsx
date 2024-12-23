@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { formatDate, formatStatus } from '@utils/format-data.ts';
+import { formatDate, formatStatus } from '@utils/format-data';
 
 interface TimelineEvent {
     title: string;
