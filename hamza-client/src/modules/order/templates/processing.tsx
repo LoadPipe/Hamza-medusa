@@ -367,6 +367,7 @@ const Processing = ({
                                     borderColor="#D9D9D9"
                                     pr={'1rem'}
                                     _last={{
+                                        mt: 8,
                                         mb: 8,
                                     }}
                                 />
