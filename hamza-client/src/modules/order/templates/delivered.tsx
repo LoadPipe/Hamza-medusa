@@ -1,17 +1,18 @@
-import { Box, Divider, Text, Flex, Button } from '@chakra-ui/react';
+import { Box, Divider, Text, Flex, Button, Collapse } from '@chakra-ui/react';
 import Spinner from '@modules/common/icons/spinner';
 import { addToCart } from '@modules/cart/actions';
 import toast from 'react-hot-toast';
 import DeliveredCard from '@modules/account/components/delivered-card';
 import EmptyState from '@modules/order/components/empty-state';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import { OrdersData } from './all';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
 import Link from 'next/link';
+import OrderTimeline from '@modules/order/components/order-timeline';
 
 const Delivered = ({
     customer,
@@ -31,6 +32,11 @@ const Delivered = ({
         'batchOrders',
     ]);
     const deliveredOrder = cachedData?.Delivered || [];
+    const [expandViewOrder, setExpandViewOrder] = useState(false);
+
+    const toggleViewOrder = (orderId: any) => {
+        setExpandViewOrder(expandViewOrder === orderId ? null : orderId);
+    };
 
     //TODO: Refactor to a mutation
     const handleReorder = async (item: any, country_code: string) => {
@@ -141,6 +147,39 @@ const Delivered = ({
                                                     mt={{ base: 4, md: 0 }}
                                                     width="100%"
                                                 >
+                                                    {index ===
+                                                    order.items.length - 1 ? (
+                                                        <Button
+                                                            variant="outline"
+                                                            colorScheme="white"
+                                                            borderRadius="37px"
+                                                            cursor="pointer"
+                                                            ml={{
+                                                                base: 0,
+                                                                md: 2,
+                                                            }}
+                                                            mt={{
+                                                                base: 2,
+                                                                md: 0,
+                                                            }}
+                                                            width={{
+                                                                base: '100%',
+                                                                md: 'auto',
+                                                            }}
+                                                            _hover={{
+                                                                textDecoration:
+                                                                    'underline',
+                                                            }}
+                                                            onClick={() =>
+                                                                toggleViewOrder(
+                                                                    item.id
+                                                                )
+                                                            }
+                                                        >
+                                                            View Order
+                                                        </Button>
+                                                    ) : null}
+
                                                     <Button
                                                         variant="outline"
                                                         colorScheme="white"
@@ -196,6 +235,14 @@ const Delivered = ({
                                                     </Link>
                                                 </Flex>
                                             </Flex>
+                                            <Collapse
+                                                in={expandViewOrder === item.id}
+                                                animateOpacity
+                                            >
+                                                <OrderTimeline
+                                                    orderDetails={order}
+                                                />
+                                            </Collapse>
                                         </div>
                                     )
                                 )}
@@ -206,6 +253,7 @@ const Delivered = ({
                                     borderColor="#D9D9D9"
                                     pr={'1rem'}
                                     _last={{
+                                        mt: 8,
                                         mb: 8,
                                     }}
                                 />
