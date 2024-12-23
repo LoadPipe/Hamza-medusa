@@ -106,7 +106,7 @@ const OrderTimeline: React.FC<TimelineProps> = ({ orderDetails }) => {
     const recentIndex = events.length - 1;
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col pl-2">
             <h2 className="text-primary-black-60 text-sm leading-relaxed mb-4">
                 TIMELINE
             </h2>
