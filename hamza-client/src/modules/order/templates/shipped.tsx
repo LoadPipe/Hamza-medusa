@@ -130,46 +130,51 @@ const Shipped = ({
                                                 />
 
                                                 {/* Right-aligned buttons */}
-                                                <Flex
-                                                    direction={{
-                                                        base: 'column',
-                                                        md: 'row',
-                                                    }}
-                                                    justifyContent={'flex-end'}
-                                                    gap={2}
-                                                    mt={{ base: 4, md: 0 }}
-                                                    width="100%"
-                                                >
-                                                    <Button
-                                                        variant="outline"
-                                                        colorScheme="white"
-                                                        borderRadius="37px"
-                                                        cursor="pointer"
-                                                        _hover={{
-                                                            textDecoration:
-                                                                'underline',
+                                                {index ===
+                                                order.items.length - 1 ? (
+                                                    <Flex
+                                                        direction={{
+                                                            base: 'column',
+                                                            md: 'row',
                                                         }}
-                                                        ml={{
-                                                            base: 0,
-                                                            md: 2,
-                                                        }}
-                                                        mt={{
-                                                            base: 2,
-                                                            md: 0,
-                                                        }}
-                                                        width={{
-                                                            base: '100%',
-                                                            md: 'auto',
-                                                        }}
-                                                        onClick={() =>
-                                                            toggleCourierInfo(
-                                                                item.id
-                                                            )
+                                                        justifyContent={
+                                                            'flex-end'
                                                         }
+                                                        gap={2}
+                                                        mt={{ base: 4, md: 0 }}
+                                                        width="100%"
                                                     >
-                                                        Track Courier
-                                                    </Button>
-                                                </Flex>
+                                                        <Button
+                                                            variant="outline"
+                                                            colorScheme="white"
+                                                            borderRadius="37px"
+                                                            cursor="pointer"
+                                                            _hover={{
+                                                                textDecoration:
+                                                                    'underline',
+                                                            }}
+                                                            ml={{
+                                                                base: 0,
+                                                                md: 2,
+                                                            }}
+                                                            mt={{
+                                                                base: 2,
+                                                                md: 0,
+                                                            }}
+                                                            width={{
+                                                                base: '100%',
+                                                                md: 'auto',
+                                                            }}
+                                                            onClick={() =>
+                                                                toggleCourierInfo(
+                                                                    item.id
+                                                                )
+                                                            }
+                                                        >
+                                                            Track Courier
+                                                        </Button>
+                                                    </Flex>
+                                                ) : null}
                                             </Flex>
                                             <Collapse
                                                 in={expandViewOrder === item.id}
@@ -213,7 +218,7 @@ const Shipped = ({
                                                                         'primary.green.900',
                                                                 }}
                                                             >
-                                                                Item Details
+                                                                Order Details
                                                             </Tab>
                                                         </TabList>
                                                         <TabPanels>

@@ -389,7 +389,7 @@ GET http://localhost:9000/custom/cart/recover?customer_id=cus_01J8FQES9MPH63SMSS
 
 
 ### Get Specific Customers All Orders METHOD: listCustomerOrders() in order.ts
-GET http://localhost:9000/custom/order/customer-orders?customer_id=cus_01J8MD5FK7AT7CRHCXGNVXTB54&buckets=true
+GET http://localhost:9000/custom/order/customer-orders?customer_id=cus_01JFS1WS3ESPX408QYTCM6Q2XJ&buckets=true
 Content-Type: application/json
 
 
