@@ -110,7 +110,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                                 item?.variant?.metadata?.imgUrl ??
                                 item?.thumbnail
                             }
-                            size="square"
+                            size="full"
                         />
                     </Flex>
                 </LocalizedClientLink>
