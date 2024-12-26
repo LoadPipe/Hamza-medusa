@@ -380,17 +380,29 @@ const Shipped = ({
                                                                                 item.currency_code
                                                                             )}
                                                                         </Text>
-                                                                        {/*<Text fontSize="md">*/}
-                                                                        {/*    <strong>*/}
-                                                                        {/*        Platform:*/}
-                                                                        {/*    </strong>{' '}*/}
-                                                                        {/*    {order*/}
-                                                                        {/*        .bucky_metadata*/}
-                                                                        {/*        ?.data*/}
-                                                                        {/*        ?.productList[0]*/}
-                                                                        {/*        ?.platform ||*/}
-                                                                        {/*        'N/A'}*/}
-                                                                        {/*</Text>*/}
+                                                                        {order
+                                                                            .shipping_methods
+                                                                            .price && (
+                                                                            <Text fontSize="md">
+                                                                                <strong>
+                                                                                    Order
+                                                                                    Shipping
+                                                                                    Cost:
+                                                                                </strong>{' '}
+                                                                                {formatCryptoPrice(
+                                                                                    Number(
+                                                                                        order
+                                                                                            ?.shipping_methods
+                                                                                            ?.price
+                                                                                    ),
+                                                                                    item.currency_code ??
+                                                                                        'usdc'
+                                                                                )}{' '}
+                                                                                {upperCase(
+                                                                                    item.currency_code
+                                                                                )}
+                                                                            </Text>
+                                                                        )}
                                                                     </VStack>
                                                                 </VStack>
                                                             </TabPanel>

@@ -38,6 +38,7 @@ import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import { OrdersData } from './all';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
+import { upperCase } from 'lodash';
 /**
  * The Processing component displays and manages the customer's processing orders, allowing users to view order details,
  * collapse or expand order views, and request cancellations of individual orders.
@@ -353,9 +354,84 @@ const Processing = ({
                                                 in={expandViewOrder === item.id}
                                                 animateOpacity
                                             >
-                                                <OrderTimeline
-                                                    orderDetails={order}
-                                                />
+                                                <Box mt={4}>
+                                                    <Tabs variant="unstyled">
+                                                        <TabList>
+                                                            <Tab
+                                                                _selected={{
+                                                                    color: 'primary.green.900',
+                                                                    borderBottom:
+                                                                        '2px solid',
+                                                                    borderColor:
+                                                                        'primary.green.900',
+                                                                }}
+                                                            >
+                                                                Order Timeline
+                                                            </Tab>
+                                                            <Tab
+                                                                _selected={{
+                                                                    color: 'primary.green.900',
+                                                                    borderBottom:
+                                                                        '2px solid',
+                                                                    borderColor:
+                                                                        'primary.green.900',
+                                                                }}
+                                                            >
+                                                                Order Details
+                                                            </Tab>
+                                                        </TabList>
+                                                        <TabPanels>
+                                                            <TabPanel>
+                                                                <OrderTimeline
+                                                                    orderDetails={
+                                                                        order
+                                                                    }
+                                                                />
+                                                            </TabPanel>
+
+                                                            <TabPanel>
+                                                                <VStack
+                                                                    align="start"
+                                                                    spacing={4}
+                                                                    p={4}
+                                                                    borderRadius="lg"
+                                                                    w="100%"
+                                                                >
+                                                                    <VStack
+                                                                        align="start"
+                                                                        spacing={
+                                                                            2
+                                                                        }
+                                                                    >
+                                                                        {order
+                                                                            ?.shipping_methods[0]
+                                                                            ?.price && (
+                                                                            <Text fontSize="md">
+                                                                                <strong>
+                                                                                    Order
+                                                                                    Shipping
+                                                                                    Cost:
+                                                                                </strong>{' '}
+                                                                                {formatCryptoPrice(
+                                                                                    Number(
+                                                                                        order
+                                                                                            ?.shipping_methods[0]
+                                                                                            ?.price
+                                                                                    ),
+                                                                                    item.currency_code ??
+                                                                                        'usdc'
+                                                                                )}{' '}
+                                                                                {upperCase(
+                                                                                    item.currency_code
+                                                                                )}
+                                                                            </Text>
+                                                                        )}
+                                                                    </VStack>
+                                                                </VStack>
+                                                            </TabPanel>
+                                                        </TabPanels>
+                                                    </Tabs>
+                                                </Box>
                                             </Collapse>
                                         </div>
                                     )
