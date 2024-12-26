@@ -1,4 +1,4 @@
-import { Box, Divider, Text, Flex, Button } from '@chakra-ui/react';
+import { Box, Divider, Text, Flex, Button, Collapse } from '@chakra-ui/react';
 import CancelCard from '@modules/account/components/cancel-card';
 import EmptyState from '@modules/order/components/empty-state';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -9,6 +9,7 @@ import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import CancellationModal from '@modules/order/templates/cancelled-modal';
 import { OrdersData } from './all';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
+import OrderTimeline from '@modules/order/components/order-timeline';
 
 const Cancelled = ({
     customer,
@@ -23,11 +24,16 @@ const Cancelled = ({
 }) => {
     const [activeOrder, setActiveOrder] = useState<string | null>(null); // State to track the active order's modal
     const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
+    const [expandViewOrder, setExpandViewOrder] = useState(false);
 
     const queryClient = useQueryClient();
     const cachedData: OrdersData | undefined = queryClient.getQueryData([
         'batchOrders',
     ]);
+
+    const toggleViewOrder = (orderId: any) => {
+        setExpandViewOrder(expandViewOrder === orderId ? null : orderId);
+    };
 
     // const {
     //     data,
@@ -163,6 +169,35 @@ const Cancelled = ({
                                                         <Button
                                                             variant="outline"
                                                             colorScheme="white"
+                                                            borderRadius="37px"
+                                                            cursor="pointer"
+                                                            ml={{
+                                                                base: 0,
+                                                                md: 2,
+                                                            }}
+                                                            mt={{
+                                                                base: 2,
+                                                                md: 0,
+                                                            }}
+                                                            width={{
+                                                                base: '100%',
+                                                                md: 'auto',
+                                                            }}
+                                                            _hover={{
+                                                                textDecoration:
+                                                                    'underline',
+                                                            }}
+                                                            onClick={() =>
+                                                                toggleViewOrder(
+                                                                    item.id
+                                                                )
+                                                            }
+                                                        >
+                                                            View Order
+                                                        </Button>
+                                                        <Button
+                                                            variant="outline"
+                                                            colorScheme="white"
                                                             borderRadius={
                                                                 '37px'
                                                             }
@@ -208,6 +243,14 @@ const Cancelled = ({
                                                     </Flex>
                                                 ) : null}
                                             </Flex>
+                                            <Collapse
+                                                in={expandViewOrder === item.id}
+                                                animateOpacity
+                                            >
+                                                <OrderTimeline
+                                                    orderDetails={order}
+                                                />
+                                            </Collapse>
                                         </div>
                                     )
                                 )}
@@ -223,6 +266,7 @@ const Cancelled = ({
                                     borderColor="#D9D9D9"
                                     pr={'1rem'}
                                     _last={{
+                                        mt: 8,
                                         mb: 8,
                                     }}
                                 />

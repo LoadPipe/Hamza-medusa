@@ -21,6 +21,7 @@ import DynamicOrderStatus from '@modules/order/templates/dynamic-order-status';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import { OrdersData } from './all';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
+import OrderTimeline from '@modules/order/components/order-timeline';
 
 const Refund = ({
     customer,
@@ -165,59 +166,63 @@ const Refund = ({
                                                 in={courierInfo === item.id}
                                                 animateOpacity
                                             >
+                                                <OrderTimeline
+                                                    orderDetails={order}
+                                                />
                                                 <Flex mt={4} width="100%">
-                                                    <Text
-                                                        fontSize="24px"
-                                                        fontWeight="semibold"
-                                                    >
-                                                        {getAmount(
-                                                            item?.unit_price,
-                                                            item?.currency_code
-                                                        )}{' '}
-                                                        {upperCase(
-                                                            item?.currency_code
-                                                        )}
-                                                    </Text>
-                                                    <HStack
-                                                        align="start"
-                                                        spacing={3}
-                                                        w="100%"
-                                                    >
-                                                        {' '}
-                                                        <Icon
-                                                            as={BsCircleFill}
-                                                            color="primary.green.900"
-                                                            boxSize={3}
-                                                            mt={1}
-                                                        />
-                                                        {/* Right Column: Text */}
-                                                        <VStack
-                                                            align="start"
-                                                            spacing={2}
-                                                        >
-                                                            {' '}
-                                                            {/* Stack text vertically */}
-                                                            <Text fontWeight="bold">
-                                                                Your request is
-                                                                now under review
-                                                            </Text>
-                                                            <Text
-                                                                fontSize="sm"
-                                                                color="gray.500"
-                                                            >
-                                                                Your request for
-                                                                a refund is now
-                                                                under review. We
-                                                                will update you
-                                                                on the status of
-                                                                your request
-                                                                within 3-5
-                                                                business days.
-                                                                Thank you for
-                                                                your patience.
-                                                            </Text>
-                                                        </VStack>
-                                                    </HStack>
+                                                    {/*<Text*/}
+                                                    {/*    fontSize="24px"*/}
+                                                    {/*    fontWeight="semibold"*/}
+                                                    {/*>*/}
+                                                    {/*    {getAmount(*/}
+                                                    {/*        item?.unit_price,*/}
+                                                    {/*        item?.currency_code*/}
+                                                    {/*    )}{' '}*/}
+                                                    {/*    {upperCase(*/}
+                                                    {/*        item?.currency_code*/}
+                                                    {/*    )}*/}
+                                                    {/*</Text>*/}
+
+                                                    {/*<HStack*/}
+                                                    {/*    align="start"*/}
+                                                    {/*    spacing={3}*/}
+                                                    {/*    w="100%"*/}
+                                                    {/*>*/}
+                                                    {/*    {' '}*/}
+                                                    {/*    <Icon*/}
+                                                    {/*        as={BsCircleFill}*/}
+                                                    {/*        color="primary.green.900"*/}
+                                                    {/*        boxSize={3}*/}
+                                                    {/*        mt={1}*/}
+                                                    {/*    />*/}
+                                                    {/*    /!* Right Column: Text *!/*/}
+                                                    {/*    <VStack*/}
+                                                    {/*        align="start"*/}
+                                                    {/*        spacing={2}*/}
+                                                    {/*    >*/}
+                                                    {/*        {' '}*/}
+                                                    {/*        /!* Stack text vertically *!/*/}
+                                                    {/*        <Text fontWeight="bold">*/}
+                                                    {/*            Your request is*/}
+                                                    {/*            now under review*/}
+                                                    {/*        </Text>*/}
+                                                    {/*        <Text*/}
+                                                    {/*            fontSize="sm"*/}
+                                                    {/*            color="gray.500"*/}
+                                                    {/*        >*/}
+                                                    {/*            Your request for*/}
+                                                    {/*            a refund is now*/}
+                                                    {/*            under review. We*/}
+                                                    {/*            will update you*/}
+                                                    {/*            on the status of*/}
+                                                    {/*            your request*/}
+                                                    {/*            within 3-5*/}
+                                                    {/*            business days.*/}
+                                                    {/*            Thank you for*/}
+                                                    {/*            your patience.*/}
+                                                    {/*        </Text>*/}
+                                                    {/*    </VStack>*/}
+                                                    {/*</HStack>*/}
                                                 </Flex>
                                             </Collapse>
                                         </div>

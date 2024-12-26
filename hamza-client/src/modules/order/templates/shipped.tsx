@@ -28,6 +28,7 @@ import currencyIcons from '@/images/currencies/crypto-currencies';
 import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import { OrdersData } from './all';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
+import OrderTimeline from '@modules/order/components/order-timeline';
 
 const Shipped = ({
     customer,
@@ -45,6 +46,7 @@ const Shipped = ({
     const cachedData: OrdersData | undefined = queryClient.getQueryData([
         'batchOrders',
     ]);
+    const [expandViewOrder, setExpandViewOrder] = useState(false);
     const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
     const toggleCourierInfo = (orderId: any) => {
@@ -56,6 +58,10 @@ const Shipped = ({
     if (isEmpty && shippedOrder?.length === 0) {
         return <EmptyState />;
     }
+
+    const toggleViewOrder = (orderId: any) => {
+        setExpandViewOrder(expandViewOrder === orderId ? null : orderId);
+    };
 
     return (
         <div>
@@ -104,14 +110,13 @@ const Shipped = ({
                                                 }}
                                                 justifyContent={{
                                                     base: 'flex-start',
-                                                    md: 'space-between',
+                                                    md: 'center',
                                                 }}
                                                 alignItems={{
                                                     base: 'flex-start',
                                                     md: 'center',
                                                 }}
                                                 mb={5}
-                                                gap={'2'}
                                             >
                                                 <OrderTotalAmount
                                                     totalPrice={totalPrice}
@@ -167,12 +172,27 @@ const Shipped = ({
                                                 </Flex>
                                             </Flex>
                                             <Collapse
+                                                in={expandViewOrder === item.id}
+                                                animateOpacity
+                                            ></Collapse>
+                                            <Collapse
                                                 in={courierInfo === item.id}
                                                 animateOpacity
                                             >
                                                 <Box mt={4}>
                                                     <Tabs variant="unstyled">
                                                         <TabList>
+                                                            <Tab
+                                                                _selected={{
+                                                                    color: 'primary.green.900',
+                                                                    borderBottom:
+                                                                        '2px solid',
+                                                                    borderColor:
+                                                                        'primary.green.900',
+                                                                }}
+                                                            >
+                                                                Order Timeline
+                                                            </Tab>
                                                             <Tab
                                                                 _selected={{
                                                                     color: 'primary.green.900',
@@ -197,6 +217,13 @@ const Shipped = ({
                                                             </Tab>
                                                         </TabList>
                                                         <TabPanels>
+                                                            <TabPanel>
+                                                                <OrderTimeline
+                                                                    orderDetails={
+                                                                        order
+                                                                    }
+                                                                />
+                                                            </TabPanel>
                                                             <TabPanel>
                                                                 <HStack
                                                                     align="start"

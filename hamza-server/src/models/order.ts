@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Order as MedusaOrder } from '@medusajs/medusa';
 import { Store } from './store';
+import { OrderHistory } from './order-history';
 
 export const EscrowStatus = {
     IN_ESCROW: 'in_escrow',
@@ -40,4 +41,9 @@ export class Order extends MedusaOrder {
 
     @Column('jsonb')
     bucky_metadata?: Record<string, unknown>;
+
+    @OneToMany(() => OrderHistory, (orderHistory) => orderHistory.order, {
+        cascade: true,
+    })
+    histories?: Relation<OrderHistory[]>;
 }
