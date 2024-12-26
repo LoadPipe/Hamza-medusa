@@ -13,6 +13,7 @@ import {
 import OrderRepository from '@medusajs/medusa/dist/repositories/order';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import { GlobetopperClient } from '../globetopper/globetopper-client';
+import SmtpMailService from './smtp-mail';
 import { ExternalApiLogRepository } from '../repositories/external-api-log';
 import { LineItem } from '../models/line-item';
 
@@ -27,6 +28,7 @@ type CreateProductInput = MedusaCreateProductInput & {
 export default class GlobetopperService extends TransactionBaseService {
     protected readonly logger: ILogger;
     protected readonly productService_: ProductService;
+    protected readonly smtpMailService_: SmtpMailService;
     protected readonly orderRepository_: typeof OrderRepository;
     protected readonly priceConverter: PriceConverter;
     protected readonly apiClient: GlobetopperClient;
@@ -37,6 +39,7 @@ export default class GlobetopperService extends TransactionBaseService {
         super(container);
         this.productService_ = container.productService;
         this.orderRepository_ = container.orderRepository;
+        this.smtpMailService_ = container.smtpMailService;
         this.externalApiLogRepository_ = container.externalApiLogRepository;
         this.logger = createLogger(container, 'GlobetopperService');
         this.priceConverter = new PriceConverter(
@@ -290,40 +293,7 @@ export default class GlobetopperService extends TransactionBaseService {
         */
 
         // stub to build email content
-        for (const purchase of purchaseOutputs) {
-            const cardInfo: string[] = [];
-            const record: any = purchase.records[0];
-            for (const field in record.extra_fields) {
-                let extraFieldContent: string = '';
-                const fieldValue: string = record.extra_fields[field];
-
-                switch (field) {
-                    case 'Barcode Image URL':
-                    case 'Brand Logo':
-                        extraFieldContent = `<img src="${fieldValue}" />`;
-                        break;
-
-                    case 'Redemption URL':
-                    case 'Barcode URL':
-                    case 'Admin Barcode URL':
-                        extraFieldContent = `<a href="${fieldValue}">`;
-                        extraFieldContent += fieldValue;
-                        extraFieldContent += '</a>';
-                        break;
-                    default:
-                        extraFieldContent = fieldValue;
-                    //break
-                }
-
-                extraFieldContent = `${field}: ${extraFieldContent}`;
-                cardInfo.push(extraFieldContent);
-            }
-
-            const emailBody: string = cardInfo.join('<br />\n');
-            console.log(
-                `Globetopper gift card email info for order ${orderId}, customer ${email}:\n${emailBody}`
-            );
-        }
+        await this.sendPostPurchaseEmail(purchaseOutputs, email);
 
         //TODO: what to do with the outputs now?
         return purchaseOutputs ?? [];
@@ -346,6 +316,57 @@ export default class GlobetopperService extends TransactionBaseService {
         });
 
         return output.data;
+    }
+
+    private async sendPostPurchaseEmail(purchases: any, email: string) {
+        let emailBody: string = '';
+
+        for (const purchase of purchases) {
+            const cardInfo: string[] = [];
+            const record: any = purchase.records[0];
+
+            for (const field in record.extra_fields) {
+                let extraFieldContent: string = '';
+                const fieldValue: string = record.extra_fields[field];
+
+                switch (field) {
+                    case 'Barcode Image URL':
+                    case 'Brand Logo':
+                        extraFieldContent = `<img src="${fieldValue}" />`;
+                        break;
+
+                    case 'Redemption URL':
+                    case 'Barcode URL':
+                    case 'Admin Barcode URL':
+                        extraFieldContent = `<a href="${fieldValue}">`;
+                        extraFieldContent += fieldValue;
+                        extraFieldContent += '</a>';
+                        break;
+                    default:
+                        extraFieldContent = fieldValue;
+                }
+
+                extraFieldContent = `${field}: ${extraFieldContent}`;
+                cardInfo.push(extraFieldContent);
+            }
+
+            emailBody += cardInfo.join('<br /><br />\n');
+            console.log(
+                `Globetopper gift card email info for customer ${email}:\n${emailBody}`
+            );
+        }
+
+        this.smtpMailService_.sendMail({
+            from: process.env.SMTP_FROM,
+            to: email,
+            subject: 'Gift Card Purchase from Hamza',
+            templateName: 'gift-card-purchase',
+            mailData: {
+                body: emailBody,
+            },
+        });
+
+        console.log(emailBody);
     }
 
     private async mapDataToProductInput(
