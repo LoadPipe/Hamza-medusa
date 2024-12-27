@@ -1,21 +1,27 @@
 {
-  "dependencies": {
-    "@tanstack/query-sync-storage-persister": "4.22",
-    "@tanstack/react-query": "4.22",
-    "@tanstack/react-query-devtools": "4",
-    "@tanstack/react-query-persist-client": "4.22",
-    "husky": "^9.1.1",
-    "prettier": "^3.3.3"
-  },
-  "scripts": {
-    "prepare": "husky",
-    "build": "cd hamza-server && yarn run build && cd .. && cd hamza-client && yarn run build",
-    "prettier": "prettier --write hamza-server/src && prettier --write hamza-client/src"
-  },
   "name": "hamza-medusa",
   "version": "1.0.0",
-  "description": "",
-  "devDependencies": {},
-  "author": "",
-  "license": "ISC"
+  "description": "Monorepo for Hamza Medusa-based applications",
+  "packageManager": "yarn@1.22.19",
+  "private": true,
+  "author": "Garo Nazarian, Beau Troxclair, Jonny Bajada, Karan Chugh, John R. Kosinski",
+  "license": "MIT",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "dependencies": {
+    "prettier": "^3.2.4"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "prettier": "prettier --write '**/*.{ts,tsx,js,jsx,json,css,md}'",
+    "lint": "eslint apps/*/src packages/*/src --fix"
+  },
+  "devDependencies": {
+    "eslint": "^8.10.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-react": "^7.32.0"
+  }
 }
