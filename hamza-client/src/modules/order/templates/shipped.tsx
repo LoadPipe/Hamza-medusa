@@ -406,6 +406,18 @@ const Shipped = ({
                                                                                 )}
                                                                             </Text>
                                                                         )}
+                                                                        <Text>
+                                                                            <strong>
+                                                                                Subtotal:{' '}
+                                                                            </strong>{' '}
+                                                                            {formatCryptoPrice(
+                                                                                subTotal,
+                                                                                item.currency_code
+                                                                            )}{' '}
+                                                                            {upperCase(
+                                                                                item.currency_code
+                                                                            )}
+                                                                        </Text>
                                                                     </VStack>
                                                                 </VStack>
                                                             </TabPanel>
