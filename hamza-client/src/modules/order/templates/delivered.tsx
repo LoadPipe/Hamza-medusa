@@ -1,4 +1,17 @@
-import { Box, Divider, Text, Flex, Button, Collapse } from '@chakra-ui/react';
+import {
+    Box,
+    Divider,
+    Text,
+    Flex,
+    Button,
+    Collapse,
+    Tabs,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
+    VStack,
+} from '@chakra-ui/react';
 import Spinner from '@modules/common/icons/spinner';
 import { addToCart } from '@modules/cart/actions';
 import toast from 'react-hot-toast';
@@ -13,6 +26,8 @@ import { OrdersData } from './all';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
 import Link from 'next/link';
 import OrderTimeline from '@modules/order/components/order-timeline';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
+import { upperCase } from 'lodash';
 
 const Delivered = ({
     customer,
@@ -81,7 +96,7 @@ const Delivered = ({
             {deliveredOrder && deliveredOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {deliveredOrder.map((order: any) => {
-                        const totalPrice = order.items.reduce(
+                        const subTotal = order.items.reduce(
                             (acc: number, item: any) =>
                                 acc + item.unit_price * item.quantity,
                             0
@@ -129,13 +144,16 @@ const Delivered = ({
                                                 mb={5}
                                             >
                                                 <OrderTotalAmount
-                                                    totalPrice={totalPrice}
+                                                    subTotal={subTotal}
                                                     currencyCode={
                                                         item.currency_code
                                                     }
                                                     index={index}
                                                     itemCount={
                                                         order.items.length - 1
+                                                    }
+                                                    paymentTotal={
+                                                        order.payments[0]
                                                     }
                                                 />
                                                 <Flex
@@ -239,9 +257,96 @@ const Delivered = ({
                                                 in={expandViewOrder === item.id}
                                                 animateOpacity
                                             >
-                                                <OrderTimeline
-                                                    orderDetails={order}
-                                                />
+                                                <Box mt={4}>
+                                                    <Tabs variant="unstyled">
+                                                        <TabList>
+                                                            <Tab
+                                                                _selected={{
+                                                                    color: 'primary.green.900',
+                                                                    borderBottom:
+                                                                        '2px solid',
+                                                                    borderColor:
+                                                                        'primary.green.900',
+                                                                }}
+                                                            >
+                                                                Order Timeline
+                                                            </Tab>
+                                                            <Tab
+                                                                _selected={{
+                                                                    color: 'primary.green.900',
+                                                                    borderBottom:
+                                                                        '2px solid',
+                                                                    borderColor:
+                                                                        'primary.green.900',
+                                                                }}
+                                                            >
+                                                                Order Details
+                                                            </Tab>
+                                                        </TabList>
+                                                        <TabPanels>
+                                                            <TabPanel>
+                                                                <OrderTimeline
+                                                                    orderDetails={
+                                                                        order
+                                                                    }
+                                                                />
+                                                            </TabPanel>
+
+                                                            <TabPanel>
+                                                                <VStack
+                                                                    align="start"
+                                                                    spacing={4}
+                                                                    p={4}
+                                                                    borderRadius="lg"
+                                                                    w="100%"
+                                                                >
+                                                                    <VStack
+                                                                        align="start"
+                                                                        spacing={
+                                                                            2
+                                                                        }
+                                                                    >
+                                                                        {order
+                                                                            ?.shipping_methods[0]
+                                                                            ?.price && (
+                                                                            <Text fontSize="md">
+                                                                                <strong>
+                                                                                    Order
+                                                                                    Shipping
+                                                                                    Cost:
+                                                                                </strong>{' '}
+                                                                                {formatCryptoPrice(
+                                                                                    Number(
+                                                                                        order
+                                                                                            ?.shipping_methods[0]
+                                                                                            ?.price
+                                                                                    ),
+                                                                                    item.currency_code ??
+                                                                                        'usdc'
+                                                                                )}{' '}
+                                                                                {upperCase(
+                                                                                    item.currency_code
+                                                                                )}
+                                                                            </Text>
+                                                                        )}
+                                                                        <Text>
+                                                                            <strong>
+                                                                                Subtotal:{' '}
+                                                                            </strong>{' '}
+                                                                            {formatCryptoPrice(
+                                                                                subTotal,
+                                                                                item.currency_code
+                                                                            )}{' '}
+                                                                            {upperCase(
+                                                                                item.currency_code
+                                                                            )}
+                                                                        </Text>
+                                                                    </VStack>
+                                                                </VStack>
+                                                            </TabPanel>
+                                                        </TabPanels>
+                                                    </Tabs>
+                                                </Box>
                                             </Collapse>
                                         </div>
                                     )

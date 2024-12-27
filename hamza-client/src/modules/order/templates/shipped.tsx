@@ -69,7 +69,7 @@ const Shipped = ({
             {shippedOrder && shippedOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {shippedOrder.map((order: any) => {
-                        const totalPrice = order.items.reduce(
+                        const subTotal = order.items.reduce(
                             (acc: number, item: any) =>
                                 acc + item.unit_price * item.quantity,
                             0
@@ -119,7 +119,7 @@ const Shipped = ({
                                                 mb={5}
                                             >
                                                 <OrderTotalAmount
-                                                    totalPrice={totalPrice}
+                                                    subTotal={subTotal}
                                                     currencyCode={
                                                         item.currency_code
                                                     }
@@ -127,49 +127,57 @@ const Shipped = ({
                                                     itemCount={
                                                         order.items.length - 1
                                                     }
+                                                    paymentTotal={
+                                                        order.payments[0]
+                                                    }
                                                 />
 
                                                 {/* Right-aligned buttons */}
-                                                <Flex
-                                                    direction={{
-                                                        base: 'column',
-                                                        md: 'row',
-                                                    }}
-                                                    justifyContent={'flex-end'}
-                                                    gap={2}
-                                                    mt={{ base: 4, md: 0 }}
-                                                    width="100%"
-                                                >
-                                                    <Button
-                                                        variant="outline"
-                                                        colorScheme="white"
-                                                        borderRadius="37px"
-                                                        cursor="pointer"
-                                                        _hover={{
-                                                            textDecoration:
-                                                                'underline',
+                                                {index ===
+                                                order.items.length - 1 ? (
+                                                    <Flex
+                                                        direction={{
+                                                            base: 'column',
+                                                            md: 'row',
                                                         }}
-                                                        ml={{
-                                                            base: 0,
-                                                            md: 2,
-                                                        }}
-                                                        mt={{
-                                                            base: 2,
-                                                            md: 0,
-                                                        }}
-                                                        width={{
-                                                            base: '100%',
-                                                            md: 'auto',
-                                                        }}
-                                                        onClick={() =>
-                                                            toggleCourierInfo(
-                                                                item.id
-                                                            )
+                                                        justifyContent={
+                                                            'flex-end'
                                                         }
+                                                        gap={2}
+                                                        mt={{ base: 4, md: 0 }}
+                                                        width="100%"
                                                     >
-                                                        Track Courier
-                                                    </Button>
-                                                </Flex>
+                                                        <Button
+                                                            variant="outline"
+                                                            colorScheme="white"
+                                                            borderRadius="37px"
+                                                            cursor="pointer"
+                                                            _hover={{
+                                                                textDecoration:
+                                                                    'underline',
+                                                            }}
+                                                            ml={{
+                                                                base: 0,
+                                                                md: 2,
+                                                            }}
+                                                            mt={{
+                                                                base: 2,
+                                                                md: 0,
+                                                            }}
+                                                            width={{
+                                                                base: '100%',
+                                                                md: 'auto',
+                                                            }}
+                                                            onClick={() =>
+                                                                toggleCourierInfo(
+                                                                    item.id
+                                                                )
+                                                            }
+                                                        >
+                                                            Track Courier
+                                                        </Button>
+                                                    </Flex>
+                                                ) : null}
                                             </Flex>
                                             <Collapse
                                                 in={expandViewOrder === item.id}
@@ -213,7 +221,7 @@ const Shipped = ({
                                                                         'primary.green.900',
                                                                 }}
                                                             >
-                                                                Item Details
+                                                                Order Details
                                                             </Tab>
                                                         </TabList>
                                                         <TabPanels>
@@ -375,17 +383,41 @@ const Shipped = ({
                                                                                 item.currency_code
                                                                             )}
                                                                         </Text>
-                                                                        {/*<Text fontSize="md">*/}
-                                                                        {/*    <strong>*/}
-                                                                        {/*        Platform:*/}
-                                                                        {/*    </strong>{' '}*/}
-                                                                        {/*    {order*/}
-                                                                        {/*        .bucky_metadata*/}
-                                                                        {/*        ?.data*/}
-                                                                        {/*        ?.productList[0]*/}
-                                                                        {/*        ?.platform ||*/}
-                                                                        {/*        'N/A'}*/}
-                                                                        {/*</Text>*/}
+                                                                        {order
+                                                                            .shipping_methods
+                                                                            .price && (
+                                                                            <Text fontSize="md">
+                                                                                <strong>
+                                                                                    Order
+                                                                                    Shipping
+                                                                                    Cost:
+                                                                                </strong>{' '}
+                                                                                {formatCryptoPrice(
+                                                                                    Number(
+                                                                                        order
+                                                                                            ?.shipping_methods
+                                                                                            ?.price
+                                                                                    ),
+                                                                                    item.currency_code ??
+                                                                                        'usdc'
+                                                                                )}{' '}
+                                                                                {upperCase(
+                                                                                    item.currency_code
+                                                                                )}
+                                                                            </Text>
+                                                                        )}
+                                                                        <Text>
+                                                                            <strong>
+                                                                                Subtotal:{' '}
+                                                                            </strong>{' '}
+                                                                            {formatCryptoPrice(
+                                                                                subTotal,
+                                                                                item.currency_code
+                                                                            )}{' '}
+                                                                            {upperCase(
+                                                                                item.currency_code
+                                                                            )}
+                                                                        </Text>
                                                                     </VStack>
                                                                 </VStack>
                                                             </TabPanel>

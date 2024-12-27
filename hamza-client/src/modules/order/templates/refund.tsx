@@ -9,6 +9,11 @@ import {
     Text,
     VStack,
     Button,
+    Tabs,
+    TabList,
+    Tab,
+    TabPanels,
+    TabPanel,
 } from '@chakra-ui/react';
 import { BsCircleFill } from 'react-icons/bs';
 import RefundCard from '@modules/account/components/refund-card';
@@ -74,7 +79,7 @@ const Refund = ({
             {refundOrder && refundOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {refundOrder.map((order: any) => {
-                        const totalPrice = order.items.reduce(
+                        const subTotal = order.items.reduce(
                             (acc: number, item: any) =>
                                 acc + item.unit_price * item.quantity,
                             0
@@ -124,13 +129,16 @@ const Refund = ({
                                                 mb={5}
                                             >
                                                 <OrderTotalAmount
-                                                    totalPrice={totalPrice}
+                                                    subTotal={subTotal}
                                                     currencyCode={
                                                         item.currency_code
                                                     }
                                                     index={index}
                                                     itemCount={
                                                         order.items.length - 1
+                                                    }
+                                                    paymentTotal={
+                                                        order.payments[0]
                                                     }
                                                 />
                                                 <Flex
@@ -166,64 +174,96 @@ const Refund = ({
                                                 in={courierInfo === item.id}
                                                 animateOpacity
                                             >
-                                                <OrderTimeline
-                                                    orderDetails={order}
-                                                />
-                                                <Flex mt={4} width="100%">
-                                                    {/*<Text*/}
-                                                    {/*    fontSize="24px"*/}
-                                                    {/*    fontWeight="semibold"*/}
-                                                    {/*>*/}
-                                                    {/*    {getAmount(*/}
-                                                    {/*        item?.unit_price,*/}
-                                                    {/*        item?.currency_code*/}
-                                                    {/*    )}{' '}*/}
-                                                    {/*    {upperCase(*/}
-                                                    {/*        item?.currency_code*/}
-                                                    {/*    )}*/}
-                                                    {/*</Text>*/}
+                                                <Box mt={4}>
+                                                    <Tabs variant="unstyled">
+                                                        <TabList>
+                                                            <Tab
+                                                                _selected={{
+                                                                    color: 'primary.green.900',
+                                                                    borderBottom:
+                                                                        '2px solid',
+                                                                    borderColor:
+                                                                        'primary.green.900',
+                                                                }}
+                                                            >
+                                                                Order Timeline
+                                                            </Tab>
+                                                            <Tab
+                                                                _selected={{
+                                                                    color: 'primary.green.900',
+                                                                    borderBottom:
+                                                                        '2px solid',
+                                                                    borderColor:
+                                                                        'primary.green.900',
+                                                                }}
+                                                            >
+                                                                Order Details
+                                                            </Tab>
+                                                        </TabList>
+                                                        <TabPanels>
+                                                            <TabPanel>
+                                                                <OrderTimeline
+                                                                    orderDetails={
+                                                                        order
+                                                                    }
+                                                                />
+                                                            </TabPanel>
 
-                                                    {/*<HStack*/}
-                                                    {/*    align="start"*/}
-                                                    {/*    spacing={3}*/}
-                                                    {/*    w="100%"*/}
-                                                    {/*>*/}
-                                                    {/*    {' '}*/}
-                                                    {/*    <Icon*/}
-                                                    {/*        as={BsCircleFill}*/}
-                                                    {/*        color="primary.green.900"*/}
-                                                    {/*        boxSize={3}*/}
-                                                    {/*        mt={1}*/}
-                                                    {/*    />*/}
-                                                    {/*    /!* Right Column: Text *!/*/}
-                                                    {/*    <VStack*/}
-                                                    {/*        align="start"*/}
-                                                    {/*        spacing={2}*/}
-                                                    {/*    >*/}
-                                                    {/*        {' '}*/}
-                                                    {/*        /!* Stack text vertically *!/*/}
-                                                    {/*        <Text fontWeight="bold">*/}
-                                                    {/*            Your request is*/}
-                                                    {/*            now under review*/}
-                                                    {/*        </Text>*/}
-                                                    {/*        <Text*/}
-                                                    {/*            fontSize="sm"*/}
-                                                    {/*            color="gray.500"*/}
-                                                    {/*        >*/}
-                                                    {/*            Your request for*/}
-                                                    {/*            a refund is now*/}
-                                                    {/*            under review. We*/}
-                                                    {/*            will update you*/}
-                                                    {/*            on the status of*/}
-                                                    {/*            your request*/}
-                                                    {/*            within 3-5*/}
-                                                    {/*            business days.*/}
-                                                    {/*            Thank you for*/}
-                                                    {/*            your patience.*/}
-                                                    {/*        </Text>*/}
-                                                    {/*    </VStack>*/}
-                                                    {/*</HStack>*/}
-                                                </Flex>
+                                                            <TabPanel>
+                                                                <VStack
+                                                                    align="start"
+                                                                    spacing={4}
+                                                                    p={4}
+                                                                    borderRadius="lg"
+                                                                    w="100%"
+                                                                >
+                                                                    <VStack
+                                                                        align="start"
+                                                                        spacing={
+                                                                            2
+                                                                        }
+                                                                    >
+                                                                        {order
+                                                                            ?.shipping_methods[0]
+                                                                            ?.price && (
+                                                                            <Text fontSize="md">
+                                                                                <strong>
+                                                                                    Order
+                                                                                    Shipping
+                                                                                    Cost:
+                                                                                </strong>{' '}
+                                                                                {formatCryptoPrice(
+                                                                                    Number(
+                                                                                        order
+                                                                                            ?.shipping_methods[0]
+                                                                                            ?.price
+                                                                                    ),
+                                                                                    item.currency_code ??
+                                                                                        'usdc'
+                                                                                )}{' '}
+                                                                                {upperCase(
+                                                                                    item.currency_code
+                                                                                )}
+                                                                            </Text>
+                                                                        )}
+                                                                        <Text>
+                                                                            <strong>
+                                                                                Subtotal:{' '}
+                                                                            </strong>{' '}
+                                                                            {formatCryptoPrice(
+                                                                                subTotal,
+                                                                                item.currency_code
+                                                                            )}{' '}
+                                                                            {upperCase(
+                                                                                item.currency_code
+                                                                            )}
+                                                                        </Text>
+                                                                    </VStack>
+                                                                </VStack>
+                                                            </TabPanel>
+                                                        </TabPanels>
+                                                    </Tabs>
+                                                </Box>
                                             </Collapse>
                                         </div>
                                     )
