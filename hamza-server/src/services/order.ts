@@ -876,6 +876,7 @@ export default class OrderService extends MedusaOrderService {
                 'store',
                 'shipping_address',
                 'shipping_methods',
+                'payments',
                 'customer',
                 'items.variant.product',
                 'histories',
