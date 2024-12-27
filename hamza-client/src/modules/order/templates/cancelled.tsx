@@ -94,7 +94,7 @@ const Cancelled = ({
             {canceledOrder && canceledOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {canceledOrder.map((order: any) => {
-                        const totalPrice = order.items.reduce(
+                        const subTotal = order.items.reduce(
                             (acc: number, item: any) =>
                                 acc + item.unit_price * item.quantity,
                             0
@@ -142,7 +142,7 @@ const Cancelled = ({
                                                 mb={5}
                                             >
                                                 <OrderTotalAmount
-                                                    totalPrice={totalPrice}
+                                                    subTotal={subTotal}
                                                     currencyCode={
                                                         item.currency_code
                                                     }

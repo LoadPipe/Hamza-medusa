@@ -10,7 +10,7 @@ type PaymentTotal = {
 };
 
 type OrderTotalAmountProps = {
-    totalPrice: number;
+    subTotal: number;
     currencyCode: string;
     index: number;
     itemCount: number;
@@ -18,7 +18,7 @@ type OrderTotalAmountProps = {
 };
 
 const OrderTotalAmount: React.FC<OrderTotalAmountProps> = ({
-    totalPrice,
+    subTotal,
     currencyCode,
     index,
     itemCount,
@@ -68,7 +68,7 @@ const OrderTotalAmount: React.FC<OrderTotalAmountProps> = ({
     );
 
     if (!paymentTotal) {
-        return renderOrderTotal('Mock Order total:', totalPrice, currencyCode);
+        return renderOrderTotal('Mock Order total:', subTotal, currencyCode);
     }
 
     return renderOrderTotal(

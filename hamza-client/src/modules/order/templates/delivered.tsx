@@ -96,7 +96,7 @@ const Delivered = ({
             {deliveredOrder && deliveredOrder.length > 0 ? (
                 <Flex width={'100%'} flexDirection="column">
                     {deliveredOrder.map((order: any) => {
-                        const totalPrice = order.items.reduce(
+                        const subTotal = order.items.reduce(
                             (acc: number, item: any) =>
                                 acc + item.unit_price * item.quantity,
                             0
@@ -144,7 +144,7 @@ const Delivered = ({
                                                 mb={5}
                                             >
                                                 <OrderTotalAmount
-                                                    totalPrice={totalPrice}
+                                                    subTotal={subTotal}
                                                     currencyCode={
                                                         item.currency_code
                                                     }
