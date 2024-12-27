@@ -137,6 +137,9 @@ const Refund = ({
                                                     itemCount={
                                                         order.items.length - 1
                                                     }
+                                                    paymentTotal={
+                                                        order.payments[0]
+                                                    }
                                                 />
                                                 <Flex
                                                     direction={{
