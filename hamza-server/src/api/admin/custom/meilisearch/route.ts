@@ -46,7 +46,7 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
             }
         );
 
-        return handler.returnStatus(200, response);
+        return handler.returnStatus(200, products);
     });
     /*
         const response = await fetch('http://localhost:7700/indexes/products/documents?primaryKey=id', {
