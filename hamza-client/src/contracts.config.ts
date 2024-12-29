@@ -17,7 +17,7 @@ const chainConfig: any = {
             address: '0x1fFc6ba4FcdfC3Ca72a53c2b64db3807B4A5aec8',
         },
         escrow_multicall: {
-            address: '0xF472c864DBC867D1439f1d45F3C9a1108Ab8b0a7',
+            address: '0xeE54D440927b94015325D79CD7CB51A5212d99a9',
         },
         dao: {
             address: '0x8bA35513C3F5ac659907D222e3DaB38b20f8F52A',
@@ -35,7 +35,7 @@ const chainConfig: any = {
             address: '0x0',
         },
         escrow_multicall: {
-            address: '0xF472c864DBC867D1439f1d45F3C9a1108Ab8b0a7',
+            address: '0xeE54D440927b94015325D79CD7CB51A5212d99a9',
         },
         dao: {
             address: '0x8bA35513C3F5ac659907D222e3DaB38b20f8F52A',
@@ -53,7 +53,7 @@ const chainConfig: any = {
             address: '0x0',
         },
         escrow_multicall: {
-            address: '0xF472c864DBC867D1439f1d45F3C9a1108Ab8b0a7',
+            address: '0xeE54D440927b94015325D79CD7CB51A5212d99a9',
         },
         dao: {
             address: '0x20823791a73f283d20B1cde299E738D5783499d8',
@@ -72,7 +72,7 @@ const chainConfig: any = {
             address: '0x49E5231A3aE4c4272257b87b944415CFD113D2c3',
         },
         escrow_multicall: {
-            address: '0xF472c864DBC867D1439f1d45F3C9a1108Ab8b0a7',
+            address: '0xeE54D440927b94015325D79CD7CB51A5212d99a9',
         },
         dao: {
             address: '0x214bef460Fda073a328aD02371C48E69Bd13442B',
