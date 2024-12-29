@@ -36,6 +36,7 @@ import { OrderHistory } from 'src/models/order-history';
 import ShippingMethodRepository from '@medusajs/medusa/dist/repositories/shipping-method';
 import CartService from './cart';
 import CartRepository from '@medusajs/medusa/dist/repositories/cart';
+import { CartEmailRepository } from '../repositories/cart-email';
 import GlobetopperService from './globetopper';
 import { randomInt, randomUUID } from 'crypto';
 
@@ -81,6 +82,7 @@ export default class OrderService extends MedusaOrderService {
     protected globetopperService_: GlobetopperService;
     protected readonly logger: ILogger;
     protected buckyClient: BuckyClient;
+    protected readonly cartEmailRepository_: typeof CartEmailRepository;
 
     constructor(container) {
         super(container);
@@ -102,6 +104,7 @@ export default class OrderService extends MedusaOrderService {
         this.logger = createLogger(container, 'OrderService');
         this.globetopperService_ = container.globetopperService;
         this.buckyClient = new BuckyClient(container.buckyLogRepository);
+        this.cartEmailRepository_ = container.cartEmailRepository;
     }
 
     async createFromPayment(
@@ -233,6 +236,19 @@ export default class OrderService extends MedusaOrderService {
             where: { id: cartId },
             relations: ['customer'],
         });
+
+        //reconconcile cart email address
+        if (cart) {
+            const cartEmail = await this.cartEmailRepository_.findOne({
+                where: { id: cartId },
+            });
+
+            //if cart email is not equal to cart email, make it so
+            if (cartEmail && cartEmail.email_address != cart.email) {
+                cart.email = cartEmail.email_address;
+                await this.cartRepository_.save(cart);
+            }
+        }
 
         //get orders & order ids
         const orders: Order[] = await this.getOrdersForCheckout(cartId);
