@@ -78,6 +78,7 @@ const HeroSlider: React.FC = () => {
                     imgSrc={products[currentIndex].imgSrc}
                     categoryTitle={products[currentIndex].categoryTitle}
                     description={products[currentIndex].description}
+                    price={products[currentIndex].price}
                 />
             </Flex>
 
