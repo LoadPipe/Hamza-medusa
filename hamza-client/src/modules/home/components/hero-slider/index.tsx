@@ -5,6 +5,7 @@ import { Flex, Text, Button, IconButton, Box } from '@chakra-ui/react';
 import HeroImageCarousel from './components/hero-image-carousel';
 import products from './productData';
 import { ArrowForwardIcon, ArrowBackIcon } from '@chakra-ui/icons';
+import Link from 'next/link'; // Import Next.js Link for better SPA navigation
 
 const HeroSlider: React.FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -70,16 +71,18 @@ const HeroSlider: React.FC = () => {
                     revolutionizing digital trade.
                 </Text>
                 <Flex flexDir="row" gap={4} mt="2rem">
-                    <Button
-                        backgroundColor={'transparent'}
-                        borderColor={'primary.green.900'}
-                        borderWidth={2}
-                        color={'primary.green.900'}
-                        _hover={{ opacity: 0.5 }}
-                        rounded="full"
-                    >
-                        Start Shopping
-                    </Button>
+                    <Link href="/shop" passHref>
+                        <Button
+                            backgroundColor={'transparent'}
+                            borderColor={'primary.green.900'}
+                            borderWidth={2}
+                            color={'primary.green.900'}
+                            _hover={{ opacity: 0.5 }}
+                            rounded="full"
+                        >
+                            Start Shopping
+                        </Button>
+                    </Link>
                     <Button
                         backgroundColor={'primary.green.900'}
                         rounded="full"
