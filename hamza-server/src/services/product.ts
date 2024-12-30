@@ -63,6 +63,7 @@ export type UpdateProductProductVariantDTO = {
 type UpdateProductInput = Omit<Partial<CreateProductInput>, 'variants'> & {
     variants?: UpdateProductProductVariantDTO[];
 };
+
 class ProductService extends MedusaProductService {
     static LIFE_TIME = Lifetime.SCOPED;
     protected readonly logger: ILogger;
@@ -672,28 +673,17 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    private async convertProductPrices(
-        products: Product[],
-        customerId: string = ''
-    ): Promise<Product[]> {
-        const strategy: PriceSelectionStrategy = new PriceSelectionStrategy({
-            customerService: this.customerService_,
-            productVariantRepository: this.productVariantRepository_,
-            logger: this.logger,
-            cachedExchangeRateRepository: this.cacheExchangeRateRepository,
+    async getProductsForMeilisearchIndex(): Promise<any[]> {
+        const products = await this.getAllProductsWithPrices();
+        return products.map((p) => {
+            return {
+                id: p.id,
+                handle: p.handle,
+                title: p.title,
+                description: p.description,
+                thumbnail: p.thumbnail,
+            };
         });
-        for (const prod of products) {
-            for (const variant of prod.variants) {
-                const results = await strategy.calculateVariantPrice(
-                    [{ variantId: variant.id, quantity: 1 }],
-                    { customer_id: customerId }
-                );
-                if (results.has(variant.id))
-                    variant.prices = results.get(variant.id).prices;
-            }
-        }
-
-        return products;
     }
 
     async convertVariantPrice(
@@ -717,6 +707,30 @@ class ProductService extends MedusaProductService {
         }
 
         return variant;
+    }
+
+    private async convertProductPrices(
+        products: Product[],
+        customerId: string = ''
+    ): Promise<Product[]> {
+        const strategy: PriceSelectionStrategy = new PriceSelectionStrategy({
+            customerService: this.customerService_,
+            productVariantRepository: this.productVariantRepository_,
+            logger: this.logger,
+            cachedExchangeRateRepository: this.cacheExchangeRateRepository,
+        });
+        for (const prod of products) {
+            for (const variant of prod.variants) {
+                const results = await strategy.calculateVariantPrice(
+                    [{ variantId: variant.id, quantity: 1 }],
+                    { customer_id: customerId }
+                );
+                if (results.has(variant.id))
+                    variant.prices = results.get(variant.id).prices;
+            }
+        }
+
+        return products;
     }
 }
 
