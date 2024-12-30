@@ -21,7 +21,7 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
             <Flex
                 bgColor={'red'}
                 borderRadius={'16px'}
-                width={'622px'}
+                maxWidth={'622px'}
                 height={'295px'}
                 bgColor={'#121212'}
             >

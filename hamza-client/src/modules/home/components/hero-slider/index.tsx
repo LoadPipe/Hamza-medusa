@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Flex, Text, Button, Image, IconButton } from '@chakra-ui/react';
+import { Flex, Text, Button, IconButton } from '@chakra-ui/react';
 import HeroImageCarousel from './components/hero-image-carousel';
 import products from './productData';
 import { ArrowForwardIcon, ArrowBackIcon } from '@chakra-ui/icons';
 
-const HeroSlider = () => {
+const HeroSlider: React.FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     const handleNext = () => {
@@ -18,16 +18,34 @@ const HeroSlider = () => {
             prevIndex === 0 ? products.length - 1 : prevIndex - 1
         );
     };
+
     return (
         <Flex
             maxW="1280px"
             height="685px"
-            justifyContent="center"
+            justifyContent="space-between"
             flexDir="row"
             px="50px"
             py="62px"
             mx="auto"
+            position="relative"
         >
+            {/* Previous Button */}
+            <IconButton
+                icon={<ArrowBackIcon />}
+                aria-label="Previous"
+                position="absolute"
+                left="-50px"
+                top="50%"
+                transform="translateY(-50%)"
+                onClick={handlePrev}
+                bg="#242424"
+                color="white"
+                _hover={{ bg: '#2D2D2D' }}
+                borderRadius="50%"
+                boxSize="50px"
+            />
+
             {/* Left Section */}
             <Flex width="50%" flexDir="column" gap={4}>
                 <Text color="white" fontSize="56px" lineHeight={1.2}>
@@ -56,41 +74,28 @@ const HeroSlider = () => {
                 justifyContent="center"
                 alignItems="center"
             >
-                {/* Previous Button */}
-                <IconButton
-                    icon={<ArrowBackIcon />}
-                    aria-label="Previous"
-                    position="absolute"
-                    left="-40px"
-                    top="50%"
-                    transform="translateY(-50%)"
-                    onClick={handlePrev}
-                    variant="ghost"
-                    color="white"
-                    _hover={{ bg: 'whiteAlpha.300' }}
-                />
-
-                {/* Hero Image Carousel */}
                 <HeroImageCarousel
                     imgSrc={products[currentIndex].imgSrc}
                     categoryTitle={products[currentIndex].categoryTitle}
                     description={products[currentIndex].description}
                 />
-
-                {/* Next Button */}
-                <IconButton
-                    icon={<ArrowForwardIcon />}
-                    aria-label="Next"
-                    position="absolute"
-                    right="-40px"
-                    top="50%"
-                    transform="translateY(-50%)"
-                    onClick={handleNext}
-                    variant="ghost"
-                    color="white"
-                    _hover={{ bg: 'whiteAlpha.300' }}
-                />
             </Flex>
+
+            {/* Next Button */}
+            <IconButton
+                icon={<ArrowForwardIcon />}
+                aria-label="Next"
+                position="absolute"
+                right="-50px"
+                top="50%"
+                transform="translateY(-50%)"
+                onClick={handleNext}
+                bg="#242424"
+                color="white"
+                _hover={{ bg: '#2D2D2D' }}
+                borderRadius="50%"
+                boxSize="50px"
+            />
         </Flex>
     );
 };
