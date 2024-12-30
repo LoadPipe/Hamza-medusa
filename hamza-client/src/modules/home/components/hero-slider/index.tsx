@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Flex, Text, Button, IconButton } from '@chakra-ui/react';
+import { Flex, Text, Button, IconButton, Box } from '@chakra-ui/react';
 import HeroImageCarousel from './components/hero-image-carousel';
 import products from './productData';
 import { ArrowForwardIcon, ArrowBackIcon } from '@chakra-ui/icons';
@@ -96,6 +96,27 @@ const HeroSlider: React.FC = () => {
                 borderRadius="50%"
                 boxSize="50px"
             />
+
+            {/* Carousel Indicators */}
+            <Flex
+                position="absolute"
+                bottom="20px"
+                left="50%"
+                transform="translateX(-50%)"
+                gap={2}
+            >
+                {products.map((_, index) => (
+                    <Box
+                        key={index}
+                        width="20px"
+                        height="20px"
+                        borderRadius="50%"
+                        border={`2px solid #676767`}
+                        bg={currentIndex === index ? '#94D42A' : 'transparent'}
+                        transition="background-color 0.3s"
+                    />
+                ))}
+            </Flex>
         </Flex>
     );
 };
