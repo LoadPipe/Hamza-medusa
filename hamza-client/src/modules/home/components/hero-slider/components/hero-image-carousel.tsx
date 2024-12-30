@@ -1,5 +1,15 @@
 import React from 'react';
-import { Flex, Text, Button, Box, Image, Link } from '@chakra-ui/react';
+import {
+    Flex,
+    Text,
+    Button,
+    Box,
+    Link,
+    Image as ChakraImage,
+} from '@chakra-ui/react';
+import currencyIcons from '@/images/currencies/crypto-currencies';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
+import Image from 'next/image';
 
 interface HeroImageCarouselProps {
     imgSrc: string;
@@ -14,6 +24,7 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
     description,
     price,
 }) => {
+    const { preferred_currency_code } = useCustomerAuthStore();
     return (
         <Flex width={'100%'} flexDir={'column'} alignSelf={'center'} gap={2}>
             <Text color={'white'}>
@@ -27,7 +38,7 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                 height={'295px'}
                 bgColor={'#121212'}
             >
-                <Image
+                <ChakraImage
                     src={imgSrc}
                     alt={imgSrc}
                     height={'295px'}
@@ -37,14 +48,22 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                 />
                 <Flex flexDir={'column'} p={4} gap={2} alignSelf={'center'}>
                     <Text color={'white'}>{description}</Text>
-                    <Text
-                        color={'white'}
-                        fontSize={'20px'}
-                        mt={4}
-                        fontWeight="bold"
-                    >
-                        {price}
-                    </Text>
+                    <Flex flexDir={'row'} alignItems={'center'} gap={2}>
+                        <Image
+                            className="h-[18px] w-[18px] md:h-[20px] md:w-[20px]"
+                            src={
+                                currencyIcons[preferred_currency_code ?? 'usdc']
+                            }
+                            alt={preferred_currency_code ?? 'usdc'}
+                        />
+                        <Text
+                            color={'white'}
+                            fontSize={'20px'}
+                            fontWeight="bold"
+                        >
+                            {price}
+                        </Text>
+                    </Flex>
                     <Box
                         bgColor={'#272727'}
                         borderRadius={'full'}
