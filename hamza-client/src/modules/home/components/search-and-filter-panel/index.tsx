@@ -22,7 +22,6 @@ const SearchAndFilterPanel = ({
             justifyContent={'center'}
             alignItems={'center'}
         >
-            <SearchBar />
             <FilterBar />
             <Hydrate state={dehydratedState}>
                 <ProductCardGroup />

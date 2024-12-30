@@ -1,5 +1,6 @@
 import React from 'react';
-import { Flex, Text, Button } from '@chakra-ui/react';
+import { Flex, Text, Button, Image } from '@chakra-ui/react';
+import HeroImageCarousel from './components/hero-image-carousel';
 
 const HeroSlider = () => {
     return (
@@ -31,24 +32,7 @@ const HeroSlider = () => {
                     <Button rounded={'full'}>Sell on Hamza</Button>
                 </Flex>
             </Flex>
-            <Flex
-                width={'100%'}
-                flexDir={'column'}
-                alignSelf={'center'}
-                gap={2}
-            >
-                <Text color={'white'}>Featured Products on</Text>
-                <Flex
-                    bgColor={'red'}
-                    borderRadius={'16px'}
-                    width={'622px'}
-                    height={'295px'}
-                    bgColor={'#121212'}
-                ></Flex>
-                <Text color={'white'} fontStyle={'italic'}>
-                    The product is on sale. Buy now and grab a great discount!
-                </Text>
-            </Flex>
+            <HeroImageCarousel categoryTitle={'Electronics'} />
         </Flex>
     );
 };
