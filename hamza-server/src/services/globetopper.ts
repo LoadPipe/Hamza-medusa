@@ -350,7 +350,7 @@ export default class GlobetopperService extends TransactionBaseService {
                 cardInfo.push(extraFieldContent);
             }
 
-            emailBody += cardInfo.join('<br /><br />\n');
+            emailBody += `<b>${purchase.records[0]?.operator?.name}</b><br/>${cardInfo.join('<br /><br />\n')}`;
             console.log(
                 `Globetopper gift card email info for customer ${email}:\n${emailBody}`
             );
@@ -365,8 +365,6 @@ export default class GlobetopperService extends TransactionBaseService {
                 body: emailBody,
             },
         });
-
-        console.log(emailBody);
     }
 
     private async mapDataToProductInput(
