@@ -97,7 +97,10 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                 {/* Main Square Image on the top (mobile) or left (desktop) */}
                 <GridItem position="relative">
                     <Box position="relative" overflow="hidden">
-                        {selectedVariantImage.includes('globetopper.com') ? (
+                        {selectedVariantImage.includes('globetopper.com') ||
+                        selectedVariantImage.includes(
+                            'images.hamza.market/GiftCards/'
+                        ) ? (
                             <Flex
                                 justifyContent={'center'}
                                 alignItems={'center'}
