@@ -19,7 +19,8 @@ interface HeroImageCarouselProps {
     categoryTitle: string;
     description: string;
     price: string;
-    productHandle: any;
+    productHandle: string;
+    currencyCode: string;
 }
 
 const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
@@ -28,6 +29,7 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
     description,
     price,
     productHandle,
+    currencyCode,
 }) => {
     const handleClick = () => {
         // Navigate to the product page after state update
@@ -75,7 +77,7 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                             fontSize={'20px'}
                             fontWeight="bold"
                         >
-                            {formatCryptoPrice(Number(price), 'usdt')}
+                            {formatCryptoPrice(Number(price), currencyCode)}
                         </Text>
                     </Flex>
                     <Box

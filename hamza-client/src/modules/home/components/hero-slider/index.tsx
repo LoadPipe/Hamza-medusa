@@ -133,6 +133,10 @@ const HeroSlider: React.FC = () => {
                 {currentProduct && (
                     <HeroImageCarousel
                         productHandle={currentProduct.handle}
+                        currencyCode={
+                            currentProduct.variants?.[0]?.prices?.[0]
+                                ?.currency_code
+                        }
                         imgSrc={currentProduct.thumbnail || ''}
                         categoryTitle={currentProduct.title || 'Unknown Title'}
                         description={
