@@ -72,7 +72,7 @@ const chainConfig: any = {
             address: '0x49E5231A3aE4c4272257b87b944415CFD113D2c3',
         },
         escrow_multicall: {
-            address: '0xeE54D440927b94015325D79CD7CB51A5212d99a9',
+            address: '0xdFc33612146333D809eD1a4ee7A79B9C776B86b4',
         },
         dao: {
             address: '0x214bef460Fda073a328aD02371C48E69Bd13442B',
