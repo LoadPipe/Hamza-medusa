@@ -92,7 +92,7 @@ const nextConfig = withStoreConfig({
             {
                 protocol: 'https',
                 hostname: 'crm.dev.globetopper.com',
-            },
+            }
         ],
     },
     async redirects() {
