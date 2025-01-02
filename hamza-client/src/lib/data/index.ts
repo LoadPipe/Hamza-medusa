@@ -293,6 +293,10 @@ export async function getAllVendorProducts() {
     return get('/store/products');
 }
 
+export async function getProductCollection() {
+    return get('/custom/product/hero-collection');
+}
+
 // Get All Store Names
 export async function getAllStoreNames() {
     return get('/custom/store/name');

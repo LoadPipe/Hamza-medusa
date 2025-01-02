@@ -6,6 +6,9 @@ import HeroImageCarousel from './components/hero-image-carousel';
 import products from './productData';
 import { ArrowForwardIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import Link from 'next/link'; // Import Next.js Link for better SPA navigation
+import getQueryClient from '@/app/getQueryClient';
+import { getProductCollection } from '@/lib/data';
+import { useQuery } from '@tanstack/react-query';
 
 const HeroSlider: React.FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -19,6 +22,17 @@ const HeroSlider: React.FC = () => {
             prevIndex === 0 ? products.length - 1 : prevIndex - 1
         );
     };
+
+    const { data, error, isLoading } = useQuery(
+        ['productCollection'],
+        () => getProductCollection(),
+        {
+            staleTime: 60 * 1000,
+            cacheTime: 2 * 60 * 1000,
+        }
+    );
+
+    console.log('product data', data.product.description);
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -101,9 +115,10 @@ const HeroSlider: React.FC = () => {
                 alignItems="center"
             >
                 <HeroImageCarousel
-                    imgSrc={products[currentIndex].imgSrc}
-                    categoryTitle={products[currentIndex].categoryTitle}
-                    description={products[currentIndex].description}
+                    productData={data}
+                    imgSrc={data.product.thumbnail}
+                    categoryTitle={data.product.title}
+                    description={data.product.description}
                     price={products[currentIndex].price}
                 />
             </Flex>

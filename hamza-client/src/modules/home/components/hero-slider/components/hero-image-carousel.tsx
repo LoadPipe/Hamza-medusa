@@ -16,6 +16,7 @@ interface HeroImageCarouselProps {
     categoryTitle: string;
     description: string;
     price: string;
+    productData: any;
 }
 
 const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
@@ -23,12 +24,13 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
     categoryTitle,
     description,
     price,
+    productData,
 }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
     return (
         <Flex width={'100%'} flexDir={'column'} alignSelf={'center'} gap={2}>
             <Text color={'white'}>
-                Featured Products on{' '}
+                Featured Product:{' '}
                 <Link color={'primary.green.900'}>{categoryTitle}</Link>
             </Text>
             <Flex
@@ -47,7 +49,9 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                     borderLeftRadius={'16px'}
                 />
                 <Flex flexDir={'column'} p={4} gap={2} alignSelf={'center'}>
-                    <Text color={'white'}>{description}</Text>
+                    <Text color={'white'} noOfLines={4}>
+                        {description}
+                    </Text>
                     <Flex flexDir={'row'} alignItems={'center'} gap={2}>
                         <Image
                             className="h-[18px] w-[18px] md:h-[20px] md:w-[20px]"
