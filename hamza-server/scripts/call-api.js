@@ -26,7 +26,7 @@ async function main() {
                 },
             }
         );
-        console.log(miscSetup);
+        console.log(await miscSetup.json());
 
         const storeResponse = await fetch(
             `http://localhost:${port}/admin/custom/setup/user`,
@@ -37,13 +37,13 @@ async function main() {
                 },
                 body: JSON.stringify({
                     email: 'goblinvendor@hamza.com',
-                    password: 'password'
-                })
+                    password: 'password',
+                }),
             }
         );
-        console.log(storeResponse);
         console.log(await storeResponse.json());
 
+        /*
         //await fetch(`http://localhost:${port}/admin/custom/massmarket`, {
         //    method: 'GET',
         //    headers: {
@@ -73,7 +73,6 @@ async function main() {
         );
         console.log(buckyResponse);
 
-        /*
         const whitelistResponse = await fetch(
             `http://localhost:${port}/admin/custom/whitelist?store=Hamza Official`,
             {
@@ -85,6 +84,32 @@ async function main() {
         );
         console.log(whitelistResponse);
         */
+
+        const giftCardsSetup = await fetch(
+            `http://localhost:${port}/admin/custom/setup/giftcards`,
+            {
+                method: 'POST',
+                headers: {
+                    Cookie: authCookie.substring(0, authCookie.indexOf(';')),
+                },
+                body: JSON.stringify({
+                    email: 'goblinvendor@hamza.com',
+                    password: 'password',
+                }),
+            }
+        );
+
+        const mockOrder = await fetch(
+            `http://localhost:${port}/admin/custom/mock-orders?count=75`,
+            {
+                method: 'POST',
+                headers: {
+                    Cookie: authCookie.substring(0, authCookie.indexOf(';')),
+                },
+            }
+        );
+
+        console.log(mockOrder);
     } catch (e) {
         console.error(e);
     }

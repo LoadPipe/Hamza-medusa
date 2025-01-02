@@ -36,7 +36,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
     const [shippingCost, setShippingCost] = useState<number>(0);
     const { shipping_options, isLoading } = useCartShippingOptions(data.id);
 
-    useEffect(() => {
+    const updateShippingCost = () => {
         const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/cart/shipping`;
         axios
             .get(url, {
@@ -48,12 +48,18 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
             .then((response) => {
                 setShippingCost(response?.data?.amount ?? 0);
             });
+    };
+
+    useEffect(() => {
+        updateShippingCost();
     }, [shipping_options, isLoading]);
 
     //TODO: this can be replaced later by extending the cart, if necessary
     const getCartSubtotal = (cart: any, currencyCode: string) => {
         const subtotals: { [key: string]: number } = {};
         const itemCurrencyCode: string = currencyCode;
+
+        updateShippingCost();
 
         for (let n = 0; n < cart.items.length; n++) {
             const item: ExtendedLineItem = cart.items[n];

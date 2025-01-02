@@ -45,7 +45,7 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
     };
 
     const subtotals = getCartSubtotals(data);
-    const currencyCode = data.items[0].currency_code ?? 'usdc';
+    const currencyCode = data?.items[0]?.currency_code ?? 'usdc';
     const shippingCost = shipping_total ?? 0;
     const taxTotal = tax_total ?? 0;
     const grandTotal = (subtotals[currencyCode] ?? 0) + shippingCost + taxTotal;

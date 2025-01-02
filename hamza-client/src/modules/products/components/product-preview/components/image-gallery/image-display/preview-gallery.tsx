@@ -97,26 +97,58 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                 {/* Main Square Image on the top (mobile) or left (desktop) */}
                 <GridItem position="relative">
                     <Box position="relative" overflow="hidden">
-                        <AspectRatio
-                            ratio={1}
-                            width={{ base: '100%', md: '100%' }} // Use full width on mobile, fixed on desktop
-                            maxH="600px"
-                            minH="312px"
-                            height="100%"
-                            overflow="hidden"
-                            borderRadius={{ base: '16px', md: '16px 0 0 16px' }}
-                            onClick={() => openGallery(0)}
-                            cursor="pointer"
-                        >
-                            <Image
-                                src={images[0]}
-                                width={'100%'}
-                                height={'100%'}
-                                alt="Main Image"
-                                objectFit="cover"
-                            />
-                        </AspectRatio>
-
+                        {selectedVariantImage.includes('globetopper.com') ||
+                        selectedVariantImage.includes(
+                            'images.hamza.market/GiftCards/'
+                        ) ? (
+                            <Flex
+                                justifyContent={'center'}
+                                alignItems={'center'}
+                                width={{ base: '100%', md: '100%' }} // Use full width on mobile, fixed on desktop
+                                maxH="600px"
+                                minH="312px"
+                                height="100%"
+                                overflow="hidden"
+                                borderRadius={{
+                                    base: '16px',
+                                    md: '16px 16px 16px 16px',
+                                }}
+                                onClick={() => openGallery(0)}
+                                cursor="pointer"
+                                backgroundColor={'black'}
+                            >
+                                <Image
+                                    src={images[0]}
+                                    maxWidth={'400px'}
+                                    maxHeight={'251px'}
+                                    alt="Main Image"
+                                    objectFit="cover"
+                                />
+                            </Flex>
+                        ) : (
+                            <AspectRatio
+                                ratio={1}
+                                width={{ base: '100%', md: '100%' }} // Use full width on mobile, fixed on desktop
+                                maxH="600px"
+                                minH="312px"
+                                height="100%"
+                                overflow="hidden"
+                                borderRadius={{
+                                    base: '16px',
+                                    md: '16px 0 0 16px',
+                                }}
+                                onClick={() => openGallery(0)}
+                                cursor="pointer"
+                            >
+                                <Image
+                                    src={images[0]}
+                                    width={'100%'}
+                                    height={'100%'}
+                                    alt="Main Image"
+                                    objectFit="cover"
+                                />
+                            </AspectRatio>
+                        )}
                         {/* Back Button (Top Left) */}
                         <IconButton
                             as="button"

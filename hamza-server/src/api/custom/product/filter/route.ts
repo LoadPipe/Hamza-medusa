@@ -37,10 +37,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     await handler.handle(async () => {
         //if no parameters passed, just get every product ever (excluding ones that are not PUBLISHED or don't have a store)
         const categories: string[] = Array.isArray(
-            handler.inputParams.category_name
+            handler.inputParams.category_handles
         )
-            ? handler.inputParams.category_name
-            : handler.inputParams.category_name?.split(',') || [];
+            ? handler.inputParams.category_handles
+            : handler.inputParams.category_handles?.split(',') || [];
 
         //make sure these are cast as numbers
         const upperPrice = handler.inputParams.price_hi ?? 0;

@@ -6,7 +6,7 @@ import {
     MassmarketWalletPaymentHandler,
     LiteSwitchWalletPaymentHandler,
     DirectWalletPaymentHandler,
-    CheckoutData,
+    EscrowWalletPaymentHandler,
 } from './payment-handlers';
 import { Button } from '@chakra-ui/react';
 import React, { useState, useEffect, useRef } from 'react';
@@ -134,8 +134,12 @@ const CryptoPaymentButton = ({
                 handler = new DirectWalletPaymentHandler();
                 break;
             case 'SWITCH':
-                handler = new LiteSwitchWalletPaymentHandler();
+                //if (data?.orders[0]?.escrow_metadata?.version === '1.0') {
+                handler = new EscrowWalletPaymentHandler();
                 break;
+            //}
+            //handler = new LiteSwitchWalletPaymentHandler();
+            //break;
         }
 
         try {
@@ -228,8 +232,6 @@ const CryptoPaymentButton = ({
                         cartId,
                         output.transaction_id,
                         output.payer_address,
-                        output.receiver_address,
-                        output.escrow_address,
                         output.chain_id
                     );
 

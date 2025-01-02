@@ -1,6 +1,5 @@
 import { Lifetime } from 'awilix';
-import { UserService as MedusaUserService } from '@medusajs/medusa';
-import { User } from '../models/user';
+import { User, UserService as MedusaUserService } from '@medusajs/medusa';
 import {
     CreateUserInput as MedusaCreateUserInput,
     UpdateUserInput,

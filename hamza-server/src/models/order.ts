@@ -1,8 +1,22 @@
-import { Entity, OneToOne, JoinColumn, Column } from 'typeorm';
+import {
+    Entity,
+    OneToOne,
+    JoinColumn,
+    Column,
+    OneToMany,
+    Relation,
+} from 'typeorm';
 import { Order as MedusaOrder } from '@medusajs/medusa';
-import { Payment as MedusaPayment } from '@medusajs/medusa';
 import { Store } from './store';
-import { BigNumberish } from 'ethers';
+import { OrderHistory } from './order-history';
+
+export const EscrowStatus = {
+    IN_ESCROW: 'in_escrow',
+    BUYER_RELEASED: 'buyer_released',
+    SELLER_RELEASED: 'seller_released',
+    RELEASED: 'released',
+    REFUNDED: 'refunded',
+};
 
 @Entity()
 export class Order extends MedusaOrder {
@@ -12,6 +26,9 @@ export class Order extends MedusaOrder {
 
     @Column('store_id')
     store_id?: string;
+
+    @Column()
+    escrow_status?: string;
 
     @Column()
     massmarket_order_id?: string;
@@ -24,4 +41,9 @@ export class Order extends MedusaOrder {
 
     @Column('jsonb')
     bucky_metadata?: Record<string, unknown>;
+
+    @OneToMany(() => OrderHistory, (orderHistory) => orderHistory.order, {
+        cascade: true,
+    })
+    histories?: Relation<OrderHistory[]>;
 }

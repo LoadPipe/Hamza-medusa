@@ -83,10 +83,10 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                             <Image
                                 src={selectedImage}
                                 alt="Selected Image"
-                                width="100%"
                                 height="100%"
+                                margin="auto"
                                 borderRadius="md"
-                                objectFit="fill"
+                                objectFit="contain"
                             />
                         </Box>
 
@@ -161,9 +161,12 @@ const ImageGalleryModal: React.FC<ImageGalleryModalProps> = ({
                                     <Image
                                         src={image}
                                         alt={`Image ${index + 1}`}
-                                        width="100%"
+                                        // width="100%"
+                                        // height="100%"
+                                        // objectFit="contain"
                                         height="100%"
-                                        objectFit="fill"
+                                        margin="auto"
+                                        objectFit="contain"
                                     />
                                 </Box>
                             ))}

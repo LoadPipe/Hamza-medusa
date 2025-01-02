@@ -61,9 +61,6 @@ const StoreBanner = (props: StoreProps) => {
                     </Flex>
 
                     <Flex color="#555555" gap={'7px'}>
-                        <Text fontSize={{ base: '10px', md: '16px' }}>
-                            Flagship Store
-                        </Text>
                         <Box
                             alignSelf={'center'}
                             width={{ base: '2.53px', md: '7.33px' }}
@@ -84,7 +81,13 @@ const StoreBanner = (props: StoreProps) => {
                 flexDirection={'column'}
                 gap={'16px'}
             >
-                <a href={process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK ?? 'https://support.hamza.market/help/1568263160'} target='_blank'>
+                <a
+                    href={
+                        process.env.NEXT_PUBLIC_HAMZA_CHAT_LINK ??
+                        'https://support.hamza.market/help/1568263160'
+                    }
+                    target="_blank"
+                >
                     <Flex
                         display={{ base: 'none', md: 'flex' }}
                         height={{ base: '33px', md: '47px' }}

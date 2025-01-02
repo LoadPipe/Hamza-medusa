@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Exclusive Gift Card Awaits!</title>
+    <style>
+        /* Add your CSS styles for the email here */
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+        .order {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .order-details {
+            margin-bottom: 10px;
+        }
+        .order-items {
+            margin-bottom: 10px;
+        }
+        .item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        .item-image {
+            max-width: 100px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    Dear Customer, 
+    <br />
+    <p>We hope you're doing well! Below you will find redemption information for the gift cards that you've purchased on Hamza.market.</p>
+    <b>Gift Card Details:</b>
+    <br/>
+    <%-data.body%>
+    <br/>
+    <p>If you have any questions or need assistance, feel free to contact us. We’re here to help!</p>
+    Best regards, <br />
+    The Hamza Team<br />
+
+<div>
+<img src="https://images.hamza.market/email/footer/logo.png">
+</div>
+<div>
+<p>Hamza eCommerce Platform<br>
+support@hamzamarket.com</p>
+</div>
+<div>
+<img src="https://images.hamza.market/email/footer/fb-icon.png">
+<img src="https://images.hamza.market/email/footer/x-icon.png">
+<img src="https://images.hamza.market/email/footer/discord-icon.png">
+<img src="https://images.hamza.market/email/footer/ig-icon.png">
+</div>
+<div>
+<p>Read our <a href="https://blog.hamza.market/privacy/">Privacy Policy</a> and <a href="https://blog.hamza.market/tos/">Terms of Service.</a></p>
+
+
+<p>You are receiving this email because you have ordered from Hamza.market. 
+    Don't want to receive these emails? <a href='https://hamza.market/account/notifications'>Unsubscribe here.</a></p>
+
+<p>© 2024 Hamza. All rights reserved</p>
+</div>
+</body>
+
+</html>

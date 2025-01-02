@@ -74,12 +74,12 @@ const StoreTemplate = ({ vendors }: any) => {
                     </Heading>
                     <Text>
                         {reviewStats.reviewCount === 0
-                            ? 'No reviews yet'
+                            ? ''
                             : `Average Rating: ${reviewStats.avgRating.toFixed(1)}`}
                     </Text>
                     <Text>
                         {reviewStats.reviewCount === 0
-                            ? 'No ratings yet'
+                            ? ''
                             : `Review Count: ${reviewStats.reviewCount}`}
                     </Text>
                 </Box>

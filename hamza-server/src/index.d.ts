@@ -31,6 +31,7 @@ export declare module '@medusajs/medusa/dist/models/customer' {
 export declare module '@medusajs/medusa/dist/models/line-item' {
     declare interface LineItem {
         currency_code: string;
+        external_order_id: number;
     }
 }
 
@@ -43,6 +44,7 @@ export declare module '@medusajs/medusa/dist/models/store' {
         roles: Role[];
         numberOfFollowers: number;
         icon: string;
+        escrow_metadata?: Record<string, unknown>;
     }
 }
 
@@ -52,12 +54,16 @@ export declare module '@medusajs/medusa/dist/models/product' {
         store_id: string;
         reviews: ProductReview[];
         bucky_metadata?: Record<string, unknown>;
+        external_metadata?: Record<string, unknown>;
+        external_source?: string;
     }
 }
 
 export declare module '@medusajs/medusa/dist/models/product-variant' {
     declare interface ProductVariant {
         bucky_metadata?: Record<string, unknown>;
+        external_metadata?: Record<string, unknown>;
+        external_source?: string;
     }
 }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Box,
     Skeleton,
@@ -18,6 +18,8 @@ import useHomeModalFilter from '@/zustand/home-page/home-filter/home-filter';
 import { getAllProducts } from '@lib/data';
 import useProductGroup from '@/zustand/products/product-group/product-group';
 import useProductFilterModal from '@/zustand/products/filter/product-filter';
+import { useSearchParams } from 'next/navigation';
+import { formatPriceBetweenCurrencies } from '@/lib/util/prices';
 
 const ProductCardGroup = ({
     columns = { base: 2, lg: 4 },
@@ -28,12 +30,21 @@ const ProductCardGroup = ({
     padding = { base: '1rem', md: '1rem' },
 }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
-    const { categorySelect } = useProductGroup();
+    const { categorySelect, setCategorySelect } = useProductGroup();
     const [visibleProductsCount, setVisibleProductsCount] = useState(
         visibleProductCountInitial
     );
 
     const { rangeUpper, rangeLower } = useProductFilterModal();
+
+    const searchParams = useSearchParams();
+    const categoryFromUrl = searchParams.get('category');
+
+    useEffect(() => {
+        if (categoryFromUrl) {
+            setCategorySelect([categoryFromUrl]);
+        }
+    }, [categoryFromUrl, setCategorySelect]);
 
     const { data, error, isLoading } = useQuery(
         ['categories', categorySelect, rangeUpper, rangeLower],
@@ -133,20 +144,11 @@ const ProductCardGroup = ({
                         preferred_currency_code as string
                     );
 
-                    let usdcProductPrice: number;
-                    let usdcFormattedPrice: string | number = '';
-                    if (preferred_currency_code === 'eth') {
-                        usdcProductPrice =
-                            variant?.prices?.find(
-                                (price: any) => price.currency_code === 'usdc'
-                            )?.amount ||
-                            variant?.prices?.[0]?.amount ||
-                            0;
-                        usdcFormattedPrice = formatCryptoPrice(
-                            usdcProductPrice ?? 0,
-                            'usdc'
-                        );
-                    }
+                    const usdcFormattedPrice = formatPriceBetweenCurrencies(
+                        variant?.prices,
+                        preferred_currency_code ?? 'usdc',
+                        'usdc'
+                    );
 
                     const reviewCounter = product.reviews.length;
                     const totalRating = product.reviews.reduce(

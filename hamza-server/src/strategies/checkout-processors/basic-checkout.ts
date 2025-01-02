@@ -19,9 +19,8 @@ import LineItemRepository from '@medusajs/medusa/dist/repositories/line-item';
 import WhiteListService from '../../services/whitelist';
 import StoreRepository from '../../repositories/store';
 import { WhiteList } from '../../models/whitelist';
-import BuckydropService from '../../services/buckydrop';
 import { createLogger, ILogger } from '../../utils/logging/logger';
-
+import StoreShippingSpecService from '../../services/store-shipping-spec';
 
 export interface IPaymentGroupData {
     items: LineItem[];
@@ -31,13 +30,13 @@ export interface IPaymentGroupData {
 }
 
 /**
- * Does basic checkout; can be used as a base class or by itself. 
+ * Does basic checkout; can be used as a base class or by itself.
  */
 export class BasicCheckoutProcessor {
     protected readonly idempotencyKeyService: IdempotencyKeyService;
     protected readonly cartService: CartService;
     protected readonly productService: ProductService;
-    protected readonly buckydropService: BuckydropService;
+    protected readonly shippingSpecService: StoreShippingSpecService;
     protected readonly paymentService: PaymentService;
     protected readonly orderService: OrderService;
     protected readonly whitelistService: WhiteListService;
@@ -58,7 +57,7 @@ export class BasicCheckoutProcessor {
         this.paymentService = container.paymentService;
         this.productService = container.productService;
         this.orderService = container.orderService;
-        this.buckydropService = container.buckydropService;
+        this.shippingSpecService = container.storeShippingSpecService;
         this.paymentRepository = container.paymentRepository;
         this.orderRepository = container.orderRepository;
         this.lineItemRepository = container.lineItemRepository;
@@ -77,9 +76,7 @@ export class BasicCheckoutProcessor {
      * @param cartId
      * @returns CartCompletionResponse
      */
-    async complete(
-        cartId: string
-    ): Promise<CartCompletionResponse> {
+    async complete(cartId: string): Promise<CartCompletionResponse> {
         try {
             this.cartId = cartId;
             this.logger.debug(`CheckoutProcessor: cart id is ${this.cartId}`);
@@ -103,20 +100,21 @@ export class BasicCheckoutProcessor {
             };
 
             //return an error response
-            this.logger.debug(`checkout response is ${JSON.stringify(response)}`);
+            this.logger.debug(
+                `checkout response is ${JSON.stringify(response)}`
+            );
             return response;
         }
     }
 
     /**
-     * Override this to change the steps or the order of the steps. 
+     * Override this to change the steps or the order of the steps.
      */
     protected async doCheckoutSteps(): Promise<void> {
-
         //get the cart
         await this.doRetrieveCart();
 
-        //restrict by whitelist 
+        //restrict by whitelist
         if (await this.customerRestrictedByWhitelist()) {
             throw { code: 401, message: 'Customer not whitelisted' };
         }
@@ -132,9 +130,7 @@ export class BasicCheckoutProcessor {
 
         //safety check: there should be the same number of orders as groups
         if (this.orders.length != this.paymentGroups.length)
-            throw new Error(
-                'inconsistency between payment groups and orders'
-            );
+            throw new Error('inconsistency between payment groups and orders');
 
         //save/update payments with order ids
         await this.updatePaymentFromOrder(this.payments, this.orders);
@@ -145,13 +141,18 @@ export class BasicCheckoutProcessor {
      */
     protected async doRetrieveCart(): Promise<void> {
         this.logger.debug(`CheckoutProcessor: retrieving cart ${this.cartId}`);
-        this.cart = await this.cartService.retrieve(this.cartId, {
-            relations: [
-                'items.variant.product.store',
-                'items.variant.prices', //TODO: we need prices?
-                'customer'
-            ],
-        }, null, true);
+        this.cart = await this.cartService.retrieve(
+            this.cartId,
+            {
+                relations: [
+                    'items.variant.product.store',
+                    'items.variant.prices', //TODO: we need prices?
+                    'customer',
+                ],
+            },
+            null,
+            true
+        );
     }
 
     /**
@@ -159,15 +160,18 @@ export class BasicCheckoutProcessor {
      */
     //TODO: currently checks for one store, but should check ALL stores
     protected async customerRestrictedByWhitelist(): Promise<boolean> {
-        this.logger.debug(`CheckoutProcessor: customerRestrictedByWhitelist ${this.cartId}`);
+        this.logger.debug(
+            `CheckoutProcessor: customerRestrictedByWhitelist ${this.cartId}`
+        );
         if (process.env.RESTRICT_WHITELIST_CHECKOUT) {
             const store: Store = await this.getStore();
 
-            //check whitelist 
-            const whitelist: WhiteList[] = await this.whitelistService.getByCustomerId(
-                store.id,
-                this.cart.customer.id
-            );
+            //check whitelist
+            const whitelist: WhiteList[] =
+                await this.whitelistService.getByCustomerId(
+                    store.id,
+                    this.cart.customer.id
+                );
             return whitelist?.length == 0;
         }
 
@@ -175,7 +179,7 @@ export class BasicCheckoutProcessor {
     }
 
     /**
-     * Override this to change how payments get grouped. 
+     * Override this to change how payments get grouped.
      */
     protected async doCreateGroups(): Promise<void> {
         this.logger.debug(`CheckoutProcessor: creating payment groups`);
@@ -183,7 +187,7 @@ export class BasicCheckoutProcessor {
     }
 
     /**
-     * Override this to change how payments get created. 
+     * Override this to change how payments get created.
      */
     protected async doCreatePayments(): Promise<void> {
         this.logger.debug(`CheckoutProcessor: creating payments`);
@@ -194,7 +198,7 @@ export class BasicCheckoutProcessor {
     }
 
     /**
-     * Override this to change how orders get created. 
+     * Override this to change how orders get created.
      */
     protected async doCreateOrders(): Promise<void> {
         this.logger.debug(`CheckoutProcessor: creating orders`);
@@ -206,7 +210,7 @@ export class BasicCheckoutProcessor {
     }
 
     /**
-     * Override this to change how a successful response is constructed. 
+     * Override this to change how a successful response is constructed.
      */
     protected getSuccessResponse(): CartCompletionResponse {
         const response = {
@@ -220,7 +224,9 @@ export class BasicCheckoutProcessor {
             },
         };
 
-        this.logger.debug(`CheckoutProcessor: returning response ${JSON.stringify(response)}`);
+        //this.logger.debug(
+        //    `CheckoutProcessor: returning response ${JSON.stringify(response)}`
+        //);
         return response;
     }
 
@@ -230,7 +236,7 @@ export class BasicCheckoutProcessor {
     ): PaymentDataInput {
         //divide the cart items
         const itemsFromStore = cart.items.filter(
-            (i: LineItem) => i.currency_code === storeGroup.currency_code
+            (i: LineItem) => i.variant.product.store_id === storeGroup.store.id
         );
 
         //get total amount for the items
@@ -250,11 +256,14 @@ export class BasicCheckoutProcessor {
         return output;
     }
 
-    //TODO: should get ALL stores 
+    //TODO: should get ALL stores
     protected async getStore(): Promise<Store> {
         const storeId = this.cart.items[0]?.variant?.product?.store?.id;
         if (storeId) {
-            return this.storeRepository.findOne({ where: { id: storeId }, relations: ['owner'] })
+            return this.storeRepository.findOne({
+                where: { id: storeId },
+                relations: ['owner'],
+            });
         }
         return null;
     }
@@ -291,17 +300,17 @@ export class BasicCheckoutProcessor {
         cart: Cart,
         paymentGroups: IPaymentGroupData[]
     ): Promise<Payment[]> {
-
         //calculate shipping cost
-        const shippingCost = await this.buckydropService.calculateShippingPriceForCart(cart.id);
-
         //for each unique group, make payment input to create a payment
         const paymentInputs: PaymentDataInput[] = [];
-        paymentGroups.forEach((group) => {
+        for (let group of paymentGroups) {
             const input = this.createPaymentInput(cart, group);
-            input.amount += shippingCost;
+            input.amount +=
+                await this.shippingSpecService.calculateShippingPriceForStore(
+                    group.store.id
+                );
             paymentInputs.push(input);
-        });
+        }
 
         //create the payments
         const promises: Promise<Payment>[] = [];

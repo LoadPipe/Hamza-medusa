@@ -210,7 +210,7 @@ export default class CartService extends MedusaCartService {
                 `Auto-adding shipping method for cart ${cart.id}`
             );
             const option = await this.shippingOptionRepository_.findOne({
-                where: { provider_id: 'bucky-fulfillment' },
+                where: { provider_id: 'store-fulfillment' },
             });
             await this.addShippingMethod(cart.id, option.id);
         }

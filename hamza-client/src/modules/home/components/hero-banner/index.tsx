@@ -15,7 +15,7 @@ const HeroBanner = () => {
             >
                 <Flex
                     w="100%"
-                    bg="primary.indigo.900"
+                    bg="secondary.charcoal.90"
                     color="white"
                     py={2}
                     mb={4}
@@ -23,14 +23,15 @@ const HeroBanner = () => {
                     alignItems="center"
                     style={{ opacity: 1, transition: 'opacity 0.5s ease-out' }}
                 >
-                    <Link href="https://blog.hamza.market/key" isExternal>
+                    <Link href="https://blog.hamza.market/beta" isExternal>
                         <Text
                             fontSize={{ base: '12px', md: '16px' }}
                             textAlign={'center'}
-                            fontWeight="bold"
+                            fontWeight="semi-bold"
+                            textColor={'white'}
                         >
-                            Black Friday Flash Opportunity - Founder Keys from
-                            Hamza!{' '}
+                            Hamza Beta Ship - Setting Sail. Join Us In The
+                            Journey to Decentralize Ecommerce{' '}
                             <Text
                                 as="span"
                                 color="cyan.300"

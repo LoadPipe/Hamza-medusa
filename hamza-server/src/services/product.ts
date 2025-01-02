@@ -10,7 +10,7 @@ import {
 } from '@medusajs/medusa';
 import axios from 'axios';
 import {
-    CreateProductInput,
+    CreateProductInput as MedusaCreateProductInput,
     CreateProductProductVariantPriceInput,
 } from '@medusajs/medusa/dist/types/product';
 import { Product } from '../models/product';
@@ -26,6 +26,10 @@ import { SeamlessCache } from '../utils/cache/seamless-cache';
 import { filterDuplicatesById } from '../utils/filter-duplicates';
 import { PriceConverter } from '../utils/price-conversion';
 import { getCurrencyPrecision } from '../currency.config';
+
+type CreateProductInput = MedusaCreateProductInput & {
+    store_id: string;
+};
 
 export type BulkImportProductInput = CreateProductInput;
 
@@ -294,10 +298,7 @@ class ProductService extends MedusaProductService {
             );
             return validProducts;
         } catch (error) {
-            this.logger.error(
-                'Error in adding products from BuckyDrop:',
-                error
-            );
+            this.logger.error('Error in bulk importing products:', error);
             throw error;
         }
     }
@@ -549,7 +550,7 @@ class ProductService extends MedusaProductService {
         try {
             //prepare category names for query
             let normalizedCategoryNames = categories.map((name) =>
-                name.toLowerCase()
+                name.toLowerCase().replace('-', ' ')
             );
             if (
                 normalizedCategoryNames.length > 1 &&
@@ -672,28 +673,17 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    private async convertProductPrices(
-        products: Product[],
-        customerId: string = ''
-    ): Promise<Product[]> {
-        const strategy: PriceSelectionStrategy = new PriceSelectionStrategy({
-            customerService: this.customerService_,
-            productVariantRepository: this.productVariantRepository_,
-            logger: this.logger,
-            cachedExchangeRateRepository: this.cacheExchangeRateRepository,
+    async getProductsForMeilisearchIndex(): Promise<any[]> {
+        const products = await this.getAllProductsWithPrices();
+        return products.map((p) => {
+            return {
+                id: p.id,
+                handle: p.handle,
+                title: p.title,
+                description: p.description,
+                thumbnail: p.thumbnail,
+            };
         });
-        for (const prod of products) {
-            for (const variant of prod.variants) {
-                const results = await strategy.calculateVariantPrice(
-                    [{ variantId: variant.id, quantity: 1 }],
-                    { customer_id: customerId }
-                );
-                if (results.has(variant.id))
-                    variant.prices = results.get(variant.id).prices;
-            }
-        }
-
-        return products;
     }
 
     async convertVariantPrice(
@@ -717,6 +707,30 @@ class ProductService extends MedusaProductService {
         }
 
         return variant;
+    }
+
+    private async convertProductPrices(
+        products: Product[],
+        customerId: string = ''
+    ): Promise<Product[]> {
+        const strategy: PriceSelectionStrategy = new PriceSelectionStrategy({
+            customerService: this.customerService_,
+            productVariantRepository: this.productVariantRepository_,
+            logger: this.logger,
+            cachedExchangeRateRepository: this.cacheExchangeRateRepository,
+        });
+        for (const prod of products) {
+            for (const variant of prod.variants) {
+                const results = await strategy.calculateVariantPrice(
+                    [{ variantId: variant.id, quantity: 1 }],
+                    { customer_id: customerId }
+                );
+                if (results.has(variant.id))
+                    variant.prices = results.get(variant.id).prices;
+            }
+        }
+
+        return products;
     }
 }
 

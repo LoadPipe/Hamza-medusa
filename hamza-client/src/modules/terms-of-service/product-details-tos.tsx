@@ -81,15 +81,24 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ metadata }) => {
                             Shipping:
                         </Text>
                     </Flex>
-                    <Text
-                        textDecor={'underline'}
-                        cursor={'pointer'}
-                        color="#94D42A"
-                        fontSize={{ base: '14px', md: '16px' }}
-                        onClick={() => openModal(0)} // Open modal and show Payment Methods tab
-                    >
-                        See shipping policy
-                    </Text>
+                    {metadata?.shipping_policy?.length ? (
+                        <Text
+                            color={'white'}
+                            fontSize={{ base: '14px', md: '16px' }}
+                        >
+                            {metadata?.shipping_policy}
+                        </Text>
+                    ) : (
+                        <Text
+                            textDecor={'underline'}
+                            cursor={'pointer'}
+                            color="#94D42A"
+                            fontSize={{ base: '14px', md: '16px' }}
+                            onClick={() => openModal(0)} // Open modal and show Payment Methods tab
+                        >
+                            See shipping policy
+                        </Text>
+                    )}
                 </Flex>
 
                 <Flex
@@ -131,16 +140,22 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ metadata }) => {
                         cursor={'pointer'}
                         fontSize={{ base: '14px', md: '16px' }}
                     >
-                        30 days returns. Buyer pays for return shipping.{' '}
-                        <span
-                            style={{
-                                textDecoration: 'underline',
-                                color: '#94D42A',
-                            }}
-                            onClick={() => openModal(1)} // Open modal and show Returns tab
-                        >
-                            See returns policy
-                        </span>
+                        {metadata?.return_policy?.length ? (
+                            <>{metadata?.return_policy}</>
+                        ) : (
+                            <>
+                                30 days returns. Buyer pays for return shipping.{' '}
+                                <span
+                                    style={{
+                                        textDecoration: 'underline',
+                                        color: '#94D42A',
+                                    }}
+                                    onClick={() => openModal(1)} // Open modal and show Returns tab
+                                >
+                                    See returns policy
+                                </span>
+                            </>
+                        )}
                     </Text>
                 </Flex>
 
@@ -169,25 +184,40 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ metadata }) => {
                             Payments:
                         </Text>
                     </Flex>
-                    <Text
-                        textDecor={'underline'}
-                        cursor={'pointer'}
-                        color="#94D42A"
-                        fontSize={{ base: '14px', md: '16px' }}
-                        onClick={() => openModal(2)} // Open modal and show Payment Methods tab
-                    >
-                        See payment method policy
-                    </Text>
+                    {metadata?.payment_policy?.length ? (
+                        <Text
+                            color={'white'}
+                            fontSize={{ base: '14px', md: '16px' }}
+                        >
+                            {metadata?.payment_policy}
+                        </Text>
+                    ) : (
+                        <Text
+                            textDecor={'underline'}
+                            cursor={'pointer'}
+                            color="#94D42A"
+                            fontSize={{ base: '14px', md: '16px' }}
+                            onClick={() => openModal(2)} // Open modal and show Payment Methods tab
+                        >
+                            See payment method policy
+                        </Text>
+                    )}
                 </Flex>
 
                 <UnorderedList color={'white'}>
-                    <ListItem fontSize={{ base: '14px', md: '16px' }}>
-                        Ships from {metadata?.ships_from ?? 'Shenzhen, China'}
-                    </ListItem>
-                    <ListItem mt="1rem" fontSize={{ base: '14px', md: '16px' }}>
-                        Allow {metadata?.shipping_time ?? '7-16 business days'}{' '}
-                        for delivery
-                    </ListItem>
+                    {metadata?.ships_from?.length && (
+                        <ListItem fontSize={{ base: '14px', md: '16px' }}>
+                            {metadata?.ships_from ?? ''}
+                        </ListItem>
+                    )}
+                    {metadata?.shipping_time?.length && (
+                        <ListItem
+                            mt="1rem"
+                            fontSize={{ base: '14px', md: '16px' }}
+                        >
+                            {metadata?.shipping_time ?? ''}{' '}
+                        </ListItem>
+                    )}
                 </UnorderedList>
 
                 {/* Modal with Three Options */}
