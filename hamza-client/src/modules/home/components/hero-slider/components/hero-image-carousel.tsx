@@ -19,7 +19,7 @@ interface HeroImageCarouselProps {
     categoryTitle: string;
     description: string;
     price: string;
-    productData: any;
+    productHandle: any;
 }
 
 const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
@@ -27,22 +27,22 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
     categoryTitle,
     description,
     price,
-    productData,
+    productHandle,
 }) => {
     const handleClick = () => {
         // Navigate to the product page after state update
-        router.push(`/products/${productData.product.handle}`);
+        router.push(`/products/${productHandle}`);
     };
 
     const { preferred_currency_code } = useCustomerAuthStore();
     return (
         <Flex width={'100%'} flexDir={'column'} alignSelf={'center'} gap={2}>
-            <Text color={'white'}>
-                Featured Product:{' '}
-                <Link onClick={handleClick} color={'primary.green.900'}>
-                    {categoryTitle}
-                </Link>
-            </Text>
+            <Flex flexDir={'row'} gap={2}>
+                <Text color={'white'}>Featured Product: </Text>
+                <LocalizedClientLink href={`/products/${productHandle}`}>
+                    <Text color={'primary.green.900'}> {categoryTitle}</Text>
+                </LocalizedClientLink>
+            </Flex>
             <Flex
                 bgColor={'red'}
                 borderRadius={'16px'}

@@ -3,26 +3,15 @@
 import React, { useState, useEffect } from 'react';
 import { Flex, Text, Button, IconButton, Box } from '@chakra-ui/react';
 import HeroImageCarousel from './components/hero-image-carousel';
-import products from './productData';
 import { ArrowForwardIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import Link from 'next/link'; // Import Next.js Link for better SPA navigation
-import getQueryClient from '@/app/getQueryClient';
-import { getProductCollection } from '@/lib/data';
 import { useQuery } from '@tanstack/react-query';
+import { getProductCollection } from '@/lib/data';
 
 const HeroSlider: React.FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
-    const handleNext = () => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % products.length);
-    };
-
-    const handlePrev = () => {
-        setCurrentIndex((prevIndex) =>
-            prevIndex === 0 ? products.length - 1 : prevIndex - 1
-        );
-    };
-
+    // Fetch product collection using react-query
     const { data, error, isLoading } = useQuery(
         ['productCollection'],
         () => getProductCollection(),
@@ -32,13 +21,42 @@ const HeroSlider: React.FC = () => {
         }
     );
 
+    // Event handlers for navigation
+    const handleNext = () => {
+        if (data?.products?.length) {
+            setCurrentIndex(
+                (prevIndex) => (prevIndex + 1) % data.products.length
+            );
+        }
+    };
+
+    const handlePrev = () => {
+        if (data?.products?.length) {
+            setCurrentIndex((prevIndex) =>
+                prevIndex === 0 ? data.products.length - 1 : prevIndex - 1
+            );
+        }
+    };
+
     useEffect(() => {
         const timer = setInterval(() => {
             handleNext();
         }, 5000); // Change slide every 5 seconds
 
         return () => clearInterval(timer); // Cleanup interval on component unmount
-    }, [currentIndex]); // Restart the interval when currentIndex changes
+    }, [data?.products?.length]); // Restart the interval when the product list changes
+
+    if (isLoading) {
+        return <Text>Loading...</Text>;
+    }
+
+    if (error) {
+        return <Text color="red.500">Error loading products.</Text>;
+    }
+
+    const currentProduct = data?.products?.[currentIndex];
+
+    console.log('handle', currentProduct);
 
     return (
         <Flex
@@ -112,23 +130,23 @@ const HeroSlider: React.FC = () => {
                 justifyContent="center"
                 alignItems="center"
             >
-                <HeroImageCarousel
-                    productData={data}
-                    imgSrc={data?.products?.[0]?.thumbnail || ''}
-                    categoryTitle={
-                        data?.products?.[0]?.title || 'Unknown Title'
-                    }
-                    description={
-                        data?.products?.[0]?.description ||
-                        'No description available'
-                    }
-                    price={
-                        data?.products?.[0]?.variants?.[0]?.prices?.[0]
-                            ?.amount !== undefined
-                            ? data.products[0].variants[0].prices[2].amount
-                            : 'Price not available'
-                    }
-                />
+                {currentProduct && (
+                    <HeroImageCarousel
+                        productHandle={currentProduct.handle}
+                        imgSrc={currentProduct.thumbnail || ''}
+                        categoryTitle={currentProduct.title || 'Unknown Title'}
+                        description={
+                            currentProduct.description ||
+                            'No description available'
+                        }
+                        price={
+                            currentProduct.variants?.[0]?.prices?.[0]
+                                ?.amount !== undefined
+                                ? currentProduct.variants[0].prices[0].amount
+                                : 'Price not available'
+                        }
+                    />
+                )}
             </Flex>
 
             {/* Next Button */}
@@ -155,7 +173,7 @@ const HeroSlider: React.FC = () => {
                 transform="translateX(-50%)"
                 gap={2}
             >
-                {products.map((_, index) => (
+                {data?.products?.map((_, index) => (
                     <Box
                         key={index}
                         width="20px"
