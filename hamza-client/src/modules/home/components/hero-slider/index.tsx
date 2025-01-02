@@ -114,10 +114,20 @@ const HeroSlider: React.FC = () => {
             >
                 <HeroImageCarousel
                     productData={data}
-                    imgSrc={data.product.thumbnail}
-                    categoryTitle={data.product.title}
-                    description={data.product.description}
-                    price={products[currentIndex].price}
+                    imgSrc={data?.products?.[0]?.thumbnail || ''}
+                    categoryTitle={
+                        data?.products?.[0]?.title || 'Unknown Title'
+                    }
+                    description={
+                        data?.products?.[0]?.description ||
+                        'No description available'
+                    }
+                    price={
+                        data?.products?.[0]?.variants?.[0]?.prices?.[0]
+                            ?.amount !== undefined
+                            ? data.products[0].variants[0].prices[2].amount
+                            : 'Price not available'
+                    }
                 />
             </Flex>
 

@@ -12,6 +12,7 @@ import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import Image from 'next/image';
 import LocalizedClientLink from '@/modules/common/components/localized-client-link';
 import router from 'next/router';
+import { formatCryptoPrice } from '@/lib/util/get-product-price';
 
 interface HeroImageCarouselProps {
     imgSrc: string;
@@ -74,7 +75,7 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                             fontSize={'20px'}
                             fontWeight="bold"
                         >
-                            {price}
+                            {formatCryptoPrice(Number(price), 'usdt')}
                         </Text>
                     </Flex>
                     <Box

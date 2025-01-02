@@ -615,10 +615,14 @@ class ProductService extends MedusaProductService {
                 where: {
                     id: In(productIds),
                 },
-                relations: ['variants.prices', 'reviews'],
+                relations: ['variants.prices'],
             });
 
-            return products;
+            // Update product pricing
+
+            let updatedProducts = await this.convertProductPrices(products);
+
+            return updatedProducts;
         } catch (error) {
             console.error('Error fetching products:', error);
             throw new Error('Failed to fetch products.');
