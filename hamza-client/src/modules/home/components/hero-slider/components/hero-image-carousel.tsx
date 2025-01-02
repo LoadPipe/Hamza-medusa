@@ -10,6 +10,8 @@ import {
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import Image from 'next/image';
+import LocalizedClientLink from '@/modules/common/components/localized-client-link';
+import router from 'next/router';
 
 interface HeroImageCarouselProps {
     imgSrc: string;
@@ -26,12 +28,19 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
     price,
     productData,
 }) => {
+    const handleClick = () => {
+        // Navigate to the product page after state update
+        router.push(`/products/${productData.product.handle}`);
+    };
+
     const { preferred_currency_code } = useCustomerAuthStore();
     return (
         <Flex width={'100%'} flexDir={'column'} alignSelf={'center'} gap={2}>
             <Text color={'white'}>
                 Featured Product:{' '}
-                <Link color={'primary.green.900'}>{categoryTitle}</Link>
+                <Link onClick={handleClick} color={'primary.green.900'}>
+                    {categoryTitle}
+                </Link>
             </Text>
             <Flex
                 bgColor={'red'}

@@ -32,8 +32,6 @@ const HeroSlider: React.FC = () => {
         }
     );
 
-    console.log('product data', data.product.description);
-
     useEffect(() => {
         const timer = setInterval(() => {
             handleNext();

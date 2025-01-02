@@ -1,23 +1,25 @@
 import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
-import ProductRepository from '@medusajs/medusa/dist/repositories/product';
+import ProductService from 'src/services/product';
 import { RouteHandler } from '../../../route-handler';
 
 //TODO: probably delete this
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
+    const productService: ProductService = req.scope.resolve('productService');
+
     try {
-        // Retrieve the product repository from the request scope
-        const productRepository = req.scope.resolve('productRepository');
+        // Define the array of product IDs to filter (replace with actual IDs or get them dynamically)
+        const productIds = [
+            'prod_01JG3NZFJMKG7NAEPAC5DXDQAP',
+            'prod_01JG3NZFP9VRWE3386W0ZJN832',
+        ];
 
-        // Find the product using the repository
-        const productCollection = await productRepository.findOne({
-            where: { id: 'prod_01JG3NZFJMKG7NAEPAC5DXDQAP' },
-        });
+        // Call the getProductCollection function
+        const products = await productService.getProductCollection(productIds);
 
-        console.log('PRODUCT COLL', productCollection);
         // Return the product details in the response
-        res.status(200).json({ product: productCollection });
+        res.status(200).json({ products });
     } catch (error) {
-        console.error('Error fetching product:', error);
+        console.error('Error fetching products:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
