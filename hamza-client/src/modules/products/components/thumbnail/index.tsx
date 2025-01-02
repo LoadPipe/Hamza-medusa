@@ -22,9 +22,11 @@ const Thumbnail: React.FC<ThumbnailProps> = ({
 }) => {
     const initialImage = thumbnail || images?.[0]?.url;
 
-    const objectFit = initialImage?.includes('globetopper.com')
-        ? 'fill'
-        : 'cover';
+    const objectFit =
+        initialImage?.includes('globetopper.com') ||
+        initialImage?.includes('images.hamza.market/GiftCards/')
+            ? 'fill'
+            : 'cover';
 
     return (
         <Container
