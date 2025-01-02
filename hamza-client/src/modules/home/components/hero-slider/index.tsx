@@ -7,8 +7,11 @@ import { ArrowForwardIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import Link from 'next/link'; // Import Next.js Link for better SPA navigation
 import { useQuery } from '@tanstack/react-query';
 import { getProductCollection } from '@/lib/data';
+import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
+import { formatCryptoPrice } from '@/lib/util/get-product-price';
 
 const HeroSlider: React.FC = () => {
+    const { preferred_currency_code } = useCustomerAuthStore();
     const [currentIndex, setCurrentIndex] = useState(0);
 
     // Fetch product collection using react-query
@@ -55,6 +58,17 @@ const HeroSlider: React.FC = () => {
     }
 
     const currentProduct = data?.products?.[currentIndex];
+
+    const variantPrices = currentProduct.variants
+        .map((variant: any) => variant.prices)
+        .flat();
+
+    const productPricing = formatCryptoPrice(
+        variantPrices.find(
+            (p: any) => p.currency_code === preferred_currency_code
+        )?.amount || 0,
+        preferred_currency_code as string
+    );
 
     console.log('handle', currentProduct);
 
@@ -143,12 +157,7 @@ const HeroSlider: React.FC = () => {
                             currentProduct.description ||
                             'No description available'
                         }
-                        price={
-                            currentProduct.variants?.[0]?.prices?.[0]
-                                ?.amount !== undefined
-                                ? currentProduct.variants[0].prices[0].amount
-                                : 'Price not available'
-                        }
+                        price={productPricing}
                     />
                 )}
             </Flex>

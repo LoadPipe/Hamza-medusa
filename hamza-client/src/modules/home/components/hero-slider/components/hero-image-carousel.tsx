@@ -77,7 +77,7 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                             fontSize={'20px'}
                             fontWeight="bold"
                         >
-                            {formatCryptoPrice(Number(price), currencyCode)}
+                            {price}
                         </Text>
                     </Flex>
                     <Box
