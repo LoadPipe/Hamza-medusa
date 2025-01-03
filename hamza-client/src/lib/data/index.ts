@@ -293,6 +293,7 @@ export async function getAllVendorProducts() {
     return get('/store/products');
 }
 
+//Get product collection for hero slider
 export async function getProductCollection() {
     return get('/custom/product/hero-collection');
 }

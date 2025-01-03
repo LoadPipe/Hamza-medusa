@@ -17,7 +17,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getProductCollection } from '@/lib/data';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
-import HeroBGImage from './images/hero_bg_image.webp';
+import HeroBGImage from '@/images/home/hero_bg_image.webp';
 import { motion } from 'framer-motion'; // Import Framer Motion
 
 const HeroSlider: React.FC = () => {
@@ -257,7 +257,7 @@ const HeroSlider: React.FC = () => {
                 transform="translateX(-50%)"
                 gap={2}
             >
-                {data?.products?.map((_, index) => (
+                {data?.products?.map((_: any, index: number) => (
                     <Box
                         key={index}
                         width="20px"

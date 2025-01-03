@@ -11,6 +11,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         const productIds = [
             'prod_01JG3NZFJMKG7NAEPAC5DXDQAP',
             'prod_01JG3NZFP9VRWE3386W0ZJN832',
+            'prod_01JG3NZH68N388AD9K1PH8E480',
+            'prod_01JG3NZGXCKNPY32C9MNPM5760',
         ];
 
         // Call the getProductCollection function

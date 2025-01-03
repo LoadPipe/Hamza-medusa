@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import {
     Flex,
@@ -11,7 +13,7 @@ import currencyIcons from '@/images/currencies/crypto-currencies';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import Image from 'next/image';
 import LocalizedClientLink from '@/modules/common/components/localized-client-link';
-import router from 'next/router';
+import { useRouter } from 'next/navigation'; // Use the correct hook for navigation
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
 
 interface HeroImageCarouselProps {
@@ -31,8 +33,10 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
     productHandle,
     currencyCode,
 }) => {
+    const router = useRouter(); // Initialize router instance
+
     const handleClick = () => {
-        // Navigate to the product page after state update
+        // Navigate to the product page
         router.push(`/products/${productHandle}`);
     };
 
@@ -46,7 +50,6 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                 </LocalizedClientLink>
             </Flex>
             <Flex
-                bgColor={'red'}
                 borderRadius={'16px'}
                 maxWidth={'622px'}
                 height={'295px'}
@@ -59,7 +62,10 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                     width={'295px'}
                     bgColor={'transparent'}
                     borderLeftRadius={'16px'}
+                    onClick={handleClick}
+                    cursor={'pointer'}
                 />
+
                 <Flex flexDir={'column'} p={4} gap={3} alignSelf={'center'}>
                     <Text color={'white'} noOfLines={4}>
                         {description}
