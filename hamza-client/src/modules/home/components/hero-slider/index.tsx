@@ -18,6 +18,7 @@ import { getProductCollection } from '@/lib/data';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
 import HeroBGImage from './images/hero_bg_image.webp';
+import { motion } from 'framer-motion'; // Import Framer Motion
 
 const HeroSlider: React.FC = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
@@ -204,20 +205,31 @@ const HeroSlider: React.FC = () => {
                 alignItems="center"
             >
                 {currentProduct && (
-                    <HeroImageCarousel
-                        productHandle={currentProduct.handle}
-                        currencyCode={
-                            currentProduct.variants?.[0]?.prices?.[0]
-                                ?.currency_code
-                        }
-                        imgSrc={currentProduct.thumbnail || ''}
-                        categoryTitle={currentProduct.title || 'Unknown Title'}
-                        description={
-                            currentProduct.description ||
-                            'No description available'
-                        }
-                        price={productPricing}
-                    />
+                    <motion.div
+                        key={currentProduct.id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 1 }}
+                        style={{ width: '100%' }}
+                    >
+                        <HeroImageCarousel
+                            productHandle={currentProduct.handle}
+                            currencyCode={
+                                currentProduct.variants?.[0]?.prices?.[0]
+                                    ?.currency_code
+                            }
+                            imgSrc={currentProduct.thumbnail || ''}
+                            categoryTitle={
+                                currentProduct.title || 'Unknown Title'
+                            }
+                            description={
+                                currentProduct.description ||
+                                'No description available'
+                            }
+                            price={productPricing}
+                        />
+                    </motion.div>
                 )}
             </Flex>
 
