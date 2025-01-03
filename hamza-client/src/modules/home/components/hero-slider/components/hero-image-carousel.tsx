@@ -18,7 +18,7 @@ interface HeroImageCarouselProps {
     imgSrc: string;
     categoryTitle: string;
     description: string;
-    price: string;
+    price: string | number;
     productHandle: string;
     currencyCode: string;
 }
@@ -57,10 +57,10 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                     alt={imgSrc}
                     height={'295px'}
                     width={'295px'}
-                    bgColor={'white'}
+                    bgColor={'transparent'}
                     borderLeftRadius={'16px'}
                 />
-                <Flex flexDir={'column'} p={4} gap={2} alignSelf={'center'}>
+                <Flex flexDir={'column'} p={4} gap={3} alignSelf={'center'}>
                     <Text color={'white'} noOfLines={4}>
                         {description}
                     </Text>
@@ -76,6 +76,7 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                             color={'white'}
                             fontSize={'20px'}
                             fontWeight="bold"
+                            lineHeight={0}
                         >
                             {price}
                         </Text>

@@ -1,7 +1,15 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Flex, Text, Button, IconButton, Box } from '@chakra-ui/react';
+import {
+    Flex,
+    Text,
+    Button,
+    IconButton,
+    Box,
+    Skeleton,
+    SkeletonText,
+} from '@chakra-ui/react';
 import HeroImageCarousel from './components/hero-image-carousel';
 import { ArrowForwardIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import Link from 'next/link'; // Import Next.js Link for better SPA navigation
@@ -9,6 +17,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getProductCollection } from '@/lib/data';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
+import HeroBGImage from './images/hero_bg_image.webp';
 
 const HeroSlider: React.FC = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
@@ -50,7 +59,52 @@ const HeroSlider: React.FC = () => {
     }, [data?.products?.length]); // Restart the interval when the product list changes
 
     if (isLoading) {
-        return <Text>Loading...</Text>;
+        return (
+            <Flex
+                maxW="1280px"
+                height="685px"
+                justifyContent="space-between"
+                flexDir="row"
+                px="50px"
+                py="62px"
+                mx="auto"
+                position="relative"
+            >
+                {/* Skeleton for Left Section */}
+                <Flex width="50%" flexDir="column" gap={4}>
+                    <Skeleton height="60px" width="80%" />
+                    <Skeleton height="24px" width="90%" />
+                    <SkeletonText
+                        mt="4"
+                        noOfLines={3}
+                        spacing="4"
+                        skeletonHeight="24px"
+                    />
+                    <Flex flexDir="row" gap={4} mt="2rem">
+                        <Skeleton
+                            height="48px"
+                            width="150px"
+                            borderRadius="full"
+                        />
+                        <Skeleton
+                            height="48px"
+                            width="150px"
+                            borderRadius="full"
+                        />
+                    </Flex>
+                </Flex>
+
+                {/* Skeleton for Right Section */}
+                <Flex
+                    width="50%"
+                    position="relative"
+                    justifyContent="center"
+                    alignItems="center"
+                >
+                    <Skeleton height="400px" width="400px" borderRadius="lg" />
+                </Flex>
+            </Flex>
+        );
     }
 
     if (error) {
@@ -82,13 +136,18 @@ const HeroSlider: React.FC = () => {
             py="62px"
             mx="auto"
             position="relative"
+            bgImage={`url(${HeroBGImage.src})`}
+            bgSize="cover"
+            bgPosition="center"
+            bgRepeat="no-repeat"
+            borderRadius={'24px'}
         >
             {/* Previous Button */}
             <IconButton
                 icon={<ArrowBackIcon />}
                 aria-label="Previous"
                 position="absolute"
-                left="-50px"
+                left="-30px"
                 top="50%"
                 transform="translateY(-50%)"
                 onClick={handlePrev}
@@ -167,7 +226,7 @@ const HeroSlider: React.FC = () => {
                 icon={<ArrowForwardIcon />}
                 aria-label="Next"
                 position="absolute"
-                right="-50px"
+                right="-30px"
                 top="50%"
                 transform="translateY(-50%)"
                 onClick={handleNext}
