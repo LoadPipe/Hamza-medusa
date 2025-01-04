@@ -178,8 +178,14 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 500,
                 'Medusa Merch Store where we sell our Medusa Sweatpants, its a nice store',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
             storeService.createStore(
@@ -190,8 +196,14 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 200,
                 "We Sell VR Headsets here, the best quality VR headsets you wouldn't believe it",
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
             storeService.createStore(
@@ -202,8 +214,14 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 450,
                 'Dauntless Store - Where bold and resilient products meet exceptional quality. Perfect for those who seek adventure and durability in every purchase.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
 
@@ -215,8 +233,14 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 720,
                 'Drones Store - Your go-to destination for cutting-edge aerial technology. Explore our wide range of high-performance drones perfect for every enthusiast.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
 
@@ -228,8 +252,14 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 315,
                 'Legos Store - Dive into the world of creativity and building blocks. Find the latest Lego sets and build your imagination with endless possibilities.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
             storeService.createStore(
@@ -240,8 +270,14 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 860,
                 'Board Games Store - A haven for tabletop enthusiasts. Discover a wide selection of board games, from strategy to family fun, and everything in between.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
             storeService.createStore(
@@ -252,8 +288,14 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 580,
                 'Workout Gear Store - Equip yourself with the best in fitness gear. From weights to apparel, we have everything you need to power your workouts.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
             storeService.createStore(
@@ -264,8 +306,14 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 930,
                 'Gaming Gear Store - Elevate your gaming experience with top-tier gear. Find the latest peripherals, accessories, and more for the ultimate gaming setup.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
             storeService.createStore(
@@ -276,8 +324,14 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 290,
                 'Shake Store - Blend your way to a healthier lifestyle. Our store offers a range of premium shakes and blenders for the health-conscious consumer.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
             storeService.createStore(
@@ -288,8 +342,14 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 670,
                 'Legendary Light Design Store - Illuminate your space with style. Explore our collection of designer lighting solutions for a touch of elegance and functionality.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
             storeService.createStore(
@@ -300,8 +360,14 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 410,
                 'Block Store - Specializing in building blocks and construction toys. Let your creativity soar with our range of products designed for endless fun.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
             storeService.createStore(
@@ -312,8 +378,14 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
                 110,
                 'Gift Cards of all kinds & varieties and types and things.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
         ]);
