@@ -609,6 +609,27 @@ class ProductService extends MedusaProductService {
         }
     }
 
+    async getProductCollection(productIds: string[]) {
+        try {
+            // Fetch products with matching IDs
+            const products = await this.productRepository_.find({
+                where: {
+                    id: In(productIds),
+                },
+                relations: ['variants.prices'],
+            });
+
+            // Update product pricing
+
+            let updatedProducts = await this.convertProductPrices(products);
+
+            return updatedProducts;
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            throw new Error('Failed to fetch products.');
+        }
+    }
+
     async getProductsFromStoreName(storeName: string) {
         try {
             const store = await this.storeRepository_.findOne({
