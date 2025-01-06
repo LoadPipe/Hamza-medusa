@@ -33,10 +33,13 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         );
 
         if (!storeData) {
-            return handler.returnStatusWithMessage(404, `Store ${store_name} not found`);
+            return handler.returnStatusWithMessage(
+                404,
+                `Store ${store_name} not found`
+            );
         }
 
-        const categories = await productService.getCategoriesByStoreId(
+        const categories = await productService.getCategoriesByStoreId2(
             storeData.id.toString()
         );
 

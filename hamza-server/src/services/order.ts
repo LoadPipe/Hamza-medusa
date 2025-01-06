@@ -39,6 +39,9 @@ import CartRepository from '@medusajs/medusa/dist/repositories/cart';
 import { CartEmailRepository } from '../repositories/cart-email';
 import GlobetopperService from './globetopper';
 import { randomInt, randomUUID } from 'crypto';
+import { CancellationRequestRepository } from 'src/repositories/cancellation-request';
+import { RefundRepository } from '../repositories/refund';
+import { Refund } from 'src/models/refund';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
 // In medusa we have these 5 DEFAULT order.STATUS's {PENDING, COMPLETED, ARCHIVED, CANCELED, REQUIRES_ACTION}
@@ -82,6 +85,8 @@ export default class OrderService extends MedusaOrderService {
     protected globetopperService_: GlobetopperService;
     protected readonly logger: ILogger;
     protected buckyClient: BuckyClient;
+    protected refundRepository_: typeof RefundRepository;
+    protected cancellationRequestRepository_: typeof CancellationRequestRepository;
     protected readonly cartEmailRepository_: typeof CartEmailRepository;
 
     constructor(container) {
@@ -91,6 +96,9 @@ export default class OrderService extends MedusaOrderService {
         this.orderRepository_ = container.orderRepository;
         this.customerRepository_ = container.customerRepository;
         this.storeRepository_ = container.storeRepository;
+        this.refundRepository_ = container.refundRepository;
+        this.regionRepository_ = container.regionRepository;
+        this.salesChannelRepository_ = container.salesChannelRepository;
         this.lineItemRepository_ = container.lineItemRepository;
         this.paymentRepository_ = container.paymentRepository;
         this.productRepository_ = container.productRepository;
@@ -189,6 +197,23 @@ export default class OrderService extends MedusaOrderService {
         return this.orderRepository_.findOne({
             where: { id: orderId },
             relations: ['store.owner', 'items'],
+        });
+    }
+
+    async getAllOrderIdsByStore(storeId: string): Promise<string[]> {
+        const rawOrders = await this.orderRepository_
+            .createQueryBuilder('order')
+            .leftJoin('order.store', 'store')
+            .select(['order.id'])
+            .where('store.id = :storeId', { storeId })
+            .getRawMany();
+
+        return rawOrders.map((order) => order.order_id);
+    }
+
+    async getAllCancelledOrders(orders: string[]) {
+        return this.cancellationRequestRepository_.find({
+            where: { order_id: In(orders) },
         });
     }
 
@@ -467,6 +492,54 @@ export default class OrderService extends MedusaOrderService {
         return [];
     }
 
+    //TODO: the return type of this is hard to work with
+    async orderSummary(cartId: string): Promise<{
+        cart: Cart;
+        items: any[];
+    }> {
+        const orders = (await this.orderRepository_.find({
+            where: {
+                cart_id: cartId,
+                status: Not(
+                    In([OrderStatus.ARCHIVED, OrderStatus.REQUIRES_ACTION])
+                ),
+            },
+            relations: ['cart.items.variant.product', 'store.owner'],
+        })) as Order[];
+
+        const products = [];
+        let cart: Cart = null;
+
+        orders.forEach((order) => {
+            cart = order.cart;
+            order.cart.items.forEach((item) => {
+                const product = {
+                    ...item.variant.product,
+                    order_id: order.id,
+                    store_name: order.store.name, // Add store.name to the product
+                    currency_code: item.currency_code,
+                    unit_price: item.unit_price,
+                };
+                products.push(product);
+            });
+        });
+
+        const seen = new Set();
+        const items = [];
+
+        for (const item of products) {
+            if (!seen.has(item.id)) {
+                seen.add(item.id);
+                items.push(item);
+            }
+        }
+
+        return {
+            cart,
+            items,
+        };
+    }
+
     async getNotReviewedOrders(customer_id: string) {
         const orderRepository = this.activeManager_.getRepository(Order);
         const notReviewedOrders = await orderRepository
@@ -731,6 +804,169 @@ export default class OrderService extends MedusaOrderService {
 
     async getOrderHistory(orderId: string): Promise<OrderHistory[]> {
         return this.orderHistoryService_.retrieve(orderId);
+    }
+
+    async createRefund(
+        orderId: string,
+        refundAmount: number, //must be a whole number
+        reason: string,
+        note?: string
+    ): Promise<Order> {
+        try {
+            // Fetch order details
+            const order = await this.orderRepository_.findOne({
+                where: { id: orderId },
+                relations: ['items'], // Ensure line items are fetched
+            });
+
+            if (!order) {
+                throw new Error(`Order with ID ${orderId} not found.`);
+            }
+
+            // Calculate total order amount
+            const totalOrderAmount = order.items.reduce(
+                (sum, item) => sum + item.unit_price * item.quantity,
+                0
+            );
+
+            // Calculate refunded amount
+            const refundedResult = await this.refundRepository_.find({
+                where: { order_id: orderId },
+            });
+
+            //TODO: this can be done using the new methods
+            const alreadyRefunded = refundedResult.reduce(
+                (sum, refund) => sum + refund.amount,
+                0
+            );
+
+            //get amount left to refund
+            const refundableAmount = totalOrderAmount - alreadyRefunded;
+
+            // Validate the refund amount
+            if (refundAmount <= 0) {
+                throw new Error(`Refund amount must be greater than 0.`);
+            }
+
+            if (refundAmount > refundableAmount) {
+                throw new Error(
+                    `Refund amount ${refundAmount} exceeds the refundable amount. Maximum refundable amount is ${refundableAmount}.`
+                );
+            }
+
+            if (refundableAmount === totalOrderAmount - refundAmount) {
+                order.payment_status = PaymentStatus.REFUNDED;
+            }
+
+            // Check for an existing unconfirmed refund
+            let refund = await this.refundRepository_.findOne({
+                where: { order_id: orderId, confirmed: false },
+            });
+
+            // Create a refund entity
+            if (refund) {
+                // Update the existing refund
+                refund.amount = refundAmount;
+                refund.reason = reason;
+                refund.note = note || refund.note;
+            } else {
+                // Create a new refund entity
+                refund = this.refundRepository_.create({
+                    order_id: orderId,
+                    amount: refundAmount,
+                    reason,
+                    note,
+                    confirmed: false,
+                    created_at: new Date(),
+                });
+            }
+
+            await this.refundRepository_.save(refund);
+
+            await this.orderRepository_.save(order);
+
+            // Optionally add notes or metadata to the order
+            order.metadata = {
+                ...order.metadata,
+                refund_note: note || '',
+                refund_id: refund?.id,
+            };
+
+            // Save the updated order
+            const updatedOrder = await this.orderRepository_.save(order);
+
+            // Return the updated order
+            return updatedOrder;
+        } catch (error) {
+            this.logger.error(`Error creating refund: ${error.message}`);
+            throw error; // Let the caller handle errors
+        }
+    }
+
+    async confirmRefund(refundId: string, orderId: string) {
+        try {
+            let refund: Refund = await this.refundRepository_.findOne({
+                where: { id: refundId },
+            });
+
+            if (!refund) {
+                throw new Error(`Refund with ID ${refundId} not found.`);
+            }
+
+            //get the order
+            const order: Order = await this.orderRepository_.findOne({
+                where: { id: orderId },
+                relations: ['refunds', 'payments'],
+            });
+
+            //refundable amount is amount paid - amount refunded so far
+            const refundableAmount = this.getRefundableAmount(order);
+
+            //if it exceeds, bring it down
+            if (refund.amount > refundableAmount) {
+                refund.amount = refundableAmount;
+            }
+
+            if (refund.amount > 0) {
+                // Update order's payment status if all refundable amount is refunded
+                if (refund.amount === refundableAmount) {
+                    order.payment_status = PaymentStatus.REFUNDED;
+                } else {
+                    order.payment_status = PaymentStatus.PARTIALLY_REFUNDED;
+                }
+
+                refund.confirmed = true;
+
+                //update the refund and the order
+                refund = await this.refundRepository_.save(refund);
+                await this.orderRepository_.save(order);
+            }
+
+            return refund;
+        } catch (error) {
+            this.logger.error(`Error updating refund: ${error.message}`);
+            throw error; // Let the caller handle errors
+        }
+    }
+
+    private getTotalRefunded(order: Order): number {
+        let output: number = 0;
+        for (let refund of order.refunds) {
+            if ((refund as Refund).confirmed) output += refund.amount;
+        }
+        return output;
+    }
+
+    private getTotalPaid(order: Order): number {
+        let output: number = 0;
+        for (let payment of order.payments) {
+            output += payment.amount;
+        }
+        return output;
+    }
+
+    private getRefundableAmount(order: Order): number {
+        return this.getTotalPaid(order) - this.getTotalRefunded(order);
     }
 
     private async sendOrderEmail(

@@ -28,6 +28,8 @@ import { PriceConverter } from '../utils/price-conversion';
 import { getCurrencyPrecision } from '../currency.config';
 import fs from 'fs';
 import csv from 'csv-parser';
+import * as readline from 'readline';
+import ProductVariantService from './product-variant';
 
 type CreateProductInput = MedusaCreateProductInput & {
     store_id: string;
@@ -882,6 +884,45 @@ class ProductService extends MedusaProductService {
     async validateCategory(categoryHandle: string): Promise<string | null> {
         const category_ = await this.getCategoryByHandle(categoryHandle);
         return category_ ? category_.id : null;
+    }
+
+    async validateCsv(
+        filePath: string,
+        requiredCsvHeadersForProduct: string[]
+    ): Promise<{ success: boolean; message: string }> {
+        const validationErrors = [];
+        const fileRows = [];
+
+        const rl = readline.createInterface({
+            input: fs.createReadStream(filePath),
+            crlfDelay: Infinity,
+        });
+
+        for await (const line of rl) {
+            fileRows.push(line);
+        }
+
+        const rowCount = fileRows.length;
+
+        if (rowCount < 2) {
+            validationErrors.push({
+                error: 'CSV file must contain more than 2 rows',
+            });
+        } else {
+            const headerRow = fileRows[0].split(',');
+            const missingHeaders = requiredCsvHeadersForProduct.filter(
+                (header) => !headerRow.includes(header)
+            );
+            if (missingHeaders.length > 0) {
+                validationErrors.push({
+                    error: `Missing headers in header row: ${missingHeaders.join(', ')}`,
+                });
+            }
+        }
+        return {
+            success: validationErrors.length === 0,
+            message: validationErrors.map((err) => err.error).join(', '),
+        };
     }
 
     /**
