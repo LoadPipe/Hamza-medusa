@@ -69,6 +69,69 @@ class ProductVariantService extends MedusaProductVariantService {
             );
         }
     }
+
+    async getVariantBySku(sku: string): Promise<ProductVariant | null> {
+        try {
+            const productVariant = await this.productVariantRepository_.findOne(
+                {
+                    where: { sku: sku },
+                }
+            );
+
+            return productVariant || null;
+        } catch (error) {
+            this.logger.error('Error fetching product variant by sku:', error);
+            throw new Error('Failed to fetch product variant by sku.');
+        }
+    }
+
+    async getVariantByBarcode(barcode: string): Promise<ProductVariant | null> {
+        try {
+            const productVariant = await this.productVariantRepository_.findOne(
+                {
+                    where: { barcode: barcode },
+                }
+            );
+
+            return productVariant || null;
+        } catch (error) {
+            this.logger.error(
+                'Error fetching product variant by barcode:',
+                error
+            );
+            throw new Error('Failed to fetch product variant by barcode.');
+        }
+    }
+
+    async getVariantByUpc(upc: string): Promise<ProductVariant | null> {
+        try {
+            const productVariant = await this.productVariantRepository_.findOne(
+                {
+                    where: { upc: upc },
+                }
+            );
+
+            return productVariant || null;
+        } catch (error) {
+            this.logger.error('Error fetching product variant by upc:', error);
+            throw new Error('Failed to fetch product variant by upc.');
+        }
+    }
+
+    async getVariantByEan(ean: string): Promise<ProductVariant | null> {
+        try {
+            const productVariant = await this.productVariantRepository_.findOne(
+                {
+                    where: { ean: ean },
+                }
+            );
+
+            return productVariant || null;
+        } catch (error) {
+            this.logger.error('Error fetching product variant by ean:', error);
+            throw new Error('Failed to fetch product variant by ean.');
+        }
+    }
 }
 
 export default ProductVariantService;

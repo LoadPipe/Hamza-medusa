@@ -11,7 +11,7 @@ import { UpdateStoreInput as MedusaUpdateStoreInput } from '@medusajs/medusa/dis
 import { UpdateProductInput as MedusaUpdateProductInput } from '@medusajs/medusa/dist/types/product';
 import ProductRepository from '@medusajs/medusa/dist/repositories/product';
 import { createLogger, ILogger } from '../utils/logging/logger';
-import { IsNull, Not } from 'typeorm';
+import { Equal, IsNull, Not } from 'typeorm';
 import UserRepository from 'src/repositories/user';
 
 type UpdateStoreInput = MedusaUpdateStoreInput & {
@@ -22,6 +22,11 @@ type UpdateStoreInput = MedusaUpdateStoreInput & {
 type UpdateProductInput = MedusaUpdateProductInput & {
     store_id?: string;
 };
+
+export enum UserRoles {
+    ADMIN = 'admin',
+    MEMBER = 'member',
+}
 
 class StoreService extends MedusaStoreService {
     static LIFE_TIME = Lifetime.SCOPED;
@@ -85,6 +90,15 @@ class StoreService extends MedusaStoreService {
         return stores.map((store) => store.name);
     }
 
+    async getStoreNameById(store_id: string) {
+        const store = await this.storeRepository_.findOne({
+            where: { id: store_id },
+            select: ['name'],
+        });
+
+        return store.name;
+    }
+
     async update(data: UpdateStoreInput) {
         return super.update(data);
     }
@@ -94,6 +108,15 @@ class StoreService extends MedusaStoreService {
         const store = await storeRepo.findOneBy({ name: store_name });
         if (!store) {
             throw new Error(`Store with name ${store_name} not found`);
+        }
+        return store;
+    }
+
+    async getStoreById(store_id: string): Promise<Store> {
+        const storeRepo = this.manager_.withRepository(this.storeRepository_);
+        const store = await storeRepo.findOneBy({ id: store_id });
+        if (!store) {
+            throw new Error(`Store with name ${store_id} not found`);
         }
         return store;
     }
