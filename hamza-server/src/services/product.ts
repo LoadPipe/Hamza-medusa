@@ -26,6 +26,8 @@ import { SeamlessCache } from '../utils/cache/seamless-cache';
 import { filterDuplicatesById } from '../utils/filter-duplicates';
 import { PriceConverter } from '../utils/price-conversion';
 import { getCurrencyPrecision } from '../currency.config';
+import fs from 'fs';
+import csv from 'csv-parser';
 
 type CreateProductInput = MedusaCreateProductInput & {
     store_id: string;
@@ -60,6 +62,44 @@ export type UpdateProductProductVariantDTO = {
     }[];
 };
 
+// Define the expected structure of the data
+export type csvProductData = {
+    category: string; // category handle from DB
+    images: string;
+    title: string;
+    subtitle: string;
+    description: string;
+    status: ProductStatus; // 'draft' or 'published'
+    thumbnail: string;
+    discountable: string; // '0' or '1'
+    weight: number;
+    handle: string; // must be unique from DB and other rows from csv
+    variant: string; // Size[XL] | Color[White] | Gender[Male]
+    variant_price: number;
+    variant_inventory_quantity: number;
+    variant_allow_backorder: string; // '0' or '1'
+    variant_manage_inventory: string; // '0' or '1'
+    variant_sku?: string;
+    variant_barcode?: string;
+    variant_ean?: string;
+    variant_upc?: string;
+    variant_hs_code?: string;
+    variant_origin_country?: string;
+    variant_mid_code?: string;
+    variant_material?: string;
+    variant_weight?: number;
+    variant_length?: number;
+    variant_height?: number;
+    variant_width?: number;
+    category_id?: string; // optional: created when data is valid, and retrieved from DB
+    invalid_error?: string; // optional: created when data is invalid, and indicates the type of error
+};
+
+export type Price = {
+    currency_code: string;
+    amount: number;
+};
+
 type UpdateProductInput = Omit<Partial<CreateProductInput>, 'variants'> & {
     variants?: UpdateProductProductVariantDTO[];
 };
@@ -71,6 +111,7 @@ class ProductService extends MedusaProductService {
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly cacheExchangeRateRepository: typeof CachedExchangeRateRepository;
     protected readonly customerService_: CustomerService;
+    protected readonly productVariantService_: ProductVariantService;
     protected readonly priceConverter_: PriceConverter;
 
     constructor(container) {
@@ -81,6 +122,7 @@ class ProductService extends MedusaProductService {
         this.cacheExchangeRateRepository =
             container.cachedExchangeRateRepository;
         this.customerService_ = container.customerService;
+        this.productVariantService_ = container.productVariantService;
         this.priceConverter_ = new PriceConverter(
             this.logger,
             this.cacheExchangeRateRepository
@@ -344,6 +386,7 @@ class ProductService extends MedusaProductService {
             await this.productRepository_.find({
                 where: { store_id: storeId, status: ProductStatus.PUBLISHED },
                 // relations: ['store'],
+                relations: ['variants'],
             })
         ).filter((p) => p.variants?.length);
     }
@@ -364,6 +407,22 @@ class ProductService extends MedusaProductService {
             );
 
             return uniqueCategoryNames;
+        } catch (error) {
+            this.logger.error('Error fetching categories by store ID:', error);
+            throw new Error(
+                'Failed to fetch categories for the specified store.'
+            );
+        }
+    }
+
+    async getCategoriesByStoreId2(storeId: string): Promise<ProductCategory[]> {
+        try {
+            const categories = await categoryCache.retrieve(
+                this.productCategoryRepository_
+            );
+            return categories.filter((c) =>
+                c.products.find((p) => p.store_id === storeId)
+            );
         } catch (error) {
             this.logger.error('Error fetching categories by store ID:', error);
             throw new Error(
@@ -544,7 +603,7 @@ class ProductService extends MedusaProductService {
         categories: string[], // Array of strings representing category names
         upperPrice: number = 0, // Number representing the upper price limit
         lowerPrice: number = 0, // Number representing the lower price limit
-        filterCurrencyCode: string,
+        filterCurrencyCode: string = 'usdc',
         storeId?: string
     ) {
         try {
@@ -752,6 +811,411 @@ class ProductService extends MedusaProductService {
         }
 
         return products;
+    }
+
+    async deleteProductById(productId: string): Promise<void> {
+        await this.delete(productId);
+    }
+
+    async getCategoryByHandle(
+        categoryHandle: string
+    ): Promise<ProductCategory | null> {
+        try {
+            const category = await this.productCategoryRepository_.findOne({
+                where: { handle: categoryHandle },
+            });
+
+            return category || null;
+        } catch (error) {
+            this.logger.error(
+                'Error fetching product category by handle:',
+                error
+            );
+            throw new Error('Failed to fetch product category by handle.');
+        }
+    }
+
+    async getProductByHandle(productHandle: string): Promise<Product | null> {
+        try {
+            const product = await this.productRepository_.findOne({
+                where: { handle: productHandle },
+            });
+
+            return product || null;
+        } catch (error) {
+            this.logger.error('Error fetching product by handle:', error);
+            throw new Error('Failed to fetch product by handle.');
+        }
+    }
+
+    async getProductById(productId: string): Promise<Product | null> {
+        try {
+            const product = await this.productRepository_.findOne({
+                where: { id: productId },
+            });
+
+            return product || null;
+        } catch (error) {
+            this.logger.error('Error fetching product by id:', error);
+            throw new Error('Failed to fetch product by id.');
+        }
+    }
+
+    async parseCsvFile(filePath: string): Promise<any[]> {
+        return new Promise((resolve, reject) => {
+            const fileRows: any[] = [];
+            fs.createReadStream(filePath)
+                .pipe(csv())
+                .on('data', (row) => {
+                    fileRows.push(row);
+                })
+                .on('end', () => {
+                    fs.unlinkSync(filePath);
+                    resolve(fileRows);
+                })
+                .on('error', (error) => {
+                    reject(error);
+                });
+        });
+    }
+
+    async validateCategory(categoryHandle: string): Promise<string | null> {
+        const category_ = await this.getCategoryByHandle(categoryHandle);
+        return category_ ? category_.id : null;
+    }
+
+    /**
+     * validate data and return valid and invalid data
+     * @param productService
+     * @param data
+     * @returns
+     */
+    async validateCsvData(
+        data: csvProductData[],
+        requiredCsvHeadersForProduct: string[],
+        requiredCsvHeadersForVariant: string[]
+    ): Promise<{
+        success: boolean;
+        message: string;
+        validData: csvProductData[];
+        invalidData: csvProductData[];
+    }> {
+        const invalidData: csvProductData[] = [];
+        const validData: csvProductData[] = [];
+
+        // validates each row, and returns invalid data if any
+        for (const row of data) {
+            const validationError = await this.validateCsvRow(
+                data,
+                row,
+                requiredCsvHeadersForProduct,
+                requiredCsvHeadersForVariant
+            );
+            if (validationError) {
+                row['invalid_error'] = validationError;
+                invalidData.push(row);
+            } else {
+                validData.push(row);
+            }
+        }
+
+        const success = validData.length > 0;
+        const message =
+            invalidData.length > 0
+                ? 'Contains SOME valid data'
+                : 'Contains valid data';
+
+        return {
+            success,
+            message: success ? message : 'Contains invalid data',
+            validData,
+            invalidData,
+        };
+    }
+
+    async csvRowIsVariant(
+        row: csvProductData,
+        requiredCsvHeadersForVariant: string[],
+        requiredCsvHeadersForProduct: string[]
+    ): Promise<boolean> {
+        const isVariant =
+            requiredCsvHeadersForVariant.every((header) => row[header]) &&
+            requiredCsvHeadersForProduct.every(
+                (header) =>
+                    !row[header] ||
+                    requiredCsvHeadersForVariant.includes(header)
+            );
+        return isVariant;
+    }
+
+    async filterCsvProductRows(
+        data: csvProductData[],
+        requiredCsvHeadersForProduct: string[],
+        requiredCsvHeadersForVariant: string[]
+    ): Promise<csvProductData[]> {
+        return data.filter(
+            (item) =>
+                requiredCsvHeadersForProduct.every((header) => item[header]) &&
+                requiredCsvHeadersForVariant.every(
+                    (header) =>
+                        !item[header] ||
+                        requiredCsvHeadersForProduct.includes(header)
+                )
+        );
+    }
+
+    async validateCsvRow(
+        data: csvProductData[],
+        row: csvProductData,
+        requiredCsvHeadersForProduct: string[],
+        requiredCsvHeadersForVariant: string[]
+    ): Promise<string | null> {
+        // determine if this is a product row or variant
+        // then, validate accordingly.
+        const isVariant = await this.csvRowIsVariant(
+            row,
+            requiredCsvHeadersForVariant,
+            requiredCsvHeadersForProduct
+        );
+        // console.log('isVariant: ' + isVariant);
+
+        if (isVariant) {
+            if (requiredCsvHeadersForVariant.some((header) => !row[header])) {
+                return 'required variant fields missing data';
+            }
+            return await this.validateCsvVariantRow(row, data);
+        } else {
+            if (requiredCsvHeadersForProduct.some((header) => !row[header])) {
+                const missingHeader = requiredCsvHeadersForProduct.find(
+                    (header) => !row[header]
+                );
+                return 'required product fields missing data: ' + missingHeader;
+            }
+
+            return await this.validateCsvProductRow(
+                row,
+                data,
+                requiredCsvHeadersForProduct,
+                requiredCsvHeadersForVariant
+            );
+        }
+    }
+
+    async validateCsvProductRow(
+        row: csvProductData,
+        data: csvProductData[],
+        requiredCsvHeadersForProduct: string[],
+        requiredCsvHeadersForVariant: string[]
+    ): Promise<string | null> {
+        const productRows = await this.filterCsvProductRows(
+            data,
+            requiredCsvHeadersForProduct,
+            requiredCsvHeadersForVariant
+        );
+        // console.log('productRows: ' + JSON.stringify(productRows));
+
+        const categoryId = await this.validateCategory(row['category']);
+        if (!categoryId) {
+            return 'category handle does not exist';
+        }
+        row['category_id'] = categoryId;
+
+        if (
+            ![ProductStatus.DRAFT, ProductStatus.PUBLISHED].includes(
+                row['status']
+            )
+        ) {
+            return 'status is not valid, status must be draft or published';
+        }
+
+        if (!Number.isInteger(Number(row['weight']))) {
+            return 'weight must be a whole number';
+        }
+
+        if (!['0', '1'].includes(row['discountable'])) {
+            return 'discountable must be a 0 or 1';
+        }
+
+        if (!Number.isInteger(Number(row['variant_price']))) {
+            return 'variant price must be a whole number';
+        }
+
+        if (!Number.isInteger(Number(row['variant_inventory_quantity']))) {
+            return 'variant inventory quantity must be a whole number';
+        }
+
+        if (!['0', '1'].includes(row['variant_allow_backorder'])) {
+            return 'variant allow backorder must be a 0 or 1';
+        }
+
+        if (!['0', '1'].includes(row['variant_manage_inventory'])) {
+            return 'variant manage inventory must be a 0 or 1';
+        }
+
+        const product = await this.getProductByHandle(row['handle']);
+        if (product) {
+            return 'product handle must be unique';
+        }
+
+        // check if handle is unique from other product rows
+        const handleExistsInProducts = productRows.some(
+            (item) => item !== row && item['handle'] === row['handle']
+        );
+        if (handleExistsInProducts) {
+            return 'handle must be unique from other product rows';
+        }
+
+        // check if thumbnail is a valid url
+        // if (!row['thumbnail'].startsWith('http')) {
+        //     return 'thumbnail must be a valid url';
+        // }
+
+        // check if thumbnail is a valid image
+        // if (
+        //     !row['thumbnail'].endsWith('.jpg') &&
+        //     !row['thumbnail'].endsWith('.png') &&
+        //     !row['thumbnail'].endsWith('.jpeg') &&
+        //     !row['thumbnail'].endsWith('.svg') &&
+        //     !row['thumbnail'].endsWith('.gif')
+        // ) {
+        //     return 'thumbnail must be a valid image';
+        // }
+
+        await this.validateCsvVariantRow(row, data);
+
+        return null;
+    }
+
+    async validateCsvVariantRow(
+        row: csvProductData,
+        data: csvProductData[]
+    ): Promise<string | null> {
+        // START: check if barcode is unique
+        if (row['variant_barcode'] && row['variant_barcode'].trim() !== '') {
+            const productVariantBarcode =
+                await this.productVariantService_.getVariantByBarcode(
+                    row['variant_barcode']
+                );
+            if (productVariantBarcode) {
+                return 'barcode must be unique';
+            }
+
+            const barcodeExistsInVariants = data.some(
+                (item) =>
+                    item !== row &&
+                    item['variant_barcode'] === row['variant_barcode']
+            );
+            if (barcodeExistsInVariants) {
+                return 'barcode must be unique from other rows';
+            }
+        }
+        // END: check if barcode is unique
+
+        // START: check if sku is unique
+        if (row['variant_sku'] && row['variant_sku'].trim() !== '') {
+            const productVariantSku =
+                await this.productVariantService_.getVariantBySku(
+                    row['variant_sku']
+                );
+            if (productVariantSku) {
+                return 'sku must be unique';
+            }
+
+            const skuExistsInVariants = data.some(
+                (item) =>
+                    item !== row && item['variant_sku'] === row['variant_sku']
+            );
+            if (skuExistsInVariants) {
+                return 'sku must be unique from other rows';
+            }
+        }
+        // END: check if sku is unique
+
+        // START: check if upc is unique
+        if (row['variant_upc'] && row['variant_upc'].trim() !== '') {
+            const productVariantUpc =
+                await this.productVariantService_.getVariantByUpc(
+                    row['variant_upc']
+                );
+            if (productVariantUpc) {
+                return 'upc must be unique';
+            }
+
+            const upcExistsInVariants = data.some(
+                (item) =>
+                    item !== row && item['variant_upc'] === row['variant_upc']
+            );
+            if (upcExistsInVariants) {
+                return 'upc must be unique from other rows';
+            }
+        }
+        // END: check if upc is unique
+
+        // START: check if ean is unique
+        if (row['variant_ean'] && row['variant_ean'].trim() !== '') {
+            const productVariantEan =
+                await this.productVariantService_.getVariantByEan(
+                    row['variant_ean']
+                );
+            if (productVariantEan) {
+                return 'ean must be unique';
+            }
+
+            const eanExistsInVariants = data.some(
+                (item) =>
+                    item !== row && item['variant_ean'] === row['variant_ean']
+            );
+            if (eanExistsInVariants) {
+                return 'ean must be unique from other rows';
+            }
+        }
+        // END: check if ean is unique
+
+        if (!Number.isInteger(Number(row['variant_price']))) {
+            return 'variant price must be a whole number';
+        }
+
+        if (!Number.isInteger(Number(row['variant_inventory_quantity']))) {
+            return 'variant inventory quantity must be a whole number';
+        }
+
+        if (!['0', '1'].includes(row['variant_allow_backorder'])) {
+            return 'variant allow backorder must be a 0 or 1';
+        }
+
+        if (!['0', '1'].includes(row['variant_manage_inventory'])) {
+            return 'variant manage inventory must be a 0 or 1';
+        }
+
+        return null;
+    }
+
+    async getPricesForVariant(
+        baseAmount: number,
+        baseCurrency: string
+    ): Promise<Price[]> {
+        //TODO: get from someplace global
+        const currencies = ['eth', 'usdc', 'usdt'];
+        const prices = [];
+
+        // console.log("baseCurrency: " + baseCurrency);
+        // console.log("baseAmount: " + baseAmount);
+
+        for (const currency of currencies) {
+            const price = await this.priceConverter_.getPrice({
+                baseAmount,
+                baseCurrency: baseCurrency,
+                toCurrency: currency,
+            });
+            // console.log("price: " + price);
+            prices.push({
+                currency_code: currency,
+                amount: price,
+            });
+        }
+        //console.log(prices);
+        //this.logger.debug(prices);
+        return prices;
     }
 }
 
