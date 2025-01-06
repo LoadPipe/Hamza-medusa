@@ -39,6 +39,7 @@ import CartRepository from '@medusajs/medusa/dist/repositories/cart';
 import { CartEmailRepository } from '../repositories/cart-email';
 import GlobetopperService from './globetopper';
 import { randomInt, randomUUID } from 'crypto';
+import { Store } from '../models/store';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
 // In medusa we have these 5 DEFAULT order.STATUS's {PENDING, COMPLETED, ARCHIVED, CANCELED, REQUIRES_ACTION}
@@ -916,13 +917,19 @@ export default class OrderService extends MedusaOrderService {
 
         //update payments with transaction info
         paymentOrders.forEach((po, i) => {
+            //get the appropriate metadata for the chain
+            console.log(po);
+            let escrow_address = this.getEscrowAddressFromStore(
+                chainId,
+                po?.order?.store
+            );
+
             promises.push(
                 this.updatePaymentAfterTransaction(po.payment.id, {
                     blockchain_data: {
                         transaction_id: transactionId,
                         payer_address: payerAddress,
-                        escrow_address:
-                            po.order?.store?.escrow_metadata?.address,
+                        escrow_address,
                         receiver_address:
                             po.order?.store?.owner?.wallet_address,
                         chain_id: chainId,
@@ -932,6 +939,21 @@ export default class OrderService extends MedusaOrderService {
         });
 
         return promises;
+    }
+
+    private getEscrowAddressFromStore(
+        chainId: number,
+        store: Store | undefined | null
+    ): string {
+        let address = null;
+        const escrow_metadata: any = store?.escrow_metadata;
+        if (escrow_metadata) {
+            if (escrow_metadata[chainId])
+                address = escrow_metadata[chainId]?.address;
+            if (!address) address = escrow_metadata.address;
+            if (!address) address = '0x0';
+        }
+        return address;
     }
 
     private getPostCheckoutUpdateOrderPromises(
