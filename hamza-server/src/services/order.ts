@@ -918,7 +918,6 @@ export default class OrderService extends MedusaOrderService {
         //update payments with transaction info
         paymentOrders.forEach((po, i) => {
             //get the appropriate metadata for the chain
-            console.log(po);
             let escrow_address = this.getEscrowAddressFromStore(
                 chainId,
                 po?.order?.store
