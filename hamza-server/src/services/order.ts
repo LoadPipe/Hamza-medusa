@@ -1177,7 +1177,7 @@ export default class OrderService extends MedusaOrderService {
                             receiver_address: '',
                             transaction_id: '',
                             escrow_address:
-                                '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                                '0xAb6a9e96E08d0ec6100016a308828B792f4da3fD',
                         },
                     });
 
