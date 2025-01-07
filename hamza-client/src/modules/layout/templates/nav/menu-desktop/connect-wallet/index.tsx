@@ -19,17 +19,10 @@ import {
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { useEffect, useState } from 'react';
+import MainMenu from '../main-menu';
+import HnsDisplay from '../hns-display';
 
 export const WalletConnectButton = () => {
-    const { error, isLoading, pendingChainId, switchNetwork } =
-        useSwitchNetwork();
-
-    //const isProduction = process.env.NODE_ENV === 'production';
-    //const networkName = isProduction ? 'Optimism' : 'Sepolia';
-    //const switchNetworkId = isProduction ? 10 : 11155111;
-    const switchNetworkId = getAllowedChainsFromConfig()[0];
-    const networkName = getBlockchainNetworkName(switchNetworkId ?? '');
-
     //Update zustand store with Wagmi hook when connected
     const account = useAccount();
     const { setWalletAddress } = useCustomerAuthStore();
@@ -92,9 +85,48 @@ export const WalletConnectButton = () => {
                             return (
                                 <Flex
                                     ml="1rem"
+                                    gap={3}
                                     flexDirection={'row'}
                                     alignItems={'center'}
                                 >
+                                    <HnsDisplay />
+                                    <button
+                                        onClick={openChainModal}
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                        }}
+                                        type="button"
+                                    >
+                                        {chain.hasIcon && (
+                                            <div
+                                                style={{
+                                                    background:
+                                                        chain.iconBackground,
+                                                    width: 44,
+                                                    height: 44,
+                                                    borderRadius: 999,
+                                                    overflow: 'hidden',
+                                                    marginRight: 4,
+                                                }}
+                                            >
+                                                {chain.iconUrl && (
+                                                    <img
+                                                        alt={
+                                                            chain.name ??
+                                                            'Chain icon'
+                                                        }
+                                                        src={chain.iconUrl}
+                                                        style={{
+                                                            width: 44,
+                                                            height: 44,
+                                                        }}
+                                                    />
+                                                )}
+                                            </div>
+                                        )}
+                                    </button>
+                                    <MainMenu />
                                     <AccountMenu />
                                 </Flex>
                             );
