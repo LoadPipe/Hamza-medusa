@@ -96,6 +96,8 @@ export default class StoreOrderService extends TransactionBaseService {
                     where[prop] = In(filter[prop].in);
                 } else if (filter[prop].ne) {
                     where[prop] = Not(filter[prop].ne);
+                } else if (filter[prop].notIn) {
+                    where[prop] = Not(In(filter[prop].notIn));
                 } else if (filter[prop].eq) {
                     where[prop] = filter[prop].eq;
                 } else if (filter[prop].lt) {
