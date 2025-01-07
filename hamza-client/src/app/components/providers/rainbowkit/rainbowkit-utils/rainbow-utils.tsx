@@ -25,6 +25,7 @@ import {
     optimismSepolia,
     optimism,
     sepolia,
+    polygon,
     linea,
     lineaTestnet,
     goerli,
@@ -72,9 +73,9 @@ const EXTRA_LOGGING = false;
 
 const allowedChains = [];
 if (process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS === '10')
-    allowedChains.push(optimism);
+    allowedChains.push(optimism, polygon);
 if (process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS === '11155111')
-    allowedChains.push(sepolia);
+    allowedChains.push(sepolia, sepolia);
 
 export const { chains, publicClient, webSocketPublicClient } = configureChains(
     allowedChains,
@@ -161,7 +162,7 @@ export function getBlockchainNetworkName(chainId: number | string) {
     //ensure number
     try {
         chainId = chainId ? parseInt(chainId.toString()) : 10;
-    } catch { }
+    } catch {}
 
     switch (chainId) {
         case 10:
@@ -216,7 +217,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
 
     console.log('pendingChainID;', pendingChainId);
 
-    const voidFunction = () => { };
+    const voidFunction = () => {};
 
     const setSwitchNetwork = () => {
         if (EXTRA_LOGGING) console.log('RB: setSwitchNetwork');
@@ -257,7 +258,7 @@ export const SwitchNetwork = ({ enabled }: Props) => {
     }, [walletClient]);
 
     return (
-        <Modal isOpen={enabled} onClose={() => { }} isCentered>
+        <Modal isOpen={enabled} onClose={() => {}} isCentered>
             <ModalOverlay />
             <ModalContent
                 justifyContent={'center'}
