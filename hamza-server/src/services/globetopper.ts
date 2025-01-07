@@ -160,7 +160,9 @@ export default class GlobetopperService extends TransactionBaseService {
         }
 
         //here you have an array of outputs, 1 for each variant
-        const purchaseOutputs = await Promise.all(promises);
+        const purchaseOutputs = promises.length
+            ? await Promise.all(promises)
+            : [];
 
         // send email(s)
         // handle balance - notify site admin if balance is below threshold
@@ -293,7 +295,8 @@ export default class GlobetopperService extends TransactionBaseService {
         */
 
         // stub to build email content
-        await this.sendPostPurchaseEmail(purchaseOutputs, email);
+        if (purchaseOutputs?.length)
+            await this.sendPostPurchaseEmail(purchaseOutputs, email);
 
         //TODO: what to do with the outputs now?
         return purchaseOutputs ?? [];
