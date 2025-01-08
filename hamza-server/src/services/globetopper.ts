@@ -318,6 +318,9 @@ export default class GlobetopperService extends TransactionBaseService {
             order_id: orderId,
         });
 
+        if (variant?.metadata?.imgUrl) {
+            output.data.thumbnail = variant.metadata.imgUrl;
+        }
         return output.data;
     }
 
@@ -339,6 +342,18 @@ export default class GlobetopperService extends TransactionBaseService {
                         break;
 
                     case 'Redemption URL':
+                        if (purchase.thumbnail) {
+                            extraFieldContent += `
+                            <div style="margin-bottom: 1rem;">
+                                <img
+                                src="${purchase.thumbnail}"
+                                alt="gift card thumbnail"
+                                style="max-width: 200px; margin-bottom: 10px;"
+                                />
+                            </div>
+                            `;
+                        }
+                        break;
                     case 'Barcode URL':
                     case 'Admin Barcode URL':
                         extraFieldContent = `<a href="${fieldValue}">`;
