@@ -30,7 +30,6 @@ const HnsDisplay = () => {
 
     return authData.status === 'authenticated' ? (
         <Flex
-            mr={'24px'}
             color={'white'}
             backgroundColor={'#121212'}
             opacity={'90%'}
