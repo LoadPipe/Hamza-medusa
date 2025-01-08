@@ -60,27 +60,50 @@ export const darkThemeConfig = darkTheme({
 const EXTRA_LOGGING = false;
 
 //import Polygon testnet
-export const polygonAmoy: Chain = {
+
+// const polygonAmoyTestnet: Chain = {
+//     id: 80002,
+//     name: 'POLYGON AMOY TESTNET',
+//     network: 'POLYGON AMOY TESTNET',
+//     nativeCurrency: {
+//         name: 'POL',
+//         symbol: 'POL',
+//         decimals: 18,
+//     },
+//     rpcUrls: {
+//         default: { http: ['https://rpc-amoy.polygon.technology/'] },
+//         public: { http: ['https://rpc-amoy.polygon.technology/'] },
+//     },
+//     blockExplorers: {
+//         default: {
+//             name: 'Amoy',
+//             url: 'https://amoy.polygonscan.com',
+//         },
+//     },
+//     testnet: true,
+// };
+
+const polygonAmoy: Chain = {
     id: 80002,
-    name: 'Polygon Amoy Testnet',
-    network: 'polygon-amoy',
-    nativeCurrency: {
-        name: 'MATIC',
-        symbol: 'MATIC',
-        decimals: 18,
-    },
+    name: 'Polygon Amoy',
+    network: 'Polygon Amoy',
+    nativeCurrency: { name: 'POL', symbol: 'POL', decimals: 18 },
     rpcUrls: {
         default: {
-            http: ['https://rpc-amoy.polygon.technology/'],
+            http: ['https://rpc-amoy.polygon.technology'],
         },
-        public: {
-            http: ['https://rpc-amoy.polygon.technology/'],
-        },
+        public: { http: ['https://rpc-amoy.polygon.technology/'] },
     },
     blockExplorers: {
         default: {
-            name: 'Amoy Polygonscan',
-            url: 'https://amoy.polygonscan.com/',
+            name: 'PolygonScan',
+            url: 'https://amoy.polygonscan.com',
+        },
+    },
+    contracts: {
+        multicall3: {
+            address: '0xca11bde05977b3631167028862be2a173976ca11',
+            blockCreated: 3127388,
         },
     },
     testnet: true,
