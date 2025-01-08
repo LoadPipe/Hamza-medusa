@@ -81,6 +81,43 @@ export const WalletConnectButton = () => {
                                     flexDirection={'row'}
                                     alignItems={'center'}
                                 >
+                                    <button
+                                        onClick={openChainModal}
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            marginRight: '1rem',
+                                        }}
+                                        type="button"
+                                    >
+                                        {chain.hasIcon && (
+                                            <div
+                                                style={{
+                                                    background:
+                                                        chain.iconBackground,
+                                                    width: 26,
+                                                    height: 26,
+                                                    borderRadius: 999,
+                                                    overflow: 'hidden',
+                                                    marginRight: 4,
+                                                }}
+                                            >
+                                                {chain.iconUrl && (
+                                                    <img
+                                                        alt={
+                                                            chain.name ??
+                                                            'Chain icon'
+                                                        }
+                                                        src={chain.iconUrl}
+                                                        style={{
+                                                            width: 26,
+                                                            height: 26,
+                                                        }}
+                                                    />
+                                                )}
+                                            </div>
+                                        )}
+                                    </button>
                                     <MobileAccountMenu />
                                 </Flex>
                             );
