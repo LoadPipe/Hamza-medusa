@@ -94,9 +94,10 @@ class SmtpNotificationService extends AbstractNotificationService {
                     ordersData[0]?.cart_id
                 );
 
-                const toEmail = customer?.is_verified
-                    ? customer.email
-                    : cart?.email;
+                const toEmail =
+                    data.email ??
+                    cart?.email ??
+                    (customer?.is_verified ? customer.email : null);
                 this.logger.info(`sending email to recipient ${toEmail}`);
 
                 if (toEmail) {
