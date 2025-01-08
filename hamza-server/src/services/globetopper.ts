@@ -335,25 +335,23 @@ export default class GlobetopperService extends TransactionBaseService {
                 let extraFieldContent: string = '';
                 const fieldValue: string = record.extra_fields[field];
 
+                if (purchase.thumbnail) {
+                    extraFieldContent += `
+                            <div style="margin-bottom: 1rem;">
+                                <img
+                                src="${purchase.thumbnail}"
+                                alt="gift card thumbnail"
+                                />
+                            </div>
+                            `;
+                }
+
                 switch (field) {
                     case 'Barcode Image URL':
                     case 'Brand Logo':
                         extraFieldContent = `<img src="${fieldValue}" />`;
                         break;
-
                     case 'Redemption URL':
-                        if (purchase.thumbnail) {
-                            extraFieldContent += `
-                            <div style="margin-bottom: 1rem;">
-                                <img
-                                src="${purchase.thumbnail}"
-                                alt="gift card thumbnail"
-                                style="max-width: 200px; margin-bottom: 10px;"
-                                />
-                            </div>
-                            `;
-                        }
-                        break;
                     case 'Barcode URL':
                     case 'Admin Barcode URL':
                         extraFieldContent = `<a href="${fieldValue}">`;
@@ -374,7 +372,7 @@ export default class GlobetopperService extends TransactionBaseService {
             );
         }
 
-        this.smtpMailService_.sendMail({
+        await this.smtpMailService_.sendMail({
             from: process.env.SMTP_FROM,
             to: email,
             subject: 'Gift Card Purchase from Hamza',
