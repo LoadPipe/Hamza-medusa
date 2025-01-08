@@ -30,7 +30,7 @@ import {
     lineaTestnet,
     goerli,
 } from 'wagmi/chains';
-import { useNetwork, useSwitchNetwork } from 'wagmi';
+import { useNetwork, useSwitchNetwork, Chain } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
@@ -59,6 +59,33 @@ export const darkThemeConfig = darkTheme({
 
 const EXTRA_LOGGING = false;
 
+//import Polygon testnet
+export const polygonAmoy: Chain = {
+    id: 80002,
+    name: 'Polygon Amoy Testnet',
+    network: 'polygon-amoy',
+    nativeCurrency: {
+        name: 'MATIC',
+        symbol: 'MATIC',
+        decimals: 18,
+    },
+    rpcUrls: {
+        default: {
+            http: ['https://rpc-amoy.polygon.technology/'],
+        },
+        public: {
+            http: ['https://rpc-amoy.polygon.technology/'],
+        },
+    },
+    blockExplorers: {
+        default: {
+            name: 'Amoy Polygonscan',
+            url: 'https://amoy.polygonscan.com/',
+        },
+    },
+    testnet: true,
+};
+
 // TODO: Later can use this logic for custom Chain logos
 // // Extend the Sepolia chain configuration
 // const customSepolia = {
@@ -75,7 +102,7 @@ const allowedChains = [];
 if (process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS === '10')
     allowedChains.push(optimism, polygon);
 if (process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS === '11155111')
-    allowedChains.push(sepolia, sepolia);
+    allowedChains.push(sepolia, polygonAmoy);
 
 export const { chains, publicClient, webSocketPublicClient } = configureChains(
     allowedChains,
