@@ -60,29 +60,6 @@ export const darkThemeConfig = darkTheme({
 const EXTRA_LOGGING = false;
 
 //import Polygon testnet
-
-// const polygonAmoyTestnet: Chain = {
-//     id: 80002,
-//     name: 'POLYGON AMOY TESTNET',
-//     network: 'POLYGON AMOY TESTNET',
-//     nativeCurrency: {
-//         name: 'POL',
-//         symbol: 'POL',
-//         decimals: 18,
-//     },
-//     rpcUrls: {
-//         default: { http: ['https://rpc-amoy.polygon.technology/'] },
-//         public: { http: ['https://rpc-amoy.polygon.technology/'] },
-//     },
-//     blockExplorers: {
-//         default: {
-//             name: 'Amoy',
-//             url: 'https://amoy.polygonscan.com',
-//         },
-//     },
-//     testnet: true,
-// };
-
 const polygonAmoy: Chain = {
     id: 80002,
     name: 'Polygon Amoy',
