@@ -37,7 +37,7 @@ const NavSearchBar = () => {
             <InputGroup display={'flex'} mx="1rem" alignItems={'center'}>
                 <Input
                     width={'100%'}
-                    height={'80px'}
+                    height={'60px'}
                     border="1px solid"
                     borderRadius="16px"
                     borderColor="#555555"
@@ -59,15 +59,15 @@ const NavSearchBar = () => {
                     alignItems="center"
                     pointerEvents="none"
                     ml="1rem"
-                    fontSize={{ base: '20px', md: '28px' }}
+                    fontSize={{ base: '20px', md: '22px' }}
                 >
                     <FaSearch color="white" />
                 </InputLeftElement>
                 <InputRightElement height="100%" mr="1rem">
                     <Flex
-                        borderRadius={'10px'}
-                        height="47px"
-                        width="45px"
+                        borderRadius={'4px'}
+                        height="24px"
+                        width="24px"
                         justifyContent={'center'}
                         alignItems="center"
                         alignSelf={'center'}
@@ -77,7 +77,7 @@ const NavSearchBar = () => {
                             src={fslash}
                             alt="slash"
                             style={{
-                                width: '11.39px',
+                                width: '6px',
                                 height: 'auto',
                             }}
                         />

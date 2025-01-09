@@ -71,30 +71,13 @@ export default async function Nav() {
                     justifyContent={'center'}
                     alignItems="center"
                 >
-                    {/* <a href="/">
-                        <Flex width={'190px'} marginLeft="auto" flexShrink={0}>
-                            <Image
-                                className="w-[22.92px] h-[33px] md:w-[49px] md:h-[71px]"
-                                style={{
-                                    alignSelf: 'center',
-                                }}
-                                src={HamzaLogo}
-                                alt="Hamza"
-                            />
-
-                            <Image
-                                src={HamzaTitle}
-                                className="w-[60.73px] h-[11.59px] md:w-[125.42px] md:h-[106px] ml-[0.5rem] md:ml-[1rem]"
-                                style={{
-                                    alignSelf: 'center',
-                                }}
-                                alt="Hamza"
-                            />
-                        </Flex>
-                    </a> */}
-
                     <a href="/">
-                        <Flex width={'190px'} marginLeft="auto" flexShrink={0}>
+                        <Flex
+                            width={'190px'}
+                            height={'80px'}
+                            marginLeft="auto"
+                            flexShrink={0}
+                        >
                             <Image
                                 style={{
                                     alignSelf: 'left',
