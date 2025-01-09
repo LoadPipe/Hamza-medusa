@@ -56,6 +56,7 @@ export declare module '@medusajs/medusa/dist/models/product' {
         bucky_metadata?: Record<string, unknown>;
         external_metadata?: Record<string, unknown>;
         external_source?: string;
+        display_rank: number;
     }
 }
 

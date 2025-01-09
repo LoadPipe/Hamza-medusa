@@ -160,7 +160,9 @@ export default class GlobetopperService extends TransactionBaseService {
         }
 
         //here you have an array of outputs, 1 for each variant
-        const purchaseOutputs = await Promise.all(promises);
+        const purchaseOutputs = promises.length
+            ? await Promise.all(promises)
+            : [];
 
         // send email(s)
         // handle balance - notify site admin if balance is below threshold
@@ -293,7 +295,8 @@ export default class GlobetopperService extends TransactionBaseService {
         */
 
         // stub to build email content
-        await this.sendPostPurchaseEmail(purchaseOutputs, email);
+        if (purchaseOutputs?.length)
+            await this.sendPostPurchaseEmail(purchaseOutputs, email);
 
         //TODO: what to do with the outputs now?
         return purchaseOutputs ?? [];
@@ -315,6 +318,9 @@ export default class GlobetopperService extends TransactionBaseService {
             order_id: orderId,
         });
 
+        if (variant?.metadata?.imgUrl) {
+            output.data.thumbnail = variant.metadata.imgUrl;
+        }
         return output.data;
     }
 
@@ -334,7 +340,6 @@ export default class GlobetopperService extends TransactionBaseService {
                     case 'Brand Logo':
                         extraFieldContent = `<img src="${fieldValue}" />`;
                         break;
-
                     case 'Redemption URL':
                     case 'Barcode URL':
                     case 'Admin Barcode URL':
@@ -350,13 +355,27 @@ export default class GlobetopperService extends TransactionBaseService {
                 cardInfo.push(extraFieldContent);
             }
 
-            emailBody += `<b>${purchase.records[0]?.operator?.name}</b><br/>${cardInfo.join('<br /><br />\n')}`;
+            //get thumbnail image to display, if there is one
+            let thumbnailImgHtml = '';
+            if (purchase.thumbnail) {
+                thumbnailImgHtml = `
+                            <div style="margin-bottom: 1rem;">
+                                <img class="item-image" 
+                                src="${purchase.thumbnail}"
+                                alt="gift card thumbnail"
+                                />
+                            </div>
+                            `;
+            }
+
+            //combine all into email body
+            emailBody += `${thumbnailImgHtml}<b>${purchase.records[0]?.operator?.name}</b><br/>${cardInfo.join('<br /><br />\n')}`;
             console.log(
                 `Globetopper gift card email info for customer ${email}:\n${emailBody}`
             );
         }
 
-        this.smtpMailService_.sendMail({
+        await this.smtpMailService_.sendMail({
             from: process.env.SMTP_FROM,
             to: email,
             subject: 'Gift Card Purchase from Hamza',

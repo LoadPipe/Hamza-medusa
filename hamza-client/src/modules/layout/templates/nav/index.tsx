@@ -99,16 +99,13 @@ export default async function Nav() {
                                 style={{
                                     alignSelf: 'left',
                                 }}
-                                src={HamzaHoliday}
+                                src={HamzaLogo}
                                 alt="Hamza"
                             />
                         </Flex>
                     </a>
 
                     <NavSearchBar />
-
-                    <HnsDisplay />
-                    <MainMenu />
 
                     <WalletConnectButton />
 

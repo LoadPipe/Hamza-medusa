@@ -31,7 +31,7 @@ export default async function MobileNav() {
                         <Flex>
                             <Image
                                 className="w-[22.92px] h-[33px] md:w-[47.34px] md:h-[67px]"
-                                src={HamzaHoliday}
+                                src={HamzaLogo}
                                 alt="Hamza"
                             />
 

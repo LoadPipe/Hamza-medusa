@@ -43,7 +43,6 @@ export class EscrowWalletPaymentHandler implements IWalletPaymentHandler {
                 chainId
             );
             console.log('sending payments: ', inputs);
-
             //check balance first
             const currencyPayments = this.groupPaymentsByCurrency(inputs);
             for (let cp of currencyPayments) {
@@ -93,7 +92,10 @@ export class EscrowWalletPaymentHandler implements IWalletPaymentHandler {
                     id: ethers.keccak256(ethers.toUtf8Bytes(o.order_id)),
                     payer,
                     receiver: o.wallet_address,
-                    contractAddress: o.escrow_metadata.address,
+                    contractAddress: this.getEscrowAddress(
+                        o.escrow_metadata,
+                        chainId
+                    ),
                     amount: process.env.NEXT_PUBLIC_ONE_SATOSHI_DISCOUNT
                         ? 1
                         : this.convertToNativeAmount(
@@ -108,6 +110,19 @@ export class EscrowWalletPaymentHandler implements IWalletPaymentHandler {
             return paymentInputs;
         }
         return [];
+    }
+
+    private getEscrowAddress(escrow_metadata: any, chainId: number): string {
+        let output = '0x0';
+        if (escrow_metadata) {
+            if (escrow_metadata[chainId]?.address)
+                output = escrow_metadata[chainId]?.address;
+            else
+                output = escrow_metadata.address
+                    ? escrow_metadata.address
+                    : '0x0';
+        }
+        return output;
     }
 
     private convertToNativeAmount(
