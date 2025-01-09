@@ -29,12 +29,12 @@ const MainMenu = () => {
         <Flex display={{ base: 'none', md: 'flex' }} height={'100%'}>
             <Menu placement="bottom-end">
                 <MenuButton
-                    width={'60px'}
-                    height={'57px'}
-                    px="1rem"
+                    width={'44px'}
+                    height={'44px'}
+                    px="0.5rem"
                     borderRadius={'full'}
                     borderColor={'white'}
-                    borderWidth={'1px'}
+                    borderWidth={'2px'}
                     backgroundColor={'transparent'}
                     cursor={'pointer'}
                     _hover={{
@@ -51,7 +51,7 @@ const MainMenu = () => {
                         alignSelf={'center'}
                         color={'white'}
                     >
-                        <IoMdMenu size={30} />
+                        <IoMdMenu size={40} />
                     </Flex>
                 </MenuButton>
                 <MenuList

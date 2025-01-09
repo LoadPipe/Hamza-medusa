@@ -35,12 +35,12 @@ const AccountMenu = () => {
         <Flex display={{ base: 'none', md: 'flex' }} height={'100%'}>
             <Menu placement="bottom-end">
                 <MenuButton
-                    width={'60px'}
-                    height={'57px'}
+                    width={'44px'}
+                    height={'44px'}
                     borderRadius={'full'}
-                    borderColor={'white'}
                     borderWidth={'1px'}
                     backgroundColor={'transparent'}
+                    border={'none'}
                     cursor={'pointer'}
                     position="relative"
                     _hover={{

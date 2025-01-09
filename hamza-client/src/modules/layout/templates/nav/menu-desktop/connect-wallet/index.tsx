@@ -109,7 +109,6 @@ export const WalletConnectButton = () => {
                                                     height: 44,
                                                     borderRadius: 999,
                                                     overflow: 'hidden',
-                                                    marginRight: 4,
                                                 }}
                                             >
                                                 {chain.iconUrl && (
