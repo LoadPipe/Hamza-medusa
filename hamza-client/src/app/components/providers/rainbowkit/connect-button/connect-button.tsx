@@ -64,18 +64,7 @@ export const WalletConnectButton = () => {
                                     </Flex>
                                 );
                             }
-                            //if (chain && chain.unsupported) {
-                            if (
-                                chain &&
-                                chain.id != getAllowedChainsFromConfig()[0]
-                            ) {
-                                return (
-                                    <button
-                                        onClick={openChainModal}
-                                        type="button"
-                                    ></button>
-                                );
-                            }
+
                             return (
                                 <Flex
                                     px="1rem"
