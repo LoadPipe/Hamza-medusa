@@ -37,12 +37,13 @@ const CurrencySelector = () => {
         <Flex display={{ base: 'none', md: 'flex' }} height={'100%'}>
             <Menu placement="bottom-end" closeOnSelect={false}>
                 <MenuButton
-                    width={'140px'}
+                    width={'130px'}
                     height={'44px'}
                     borderRadius={'8px'}
                     borderColor={'white'}
                     borderWidth={'1px'}
-                    backgroundColor={'transparent'}
+                    backgroundColor={'#2A2A2A'}
+                    border={'none'}
                     cursor={'pointer'}
                     display="flex"
                     alignItems="center"
@@ -53,14 +54,14 @@ const CurrencySelector = () => {
                         transition: 'border-color 0.3s ease-in-out',
                     }}
                 >
-                    <Flex alignItems="center" flexDir={'row'} gap={3}>
+                    <Flex alignItems="center" flexDir={'row'} gap={2}>
                         <Image
                             src={currencyIcons[selectedCurrency ?? 'usdc']}
                             alt={selectedCurrency ?? 'USDC'}
-                            width={24}
-                            height={24}
+                            width={20}
+                            height={20}
                         />
-                        <Text fontWeight={'600'} color="white">
+                        <Text fontWeight={'400'} color="white">
                             {selectedCurrency?.toUpperCase() ?? 'USDC'}
                         </Text>
                         <ChevronDownIcon
@@ -74,11 +75,10 @@ const CurrencySelector = () => {
                 <MenuList
                     marginTop={'1rem'}
                     py={2}
-                    px={1}
                     borderRadius={'16px'}
                     borderColor="white"
-                    backgroundColor={'black'}
-                    width={{ base: '100vw', md: '240px' }}
+                    backgroundColor={'#121212'}
+                    width={{ base: '100vw', md: '205px' }}
                 >
                     {['usdt', 'usdc', 'eth'].map((currency) => (
                         <MenuItem
@@ -86,12 +86,13 @@ const CurrencySelector = () => {
                             fontWeight={'600'}
                             pl="1rem"
                             color={'white'}
-                            gap={2}
-                            backgroundColor={'black'}
+                            gap={3}
+                            backgroundColor={'transparent'}
                             _hover={{ color: 'primary.green.900' }}
                             onClick={() => handleCurrencySelect(currency)}
                         >
                             <Checkbox
+                                style={{ width: '14px', height: '14px' }}
                                 isChecked={selectedCurrency === currency}
                                 onChange={() => handleCurrencySelect(currency)}
                                 colorScheme="green"
@@ -100,10 +101,10 @@ const CurrencySelector = () => {
                                 <Image
                                     src={currencyIcons[currency]}
                                     alt={currency.toUpperCase()}
-                                    width={24}
-                                    height={24}
+                                    width={20}
+                                    height={20}
                                 />
-                                <Text fontWeight={'600'}>
+                                <Text fontWeight={'400'} lineHeight={0}>
                                     {currency.toUpperCase()}
                                 </Text>
                             </Flex>
@@ -113,6 +114,10 @@ const CurrencySelector = () => {
                         <Button
                             colorScheme="green"
                             width="100%"
+                            height={'27px'}
+                            fontSize={'10px'}
+                            borderRadius={'full'}
+                            color={'black'}
                             onClick={handleSaveChanges}
                         >
                             Save Changes
