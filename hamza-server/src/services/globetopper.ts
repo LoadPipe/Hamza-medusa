@@ -335,17 +335,6 @@ export default class GlobetopperService extends TransactionBaseService {
                 let extraFieldContent: string = '';
                 const fieldValue: string = record.extra_fields[field];
 
-                if (purchase.thumbnail) {
-                    extraFieldContent += `
-                            <div style="margin-bottom: 1rem;">
-                                <img
-                                src="${purchase.thumbnail}"
-                                alt="gift card thumbnail"
-                                />
-                            </div>
-                            `;
-                }
-
                 switch (field) {
                     case 'Barcode Image URL':
                     case 'Brand Logo':
@@ -366,7 +355,21 @@ export default class GlobetopperService extends TransactionBaseService {
                 cardInfo.push(extraFieldContent);
             }
 
-            emailBody += `<b>${purchase.records[0]?.operator?.name}</b><br/>${cardInfo.join('<br /><br />\n')}`;
+            //get thumbnail image to display, if there is one
+            let thumbnailImgHtml = '';
+            if (purchase.thumbnail) {
+                thumbnailImgHtml = `
+                            <div style="margin-bottom: 1rem;">
+                                <img class="item-image" 
+                                src="${purchase.thumbnail}"
+                                alt="gift card thumbnail"
+                                />
+                            </div>
+                            `;
+            }
+
+            //combine all into email body
+            emailBody += `${thumbnailImgHtml}<b>${purchase.records[0]?.operator?.name}</b><br/>${cardInfo.join('<br /><br />\n')}`;
             console.log(
                 `Globetopper gift card email info for customer ${email}:\n${emailBody}`
             );
