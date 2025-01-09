@@ -29,7 +29,6 @@ export default class GlobetopperService extends TransactionBaseService {
     protected readonly logger: ILogger;
     protected readonly productService_: ProductService;
     protected readonly smtpMailService_: SmtpMailService;
-    protected readonly orderRepository_: typeof OrderRepository;
     protected readonly priceConverter: PriceConverter;
     protected readonly apiClient: GlobetopperClient;
     protected readonly externalApiLogRepository_: typeof ExternalApiLogRepository;
@@ -38,7 +37,6 @@ export default class GlobetopperService extends TransactionBaseService {
     constructor(container) {
         super(container);
         this.productService_ = container.productService;
-        this.orderRepository_ = container.orderRepository;
         this.smtpMailService_ = container.smtpMailService;
         this.externalApiLogRepository_ = container.externalApiLogRepository;
         this.logger = createLogger(container, 'GlobetopperService');
