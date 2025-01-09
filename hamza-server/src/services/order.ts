@@ -812,6 +812,7 @@ export default class OrderService extends MedusaOrderService {
                 const { variants, quantities } =
                     await this.getBuckyProductVariantsFromOrder(order);
                 if (variants?.length) {
+                    order.external_source = 'buckydrop';
                     order.external_metadata = { status: 'pending' };
                     await this.orderRepository_.save(order);
                 }
@@ -834,14 +835,21 @@ export default class OrderService extends MedusaOrderService {
                         GlobetopperService.EXTERNAL_SOURCE
                     );
 
-                const results: any[] =
-                    await this.globetopperService_.processPointOfSale(
-                        order.id,
-                        cart.customer.first_name,
-                        cart.customer.last_name,
-                        cart.email,
-                        items
-                    );
+                if (items.length) {
+                    const results: any[] =
+                        await this.globetopperService_.processPointOfSale(
+                            order.id,
+                            cart.customer.first_name,
+                            cart.customer.last_name,
+                            cart.email,
+                            items
+                        );
+
+                    order.external_source = 'globetopper';
+                    await this.orderRepository_.save(order);
+
+                    //set to auto-delivered
+                }
             } catch (e: any) {
                 this.logger.error(
                     `Error processing globetopper orders for order ${order.id}`,
@@ -959,7 +967,10 @@ export default class OrderService extends MedusaOrderService {
             return this.orderRepository_.save({
                 id: o.id,
                 status: OrderStatus.PENDING,
-                payment_status: PaymentStatus.AWAITING,
+                payment_status:
+                    o.external_source === 'buckydrop'
+                        ? PaymentStatus.AWAITING
+                        : PaymentStatus.CAPTURED,
                 escrow_status: EscrowStatus.IN_ESCROW,
             });
         });
