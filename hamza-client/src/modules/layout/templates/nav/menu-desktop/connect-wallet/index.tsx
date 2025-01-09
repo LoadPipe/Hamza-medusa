@@ -28,6 +28,10 @@ export const WalletConnectButton = () => {
     const account = useAccount();
     const { setWalletAddress } = useCustomerAuthStore();
     // useEffect to update Zustand state when the account is connected
+
+    const switchNetworkId = getAllowedChainsFromConfig()[0];
+    const networkName = getBlockchainNetworkName(switchNetworkId ?? '');
+
     useEffect(() => {
         if (account?.address) {
             setWalletAddress(account.address); // Update Zustand store
@@ -89,7 +93,7 @@ export const WalletConnectButton = () => {
                                     alignItems={'center'}
                                 >
                                     <HnsDisplay />
-                                    <CurrencySelector />
+                                    <CurrencySelector network={networkName} />
                                     <button
                                         onClick={openChainModal}
                                         style={{

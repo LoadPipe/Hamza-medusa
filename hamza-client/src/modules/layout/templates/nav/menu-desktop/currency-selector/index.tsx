@@ -17,7 +17,7 @@ import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import { setCurrency } from '@/lib/data';
 
-const CurrencySelector = () => {
+const CurrencySelector = (props: any) => {
     const { preferred_currency_code, setCustomerPreferredCurrency, authData } =
         useCustomerAuthStore();
     const [displayedCurrency, setDisplayedCurrency] = useState(
@@ -51,6 +51,9 @@ const CurrencySelector = () => {
         }
     };
 
+    function capitalizeFirstLetter(str: string) {
+        return str[0].toUpperCase() + str.slice(1);
+    }
     return (
         <Flex display={{ base: 'none', md: 'flex' }} height={'100%'}>
             <Menu placement="bottom-end" closeOnSelect={false}>
@@ -104,6 +107,23 @@ const CurrencySelector = () => {
                             backgroundColor={'#121212'}
                             width={{ base: '100vw', md: '205px' }}
                         >
+                            <MenuItem
+                                my="1rem"
+                                fontWeight={'600'}
+                                pl="1rem"
+                                color={'white'}
+                                backgroundColor={'transparent'}
+                                _hover={{ color: 'primary.green.900' }}
+                            >
+                                <Text
+                                    fontWeight={'400'}
+                                    fontSize={'12px'}
+                                    lineHeight={0}
+                                >
+                                    Running on{' '}
+                                    {capitalizeFirstLetter(props.network)}
+                                </Text>
+                            </MenuItem>
                             {['usdt', 'usdc', 'eth'].map((currency) => (
                                 <MenuItem
                                     key={currency}
