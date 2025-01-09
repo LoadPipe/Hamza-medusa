@@ -122,13 +122,13 @@ const CurrencySelector = () => {
                                             width: '14px',
                                             height: '14px',
                                         }}
+                                        colorScheme="green"
                                         isChecked={
                                             selectedCurrency === currency
                                         }
                                         onChange={() =>
                                             handleCurrencySelect(currency)
                                         }
-                                        colorScheme="green"
                                     />
                                     <Flex alignItems="center" gap={2}>
                                         <Image
@@ -150,7 +150,11 @@ const CurrencySelector = () => {
                                     height={'27px'}
                                     fontSize={'10px'}
                                     borderRadius={'full'}
+                                    backgroundColor={'#84C441'}
                                     color={'black'}
+                                    _hover={{
+                                        opacity: 0.5,
+                                    }}
                                     onClick={() => handleSaveChanges(onClose)}
                                 >
                                     Save Changes
