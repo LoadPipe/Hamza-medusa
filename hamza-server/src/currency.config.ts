@@ -53,6 +53,33 @@ const chainConfig: any = {
             },
         },
     },
+    80002: {
+        chain_name: 'amoy',
+        usdc: {
+            contract_address: '0xA4b440AAA9A7bd454d775D3f38194D59A8ADCC45',
+            precision: {
+                display: 2,
+                db: 2,
+                native: 12,
+            },
+        },
+        usdt: {
+            contract_address: '0x6718F8c7686B4C1a756cf5028d3b66b74E432596',
+            precision: {
+                display: 2,
+                db: 2,
+                native: 6,
+            },
+        },
+        eth: {
+            contract_address: '0x0000000000000000000000000000000000000000',
+            precision: {
+                display: 5,
+                db: 8,
+                native: 18,
+            },
+        },
+    },
     1: {
         chain_name: 'mainnet',
         usdc: {
