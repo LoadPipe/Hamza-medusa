@@ -74,9 +74,8 @@ export const WalletConnectButton = () => {
                                         borderRadius={'30px'}
                                         backgroundColor={'primary.green.900'}
                                         onClick={openConnectModal}
-                                        ml="1rem"
-                                        height="54px"
-                                        fontSize={'20px'}
+                                        height="48px"
+                                        fontSize={'16px'}
                                     >
                                         Connect Wallet
                                     </Button>
@@ -85,7 +84,7 @@ export const WalletConnectButton = () => {
 
                             return (
                                 <Flex
-                                    gap={4}
+                                    gap={'18px'}
                                     flexDirection={'row'}
                                     alignItems={'center'}
                                 >

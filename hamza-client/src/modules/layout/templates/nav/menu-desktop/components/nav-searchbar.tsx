@@ -33,7 +33,11 @@ const NavSearchBar = () => {
     }, [pathname]);
 
     return (
-        <Flex width={'100%'} display={{ base: 'none', md: 'flex' }}>
+        <Flex
+            width={'100%'}
+            maxW={'448px'}
+            display={{ base: 'none', md: 'flex' }}
+        >
             <InputGroup display={'flex'} mx="1rem" alignItems={'center'}>
                 <Input
                     width={'100%'}

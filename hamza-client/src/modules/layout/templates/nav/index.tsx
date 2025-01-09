@@ -2,7 +2,7 @@
 
 import React from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import { Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 // Images
 //import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
@@ -66,11 +66,7 @@ export default async function Nav() {
                 bgColor={'transparent'}
                 alignItems="center"
             >
-                <Flex
-                    width={'100%'}
-                    justifyContent={'center'}
-                    alignItems="center"
-                >
+                <Flex width={'100%'} alignItems="center" gap={'18px'}>
                     <a href="/">
                         <Flex
                             width={'190px'}
@@ -90,13 +86,11 @@ export default async function Nav() {
 
                     <NavSearchBar />
 
-                    <WalletConnectButton />
+                    <Box ml={'auto'}>
+                        <WalletConnectButton />
+                    </Box>
 
-                    <Flex
-                        ml="0.75rem"
-                        flexDirection={'row'}
-                        alignItems={'center'}
-                    >
+                    <Flex flexDirection={'row'} alignItems={'center'}>
                         <Flex alignSelf={'center'}>
                             <LocalizedClientLink href="/cart">
                                 <Flex
