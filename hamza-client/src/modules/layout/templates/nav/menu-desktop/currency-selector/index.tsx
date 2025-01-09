@@ -47,7 +47,7 @@ const CurrencySelector = () => {
                     display="flex"
                     alignItems="center"
                     justifyContent="space-between"
-                    padding="0.5rem"
+                    padding="0.75rem"
                     _hover={{
                         borderColor: 'primary.green.900',
                         transition: 'border-color 0.3s ease-in-out',
