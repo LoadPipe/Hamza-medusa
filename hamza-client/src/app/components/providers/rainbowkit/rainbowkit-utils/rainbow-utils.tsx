@@ -86,23 +86,16 @@ const polygonAmoy: Chain = {
     testnet: true,
 };
 
-// TODO: Later can use this logic for custom Chain logos
-// // Extend the Sepolia chain configuration
-// const customSepolia = {
-//     ...sepolia,
-//     iconUrl: sepoliaImage.src, // Use the correct property for the image URL
-//     // lets make the background transparent
-//     iconBackground: 'transparent', // Set your desired background color
-// };
-
-// export { customSepolia };
-//const isProduction = process.env.NODE_ENV === 'production';
-
 const allowedChains = [];
-if (process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS === '10')
+// Determine if the environment is production or development
+const isProduction = process.env.NODE_ENV === 'production';
+if (isProduction) {
+    // Use mainnets in production
     allowedChains.push(optimism, polygon);
-if (process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS === '11155111')
+} else {
+    // Use testnets in development
     allowedChains.push(sepolia, polygonAmoy);
+}
 
 export const { chains, publicClient, webSocketPublicClient } = configureChains(
     allowedChains,
