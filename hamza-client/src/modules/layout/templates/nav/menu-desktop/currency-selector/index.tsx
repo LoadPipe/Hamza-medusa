@@ -18,7 +18,7 @@ import currencyIcons from '@/images/currencies/crypto-currencies';
 import { setCurrency } from '@/lib/data';
 
 const CurrencySelector = () => {
-    const { preferred_currency_code, setCustomerPreferredCurrency } =
+    const { preferred_currency_code, setCustomerPreferredCurrency, authData } =
         useCustomerAuthStore();
     const [displayedCurrency, setDisplayedCurrency] = useState(
         preferred_currency_code
@@ -41,7 +41,7 @@ const CurrencySelector = () => {
                 setDisplayedCurrency(selectedCurrency);
 
                 // Call the API to update the currency
-                await setCurrency(selectedCurrency);
+                await setCurrency(selectedCurrency, authData.customer_id);
                 console.log(`Currency updated to: ${selectedCurrency}`);
 
                 // Close the menu
