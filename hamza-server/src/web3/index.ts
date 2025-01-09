@@ -25,7 +25,6 @@ export async function getAmountPaidForOrder(
 ): Promise<bigint> {
     const switchClient = new LiteSwitchClient(chainId);
     const events = await switchClient.findPaymentEvents(orderId, transactionId);
-    //console.log('events: ', events);
 
     let total: bigint = BigInt(0);
     if (events.length) {
@@ -36,14 +35,13 @@ export async function getAmountPaidForOrder(
 }
 
 export async function getEscrowPayment(
+    chainId: number,
     escrowAddress: string,
     orderId: string
 ): Promise<PaymentDefinition> {
     try {
-        const escrow = new EscrowClient(escrowAddress);
-        const payment = await escrow.getEscrowPayment(
-            ethers.keccak256(ethers.toUtf8Bytes(orderId))
-        );
+        const escrow = new EscrowClient(chainId, escrowAddress);
+        const payment = await escrow.getEscrowPayment(orderId);
 
         return paymentIsValid(payment) ? payment : null;
     } catch (e: any) {
@@ -70,7 +68,13 @@ function paymentIsValid(payment: PaymentDefinition | null): boolean {
  * @param order Any Order object with payments.
  * @returns Address of escrow contract.
  */
-export function findEscrowAddressFromOrder(order: any): string {
+export function findEscrowDataFromOrder(order: any): {
+    address: string;
+    chain_id: number;
+} {
     order?.payments?.sort((a: any, b: any) => a.created_at < b.created_at);
-    return order?.payments[0]?.blockchain_data?.escrow_address;
+    return {
+        address: order?.payments[0]?.blockchain_data?.escrow_address,
+        chain_id: order?.payments[0]?.blockchain_data?.chain_id ?? 0,
+    };
 }
