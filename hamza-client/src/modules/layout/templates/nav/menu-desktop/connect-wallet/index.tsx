@@ -85,8 +85,7 @@ export const WalletConnectButton = () => {
 
                             return (
                                 <Flex
-                                    ml="1rem"
-                                    gap={3}
+                                    gap={4}
                                     flexDirection={'row'}
                                     alignItems={'center'}
                                 >

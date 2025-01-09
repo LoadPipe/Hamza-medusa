@@ -109,7 +109,11 @@ export default async function Nav() {
 
                     <WalletConnectButton />
 
-                    <Flex ml="1rem" flexDirection={'row'} alignItems={'center'}>
+                    <Flex
+                        ml="0.75rem"
+                        flexDirection={'row'}
+                        alignItems={'center'}
+                    >
                         <Flex alignSelf={'center'}>
                             <LocalizedClientLink href="/cart">
                                 <Flex
