@@ -58,7 +58,7 @@ const CurrencySelector = () => {
                     <>
                         <MenuButton
                             width={'130px'}
-                            height={'44px'}
+                            height={'48px'}
                             borderRadius={'8px'}
                             borderColor={'white'}
                             borderWidth={'1px'}

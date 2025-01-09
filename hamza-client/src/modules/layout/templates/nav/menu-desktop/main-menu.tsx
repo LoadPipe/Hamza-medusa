@@ -29,8 +29,8 @@ const MainMenu = () => {
         <Flex display={{ base: 'none', md: 'flex' }} height={'100%'}>
             <Menu placement="bottom-end">
                 <MenuButton
-                    width={'44px'}
-                    height={'44px'}
+                    width={'48px'}
+                    height={'48px'}
                     px="0.5rem"
                     borderRadius={'full'}
                     borderColor={'white'}

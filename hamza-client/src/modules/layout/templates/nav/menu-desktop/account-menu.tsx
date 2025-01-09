@@ -35,8 +35,8 @@ const AccountMenu = () => {
         <Flex display={{ base: 'none', md: 'flex' }} height={'100%'}>
             <Menu placement="bottom-end">
                 <MenuButton
-                    width={'44px'}
-                    height={'44px'}
+                    width={'48px'}
+                    height={'48px'}
                     borderRadius={'full'}
                     borderWidth={'1px'}
                     backgroundColor={'transparent'}

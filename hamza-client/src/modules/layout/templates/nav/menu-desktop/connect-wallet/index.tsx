@@ -104,8 +104,8 @@ export const WalletConnectButton = () => {
                                                 style={{
                                                     background:
                                                         chain.iconBackground,
-                                                    width: 44,
-                                                    height: 44,
+                                                    width: 48,
+                                                    height: 48,
                                                     borderRadius: 999,
                                                     overflow: 'hidden',
                                                 }}
@@ -118,8 +118,8 @@ export const WalletConnectButton = () => {
                                                         }
                                                         src={chain.iconUrl}
                                                         style={{
-                                                            width: 44,
-                                                            height: 44,
+                                                            width: 48,
+                                                            height: 48,
                                                         }}
                                                     />
                                                 )}
