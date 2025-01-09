@@ -10,7 +10,7 @@ import {
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
 import OrderService from '../services/order';
-import { BuckyLogRepository } from '../repositories/bucky-log';
+import { ExternalApiLogRepository } from '../repositories/external-api-log';
 import { Product } from '../models/product';
 import { Order } from '../models/order';
 import { PriceConverter } from '../utils/price-conversion';
@@ -65,7 +65,7 @@ export default class BuckydropService extends TransactionBaseService {
     protected readonly orderRepository_: typeof OrderRepository;
     protected readonly priceConverter: PriceConverter;
     protected readonly buckyClient: BuckyClient;
-    protected readonly buckyLogRepository: typeof BuckyLogRepository;
+    protected readonly externalApiLogRepository: typeof ExternalApiLogRepository;
     public static readonly EXTERNAL_SOURCE: string = PRODUCT_EXTERNAL_SOURCE;
 
     constructor(container) {
@@ -80,8 +80,8 @@ export default class BuckydropService extends TransactionBaseService {
             this.logger,
             container.cachedExchangeRateRepository
         );
-        this.buckyLogRepository = container.buckyLogRepository;
-        this.buckyClient = new BuckyClient(this.buckyLogRepository);
+        this.externalApiLogRepository = container.externalApiLogRepository;
+        this.buckyClient = new BuckyClient(this.externalApiLogRepository);
     }
 
     async importProductsByKeyword(
