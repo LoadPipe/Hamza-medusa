@@ -86,16 +86,13 @@ const polygonAmoy: Chain = {
     testnet: true,
 };
 
-const allowedChains = [];
-// Determine if the environment is production or development
-const isProduction = process.env.NODE_ENV === 'production';
-if (isProduction) {
-    // Use mainnets in production
-    allowedChains.push(optimism, polygon);
-} else {
-    // Use testnets in development
-    allowedChains.push(sepolia, polygonAmoy);
-}
+const chainConfig: Record<'production' | 'development', Chain[]> = {
+    production: [optimism, polygon, mainnet],
+    development: [sepolia, polygonAmoy],
+};
+
+const allowedChains =
+    chainConfig[process.env.NODE_ENV as keyof typeof chainConfig] || [];
 
 export const { chains, publicClient, webSocketPublicClient } = configureChains(
     allowedChains,
