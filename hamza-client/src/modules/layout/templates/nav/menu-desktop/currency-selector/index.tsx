@@ -10,6 +10,7 @@ import {
     Button,
     Checkbox,
     Box,
+    MenuDivider,
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import Image from 'next/image';
@@ -124,6 +125,13 @@ const CurrencySelector = (props: any) => {
                                     {capitalizeFirstLetter(props.network)}
                                 </Text>
                             </MenuItem>
+                            <Box px={{ base: '2rem', md: 0 }}>
+                                <MenuDivider
+                                    mx="1rem"
+                                    opacity={{ base: '0.5', md: '1' }}
+                                    borderColor={'white'}
+                                />
+                            </Box>
                             {['usdt', 'usdc', 'eth'].map((currency) => (
                                 <MenuItem
                                     key={currency}
@@ -163,7 +171,7 @@ const CurrencySelector = (props: any) => {
                                     </Flex>
                                 </MenuItem>
                             ))}
-                            <Box px={4} py={2}>
+                            <Box mt="1rem" px={4} py={2}>
                                 <Button
                                     colorScheme="green"
                                     width="100%"

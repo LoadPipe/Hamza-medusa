@@ -1,24 +1,11 @@
 'use client';
 
-import {
-    Button,
-    Flex,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalBody,
-    Text,
-    Skeleton,
-} from '@chakra-ui/react';
+import { Button, Flex } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import AccountMenu from '@modules/layout/templates/nav/menu-desktop/account-menu';
-import { useSwitchNetwork, useWalletClient, useAccount } from 'wagmi';
-import {
-    getAllowedChainsFromConfig,
-    getBlockchainNetworkName,
-} from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
+import { useWalletClient, useAccount } from 'wagmi';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import MainMenu from '../main-menu';
 import HnsDisplay from '../hns-display';
 import CurrencySelector from '../currency-selector';
@@ -28,9 +15,6 @@ export const WalletConnectButton = () => {
     const account = useAccount();
     const { setWalletAddress } = useCustomerAuthStore();
     // useEffect to update Zustand state when the account is connected
-
-    const switchNetworkId = getAllowedChainsFromConfig()[0];
-    const networkName = getBlockchainNetworkName(switchNetworkId ?? '');
 
     useEffect(() => {
         if (account?.address) {
@@ -93,7 +77,7 @@ export const WalletConnectButton = () => {
                                     alignItems={'center'}
                                 >
                                     <HnsDisplay />
-                                    <CurrencySelector network={networkName} />
+                                    <CurrencySelector network={chain.name} />
                                     <button
                                         onClick={openChainModal}
                                         style={{
