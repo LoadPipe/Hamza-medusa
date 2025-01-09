@@ -9,7 +9,6 @@ import {
     ProductVariant,
     LineItem,
 } from '@medusajs/medusa';
-import { BuckyLogRepository } from '../repositories/bucky-log';
 import SalesChannelRepository from '@medusajs/medusa/dist/repositories/sales-channel';
 import RegionRepository from '@medusajs/medusa/dist/repositories/region';
 import AddressRepository from '@medusajs/medusa/dist/repositories/address';
@@ -104,7 +103,7 @@ export default class OrderService extends MedusaOrderService {
         this.orderHistoryService_ = container.orderHistoryService;
         this.logger = createLogger(container, 'OrderService');
         this.globetopperService_ = container.globetopperService;
-        this.buckyClient = new BuckyClient(container.buckyLogRepository);
+        this.buckyClient = new BuckyClient(container.externalApiLogRepository);
         this.cartEmailRepository_ = container.cartEmailRepository;
     }
 
@@ -570,7 +569,7 @@ export default class OrderService extends MedusaOrderService {
     ): Promise<{ variants: ProductVariant[]; quantities: number[] }> {
         const orders: Order[] = await this.getOrdersWithItems([order]);
         const relevantItems: LineItem[] = orders[0].cart.items.filter(
-            (i) => i.variant.product.bucky_metadata
+            (i) => i.variant.product.external_metadata
         );
 
         return relevantItems?.length
@@ -804,10 +803,9 @@ export default class OrderService extends MedusaOrderService {
                 const { variants, quantities } =
                     await this.getBuckyProductVariantsFromOrder(order);
                 if (variants?.length) {
-                    order.bucky_metadata = { status: 'pending' };
+                    order.external_source = 'buckydrop';
+                    order.external_metadata = { status: 'pending' };
                     await this.orderRepository_.save(order);
-
-                    this.logger.debug('BUCKY CREATED ORDER');
                 }
             }
         } catch (e) {
@@ -828,24 +826,29 @@ export default class OrderService extends MedusaOrderService {
                         GlobetopperService.EXTERNAL_SOURCE
                     );
 
-                const results: any[] =
-                    await this.globetopperService_.processPointOfSale(
-                        order.id,
-                        cart.customer.first_name,
-                        cart.customer.last_name,
-                        cart.email,
-                        items
-                    );
+                if (items.length) {
+                    const results: any[] =
+                        await this.globetopperService_.processPointOfSale(
+                            order.id,
+                            cart.customer.first_name,
+                            cart.customer.last_name,
+                            cart.email,
+                            items
+                        );
 
-                //set fulfillment status to delivered
-                await this.setOrderStatus(
-                    order,
-                    null,
-                    FulfillmentStatus.FULFILLED,
-                    null,
-                    null,
-                    null
-                );
+                    order.external_source = 'globetopper';
+                    await this.orderRepository_.save(order);
+
+                    //set fulfillment status to delivered
+                    await this.setOrderStatus(
+                        order,
+                        null,
+                        FulfillmentStatus.FULFILLED,
+                        null,
+                        null,
+                        null
+                    );
+                }
             } catch (e: any) {
                 this.logger.error(
                     `Error processing globetopper orders for order ${order.id}`,
@@ -963,7 +966,10 @@ export default class OrderService extends MedusaOrderService {
             return this.orderRepository_.save({
                 id: o.id,
                 status: OrderStatus.PENDING,
-                payment_status: PaymentStatus.AWAITING,
+                payment_status:
+                    o.external_source === 'buckydrop'
+                        ? PaymentStatus.AWAITING
+                        : PaymentStatus.CAPTURED,
                 escrow_status: EscrowStatus.IN_ESCROW,
             });
         });
