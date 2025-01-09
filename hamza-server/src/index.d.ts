@@ -53,7 +53,6 @@ export declare module '@medusajs/medusa/dist/models/product' {
         store?: Store;
         store_id: string;
         reviews: ProductReview[];
-        bucky_metadata?: Record<string, unknown>;
         external_metadata?: Record<string, unknown>;
         external_source?: string;
         display_rank: number;
@@ -62,7 +61,6 @@ export declare module '@medusajs/medusa/dist/models/product' {
 
 export declare module '@medusajs/medusa/dist/models/product-variant' {
     declare interface ProductVariant {
-        bucky_metadata?: Record<string, unknown>;
         external_metadata?: Record<string, unknown>;
         external_source?: string;
     }
@@ -75,6 +73,7 @@ export declare module '@medusajs/medusa/dist/model/order' {
         massmarket_order_id?: string;
         massmarket_ttl?: number;
         massmarket_amount?: string;
-        bucky_metadata?: Record<string, unknown>;
+        external_source?: string;
+        external_metadata?: Record<string, unknown>;
     }
 }
