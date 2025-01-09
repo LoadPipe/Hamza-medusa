@@ -91,6 +91,7 @@ export const WalletConnectButton = () => {
                                     alignItems={'center'}
                                 >
                                     <HnsDisplay />
+                                    <CurrencySelector />
                                     <button
                                         onClick={openChainModal}
                                         style={{
@@ -127,7 +128,7 @@ export const WalletConnectButton = () => {
                                             </div>
                                         )}
                                     </button>
-                                    <CurrencySelector />
+
                                     <MainMenu />
                                     <AccountMenu />
                                 </Flex>

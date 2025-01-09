@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Flex,
     Text,
@@ -7,87 +7,117 @@ import {
     MenuButton,
     MenuList,
     MenuItem,
+    Button,
+    Checkbox,
+    Box,
 } from '@chakra-ui/react';
-import { MdOutlineShield } from 'react-icons/md';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import Image from 'next/image';
-
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 
 const CurrencySelector = () => {
     const { preferred_currency_code, setCustomerPreferredCurrency } =
         useCustomerAuthStore();
+    const [selectedCurrency, setSelectedCurrency] = useState(
+        preferred_currency_code
+    );
 
-    const handleCurrencyChange = (currency: string) => {
-        setCustomerPreferredCurrency(currency);
+    const handleCurrencySelect = (currency: string) => {
+        setSelectedCurrency(currency);
+    };
+
+    const handleSaveChanges = () => {
+        if (selectedCurrency) {
+            setCustomerPreferredCurrency(selectedCurrency);
+        }
     };
 
     return (
         <Flex display={{ base: 'none', md: 'flex' }} height={'100%'}>
-            <Menu placement="bottom-end">
+            <Menu placement="bottom-end" closeOnSelect={false}>
                 <MenuButton
-                    width={'44px'}
+                    width={'140px'}
                     height={'44px'}
-                    borderRadius={'full'}
+                    borderRadius={'8px'}
                     borderColor={'white'}
                     borderWidth={'1px'}
                     backgroundColor={'transparent'}
                     cursor={'pointer'}
-                    position="relative"
-                    alignItems={'center'}
-                    justifyContent={'center'}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    padding="0.5rem"
                     _hover={{
-                        '.profile-icon': {
-                            color: 'primary.green.900',
-                            transition: 'color 0.3s ease-in-out',
-                        },
                         borderColor: 'primary.green.900',
                         transition: 'border-color 0.3s ease-in-out',
                     }}
                 >
-                    <Image
-                        style={{
-                            height: '100%',
-                            width: '100%',
-                            objectFit: 'cover',
-                        }}
-                        src={currencyIcons[preferred_currency_code ?? 'usdc']}
-                        alt={preferred_currency_code ?? 'USDC'}
-                    />
+                    <Flex alignItems="center" flexDir={'row'} gap={3}>
+                        <Image
+                            src={currencyIcons[selectedCurrency ?? 'usdc']}
+                            alt={selectedCurrency ?? 'USDC'}
+                            width={24}
+                            height={24}
+                        />
+                        <Text fontWeight={'600'} color="white">
+                            {selectedCurrency?.toUpperCase() ?? 'USDC'}
+                        </Text>
+                        <ChevronDownIcon
+                            style={{ marginLeft: 'auto' }}
+                            color="white"
+                            w={5}
+                            h={5}
+                        />
+                    </Flex>
                 </MenuButton>
                 <MenuList
                     marginTop={'1rem'}
-                    pb={'0px'}
+                    py={2}
+                    px={1}
                     borderRadius={'16px'}
-                    borderColor={{
-                        base: 'transparent',
-                        md: 'white',
-                    }}
+                    borderColor="white"
                     backgroundColor={'black'}
-                    width={{ base: '100vw', md: '60px' }}
+                    width={{ base: '100vw', md: '240px' }}
                 >
                     {['usdt', 'usdc', 'eth'].map((currency) => (
                         <MenuItem
                             key={currency}
                             fontWeight={'600'}
                             pl="1rem"
-                            mt="1rem"
-                            mb="1rem"
                             color={'white'}
                             gap={2}
                             backgroundColor={'black'}
                             _hover={{ color: 'primary.green.900' }}
-                            onClick={() => handleCurrencyChange(currency)}
+                            onClick={() => handleCurrencySelect(currency)}
                         >
-                            <Image
-                                src={currencyIcons[currency ?? 'usdc']}
-                                alt={currency ?? 'USDC'}
+                            <Checkbox
+                                isChecked={selectedCurrency === currency}
+                                onChange={() => handleCurrencySelect(currency)}
+                                colorScheme="green"
                             />
-                            <Text fontWeight={'600'} ml="0.5rem">
-                                {currency.toUpperCase()}
-                            </Text>
+                            <Flex alignItems="center" gap={2}>
+                                <Image
+                                    src={currencyIcons[currency]}
+                                    alt={currency.toUpperCase()}
+                                    width={24}
+                                    height={24}
+                                />
+                                <Text fontWeight={'600'}>
+                                    {currency.toUpperCase()}
+                                </Text>
+                            </Flex>
                         </MenuItem>
                     ))}
+                    <Box px={4} py={2}>
+                        <Button
+                            colorScheme="green"
+                            width="100%"
+                            onClick={handleSaveChanges}
+                        >
+                            Save Changes
+                        </Button>
+                    </Box>
                 </MenuList>
             </Menu>
         </Flex>
