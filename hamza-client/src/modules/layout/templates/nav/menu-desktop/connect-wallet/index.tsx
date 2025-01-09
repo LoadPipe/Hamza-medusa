@@ -19,17 +19,10 @@ import {
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { useEffect, useState } from 'react';
+import MainMenu from '../main-menu';
+import HnsDisplay from '../hns-display';
 
 export const WalletConnectButton = () => {
-    const { error, isLoading, pendingChainId, switchNetwork } =
-        useSwitchNetwork();
-
-    //const isProduction = process.env.NODE_ENV === 'production';
-    //const networkName = isProduction ? 'Optimism' : 'Sepolia';
-    //const switchNetworkId = isProduction ? 10 : 11155111;
-    const switchNetworkId = getAllowedChainsFromConfig()[0];
-    const networkName = getBlockchainNetworkName(switchNetworkId ?? '');
-
     //Update zustand store with Wagmi hook when connected
     const account = useAccount();
     const { setWalletAddress } = useCustomerAuthStore();
@@ -59,6 +52,10 @@ export const WalletConnectButton = () => {
                     (!authenticationStatus ||
                         authenticationStatus === 'authenticated');
 
+                if (ready && connected && chain.unsupported) {
+                    openChainModal();
+                }
+
                 return (
                     <div
                         {...(!ready && {
@@ -85,100 +82,51 @@ export const WalletConnectButton = () => {
                                 );
                             }
 
-                            //if (chain && chain.unsupported) {
-                            if (
-                                chain &&
-                                chain.id != getAllowedChainsFromConfig()[0]
-                            ) {
-                                console.log(chain);
-                                console.log('Network id is', switchNetworkId);
-                                return (
-                                    <Modal
-                                        isOpen={true}
-                                        onClose={() => {}}
-                                        isCentered
-                                    >
-                                        <ModalOverlay />
-                                        <ModalContent
-                                            justifyContent={'center'}
-                                            alignItems={'center'}
-                                            borderRadius={'16px'}
-                                            backgroundColor={'#121212'}
-                                            border={'1px'}
-                                            borderColor={'white'}
-                                        >
-                                            <ModalBody
-                                                width={'100%'}
-                                                py="1.5rem"
-                                            >
-                                                <Flex
-                                                    flexDirection={'column'}
-                                                    gap={'16px'}
-                                                    alignItems={'center'}
-                                                >
-                                                    <Text
-                                                        fontSize={'2rem'}
-                                                        color={'white'}
-                                                        fontWeight={300}
-                                                    >
-                                                        Unsupported Network
-                                                    </Text>
-                                                    <Text color={'white'}>
-                                                        Hamza currently only
-                                                        supports {networkName}.
-                                                        Switch to {networkName}
-                                                        to continue using Hamza.
-                                                    </Text>
-                                                    <Button
-                                                        backgroundColor={
-                                                            'primary.indigo.900'
-                                                        }
-                                                        color={'white'}
-                                                        height={'38px'}
-                                                        borderRadius={'full'}
-                                                        width="100%"
-                                                        disabled={
-                                                            !switchNetwork ||
-                                                            isLoading
-                                                        }
-                                                        _hover={{
-                                                            backgroundColor:
-                                                                'primary.indigo.800',
-                                                            transition:
-                                                                'background-color 0.3s ease-in-out',
-                                                        }}
-                                                        _focus={{
-                                                            boxShadow: 'none',
-                                                            outline: 'none',
-                                                        }}
-                                                        onClick={() => {
-                                                            if (switchNetwork) {
-                                                                switchNetwork(
-                                                                    switchNetworkId
-                                                                );
-                                                            }
-                                                        }}
-                                                    >
-                                                        Switch to {networkName}
-                                                    </Button>
-                                                </Flex>
-                                                {error && (
-                                                    <p>
-                                                        Error: {error.message}
-                                                    </p>
-                                                )}
-                                            </ModalBody>
-                                        </ModalContent>
-                                    </Modal>
-                                );
-                            }
-
                             return (
                                 <Flex
                                     ml="1rem"
+                                    gap={3}
                                     flexDirection={'row'}
                                     alignItems={'center'}
                                 >
+                                    <HnsDisplay />
+                                    <button
+                                        onClick={openChainModal}
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                        }}
+                                        type="button"
+                                    >
+                                        {chain.hasIcon && (
+                                            <div
+                                                style={{
+                                                    background:
+                                                        chain.iconBackground,
+                                                    width: 44,
+                                                    height: 44,
+                                                    borderRadius: 999,
+                                                    overflow: 'hidden',
+                                                    marginRight: 4,
+                                                }}
+                                            >
+                                                {chain.iconUrl && (
+                                                    <img
+                                                        alt={
+                                                            chain.name ??
+                                                            'Chain icon'
+                                                        }
+                                                        src={chain.iconUrl}
+                                                        style={{
+                                                            width: 44,
+                                                            height: 44,
+                                                        }}
+                                                    />
+                                                )}
+                                            </div>
+                                        )}
+                                    </button>
+                                    <MainMenu />
                                     <AccountMenu />
                                 </Flex>
                             );

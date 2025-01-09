@@ -33,4 +33,10 @@ export class Product extends MedusaProduct {
 
     @Column('jsonb')
     external_metadata?: Record<string, unknown>;
+
+    @Column('jsonb')
+    bucky_metadata?: Record<string, unknown>;
+
+    @Column()
+    display_rank: number;
 }
