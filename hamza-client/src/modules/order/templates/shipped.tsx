@@ -273,13 +273,13 @@ const Shipped = ({
                                                                             </Text>
                                                                             <Text>
                                                                                 {order
-                                                                                    .bucky_metadata
+                                                                                    .external_metadata
                                                                                     ?.tracking
                                                                                     ?.data
                                                                                     ?.soOrderInfo
                                                                                     ?.createTime
                                                                                     ? new Date(
-                                                                                          order.bucky_metadata.tracking.data.soOrderInfo.createTime
+                                                                                          order.external_metadata.tracking.data.soOrderInfo.createTime
                                                                                       ).toLocaleString(
                                                                                           undefined,
                                                                                           {
@@ -322,7 +322,7 @@ const Shipped = ({
                                                                                 Number:
                                                                             </strong>{' '}
                                                                             {order
-                                                                                .bucky_metadata
+                                                                                .external_metadata
                                                                                 ?.data
                                                                                 ?.shopOrderNo ||
                                                                                 'N/A'}
@@ -351,7 +351,7 @@ const Shipped = ({
                                                                                 Name:
                                                                             </strong>{' '}
                                                                             {order
-                                                                                .bucky_metadata
+                                                                                .external_metadata
                                                                                 ?.data
                                                                                 ?.productList[0]
                                                                                 ?.productName ||
@@ -362,7 +362,7 @@ const Shipped = ({
                                                                                 Quantity:
                                                                             </strong>{' '}
                                                                             {order
-                                                                                .bucky_metadata
+                                                                                .external_metadata
                                                                                 ?.data
                                                                                 ?.productList[0]
                                                                                 ?.productCount ||

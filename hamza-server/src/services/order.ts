@@ -578,7 +578,7 @@ export default class OrderService extends MedusaOrderService {
     ): Promise<{ variants: ProductVariant[]; quantities: number[] }> {
         const orders: Order[] = await this.getOrdersWithItems([order]);
         const relevantItems: LineItem[] = orders[0].cart.items.filter(
-            (i) => i.variant.product.bucky_metadata
+            (i) => i.variant.product.external_metadata
         );
 
         return relevantItems?.length
@@ -812,10 +812,8 @@ export default class OrderService extends MedusaOrderService {
                 const { variants, quantities } =
                     await this.getBuckyProductVariantsFromOrder(order);
                 if (variants?.length) {
-                    order.bucky_metadata = { status: 'pending' };
+                    order.external_metadata = { status: 'pending' };
                     await this.orderRepository_.save(order);
-
-                    this.logger.debug('BUCKY CREATED ORDER');
                 }
             }
         } catch (e) {
