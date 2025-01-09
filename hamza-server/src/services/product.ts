@@ -835,6 +835,14 @@ class ProductFilterCache extends SeamlessCache {
                 return priceA - priceB; // Ascending order
             });
         }
+        else{
+            products = products.sort((a, b) => {
+                const rankA = a.display_rank ?? 0;
+                const rankB = b.display_rank ?? 0;
+                return rankB - rankA;
+            });
+        }
+
 
         return products;
     }
