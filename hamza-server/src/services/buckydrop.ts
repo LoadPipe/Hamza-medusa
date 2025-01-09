@@ -254,7 +254,12 @@ export default class BuckydropService extends TransactionBaseService {
             where: { id: orderId },
         });
 
-        if (order && order?.cart_id && order.external_metadata) {
+        if (
+            order &&
+            order?.cart_id &&
+            order.external_metadata &&
+            order.external_source === PRODUCT_EXTERNAL_SOURCE
+        ) {
             //get cart
             const cart: Cart = await this.cartService_.retrieve(order.cart_id, {
                 relations: ['billing_address.country', 'customer'],
@@ -310,6 +315,7 @@ export default class BuckydropService extends TransactionBaseService {
 
             //save the output
             order.external_metadata = output;
+            order.external_source = PRODUCT_EXTERNAL_SOURCE;
 
             order.status = output?.success
                 ? OrderStatus.PENDING
@@ -330,7 +336,10 @@ export default class BuckydropService extends TransactionBaseService {
         try {
             //get order & metadata
             let order: Order = await this.orderService_.retrieve(orderId);
-            const buckyData: any = order.external_metadata;
+            const buckyData: any =
+                order.external_source === PRODUCT_EXTERNAL_SOURCE
+                    ? order.external_metadata
+                    : null;
 
             if (
                 order &&
@@ -572,6 +581,7 @@ export default class BuckydropService extends TransactionBaseService {
     async getOrdersToVerify(): Promise<Order[]> {
         const where: FindOptionsWhere<Order> = {
             external_metadata: Not(IsNull()),
+            external_source: PRODUCT_EXTERNAL_SOURCE,
             status: OrderStatus.PENDING,
 
             payment_status: PaymentStatus.AWAITING,
@@ -615,6 +625,7 @@ export default class BuckydropService extends TransactionBaseService {
                 status: OrderStatus.PENDING,
                 payment_status: PaymentStatus.CAPTURED,
                 fulfillment_status: FulfillmentStatus.NOT_FULFILLED,
+                external_source: PRODUCT_EXTERNAL_SOURCE,
                 external_metadata: Not(IsNull()),
             },
         };

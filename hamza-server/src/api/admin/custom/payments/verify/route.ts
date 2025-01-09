@@ -45,6 +45,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         for (let item of orderPayments) {
             if (
                 item.order.external_metadata &&
+                item.order.external_source === 'buckydrop' &&
                 item.order.external_metadata.status === 'pending'
             ) {
                 item.order = await buckydropService.processPendingOrder(

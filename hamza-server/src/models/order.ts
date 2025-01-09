@@ -39,6 +39,9 @@ export class Order extends MedusaOrder {
     @Column()
     massmarket_amount?: string;
 
+    @Column()
+    external_source?: string;
+
     @Column('jsonb')
     external_metadata?: Record<string, unknown>;
 
