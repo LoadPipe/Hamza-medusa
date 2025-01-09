@@ -1,7 +1,11 @@
 import React from 'react';
-
+import { Flex, Box, Text } from '@chakra-ui/react';
 function CurrencySelector() {
-    return <div>index</div>;
+    return (
+        <Flex>
+            <Text color={'white'}>Currency</Text>
+        </Flex>
+    );
 }
 
 export default CurrencySelector;

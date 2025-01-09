@@ -21,6 +21,7 @@ import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { useEffect, useState } from 'react';
 import MainMenu from '../main-menu';
 import HnsDisplay from '../hns-display';
+import CurrencySelector from '../currency-selector';
 
 export const WalletConnectButton = () => {
     //Update zustand store with Wagmi hook when connected
@@ -126,6 +127,7 @@ export const WalletConnectButton = () => {
                                             </div>
                                         )}
                                     </button>
+                                    <CurrencySelector />
                                     <MainMenu />
                                     <AccountMenu />
                                 </Flex>
