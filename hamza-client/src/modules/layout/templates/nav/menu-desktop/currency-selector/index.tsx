@@ -42,7 +42,6 @@ const CurrencySelector = () => {
 
                 // Call the API to update the currency
                 await setCurrency(selectedCurrency, authData.customer_id);
-                console.log(`Currency updated to: ${selectedCurrency}`);
 
                 // Close the menu
                 onClose();
