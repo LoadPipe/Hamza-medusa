@@ -355,15 +355,6 @@ export default class OrderService extends MedusaOrderService {
         return order;
     }
 
-    async changeFulfillmentStatus(orderId: string, status: FulfillmentStatus) {
-        const order = await this.orderRepository_.findOne({
-            where: { id: orderId },
-        });
-        order.fulfillment_status = status;
-        await this.orderRepository_.save(order);
-        return order;
-    }
-
     async cancelOrderFromCart(cart_id: string) {
         await this.orderRepository_.update(
             { status: OrderStatus.REQUIRES_ACTION, cart: { id: cart_id } },
@@ -845,6 +836,16 @@ export default class OrderService extends MedusaOrderService {
                         cart.email,
                         items
                     );
+
+                //set fulfillment status to delivered
+                await this.setOrderStatus(
+                    order,
+                    null,
+                    FulfillmentStatus.FULFILLED,
+                    null,
+                    null,
+                    null
+                );
             } catch (e: any) {
                 this.logger.error(
                     `Error processing globetopper orders for order ${order.id}`,
