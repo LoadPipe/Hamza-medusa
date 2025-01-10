@@ -514,10 +514,24 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                             <div className="flex flex-col gap-y-4">
                                 {(productData.options || []).map(
                                     (option: any) => {
+                                    const updatedValues = option.values.map((val: any) => {
+                                        const matchingVariant = productData.variants.find(
+                                            (v: any) => v.id === val.variant_id
+                                        );
+
+                                        return {
+                                            ...val,
+                                            variant_rank: matchingVariant?.variant_rank ?? null, 
+                                        };
+                                    });
+                                    const augmentedOption = {
+                                            ...option,
+                                            values: updatedValues,
+                                        };
                                         return (
                                             <div key={option.id}>
                                                 <OptionSelect
-                                                    option={option}
+                                                    option={augmentedOption}           
                                                     current={options[option.id]}
                                                     updateOption={updateOptions}
                                                     title={option.title}
