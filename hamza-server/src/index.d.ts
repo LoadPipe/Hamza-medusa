@@ -45,6 +45,7 @@ export declare module '@medusajs/medusa/dist/models/store' {
         numberOfFollowers: number;
         icon: string;
         escrow_metadata?: Record<string, unknown>;
+        handle: string;
     }
 }
 
