@@ -108,16 +108,10 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
         finalSubtotal?.currency || preferred_currency_code || 'usdc';
 
     // TODO: when we set shipping / tax we can then enhance this...
-    let usdSubtotal: { currency: string; amount: number };
-    let usdGrandTotal: number = 0;
-
     // TODO: when we set shipping / tax we can then enhance this...
     // use convertCryptoPrice from eth to usd from seller
+    let usdGrandTotal: number = 0;
 
-    // if (preferred_currency_code === 'eth') {
-    //     usdSubtotal = getCartSubtotal(data, 'usdc');
-    //     usdGrandTotal = (usdSubtotal.amount ?? 0) + usdShippingCost + taxTotal;
-    // }
     return (
         <>
             {/* amounts */}
