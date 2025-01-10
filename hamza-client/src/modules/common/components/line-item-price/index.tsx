@@ -29,6 +29,8 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
         const totalItemAmount =
             item.subtotal ?? item.unit_price * item.quantity;
         const discountTotal = item.discount_total ?? null;
+
+        console.log('totalItemAmount', totalItemAmount);
         setPrice(totalItemAmount);
 
         // const findUsdcPrice = item?.variant?.prices.find(
@@ -45,7 +47,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
         ) {
             setHasReducedPrice(true);
         }
-    }, [item]);
+    }, [item, preferred_currency_code]);
 
     return (
         <div className="flex flex-col gap-x-1 text-ui-fg-subtle items-end">
