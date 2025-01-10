@@ -173,6 +173,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             storeService.createStore(
                 user0,
                 'Medusa Merch',
+                'medusa-merch',
                 'pcol_01HRVF8HCVY8B00RF5S54THTPC',
                 'https://medusa-public-images.s3.eu-west-1.amazonaws.com/sweatpants-gray-front.png',
                 500,
@@ -191,6 +192,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             storeService.createStore(
                 user1,
                 'Echo Rift',
+                'echo-rift',
                 'pcol_01HSGAM4918EX0DETKY6E662WT',
                 'https://images.hamza.market/headphones.webp',
                 200,
@@ -209,6 +211,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             storeService.createStore(
                 user2,
                 'Dauntless',
+                'dauntless',
                 'pcol_01HSGAMXDJD725MR3VSW631SN2',
                 'https://images.hamza.market/dalle_vr.webp',
                 450,
@@ -228,6 +231,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             storeService.createStore(
                 user3,
                 'Drones',
+                'drones',
                 'pcol_01HSGAMXDJD725MR3VSW631DR0',
                 'https://images.hamza.market/Drones/dji_mini_4_pro/dji_mini_pro_1.jpg',
                 720,
@@ -247,6 +251,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             storeService.createStore(
                 user4,
                 'Legos',
+                'legos',
                 'pcol_01HSGAMXDJD725MR3VSW63LEG0',
                 'https://images.hamza.market/Lego/corvette/corvette_1.jpg',
                 315,
@@ -265,6 +270,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             storeService.createStore(
                 user5,
                 'Board Games',
+                'board-games',
                 'pcol_01HSGAMXDJD725MR3VSW63B0RD',
                 'https://images.hamza.market/Board_Games/dark_souls/souls_1.jpg',
                 860,
@@ -283,6 +289,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             storeService.createStore(
                 user6,
                 'Workout Gear',
+                'workout-gear',
                 'pcol_01HSGAMXDJD725MR3VSW63W0GE',
                 'https://images.hamza.market/Workout/dumbbell/dumb_2.jpg',
                 580,
@@ -301,6 +308,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             storeService.createStore(
                 user7,
                 'Gaming Gear',
+                'gaming-gear',
                 'pcol_01HSGAMXDJD725MR3VSW63W0GA',
                 'https://images.hamza.market/gaming_store/6.1.png',
                 930,
@@ -319,6 +327,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             storeService.createStore(
                 user8,
                 'Shake',
+                'shake',
                 'pcol_shake',
                 'https://images.hamza.market/headphones.webp',
                 290,
@@ -337,6 +346,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             storeService.createStore(
                 user9,
                 'Legendary Light Design',
+                'legendary-light-design',
                 'pcol_lighting',
                 'https://images.hamza.market/Legendary/mood/LLD_mood1.webp',
                 670,
@@ -355,6 +365,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             storeService.createStore(
                 user10,
                 'Block',
+                'block',
                 'pcol_blocks',
                 'https://images.hamza.market/headphones.webp',
                 410,
@@ -373,6 +384,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             storeService.createStore(
                 user11,
                 'Gift Cards',
+                'gift-cards',
                 'pcol_giftcards',
                 'https://images.hamza.market/giftcards.webp',
                 110,

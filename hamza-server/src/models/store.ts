@@ -44,6 +44,9 @@ export class Store extends MedusaStore {
     @Column()
     icon: string;
 
+    @Column()
+    handle: string;
+
     get numberOfFollowers(): number {
         // Hard-coded value for now
         return 100;

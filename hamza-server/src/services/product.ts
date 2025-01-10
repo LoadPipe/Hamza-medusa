@@ -630,14 +630,21 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    async getProductsFromStoreName(storeName: string) {
+    async getProductsByStoreHandleOrName(identifier: string) {
         try {
-            const store = await this.storeRepository_.findOne({
-                where: { name: storeName },
+            let store = await this.storeRepository_.findOne({
+                where: { handle: identifier.toLowerCase() },
             });
 
+            // If not found by handle, try finding by name
             if (!store) {
-                return null;
+                 store = await this.storeRepository_.findOne({
+                    where: { name: identifier.replace(/(%20|%2D)/g, ' ') },
+                });
+
+                if (!store) {
+                    return null;
+                }
             }
 
             let totalReviews = 0;

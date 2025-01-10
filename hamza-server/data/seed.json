@@ -1,7 +1,8 @@
 {
     "store": {
         "currencies": ["eur", "usd", "eth", "usdc", "usdt"],
-        "default_currency_code": "eth"
+        "default_currency_code": "eth",
+        "handle":"medusa-store"
     },
     "users": [
         {
