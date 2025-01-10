@@ -390,6 +390,25 @@ export default class OrderService extends MedusaOrderService {
         });
     }
 
+    async getCustomerOrder(customerId: string, orderId: string, includePayments: boolean = false): Promise<Order> {
+        return this.orderRepository_.findOne({
+            where: {
+                customer_id: customerId,
+                status: Not(
+                    In([OrderStatus.ARCHIVED, OrderStatus.REQUIRES_ACTION])
+                ),
+            },
+            relations: includePayments
+                ? [
+                      'cart.items',
+                      'cart',
+                      'cart.items.variant.product',
+                      'payments',
+                  ]
+                : ['cart.items', 'cart', 'cart.items.variant.product'],
+        });
+    }
+
     async getCustomerOrderBuckets(
         customerId: string
     ): Promise<OrderBucketList> {
