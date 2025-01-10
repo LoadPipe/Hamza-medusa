@@ -30,7 +30,6 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
             item.subtotal ?? item.unit_price * item.quantity;
         const discountTotal = item.discount_total ?? null;
 
-        console.log('totalItemAmount', totalItemAmount);
         setPrice(totalItemAmount);
 
         // const findUsdcPrice = item?.variant?.prices.find(
