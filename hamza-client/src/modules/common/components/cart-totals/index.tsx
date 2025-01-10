@@ -1,16 +1,17 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { Flex, Text, Divider } from '@chakra-ui/react';
+import { Cart, Order, LineItem } from '@medusajs/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import React, { useEffect, useState } from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
+import { Flex, Text, Divider } from '@chakra-ui/react';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
-import { updateShippingCost } from '@lib/data';
 import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
+import { updateShippingCost } from '@lib/data';
 
 type CartTotalsProps = {
-    data: Cart | Order;
+    data: Omit<Cart, 'refundable_amount' | 'refunded_total'> | Order;
     useCartStyle: boolean;
 };
 
