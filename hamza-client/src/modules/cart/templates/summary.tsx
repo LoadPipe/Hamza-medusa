@@ -16,8 +16,6 @@ type SummaryProps = {
 const Summary = ({ cart }: SummaryProps) => {
     const isUpdating = useCartStore((state) => state.isUpdating);
 
-    console.log('summary cart page', cart);
-
     return (
         <Flex
             flexDir={'column'}
