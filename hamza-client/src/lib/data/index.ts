@@ -418,15 +418,17 @@ export async function getOrderBucket(customer_id: string) {
 //TODO: why is bucket a number?
 export async function getSingleBucket(
     customer_id: string,
-    bucket: number,
-    cart_id?: string
+    bucket?: number,
+    cart_id?: string,
+    order_id?: string
 ) {
     const response = await getSecure('/custom/order/customer-order', {
         customer_id,
         bucket,
         cart_id,
+        order_id,
     });
-    return response.orders;
+    return response ?? {};
 }
 
 export async function getNotReviewedOrders(customer_id: string) {
