@@ -118,7 +118,7 @@ export const ReleaseEscrowDialog = ({ order, escrowPayment }: { order: Order, es
                                 handleReleaseEscrow();
                             }}
                             isLoading={isLoading}
-                            // isDisabled={isReleased}
+                            isDisabled={isReleased}
                         >
                             {isReleased ? "Escrow Released" : "Release"}
                         </Button>

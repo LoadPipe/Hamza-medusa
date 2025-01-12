@@ -394,6 +394,7 @@ export default class OrderService extends MedusaOrderService {
         return this.orderRepository_.findOne({
             where: {
                 customer_id: customerId,
+                id: orderId,
                 status: Not(
                     In([OrderStatus.ARCHIVED, OrderStatus.REQUIRES_ACTION])
                 ),
@@ -404,6 +405,8 @@ export default class OrderService extends MedusaOrderService {
                       'cart',
                       'cart.items.variant.product',
                       'payments',
+                      'shipping_methods',
+                      'store'
                   ]
                 : ['cart.items', 'cart', 'cart.items.variant.product'],
         });

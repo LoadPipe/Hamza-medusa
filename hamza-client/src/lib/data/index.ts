@@ -430,7 +430,7 @@ export async function getSingleBucket(
         cart_id,
         order_id,
     });
-    return response ?? {};
+    return response;
 }
 
 export async function getNotReviewedOrders(customer_id: string) {

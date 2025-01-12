@@ -9,7 +9,6 @@ import { ReleaseEscrowDialog } from "../components/escrow/release-escrow-dialog"
 import EscrowStatus from "../components/order-overview/escrow-status";
 import { getEscrowPayment } from "@/utils/order-escrow";
 import { Order, PaymentDefinition } from "@/web3/contracts/escrow";
-import { Order as MedusaOrder } from "@medusajs/medusa";
 
 interface Customer {
 	id: string;
@@ -26,77 +25,106 @@ export const Escrow = () => {
 	const [customer, setCustomer] = useState<Customer | null>(null);
 	const [order, setOrder] = useState<Order | null>(null);
 	const [escrowPayment, setEscrowPayment] = useState<PaymentDefinition | null>(null);
-	const [hasFetchedOrder, setHasFetchedOrder] = useState(false);
-	const [hasFetchedOrderEscrow, setHasFetchedOrderEscrow] = useState(false);
+	const [customerExist, setCustomerExist] = useState<true | false | null>(null);
+	const [orderExist, setOrderExist] = useState<true | false | null>(null);
+	const [escrowPaymentExist, setEscrowPaymentExist] = useState<true | false | null>(null);
 
 	useEffect(() => {
-		if (hasFetchedOrder) return;
 		const fetchCustomerAndOrder = async () => {
 			try {
+					//customer
 				  const customer = await getHamzaCustomer(true);
-					setCustomer(customer);
-
-					if (customer) {
-						  const order = await getSingleBucket(customer.id, undefined, undefined, id as string);
-							setOrder(order);
+					if (!customer) {
+						setCustomerExist(false);
+						return;
 					}
+					setCustomerExist(true);
+					setCustomer(customer);
+					
+					//order
+					const order = await getSingleBucket(customer.id, undefined, undefined, id as string);			
+					if (!order) {
+						setOrderExist(false);
+						return;
+					}
+					setOrderExist(true);
+					setOrder(order);
+
+					// escrow payment
+					const escrowPayment = await getEscrowPayment(order);
+					if (!escrowPayment) {
+						setEscrowPaymentExist(false);
+					}
+					setEscrowPaymentExist(true);
+					setEscrowPayment(escrowPayment);
 			} catch (error) {
 				  console.error("Error fetching customer or order:", error);
-			} finally {
-				setHasFetchedOrder(true);
 			}
 		};
+
 		fetchCustomerAndOrder();
-	}, [id, order, customer, hasFetchedOrder]);
-
-	useEffect(() => {
-		if (!order) return;
-		if (escrowPayment) return;
-		if (hasFetchedOrderEscrow) return;
-		const fetchEscrowPayment = async () => {
-			try {
-				const escrow_payment = await getEscrowPayment(order);
-				console.log("escrow_payment: ", escrow_payment);
-				setEscrowPayment(escrow_payment);
-				setHasFetchedOrderEscrow(true);
-			} catch (error) {
-				console.error('Error fetching escrow payment:', error);
-			}
-		};
-		fetchEscrowPayment();
-	}, [order, escrowPayment, hasFetchedOrderEscrow]);
-
+	}, [id]);
+	
 	return (
-		<Flex
-				flexDir={'column'}
-				width={'100%'}
-				maxW={'1024px'}
-				mt="3rem"
-				mb="5rem"
-				mx="auto"
-				p={{ base: '16px', md: '40px' }}
-				borderRadius={'16px'}
-				color="white"
-				justifyContent={'center'}
-				alignItems={'center'}
-				backgroundColor={'#121212'}>
-					<Box
-						color="primary.green.900"
-						mb="1rem"
-						fontSize={{ base: '40px', md: '72px' }}>
-							<MdOutlineHandshake />
-					</Box>
-					<Text fontSize={'24px'} fontWeight={700}>
-							Escrow
-					</Text>
-					{/* {customer && customer.id} */}
-					{!order && <Text>Order loading...</Text>}
-					{order && order.id}
-					
-					{/* <OrderComponent order={order} /> */}
-					{order && escrowPayment && <ReleaseEscrowDialog order={order} escrowPayment={escrowPayment} />}
+        <Flex
+            flexDir={'column'}
+            width={'100%'}
+            maxW={'800px'}
+            mt="3rem"
+            mb="5rem"
+            mx="auto"
+            p={{ base: '16px', md: '40px' }}
+            borderRadius={'16px'}
+            color="white"
+            justifyContent={'center'}
+            alignItems={'center'}
+            backgroundColor={'#121212'}
+        >
+            <Box
+                color="primary.green.900"
+                mb="1rem"
+                fontSize={{ base: '40px', md: '72px' }}
+            >
+                <MdOutlineHandshake />
+            </Box>
+            <Text fontSize={'24px'} fontWeight={700}>
+                Escrow
+            </Text>
 
-					{escrowPayment && <EscrowStatus payment={escrowPayment} />}
-			</Flex>
-	);
+						{/* customer and order */}
+            {customerExist === null && <Text>Customer loading...</Text>}
+            {customerExist === false && <Text>Customer not found</Text>}
+
+            {orderExist === null && <Text>Order loading...</Text>}
+            {orderExist === false && <Text>Order not found</Text>}
+            {customerExist === true && orderExist === false && (
+                <Text>The order ({id}) does not belong to this customer</Text>
+            )}
+
+            {orderExist === true && order && order.id}
+            {orderExist === true && order && <OrderComponent order={order} />}
+
+						{/* escrow payment */}
+            {escrowPaymentExist === null && (
+                <Text>Escrow status loading...</Text>
+            )}
+            {orderExist === true && escrowPaymentExist === false && order && (
+                <Text>
+                    Order found for ({order.id}) but escrow payment not found
+                </Text>
+            )}
+            {orderExist === true &&
+                escrowPaymentExist === true &&
+                order &&
+                escrowPayment && (escrowPayment.payerReleased === false) && (
+                    <ReleaseEscrowDialog
+                        order={order}
+                        escrowPayment={escrowPayment}
+                    />
+                )}
+            {escrowPaymentExist === true && escrowPayment && (
+                <EscrowStatus payment={escrowPayment} />
+            )}
+        </Flex>
+    );
 };

@@ -1,9 +1,10 @@
-import { BigNumberish, ethers, keccak256 } from 'ethers';
+import { BigNumberish, ethers } from 'ethers';
 import { ITransactionOutput } from '..';
 import { getCurrencyAddress } from '../../currency.config';
 import { escrowMulticallAbi } from '../abi/escrow-multicall-abi';
 import { erc20abi } from '../abi/erc20-abi';
 import { escrowAbi } from '../abi/escrow-abi';
+import { Cart, Order as MedusaOrder, Payment as MedusaPayment, ShippingMethod, Store as MedusaStore } from '@medusajs/medusa';
 
 export type PaymentDefinition = {
     id: string;
@@ -38,15 +39,21 @@ interface BlockchainData {
 	chain_id: number;
 }
 
-export interface Payment {
-    created_at: string;
-	blockchain_data: BlockchainData;
+export interface Payment extends MedusaPayment {
+    blockchain_data: BlockchainData;
 }
 
-export interface Order {
-	id: string;
+export interface Store extends MedusaStore {
+    icon: string;
+}
+
+export interface Order extends MedusaOrder {
 	escrow_status: string;
 	payments: Payment[];
+    store: Store;
+    shipping_methods: ShippingMethod[];
+    cart: Cart;
+    histories: History[];
 }
 
 export class EscrowMulticallClient {
