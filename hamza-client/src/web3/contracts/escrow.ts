@@ -33,6 +33,22 @@ export type MulticallPaymentInput = {
     amount: BigNumberish;
 };
 
+interface BlockchainData {
+	escrow_address: string; //contract address
+	chain_id: number;
+}
+
+export interface Payment {
+    created_at: string;
+	blockchain_data: BlockchainData;
+}
+
+export interface Order {
+	id: string;
+	escrow_status: string;
+	payments: Payment[];
+}
+
 export class EscrowMulticallClient {
     contractAddress: string;
     contract: ethers.Contract;

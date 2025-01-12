@@ -8,12 +8,14 @@ import { useEffect, useState } from "react";
 import { ReleaseEscrowDialog } from "../components/escrow/release-escrow-dialog";
 import EscrowStatus from "../components/order-overview/escrow-status";
 import { getEscrowPayment } from "@/utils/order-escrow";
-import { PaymentDefinition } from "@/web3/contracts/escrow";
+import { Order, PaymentDefinition } from "@/web3/contracts/escrow";
+import { Order as MedusaOrder } from "@medusajs/medusa";
 
 interface Customer {
 	id: string;
 	// ... other properties
 }
+
 // TODO: need to get the escrow address and chain id for releasing
 // TODO: user must connect the chain id that belongs to the order?
 // TODO: the escrow contract is queried to make sure that the specified order exists in escrow, that it hasn’t yet been released, and that there is money to release
@@ -22,13 +24,15 @@ interface Customer {
 export const Escrow = () => {
 	const { id } = useParams();
 	const [customer, setCustomer] = useState<Customer | null>(null);
-	const [order, setOrder] = useState<any>(null);
+	const [order, setOrder] = useState<Order | null>(null);
 	const [escrowPayment, setEscrowPayment] = useState<PaymentDefinition | null>(null);
+	const [hasFetchedOrder, setHasFetchedOrder] = useState(false);
+	const [hasFetchedOrderEscrow, setHasFetchedOrderEscrow] = useState(false);
 
 	useEffect(() => {
+		if (hasFetchedOrder) return;
 		const fetchCustomerAndOrder = async () => {
 			try {
-				if (order) return;
 				  const customer = await getHamzaCustomer(true);
 					setCustomer(customer);
 
@@ -38,24 +42,29 @@ export const Escrow = () => {
 					}
 			} catch (error) {
 				  console.error("Error fetching customer or order:", error);
+			} finally {
+				setHasFetchedOrder(true);
 			}
 		};
 		fetchCustomerAndOrder();
-	}, [id, order, customer]);
+	}, [id, order, customer, hasFetchedOrder]);
 
 	useEffect(() => {
+		if (!order) return;
+		if (escrowPayment) return;
+		if (hasFetchedOrderEscrow) return;
 		const fetchEscrowPayment = async () => {
 			try {
-				if (!order) return;
 				const escrow_payment = await getEscrowPayment(order);
-				setEscrowPayment(escrow_payment);
 				console.log("escrow_payment: ", escrow_payment);
+				setEscrowPayment(escrow_payment);
+				setHasFetchedOrderEscrow(true);
 			} catch (error) {
 				console.error('Error fetching escrow payment:', error);
 			}
 		};
 		fetchEscrowPayment();
-	}, [order]);
+	}, [order, escrowPayment, hasFetchedOrderEscrow]);
 
 	return (
 		<Flex
@@ -85,7 +94,7 @@ export const Escrow = () => {
 					{order && order.id}
 					
 					{/* <OrderComponent order={order} /> */}
-					{order && <ReleaseEscrowDialog />}
+					{order && escrowPayment && <ReleaseEscrowDialog order={order} escrowPayment={escrowPayment} />}
 
 					{escrowPayment && <EscrowStatus payment={escrowPayment} />}
 			</Flex>

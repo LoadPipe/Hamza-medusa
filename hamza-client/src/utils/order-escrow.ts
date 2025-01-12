@@ -1,4 +1,5 @@
-import { EscrowClient, PaymentDefinition } from '@/web3/contracts/escrow';
+import { ITransactionOutput } from '@/web3';
+import { EscrowClient, Order, Payment, PaymentDefinition } from '@/web3/contracts/escrow';
 import { BigNumberish, ethers } from 'ethers';
 import { keccak256, toUtf8Bytes } from 'ethers';
 
@@ -15,30 +16,39 @@ import { keccak256, toUtf8Bytes } from 'ethers';
  *
  * @returns True if it was possible to make the contract call.
  */
-// export async function releaseEscrowPayment(order: any): Promise<void> {
-//     if (window.ethereum) {
-//         const escrow: EscrowClient = await createEscrowContract(order);
+export async function releaseEscrowPayment(
+    order: Order,
+    validateBy: 'seller' | 'buyer' | 'all' = 'all'
+): Promise<ITransactionOutput> {
+    if (window.ethereum) {
+        const escrow: EscrowClient = await createEscrowContract(order);
 
-//         try {
-//             const payment = await getEscrowPayment(order);
+        try {
+            const payment = await getEscrowPayment(order);
 
-//             //validate before releasing
-//             validatePaymentExists(payment, order.id);
-//             validatePaymentNotReleased(payment, order.id);
-//             validatePaymentNotReleasedBySeller(payment, order.id);
+            //validate before releasing
+            validatePaymentExists(payment, order.id);
+            if (validateBy === 'buyer' || validateBy === 'all') {
+                validatePaymentNotReleased(payment, order.id);
+            }
+            if (validateBy === 'seller' || validateBy === 'all') {
+                validatePaymentNotReleasedBySeller(payment, order.id);
+            }
+            
+            const releaseData = await escrow.releaseEscrow(
+                keccak256(toUtf8Bytes(order.id))
+            );
 
-//             await escrow.releaseEscrow(
-//                 keccak256(toUtf8Bytes(order.id))
-//             );
-//         } catch (error) {
-//             console.error('Error during escrow release:', error); // Log the error
-//             throw error; // Ensure the error is propagated
-//         }
-//     } else {
-//         console.error('No web3 provider available.'); // Log the missing provider error
-//         throw new Error('No web3 provider available.');
-//     }
-// }
+            return releaseData;
+        } catch (error) {
+            console.error('Error during escrow release:', error); // Log the error
+            throw error; // Ensure the error is propagated
+        }
+    } else {
+        console.error('No web3 provider available.'); // Log the missing provider error
+        throw new Error('No web3 provider available.');
+    }
+}
 
 /**
  *
@@ -54,38 +64,38 @@ import { keccak256, toUtf8Bytes } from 'ethers';
  *
  * @returns True if it was possible to make the contract call.
  */
-// export async function refundEscrowPayment(
-//     order: any,
-//     amount: BigNumberish
-// ): Promise<boolean | undefined> {
-//     if (window.ethereum) {
-//         try {
-//             const escrow: EscrowClient = await createEscrowContract(order);
+export async function refundEscrowPayment(
+    order: Order,
+    amount: BigNumberish
+): Promise<boolean | undefined> {
+    if (window.ethereum) {
+        try {
+            const escrow: EscrowClient = await createEscrowContract(order);
 
-//             if (escrow) {
-//                 const payment = await getEscrowPayment(order);
-//                 console.log(payment);
-//                 //validate before refunding
-//                 validatePaymentExists(payment, order.id);
-//                 validatePaymentNotReleased(payment, order.id);
-//                 validateRefundAmount(payment, order.id, amount);
+            if (escrow) {
+                const payment = await getEscrowPayment(order);
+                console.log(payment);
+                //validate before refunding
+                validatePaymentExists(payment, order.id);
+                validatePaymentNotReleased(payment, order.id);
+                validateRefundAmount(payment, order.id, amount);
 
-//                 await escrow.refundPayment(
-//                     keccak256(toUtf8Bytes(order.id)),
-//                     amount
-//                 );
-//                 return true;
-//             } else {
-//                 return false;
-//             }
-//         } catch (error) {
-//             throw error; // Ensure the error propagates to the caller
-//         }
-//     } else {
-//         // console.error('No web3 provider available.');
-//         throw new Error('No web3 provider available');
-//     }
-// }
+                await escrow.refundPayment(
+                    keccak256(toUtf8Bytes(order.id)),
+                    amount
+                );
+                return true;
+            } else {
+                return false;
+            }
+        } catch (error) {
+            throw error; // Ensure the error propagates to the caller
+        }
+    } else {
+        // console.error('No web3 provider available.');
+        throw new Error('No web3 provider available');
+    }
+}
 
 /**
  * Searches the order data for an escrow contract address.
@@ -93,11 +103,11 @@ import { keccak256, toUtf8Bytes } from 'ethers';
  * @param order Any Order object with payments.
  * @returns Address of escrow contract.
  */
-export function findEscrowDataFromOrder(order: any): {
+export function findEscrowDataFromOrder(order: Order): {
     address: string;
     chain_id: number;
 } {
-    order?.payments?.sort((a: any, b: any) => a.created_at < b.created_at);
+    order?.payments?.sort((a: Payment, b: Payment) => (a.created_at < b.created_at ? -1 : 1));
     return {
         address: order?.payments[0]?.blockchain_data?.escrow_address,
         chain_id: order?.payments[0]?.blockchain_data?.chain_id ?? 0,
@@ -110,7 +120,7 @@ export function findEscrowDataFromOrder(order: any): {
  * @param order Any Order object with payments.
  * @returns EscrowClient object.
  */
-async function createEscrowContract(order: any): Promise<EscrowClient> {
+async function createEscrowContract(order: Order): Promise<EscrowClient> {
     if (!window.ethereum) {
         throw new Error('No web3 provider available');
     }
@@ -140,7 +150,7 @@ async function createEscrowContract(order: any): Promise<EscrowClient> {
  * @returns PaymentDefinition
  */
 export async function getEscrowPayment(
-    order: any
+    order: Order
 ): Promise<PaymentDefinition | null> {
     if (window.ethereum) {
         try {

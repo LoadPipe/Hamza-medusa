@@ -32,8 +32,8 @@ function getEscrowStatus(payment: PaymentDefinition): string {
     return 'in escrow';
 }
 
-const EscrowStatus: React.FC<EscrowStatusProps> = ({ payment }) => {
-    const status = getEscrowStatus(payment);
+const EscrowStatus: React.FC<EscrowStatusProps> = ({ payment }: { payment: PaymentDefinition | null }) => {
+    const status = payment ? getEscrowStatus(payment) : '-';
 
     return (
         <div className="p-4 bg-[#242424] rounded-lg shadow-sm">
