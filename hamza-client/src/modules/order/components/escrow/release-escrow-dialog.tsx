@@ -1,7 +1,7 @@
 "use client";
 import { getEscrowPayment, releaseEscrowPayment } from '@/utils/order-escrow';
-import { getWalletAddress, getChainId } from '@/web3';
-import { EscrowPaymentDefinition, PaymentDefinition } from '@/web3/contracts/escrow';
+import { getChainId } from '@/web3';
+import { PaymentDefinition } from '@/web3/contracts/escrow';
 import {
     Modal,
     ModalOverlay,
@@ -11,17 +11,32 @@ import {
     ModalFooter,
     Button,
     useDisclosure,
-		useToast
+    useToast,
+    Flex,
+    ModalCloseButton,
+    Text
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { Order } from '@/web3/contracts/escrow';
 import { useSwitchNetwork } from 'wagmi';
 import { updateOrderEscrowStatus } from '@/lib/data';
+import { FaExclamationTriangle, FaQuestionCircle } from 'react-icons/fa';
 import { EscrowStatus } from '@/lib/data/enums';
+import GeneralModal from '../general-modal';
 
+class CustomError extends Error {
+    info?: any;
+
+    constructor(message?: string, info?: any) {
+        super(message);
+        this.name = "CustomError";
+        this.info = info;
+    }
+}
 
 export const ReleaseEscrowDialog = ({ order, escrowPayment }: { order: Order, escrowPayment: PaymentDefinition }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isReleased, setIsReleased] = useState(false);
     const toast = useToast();
@@ -81,11 +96,15 @@ export const ReleaseEscrowDialog = ({ order, escrowPayment }: { order: Order, es
         } catch (error) {
             setIsLoading(false);
             console.error('Error during escrow release:', error);
-            toast({
-                title: 'Error during escrow release',
-                description: error instanceof Error ? error.message : 'An unknown error occurred',
-                status: 'error',
-            });
+
+            const message = error instanceof CustomError ? (error.info?.error?.message || error.message) : 'An unknown error occurred';
+            setErrorMessage(message);
+
+            // toast({
+            //     title: 'Error during escrow release',
+            //     description: message,
+            //     status: 'error',
+            // });
         }
     }
 
@@ -100,31 +119,41 @@ export const ReleaseEscrowDialog = ({ order, escrowPayment }: { order: Order, es
             <Button mt="2rem" colorScheme="teal" onClick={onOpen}>
                 Release Escrow
             </Button>
-            <Modal isOpen={isOpen} onClose={onClose}>
-                <ModalOverlay />
-                <ModalContent>
-                <ModalHeader>Are you sure?</ModalHeader>
-                <ModalBody>
-                        Check your items before releasing the escrow.
-                </ModalBody>
-                <ModalFooter>
-                        <Button variant="ghost" onClick={onClose}>
-                            Cancel
-                        </Button>
-                        <Button
-                            colorScheme="teal"
-                            ml={3}
-                            onClick={() => {
-                                handleReleaseEscrow();
-                            }}
-                            isLoading={isLoading}
-                            isDisabled={isReleased}
-                        >
-                            {isReleased ? "Escrow Released" : "Release"}
-                        </Button>
-                </ModalFooter>
-                </ModalContent>
-            </Modal>
+
+            <GeneralModal
+                eventStatus={{ isLoading, isReleased }}
+                isOpen={isOpen}
+                onClose={onClose}
+                title="Are you sure?"
+                message="Please make sure you have received all your items, and have checked to make sure they are in good condition. Once you confirm, your crypto will be released to the seller."
+                icon={<FaQuestionCircle size={72} color="#94D42A" />}
+                leftButton={{
+                    text: "Cancel",
+                    function: onClose
+                }}
+                rightButton={{
+                    text: isReleased ? "Escrow Released" : "Release Now",
+                    function: handleReleaseEscrow
+                }}
+            />
+
+            <GeneralModal
+                isOpen={!!errorMessage}
+                onClose={() => {
+                    setErrorMessage(null);
+                    onClose();
+                }}
+                title="Error"
+                message={errorMessage || ''}
+                icon={<FaExclamationTriangle size={72} color="#FF4500" />}
+                rightButton={{
+                    text: "Close",
+                    function: () => {
+                        setErrorMessage(null);
+                        onClose();
+                    }
+                }}
+            />
         </>
     );
 };

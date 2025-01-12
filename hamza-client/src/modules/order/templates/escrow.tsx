@@ -53,8 +53,9 @@ export const Escrow = () => {
 					// escrow payment
 					const escrowPayment = await getEscrowPayment(order);
 					if (!escrowPayment) {
-						setEscrowPaymentExist(false);
+                        setEscrowPaymentExist(false);
 					}
+                    console.log("escrowPayment: ", escrowPayment);
 					setEscrowPaymentExist(true);
 					setEscrowPayment(escrowPayment);
 			} catch (error) {
