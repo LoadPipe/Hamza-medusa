@@ -48,47 +48,61 @@ const HeroSlider: React.FC = () => {
     if (isLoading) {
         return (
             <Flex
+                mt={{ base: '-5rem', md: '0' }}
                 maxW="1280px"
-                height="470px"
+                height={{ base: '300px', md: '625px' }}
                 justifyContent="space-between"
                 flexDir="row"
-                px="50px"
+                px={{ base: '1rem', md: '50px' }}
                 py="62px"
                 mx="auto"
                 position="relative"
+                bgSize="cover"
+                bgPosition="center"
+                bgRepeat="no-repeat"
+                borderRadius="24px"
             >
-                {/* Skeleton for Left Section */}
-                <Flex width="50%" flexDir="column" gap={4}>
-                    <Skeleton height="60px" width="80%" />
-                    <Skeleton height="24px" width="90%" />
+                {/* Skeleton Left Section */}
+                <Flex
+                    width={{ base: '100%', md: '50%' }}
+                    flexDir="column"
+                    mt="4rem"
+                    gap={5}
+                >
+                    {/* Large Heading */}
+                    <Skeleton
+                        height={{ base: '24px', md: '56px' }}
+                        width="80%"
+                    />
+
+                    {/* Subheading */}
+                    <Skeleton
+                        height={{ base: '12px', md: '24px' }}
+                        width="90%"
+                    />
+
+                    {/* Paragraph Text */}
                     <SkeletonText
                         mt="4"
                         noOfLines={3}
                         spacing="4"
-                        skeletonHeight="24px"
+                        skeletonHeight={{ base: '12px', md: '20px' }}
                     />
-                    <Flex flexDir="row" gap={4} mt="2rem">
-                        <Skeleton
-                            height="48px"
-                            width="150px"
-                            borderRadius="full"
-                        />
-                        <Skeleton
-                            height="48px"
-                            width="150px"
-                            borderRadius="full"
-                        />
-                    </Flex>
                 </Flex>
 
-                {/* Skeleton for Right Section */}
+                {/* Skeleton Right Section */}
                 <Flex
+                    display={{ base: 'none', md: 'flex' }}
                     width="50%"
                     position="relative"
                     justifyContent="center"
                     alignItems="center"
                 >
-                    <Skeleton height="400px" width="400px" borderRadius="lg" />
+                    <Skeleton
+                        height={{ base: '200px', md: '295px' }}
+                        width={{ base: '100%', md: '50%' }}
+                        borderRadius="16px"
+                    />
                 </Flex>
             </Flex>
         );
