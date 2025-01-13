@@ -115,7 +115,7 @@ async function axiosCall(
     }
 }
 
-async function get(
+export async function get(
     url: string,
     params: any = null,
     requiresSecurity: boolean = false,

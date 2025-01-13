@@ -2,7 +2,10 @@
 
 import Image from 'next/image';
 import { Cart, Order, LineItem } from '@medusajs/medusa';
-import { formatCryptoPrice } from '@lib/util/get-product-price';
+import {
+    convertCryptoPrice,
+    formatCryptoPrice,
+} from '@lib/util/get-product-price';
 import React, { useEffect, useState } from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { Flex, Text, Divider, Spinner } from '@chakra-ui/react';
@@ -106,11 +109,6 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
     const grandTotal = (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
     const displayCurrency =
         finalSubtotal?.currency || preferred_currency_code || 'usdc';
-
-    // TODO: when we set shipping / tax we can then enhance this...
-    // TODO: when we set shipping / tax we can then enhance this...
-    // use convertCryptoPrice from eth to usd from seller
-    let usdGrandTotal: number = 0;
 
     return (
         <>
@@ -254,7 +252,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                                             fontWeight={700}
                                             textAlign="right"
                                         >
-                                            {`≅ $ ${formatCryptoPrice(usdGrandTotal, 'usdc')} USDC`}
+                                            {`≅ $ ${convertCryptoPrice(grandTotal, 'eth', 'usdc')} USDC`}
                                         </Text>
                                     </Flex>
                                 ) : (
@@ -273,7 +271,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                                             fontWeight={600}
                                             textAlign="right"
                                         >
-                                            {`≅ $ ${formatCryptoPrice(usdGrandTotal, 'usdc')} USDC`}
+                                            {`≅ $ ${convertCryptoPrice(grandTotal, 'eth', 'usdc')} USDC`}
                                         </Text>
                                     </Flex>
                                 ))}
