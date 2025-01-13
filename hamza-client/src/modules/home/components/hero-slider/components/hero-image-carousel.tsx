@@ -68,7 +68,7 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
         <Flex width="100%" flexDir="column" alignSelf="center" gap={4} p={4}>
             {/* Featured Product Title */}
             <Flex flexDir="row" gap={2}>
-                <Text color="white">Featured Product:</Text>
+                <Text color="#A0A0A0">Featured Product:</Text>
                 <Text
                     color="primary.green.900"
                     onClick={handleClick}
@@ -150,7 +150,7 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
             </Flex>
 
             {/* Sale Text */}
-            <Text color="white" fontStyle="italic">
+            <Text color="#A0A0A0" fontStyle="italic">
                 The product is on sale. Buy now and grab a great discount!
             </Text>
         </Flex>
