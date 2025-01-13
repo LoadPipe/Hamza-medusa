@@ -60,7 +60,7 @@ export const darkThemeConfig = darkTheme({
 const EXTRA_LOGGING = false;
 
 //import Polygon testnet
-const polygonAmoy: Chain = {
+const amoy: Chain = {
     id: 80002,
     name: 'Polygon Amoy',
     network: 'Polygon Amoy',
@@ -96,9 +96,11 @@ if (allowedChains.length === 0) {
     allowedChains.push('sepolia');
 } else {
     const chainConfig = {
-        sepolia: sepolia,
         optimism: optimism,
         polygon: polygon,
+        mainnet: mainnet,
+        sepolia: sepolia,
+        amoy: amoy,
     };
 
     wagmiChains = allowedChains.map(
