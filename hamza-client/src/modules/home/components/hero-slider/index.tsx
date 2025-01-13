@@ -114,10 +114,10 @@ const HeroSlider: React.FC = () => {
     return (
         <Flex
             maxW="1280px"
-            height="685px"
+            height={{ base: '354px', md: '685px' }}
             justifyContent="space-between"
             flexDir="row"
-            px="50px"
+            px={{ base: '1rem', md: '50px' }}
             py="62px"
             mx="auto"
             position="relative"
@@ -151,12 +151,19 @@ const HeroSlider: React.FC = () => {
                     intermediaries, powered by blockchain. Join us in
                     revolutionizing digital trade.
                 </Text>
-                <Flex flexDir="row" gap={4} mt="2rem">
+                <Flex
+                    flexDir="row"
+                    justifyContent={{ base: 'center', md: 'unset' }}
+                    gap={4}
+                    mt={{ base: '1rem', md: '2rem' }}
+                >
                     <Link href="/shop" passHref>
                         <Button
                             backgroundColor={'transparent'}
                             borderColor={'primary.green.900'}
                             borderWidth={2}
+                            height={{ base: '41px', md: '44px' }}
+                            fontSize={{ base: '12px', md: '16px' }}
                             color={'primary.green.900'}
                             _hover={{ opacity: 0.5 }}
                             rounded="full"
@@ -167,6 +174,8 @@ const HeroSlider: React.FC = () => {
                     <Button
                         backgroundColor={'primary.green.900'}
                         rounded="full"
+                        height={{ base: '41px', md: '44px' }}
+                        fontSize={{ base: '12px', md: '16px' }}
                         _hover={{ opacity: 0.5 }}
                     >
                         Sell on Hamza
