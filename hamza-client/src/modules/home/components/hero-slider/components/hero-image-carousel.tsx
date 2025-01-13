@@ -95,13 +95,13 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                 <ChakraImage
                     src={imgSrc}
                     alt={categoryTitle}
-                    flexShrink={1} // Allow the image to shrink proportionally
-                    objectFit="cover" // Ensure the image fills the container while maintaining proportions
-                    height="100%" // Match the card's height
-                    width={{ base: '100%', md: '50%' }} // Shrink proportionally with the card
-                    minWidth="150px" // Prevent the image from shrinking too small
+                    flexShrink={1}
+                    objectFit="cover"
+                    height="100%"
+                    width={{ base: '100%', md: '50%' }}
+                    minWidth="150px"
                     bgColor="transparent"
-                    borderLeftRadius={{ md: '16px' }} // Apply border radius on larger screens
+                    borderLeftRadius={{ md: '16px' }}
                     cursor="pointer"
                     onClick={handleClick}
                 />
