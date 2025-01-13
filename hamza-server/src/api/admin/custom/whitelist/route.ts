@@ -5,10 +5,11 @@ import StoreService from '../../../../services/store';
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const storeService: StoreService = req.scope.resolve('storeService');
-    const whitelistService: WhiteListService = req.scope.resolve('whitelistService');
+    const whitelistService: WhiteListService =
+        req.scope.resolve('whitelistService');
 
     const setUpWhitelist = async (storeName: string) => {
-        const store = await storeService.getStoreByName(storeName);
+        const store = await storeService.getStoreByHandleOrName(storeName);
         const whitelistAddresses = [
             '0x8bA35513C3F5ac659907D222e3DaB38b20f8F52A',
         ];
@@ -16,14 +17,19 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         console.log(store.id);
 
         if (store) {
-            await Promise.all(whitelistAddresses.map(a => {
-                return whitelistService.create(store.id, a)
-            }));
+            await Promise.all(
+                whitelistAddresses.map((a) => {
+                    return whitelistService.create(store.id, a);
+                })
+            );
         }
     };
 
     const handler: RouteHandler = new RouteHandler(
-        req, res, 'GET', '/admin/custom/whitelist'
+        req,
+        res,
+        'GET',
+        '/admin/custom/whitelist'
     );
 
     await handler.handle(async () => {

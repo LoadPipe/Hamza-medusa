@@ -10,7 +10,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     await handler.handle(async () => {
         if (!handler.requireParam('store_name')) return;
 
-        const store = await storeService.getStoreByName(
+        const store = await storeService.getStoreByHandleOrName(
             handler.inputParams.store_name
         );
         if (!store)
