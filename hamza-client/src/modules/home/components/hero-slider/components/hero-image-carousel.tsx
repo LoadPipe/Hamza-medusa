@@ -32,6 +32,38 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
 
     const { preferred_currency_code } = useCustomerAuthStore();
 
+    // Function to check if a string contains HTML tags
+    const isHTML = (str: string): boolean => {
+        const doc = new DOMParser().parseFromString(str, 'text/html');
+        return Array.from(doc.body.childNodes).some(
+            (node) => node.nodeType === 1
+        ); // Node type 1 = Element
+    };
+
+    // Function to extract the first <p> element's content from the description HTML
+    const extractFirstParagraph = (htmlContent: string): string => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(htmlContent, 'text/html');
+        const firstParagraph = doc.querySelector('p');
+        return firstParagraph ? firstParagraph.innerHTML : '';
+    };
+
+    // Handle description rendering
+    const renderDescription = () => {
+        if (isHTML(description)) {
+            const firstParagraph = extractFirstParagraph(description);
+            return (
+                <span
+                    dangerouslySetInnerHTML={{
+                        __html: firstParagraph || 'No description available.',
+                    }}
+                />
+            );
+        }
+        // For plain text descriptions
+        return description || 'No description available.';
+    };
+
     return (
         <Flex width="100%" flexDir="column" alignSelf="center" gap={4} p={4}>
             {/* Featured Product Title */}
@@ -83,7 +115,7 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                     justifyContent="center"
                 >
                     <Text color="white" noOfLines={4}>
-                        {description}
+                        {renderDescription()}
                     </Text>
 
                     {/* Price */}
