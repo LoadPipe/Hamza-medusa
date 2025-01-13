@@ -1,9 +1,8 @@
 import axios, { AxiosInstance } from 'axios';
 import { createHash } from 'crypto';
-import { BuckyLogRepository } from 'src/repositories/bucky-log';
+import { ExternalApiLogRepository } from 'src/repositories/external-api-log';
 import { generateEntityId, Logger } from '@medusajs/medusa';
-import { BuckyLog } from 'src/models/bucky-log';
-
+import { ExternalApiLog } from 'src/models/external-api-log';
 
 export interface CancelOrderParams {
     partnerOrderNo?: string;
@@ -66,12 +65,12 @@ export interface IBuckyShippingCostRequest {
 
 export class BuckyClient {
     private client: AxiosInstance;
-    protected readonly buckyLogRepository: typeof BuckyLogRepository;
+    protected readonly externalApiLogRepository: typeof ExternalApiLogRepository;
     protected readonly BUCKY_URL: string;
     protected readonly APP_CODE: string;
     protected readonly APP_SECRET: string;
 
-    constructor(buckyLogRepository: typeof BuckyLogRepository) {
+    constructor(externalApiLogRepository: typeof ExternalApiLogRepository) {
         this.BUCKY_URL = process.env.BUCKY_URL || 'https://dev.buckydrop.com';
         this.APP_CODE = process.env.BUCKY_APP_CODE || '0077651952683977';
         this.APP_SECRET =
@@ -85,25 +84,16 @@ export class BuckyClient {
             },
             timeout: 13000,
         });
-        this.buckyLogRepository = buckyLogRepository;
+        this.externalApiLogRepository = externalApiLogRepository;
     }
 
     private async post(url: string, params: any): Promise<any> {
         url = this.formatApiUrl(url, JSON.stringify(params));
 
-        const logRecord = await this.saveLogInput(
-            url,
-            params,
-            null,
-            null
-        );
+        const logRecord = await this.saveLogInput(url, params, null, null);
 
         const output = await this.client
-            .post(
-                url,
-                params,
-                { timeout: 600000 }
-            )
+            .post(url, params, { timeout: 600000 })
             .then((response) => response.data)
             .catch((error) => {
                 throw error;
@@ -129,12 +119,13 @@ export class BuckyClient {
         currentPage: number = 1,
         pageSize: number = 10
     ): Promise<any[]> {
-
-        return (await this.post('product/search', {
-            curent: currentPage, // Note the typo "curent" should be "current" if API docs are correct
-            size: pageSize,
-            item: { keyword: keyword },
-        }))?.data?.records;
+        return (
+            await this.post('product/search', {
+                curent: currentPage, // Note the typo "curent" should be "current" if API docs are correct
+                size: pageSize,
+                item: { keyword: keyword },
+            })
+        )?.data?.records;
     }
 
     async searchProductByImage(
@@ -142,7 +133,6 @@ export class BuckyClient {
         currentPage = 1,
         pageSize = 10
     ): Promise<any> {
-
         const params = JSON.stringify({
             curent: currentPage,
             size: pageSize,
@@ -196,9 +186,11 @@ export class BuckyClient {
     async getShippingCostEstimate(
         item: IBuckyShippingCostRequest
     ): Promise<any> {
-        return this.post('/logistics/channel-carriage-list', { size: 10, item });
+        return this.post('/logistics/channel-carriage-list', {
+            size: 10,
+            item,
+        });
     }
-
 
     private formatApiUrl(route: string, params: any = {}): string {
         route = route.trim();
@@ -223,17 +215,17 @@ export class BuckyClient {
         input: any,
         output: any,
         context: any
-    ): Promise<BuckyLog> {
+    ): Promise<ExternalApiLog> {
         try {
             const entry = {
                 endpoint,
+                api_source: 'buckydrop',
                 input,
                 output,
                 context,
-                timestamp: Date.now(), // ISO formatted timestamp
                 id: generateEntityId(),
             };
-            const record = await this.buckyLogRepository?.save(entry);
+            const record = await this.externalApiLogRepository?.save(entry);
             return record;
         } catch (e) {
             console.error(e);
@@ -243,9 +235,9 @@ export class BuckyClient {
     }
 
     //TODO: need logger also
-    private async saveLogOutput(record: BuckyLog): Promise<void> {
+    private async saveLogOutput(record: ExternalApiLog): Promise<void> {
         try {
-            await this.buckyLogRepository?.save(record);
+            await this.externalApiLogRepository?.save(record);
         } catch (e) {
             console.error(e);
         }

@@ -67,7 +67,7 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
     const getVendorPage = async () => {
         try {
             console.log(`Display Slug is ${displaySlug}`);
-            const response = await getVendorStoreBySlug(displaySlug);
+            const response = await getVendorStoreBySlug(params.slug);
             if (
                 response &&
                 JSON.stringify(response) !== JSON.stringify(reviewStats)
