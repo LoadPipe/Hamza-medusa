@@ -86,16 +86,28 @@ const polygonAmoy: Chain = {
     testnet: true,
 };
 
-const chainConfig: Record<'production' | 'development', Chain[]> = {
-    production: [optimism, polygon, mainnet],
-    development: [sepolia, polygonAmoy],
-};
+let wagmiChains: Chain[] = [];
 
-const allowedChains =
-    chainConfig[process.env.NODE_ENV as keyof typeof chainConfig] || [];
+const allowedChains = (process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS ?? '').split(
+    ','
+);
+
+if (allowedChains.length === 0) {
+    allowedChains.push('sepolia');
+} else {
+    const chainConfig = {
+        sepolia: sepolia,
+        optimism: optimism,
+        polygon: polygon,
+    };
+
+    wagmiChains = allowedChains.map(
+        (c) => chainConfig[c as keyof typeof chainConfig]
+    );
+}
 
 export const { chains, publicClient, webSocketPublicClient } = configureChains(
-    allowedChains,
+    wagmiChains,
     [
         alchemyProvider({
             apiKey: ALCHEMY_API_KEY,
