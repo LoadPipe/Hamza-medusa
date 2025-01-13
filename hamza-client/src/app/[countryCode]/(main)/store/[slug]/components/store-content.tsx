@@ -40,7 +40,7 @@ import { Metadata } from 'next';
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
 export default function StoreContent({ params }: { params: { slug: string } }) {
-    const displaySlug = capitalizeSlug(params.slug);
+    const displaySlug = params.slug?.trim(); //capitalizeSlug(params.slug);
     const [reviewStats, setReviewStats] = useState({
         reviewCount: 0,
         reviews: [],

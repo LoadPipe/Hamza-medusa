@@ -91,11 +91,31 @@ class StoreService extends MedusaStoreService {
         return super.update(data);
     }
 
-    async getStoreByName(store_name: string): Promise<Store> {
+    /**
+     * @deprecated use getStoreByHandleOrName
+     */
+    async getStoreByName(storeName: string): Promise<Store> {
         const storeRepo = this.manager_.withRepository(this.storeRepository_);
-        const store = await storeRepo.findOneBy({ name: store_name });
+        const store = await storeRepo.findOneBy({ name: storeName });
         if (!store) {
-            throw new Error(`Store with name ${store_name} not found`);
+            throw new Error(`Store with name ${storeName} not found`);
+        }
+        return store;
+    }
+
+    async getStoreByHandleOrName(storeHandleOrName: string): Promise<Store> {
+        const storeRepo = this.manager_.withRepository(this.storeRepository_);
+        let store = await storeRepo.findOneBy({ handle: storeHandleOrName });
+
+        console.log('store by handle:', store, storeHandleOrName);
+
+        if (!store) {
+            store = await storeRepo.findOneBy({ name: storeHandleOrName });
+            if (!store) {
+                throw new Error(
+                    `Store with handle or name ${storeHandleOrName} not found`
+                );
+            }
         }
         return store;
     }
