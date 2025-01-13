@@ -50,7 +50,10 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
             {/* Image and Content */}
             <Flex
                 borderRadius="16px"
-                maxWidth="100%"
+                w="100%" // Ensure the card takes full width of the container
+                maxW="622px" // Restrict the maximum width
+                h="295px" // Set a fixed height to ensure it appears
+                maxH="295px" // Restrict the maximum height
                 bgColor="#121212"
                 overflow="hidden"
                 flexDir={{ base: 'column', md: 'row' }} // Stack on small screens
@@ -60,18 +63,18 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                 <ChakraImage
                     src={imgSrc}
                     alt={categoryTitle}
-                    flexShrink={0} // Prevent the image from shrinking unnaturally
+                    flexShrink={1} // Allow the image to shrink proportionally
                     objectFit="cover" // Ensure the image fills the container while maintaining proportions
-                    height={{ base: '200px', md: '295px' }} // Consistent height across images
-                    width={{ base: '100%', md: 'auto' }} // Shrinks width as needed
-                    maxWidth={{ md: '295px' }} // Limit width to maintain balance
+                    height="100%" // Match the card's height
+                    width={{ base: '100%', md: '50%' }} // Shrink proportionally with the card
+                    minWidth="150px" // Prevent the image from shrinking too small
                     bgColor="transparent"
                     borderLeftRadius={{ md: '16px' }} // Apply border radius on larger screens
                     cursor="pointer"
                     onClick={handleClick}
                 />
 
-                {/* Content */}
+                {/* Description */}
                 <Flex
                     flex="1"
                     flexDir="column"
@@ -79,7 +82,6 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                     gap={3}
                     justifyContent="center"
                 >
-                    {/* Description */}
                     <Text color="white" noOfLines={4}>
                         {description}
                     </Text>
@@ -98,7 +100,7 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                         </Text>
                     </Flex>
 
-                    {/* Category Tag */}
+                    {/* Title */}
                     <Box
                         bgColor="#272727"
                         borderRadius="full"
