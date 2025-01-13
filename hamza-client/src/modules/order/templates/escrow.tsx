@@ -1,5 +1,5 @@
 "use client"
-import { Button, Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { MdOutlineHandshake } from "react-icons/md";
 import { OrderComponent } from "@/modules/order/components/order-overview/order-component";
 import { useParams } from 'next/navigation';
@@ -10,8 +10,7 @@ import EscrowStatus from "../components/order-overview/escrow-status";
 import { getEscrowPayment } from "@/utils/order-escrow";
 import { Order, PaymentDefinition } from "@/web3/contracts/escrow";
 import { useAccount } from 'wagmi';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import Loading from "@/app/[countryCode]/(main)/account/loading";
+import { ModalCoverWalletConnect } from "@/modules/common/components/modal-cover-wallet-connect";
 
 interface Customer {
 	id: string;
@@ -33,7 +32,7 @@ export const Escrow = () => {
 	const [escrowPaymentExist, setEscrowPaymentExist] = useState<true | false | null>(null);
     const [isClient, setIsClient] = useState(false); // New state to track client-side rendering
 
-    const { isConnected, status } = useAccount();
+    const { isConnected } = useAccount();
 
     useEffect(() => {
         setIsClient(true); // Set to true when the component is mounted on the client
@@ -80,7 +79,13 @@ export const Escrow = () => {
 	}, [id, isConnected]);
 	
     if (!isClient) {
-        return <LoginBox isClient={isClient} />; // Render nothing on the server
+        return (
+            <ModalCoverWalletConnect
+                title="Proceed to Escrow"
+                message="To view escrow details, please connect your wallet"
+                pageIsLoading={isClient}
+            />
+        ); // Render nothing on the server
     } 
 
 	return (
@@ -99,7 +104,11 @@ export const Escrow = () => {
             backgroundColor={'#121212'}
         >
             {!isConnected ? (
-                <LoginBox isClient={isClient} />
+                <ModalCoverWalletConnect
+                    title="Proceed to Escrow"
+                    message="To view escrow details, please connect your wallet"
+                    pageIsLoading={isClient}
+                />
             ) : (
                 <>
                     <Box
@@ -155,65 +164,3 @@ export const Escrow = () => {
     );
 };
 
-const LoginBox = ({ isClient }: { isClient: boolean }) => {
-    return (
-        <Box
-            position="fixed"
-            top="0"
-            left="0"
-            width="100vw"
-            height="100vh"
-            zIndex="9999"
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            backgroundColor="#040404"
-            color={'white'}
-            flexDirection={'column'}
-        >
-            <Flex
-                flexDir={'column'}
-                justifyContent={'center'}
-                alignItems={'center'}
-                borderRadius={'12px'}
-                gap={5}
-                backgroundColor={'#121212'}
-                height={'400px'}
-                width={'500px'}
-            >
-                <Text
-                    color={'white'}
-                    fontSize={'24px'}
-                >
-                    Proceed to Escrow
-                </Text>
-                <Text
-                    color={'white'}
-                    textAlign={'center'}
-                >
-                    To view escrow details, please connect your wallet
-                </Text>
-                <ConnectButton.Custom>
-                    {({ openConnectModal, authenticationStatus }) => {
-                        if (authenticationStatus === 'unauthenticated' && isClient) {
-                            return (
-                                <Button
-                                    borderRadius={'30px'}
-                                    backgroundColor={'primary.green.900'}
-                                    onClick={openConnectModal}
-                                    ml="1rem"
-                                    height="54px"
-                                    fontSize={'20px'}
-                                >
-                                    Connect Wallet
-                                </Button>
-                            );
-                        } else {
-                            return <Loading style={{ padding: 0, margin: 0, height: '50px' }} />;
-                        }
-                    }}
-                </ConnectButton.Custom>
-            </Flex>
-        </Box>
-    );
-};

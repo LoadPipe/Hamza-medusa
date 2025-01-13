@@ -22,7 +22,7 @@ import { useSwitchNetwork } from 'wagmi';
 import { updateOrderEscrowStatus } from '@/lib/data';
 import { FaExclamationTriangle, FaQuestionCircle } from 'react-icons/fa';
 import { EscrowStatus } from '@/lib/data/enums';
-import GeneralModal from '../general-modal';
+import GeneralModal from '../../../common/components/modal-confirm';
 
 class CustomError extends Error {
     info?: any;
