@@ -4,7 +4,7 @@ import { getCurrencyAddress } from '../../currency.config';
 import { escrowMulticallAbi } from '../abi/escrow-multicall-abi';
 import { erc20abi } from '../abi/erc20-abi';
 import { escrowAbi } from '../abi/escrow-abi';
-import { Cart, Order as MedusaOrder, Payment as MedusaPayment, ShippingMethod, Store as MedusaStore } from '@medusajs/medusa';
+import { Cart, Order as MedusaOrder, Payment as MedusaPayment, ShippingMethod, Store as MedusaStore, LineItem } from '@medusajs/medusa';
 
 export type PaymentDefinition = {
     id: string;
@@ -52,8 +52,8 @@ export interface Order extends MedusaOrder {
 	payments: Payment[];
     store: Store;
     shipping_methods: ShippingMethod[];
-    cart: Cart;
-    histories: History[];
+    items: LineItem[];
+    histories: any[];
 }
 
 export class EscrowMulticallClient {

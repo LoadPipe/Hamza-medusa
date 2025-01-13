@@ -3,7 +3,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import { MdOutlineHandshake } from "react-icons/md";
 import { OrderComponent } from "@/modules/order/components/order-overview/order-component";
 import { useParams } from 'next/navigation';
-import { getHamzaCustomer, getSingleBucket } from "@/lib/data";
+import { getCustomerOrder, getHamzaCustomer } from "@/lib/data";
 import { useEffect, useState } from "react";
 import { ReleaseEscrowDialog } from "../components/escrow/release-escrow-dialog";
 import EscrowStatus from "../components/order-overview/escrow-status";
@@ -57,7 +57,8 @@ export const Escrow = () => {
 				setCustomer(customer);
 
 				// Fetch order
-				const order = await getSingleBucket(customer.id, undefined, undefined, id as string);
+                const order = await getCustomerOrder(customer.id, id as string);
+                console.log("Order: ", order);
 				setOrderExist(!!order);
 				if (!order) {
                     setEscrowPaymentExist(false);

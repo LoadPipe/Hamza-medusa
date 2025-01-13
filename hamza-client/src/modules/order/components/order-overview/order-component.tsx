@@ -47,7 +47,7 @@ export const OrderComponent = ({ order }: { order: Order }) => {
         router.push('/checkout');
     };
 
-    const subTotal = order.cart.items.reduce(
+    const subTotal = order.items.reduce(
         (acc: number, item: LineItem) => acc + item.unit_price * item.quantity,
         0
     );
@@ -56,7 +56,7 @@ export const OrderComponent = ({ order }: { order: Order }) => {
         <>
             {order && (
                 <Flex key={order.id} direction="column" width="100%">
-                    {order.cart.items?.map((item: any, index: number) => (
+                    {order.items?.map((item: any, index: number) => (
                         <div key={item.id}>
                             {index === 0 ? (
                                 <DynamicOrderStatus
@@ -90,7 +90,7 @@ export const OrderComponent = ({ order }: { order: Order }) => {
                                     subTotal={subTotal}
                                     currencyCode={item.currency_code}
                                     index={index}
-                                    itemCount={order.cart.items.length - 1}
+                                    itemCount={order.items.length - 1}
                                     paymentTotal={order.payments[0]}
                                 />
                                 <Flex
@@ -102,7 +102,7 @@ export const OrderComponent = ({ order }: { order: Order }) => {
                                     mt={{ base: 4, md: 0 }}
                                     width="100%"
                                 >
-                                    {index === order.cart.items.length - 1 ? (
+                                    {index === order.items.length - 1 ? (
                                         <Button
                                             variant="outline"
                                             colorScheme="white"
@@ -137,9 +137,9 @@ export const OrderComponent = ({ order }: { order: Order }) => {
                                 animateOpacity
                             >
                                 <Box mt={4}>
-                                    <Tabs variant="unstyled">
+                                    <Tabs variant="unstyled" defaultIndex={0}>
                                         <TabList>
-                                            <Tab
+                                            {/* <Tab
                                                 _selected={{
                                                     color: 'primary.green.900',
                                                     borderBottom: '2px solid',
@@ -148,7 +148,7 @@ export const OrderComponent = ({ order }: { order: Order }) => {
                                                 }}
                                             >
                                                 Order Timeline
-                                            </Tab>
+                                            </Tab> */}
                                             <Tab
                                                 _selected={{
                                                     color: 'primary.green.900',
@@ -161,10 +161,10 @@ export const OrderComponent = ({ order }: { order: Order }) => {
                                             </Tab>
                                         </TabList>
                                         <TabPanels>
-                                            <TabPanel>
-                                                {/* <OrderTimeline orderDetails={order} /> */}
+                                            {/* <TabPanel>
+                                                <OrderTimeline orderDetails={order} />
                                                 <div>Details</div>
-                                            </TabPanel>
+                                            </TabPanel> */}
 
                                             <TabPanel>
                                                 <VStack

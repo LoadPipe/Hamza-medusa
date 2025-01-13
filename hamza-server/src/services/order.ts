@@ -880,24 +880,27 @@ export default class OrderService extends MedusaOrderService {
         }
     }
 
-    private async getCustomerOrdersByStatus(
+    public async getCustomerOrdersByStatus(
         customerId: string,
         statusParams: {
             orderStatus?: OrderStatus;
             paymentStatus?: PaymentStatus;
             fulfillmentStatus?: FulfillmentStatus;
-        }
+        },
+        orderId?: string
     ): Promise<Order[]> {
         const where: {
             customer_id: string;
             status?: any;
             payment_status?: any;
             fulfillment_status?: any;
+            id?: string;
         } = {
             customer_id: customerId,
             status: Not(
                 In([OrderStatus.ARCHIVED, OrderStatus.REQUIRES_ACTION])
             ),
+            id: orderId,
         };
 
         if (statusParams.orderStatus) {

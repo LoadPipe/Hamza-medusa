@@ -33,7 +33,7 @@ interface GeneralModalProps {
 	
 }
 
-const GeneralModal: React.FC<GeneralModalProps> = ({
+const ConfirmModal: React.FC<GeneralModalProps> = ({
     eventStatus,
     isOpen,
     onClose,
@@ -126,4 +126,4 @@ const GeneralModal: React.FC<GeneralModalProps> = ({
     );
 };
 
-export default GeneralModal;
+export default ConfirmModal;

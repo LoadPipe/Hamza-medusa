@@ -36,12 +36,14 @@ class CustomError extends Error {
 
 export const ReleaseEscrowDialog = ({ order, escrowPayment }: { order: Order, escrowPayment: PaymentDefinition }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [errorMessage, setErrorMessage] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isReleased, setIsReleased] = useState(false);
     const toast = useToast();
     const { switchNetwork } = useSwitchNetwork();
     
+    
+
     const handleSwitchNetwork = (chainId: number) => {
         if (switchNetwork) {
             switchNetwork(chainId);
@@ -54,13 +56,6 @@ export const ReleaseEscrowDialog = ({ order, escrowPayment }: { order: Order, es
         setIsLoading(true);
 
         try {
-            const chainId = await getChainId();
-            const paymentChainId = order.payments[0].blockchain_data.chain_id;
-
-            if (paymentChainId !== Number(chainId)) {
-                handleSwitchNetwork(paymentChainId);
-            }
-
             const releaseData = await releaseEscrowPayment(order, 'buyer');
             console.log("Escrow released data: ", releaseData);
 
@@ -97,7 +92,7 @@ export const ReleaseEscrowDialog = ({ order, escrowPayment }: { order: Order, es
             setIsLoading(false);
             console.error('Error during escrow release:', error);
 
-            const message = error instanceof CustomError ? (error.info?.error?.message || error.message) : 'An unknown error occurred';
+            const message = error ? error : 'An unknown error occurred';
             setErrorMessage(message);
 
             // toast({
@@ -112,7 +107,19 @@ export const ReleaseEscrowDialog = ({ order, escrowPayment }: { order: Order, es
         if (escrowPayment.released) {
             setIsReleased(true);
         }
-    }, []);
+    }, [escrowPayment]);
+
+    useEffect(() => {
+        const checkNetwork = async () => {
+            const chainId = await getChainId();
+            const paymentChainId = order.payments[0].blockchain_data.chain_id;
+    
+            if (paymentChainId !== Number(chainId)) {
+                handleSwitchNetwork(paymentChainId);
+            }
+        }
+        checkNetwork();
+    }, [order]);
 
     return (
         <>
