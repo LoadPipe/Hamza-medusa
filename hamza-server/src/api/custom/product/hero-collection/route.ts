@@ -1,27 +1,32 @@
 import { MedusaRequest, MedusaResponse, Logger } from '@medusajs/medusa';
 import ProductService from 'src/services/product';
+import ProductRepository from '@medusajs/medusa/dist/repositories/product';
 import { RouteHandler } from '../../../route-handler';
 
 //TODO: probably delete this
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const productService: ProductService = req.scope.resolve('productService');
 
-    try {
-        // Define the array of product IDs to filter (replace with actual IDs or get them dynamically)
-        const productIds = [
-            'prod_01JG3NZFJMKG7NAEPAC5DXDQAP',
-            'prod_01JG3NZFP9VRWE3386W0ZJN832',
-            'prod_01JG3NZH68N388AD9K1PH8E480',
-            'prod_01JG3NZGXCKNPY32C9MNPM5760',
-        ];
+    const handler: RouteHandler = new RouteHandler(
+        req,
+        res,
+        'GET',
+        '/custom/product/hero-collection'
+    );
 
-        // Call the getProductCollection function
+    try {
+        let productData = await ProductRepository.find({
+            select: ['id'],
+            take: 4,
+        });
+
+        const productIds = productData.map((product) => product.id);
+
         const products = await productService.getProductCollection(productIds);
 
-        // Return the product details in the response
-        res.status(200).json({ products });
+        handler.returnStatus(200, { products });
     } catch (error) {
         console.error('Error fetching products:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        handler.returnStatus(500, { error: 'Internal Server Error' });
     }
 };
