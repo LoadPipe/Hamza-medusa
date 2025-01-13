@@ -7,6 +7,13 @@ import { RouteHandler } from '../../../route-handler';
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     const productService: ProductService = req.scope.resolve('productService');
 
+    const handler: RouteHandler = new RouteHandler(
+        req,
+        res,
+        'GET',
+        '/custom/product/hero-collection'
+    );
+
     try {
         let productData = await ProductRepository.find({
             select: ['id'],
@@ -17,9 +24,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
         const products = await productService.getProductCollection(productIds);
 
-        res.status(200).json({ products });
+        handler.returnStatus(200, { products });
     } catch (error) {
         console.error('Error fetching products:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        handler.returnStatus(500, { error: 'Internal Server Error' });
     }
 };
