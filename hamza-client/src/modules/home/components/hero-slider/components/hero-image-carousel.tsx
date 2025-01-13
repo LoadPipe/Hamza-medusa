@@ -90,6 +90,7 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                 overflow="hidden"
                 flexDir={{ base: 'column', md: 'row' }} // Stack on small screens
                 alignItems="stretch"
+                boxShadow="12px 12px 24px rgba(18, 18, 18, 0.6), -6px -6px 12px rgba(18, 18, 18, 0.1)"
             >
                 {/* Image */}
                 <ChakraImage

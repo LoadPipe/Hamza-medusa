@@ -145,8 +145,8 @@ const HeroSlider: React.FC = () => {
             <Flex
                 width={{ base: '100%', md: '50%' }}
                 flexDir="column"
-                mt="4rem"
-                gap={5}
+                mt="4.15rem"
+                gap={6}
             >
                 <Text
                     textAlign={{ base: 'center', md: 'unset' }}
