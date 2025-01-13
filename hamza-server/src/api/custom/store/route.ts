@@ -22,13 +22,13 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             );
             return res.json(store_name);
         } else if (handler.hasParam('store_name')) {
-            const products = await productService.getProductsFromStoreName(
+            const products = await productService.getProductsByStoreHandleOrName(
                 handler.inputParams.store_name
             );
             return res.json(products);
         } else if (handler.hasParam('store_handle')) {
-            const products = await productService.getProductsFromStoreName(
-                handler.inputParams.store_handle.replaceAll('-', ' ')
+            const products = await productService.getProductsByStoreHandleOrName(
+                handler.inputParams.store_handle
             );
             return res.json(products);
         } else {

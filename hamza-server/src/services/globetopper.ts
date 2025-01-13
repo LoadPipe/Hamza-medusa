@@ -29,7 +29,6 @@ export default class GlobetopperService extends TransactionBaseService {
     protected readonly logger: ILogger;
     protected readonly productService_: ProductService;
     protected readonly smtpMailService_: SmtpMailService;
-    protected readonly orderRepository_: typeof OrderRepository;
     protected readonly priceConverter: PriceConverter;
     protected readonly apiClient: GlobetopperClient;
     protected readonly externalApiLogRepository_: typeof ExternalApiLogRepository;
@@ -38,7 +37,6 @@ export default class GlobetopperService extends TransactionBaseService {
     constructor(container) {
         super(container);
         this.productService_ = container.productService;
-        this.orderRepository_ = container.orderRepository;
         this.smtpMailService_ = container.smtpMailService;
         this.externalApiLogRepository_ = container.externalApiLogRepository;
         this.logger = createLogger(container, 'GlobetopperService');
@@ -544,6 +542,21 @@ export default class GlobetopperService extends TransactionBaseService {
 
             //add variant images to the main product images
             const images = []; //TODO: get images
+            let description = '';
+
+            const formatSection = (title: string, content: string): string => {
+                if (content && content.trim() !== '') {
+                    return `<h2>${title}</h2><p>${content}</p>`;
+                }
+                return '';
+            };
+
+            description += formatSection('Brand Description: ', productDetail.brand_description);
+            description += formatSection('Redemption Instructions: ', productDetail.redemption_instruction);
+            description += formatSection('Disclaimer: ', productDetail.brand_disclaimer);
+            description += formatSection('Terms & Conditions: ', productDetail.term_and_conditions);
+            description += formatSection('Restriction & Policies: ', productDetail.restriction_and_policies);
+            description += formatSection('Additional Information: ', productDetail.brand_additional_information);
 
             let handle = item?.name
                 ?.trim()
@@ -556,7 +569,7 @@ export default class GlobetopperService extends TransactionBaseService {
                 title: item?.name,
                 subtitle: productDetail.brand_description, //TODO: find a better value
                 handle,
-                description: `${productDetail.brand_description} <br/>${productDetail.redemption_instruction}`, //TODO: make better description
+                description: description, 
                 is_giftcard: false,
                 status: status as ProductStatus,
                 thumbnail: item?.picUrl ?? productDetail?.card_image,
@@ -597,8 +610,10 @@ export default class GlobetopperService extends TransactionBaseService {
     ): Promise<CreateProductProductVariantInput[]> {
         const variants = [];
         const variantPrices = this.getVariantPrices(item);
+        variantPrices.sort((a, b) => a - b);
 
-        for (let variantPrice of variantPrices) {
+        for (let index = 0; index < variantPrices.length; index++) {
+            const variantPrice = variantPrices[index];
             variants.push({
                 title: item?.name,
                 inventory_quantity: 9999,
@@ -606,7 +621,7 @@ export default class GlobetopperService extends TransactionBaseService {
                 manage_inventory: true,
                 external_id: item?.operator?.id,
                 external_source: PRODUCT_EXTERNAL_SOURCE,
-                external_metadata: { amount: item.min },
+                external_metadata: { amount:  variantPrice.toFixed(2) },
                 metadata: { imgUrl: productDetail?.card_image },
                 prices: [
                     {
@@ -627,6 +642,7 @@ export default class GlobetopperService extends TransactionBaseService {
                     },
                 ],
                 options: [{ value: variantPrice.toFixed(2) }],
+                variant_rank: index,
             });
         }
 
