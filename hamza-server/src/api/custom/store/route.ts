@@ -33,7 +33,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 await storeService.getStoreByHandleOrName(handleOrName);
 
             const products = await productService.getProductsForStore(store);
-            return res.json(products);
+            return res.json({ store, products });
         } else {
             const stores = await storeService.getStores();
             return res.json(stores);
