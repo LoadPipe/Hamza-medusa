@@ -41,6 +41,7 @@ class StoreService extends MedusaStoreService {
     async createStore(
         user: User,
         store_name: string,
+        handle: string,
         collection: string,
         icon: string,
         store_followers: number,
@@ -60,6 +61,7 @@ class StoreService extends MedusaStoreService {
         newStore.store_description = store_description;
         newStore.default_currency_code = 'eth';
         newStore.escrow_metadata = escrow_metadata;
+        newStore.handle = handle;
         newStore = await storeRepo.save(newStore);
         this.logger.debug('New Store Saved:' + newStore);
 

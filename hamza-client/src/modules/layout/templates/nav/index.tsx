@@ -86,11 +86,9 @@ export default async function Nav() {
 
                     <NavSearchBar />
 
-                    <Box ml={'auto'}>
-                        <WalletConnectButton />
-                    </Box>
+                    <WalletConnectButton />
 
-                    <Flex flexDirection={'row'} alignItems={'center'}>
+                    <Flex ml="1rem" flexDirection={'row'} alignItems={'center'}>
                         <Flex alignSelf={'center'}>
                             <LocalizedClientLink href="/cart">
                                 <Flex

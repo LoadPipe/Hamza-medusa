@@ -86,23 +86,40 @@ const polygonAmoy: Chain = {
     testnet: true,
 };
 
-// TODO: Later can use this logic for custom Chain logos
-// // Extend the Sepolia chain configuration
-// const customSepolia = {
-//     ...sepolia,
-//     iconUrl: sepoliaImage.src, // Use the correct property for the image URL
-//     // lets make the background transparent
-//     iconBackground: 'transparent', // Set your desired background color
-// };
+//import Polygon testnet
+const polygonAmoy: Chain = {
+    id: 80002,
+    name: 'Polygon Amoy',
+    network: 'Polygon Amoy',
+    nativeCurrency: { name: 'POL', symbol: 'POL', decimals: 18 },
+    rpcUrls: {
+        default: {
+            http: ['https://rpc-amoy.polygon.technology'],
+        },
+        public: { http: ['https://rpc-amoy.polygon.technology/'] },
+    },
+    blockExplorers: {
+        default: {
+            name: 'PolygonScan',
+            url: 'https://amoy.polygonscan.com',
+        },
+    },
+    contracts: {
+        multicall3: {
+            address: '0xca11bde05977b3631167028862be2a173976ca11',
+            blockCreated: 3127388,
+        },
+    },
+    testnet: true,
+};
 
-// export { customSepolia };
-//const isProduction = process.env.NODE_ENV === 'production';
+const chainConfig: Record<'production' | 'development', Chain[]> = {
+    production: [optimism, polygon, mainnet],
+    development: [sepolia, polygonAmoy],
+};
 
-const allowedChains = [];
-if (process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS === '10')
-    allowedChains.push(optimism, polygon);
-if (process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS === '11155111')
-    allowedChains.push(sepolia, polygonAmoy);
+const allowedChains =
+    chainConfig[process.env.NODE_ENV as keyof typeof chainConfig] || [];
 
 export const { chains, publicClient, webSocketPublicClient } = configureChains(
     allowedChains,

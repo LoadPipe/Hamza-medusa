@@ -5,10 +5,9 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import AccountMenu from '@modules/layout/templates/nav/menu-desktop/account-menu';
 import { useWalletClient, useAccount } from 'wagmi';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import MainMenu from '../main-menu';
 import HnsDisplay from '../hns-display';
-import CurrencySelector from '../currency-selector';
 
 export const WalletConnectButton = () => {
     //Update zustand store with Wagmi hook when connected
@@ -72,12 +71,12 @@ export const WalletConnectButton = () => {
 
                             return (
                                 <Flex
-                                    gap={'18px'}
+                                    ml="1rem"
+                                    gap={3}
                                     flexDirection={'row'}
                                     alignItems={'center'}
                                 >
                                     <HnsDisplay />
-                                    <CurrencySelector network={chain.name} />
                                     <button
                                         onClick={openChainModal}
                                         style={{
@@ -91,10 +90,11 @@ export const WalletConnectButton = () => {
                                                 style={{
                                                     background:
                                                         chain.iconBackground,
-                                                    width: 48,
-                                                    height: 48,
+                                                    width: 44,
+                                                    height: 44,
                                                     borderRadius: 999,
                                                     overflow: 'hidden',
+                                                    marginRight: 4,
                                                 }}
                                             >
                                                 {chain.iconUrl && (
@@ -105,15 +105,14 @@ export const WalletConnectButton = () => {
                                                         }
                                                         src={chain.iconUrl}
                                                         style={{
-                                                            width: 48,
-                                                            height: 48,
+                                                            width: 44,
+                                                            height: 44,
                                                         }}
                                                     />
                                                 )}
                                             </div>
                                         )}
                                     </button>
-
                                     <MainMenu />
                                     <AccountMenu />
                                 </Flex>
