@@ -110,6 +110,26 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
     const displayCurrency =
         finalSubtotal?.currency || preferred_currency_code || 'usdc';
 
+    const [convertedPrice, setConvertedPrice] = React.useState<string | null>(
+        null
+    );
+
+    React.useEffect(() => {
+        const fetchConvertedPrice = async () => {
+            const result = await convertCryptoPrice(
+                Number(formatCryptoPrice(grandTotal, displayCurrency)),
+                'eth',
+                'usdc'
+            );
+            const formattedResult = Number(result).toFixed(2);
+            setConvertedPrice(formattedResult);
+        };
+
+        if (preferred_currency_code === 'eth') {
+            fetchConvertedPrice();
+        }
+    }, [grandTotal]);
+
     return (
         <>
             {/* amounts */}
@@ -252,7 +272,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                                             fontWeight={700}
                                             textAlign="right"
                                         >
-                                            {`≅ $ ${convertCryptoPrice(grandTotal, 'eth', 'usdc')} USDC`}
+                                            {`≅ $ ${convertedPrice} USDC`}
                                         </Text>
                                     </Flex>
                                 ) : (
@@ -271,7 +291,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                                             fontWeight={600}
                                             textAlign="right"
                                         >
-                                            {`≅ $ ${convertCryptoPrice(grandTotal, 'eth', 'usdc')} USDC`}
+                                            {`≅ $ ${convertedPrice} USDC`}
                                         </Text>
                                     </Flex>
                                 ))}

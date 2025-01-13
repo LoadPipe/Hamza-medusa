@@ -1,3 +1,4 @@
+import { MdOutlineOutput } from 'react-icons/md';
 import { get } from '../data/index';
 import { SeamlessCache } from './seamless-cache';
 
@@ -22,6 +23,8 @@ export async function convertPrice(
     to = to.trim().toLowerCase();
     const key = `${from}-${to}`;
     const output = await exchangeRateCache.retrieve();
+
+    console.log('outputt', output);
 
     if (!output[key])
         throw new Error(
