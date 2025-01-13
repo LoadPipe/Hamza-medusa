@@ -1,6 +1,6 @@
 import type { MedusaRequest, MedusaResponse, Logger, CustomerService } from '@medusajs/medusa';
 import { readRequestBody } from '../../../utils/request-body';
-import { LineItemService } from '@medusajs/medusa';
+import { FulfillmentStatus, LineItemService, OrderStatus } from '@medusajs/medusa';
 import { RouteHandler } from '../../route-handler';
 import OrderService from 'src/services/order';
 
@@ -47,9 +47,10 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             }
 
             //enforce security
-            // if (!handler.enforceCustomerId(customerId)) return;
+            if (!handler.enforceCustomerId(customerId)) return;
 
             const orders = await orderService.getCustomerOrdersByStatus(customerId, {}, orderId);
+
             handler.returnStatus(200, orders);
         } catch (e: any) {
             handler.logger.error(e);

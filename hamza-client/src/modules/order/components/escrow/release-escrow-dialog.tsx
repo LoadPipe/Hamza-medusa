@@ -36,7 +36,7 @@ class CustomError extends Error {
 
 export const ReleaseEscrowDialog = ({ order, escrowPayment }: { order: Order, escrowPayment: PaymentDefinition }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const [errorMessage, setErrorMessage] = useState<any>(null);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isReleased, setIsReleased] = useState(false);
     const toast = useToast();
@@ -92,7 +92,7 @@ export const ReleaseEscrowDialog = ({ order, escrowPayment }: { order: Order, es
             setIsLoading(false);
             console.error('Error during escrow release:', error);
 
-            const message = error ? error : 'An unknown error occurred';
+            const message = error instanceof CustomError ? (error.info?.error?.message || error.message) : 'An unknown error occurred';
             setErrorMessage(message);
 
             // toast({
