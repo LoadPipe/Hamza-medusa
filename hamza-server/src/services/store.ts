@@ -110,7 +110,9 @@ class StoreService extends MedusaStoreService {
         console.log('store by handle:', store, storeHandleOrName);
 
         if (!store) {
-            store = await storeRepo.findOneBy({ name: storeHandleOrName });
+            store = await storeRepo.findOneBy({
+                name: this.adjustHandleToName(storeHandleOrName),
+            });
             if (!store) {
                 throw new Error(
                     `Store with handle or name ${storeHandleOrName} not found`
@@ -118,6 +120,20 @@ class StoreService extends MedusaStoreService {
             }
         }
         return store;
+    }
+
+    private adjustHandleToName(value: string) {
+        // Decode URI components before processing
+        const decodedValue = decodeURIComponent(value);
+        return decodedValue
+            .replace(/\+/g, ' ')
+            .replace(/\-/g, ' ')
+            .split(/[\s-]+/) // Split on any sequence of spaces or dashes
+            .map(
+                (word) =>
+                    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+            )
+            .join(' ');
     }
 }
 
