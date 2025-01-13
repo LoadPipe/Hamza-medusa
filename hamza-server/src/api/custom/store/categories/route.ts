@@ -28,7 +28,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         if (!handler.requireParam('store_name')) return;
 
         // Fetch the categories by store ID
-        const storeData = await storeService.getStoreByName(
+        const storeData = await storeService.getStoreByHandleOrName(
             store_name.toString()
         );
 

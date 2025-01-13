@@ -691,12 +691,8 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    async getProductsFromStoreName(storeName: string) {
+    async getProductsForStore(store: Store) {
         try {
-            const store = await this.storeRepository_.findOne({
-                where: { name: storeName },
-            });
-
             if (!store) {
                 return null;
             }
@@ -1339,15 +1335,13 @@ class ProductFilterCache extends SeamlessCache {
                     )?.amount ?? 0;
                 return priceA - priceB; // Ascending order
             });
-        }
-        else{
+        } else {
             products = products.sort((a, b) => {
                 const rankA = a.display_rank ?? 0;
                 const rankB = b.display_rank ?? 0;
                 return rankB - rankA;
             });
         }
-
 
         return products;
     }

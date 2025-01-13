@@ -81,7 +81,7 @@ const ProductTemplate: React.FC<ProductTemplateProps> = ({
             try {
                 const data = await getStore(product.id as string);
                 // console.log(`Vendor: ${data}`);
-                setStore(data.name);
+                setStore(data.handle);
                 setIcon(data.icon);
             } catch (error) {
                 console.error('Error fetching vendor: ', error);

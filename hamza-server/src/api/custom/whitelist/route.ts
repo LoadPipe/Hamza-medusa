@@ -9,7 +9,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         req.scope.resolve('whitelistService');
 
     const setUpWhitelist = async (storeName: string) => {
-        const store = await storeService.getStoreByName(storeName);
+        const store = await storeService.getStoreByHandleOrName(storeName);
         const whitelistAddresses = [
             '0x8bA35513C3F5ac659907D222e3DaB38b20f8F52A',
         ];

@@ -63,7 +63,7 @@ export default async function Home({
     return (
         <Box backgroundColor={'transparent'}>
             <HeroBanner />
-            {/* <HeroSlider /> */}
+            <HeroSlider />
             <SearchAndFilterPanel dehydratedState={dehydratedHomeProducts} />
         </Box>
     );

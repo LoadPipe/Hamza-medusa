@@ -21,16 +21,19 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 handler.inputParams.product_id
             );
             return res.json(store_name);
-        } else if (handler.hasParam('store_name')) {
-            const products = await productService.getProductsFromStoreName(
-                handler.inputParams.store_name
-            );
-            return res.json(products);
-        } else if (handler.hasParam('store_handle')) {
-            const products = await productService.getProductsFromStoreName(
-                handler.inputParams.store_handle.replaceAll('-', ' ')
-            );
-            return res.json(products);
+        } else if (
+            handler.hasParam('store_name') ||
+            handler.hasParam('store_handle')
+        ) {
+            let handleOrName = handler.inputParams.store_handle;
+            if (!handleOrName?.length)
+                handleOrName = handler.inputParams.store_name;
+
+            const store =
+                await storeService.getStoreByHandleOrName(handleOrName);
+
+            const products = await productService.getProductsForStore(store);
+            return res.json({ store, products });
         } else {
             const stores = await storeService.getStores();
             return res.json(stores);
