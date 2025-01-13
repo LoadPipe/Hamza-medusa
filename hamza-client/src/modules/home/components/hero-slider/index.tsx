@@ -49,7 +49,7 @@ const HeroSlider: React.FC = () => {
         return (
             <Flex
                 maxW="1280px"
-                height="685px"
+                height="470px"
                 justifyContent="space-between"
                 flexDir="row"
                 px="50px"
@@ -114,7 +114,7 @@ const HeroSlider: React.FC = () => {
     return (
         <Flex
             maxW="1280px"
-            height={{ base: '354px', md: '685px' }}
+            height={{ base: '354px', md: '625px' }}
             justifyContent="space-between"
             flexDir="row"
             px={{ base: '1rem', md: '50px' }}
@@ -226,7 +226,7 @@ const HeroSlider: React.FC = () => {
                 <Flex
                     display={{ base: 'none', md: 'flex' }}
                     position="absolute"
-                    bottom="80px"
+                    bottom="10px"
                     left="50%"
                     transform="translateX(-50%)"
                     gap={3}
