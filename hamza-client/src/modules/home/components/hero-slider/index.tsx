@@ -113,8 +113,9 @@ const HeroSlider: React.FC = () => {
 
     return (
         <Flex
+            mt={{ base: '-5rem', md: '0' }}
             maxW="1280px"
-            height={{ base: '354px', md: '625px' }}
+            height={{ base: '300px', md: '625px' }}
             justifyContent="space-between"
             flexDir="row"
             px={{ base: '1rem', md: '50px' }}
@@ -137,14 +138,13 @@ const HeroSlider: React.FC = () => {
                     textAlign={{ base: 'center', md: 'unset' }}
                     color="white"
                     fontSize={{ base: '24px', md: '56px' }}
-                    lineHeight={1}
+                    lineHeight={{ base: '1.2', md: '1' }}
                 >
                     The World's 1st{' '}
                     <Text as="span" color="primary.green.900">
-                        Decentralized
+                        Decentralized{' '}
                     </Text>
-                    {'  '}
-                    E-commerce
+                    <Text>E-commerce</Text>
                 </Text>
                 <Text
                     textAlign={{ base: 'center', md: 'unset' }}
