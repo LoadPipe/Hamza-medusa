@@ -65,7 +65,7 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
     };
 
     return (
-        <Flex width="100%" flexDir="column" alignSelf="center" gap={4} p={4}>
+        <Flex width="100%" flexDir="column" gap={7} p={4}>
             {/* Featured Product Title */}
             <Flex flexDir="row" gap={2}>
                 <Text color="#A0A0A0">Featured Product:</Text>

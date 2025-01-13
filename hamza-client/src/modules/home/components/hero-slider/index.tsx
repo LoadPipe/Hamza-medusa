@@ -127,31 +127,37 @@ const HeroSlider: React.FC = () => {
             borderRadius={'24px'}
         >
             {/* Left Section */}
-            <Flex width={{ base: '100%', md: '50%' }} flexDir="column" gap={4}>
+            <Flex
+                width={{ base: '100%', md: '50%' }}
+                flexDir="column"
+                mt="4rem"
+                gap={5}
+            >
                 <Text
                     textAlign={{ base: 'center', md: 'unset' }}
                     color="white"
                     fontSize={{ base: '24px', md: '56px' }}
-                    lineHeight={1.2}
+                    lineHeight={1}
                 >
-                    The World's first{' '}
+                    The World's 1st{' '}
                     <Text as="span" color="primary.green.900">
-                        decentralized commerce
-                    </Text>{' '}
-                    marketplace
+                        Decentralized
+                    </Text>
+                    {'  '}
+                    E-commerce
                 </Text>
                 <Text
                     textAlign={{ base: 'center', md: 'unset' }}
                     fontSize={{ base: '12px', md: '24px' }}
                     color="white"
+                    lineHeight={1.6}
                     maxW={{ base: '100%', md: '520px' }}
                 >
                     Discover the world’s first decentralized commerce
-                    marketplace. Buy and sell directly, securely, and without
-                    intermediaries, powered by blockchain. Join us in
-                    revolutionizing digital trade.
+                    marketplace. Buy and sell directly, securely, powered by
+                    blockchain.
                 </Text>
-                <Flex
+                {/* <Flex
                     flexDir="row"
                     justifyContent={{ base: 'center', md: 'unset' }}
                     gap={4}
@@ -180,7 +186,7 @@ const HeroSlider: React.FC = () => {
                     >
                         Sell on Hamza
                     </Button>
-                </Flex>
+                </Flex> */}
             </Flex>
 
             {/* Right Section */}
@@ -189,7 +195,6 @@ const HeroSlider: React.FC = () => {
                 width="50%"
                 position="relative"
                 justifyContent="center"
-                alignItems="center"
             >
                 {currentProduct && (
                     <motion.div
@@ -221,16 +226,16 @@ const HeroSlider: React.FC = () => {
                 <Flex
                     display={{ base: 'none', md: 'flex' }}
                     position="absolute"
-                    bottom="20px"
+                    bottom="80px"
                     left="50%"
                     transform="translateX(-50%)"
-                    gap={2}
+                    gap={3}
                 >
                     {data?.products?.map((_: any, index: number) => (
                         <Box
                             key={index}
-                            width="20px"
-                            height="20px"
+                            width="15px"
+                            height="15px"
                             borderRadius="50%"
                             border={`2px solid #676767`}
                             bg={
