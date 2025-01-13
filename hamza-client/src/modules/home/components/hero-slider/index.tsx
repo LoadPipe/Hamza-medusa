@@ -5,20 +5,18 @@ import {
     Flex,
     Text,
     Button,
-    IconButton,
     Box,
     Skeleton,
     SkeletonText,
 } from '@chakra-ui/react';
 import HeroImageCarousel from './components/hero-image-carousel';
-import { ArrowForwardIcon, ArrowBackIcon } from '@chakra-ui/icons';
-import Link from 'next/link'; // Import Next.js Link for better SPA navigation
+import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { getProductCollection } from '@/lib/data';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
 import HeroBGImage from '@/images/home/hero_bg_image.webp';
-import { motion } from 'framer-motion'; // Import Framer Motion
+import { motion } from 'framer-motion';
 
 const HeroSlider: React.FC = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
@@ -34,30 +32,18 @@ const HeroSlider: React.FC = () => {
         }
     );
 
-    // Event handlers for navigation
-    const handleNext = () => {
-        if (data?.products?.length) {
-            setCurrentIndex(
-                (prevIndex) => (prevIndex + 1) % data.products.length
-            );
-        }
-    };
-
-    const handlePrev = () => {
-        if (data?.products?.length) {
-            setCurrentIndex((prevIndex) =>
-                prevIndex === 0 ? data.products.length - 1 : prevIndex - 1
-            );
-        }
-    };
-
+    // Automatic carousel timer
     useEffect(() => {
         const timer = setInterval(() => {
-            handleNext();
+            if (data?.products?.length) {
+                setCurrentIndex(
+                    (prevIndex) => (prevIndex + 1) % data.products.length
+                );
+            }
         }, 5000); // Change slide every 5 seconds
 
         return () => clearInterval(timer); // Cleanup interval on component unmount
-    }, [data?.products?.length]); // Restart the interval when the product list changes
+    }, [data?.products?.length]);
 
     if (isLoading) {
         return (
@@ -114,18 +100,16 @@ const HeroSlider: React.FC = () => {
 
     const currentProduct = data?.products?.[currentIndex];
 
-    const variantPrices = currentProduct.variants
+    const variantPrices = currentProduct?.variants
         .map((variant: any) => variant.prices)
         .flat();
 
     const productPricing = formatCryptoPrice(
-        variantPrices.find(
+        variantPrices?.find(
             (p: any) => p.currency_code === preferred_currency_code
         )?.amount || 0,
         preferred_currency_code as string
     );
-
-    console.log('handle', currentProduct);
 
     return (
         <Flex
@@ -137,38 +121,31 @@ const HeroSlider: React.FC = () => {
             py="62px"
             mx="auto"
             position="relative"
-            bgImage={`url(${HeroBGImage.src})`}
             bgSize="cover"
             bgPosition="center"
             bgRepeat="no-repeat"
             borderRadius={'24px'}
         >
-            {/* Previous Button */}
-            <IconButton
-                icon={<ArrowBackIcon />}
-                aria-label="Previous"
-                position="absolute"
-                left="-30px"
-                top="50%"
-                transform="translateY(-50%)"
-                onClick={handlePrev}
-                bg="#242424"
-                color="white"
-                _hover={{ bg: '#2D2D2D' }}
-                borderRadius="50%"
-                boxSize="50px"
-            />
-
             {/* Left Section */}
-            <Flex width="50%" flexDir="column" gap={4}>
-                <Text color="white" fontSize="56px" lineHeight={1.2}>
+            <Flex width={{ base: '100%', md: '50%' }} flexDir="column" gap={4}>
+                <Text
+                    textAlign={{ base: 'center', md: 'unset' }}
+                    color="white"
+                    fontSize={{ base: '24px', md: '56px' }}
+                    lineHeight={1.2}
+                >
                     The World's first{' '}
                     <Text as="span" color="primary.green.900">
                         decentralized commerce
                     </Text>{' '}
                     marketplace
                 </Text>
-                <Text fontSize="24px" color="white" maxW="520px">
+                <Text
+                    textAlign={{ base: 'center', md: 'unset' }}
+                    fontSize={{ base: '12px', md: '24px' }}
+                    color="white"
+                    maxW={{ base: '100%', md: '520px' }}
+                >
                     Discover the world’s first decentralized commerce
                     marketplace. Buy and sell directly, securely, and without
                     intermediaries, powered by blockchain. Join us in
@@ -199,6 +176,7 @@ const HeroSlider: React.FC = () => {
 
             {/* Right Section */}
             <Flex
+                display={{ base: 'none', md: 'flex' }}
                 width="50%"
                 position="relative"
                 justifyContent="center"
@@ -231,43 +209,30 @@ const HeroSlider: React.FC = () => {
                         />
                     </motion.div>
                 )}
-            </Flex>
-
-            {/* Next Button */}
-            <IconButton
-                icon={<ArrowForwardIcon />}
-                aria-label="Next"
-                position="absolute"
-                right="-30px"
-                top="50%"
-                transform="translateY(-50%)"
-                onClick={handleNext}
-                bg="#242424"
-                color="white"
-                _hover={{ bg: '#2D2D2D' }}
-                borderRadius="50%"
-                boxSize="50px"
-            />
-
-            {/* Carousel Indicators */}
-            <Flex
-                position="absolute"
-                bottom="20px"
-                left="50%"
-                transform="translateX(-50%)"
-                gap={2}
-            >
-                {data?.products?.map((_: any, index: number) => (
-                    <Box
-                        key={index}
-                        width="20px"
-                        height="20px"
-                        borderRadius="50%"
-                        border={`2px solid #676767`}
-                        bg={currentIndex === index ? '#94D42A' : 'transparent'}
-                        transition="background-color 0.3s"
-                    />
-                ))}
+                <Flex
+                    display={{ base: 'none', md: 'flex' }}
+                    position="absolute"
+                    bottom="20px"
+                    left="50%"
+                    transform="translateX(-50%)"
+                    gap={2}
+                >
+                    {data?.products?.map((_: any, index: number) => (
+                        <Box
+                            key={index}
+                            width="20px"
+                            height="20px"
+                            borderRadius="50%"
+                            border={`2px solid #676767`}
+                            bg={
+                                currentIndex === index
+                                    ? '#94D42A'
+                                    : 'transparent'
+                            }
+                            transition="background-color 0.3s"
+                        />
+                    ))}
+                </Flex>
             </Flex>
         </Flex>
     );

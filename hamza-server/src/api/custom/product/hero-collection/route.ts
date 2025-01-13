@@ -9,10 +9,10 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     try {
         // Define the array of product IDs to filter (replace with actual IDs or get them dynamically)
         const productIds = [
-            'prod_01JG3NZFJMKG7NAEPAC5DXDQAP',
-            'prod_01JG3NZFP9VRWE3386W0ZJN832',
-            'prod_01JG3NZH68N388AD9K1PH8E480',
-            'prod_01JG3NZGXCKNPY32C9MNPM5760',
+            'prod_01JHEZTBGEVK1H55VF71DR3AR0',
+            'prod_01JHEZQB0D2267TDZ67AQ0KZ81',
+            'prod_01JHEZQB5GY6KXK09E0D50AXPM',
+            'prod_01JHEZQBAGT0D5QJXTZ5QD7A9D',
         ];
 
         // Call the getProductCollection function
