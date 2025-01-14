@@ -45,8 +45,6 @@ const HeroSlider: React.FC = () => {
         return () => clearInterval(timer); // Cleanup interval on component unmount
     }, [data?.products?.length]);
 
-    console.log('product data', data);
-
     if (isLoading) {
         return (
             <Flex
