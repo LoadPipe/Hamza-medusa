@@ -25,11 +25,12 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
     >(null);
     const [reducedPrice, setReducedPrice] = useState<number | null>(null);
     const [hasReducedPrice, setHasReducedPrice] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
+    const [loadingUSDPrice, setLoadingUSDPrice] = useState<boolean>(false);
     const { preferred_currency_code } = useCustomerAuthStore();
 
     useEffect(() => {
-        setLoading(true);
+        setLoadingPrice(true);
         const itemPrice = getPriceByCurrency(
             item.variant.prices,
             preferred_currency_code ?? 'usdc'
@@ -37,7 +38,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
 
         const subTotal = Number(itemPrice) * item.quantity;
         setPrice(subTotal);
-        setLoading(false);
+        setLoadingPrice(false);
 
         const originalTotal = item.original_total ?? null;
         const totalItemAmount =
@@ -56,7 +57,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
 
     useEffect(() => {
         const fetchConvertedPrice = async () => {
-            setLoading(true);
+            setLoadingUSDPrice(true);
             try {
                 const result = await convertCryptoPrice(
                     Number(
@@ -72,11 +73,11 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
             } catch (error) {
                 console.error('Error converting price:', error);
             } finally {
-                setLoading(false);
+                setLoadingUSDPrice(false);
             }
         };
 
-        if (price > 0) {
+        if (preferred_currency_code === 'eth') {
             fetchConvertedPrice();
         }
     }, [price, preferred_currency_code]);
@@ -106,7 +107,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                     </>
                 )}
 
-                {price && (
+                {price > 0 && (
                     <Flex flexDirection={'row'} alignItems="center">
                         {/* Currency Icon */}
                         <Flex alignItems={'center'}>
@@ -122,7 +123,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                         </Flex>
 
                         {/* Spinner or Base Price */}
-                        {loading ? (
+                        {loadingPrice ? (
                             <Spinner
                                 size="sm"
                                 color="white"
@@ -148,7 +149,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                         {/* Spinner or Converted Price */}
                         {preferred_currency_code === 'eth' && (
                             <>
-                                {loading ? (
+                                {loadingUSDPrice ? (
                                     <Spinner size="sm" color="white" ml={2} />
                                 ) : (
                                     <Text
