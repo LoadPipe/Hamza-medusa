@@ -244,10 +244,7 @@ export default async function Footer() {
                         <Text className="text-base font-bold">
                             Follow us on:{' '}
                         </Text>
-                        <Link
-                            href="https://x.com/hamzadecom?t=mrR1xycvffxf-4MoBAhFJA&s=09"
-                            target="_blank"
-                        >
+                        <Link href="https://x.com/hamzadecom1" target="_blank">
                             <FaTwitter size={24} />
                         </Link>
                         <Link

@@ -26,7 +26,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 
             let list_products = [];
             if (storeName?.length) {
-                const store = await storeService.getStoreByName(storeName);
+                const store =
+                    await storeService.getStoreByHandleOrName(storeName);
 
                 //check for store existence
                 if (!store) {
@@ -42,14 +43,12 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                         store.id
                     );
             } else {
-                list_products =
-                    await productService.getAllProductsWithPrices();
+                list_products = await productService.getAllProductsWithPrices();
             }
 
             return res.json(list_products);
         } else {
-            const products =
-                await productService.getAllProductsWithPrices();
+            const products = await productService.getAllProductsWithPrices();
             return handler.returnStatus(200, products);
         }
     });

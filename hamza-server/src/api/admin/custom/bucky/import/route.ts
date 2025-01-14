@@ -33,7 +33,9 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
             salesChannelId: '',
         };
 
-        output.storeId = (await storeService.getStoreByName(storeName)).id;
+        output.storeId = (
+            await storeService.getStoreByHandleOrName(storeName)
+        ).id;
         output.collectionId = (
             await productCollectionRepository.findOne({
                 where: { store_id: output.storeId },
@@ -66,8 +68,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 importData.collectionId,
                 importData.salesChannelId
             );
-        }
-        else {
+        } else {
             output = await buckyService.importProductsByKeyword(
                 handler.inputParams.keyword.toString(),
                 importData.storeId,

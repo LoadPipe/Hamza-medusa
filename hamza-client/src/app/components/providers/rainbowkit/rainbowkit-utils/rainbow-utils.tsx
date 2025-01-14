@@ -60,7 +60,7 @@ export const darkThemeConfig = darkTheme({
 const EXTRA_LOGGING = false;
 
 //import Polygon testnet
-const polygonAmoy: Chain = {
+const amoy: Chain = {
     id: 80002,
     name: 'Polygon Amoy',
     network: 'Polygon Amoy',
@@ -86,16 +86,30 @@ const polygonAmoy: Chain = {
     testnet: true,
 };
 
-const chainConfig: Record<'production' | 'development', Chain[]> = {
-    production: [optimism, polygon, mainnet],
-    development: [sepolia, polygonAmoy],
-};
+let wagmiChains: Chain[] = [];
 
-const allowedChains =
-    chainConfig[process.env.NODE_ENV as keyof typeof chainConfig] || [];
+const allowedChains = (process.env.NEXT_PUBLIC_ALLOWED_BLOCKCHAINS ?? '').split(
+    ','
+);
+
+if (allowedChains.length === 0) {
+    allowedChains.push('sepolia');
+} else {
+    const chainConfig = {
+        optimism: optimism, 10: optimism,
+        polygon: polygon, 137: polygon,
+        mainnet: mainnet, 1: mainnet,
+        sepolia: sepolia, 11155111: sepolia,
+        amoy: amoy, 80002: amoy
+    };
+
+    wagmiChains = allowedChains.map(
+        (c) => chainConfig[c as keyof typeof chainConfig]
+    );
+}
 
 export const { chains, publicClient, webSocketPublicClient } = configureChains(
-    allowedChains,
+    wagmiChains,
     [
         alchemyProvider({
             apiKey: ALCHEMY_API_KEY,
