@@ -129,7 +129,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                                     as="h3"
                                     variant="semibold"
                                     color="white"
-                                    lineHeight="2"
+                                    lineHeight="1.1"
                                     fontSize={{ base: '12px', md: '16px' }}
                                     fontWeight={700}
                                     textAlign="right"
