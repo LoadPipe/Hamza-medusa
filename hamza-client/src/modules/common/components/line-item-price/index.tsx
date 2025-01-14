@@ -2,7 +2,7 @@ import { LineItem } from '@medusajs/medusa';
 import Image from 'next/image';
 import { getPercentageDiff } from '@lib/util/get-precentage-diff';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex, Spinner, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
@@ -25,9 +25,11 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
     >(null);
     const [reducedPrice, setReducedPrice] = useState<number | null>(null);
     const [hasReducedPrice, setHasReducedPrice] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const { preferred_currency_code } = useCustomerAuthStore();
 
     useEffect(() => {
+        setLoading(true);
         const itemPrice = getPriceByCurrency(
             item.variant.prices,
             preferred_currency_code ?? 'usdc'
@@ -35,6 +37,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
 
         const subTotal = Number(itemPrice) * item.quantity;
         setPrice(subTotal);
+        setLoading(false);
 
         const originalTotal = item.original_total ?? null;
         const totalItemAmount =
@@ -51,20 +54,29 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
         }
     }, [item, preferred_currency_code, reducedPrice]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         const fetchConvertedPrice = async () => {
-            const result = await convertCryptoPrice(
-                Number(
-                    formatCryptoPrice(price, preferred_currency_code ?? 'eth')
-                ),
-                'eth',
-                'usdc'
-            );
-            const formattedResult = Number(result).toFixed(2);
-            setConvertedUSDPrice(formattedResult);
+            setLoading(true);
+            try {
+                const result = await convertCryptoPrice(
+                    Number(
+                        formatCryptoPrice(
+                            price,
+                            preferred_currency_code ?? 'usdc'
+                        )
+                    ),
+                    preferred_currency_code ?? 'usdc',
+                    'usdc'
+                );
+                setConvertedUSDPrice(Number(result).toFixed(2));
+            } catch (error) {
+                console.error('Error converting price:', error);
+            } finally {
+                setLoading(false);
+            }
         };
 
-        if (price !== 0 && preferred_currency_code === 'eth') {
+        if (price > 0) {
             fetchConvertedPrice();
         }
     }, [price, preferred_currency_code]);
@@ -96,6 +108,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
 
                 {price && (
                     <Flex flexDirection={'row'} alignItems="center">
+                        {/* Currency Icon */}
                         <Flex alignItems={'center'}>
                             <Image
                                 className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
@@ -107,35 +120,51 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                                 alt={preferred_currency_code ?? 'usdc'}
                             />
                         </Flex>
-                        <Text
-                            ml={{ base: '0.4rem', md: '0.5rem' }}
-                            fontSize={{ base: '15px', md: '24px' }}
-                            fontWeight={700}
-                            lineHeight="1.1" // Fine-tune line height
-                            position="relative" // Allows for slight adjustments with top
-                            top="1px" // Adjust to fine-tune alignment
-                            color={'white'}
-                        >
-                            {formatCryptoPrice(
-                                price,
-                                preferred_currency_code ?? 'usdc'
-                            )}
-                        </Text>
+
+                        {/* Spinner or Base Price */}
+                        {loading ? (
+                            <Spinner
+                                size="sm"
+                                color="white"
+                                ml={{ base: '0.4rem', md: '0.5rem' }}
+                            />
+                        ) : (
+                            <Text
+                                ml={{ base: '0.4rem', md: '0.5rem' }}
+                                fontSize={{ base: '15px', md: '24px' }}
+                                fontWeight={700}
+                                lineHeight="1.1"
+                                position="relative"
+                                top="1px"
+                                color={'white'}
+                            >
+                                {formatCryptoPrice(
+                                    price,
+                                    preferred_currency_code ?? 'usdc'
+                                )}
+                            </Text>
+                        )}
+
+                        {/* Spinner or Converted Price */}
                         {preferred_currency_code === 'eth' && (
                             <>
-                                <Text
-                                    mt={2}
-                                    ml={{ base: '8px', md: '16px' }}
-                                    as="h3"
-                                    variant="semibold"
-                                    color="white"
-                                    lineHeight="1.1"
-                                    fontSize={{ base: '12px', md: '16px' }}
-                                    fontWeight={700}
-                                    textAlign="right"
-                                >
-                                    {`≅  ${convertedUSDPrice} USDC`}
-                                </Text>
+                                {loading ? (
+                                    <Spinner size="sm" color="white" ml={2} />
+                                ) : (
+                                    <Text
+                                        mt={2}
+                                        ml={{ base: '8px', md: '16px' }}
+                                        as="h3"
+                                        variant="semibold"
+                                        color="white"
+                                        lineHeight="1.1"
+                                        fontSize={{ base: '12px', md: '16px' }}
+                                        fontWeight={700}
+                                        textAlign="right"
+                                    >
+                                        {`≅  ${convertedUSDPrice} USDC`}
+                                    </Text>
+                                )}
                             </>
                         )}
                     </Flex>
