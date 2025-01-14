@@ -20,14 +20,16 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     );
 
     await handler.handle(async () => {
-        const orderService: OrderService = req.scope.resolve('orderService');
-        const customerService: CustomerService =
-            req.scope.resolve('customerService');
+        try {
+            const orderService: OrderService = req.scope.resolve('orderService');
+            const customerService: CustomerService =
+                req.scope.resolve('customerService');
 
-        //validate
-        if (!handler.inputParams.customer_id?.length) {
-            res.status(400).json({ message: 'customer_id is required' });
-        } else {
+            //validate
+            if (!handler.inputParams.customer_id?.length) {
+                res.status(400).json({ message: 'customer_id is required' });
+            }
+
             const customerId = handler.inputParams.customer_id;
 
             //check for existence of customer
@@ -35,23 +37,32 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
                 res.status(404).json({
                     message: `Customer id ${customerId} not found`,
                 });
-            } else {
-                //enforce security
-                if (!handler.enforceCustomerId(customerId)) return;
-
-                if (handler.inputParams.bucket) {
-                    const bucketValue = parseInt(handler.inputParams.bucket);
-                    const orders = await orderService.getCustomerOrderBucket(
-                        customerId,
-                        bucketValue
-                    );
-                    handler.returnStatus(200, { orders: orders });
-                } else {
-                    const orders =
-                        await orderService.getCustomerOrders(customerId);
-                    handler.returnStatus(200, { orders: orders });
-                }
             }
+
+            //enforce security
+            if (!handler.enforceCustomerId(customerId)) return;
+
+            if (handler.inputParams.bucket) {
+                const bucketValue = parseInt(handler.inputParams.bucket);
+                const orders = await orderService.getCustomerOrderBucket(
+                    customerId,
+                    bucketValue
+                );
+                handler.returnStatus(200, { orders: orders });
+            }
+
+            if (customerId) {
+                const orders =
+                    await orderService.getCustomerOrders(customerId);
+                handler.returnStatus(200, { orders: orders });
+            }
+
+            res.status(404).json({
+                message: `Order not found`,
+            });
+        } catch (e: any) {
+            handler.logger.error(e);
+            handler.returnStatusWithMessage(500, 'Failed to get customer orders');
         }
     });
 };

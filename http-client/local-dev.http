@@ -180,6 +180,15 @@ Content-Type: application/json
   "cart_id": "cart_01J3CF7DMR72ZS436EM0NYDCGW"
 }
 
+### Get order by customer_id and order_id
+POST http://localhost:9000/custom/order
+Content-Type: application/json
+
+{
+  "customer_id": "cus_01JH7QA4F35AXJ3BGC9J733JHT",
+  "order_id": "order_01JHDCBFSQ490MXPHPGZTWPG8C"
+}
+
 ### Update Currency
 PUT http://localhost:9000/custom/preferred-currency
 Content-Type: application/json
