@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
+import { convertCryptoPrice } from '@lib/util/get-product-price';
 
 // TODO: Can this be removed?
 type ExtendedLineItem = LineItem & {
@@ -18,26 +19,28 @@ type LineItemPriceProps = {
 };
 
 const LineItemPrice = ({ item }: LineItemPriceProps) => {
-    const [price, setPrice] = useState<number | null>(null);
+    const [price, setPrice] = useState<number>(0);
+    const [convertedUSDPrice, setConvertedUSDPrice] = React.useState<
+        string | null
+    >(null);
     const [reducedPrice, setReducedPrice] = useState<number | null>(null);
     const [hasReducedPrice, setHasReducedPrice] = useState<boolean>(false);
-    const [usdcPrice, setUsdcPrice] = useState<number | null>(0);
     const { preferred_currency_code } = useCustomerAuthStore();
 
     useEffect(() => {
+        const itemPrice = getPriceByCurrency(
+            item.variant.prices,
+            preferred_currency_code ?? 'usdc'
+        );
+
+        const subTotal = Number(itemPrice) * item.quantity;
+        setPrice(subTotal);
+
         const originalTotal = item.original_total ?? null;
         const totalItemAmount =
-            item.subtotal ?? item.unit_price * item.quantity;
+            item.subtotal ?? Number(itemPrice) * item.quantity;
         const discountTotal = item.discount_total ?? null;
 
-        setPrice(totalItemAmount);
-
-        // const findUsdcPrice = item?.variant?.prices.find(
-        //     (p: any) => p?.currency_code?.toLowerCase() === 'usdc'
-        // )?.amount;
-        const findUsdcPrice = getPriceByCurrency(item?.variant?.prices, 'usdc');
-        const usdcPrice = Number(findUsdcPrice) * item.quantity;
-        setUsdcPrice(usdcPrice);
         setReducedPrice(reducedPrice);
         if (
             discountTotal !== null &&
@@ -46,7 +49,25 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
         ) {
             setHasReducedPrice(true);
         }
-    }, [item, preferred_currency_code]);
+    }, [item, preferred_currency_code, reducedPrice]);
+
+    React.useEffect(() => {
+        const fetchConvertedPrice = async () => {
+            const result = await convertCryptoPrice(
+                Number(
+                    formatCryptoPrice(price, preferred_currency_code ?? 'eth')
+                ),
+                'eth',
+                'usdc'
+            );
+            const formattedResult = Number(result).toFixed(2);
+            setConvertedUSDPrice(formattedResult);
+        };
+
+        if (price !== 0 && preferred_currency_code === 'eth') {
+            fetchConvertedPrice();
+        }
+    }, [price, preferred_currency_code]);
 
     return (
         <div className="flex flex-col gap-x-1 text-ui-fg-subtle items-end">
@@ -97,22 +118,23 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                         >
                             {formatCryptoPrice(
                                 price,
-                                preferred_currency_code ?? 'usdt'
+                                preferred_currency_code ?? 'usdc'
                             )}
                         </Text>
                         {preferred_currency_code === 'eth' && (
                             <>
                                 <Text
+                                    mt={2}
                                     ml={{ base: '8px', md: '16px' }}
                                     as="h3"
                                     variant="semibold"
                                     color="white"
-                                    mt={2}
+                                    lineHeight="2"
                                     fontSize={{ base: '12px', md: '16px' }}
                                     fontWeight={700}
                                     textAlign="right"
                                 >
-                                    {`≅  ${formatCryptoPrice(usdcPrice ?? 0, 'usdc')} USDC`}
+                                    {`≅  ${convertedUSDPrice} USDC`}
                                 </Text>
                             </>
                         )}
