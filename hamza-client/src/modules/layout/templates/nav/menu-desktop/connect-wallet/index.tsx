@@ -5,16 +5,10 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import AccountMenu from '@modules/layout/templates/nav/menu-desktop/account-menu';
 import { useWalletClient, useAccount } from 'wagmi';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-<<<<<<< HEAD
 import { useEffect } from 'react';
 import MainMenu from '../main-menu';
 import HnsDisplay from '../hns-display';
 import CurrencySelector from '../currency-selector';
-=======
-import { useEffect, useState } from 'react';
-import MainMenu from '../main-menu';
-import HnsDisplay from '../hns-display';
->>>>>>> 2d48fa4c4a8f86f55a89cf1f124faac6ca7b4264
 
 export const WalletConnectButton = () => {
     //Update zustand store with Wagmi hook when connected
@@ -78,20 +72,12 @@ export const WalletConnectButton = () => {
 
                             return (
                                 <Flex
-<<<<<<< HEAD
                                     gap={'18px'}
-=======
-                                    ml="1rem"
-                                    gap={3}
->>>>>>> 2d48fa4c4a8f86f55a89cf1f124faac6ca7b4264
                                     flexDirection={'row'}
                                     alignItems={'center'}
                                 >
                                     <HnsDisplay />
-<<<<<<< HEAD
                                     <CurrencySelector network={chain.name} />
-=======
->>>>>>> 2d48fa4c4a8f86f55a89cf1f124faac6ca7b4264
                                     <button
                                         onClick={openChainModal}
                                         style={{
@@ -105,18 +91,10 @@ export const WalletConnectButton = () => {
                                                 style={{
                                                     background:
                                                         chain.iconBackground,
-<<<<<<< HEAD
                                                     width: 48,
                                                     height: 48,
                                                     borderRadius: 999,
                                                     overflow: 'hidden',
-=======
-                                                    width: 44,
-                                                    height: 44,
-                                                    borderRadius: 999,
-                                                    overflow: 'hidden',
-                                                    marginRight: 4,
->>>>>>> 2d48fa4c4a8f86f55a89cf1f124faac6ca7b4264
                                                 }}
                                             >
                                                 {chain.iconUrl && (
@@ -127,23 +105,14 @@ export const WalletConnectButton = () => {
                                                         }
                                                         src={chain.iconUrl}
                                                         style={{
-<<<<<<< HEAD
                                                             width: 48,
                                                             height: 48,
-=======
-                                                            width: 44,
-                                                            height: 44,
->>>>>>> 2d48fa4c4a8f86f55a89cf1f124faac6ca7b4264
                                                         }}
                                                     />
                                                 )}
                                             </div>
                                         )}
                                     </button>
-<<<<<<< HEAD
-
-=======
->>>>>>> 2d48fa4c4a8f86f55a89cf1f124faac6ca7b4264
                                     <MainMenu />
                                     <AccountMenu />
                                 </Flex>
