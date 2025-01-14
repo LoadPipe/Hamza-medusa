@@ -120,9 +120,9 @@ const HeroSlider: React.FC = () => {
 
     const productPricing = formatCryptoPrice(
         variantPrices?.find(
-            (p: any) => p.currency_code === preferred_currency_code
+            (p: any) => p.currency_code === (preferred_currency_code ?? 'usdc')
         )?.amount || 0,
-        preferred_currency_code as string
+        (preferred_currency_code ?? 'usdc') as string
     );
 
     return (
