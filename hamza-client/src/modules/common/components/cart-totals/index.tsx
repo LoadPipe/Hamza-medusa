@@ -38,6 +38,9 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const [shippingCost, setShippingCost] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false); // Added loading state
+    const [convertedPrice, setConvertedPrice] = React.useState<string | null>(
+        null
+    );
 
     useEffect(() => {
         let isMounted = true; // Prevent setting state if component unmounts
@@ -110,9 +113,20 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
     const displayCurrency =
         finalSubtotal?.currency || preferred_currency_code || 'usdc';
 
-    const [convertedPrice, setConvertedPrice] = React.useState<string | null>(
-        null
-    );
+    // React.useEffect(() => {
+    //     const fetchConvertedPrice = async () => {
+    //         const usdcSubTotal = getCartSubtotal(data, 'usdc');
+    //         const grandTotalUSDC =
+    //             (usdcSubTotal.amount ?? 0) + shippingCost + taxTotal;
+
+    //         const usdcPrice = formatCryptoPrice(grandTotalUSDC, 'usdc');
+    //         setConvertedPrice(usdcPrice.toString());
+    //     };
+
+    //     if (preferred_currency_code === 'eth') {
+    //         fetchConvertedPrice();
+    //     }
+    // }, [grandTotal]);
 
     React.useEffect(() => {
         const fetchConvertedPrice = async () => {
