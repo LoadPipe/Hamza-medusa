@@ -204,25 +204,6 @@ export default async function Footer() {
                     <Flex justifyContent={'center'} alignItems="center">
                         <LocalizedClientLink href="/">
                             <Flex width={'190px'} flexShrink={0}>
-                                {/*
-                                <Image
-                                    src={HamzaLogo}
-                                    style={{ width: '100%', height: '67px' }}
-                                    alt="Hamza"
-                                />
-
-                                <Image
-                                    src={HamzaTitle}
-                                    style={{
-                                        width: '100%',
-                                        height: '23.07px',
-                                        alignSelf: 'center',
-                                        marginLeft: '1rem',
-                                    }}
-                                    alt="Hamza"
-                                />
-                                */}
-
                                 <Image
                                     style={{
                                         alignSelf: 'left',
@@ -272,7 +253,7 @@ export default async function Footer() {
                 {/* Freescout (chat) */}
                 <Flex
                     dangerouslySetInnerHTML={{
-                        __html: '`<script>var FreeScoutW={s:{"color":"#5ab334","position":"br","id":2009307235}};(function(d,e,s){if(d.getElementById("freescout-w"))return;a=d.createElement(e);m=d.getElementsByTagName(e)[0];a.async=1;a.id="freescout-w";a.src=s;m.parentNode.insertBefore(a, m)})(document,"script","[https://support.hamza.market/modules/chat/js/widget.js?v=4239"](https://support.hamza.market/modules/chat/js/widget.js?v=4239%22));</script>` ',
+                        __html: `<script>var FreeScoutW={s:{"color":"#5ab334","position":"br","id":2009307235}};(function(d,e,s){if(d.getElementById("freescout-w"))return;a=d.createElement(e);m=d.getElementsByTagName(e)[0];a.async=1;a.id="freescout-w";a.src=s;m.parentNode.insertBefore(a, m)})(document,"script","[https://support.hamza.market/modules/chat/js/widget.js?v=4239"](https://support.hamza.market/modules/chat/js/widget.js?v=4239%22));</script>`,
                     }}
                 ></Flex>
 
