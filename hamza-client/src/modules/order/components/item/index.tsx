@@ -40,7 +40,6 @@ const Item = ({ item, region, currencyCode }: ItemProps) => {
                         </Text>
                         <LineItemUnitPrice
                             item={item}
-                            region={region}
                             style="tight"
                             currencyCode={currencyCode}
                         />
