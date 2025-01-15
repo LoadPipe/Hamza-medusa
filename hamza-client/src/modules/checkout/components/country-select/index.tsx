@@ -18,16 +18,22 @@ const CountrySelect = forwardRef<
         () => innerRef.current
     );
 
+    console.log('defaultValue', defaultValue);
+
     const countryOptions = useMemo(() => {
         if (!region) {
             return [];
         }
 
-        return region.countries.map((country) => ({
-            value: country.iso_2,
-            label: country.display_name,
-        }));
+        return region.countries
+            .filter((country) => country.iso_2 !== 'en')
+            .map((country) => ({
+                value: country.iso_2,
+                label: country.display_name,
+            }));
     }, [region]);
+
+    console.log('countryOptions', countryOptions);
 
     return (
         <NativeSelect
