@@ -17,7 +17,7 @@ export default async function Footer() {
         <Flex
             width="full"
             bgColor={'black'}
-            py="4rem"
+            py={{ base: '2rem', md: '4rem' }}
             justifyContent={'center'}
         >
             <Flex
@@ -27,6 +27,17 @@ export default async function Footer() {
                 width={'100%'}
             >
                 {/* links */}
+                <Flex
+                    mb="2rem"
+                    justifyContent={'center'}
+                    display={{ base: 'flex', md: 'none' }}
+                >
+                    <LocalizedClientLink href="/">
+                        <Flex width={'172px'} flexShrink={0}>
+                            <Image src={HamzaLogo} alt="Hamza" />
+                        </Flex>
+                    </LocalizedClientLink>
+                </Flex>
                 <Divider mx="auto" color="#555555" maxWidth={'1014px'} />
                 <Flex
                     pt={{ base: '2rem', md: '3rem' }}
@@ -127,7 +138,12 @@ export default async function Footer() {
                         </a>
                     </Flex>
 
-                    <Flex flexDir={'column'} color={'white'} gap={'8px'}>
+                    <Flex
+                        mt={{ base: '8px', md: '0px' }}
+                        flexDir={'column'}
+                        color={'white'}
+                        gap={'8px'}
+                    >
                         <a
                             href="https://blog.hamza.market/merchant/"
                             target="_blank"
@@ -200,22 +216,21 @@ export default async function Footer() {
                 <Divider />
                 {/* Bottom Content */}
 
-                <Flex pt="2rem" justifyContent={'space-between'} width={'100%'}>
-                    <Flex justifyContent={'center'} alignItems="center">
+                <Flex
+                    pt="2rem"
+                    flexDir={{ base: 'column', md: 'row' }}
+                    width={'100%'}
+                    gap={4}
+                >
+                    <Flex display={{ base: 'none', md: 'flex' }}>
                         <LocalizedClientLink href="/">
                             <Flex width={'190px'} flexShrink={0}>
-                                <Image
-                                    style={{
-                                        alignSelf: 'left',
-                                    }}
-                                    src={HamzaLogo}
-                                    alt="Hamza"
-                                />
+                                <Image src={HamzaLogo} alt="Hamza" />
                             </Flex>
                         </LocalizedClientLink>
                     </Flex>
                     <Flex
-                        mr={{ base: 'auto', md: '0' }}
+                        ml={{ base: '0', md: 'auto' }}
                         flexDir={'row'}
                         justifyContent={'center'}
                         alignItems="center"
