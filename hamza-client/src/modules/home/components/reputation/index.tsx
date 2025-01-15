@@ -1,11 +1,17 @@
 'use client';
 import React from 'react';
 import { Box, Flex, Text } from '@chakra-ui/react';
-import hns from '../../../../../public/images/reputation/hns-conference.png';
-import cbs from '../../../../../public/images/reputation/crossbordersummit.jpg';
-import ethlondon from '../../../../../public/images/reputation/ETHGlobal_London.jpg';
-import ethglobal from '../../../../../public/images/reputation/ethglobal.jpg';
+import hns from '../../../../../public/images/reputation/footer-logo-handshake.png';
+import cbs from '../../../../../public/images/reputation/footer-logo-cross-border-summit.png';
+import ethlondon from '../../../../../public/images/reputation/footer-logo-ethglobal-london.png';
+import ethglobal from '../../../../../public/images/reputation/footer-logo-ethglobal.png';
 import Image from 'next/image';
+
+const imageStyles = {
+    width: "160px",
+    filter: 'hue-rotate(186deg) brightness(90%) contrast(90%)',
+    height: 'fit-content !important' as const,
+};
 
 const Reputation = () => {
     return (
@@ -19,49 +25,33 @@ const Reputation = () => {
             className="w-full font-sora"
         >
             <Text
-                letterSpacing={'4px'}
-                className="font-sora text-xs font-bold leading-6 tracking-wider text-center"
-                color="#9C9B9B"
-                mb={8}
+                fontWeight="bold"
+                className="text-xs font-bold leading-6 tracking-wider text-center"
+                color="#FFF"
+                mb={5}
             >
                 AS SEEN IN
             </Text>
-            <Flex gap={'21'} justifyContent="center" mb={6}>
+            <Flex gap={'51'} justifyContent="center" alignItems="center" mb={6}>
                 <Image
                     src={ethlondon}
-                    width={126}
-                    height={80}
                     alt={'ETH London'}
-                    style={{
-                        filter: 'hue-rotate(186deg) brightness(90%) contrast(90%)',
-                    }}
+                    style={imageStyles}
                 />
                 <Image
                     src={ethglobal}
-                    width={126}
-                    height={80}
                     alt={'ETH Global'}
-                    style={{
-                        filter: 'hue-rotate(186deg) brightness(90%) contrast(90%)',
-                    }}
+                    style={imageStyles}
                 />
                 <Image
                     src={cbs}
-                    width={126}
-                    height={80}
                     alt={'Cross Border Summit'}
-                    style={{
-                        filter: 'hue-rotate(186deg) brightness(90%) contrast(90%)',
-                    }}
+                    style={imageStyles}
                 />
                 <Image
                     src={hns}
-                    width={126}
-                    height={80}
                     alt={'Handshake Conference'}
-                    style={{
-                        filter: 'hue-rotate(186deg) brightness(90%) contrast(90%)',
-                    }}
+                    style={imageStyles}
                 />
             </Flex>
         </Box>

@@ -40,7 +40,7 @@ import { Metadata } from 'next';
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
 export default function StoreContent({ params }: { params: { slug: string } }) {
-    const displaySlug = capitalizeSlug(params.slug);
+    const slug = params.slug?.trim(); //capitalizeSlug(params.slug);
     const [reviewStats, setReviewStats] = useState({
         reviewCount: 0,
         reviews: [],
@@ -54,7 +54,7 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
 
     // reveal more text mobile about
     const [showMore, setShowMore] = useState(3);
-    console.log(`slug name ${displaySlug}`);
+    const [storeName, setStoreName] = useState('');
     const router = useRouter();
 
     useEffect(() => {
@@ -66,15 +66,15 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
 
     const getVendorPage = async () => {
         try {
-            console.log(`Display Slug is ${displaySlug}`);
-            const response = await getVendorStoreBySlug(displaySlug);
+            const response = await getVendorStoreBySlug(params.slug);
+
             if (
-                response &&
-                JSON.stringify(response) !== JSON.stringify(reviewStats)
+                response?.products &&
+                JSON.stringify(response?.products) !==
+                    JSON.stringify(reviewStats)
             ) {
-                console.log(`Response ${JSON.stringify(response)}`);
-                setReviewStats(response);
-                console.log(`THUMBNAIL: ${response.thumbnail}`);
+                setStoreName(response?.store?.name);
+                setReviewStats(response?.products);
             } else {
                 console.log('Response was null or no data changes');
                 return '/not-found';
@@ -145,7 +145,7 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
                             />
                             <Flex flexDir={'column'} alignSelf={'center'}>
                                 <Text fontSize={{ base: '12px', md: '24px' }}>
-                                    {displaySlug}{' '}
+                                    {storeName}{' '}
                                     {/* Display the capitalized slug */}
                                 </Text>
                                 <Flex color="#555555" gap={'7px'}>
@@ -393,7 +393,7 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
                 </Flex>
             </Flex>
 
-            <StoreProductDisplay storeName={displaySlug} />
+            <StoreProductDisplay storeName={slug} />
         </Box>
     );
 }

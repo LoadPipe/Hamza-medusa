@@ -21,7 +21,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         let storeId = handler.inputParams.store_id;
         if (!handler.hasParam('store_id')) {
             if (handler.hasParam('store_name')) {
-                const store = await storeService.getStoreByName(
+                const store = await storeService.getStoreByHandleOrName(
                     handler.inputParams.store_name
                 );
                 if (!store) {

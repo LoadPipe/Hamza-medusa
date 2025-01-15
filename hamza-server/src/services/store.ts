@@ -41,6 +41,7 @@ class StoreService extends MedusaStoreService {
     async createStore(
         user: User,
         store_name: string,
+        handle: string,
         collection: string,
         icon: string,
         store_followers: number,
@@ -60,6 +61,7 @@ class StoreService extends MedusaStoreService {
         newStore.store_description = store_description;
         newStore.default_currency_code = 'eth';
         newStore.escrow_metadata = escrow_metadata;
+        newStore.handle = handle;
         newStore = await storeRepo.save(newStore);
         this.logger.debug('New Store Saved:' + newStore);
 
@@ -89,13 +91,49 @@ class StoreService extends MedusaStoreService {
         return super.update(data);
     }
 
-    async getStoreByName(store_name: string): Promise<Store> {
+    /**
+     * @deprecated use getStoreByHandleOrName
+     */
+    async getStoreByName(storeName: string): Promise<Store> {
         const storeRepo = this.manager_.withRepository(this.storeRepository_);
-        const store = await storeRepo.findOneBy({ name: store_name });
+        const store = await storeRepo.findOneBy({ name: storeName });
         if (!store) {
-            throw new Error(`Store with name ${store_name} not found`);
+            throw new Error(`Store with name ${storeName} not found`);
         }
         return store;
+    }
+
+    async getStoreByHandleOrName(storeHandleOrName: string): Promise<Store> {
+        const storeRepo = this.manager_.withRepository(this.storeRepository_);
+        let store = await storeRepo.findOneBy({ handle: storeHandleOrName });
+
+        console.log('store by handle:', store, storeHandleOrName);
+
+        if (!store) {
+            store = await storeRepo.findOneBy({
+                name: this.adjustHandleToName(storeHandleOrName),
+            });
+            if (!store) {
+                throw new Error(
+                    `Store with handle or name ${storeHandleOrName} not found`
+                );
+            }
+        }
+        return store;
+    }
+
+    private adjustHandleToName(value: string) {
+        // Decode URI components before processing
+        const decodedValue = decodeURIComponent(value);
+        return decodedValue
+            .replace(/\+/g, ' ')
+            .replace(/\-/g, ' ')
+            .split(/[\s-]+/) // Split on any sequence of spaces or dashes
+            .map(
+                (word) =>
+                    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+            )
+            .join(' ');
     }
 }
 

@@ -6,6 +6,7 @@ import { Box } from '@chakra-ui/react';
 import HeroBanner from '@modules/home/components/hero-banner';
 import getQueryClient from '@/getQueryClient';
 import { dehydrate, useQueryClient } from '@tanstack/react-query';
+import HeroSlider from '@/modules/home/components/hero-slider';
 
 /**
  * Author: Garo Nazarian
@@ -62,6 +63,7 @@ export default async function Home({
     return (
         <Box backgroundColor={'transparent'}>
             <HeroBanner />
+            <HeroSlider />
             <SearchAndFilterPanel dehydratedState={dehydratedHomeProducts} />
         </Box>
     );

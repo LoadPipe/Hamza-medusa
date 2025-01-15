@@ -29,7 +29,6 @@ export default class GlobetopperService extends TransactionBaseService {
     protected readonly logger: ILogger;
     protected readonly productService_: ProductService;
     protected readonly smtpMailService_: SmtpMailService;
-    protected readonly orderRepository_: typeof OrderRepository;
     protected readonly priceConverter: PriceConverter;
     protected readonly apiClient: GlobetopperClient;
     protected readonly externalApiLogRepository_: typeof ExternalApiLogRepository;
@@ -38,7 +37,6 @@ export default class GlobetopperService extends TransactionBaseService {
     constructor(container) {
         super(container);
         this.productService_ = container.productService;
-        this.orderRepository_ = container.orderRepository;
         this.smtpMailService_ = container.smtpMailService;
         this.externalApiLogRepository_ = container.externalApiLogRepository;
         this.logger = createLogger(container, 'GlobetopperService');
@@ -160,7 +158,9 @@ export default class GlobetopperService extends TransactionBaseService {
         }
 
         //here you have an array of outputs, 1 for each variant
-        const purchaseOutputs = await Promise.all(promises);
+        const purchaseOutputs = promises.length
+            ? await Promise.all(promises)
+            : [];
 
         // send email(s)
         // handle balance - notify site admin if balance is below threshold
@@ -293,7 +293,8 @@ export default class GlobetopperService extends TransactionBaseService {
         */
 
         // stub to build email content
-        await this.sendPostPurchaseEmail(purchaseOutputs, email);
+        if (purchaseOutputs?.length)
+            await this.sendPostPurchaseEmail(purchaseOutputs, email);
 
         //TODO: what to do with the outputs now?
         return purchaseOutputs ?? [];
@@ -315,6 +316,9 @@ export default class GlobetopperService extends TransactionBaseService {
             order_id: orderId,
         });
 
+        if (variant?.metadata?.imgUrl) {
+            output.data.thumbnail = variant.metadata.imgUrl;
+        }
         return output.data;
     }
 
@@ -334,7 +338,6 @@ export default class GlobetopperService extends TransactionBaseService {
                     case 'Brand Logo':
                         extraFieldContent = `<img src="${fieldValue}" />`;
                         break;
-
                     case 'Redemption URL':
                     case 'Barcode URL':
                     case 'Admin Barcode URL':
@@ -350,13 +353,27 @@ export default class GlobetopperService extends TransactionBaseService {
                 cardInfo.push(extraFieldContent);
             }
 
-            emailBody += `<b>${purchase.records[0]?.operator?.name}</b><br/>${cardInfo.join('<br /><br />\n')}`;
+            //get thumbnail image to display, if there is one
+            let thumbnailImgHtml = '';
+            if (purchase.thumbnail) {
+                thumbnailImgHtml = `
+                            <div style="margin-bottom: 1rem;">
+                                <img class="item-image" 
+                                src="${purchase.thumbnail}"
+                                alt="gift card thumbnail"
+                                />
+                            </div>
+                            `;
+            }
+
+            //combine all into email body
+            emailBody += `${thumbnailImgHtml}<b>${purchase.records[0]?.operator?.name}</b><br/>${cardInfo.join('<br /><br />\n')}`;
             console.log(
                 `Globetopper gift card email info for customer ${email}:\n${emailBody}`
             );
         }
 
-        this.smtpMailService_.sendMail({
+        await this.smtpMailService_.sendMail({
             from: process.env.SMTP_FROM,
             to: email,
             subject: 'Gift Card Purchase from Hamza',
@@ -525,6 +542,21 @@ export default class GlobetopperService extends TransactionBaseService {
 
             //add variant images to the main product images
             const images = []; //TODO: get images
+            let description = '';
+
+            const formatSection = (title: string, content: string): string => {
+                if (content && content.trim() !== '') {
+                    return `<h2>${title}</h2><p>${content}</p>`;
+                }
+                return '';
+            };
+
+            description += formatSection('Brand Description: ', productDetail.brand_description);
+            description += formatSection('Redemption Instructions: ', productDetail.redemption_instruction);
+            description += formatSection('Disclaimer: ', productDetail.brand_disclaimer);
+            description += formatSection('Terms & Conditions: ', productDetail.term_and_conditions);
+            description += formatSection('Restriction & Policies: ', productDetail.restriction_and_policies);
+            description += formatSection('Additional Information: ', productDetail.brand_additional_information);
 
             let handle = item?.name
                 ?.trim()
@@ -537,7 +569,7 @@ export default class GlobetopperService extends TransactionBaseService {
                 title: item?.name,
                 subtitle: productDetail.brand_description, //TODO: find a better value
                 handle,
-                description: `${productDetail.brand_description} <br/>${productDetail.redemption_instruction}`, //TODO: make better description
+                description: description, 
                 is_giftcard: false,
                 status: status as ProductStatus,
                 thumbnail: item?.picUrl ?? productDetail?.card_image,
@@ -578,8 +610,10 @@ export default class GlobetopperService extends TransactionBaseService {
     ): Promise<CreateProductProductVariantInput[]> {
         const variants = [];
         const variantPrices = this.getVariantPrices(item);
+        variantPrices.sort((a, b) => a - b);
 
-        for (let variantPrice of variantPrices) {
+        for (let index = 0; index < variantPrices.length; index++) {
+            const variantPrice = variantPrices[index];
             variants.push({
                 title: item?.name,
                 inventory_quantity: 9999,
@@ -587,7 +621,7 @@ export default class GlobetopperService extends TransactionBaseService {
                 manage_inventory: true,
                 external_id: item?.operator?.id,
                 external_source: PRODUCT_EXTERNAL_SOURCE,
-                external_metadata: { amount: item.min },
+                external_metadata: { amount:  variantPrice.toFixed(2) },
                 metadata: { imgUrl: productDetail?.card_image },
                 prices: [
                     {
@@ -608,6 +642,7 @@ export default class GlobetopperService extends TransactionBaseService {
                     },
                 ],
                 options: [{ value: variantPrice.toFixed(2) }],
+                variant_rank: index,
             });
         }
 

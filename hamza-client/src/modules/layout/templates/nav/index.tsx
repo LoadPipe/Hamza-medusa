@@ -20,7 +20,6 @@ import { WalletConnectButton } from './menu-desktop/connect-wallet';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { LineItem } from '@medusajs/medusa';
-import { usePathname } from 'next/navigation';
 import { headers } from 'next/headers';
 
 const fetchCart = async () => {
@@ -100,16 +99,13 @@ export default async function Nav() {
                                 style={{
                                     alignSelf: 'left',
                                 }}
-                                src={HamzaHoliday}
+                                src={HamzaLogo}
                                 alt="Hamza"
                             />
                         </Flex>
                     </a>
 
                     <NavSearchBar />
-
-                    <HnsDisplay />
-                    <MainMenu />
 
                     <WalletConnectButton />
 

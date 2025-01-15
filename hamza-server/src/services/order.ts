@@ -9,7 +9,6 @@ import {
     ProductVariant,
     LineItem,
 } from '@medusajs/medusa';
-import { BuckyLogRepository } from '../repositories/bucky-log';
 import SalesChannelRepository from '@medusajs/medusa/dist/repositories/sales-channel';
 import RegionRepository from '@medusajs/medusa/dist/repositories/region';
 import AddressRepository from '@medusajs/medusa/dist/repositories/address';
@@ -39,6 +38,7 @@ import CartRepository from '@medusajs/medusa/dist/repositories/cart';
 import { CartEmailRepository } from '../repositories/cart-email';
 import GlobetopperService from './globetopper';
 import { randomInt, randomUUID } from 'crypto';
+import { Store } from '../models/store';
 
 // Since {TO_PAY, TO_SHIP} are under the umbrella name {Processing} in FE, not sure if we should modify atm
 // In medusa we have these 5 DEFAULT order.STATUS's {PENDING, COMPLETED, ARCHIVED, CANCELED, REQUIRES_ACTION}
@@ -103,7 +103,7 @@ export default class OrderService extends MedusaOrderService {
         this.orderHistoryService_ = container.orderHistoryService;
         this.logger = createLogger(container, 'OrderService');
         this.globetopperService_ = container.globetopperService;
-        this.buckyClient = new BuckyClient(container.buckyLogRepository);
+        this.buckyClient = new BuckyClient(container.externalApiLogRepository);
         this.cartEmailRepository_ = container.cartEmailRepository;
     }
 
@@ -354,15 +354,6 @@ export default class OrderService extends MedusaOrderService {
         return order;
     }
 
-    async changeFulfillmentStatus(orderId: string, status: FulfillmentStatus) {
-        const order = await this.orderRepository_.findOne({
-            where: { id: orderId },
-        });
-        order.fulfillment_status = status;
-        await this.orderRepository_.save(order);
-        return order;
-    }
-
     async cancelOrderFromCart(cart_id: string) {
         await this.orderRepository_.update(
             { status: OrderStatus.REQUIRES_ACTION, cart: { id: cart_id } },
@@ -396,6 +387,28 @@ export default class OrderService extends MedusaOrderService {
                 ),
             },
             relations: ['cart.items', 'cart', 'cart.items.variant.product'],
+        });
+    }
+
+    async getCustomerOrder(customerId: string, orderId: string, includePayments: boolean = false): Promise<Order> {
+        return this.orderRepository_.findOne({
+            where: {
+                customer_id: customerId,
+                id: orderId,
+                status: Not(
+                    In([OrderStatus.ARCHIVED, OrderStatus.REQUIRES_ACTION])
+                ),
+            },
+            relations: includePayments
+                ? [
+                      'cart.items',
+                      'cart',
+                      'cart.items.variant.product',
+                      'payments',
+                      'shipping_methods',
+                      'store'
+                  ]
+                : ['cart.items', 'cart', 'cart.items.variant.product'],
         });
     }
 
@@ -578,7 +591,7 @@ export default class OrderService extends MedusaOrderService {
     ): Promise<{ variants: ProductVariant[]; quantities: number[] }> {
         const orders: Order[] = await this.getOrdersWithItems([order]);
         const relevantItems: LineItem[] = orders[0].cart.items.filter(
-            (i) => i.variant.product.bucky_metadata
+            (i) => i.variant.product.external_metadata
         );
 
         return relevantItems?.length
@@ -812,10 +825,9 @@ export default class OrderService extends MedusaOrderService {
                 const { variants, quantities } =
                     await this.getBuckyProductVariantsFromOrder(order);
                 if (variants?.length) {
-                    order.bucky_metadata = { status: 'pending' };
+                    order.external_source = 'buckydrop';
+                    order.external_metadata = { status: 'pending' };
                     await this.orderRepository_.save(order);
-
-                    this.logger.debug('BUCKY CREATED ORDER');
                 }
             }
         } catch (e) {
@@ -836,14 +848,29 @@ export default class OrderService extends MedusaOrderService {
                         GlobetopperService.EXTERNAL_SOURCE
                     );
 
-                const results: any[] =
-                    await this.globetopperService_.processPointOfSale(
-                        order.id,
-                        cart.customer.first_name,
-                        cart.customer.last_name,
-                        cart.email,
-                        items
+                if (items.length) {
+                    const results: any[] =
+                        await this.globetopperService_.processPointOfSale(
+                            order.id,
+                            cart.customer.first_name,
+                            cart.customer.last_name,
+                            cart.email,
+                            items
+                        );
+
+                    order.external_source = 'globetopper';
+                    await this.orderRepository_.save(order);
+
+                    //set fulfillment status to delivered
+                    await this.setOrderStatus(
+                        order,
+                        null,
+                        FulfillmentStatus.FULFILLED,
+                        null,
+                        null,
+                        null
                     );
+                }
             } catch (e: any) {
                 this.logger.error(
                     `Error processing globetopper orders for order ${order.id}`,
@@ -853,24 +880,27 @@ export default class OrderService extends MedusaOrderService {
         }
     }
 
-    private async getCustomerOrdersByStatus(
+    public async getCustomerOrdersByStatus(
         customerId: string,
         statusParams: {
             orderStatus?: OrderStatus;
             paymentStatus?: PaymentStatus;
             fulfillmentStatus?: FulfillmentStatus;
-        }
+        },
+        orderId?: string
     ): Promise<Order[]> {
         const where: {
             customer_id: string;
             status?: any;
             payment_status?: any;
             fulfillment_status?: any;
+            id?: string;
         } = {
             customer_id: customerId,
             status: Not(
                 In([OrderStatus.ARCHIVED, OrderStatus.REQUIRES_ACTION])
             ),
+            id: orderId,
         };
 
         if (statusParams.orderStatus) {
@@ -916,13 +946,18 @@ export default class OrderService extends MedusaOrderService {
 
         //update payments with transaction info
         paymentOrders.forEach((po, i) => {
+            //get the appropriate metadata for the chain
+            let escrow_address = this.getEscrowAddressFromStore(
+                chainId,
+                po?.order?.store
+            );
+
             promises.push(
                 this.updatePaymentAfterTransaction(po.payment.id, {
                     blockchain_data: {
                         transaction_id: transactionId,
                         payer_address: payerAddress,
-                        escrow_address:
-                            po.order?.store?.escrow_metadata?.address,
+                        escrow_address,
                         receiver_address:
                             po.order?.store?.owner?.wallet_address,
                         chain_id: chainId,
@@ -934,6 +969,21 @@ export default class OrderService extends MedusaOrderService {
         return promises;
     }
 
+    private getEscrowAddressFromStore(
+        chainId: number,
+        store: Store | undefined | null
+    ): string {
+        let address = null;
+        const escrow_metadata: any = store?.escrow_metadata;
+        if (escrow_metadata) {
+            if (escrow_metadata[chainId])
+                address = escrow_metadata[chainId]?.address;
+            if (!address) address = escrow_metadata.address;
+            if (!address) address = '0x0';
+        }
+        return address;
+    }
+
     private getPostCheckoutUpdateOrderPromises(
         orders: Order[]
     ): Promise<Order>[] {
@@ -941,7 +991,10 @@ export default class OrderService extends MedusaOrderService {
             return this.orderRepository_.save({
                 id: o.id,
                 status: OrderStatus.PENDING,
-                payment_status: PaymentStatus.AWAITING,
+                payment_status:
+                    o.external_source === 'buckydrop'
+                        ? PaymentStatus.AWAITING
+                        : PaymentStatus.CAPTURED,
                 escrow_status: EscrowStatus.IN_ESCROW,
             });
         });
@@ -1155,7 +1208,7 @@ export default class OrderService extends MedusaOrderService {
                             receiver_address: '',
                             transaction_id: '',
                             escrow_address:
-                                '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
+                                '0xAb6a9e96E08d0ec6100016a308828B792f4da3fD',
                         },
                     });
 

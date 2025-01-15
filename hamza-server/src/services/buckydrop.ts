@@ -10,7 +10,7 @@ import {
 } from '@medusajs/medusa';
 import ProductService from '../services/product';
 import OrderService from '../services/order';
-import { BuckyLogRepository } from '../repositories/bucky-log';
+import { ExternalApiLogRepository } from '../repositories/external-api-log';
 import { Product } from '../models/product';
 import { Order } from '../models/order';
 import { PriceConverter } from '../utils/price-conversion';
@@ -38,13 +38,12 @@ type CreateProductInput = MedusaCreateProductInput & {
     store_id: string;
     external_source: string;
     external_metadata?: Record<string, unknown>;
-    bucky_metadata?: Record<string, unknown>;
 };
 
 const PRODUCT_EXTERNAL_SOURCE: string = 'buckydrop';
 
 type FindOptionsWhere<Order> = TypeormFindOptionsWhere<Order> & {
-    bucky_metadata?: any;
+    external_metadata?: any;
 };
 
 const SHIPPING_COST_MIN: number = parseInt(
@@ -65,7 +64,7 @@ export default class BuckydropService extends TransactionBaseService {
     protected readonly orderRepository_: typeof OrderRepository;
     protected readonly priceConverter: PriceConverter;
     protected readonly buckyClient: BuckyClient;
-    protected readonly buckyLogRepository: typeof BuckyLogRepository;
+    protected readonly externalApiLogRepository: typeof ExternalApiLogRepository;
     public static readonly EXTERNAL_SOURCE: string = PRODUCT_EXTERNAL_SOURCE;
 
     constructor(container) {
@@ -80,8 +79,8 @@ export default class BuckydropService extends TransactionBaseService {
             this.logger,
             container.cachedExchangeRateRepository
         );
-        this.buckyLogRepository = container.buckyLogRepository;
-        this.buckyClient = new BuckyClient(this.buckyLogRepository);
+        this.externalApiLogRepository = container.externalApiLogRepository;
+        this.buckyClient = new BuckyClient(this.externalApiLogRepository);
     }
 
     async importProductsByKeyword(
@@ -201,53 +200,6 @@ export default class BuckydropService extends TransactionBaseService {
                 ? cart.customer.preferred_currency_id
                 : (cart?.items[0]?.currency_code ?? 'usdc');
 
-            /*
-            //calculate prices
-            const input: IBuckyShippingCostRequest = {
-                lang: 'en',
-                countryCode: cart.shipping_address.country_code,
-                country: cart.shipping_address.country.name,
-                provinceCode: cart.shipping_address.province,
-                province: cart.shipping_address.province,
-                detailAddress:
-                    `${cart.shipping_address.address_1 ?? ''} ${cart.shipping_address.address_2 ?? ''}`.trim(),
-                postCode: cart.shipping_address.postal_code,
-                productList: [],
-            };
-
-            //generate input for each product in cart that is bucky
-            for (let item of cart.items) {
-                if (item.variant.bucky_metadata?.length) {
-                    const variantMetadata: any = item.variant.bucky_metadata;
-                    const productMetadata: any =
-                        item.variant.product.bucky_metadata;
-                    input.productList.push({
-                        length: variantMetadata.length ?? 100,
-                        width: variantMetadata.width ?? 100,
-                        height: variantMetadata.height ?? 100,
-                        weight: variantMetadata.weight ?? 100,
-                        categoryCode: productMetadata.detail.categoryCode,
-                    });
-
-                    subtotal += item.unit_price * item.quantity;
-                }
-            }
-
-            //if (subtotal > 0) {
-            /*
-            const estimate =
-                await this.buckyClient.getShippingCostEstimate(input);
-
-            //convert to usd first
-            if (estimate?.data?.total) {
-                output = await this.priceConverter.convertPrice(
-                    estimate.data.total,
-                    'cny',
-                    'usdc'
-                );
-                gotPrice = true;
-            }
-            */
 
             output = SHIPPING_COST_MAX; // subtotal;
             output = output < SHIPPING_COST_MIN ? SHIPPING_COST_MIN : output;
@@ -260,33 +212,6 @@ export default class BuckydropService extends TransactionBaseService {
                     'usdc',
                     currency
                 );
-            // }
-
-            //if price was not yet converted, or nothing came back, do it now
-            /*if (!gotPrice) {
-                //this needs to be converted to USDC in order to compare
-                if (output <= 0 && subtotal > 0) {
-                    subtotal = await this.priceConverter.convertPrice(
-                        subtotal,
-                        currency,
-                        'usdc'
-                    );
-
-                    //final calculated price should be
-                    output = subtotal;
-                    output =
-                        output < SHIPPING_COST_MIN ? SHIPPING_COST_MIN : output;
-                    output =
-                        output > SHIPPING_COST_MAX ? SHIPPING_COST_MAX : output;
-                }
-
-                output = await this.priceConverter.convertPrice(
-                    output,
-                    'usdc',
-                    currency
-                );
-            }
-            */
         } catch (e) {
             this.logger.error(
                 `Error calculating shipping costs in BuckydropService`,
@@ -303,7 +228,12 @@ export default class BuckydropService extends TransactionBaseService {
             where: { id: orderId },
         });
 
-        if (order && order?.cart_id && order.bucky_metadata) {
+        if (
+            order &&
+            order?.cart_id &&
+            order.external_metadata &&
+            order.external_source === PRODUCT_EXTERNAL_SOURCE
+        ) {
             //get cart
             const cart: Cart = await this.cartService_.retrieve(order.cart_id, {
                 relations: ['billing_address.country', 'customer'],
@@ -318,8 +248,8 @@ export default class BuckydropService extends TransactionBaseService {
             //create list of products
             const productList: ICreateBuckyOrderProduct[] = [];
             for (let n = 0; n < variants.length; n++) {
-                const prodMetadata: any = variants[n].product.bucky_metadata;
-                const varMetadata: any = variants[n].bucky_metadata;
+                const prodMetadata: any = variants[n].product.external_metadata;
+                const varMetadata: any = variants[n].external_metadata;
 
                 productList.push({
                     spuCode: prodMetadata?.detail.spuCode,
@@ -358,7 +288,8 @@ export default class BuckydropService extends TransactionBaseService {
             this.logger.info(`Created buckydrop order for ${orderId}`);
 
             //save the output
-            order.bucky_metadata = output;
+            order.external_metadata = output;
+            order.external_source = PRODUCT_EXTERNAL_SOURCE;
 
             order.status = output?.success
                 ? OrderStatus.PENDING
@@ -379,7 +310,10 @@ export default class BuckydropService extends TransactionBaseService {
         try {
             //get order & metadata
             let order: Order = await this.orderService_.retrieve(orderId);
-            const buckyData: any = order.bucky_metadata;
+            const buckyData: any =
+                order.external_source === PRODUCT_EXTERNAL_SOURCE
+                    ? order.external_metadata
+                    : null;
 
             if (
                 order &&
@@ -397,7 +331,7 @@ export default class BuckydropService extends TransactionBaseService {
 
                     //save the tracking data
                     buckyData.tracking = orderDetail;
-                    order.bucky_metadata = buckyData;
+                    order.external_metadata = buckyData;
 
                     if (status) {
                         //translate the status
@@ -549,7 +483,7 @@ export default class BuckydropService extends TransactionBaseService {
     async cancelOrder(orderId: string): Promise<Order> {
         try {
             const order: Order = await this.orderService_.retrieve(orderId);
-            const buckyData: any = order.bucky_metadata;
+            const buckyData: any = order.external_metadata;
             let cancelOutput: any = null;
 
             if (order && buckyData) {
@@ -589,7 +523,7 @@ export default class BuckydropService extends TransactionBaseService {
 
                     if (cancelOutput) {
                         //save the tracking data
-                        order.bucky_metadata = buckyData;
+                        order.external_metadata = buckyData;
                         buckyData.cancel = cancelOutput;
 
                         //save the order
@@ -620,7 +554,8 @@ export default class BuckydropService extends TransactionBaseService {
 
     async getOrdersToVerify(): Promise<Order[]> {
         const where: FindOptionsWhere<Order> = {
-            bucky_metadata: Not(IsNull()),
+            external_metadata: Not(IsNull()),
+            external_source: PRODUCT_EXTERNAL_SOURCE,
             status: OrderStatus.PENDING,
 
             payment_status: PaymentStatus.AWAITING,
@@ -652,7 +587,8 @@ export default class BuckydropService extends TransactionBaseService {
             }) ?? [];
 
         orders =
-            orders?.filter((o) => o.bucky_metadata?.status === 'pending') ?? [];
+            orders?.filter((o) => o.external_metadata?.status === 'pending') ??
+            [];
 
         return orders;
     }
@@ -663,12 +599,14 @@ export default class BuckydropService extends TransactionBaseService {
                 status: OrderStatus.PENDING,
                 payment_status: PaymentStatus.CAPTURED,
                 fulfillment_status: FulfillmentStatus.NOT_FULFILLED,
-                bucky_metadata: Not(IsNull()),
+                external_source: PRODUCT_EXTERNAL_SOURCE,
+                external_metadata: Not(IsNull()),
             },
         };
         const orders: Order[] = await this.orderRepository_.find(options);
         return (
-            orders?.filter((o) => o.bucky_metadata?.status === 'pending') ?? []
+            orders?.filter((o) => o.external_metadata?.status === 'pending') ??
+            []
         );
     }
 
@@ -680,12 +618,13 @@ export default class BuckydropService extends TransactionBaseService {
                 fulfillment_status: Not(
                     In([FulfillmentStatus.CANCELED, FulfillmentStatus.RETURNED])
                 ),
-                bucky_metadata: Not(IsNull()),
+                external_metadata: Not(IsNull()),
             },
         };
         const orders: Order[] = await this.orderRepository_.find(options);
         return (
-            orders?.filter((o) => o.bucky_metadata?.status !== 'pending') ?? []
+            orders?.filter((o) => o.external_metadata?.status !== 'pending') ??
+            []
         );
     }
 
@@ -864,7 +803,6 @@ export default class BuckydropService extends TransactionBaseService {
                     return { id: sc };
                 }),
                 tags: tagName?.length ? [{ id: tagName, value: tagName }] : [],
-                bucky_metadata: metadata,
                 external_metadata: metadata,
                 options: optionNames.map((o) => {
                     return { title: o };
@@ -947,7 +885,6 @@ export default class BuckydropService extends TransactionBaseService {
                 inventory_quantity: variant.quantity,
                 allow_backorder: false,
                 manage_inventory: true,
-                bucky_metadata: variant,
                 external_metadata: variant,
                 external_source: PRODUCT_EXTERNAL_SOURCE,
                 metadata: { imgUrl: variant.imgUrl },

@@ -609,12 +609,29 @@ class ProductService extends MedusaProductService {
         }
     }
 
-    async getProductsFromStoreName(storeName: string) {
+    async getProductCollection(productIds: string[]) {
         try {
-            const store = await this.storeRepository_.findOne({
-                where: { name: storeName },
+            // Fetch products with matching IDs
+            const products = await this.productRepository_.find({
+                where: {
+                    id: In(productIds),
+                },
+                relations: ['variants.prices'],
             });
 
+            // Update product pricing
+
+            let updatedProducts = await this.convertProductPrices(products);
+
+            return updatedProducts;
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            throw new Error('Failed to fetch products.');
+        }
+    }
+
+    async getProductsForStore(store: Store) {
+        try {
             if (!store) {
                 return null;
             }
@@ -812,6 +829,12 @@ class ProductFilterCache extends SeamlessCache {
                         (p) => p.currency_code === params.filterCurrencyCode
                     )?.amount ?? 0;
                 return priceA - priceB; // Ascending order
+            });
+        } else {
+            products = products.sort((a, b) => {
+                const rankA = a.display_rank ?? 0;
+                const rankB = b.display_rank ?? 0;
+                return rankB - rankA;
             });
         }
 

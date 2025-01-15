@@ -19,7 +19,11 @@ const OptionSelect: React.FC<OptionSelectProps> = ({
    updateOption,
    title,
  }) => {
-  const filteredOptions = option.values
+  const sortedValues = [...option.values].sort((a: any, b: any) => {
+    return (a.variant_rank) - (b.variant_rank);
+  });
+
+  const filteredOptions = sortedValues
     .map((v) => v.value)
     .filter(onlyUnique);
 

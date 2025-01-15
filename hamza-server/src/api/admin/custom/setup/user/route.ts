@@ -173,147 +173,231 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             storeService.createStore(
                 user0,
                 'Medusa Merch',
+                'medusa-merch',
                 'pcol_01HRVF8HCVY8B00RF5S54THTPC',
                 'https://medusa-public-images.s3.eu-west-1.amazonaws.com/sweatpants-gray-front.png',
                 500,
                 'Medusa Merch Store where we sell our Medusa Sweatpants, its a nice store',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0xAb6a9e96E08d0ec6100016a308828B792f4da3fD',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
             storeService.createStore(
                 user1,
                 'Echo Rift',
+                'echo-rift',
                 'pcol_01HSGAM4918EX0DETKY6E662WT',
                 'https://images.hamza.market/headphones.webp',
                 200,
                 "We Sell VR Headsets here, the best quality VR headsets you wouldn't believe it",
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0xAb6a9e96E08d0ec6100016a308828B792f4da3fD',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
             storeService.createStore(
                 user2,
                 'Dauntless',
+                'dauntless',
                 'pcol_01HSGAMXDJD725MR3VSW631SN2',
                 'https://images.hamza.market/dalle_vr.webp',
                 450,
                 'Dauntless Store - Where bold and resilient products meet exceptional quality. Perfect for those who seek adventure and durability in every purchase.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0xAb6a9e96E08d0ec6100016a308828B792f4da3fD',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
 
             storeService.createStore(
                 user3,
                 'Drones',
+                'drones',
                 'pcol_01HSGAMXDJD725MR3VSW631DR0',
                 'https://images.hamza.market/Drones/dji_mini_4_pro/dji_mini_pro_1.jpg',
                 720,
                 'Drones Store - Your go-to destination for cutting-edge aerial technology. Explore our wide range of high-performance drones perfect for every enthusiast.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0xAb6a9e96E08d0ec6100016a308828B792f4da3fD',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
 
             storeService.createStore(
                 user4,
                 'Legos',
+                'legos',
                 'pcol_01HSGAMXDJD725MR3VSW63LEG0',
                 'https://images.hamza.market/Lego/corvette/corvette_1.jpg',
                 315,
                 'Legos Store - Dive into the world of creativity and building blocks. Find the latest Lego sets and build your imagination with endless possibilities.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0xAb6a9e96E08d0ec6100016a308828B792f4da3fD',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
             storeService.createStore(
                 user5,
                 'Board Games',
+                'board-games',
                 'pcol_01HSGAMXDJD725MR3VSW63B0RD',
                 'https://images.hamza.market/Board_Games/dark_souls/souls_1.jpg',
                 860,
                 'Board Games Store - A haven for tabletop enthusiasts. Discover a wide selection of board games, from strategy to family fun, and everything in between.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0xAb6a9e96E08d0ec6100016a308828B792f4da3fD',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
             storeService.createStore(
                 user6,
                 'Workout Gear',
+                'workout-gear',
                 'pcol_01HSGAMXDJD725MR3VSW63W0GE',
                 'https://images.hamza.market/Workout/dumbbell/dumb_2.jpg',
                 580,
                 'Workout Gear Store - Equip yourself with the best in fitness gear. From weights to apparel, we have everything you need to power your workouts.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0xAb6a9e96E08d0ec6100016a308828B792f4da3fD',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
             storeService.createStore(
                 user7,
                 'Gaming Gear',
+                'gaming-gear',
                 'pcol_01HSGAMXDJD725MR3VSW63W0GA',
                 'https://images.hamza.market/gaming_store/6.1.png',
                 930,
                 'Gaming Gear Store - Elevate your gaming experience with top-tier gear. Find the latest peripherals, accessories, and more for the ultimate gaming setup.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0xAb6a9e96E08d0ec6100016a308828B792f4da3fD',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
             storeService.createStore(
                 user8,
                 'Shake',
+                'shake',
                 'pcol_shake',
                 'https://images.hamza.market/headphones.webp',
                 290,
                 'Shake Store - Blend your way to a healthier lifestyle. Our store offers a range of premium shakes and blenders for the health-conscious consumer.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0xAb6a9e96E08d0ec6100016a308828B792f4da3fD',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
             storeService.createStore(
                 user9,
                 'Legendary Light Design',
+                'legendary-light-design',
                 'pcol_lighting',
                 'https://images.hamza.market/Legendary/mood/LLD_mood1.webp',
                 670,
                 'Legendary Light Design Store - Illuminate your space with style. Explore our collection of designer lighting solutions for a touch of elegance and functionality.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0xAb6a9e96E08d0ec6100016a308828B792f4da3fD',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
             storeService.createStore(
                 user10,
                 'Block',
+                'block',
                 'pcol_blocks',
                 'https://images.hamza.market/headphones.webp',
                 410,
                 'Block Store - Specializing in building blocks and construction toys. Let your creativity soar with our range of products designed for endless fun.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0xAb6a9e96E08d0ec6100016a308828B792f4da3fD',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
             storeService.createStore(
                 user11,
                 'Gift Cards',
+                'gift-cards',
                 'pcol_giftcards',
                 'https://images.hamza.market/giftcards.webp',
                 110,
                 'Gift Cards of all kinds & varieties and types and things.',
                 {
-                    address: '0x77930414Ba3E8f8799A9e503d2E6A9CBC95F42B6',
-                    version: '1.0',
+                    11155111: {
+                        address: '0xAb6a9e96E08d0ec6100016a308828B792f4da3fD',
+                        version: '1.0',
+                    },
+                    80002: {
+                        address: '0xEb6b6144B0DDC6494FB7483D209ecc41A7Ae2Cc5',
+                        version: '1.0',
+                    },
                 }
             ),
         ]);

@@ -19,9 +19,6 @@ import Image from 'next/image';
 const NavSearchBar = () => {
     const [searchOpened, setSearchOpened] = useState(false);
     const pathname = usePathname();
-    //Todo: get country code
-    const isHomePage =
-        pathname === `/${process.env.NEXT_PUBLIC_FORCE_COUNTRY ?? 'en'}`;
 
     useEffect(() => {
         window.addEventListener('keydown', (event) => {
@@ -37,11 +34,7 @@ const NavSearchBar = () => {
 
     return (
         <Flex width={'100%'} display={{ base: 'none', md: 'flex' }}>
-            <InputGroup
-                display={isHomePage ? 'none' : 'flex'}
-                mx="1rem"
-                alignItems={'center'}
-            >
+            <InputGroup display={'flex'} mx="1rem" alignItems={'center'}>
                 <Input
                     width={'100%'}
                     height={'80px'}

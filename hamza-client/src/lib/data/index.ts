@@ -10,6 +10,7 @@ import {
     StorePostCustomersCustomerAddressesAddressReq,
     StorePostCustomersCustomerAddressesReq,
     StorePostCustomersCustomerReq,
+    Order,
 } from '@medusajs/medusa';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { cache } from 'react';
@@ -28,6 +29,7 @@ import axios from 'axios';
 
 import { cookies } from 'next/headers';
 import { next } from 'sucrase/dist/types/parser/tokenizer';
+import { EscrowStatus } from './enums';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -293,6 +295,11 @@ export async function getAllVendorProducts() {
     return get('/store/products');
 }
 
+//Get product collection for hero slider
+export async function getProductCollection() {
+    return get('/custom/product/hero-collection');
+}
+
 // Get All Store Names
 export async function getAllStoreNames() {
     return get('/custom/store/name');
@@ -433,6 +440,18 @@ export async function getNotReviewedOrders(customer_id: string) {
 export async function getOrderStatus(order_id: string) {
     return getSecure('/custom/order/status', {
         order_id: order_id,
+    });
+}
+
+export async function updateOrderEscrowStatus(
+    order_id: string,
+    escrow_status: EscrowStatus,
+    metadata: any
+): Promise<Order> {
+    return putSecure('/custom/order/status', {
+        order_id: order_id,
+        escrow_status: escrow_status,
+        metadata: metadata,
     });
 }
 
@@ -890,6 +909,14 @@ export async function getCustomer() {
             }
             return null;
         });
+}
+
+export async function getCustomerOrder(customer_id: string, order_id: string) {
+    const orders = await postSecure('/custom/order', {
+        customer_id: customer_id,
+        order_id: order_id
+    });
+    return orders[0];
 }
 
 declare class StorePostCustomersReqCustom {

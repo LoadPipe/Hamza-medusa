@@ -1,8 +1,8 @@
 {
     "name": "hamza-client",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "private": true,
-    "author": "Garo Nazarian, Beau Troxclair, Jonny Bajada, Karan Chugh, John R. Kosinski",
+    "author": "Garo Nazarian, Beau Troxclair, Jonny Bajada, Karan Chugh, Chris Li, John R. Kosinski",
     "description": "Hamza Web Client",
     "keywords": [
         "medusa-storefront"
@@ -24,7 +24,7 @@
         "@types/react": "17.0.40"
     },
     "dependencies": {
-        "@chakra-ui/icons": "^2.1.1",
+        "@chakra-ui/icons": "^2.2.5",
         "@chakra-ui/react": "^2.8.2",
         "@emotion/react": "^11.11.4",
         "@emotion/styled": "^11.11.0",
@@ -54,7 +54,7 @@
         "jsonwebtoken": "^9.0.2",
         "lodash": "^4.17.21",
         "medusa-react": "^9.0.0",
-        "next": "14.0.0",
+        "next": "14.2.1",
         "pg": "^8.11.3",
         "pino-pretty": "^10.3.1",
         "react": "^18.2.0",
