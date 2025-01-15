@@ -200,6 +200,7 @@ export default class BuckydropService extends TransactionBaseService {
                 ? cart.customer.preferred_currency_id
                 : (cart?.items[0]?.currency_code ?? 'usdc');
 
+
             output = SHIPPING_COST_MAX; // subtotal;
             output = output < SHIPPING_COST_MIN ? SHIPPING_COST_MIN : output;
             output = output > SHIPPING_COST_MAX ? SHIPPING_COST_MAX : output;
@@ -211,33 +212,6 @@ export default class BuckydropService extends TransactionBaseService {
                     'usdc',
                     currency
                 );
-            // }
-
-            //if price was not yet converted, or nothing came back, do it now
-            /*if (!gotPrice) {
-                //this needs to be converted to USDC in order to compare
-                if (output <= 0 && subtotal > 0) {
-                    subtotal = await this.priceConverter.convertPrice(
-                        subtotal,
-                        currency,
-                        'usdc'
-                    );
-
-                    //final calculated price should be
-                    output = subtotal;
-                    output =
-                        output < SHIPPING_COST_MIN ? SHIPPING_COST_MIN : output;
-                    output =
-                        output > SHIPPING_COST_MAX ? SHIPPING_COST_MAX : output;
-                }
-
-                output = await this.priceConverter.convertPrice(
-                    output,
-                    'usdc',
-                    currency
-                );
-            }
-            */
         } catch (e) {
             this.logger.error(
                 `Error calculating shipping costs in BuckydropService`,
