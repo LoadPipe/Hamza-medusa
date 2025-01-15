@@ -230,7 +230,7 @@ export default async function Footer() {
                         </LocalizedClientLink>
                     </Flex>
                     <Flex
-                        mr={{ base: 'auto', md: '0' }}
+                        ml={{ base: '0', md: 'auto' }}
                         flexDir={'row'}
                         justifyContent={'center'}
                         alignItems="center"
