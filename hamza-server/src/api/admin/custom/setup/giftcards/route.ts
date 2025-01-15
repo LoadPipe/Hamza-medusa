@@ -18,10 +18,19 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         res,
         'POST',
         '/admin/custom/setup/giftcards',
-        ['currency']
+        ['currency', 'behavior']
     );
 
     await handler.handle(async () => {
+        /*
+        behaviors: 
+        add-only: new giftcards will be added, any that already exist in the database will be ignored/skipped
+        update-only: giftcards that already exist will be updated; any that do not will be skipped 
+        combined: new gift cards will be added, existing ones will be updated 
+        */
+        let behavior = handler.inputParams.behavior;
+        if (!behavior?.length) behavior = 'combined';
+
         //get the store
         const store = await storeRepository.findOne({
             where: { name: 'Gift Cards' },
@@ -30,8 +39,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             where: { id: Not(IsNull()) },
         });
 
-        const products = await globetopperService.import(
+        const products = await globetopperService.import2(
             store.id,
+            behavior,
             'pcat_giftcards',
             'pcol_giftcards',
             salesChannel.id,

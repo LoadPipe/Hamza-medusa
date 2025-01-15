@@ -115,6 +115,96 @@ export default class GlobetopperService extends TransactionBaseService {
         return [];
     }
 
+    public async import2(
+        storeId: string,
+        behavior: string,
+        categoryId: string,
+        collectionId: string,
+        salesChannelId: string,
+        currencyCode: string = 'USD'
+    ): Promise<Product[]> {
+        try {
+            //get products in two API calls
+            const gtProducts = await this.apiClient.searchProducts(
+                undefined,
+                currencyCode
+            );
+            const gtCatalogue = await this.apiClient.getCatalog();
+
+            const productInputs: (CreateProductInput & { store_id: string })[] =
+                [];
+
+            //sort the output
+            const gtRecords = gtProducts.records.sort(
+                (a, b) => (a?.operator?.id ?? 0) < (b?.operator?.id ?? 0)
+            );
+
+            const gtCat = gtCatalogue.records.sort(
+                (a, b) =>
+                    (a?.topup_product_id ?? 0) < (b?.topup_product_id ?? 0)
+            );
+
+            //create product inputs for each product
+            for (let record of gtRecords) {
+                const productDetails = gtCat.find(
+                    (r) => r.topup_product_id == (record?.operator?.id ?? 0)
+                );
+
+                //TODO: determine whether or not the gift card currently exists in our database
+                // we do this by asking if product.external_source === PRODUCT_EXTERNAL_SOURCE and
+                // product.external_id ==  productDetails?.operator?.id;
+
+                if (productDetails) {
+                    productInputs.push(
+                        await this.mapDataToProductInput(
+                            record,
+                            productDetails,
+                            ProductStatus.PUBLISHED,
+                            storeId,
+                            categoryId,
+                            collectionId,
+                            [salesChannelId]
+                        )
+                    );
+                }
+
+                /* //TODO:
+                 now, based on behavior param, we decide how to handle existing 
+
+                 if (behavior is add-only, and existing = true, then ignore)
+                 if (behavior is update-only, and existing = false, then ignore )
+                 if existing, then update
+                 if not existing, then add 
+                */
+
+                /*
+                Fields that can be updated: 
+                    product.title
+                    product.subtitle 
+                    description
+                    thumbnail
+                    images
+                    external_metadata
+                    variants/prices
+                 */
+            }
+
+            this.logger.debug(`importing ${productInputs.length} products`);
+
+            //insert products into DB
+            const products = await this.productService_.bulkImportProducts(
+                storeId,
+                productInputs
+            );
+
+            return products;
+        } catch (e: any) {
+            this.logger.error('Error importing GlobeTopper products', e);
+        }
+
+        return [];
+    }
+
     public async processPointOfSale(
         orderId: string,
         firstName: string,
@@ -551,12 +641,30 @@ export default class GlobetopperService extends TransactionBaseService {
                 return '';
             };
 
-            description += formatSection('Brand Description: ', productDetail.brand_description);
-            description += formatSection('Redemption Instructions: ', productDetail.redemption_instruction);
-            description += formatSection('Disclaimer: ', productDetail.brand_disclaimer);
-            description += formatSection('Terms & Conditions: ', productDetail.term_and_conditions);
-            description += formatSection('Restriction & Policies: ', productDetail.restriction_and_policies);
-            description += formatSection('Additional Information: ', productDetail.brand_additional_information);
+            description += formatSection(
+                'Brand Description: ',
+                productDetail.brand_description
+            );
+            description += formatSection(
+                'Redemption Instructions: ',
+                productDetail.redemption_instruction
+            );
+            description += formatSection(
+                'Disclaimer: ',
+                productDetail.brand_disclaimer
+            );
+            description += formatSection(
+                'Terms & Conditions: ',
+                productDetail.term_and_conditions
+            );
+            description += formatSection(
+                'Restriction & Policies: ',
+                productDetail.restriction_and_policies
+            );
+            description += formatSection(
+                'Additional Information: ',
+                productDetail.brand_additional_information
+            );
 
             let handle = item?.name
                 ?.trim()
@@ -569,7 +677,7 @@ export default class GlobetopperService extends TransactionBaseService {
                 title: item?.name,
                 subtitle: productDetail.brand_description, //TODO: find a better value
                 handle,
-                description: description, 
+                description: description,
                 is_giftcard: false,
                 status: status as ProductStatus,
                 thumbnail: item?.picUrl ?? productDetail?.card_image,
@@ -621,7 +729,7 @@ export default class GlobetopperService extends TransactionBaseService {
                 manage_inventory: true,
                 external_id: item?.operator?.id,
                 external_source: PRODUCT_EXTERNAL_SOURCE,
-                external_metadata: { amount:  variantPrice.toFixed(2) },
+                external_metadata: { amount: variantPrice.toFixed(2) },
                 metadata: { imgUrl: productDetail?.card_image },
                 prices: [
                     {
