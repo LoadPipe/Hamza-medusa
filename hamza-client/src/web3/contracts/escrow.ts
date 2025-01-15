@@ -1,8 +1,29 @@
-import { BigNumberish, ethers, keccak256 } from 'ethers';
+import { BigNumberish, ethers } from 'ethers';
 import { ITransactionOutput } from '..';
 import { getCurrencyAddress } from '../../currency.config';
 import { escrowMulticallAbi } from '../abi/escrow-multicall-abi';
 import { erc20abi } from '../abi/erc20-abi';
+import { escrowAbi } from '../abi/escrow-abi';
+import { Cart, Order as MedusaOrder, Payment as MedusaPayment, ShippingMethod, Store as MedusaStore, LineItem } from '@medusajs/medusa';
+
+export type PaymentDefinition = {
+    id: string;
+    payer: string;
+    receiver: string;
+    amount: number;
+    amountRefunded: number;
+    payerReleased: boolean;
+    receiverReleased: boolean;
+    released: boolean;
+    currency: string; //token address, or 0x0 for native
+};
+
+export type EscrowPaymentDefinition = {
+    order_id: string;
+    escrow_address: string;
+    chain_id: number;
+    payment: PaymentDefinition;
+};
 
 export type MulticallPaymentInput = {
     id: string;
@@ -12,6 +33,28 @@ export type MulticallPaymentInput = {
     payer: string;
     amount: BigNumberish;
 };
+
+interface BlockchainData {
+	escrow_address: string; //contract address
+	chain_id: number;
+}
+
+export interface Payment extends MedusaPayment {
+    blockchain_data: BlockchainData;
+}
+
+export interface Store extends MedusaStore {
+    icon: string;
+}
+
+export interface Order extends MedusaOrder {
+	escrow_status: string;
+	payments: Payment[];
+    store: Store;
+    shipping_methods: ShippingMethod[];
+    items: LineItem[];
+    histories: any[];
+}
 
 export class EscrowMulticallClient {
     contractAddress: string;
@@ -192,6 +235,101 @@ export class EscrowMulticallClient {
         if (bigintAmount > 0) {
             const tx = await token.approve(spender, bigintAmount.toString()); // Convert bigint back to string for the smart contract call
             await tx.wait();
+        }
+    }
+}
+
+export class EscrowClient {
+    contractAddress: string;
+    contract: ethers.Contract;
+    provider: ethers.BrowserProvider;
+    signer: ethers.Signer;
+    tokens: { [id: string]: ethers.Contract } = {};
+
+    /**
+     * Constructor.
+     * @param address Address of the LiteSwitch contract
+     */
+    constructor(
+        provider: ethers.BrowserProvider,
+        signer: ethers.Signer,
+        address: string
+    ) {
+        this.provider = provider;
+        this.signer = signer;
+        this.contractAddress = address;
+
+        this.contract = new ethers.Contract(
+            this.contractAddress,
+            escrowAbi,
+            signer
+        );
+    }
+
+    /**
+     * Fully or partially refund a payment.
+     *
+     * @param paymentId Uniquely identifies the payment to be refunded.
+     * @param amount The amount to refund.
+     * @returns
+     */
+    async refundPayment(
+        paymentId: string,
+        amount: BigNumberish
+    ): Promise<ITransactionOutput> {
+        try {
+            const tx: any = await this.contract.refundPayment(
+                paymentId,
+                amount
+            );
+            const transaction_id = tx.hash;
+            const receipt = await tx.wait();
+
+            return {
+                transaction_id,
+                tx,
+                receipt,
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getPayment(paymentId: string): Promise<PaymentDefinition> {
+        const output = await this.contract.getPayment(paymentId);
+
+        return {
+            id: output[0],
+            payer: output[1],
+            receiver: output[2],
+            amount: output[3],
+            amountRefunded: output[4],
+            payerReleased: output[5],
+            receiverReleased: output[6],
+            released: output[7],
+            currency: output[8],
+        };
+    }
+
+    /**
+     * Set a flag that the seller considers that the escrow should be released.
+     *
+     * @param paymentId Uniquely identifies the payment to be released.
+     * @returns
+     */
+    async releaseEscrow(paymentId: string): Promise<ITransactionOutput> {
+        try {
+            const tx: any = await this.contract.releaseEscrow(paymentId);
+            const transaction_id = tx.hash;
+            const receipt = await tx.wait();
+
+            return {
+                transaction_id,
+                tx,
+                receipt,
+            };
+        } catch (error) {
+            throw error;
         }
     }
 }

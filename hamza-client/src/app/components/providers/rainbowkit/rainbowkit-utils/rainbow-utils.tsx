@@ -97,10 +97,15 @@ if (allowedChains.length === 0) {
 } else {
     const chainConfig = {
         optimism: optimism,
+        10: optimism,
         polygon: polygon,
+        137: polygon,
         mainnet: mainnet,
+        1: mainnet,
         sepolia: sepolia,
+        11155111: sepolia,
         amoy: amoy,
+        80002: amoy,
     };
 
     wagmiChains = allowedChains.map(

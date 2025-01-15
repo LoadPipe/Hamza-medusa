@@ -17,7 +17,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     // Return error if no products in store
     await handler.handle(async () => {
         // Fetch the store data by name
-        const storeData = await storeService.getStoreByName(
+        const storeData = await storeService.getStoreByHandleOrName(
             handler.inputParams.store_name.toString()
         );
 

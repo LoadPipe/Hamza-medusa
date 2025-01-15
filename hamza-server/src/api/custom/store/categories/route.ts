@@ -28,12 +28,15 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
         if (!handler.requireParam('store_name')) return;
 
         // Fetch the categories by store ID
-        const storeData = await storeService.getStoreByName(
+        const storeData = await storeService.getStoreByHandleOrName(
             store_name.toString()
         );
 
         if (!storeData) {
-            return handler.returnStatusWithMessage(404, `Store ${store_name} not found`);
+            return handler.returnStatusWithMessage(
+                404,
+                `Store ${store_name} not found`
+            );
         }
 
         const categories = await productService.getCategoriesByStoreId(

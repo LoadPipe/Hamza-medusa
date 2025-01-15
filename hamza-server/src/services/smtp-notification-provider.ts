@@ -9,8 +9,10 @@ import SmtpMailService from './smtp-mail';
 import ordersDataParser from '../utils/notification/order-data-handler';
 import { createLogger, ILogger } from '../utils/logging/logger';
 import CustomerNotificationSerivce from './customer-notification';
+import { Lifetime } from 'awilix';
 
 class SmtpNotificationService extends AbstractNotificationService {
+    LIFE_TIME = Lifetime.SINGLETON;
     static identifier = 'smtp-notification';
     private notificationDataService: NotificationDataService;
     private customerNotificationService_: CustomerNotificationSerivce;
