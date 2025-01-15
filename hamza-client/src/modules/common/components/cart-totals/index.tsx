@@ -70,9 +70,6 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                 itemCurrencyCode
             );
 
-            console.log(
-                `itemCurrencyCode ${itemCurrencyCode} item Price: ${itemPrice}`
-            );
             if (itemCurrencyCode?.length) {
                 if (!subtotals[itemCurrencyCode]) {
                     subtotals[itemCurrencyCode] = 0;
@@ -107,7 +104,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
     const grandTotal = (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
     const displayCurrency = finalSubtotal?.currency?.length
         ? finalSubtotal.currency
-        : preferred_currency_code ?? 'usdc';
+        : (preferred_currency_code ?? 'usdc');
 
     // TODO: when we set shipping / tax we can then enhance this...
     let usdSubtotal: { currency: string; amount: number };

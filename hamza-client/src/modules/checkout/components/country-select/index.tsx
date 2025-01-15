@@ -18,8 +18,6 @@ const CountrySelect = forwardRef<
         () => innerRef.current
     );
 
-    console.log('defaultValue', defaultValue);
-
     const countryOptions = useMemo(() => {
         if (!region) {
             return [];
@@ -32,8 +30,6 @@ const CountrySelect = forwardRef<
                 label: country.display_name,
             }));
     }, [region]);
-
-    console.log('countryOptions', countryOptions);
 
     return (
         <NativeSelect
