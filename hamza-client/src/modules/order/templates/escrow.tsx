@@ -58,7 +58,7 @@ export const Escrow = () => {
 
 				// Fetch order
                 const order = await getCustomerOrder(customer.id, id as string);
-                console.log("Order: ", order);
+                // console.log("Order: ", order);
 				setOrderExist(!!order);
 				if (!order) {
                     setEscrowPaymentExist(false);
