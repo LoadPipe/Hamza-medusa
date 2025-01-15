@@ -72,7 +72,13 @@ const Item = ({ item, region, currencyCode }: ItemProps) => {
                         width={{ base: '60px', md: '110px' }}
                         height={{ base: '60px', md: '110px' }}
                     >
-                        <Thumbnail thumbnail={item?.variant?.metadata?.imgUrl ?? item?.thumbnail} size="square" />
+                        <Thumbnail
+                            thumbnail={
+                                item?.variant?.metadata?.imgUrl ??
+                                item?.thumbnail
+                            }
+                            size="square"
+                        />
                     </Flex>
                 </LocalizedClientLink>
 
@@ -102,11 +108,7 @@ const Item = ({ item, region, currencyCode }: ItemProps) => {
                                 >
                                     {item.quantity}x
                                 </Text>
-                                <LineItemUnitPrice
-                                    item={item}
-                                    region={region}
-                                    style="tight"
-                                />
+                                <LineItemUnitPrice item={item} style="tight" />
                             </Flex>
                         </Flex>
                     </Flex>
