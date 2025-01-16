@@ -73,7 +73,7 @@ const FilterBar = () => {
 
     return (
         <Flex
-            mt={{ base: '0.5rem', md: '2rem' }}
+            mt={{ base: '0.5rem', md: '0' }}
             maxW={'1280px'}
             width={'100%'}
             alignItems={'center'}
