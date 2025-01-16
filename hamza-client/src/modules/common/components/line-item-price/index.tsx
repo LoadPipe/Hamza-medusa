@@ -16,6 +16,7 @@ type ExtendedLineItem = LineItem & {
 
 type LineItemPriceProps = {
     item: Omit<ExtendedLineItem, 'beforeInsert'>;
+    usdcOnDifferentLine?: boolean;
 };
 
 const LineItemPrice = ({ item }: LineItemPriceProps) => {

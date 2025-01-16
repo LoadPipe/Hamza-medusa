@@ -1,5 +1,5 @@
-import React from 'react';
-import { Flex, Text, Box, Image } from '@chakra-ui/react';
+import React, { useState } from 'react';
+import { Flex, Text, Box, Image, Skeleton } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
 import { FaCheckCircle } from 'react-icons/fa';
@@ -12,6 +12,7 @@ type StoreProps = {
 const StoreBanner = (props: StoreProps) => {
     const router = useRouter();
     const { countryCode } = useParams();
+    const [isLoading, setIsLoading] = useState(true); // State to track loading
 
     const navigateToVendor = () => {
         router.push(`/${countryCode}/store/${props.store}`);
@@ -27,13 +28,24 @@ const StoreBanner = (props: StoreProps) => {
             p={{ base: '1rem', md: '2rem' }}
         >
             <Flex gap={{ base: '10px', md: '20px' }}>
-                <Flex flexShrink={0} alignSelf={'center'}>
-                    <Image
-                        src={props.icon}
-                        alt="Light Logo"
-                        boxSize={{ base: '36.5px', md: '72px' }}
-                        borderRadius="full"
-                    />
+                <Flex flexShrink={0} alignSelf="center">
+                    {!props.icon && isLoading ? (
+                        <Skeleton
+                            boxSize={{ base: '36.5px', md: '72px' }}
+                            borderRadius="full"
+                            startColor="gray.700"
+                            endColor="gray.500"
+                        />
+                    ) : (
+                        <Image
+                            src={props.icon}
+                            alt={`Store Logo`}
+                            boxSize={{ base: '36.5px', md: '72px' }}
+                            borderRadius="full"
+                            onLoad={() => setIsLoading(false)} // Set loading to false when the image is loaded
+                            onError={() => setIsLoading(false)} // Handle load failure gracefully
+                        />
+                    )}
                 </Flex>
 
                 {/* Middle Section with Text */}

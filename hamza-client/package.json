@@ -1,14 +1,14 @@
 {
     "name": "hamza-client",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "private": true,
-    "author": "Garo Nazarian, Beau Troxclair, Jonny Bajada, Karan Chugh, John R. Kosinski",
+    "author": "Garo Nazarian, Beau Troxclair, Jonny Bajada, Karan Chugh, Chris Li, John R. Kosinski",
     "description": "Hamza Web Client",
     "keywords": [
         "medusa-storefront"
     ],
     "scripts": {
-        "dev": "next dev -p 8000",
+        "dev": "next dev -p 8000 --turbo",
         "build": "next build",
         "start": "next start -p 8000",
         "lint": "next lint",

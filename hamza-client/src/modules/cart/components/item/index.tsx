@@ -13,6 +13,7 @@ import { Flex, Text, Divider } from '@chakra-ui/react';
 import toast from 'react-hot-toast';
 import { debounce } from 'lodash';
 import { addDefaultShippingMethod } from '@lib/data';
+import LineItemUnitPrice from '@/modules/common/components/line-item-unit-price';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -39,6 +40,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
     const setIsUpdating = useCartStore((state) => state.setIsUpdating);
 
     const { handle } = item.variant.product;
+    // console.log('item quantity: ', item.quantity);
 
     useEffect(() => {
         if (item.variant.inventory_quantity === 0) {
@@ -132,28 +134,41 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                         </Text>
                         <LineItemOptions variant={item.variant} />
                         <Flex mt="auto">
-                            <LineItemPrice item={item} />
+                            <CartItemSelect
+                                value={quantity} // Visual update
+                                onChange={(valueAsNumber) =>
+                                    changeQuantity(Number(valueAsNumber))
+                                } // Debounced server update
+                                min={1}
+                                max={Math.min(
+                                    item.variant.inventory_quantity > 0
+                                        ? item.variant.inventory_quantity
+                                        : 100,
+                                    100
+                                )}
+                                className="w-12 h-8 md:w-14 md:h-10 mt-auto"
+                            />
+
+                            <LineItemUnitPrice
+                                item={item}
+                                currencyCode={item.currency_code}
+                                useChakra={true}
+                                displayReducedPrice={false}
+                                displayCurrencyLetters={false}
+                            />
                         </Flex>
                     </Flex>
 
-                    <Flex ml="auto" flexDirection={'column'}>
+                    <Flex
+                        ml="auto"
+                        flexDirection={'column'}
+                        justifyContent={'space-between'}
+                    >
                         <Flex ml="auto" mb={{ base: 'auto', md: '1.25rem' }}>
                             <DeleteButton id={item.id} />
                         </Flex>
-                        <CartItemSelect
-                            value={quantity} // Visual update
-                            onChange={(valueAsNumber) =>
-                                changeQuantity(Number(valueAsNumber))
-                            } // Debounced server update
-                            min={1}
-                            max={Math.min(
-                                item.variant.inventory_quantity > 0
-                                    ? item.variant.inventory_quantity
-                                    : 100,
-                                100
-                            )}
-                            className="w-12 h-8 md:w-14 md:h-10 mt-auto"
-                        />
+
+                        <LineItemPrice item={item} usdcOnDifferentLine={true} />
                     </Flex>
                 </Flex>
             </Flex>
