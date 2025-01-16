@@ -48,18 +48,14 @@ const HeroSlider: React.FC = () => {
     if (isLoading) {
         return (
             <Flex
-                mt={{ base: '-5rem', md: '0' }}
                 maxW="1280px"
                 height={{ base: '300px', md: '625px' }}
                 justifyContent="space-between"
                 flexDir="row"
                 px={{ base: '1rem', md: '50px' }}
-                py="62px"
+                py="52px"
                 mx="auto"
                 position="relative"
-                bgSize="cover"
-                bgPosition="center"
-                bgRepeat="no-repeat"
                 borderRadius="24px"
             >
                 {/* Skeleton Left Section */}
@@ -127,18 +123,14 @@ const HeroSlider: React.FC = () => {
 
     return (
         <Flex
-            mt={{ base: '-5rem', md: '0' }}
             maxW="1280px"
             height={{ base: '300px', md: '625px' }}
             justifyContent="space-between"
             flexDir="row"
             px={{ base: '1rem', md: '50px' }}
-            py="62px"
+            py="42px"
             mx="auto"
             position="relative"
-            bgSize="cover"
-            bgPosition="center"
-            bgRepeat="no-repeat"
             borderRadius={'24px'}
         >
             {/* Left Section */}
@@ -240,7 +232,7 @@ const HeroSlider: React.FC = () => {
                 <Flex
                     display={{ base: 'none', md: 'flex' }}
                     position="absolute"
-                    bottom="10px"
+                    bottom="55px"
                     left="50%"
                     transform="translateX(-50%)"
                     gap={3}
