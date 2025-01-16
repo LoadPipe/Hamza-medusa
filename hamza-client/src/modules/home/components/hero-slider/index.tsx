@@ -56,7 +56,6 @@ const HeroSlider: React.FC = () => {
                 px={{ base: '1rem', md: '50px' }}
                 py="62px"
                 mx="auto"
-                bgColor={'red'}
                 position="relative"
                 borderRadius="24px"
             >
