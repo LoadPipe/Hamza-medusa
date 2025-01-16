@@ -3,7 +3,7 @@ import {
     ProductStatus,
     ProductVariant,
 } from '@medusajs/medusa';
-import ProductService from '../services/product';
+import ProductService, { UpdateProductInput, UpdateProductProductVariantDTO } from '../services/product';
 import { Product } from '../models/product';
 import { PriceConverter } from '../utils/price-conversion';
 import {
@@ -131,8 +131,9 @@ export default class GlobetopperService extends TransactionBaseService {
             );
             const gtCatalogue = await this.apiClient.getCatalog();
 
-            const productInputs: (CreateProductInput & { store_id: string })[] =
+            const toCreate: (CreateProductInput & { store_id: string })[] =
                 [];
+            const toUpdate: UpdateProductInput[] = []
 
             //sort the output
             const gtRecords = gtProducts.records.sort(
@@ -154,18 +155,40 @@ export default class GlobetopperService extends TransactionBaseService {
                 // we do this by asking if product.external_source === PRODUCT_EXTERNAL_SOURCE and
                 // product.external_id ==  productDetails?.operator?.id;
 
+                const existingProduct = await this.productService_.getProductByExternalSourceAndExternalId(
+                    record?.operator?.id, 
+                    PRODUCT_EXTERNAL_SOURCE
+                );
+
                 if (productDetails) {
-                    productInputs.push(
-                        await this.mapDataToProductInput(
-                            record,
-                            productDetails,
-                            ProductStatus.PUBLISHED,
-                            storeId,
-                            categoryId,
-                            collectionId,
-                            [salesChannelId]
-                        )
-                    );
+                    if (!existingProduct) {
+                        if (behavior === 'add-only' || behavior === 'combined') {
+                            toCreate.push(
+                                await this.mapDataToProductInput(
+                                    record,
+                                    productDetails,
+                                    ProductStatus.PUBLISHED,
+                                    storeId,
+                                    categoryId,
+                                    collectionId,
+                                    [salesChannelId]
+                                )
+                            );
+                        }
+                    } else {
+                        if (behavior === 'update-only' || behavior === 'combined') {
+                            toUpdate.push(await this.mapDataToUpdateProductInput(
+                                record,
+                                productDetails,
+                                ProductStatus.PUBLISHED,
+                                storeId,
+                                categoryId,
+                                collectionId,
+                                [salesChannelId],
+                                existingProduct
+                            ))
+                        }
+                    }
                 }
 
                 /* //TODO:
@@ -189,15 +212,26 @@ export default class GlobetopperService extends TransactionBaseService {
                  */
             }
 
-            this.logger.debug(`importing ${productInputs.length} products`);
+            this.logger.debug(`importing ${toCreate.length} products`);
 
-            //insert products into DB
-            const products = await this.productService_.bulkImportProducts(
-                storeId,
-                productInputs
-            );
+            let createdProducts: Product[] = [];
+            let updatedProducts: Product[] = [];
 
-            return products;
+            if (toCreate.length) {
+                createdProducts = await this.productService_.bulkImportProducts(
+                    storeId,
+                    toCreate,
+                );
+            }
+            
+            if (toUpdate.length) {
+                updatedProducts = await this.productService_.bulkUpdateProducts(
+                    storeId, 
+                    toUpdate
+                );
+            }
+
+            return [...createdProducts, ...updatedProducts];
         } catch (e: any) {
             this.logger.error('Error importing GlobeTopper products', e);
         }
@@ -677,7 +711,7 @@ export default class GlobetopperService extends TransactionBaseService {
                 title: item?.name,
                 subtitle: productDetail.brand_description, //TODO: find a better value
                 handle,
-                description: description,
+                description,
                 is_giftcard: false,
                 status: status as ProductStatus,
                 thumbnail: item?.picUrl ?? productDetail?.card_image,
@@ -808,4 +842,159 @@ export default class GlobetopperService extends TransactionBaseService {
 
         return output;
     }
+
+    public async mapDataToUpdateProductInput(
+        item: any,
+        productDetail: any,
+        status: ProductStatus,
+        storeId: string,
+        categoryId: string,
+        collectionId: string,
+        salesChannels: string[],
+        existingProduct: Product,
+    ): Promise<UpdateProductInput> {
+        try {
+            const externalId = item?.operator?.id;
+
+            if (!externalId) throw new Error('SPU code not found');
+            // const updatedVariants = await this.mapVariantsForUpdate(item, productDetail, existingProduct) 
+            const images = []; 
+            const description = this.buildDescription(productDetail);
+
+
+            let handle = item?.name
+                ?.trim()
+                ?.toLowerCase()
+                ?.replace(/[^a-zA-Z0-9 ]/g, '')
+                ?.replaceAll(' ', '-');
+            handle = `gc-${handle}-${externalId}`;
+
+            const updatePayload: UpdateProductInput = {
+                id: existingProduct.id,
+                title: item?.name, 
+                subtitle: productDetail.brand_description,
+                handle,
+                description,
+                is_giftcard: false,
+                status: status as ProductStatus,
+                thumbnail: item?.picUrl ?? productDetail?.card_image,
+                images,
+                collection_id: collectionId,
+                weight: Math.round(item?.weight ?? 100),
+                discountable: true,
+                store_id: storeId, 
+                external_id: externalId,
+                external_source: PRODUCT_EXTERNAL_SOURCE,
+                external_metadata: productDetail,
+                categories: categoryId?.length ? [{ id: categoryId }] : [],
+                sales_channels: salesChannels.map((sc) => ({ id: sc })),
+                // variants: updatedVariants,
+            };
+
+            console.log("GUN updatePayload : ", JSON.stringify(updatePayload))
+
+
+            return updatePayload;
+        } catch (error) {
+            this.logger.error("Error mapping Globetopper data to UpdateProductInput", error);
+            return {};
+        }
+    }
+
+    private async mapVariantsForUpdate(
+        item: any,
+        productDetail: any,
+        existingProduct: Product 
+    ): Promise<UpdateProductProductVariantDTO[]> {
+
+        const variantPrices = this.getVariantPrices(item)
+        variantPrices.sort((a, b) => a - b)
+
+        const minPrice: number = parseFloat(item.min);
+        const maxPrice: number = parseFloat(item.max);
+
+        const updatedVariants: UpdateProductProductVariantDTO[] = []
+        const existingVariants = existingProduct.variants || [];
+
+        let variantRank = 0;
+        for (const variantPrice of variantPrices) {
+            const isWithinRange = variantPrice >= minPrice && variantPrice <= maxPrice;
+                if (!isWithinRange) {
+                const variantToDelete = existingVariants.find(ev => ev.external_metadata?.amount === variantPrice.toFixed(2));
+                if (variantToDelete) {
+                    this.logger.info(
+                    `Variant with price ${variantPrice} does not meet allowed rules; variant ${variantToDelete.id} will be deleted.`
+                    );
+                }
+                continue;
+            }
+
+            const existingVariant = existingVariants.find(ev => ev.external_metadata?.amount === variantPrice.toFixed(2));
+
+            const updatedVariant: UpdateProductProductVariantDTO = {
+                id: existingVariant?.id, 
+                title: item?.name,
+                inventory_quantity: existingVariant?.inventory_quantity ?? 9999,
+                allow_backorder: false,
+                manage_inventory: true,
+                // product_id: existingProduct.id,
+                // external_id: item?.operator?.id,
+                // external_source: PRODUCT_EXTERNAL_SOURCE,
+                // external_metadata: { amount: variantPrice.toFixed(2) },
+                metadata: {
+                    ...existingVariant?.metadata,
+                    imgUrl: productDetail?.card_image,
+                },
+                prices: [
+                    {
+                    currency_code: "usdc",
+                    amount: Math.floor(variantPrice * 100),
+                    },
+                    {
+                    currency_code: "usdt",
+                    amount: Math.floor(variantPrice * 100),
+                    },
+                    {
+                    currency_code: "eth",
+                    amount: await this.priceConverter.getPrice({
+                        baseAmount: Math.floor(variantPrice * 100),
+                        baseCurrency: "usdc",
+                        toCurrency: "eth",
+                    }),
+                    },
+                ],
+                options: [
+                    {
+                        value: variantPrice.toFixed(2),
+                        option_id: existingProduct?.options?.[0]?.id ?? "option_id",
+                    },
+                ],
+            };
+
+            updatedVariants.push(updatedVariant);
+            variantRank++;
+        }
+        return updatedVariants
+    }
+
+    private buildDescription(productDetail: any): string {
+        const formatSection = (title: string, content: string): string => {
+            if (content && content.trim() !== '') {
+            return `<h2>${title}</h2><p>${content}</p>`;
+            }
+            return '';
+        };
+
+        let description = '';
+        description += formatSection('Brand Description: ', productDetail.brand_description);
+        description += formatSection('Redemption Instructions: ', productDetail.redemption_instruction);
+        description += formatSection('Disclaimer: ', productDetail.brand_disclaimer);
+        description += formatSection('Terms & Conditions: ', productDetail.term_and_conditions);
+        description += formatSection('Restriction & Policies: ', productDetail.restriction_and_policies);
+        description += formatSection('Additional Information: ', productDetail.brand_additional_information);
+
+        return description;
+    }
+
+
 }
