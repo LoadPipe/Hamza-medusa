@@ -684,7 +684,8 @@ export default class GlobetopperService extends TransactionBaseService {
                 storeId,
                 categoryId,
                 collectionId,
-                salesChannels
+                salesChannels,
+                null
             ) as CreateProductInput;
             /*
             //add variant images to the main product images
@@ -757,7 +758,8 @@ export default class GlobetopperService extends TransactionBaseService {
                 storeId,
                 categoryId,
                 collectionId,
-                salesChannels
+                salesChannels,
+                existingProduct
             ) as UpdateProductInput;
             /*
             const images = [];
@@ -1036,13 +1038,15 @@ export default class GlobetopperService extends TransactionBaseService {
         storeId: string,
         categoryId: string,
         collectionId: string,
-        salesChannels: string[]
+        salesChannels: string[],
+        existingProduct: Product
     ): UpdateProductInput | CreateProductInput {
         const images = []; //TODO: get images
         const description = this.buildDescription(productDetail);
         const handle = this.buildHandle(item, externalId);
 
-        const output = {
+        const output: any = {
+            id: existingProduct?.id,
             title: item?.name,
             subtitle: this.getSubtitle(productDetail),
             handle,
@@ -1063,9 +1067,9 @@ export default class GlobetopperService extends TransactionBaseService {
                 return { id: sc };
             }),
             options: [{ title: 'Amount' }],
-            variants,
         };
 
+        if (variants) output.variants = variants;
         return output;
     }
 }
