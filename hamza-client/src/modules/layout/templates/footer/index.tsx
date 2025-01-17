@@ -2,7 +2,6 @@ import { clx } from '@medusajs/ui';
 import { Flex, Container, Text, Box, Divider } from '@chakra-ui/react';
 import { getCategoriesList, getCollectionsList } from '@lib/data';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import { FaTwitter } from 'react-icons/fa6';
 import { FaDiscord } from 'react-icons/fa6';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -240,9 +239,7 @@ export default async function Footer() {
                         <Text className="text-base font-bold">
                             Follow us on:{' '}
                         </Text>
-                        <Link href="https://x.com/hamzadecom1" target="_blank">
-                            <FaTwitter size={24} />
-                        </Link>
+
                         <Link
                             href="https://discord.gg/W7qu9gb3Yz"
                             target="_blank"

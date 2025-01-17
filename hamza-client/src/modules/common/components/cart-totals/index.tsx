@@ -2,10 +2,8 @@
 
 import Image from 'next/image';
 import { Cart, Order, LineItem } from '@medusajs/medusa';
-import {
-    convertCryptoPrice,
-    formatCryptoPrice,
-} from '@lib/util/get-product-price';
+import { formatCryptoPrice } from '@lib/util/get-product-price';
+import { convertPrice } from '@/lib/util/price-conversion';
 import React, { useEffect, useState } from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { Flex, Text, Divider, Spinner } from '@chakra-ui/react';
@@ -115,7 +113,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
 
     React.useEffect(() => {
         const fetchConvertedPrice = async () => {
-            const result = await convertCryptoPrice(
+            const result = await convertPrice(
                 Number(
                     formatCryptoPrice(
                         grandTotal,
