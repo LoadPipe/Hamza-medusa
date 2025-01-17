@@ -39,7 +39,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             where: { id: Not(IsNull()) },
         });
 
-        const products = await globetopperService.import2(
+        const products = await globetopperService.import(
             store.id,
             behavior,
             'pcat_giftcards',
