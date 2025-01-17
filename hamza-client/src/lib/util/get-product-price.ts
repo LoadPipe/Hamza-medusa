@@ -129,14 +129,6 @@ export function formatCryptoPrice(
     }
 }
 
-export async function convertCryptoPrice(
-    amount: number,
-    from: string,
-    to: string
-): Promise<number> {
-    return await convertPrice(amount, from, to);
-}
-
 function limitPrecision(value: number, maxDigits: number): string {
     return removeTrailingZeros(value.toFixed(maxDigits));
 }
