@@ -3,6 +3,7 @@ import { formatAmount } from '@lib/util/prices';
 import { RegionInfo } from '@/types/global';
 import { CalculatedVariant } from '@/types/medusa';
 import { getCurrencyPrecision } from '@/currency.config';
+import { convertPrice } from './price-conversion';
 
 export function getProductPrice({
     product,
@@ -125,6 +126,10 @@ export function formatCryptoPrice(
         console.error(e);
         return '0.00';
     }
+}
+
+export function convertCryptoPrice(amount: number, from: string, to: string) {
+    return convertPrice(amount, from, to);
 }
 
 function limitPrecision(value: number, maxDigits: number): string {
