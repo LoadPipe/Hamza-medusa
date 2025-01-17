@@ -63,7 +63,7 @@ const CartTemplate = ({
                         region={cart?.region}
                         items={cart?.items}
                         cart_id={cart?.id as string}
-                        currencyCode={preferred_currency_code ?? undefined}
+                        currencyCode={preferred_currency_code ?? 'usdc'}
                     />
                     {/* Shipping Address */}
                     {/* <CartShippingAddress customer={customer} /> */}

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import { Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import Image from 'next/image';
 // Images
 //import HamzaLogo from '../../../../../public/images/logo/logo_green.svg';
@@ -66,35 +66,14 @@ export default async function Nav() {
                 bgColor={'transparent'}
                 alignItems="center"
             >
-                <Flex
-                    width={'100%'}
-                    justifyContent={'center'}
-                    alignItems="center"
-                >
-                    {/* <a href="/">
-                        <Flex width={'190px'} marginLeft="auto" flexShrink={0}>
-                            <Image
-                                className="w-[22.92px] h-[33px] md:w-[49px] md:h-[71px]"
-                                style={{
-                                    alignSelf: 'center',
-                                }}
-                                src={HamzaLogo}
-                                alt="Hamza"
-                            />
-
-                            <Image
-                                src={HamzaTitle}
-                                className="w-[60.73px] h-[11.59px] md:w-[125.42px] md:h-[106px] ml-[0.5rem] md:ml-[1rem]"
-                                style={{
-                                    alignSelf: 'center',
-                                }}
-                                alt="Hamza"
-                            />
-                        </Flex>
-                    </a> */}
-
+                <Flex width={'100%'} alignItems="center" gap={'18px'}>
                     <a href="/">
-                        <Flex width={'190px'} marginLeft="auto" flexShrink={0}>
+                        <Flex
+                            width={'190px'}
+                            height={'80px'}
+                            marginLeft="auto"
+                            flexShrink={0}
+                        >
                             <Image
                                 style={{
                                     alignSelf: 'left',
@@ -107,9 +86,11 @@ export default async function Nav() {
 
                     <NavSearchBar />
 
-                    <WalletConnectButton />
+                    <Box ml={'auto'}>
+                        <WalletConnectButton />
+                    </Box>
 
-                    <Flex ml="1rem" flexDirection={'row'} alignItems={'center'}>
+                    <Flex flexDirection={'row'} alignItems={'center'}>
                         <Flex alignSelf={'center'}>
                             <LocalizedClientLink href="/cart">
                                 <Flex
