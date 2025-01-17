@@ -1,10 +1,8 @@
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
-
 import { formatAmount } from '@lib/util/prices';
 import { RegionInfo } from '@/types/global';
 import { CalculatedVariant } from '@/types/medusa';
 import { getCurrencyPrecision } from '@/currency.config';
-import { convertPrice } from './price-conversion';
 
 export function getProductPrice({
     product,
