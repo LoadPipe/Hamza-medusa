@@ -1,30 +1,38 @@
-import { formatAmount } from '@lib/util/prices';
-import { LineItem, Region } from '@medusajs/medusa';
+import { LineItem } from '@medusajs/medusa';
 import { clx } from '@medusajs/ui';
-
 import { getPercentageDiff } from '@lib/util/get-precentage-diff';
 import { CalculatedVariant } from '@/types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
+import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { useCustomerProfileStore } from '@/zustand/customer-profile/customer-profile';
 
+import { LineItemUnitPriceDisplay } from './line-item-display';
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
 };
 
 type LineItemUnitPriceProps = {
     item: Omit<ExtendedLineItem, 'beforeInsert'>;
-    region: Region;
     style?: 'default' | 'tight';
     currencyCode?: string;
+    displayReducedPrice?: boolean;
+    displayCurrencyLetters?: boolean;
+    useChakra?: boolean;
+    classNames?: string;
 };
+
+
 
 const LineItemUnitPrice = ({
     item,
-    region,
     style = 'default',
     currencyCode,
+    displayCurrencyLetters = true,
+    displayReducedPrice = true,
+    useChakra = false
 }: LineItemUnitPriceProps) => {
+    const { preferred_currency_code } = useCustomerAuthStore();
+    
     const unitPrice = item.variant.prices
         ? (item.variant as CalculatedVariant).prices.find(
               (p) => p.currency_code == currencyCode
@@ -34,9 +42,19 @@ const LineItemUnitPrice = ({
     const hasReducedPrice = (price * item.quantity || 0) > item.total!;
     const reducedPrice = (item.total || 0) / item.quantity!;
 
+    const displayPrice = () => {
+        const price = formatCryptoPrice(
+            reducedPrice || item.unit_price || 0,
+            item.currency_code ?? ''
+        ) + (displayCurrencyLetters ? ' ' + item.currency_code?.toUpperCase() : '');
+        return price;
+    }
+
+    // console.log('preferred_currency_code: ', preferred_currency_code);
+    
     return (
         <div className="flex flex-col text-ui-fg-muted justify-center h-full">
-            {hasReducedPrice && (
+            {displayReducedPrice && hasReducedPrice && (
                 <>
                     <p>
                         {style === 'default' && (
@@ -54,19 +72,19 @@ const LineItemUnitPrice = ({
                     )}
                 </>
             )}
-            <span
-                className={clx('text-base-regular', {
+            
+            <LineItemUnitPriceDisplay
+                price={displayPrice().toString()}
+                preferredCurrencyCode={preferred_currency_code ?? 'usdc'}
+                useChakra={useChakra}
+                classNames={clx('text-base-regular', {
                     'text-ui-fg-interactive': hasReducedPrice,
                 })}
-            >
-                {formatCryptoPrice(
-                    reducedPrice || item.unit_price || 0,
-                    item.currency_code ?? ''
-                )}{' '}
-                {item.currency_code?.toUpperCase() ?? ''}
-            </span>
+            />
         </div>
     );
 };
+
+
 
 export default LineItemUnitPrice;

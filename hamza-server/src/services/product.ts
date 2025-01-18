@@ -64,46 +64,14 @@ export type UpdateProductProductVariantDTO = {
     }[];
 };
 
-// Define the expected structure of the data
-export type csvProductData = {
-    category: string; // category handle from DB
-    images: string;
-    title: string;
-    subtitle: string;
-    description: string;
-    status: ProductStatus; // 'draft' or 'published'
-    thumbnail: string;
-    discountable: string; // '0' or '1'
-    weight: number;
-    handle: string; // must be unique from DB and other rows from csv
-    variant: string; // Size[XL] | Color[White] | Gender[Male]
-    variant_price: number;
-    variant_inventory_quantity: number;
-    variant_allow_backorder: string; // '0' or '1'
-    variant_manage_inventory: string; // '0' or '1'
-    variant_sku?: string;
-    variant_barcode?: string;
-    variant_ean?: string;
-    variant_upc?: string;
-    variant_hs_code?: string;
-    variant_origin_country?: string;
-    variant_mid_code?: string;
-    variant_material?: string;
-    variant_weight?: number;
-    variant_length?: number;
-    variant_height?: number;
-    variant_width?: number;
-    category_id?: string; // optional: created when data is valid, and retrieved from DB
-    invalid_error?: string; // optional: created when data is invalid, and indicates the type of error
-};
-
-export type Price = {
-    currency_code: string;
-    amount: number;
-};
-
-type UpdateProductInput = Omit<Partial<CreateProductInput>, 'variants'> & {
+export type UpdateProductInput = Omit<
+    Partial<CreateProductInput>,
+    'variants'
+> & {
     variants?: UpdateProductProductVariantDTO[];
+    external_source?: string;
+    external_metadata?: any;
+    id?: string;
 };
 
 class ProductService extends MedusaProductService {
@@ -344,6 +312,95 @@ class ProductService extends MedusaProductService {
         } catch (error) {
             this.logger.error('Error in bulk importing products:', error);
             throw error;
+        }
+    }
+
+    async bulkUpdateProducts(
+        storeId: string,
+        productData: UpdateProductInput[]
+    ): Promise<Product[]> {
+        try {
+            //get the store
+            const store: Store = await this.storeRepository_.findOne({
+                where: { id: storeId },
+            });
+
+            if (!store) {
+                throw new Error(`Store ${storeId} not found.`);
+            }
+
+            //get existing products by handle
+            const existingProducts: Product[] = await Promise.all(
+                productData
+                    .filter((product) => product.id)
+                    .map((product) =>
+                        this.productRepository_.findOne({
+                            where: { id: product.id },
+                            relations: ['variants'],
+                        })
+                    )
+            );
+
+            const updatedProducts = await Promise.all(
+                productData.map((product) =>
+                    this.processProductUpdate(product, existingProducts)
+                )
+            );
+
+            // Ensure all products are non-null and have valid IDs
+            const validProducts = updatedProducts.filter((p) => p && p.id);
+            this.logger.info(
+                `${validProducts.length} out of ${productData.length} products were updated`
+            );
+            if (validProducts.length !== updatedProducts.length) {
+                this.logger.warn('Some products were not updated successfully');
+            }
+
+            this.logger.debug(
+                `Updated products: ${validProducts.map((p) => p.id).join(', ')}`
+            );
+            return validProducts;
+        } catch (error) {
+            this.logger.error('Error in updating products from CSV: ', error);
+            throw error;
+        }
+    }
+
+    public async processProductUpdate(
+        product: UpdateProductInput,
+        existingProducts: Product[]
+    ): Promise<Product | null> {
+        const productId = product.id;
+
+        try {
+            // Check if the product already exists by product ID
+            const existingProduct = existingProducts.find(
+                (p) => p.id === productId
+            );
+
+            // Update existing product
+            if (existingProduct) {
+                this.updateProduct(
+                    existingProduct.id,
+                    product as UpdateProductInput
+                );
+                this.logger.info(
+                    `Updated product with product ID: ${productId}`
+                );
+                return existingProduct;
+            }
+
+            // If the product does not exist, create a new one
+            this.logger.info(
+                `Product with ID: ${productId} does not exist, creating new product.`
+            );
+            return null;
+        } catch (error) {
+            this.logger.error(
+                `Error processing product with product ID: ${productId}`,
+                error
+            );
+            return null;
         }
     }
 
@@ -785,6 +842,19 @@ class ProductService extends MedusaProductService {
         }
 
         return variant;
+    }
+
+    async getProductByExternalSourceAndExternalId(
+        externalId: string,
+        externalSource: string
+    ): Promise<Product | null> {
+        return await this.productRepository_.findOne({
+            where: {
+                external_source: externalSource,
+                external_id: externalId,
+            },
+            relations: ['variants', 'options'],
+        });
     }
 
     private async convertProductPrices(

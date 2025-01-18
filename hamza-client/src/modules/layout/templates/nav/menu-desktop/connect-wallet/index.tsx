@@ -1,32 +1,21 @@
 'use client';
 
-import {
-    Button,
-    Flex,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalBody,
-    Text,
-    Skeleton,
-} from '@chakra-ui/react';
+import { Button, Flex } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import AccountMenu from '@modules/layout/templates/nav/menu-desktop/account-menu';
-import { useSwitchNetwork, useWalletClient, useAccount } from 'wagmi';
-import {
-    getAllowedChainsFromConfig,
-    getBlockchainNetworkName,
-} from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
+import { useWalletClient, useAccount } from 'wagmi';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import MainMenu from '../main-menu';
 import HnsDisplay from '../hns-display';
+import CurrencySelector from '../currency-selector';
 
 export const WalletConnectButton = () => {
     //Update zustand store with Wagmi hook when connected
     const account = useAccount();
     const { setWalletAddress } = useCustomerAuthStore();
     // useEffect to update Zustand state when the account is connected
+
     useEffect(() => {
         if (account?.address) {
             setWalletAddress(account.address); // Update Zustand store
@@ -73,9 +62,8 @@ export const WalletConnectButton = () => {
                                         borderRadius={'30px'}
                                         backgroundColor={'primary.green.900'}
                                         onClick={openConnectModal}
-                                        ml="1rem"
-                                        height="54px"
-                                        fontSize={'20px'}
+                                        height="48px"
+                                        fontSize={'16px'}
                                     >
                                         Connect Wallet
                                     </Button>
@@ -84,12 +72,12 @@ export const WalletConnectButton = () => {
 
                             return (
                                 <Flex
-                                    ml="1rem"
-                                    gap={3}
+                                    gap={'18px'}
                                     flexDirection={'row'}
                                     alignItems={'center'}
                                 >
                                     <HnsDisplay />
+                                    <CurrencySelector network={chain.name} />
                                     <button
                                         onClick={openChainModal}
                                         style={{
@@ -103,11 +91,10 @@ export const WalletConnectButton = () => {
                                                 style={{
                                                     background:
                                                         chain.iconBackground,
-                                                    width: 44,
-                                                    height: 44,
+                                                    width: 48,
+                                                    height: 48,
                                                     borderRadius: 999,
                                                     overflow: 'hidden',
-                                                    marginRight: 4,
                                                 }}
                                             >
                                                 {chain.iconUrl && (
@@ -118,8 +105,8 @@ export const WalletConnectButton = () => {
                                                         }
                                                         src={chain.iconUrl}
                                                         style={{
-                                                            width: 44,
-                                                            height: 44,
+                                                            width: 48,
+                                                            height: 48,
                                                         }}
                                                     />
                                                 )}

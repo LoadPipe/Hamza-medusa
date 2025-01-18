@@ -415,6 +415,28 @@ export default class OrderService extends MedusaOrderService {
         });
     }
 
+    async getCustomerOrder(customerId: string, orderId: string, includePayments: boolean = false): Promise<Order> {
+        return this.orderRepository_.findOne({
+            where: {
+                customer_id: customerId,
+                id: orderId,
+                status: Not(
+                    In([OrderStatus.ARCHIVED, OrderStatus.REQUIRES_ACTION])
+                ),
+            },
+            relations: includePayments
+                ? [
+                      'cart.items',
+                      'cart',
+                      'cart.items.variant.product',
+                      'payments',
+                      'shipping_methods',
+                      'store'
+                  ]
+                : ['cart.items', 'cart', 'cart.items.variant.product'],
+        });
+    }
+
     async getCustomerOrderBuckets(
         customerId: string
     ): Promise<OrderBucketList> {
@@ -1094,24 +1116,27 @@ export default class OrderService extends MedusaOrderService {
         }
     }
 
-    private async getCustomerOrdersByStatus(
+    public async getCustomerOrdersByStatus(
         customerId: string,
         statusParams: {
             orderStatus?: OrderStatus;
             paymentStatus?: PaymentStatus;
             fulfillmentStatus?: FulfillmentStatus;
-        }
+        },
+        orderId?: string
     ): Promise<Order[]> {
         const where: {
             customer_id: string;
             status?: any;
             payment_status?: any;
             fulfillment_status?: any;
+            id?: string;
         } = {
             customer_id: customerId,
             status: Not(
                 In([OrderStatus.ARCHIVED, OrderStatus.REQUIRES_ACTION])
             ),
+            id: orderId,
         };
 
         if (statusParams.orderStatus) {

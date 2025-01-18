@@ -63,7 +63,8 @@ const AddressModal: React.FC<AddressModalProps> = ({
         'shipping_address.company': '',
         'shipping_address.postal_code': '',
         'shipping_address.city': '',
-        'shipping_address.country_code': countryCode || '',
+        'shipping_address.country_code':
+            countryCode === 'en' ? 'us' : countryCode,
         'shipping_address.province': '',
         email: '',
         'shipping_address.phone': '',
@@ -89,7 +90,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                         cart.shipping_address.postal_code || '',
                     'shipping_address.city': cart.shipping_address.city || '',
                     'shipping_address.country_code':
-                        cart.shipping_address.country_code || countryCode || '',
+                        cart.shipping_address.country_code || 'us',
                     'shipping_address.province':
                         cart.shipping_address.province || '',
                     email: cart?.email
@@ -383,7 +384,7 @@ const AddressModal: React.FC<AddressModalProps> = ({
                                         value={
                                             formData[
                                                 'shipping_address.country_code'
-                                            ]
+                                            ] ?? 'us'
                                         }
                                         onChange={handleChange}
                                         required

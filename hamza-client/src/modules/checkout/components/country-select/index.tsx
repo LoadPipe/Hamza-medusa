@@ -23,10 +23,12 @@ const CountrySelect = forwardRef<
             return [];
         }
 
-        return region.countries.map((country) => ({
-            value: country.iso_2,
-            label: country.display_name,
-        }));
+        return region.countries
+            .filter((country) => country.iso_2 !== 'en')
+            .map((country) => ({
+                value: country.iso_2,
+                label: country.display_name,
+            }));
     }, [region]);
 
     return (

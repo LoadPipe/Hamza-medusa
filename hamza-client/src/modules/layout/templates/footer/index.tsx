@@ -2,7 +2,6 @@ import { clx } from '@medusajs/ui';
 import { Flex, Container, Text, Box, Divider } from '@chakra-ui/react';
 import { getCategoriesList, getCollectionsList } from '@lib/data';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import { FaTwitter } from 'react-icons/fa6';
 import { FaDiscord } from 'react-icons/fa6';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -17,7 +16,7 @@ export default async function Footer() {
         <Flex
             width="full"
             bgColor={'black'}
-            py="4rem"
+            py={{ base: '2rem', md: '4rem' }}
             justifyContent={'center'}
         >
             <Flex
@@ -27,6 +26,17 @@ export default async function Footer() {
                 width={'100%'}
             >
                 {/* links */}
+                <Flex
+                    mb="2rem"
+                    justifyContent={'center'}
+                    display={{ base: 'flex', md: 'none' }}
+                >
+                    <LocalizedClientLink href="/">
+                        <Flex width={'172px'} flexShrink={0}>
+                            <Image src={HamzaLogo} alt="Hamza" />
+                        </Flex>
+                    </LocalizedClientLink>
+                </Flex>
                 <Divider mx="auto" color="#555555" maxWidth={'1014px'} />
                 <Flex
                     pt={{ base: '2rem', md: '3rem' }}
@@ -127,7 +137,12 @@ export default async function Footer() {
                         </a>
                     </Flex>
 
-                    <Flex flexDir={'column'} color={'white'} gap={'8px'}>
+                    <Flex
+                        mt={{ base: '8px', md: '0px' }}
+                        flexDir={'column'}
+                        color={'white'}
+                        gap={'8px'}
+                    >
                         <a
                             href="https://blog.hamza.market/merchant/"
                             target="_blank"
@@ -200,41 +215,21 @@ export default async function Footer() {
                 <Divider />
                 {/* Bottom Content */}
 
-                <Flex pt="2rem" justifyContent={'space-between'} width={'100%'}>
-                    <Flex justifyContent={'center'} alignItems="center">
+                <Flex
+                    pt="2rem"
+                    flexDir={{ base: 'column', md: 'row' }}
+                    width={'100%'}
+                    gap={4}
+                >
+                    <Flex display={{ base: 'none', md: 'flex' }}>
                         <LocalizedClientLink href="/">
                             <Flex width={'190px'} flexShrink={0}>
-                                {/*
-                                <Image
-                                    src={HamzaLogo}
-                                    style={{ width: '100%', height: '67px' }}
-                                    alt="Hamza"
-                                />
-
-                                <Image
-                                    src={HamzaTitle}
-                                    style={{
-                                        width: '100%',
-                                        height: '23.07px',
-                                        alignSelf: 'center',
-                                        marginLeft: '1rem',
-                                    }}
-                                    alt="Hamza"
-                                />
-                                */}
-
-                                <Image
-                                    style={{
-                                        alignSelf: 'left',
-                                    }}
-                                    src={HamzaLogo}
-                                    alt="Hamza"
-                                />
+                                <Image src={HamzaLogo} alt="Hamza" />
                             </Flex>
                         </LocalizedClientLink>
                     </Flex>
                     <Flex
-                        mr={{ base: 'auto', md: '0' }}
+                        ml={{ base: '0', md: 'auto' }}
                         flexDir={'row'}
                         justifyContent={'center'}
                         alignItems="center"
@@ -244,12 +239,7 @@ export default async function Footer() {
                         <Text className="text-base font-bold">
                             Follow us on:{' '}
                         </Text>
-                        <Link
-                            href="https://x.com/hamzadecom?t=mrR1xycvffxf-4MoBAhFJA&s=09"
-                            target="_blank"
-                        >
-                            <FaTwitter size={24} />
-                        </Link>
+
                         <Link
                             href="https://discord.gg/W7qu9gb3Yz"
                             target="_blank"
@@ -275,7 +265,7 @@ export default async function Footer() {
                 {/* Freescout (chat) */}
                 <Flex
                     dangerouslySetInnerHTML={{
-                        __html: '`<script>var FreeScoutW={s:{"color":"#5ab334","position":"br","id":2009307235}};(function(d,e,s){if(d.getElementById("freescout-w"))return;a=d.createElement(e);m=d.getElementsByTagName(e)[0];a.async=1;a.id="freescout-w";a.src=s;m.parentNode.insertBefore(a, m)})(document,"script","[https://support.hamza.market/modules/chat/js/widget.js?v=4239"](https://support.hamza.market/modules/chat/js/widget.js?v=4239%22));</script>` ',
+                        __html: `<script>var FreeScoutW={s:{"color":"#5ab334","position":"br","id":2009307235}};(function(d,e,s){if(d.getElementById("freescout-w"))return;a=d.createElement(e);m=d.getElementsByTagName(e)[0];a.async=1;a.id="freescout-w";a.src=s;m.parentNode.insertBefore(a, m)})(document,"script","[https://support.hamza.market/modules/chat/js/widget.js?v=4239"](https://support.hamza.market/modules/chat/js/widget.js?v=4239%22));</script>`,
                     }}
                 ></Flex>
 

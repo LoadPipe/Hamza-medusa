@@ -54,3 +54,25 @@ export interface ISwitchMultiPaymentInput {
     currency: string; //token address, or ethers.ZeroAddress for native
     payments: ISwitchPaymentInput[];
 }
+
+/**
+ * Gets the chain id for the current signed in wallet.
+ */
+export async function getChainId(): Promise<bigint> {
+    const provider: ethers.BrowserProvider = new ethers.BrowserProvider(
+        window.ethereum as ethers.Eip1193Provider
+    );
+    const { chainId } = await provider.getNetwork();
+    return chainId;
+}
+
+/**
+ * Gets the address of the current signed in wallet.
+ */
+export async function getWalletAddress(): Promise<string> {
+    const provider: ethers.BrowserProvider = new ethers.BrowserProvider(
+        window.ethereum as ethers.Eip1193Provider
+    );
+    const signer: ethers.Signer = await provider.getSigner();
+    return await signer.getAddress();
+}

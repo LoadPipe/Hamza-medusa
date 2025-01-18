@@ -31,11 +31,12 @@ const HnsDisplay = () => {
     return authData.status === 'authenticated' ? (
         <Flex
             color={'white'}
-            backgroundColor={'#121212'}
+            justifyContent={'center'}
+            backgroundColor={'#2A2A2A'}
             opacity={'90%'}
             flexDirection={'row'}
             alignItems={'center'}
-            width={'180px'}
+            width={'150px'}
             height={'48px'}
             padding={'14px'}
             cursor="pointer"

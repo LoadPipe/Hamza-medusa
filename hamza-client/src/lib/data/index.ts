@@ -10,6 +10,7 @@ import {
     StorePostCustomersCustomerAddressesAddressReq,
     StorePostCustomersCustomerAddressesReq,
     StorePostCustomersCustomerReq,
+    Order,
 } from '@medusajs/medusa';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { cache } from 'react';
@@ -28,6 +29,7 @@ import axios from 'axios';
 
 import { cookies } from 'next/headers';
 import { next } from 'sucrase/dist/types/parser/tokenizer';
+import { EscrowStatus } from './enums';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
@@ -115,7 +117,7 @@ async function axiosCall(
     }
 }
 
-async function get(
+export async function get(
     url: string,
     params: any = null,
     requiresSecurity: boolean = false,
@@ -441,6 +443,18 @@ export async function getOrderStatus(order_id: string) {
     });
 }
 
+export async function updateOrderEscrowStatus(
+    order_id: string,
+    escrow_status: EscrowStatus,
+    metadata: any
+): Promise<Order> {
+    return putSecure('/custom/order/status', {
+        order_id: order_id,
+        escrow_status: escrow_status,
+        metadata: metadata,
+    });
+}
+
 export async function cancelOrder(order_id: string, cancel_reason: string) {
     return putSecure('/custom/order/cancel', { order_id, cancel_reason });
 }
@@ -629,6 +643,19 @@ export async function updateItem({
         .update(cartId, lineId, { quantity }, headers)
         .then(({ cart }) => cart)
         .catch((err) => medusaError(err));
+}
+
+export async function updateShippingCost(cart_id: string) {
+    try {
+        const response = await getSecure('/custom/cart/shipping', {
+            cart_id,
+        });
+        const shippingCost = response?.amount ?? 0;
+        return shippingCost; // Return shipping cost for further use if needed
+    } catch (error) {
+        console.error('Error updating shipping cost:', error);
+        return 0; // Return a default value or handle the error as needed
+    }
 }
 
 export async function removeItem({
@@ -895,6 +922,14 @@ export async function getCustomer() {
             }
             return null;
         });
+}
+
+export async function getCustomerOrder(customer_id: string, order_id: string) {
+    const orders = await postSecure('/custom/order', {
+        customer_id: customer_id,
+        order_id: order_id
+    });
+    return orders[0];
 }
 
 declare class StorePostCustomersReqCustom {

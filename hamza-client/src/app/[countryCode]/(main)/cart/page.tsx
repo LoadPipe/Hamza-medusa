@@ -38,6 +38,7 @@ const fetchCart = async () => {
 
 export default async function Cart() {
     const cart = await fetchCart();
+    console.log('fetched cart', cart);
     const customer = await getHamzaCustomer();
 
     return <CartTemplate cart={cart} customer={customer} />;

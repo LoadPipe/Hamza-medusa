@@ -28,6 +28,7 @@ import {
     AlertDescription,
     FormErrorMessage,
     Divider,
+    Skeleton,
 } from '@chakra-ui/react';
 import StoreProductDisplay from '@modules/store/components/products/store-product-display';
 import { getVendorStoreBySlug } from '@lib/data';
@@ -51,6 +52,7 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
         thumbnail: '',
         description: '',
     });
+    const [isLoading, setIsLoading] = useState(true);
 
     // reveal more text mobile about
     const [showMore, setShowMore] = useState(3);
@@ -134,15 +136,27 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
                             flexDir={'row'}
                             gap={{ base: '16px', md: '24px' }}
                         >
-                            <Image
-                                src={reviewStats.thumbnail}
-                                alt="Vendor"
-                                borderRadius="full"
-                                boxSize={{ base: '40px', md: '72px' }}
-                                objectFit="cover"
-                                objectPosition="center"
-                                alignSelf={'center'}
-                            />
+                            {!reviewStats.thumbnail && isLoading ? (
+                                <Skeleton
+                                    boxSize={{ base: '36.5px', md: '72px' }}
+                                    borderRadius="full"
+                                    startColor="gray.700"
+                                    endColor="gray.500"
+                                />
+                            ) : (
+                                <Image
+                                    src={reviewStats.thumbnail}
+                                    alt="Vendor"
+                                    borderRadius="full"
+                                    boxSize={{ base: '40px', md: '72px' }}
+                                    objectFit="cover"
+                                    objectPosition="center"
+                                    alignSelf={'center'}
+                                    onLoad={() => setIsLoading(false)}
+                                    onError={() => setIsLoading(false)}
+                                />
+                            )}
+
                             <Flex flexDir={'column'} alignSelf={'center'}>
                                 <Text fontSize={{ base: '12px', md: '24px' }}>
                                     {storeName}{' '}

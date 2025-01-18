@@ -4,9 +4,11 @@ import ejs from 'ejs';
 import path from 'path';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import dotenv from 'dotenv';
+import { Lifetime } from 'awilix';
 dotenv.config();
 
 class SmtpMailService {
+    LIFE_TIME = Lifetime.SINGLETON;
     private SMTP_TRANSPORTER: nodemailer.Transporter<SMTPTransport.SentMessageInfo>;
 
     constructor() {

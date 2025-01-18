@@ -153,6 +153,7 @@ const theme = extendTheme({
                     fontSize: '0.625rem',
                 },
             },
+
             variant: {
                 regular: {
                     fontWeight: 'normal', // 400
@@ -164,6 +165,27 @@ const theme = extendTheme({
                     fontWeight: 'bold', // 700
                 },
             },
+
+            Checkbox: {
+                baseStyle: {
+                    control: {
+                        border: '2px solid white', // White border by default
+                        borderRadius: '4px', // Rounded corners
+                        bg: 'transparent', // Transparent background by default
+                        _checked: {
+                            bg: '#84C441', // Green background when checked
+                            borderColor: '#84C441', // Green border when checked
+                        },
+                        _hover: {
+                            borderColor: 'white', // Keeps the border white on hover
+                        },
+                        _focus: {
+                            boxShadow: 'none', // Remove default focus styles
+                        },
+                    },
+                },
+            },
+
             defaultProps: {
                 size: 'h2',
                 variant: 'bold',
