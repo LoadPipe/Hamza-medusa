@@ -10,6 +10,7 @@ import Reputation from '@modules/home/components/reputation';
 //import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
 import HamzaLogo from '../../../../../public/images/logo/hamza-beta.png';
 import React from 'react';
+import { FaTwitter } from 'react-icons/fa6';
 
 export default async function Footer() {
     return (
@@ -239,7 +240,9 @@ export default async function Footer() {
                         <Text className="text-base font-bold">
                             Follow us on:{' '}
                         </Text>
-
+                        <Link href="https://x.com/hamzadecom1" target="_blank">
+                            <FaTwitter size={24} />
+                        </Link>
                         <Link
                             href="https://discord.gg/W7qu9gb3Yz"
                             target="_blank"
