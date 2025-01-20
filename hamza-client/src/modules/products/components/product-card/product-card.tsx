@@ -235,7 +235,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
                                             textTransform: 'uppercase',
                                         }}
                                     >
-                                        USDC
+                                        USD
                                     </Text>
                                 </Text>
                             </Flex>
