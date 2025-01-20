@@ -146,7 +146,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                                         : 100,
                                     100
                                 )}
-                                className="w-12 h-8 md:w-14 md:h-10 mt-auto"
+                                className="w-12 h-8 md:w-14 md:h-10 "
                             />
 
                             <LineItemUnitPrice
