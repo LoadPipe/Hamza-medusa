@@ -164,7 +164,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                                         fontWeight={700}
                                         textAlign="right"
                                     >
-                                        {`≅  ${convertedUSDPrice} USDC`}
+                                        {`≅  $${convertedUSDPrice} USD`}
                                     </Text>
                                 )}
                             </>

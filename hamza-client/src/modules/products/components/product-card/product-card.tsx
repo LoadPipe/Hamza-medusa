@@ -221,7 +221,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
                                     fontWeight="500"
                                     fontSize={{ base: '14px', md: '16px' }}
                                 >
-                                    ≅ {usdcProductPrice}
+                                    ≅ ${usdcProductPrice}
                                     <Text
                                         textOverflow="ellipsis"
                                         ml="5px"
@@ -235,7 +235,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
                                             textTransform: 'uppercase',
                                         }}
                                     >
-                                        USDC
+                                        USD
                                     </Text>
                                 </Text>
                             </Flex>

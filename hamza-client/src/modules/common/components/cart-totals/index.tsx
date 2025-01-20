@@ -256,47 +256,24 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                                     )}
                                 </Text>
                             </Flex>
-                            {preferred_currency_code === 'eth' &&
-                                (!useCartStyle ? (
-                                    <Flex
-                                        justifyContent="flex-end"
-                                        width="100%"
+                            {preferred_currency_code === 'eth' && (
+                                <Flex justifyContent="flex-end" width="100%">
+                                    <Text
+                                        as="h3"
+                                        variant="semibold"
+                                        color="white"
+                                        mt={2}
+                                        fontSize={{
+                                            base: '15px',
+                                            md: '18px',
+                                        }}
+                                        fontWeight={700}
+                                        textAlign="right"
                                     >
-                                        <Text
-                                            as="h3"
-                                            variant="semibold"
-                                            color="white"
-                                            mt={2}
-                                            fontSize={{
-                                                base: '15px',
-                                                md: '18px',
-                                            }}
-                                            fontWeight={700}
-                                            textAlign="right"
-                                        >
-                                            {`≅ $ ${convertedPrice} USDC`}
-                                        </Text>
-                                    </Flex>
-                                ) : (
-                                    <Flex
-                                        justifyContent="flex-end"
-                                        width="100%"
-                                    >
-                                        <Text
-                                            as="h3"
-                                            color="white"
-                                            mt={2}
-                                            fontSize={{
-                                                base: '14px',
-                                                md: '16px',
-                                            }}
-                                            fontWeight={600}
-                                            textAlign="right"
-                                        >
-                                            {`≅ $ ${convertedPrice} USDC`}
-                                        </Text>
-                                    </Flex>
-                                ))}
+                                        {`≅ $${convertedPrice} USD`}
+                                    </Text>
+                                </Flex>
+                            )}
                         </Flex>
                     )}
                 </Flex>
