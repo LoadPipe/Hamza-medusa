@@ -44,16 +44,28 @@ const Summary: React.FC<SummaryProps> = ({ cart }) => {
                                 </Flex>
                             </LocalizedClientLink>
                         </Flex>
-                        <Text
-                            ml="1rem"
-                            maxW={{ base: '200px', md: '336px' }}
-                            height="46px"
-                            width="100%"
-                            fontSize={{ base: '14px', md: '16px' }}
-                            noOfLines={2}
-                        >
-                            {item.title}
-                        </Text>
+                        <Flex flexDir={'column'}>
+                            <Text
+                                ml="1rem"
+                                maxW={{ base: '200px', md: '336px' }}
+                                height="46px"
+                                width="100%"
+                                fontSize={{ base: '14px', md: '16px' }}
+                                noOfLines={2}
+                            >
+                                {item.title}
+                            </Text>
+                            <Text
+                                ml="1rem"
+                                maxW={{ base: '200px', md: '336px' }}
+                                height="46px"
+                                width="100%"
+                                fontSize={{ base: '14px', md: '16px' }}
+                                noOfLines={2}
+                            >
+                                {item.order_id}
+                            </Text>
+                        </Flex>
                         <Flex ml="auto">
                             <Flex height="22px" alignItems="center" mb="auto">
                                 <Image
@@ -89,7 +101,7 @@ const Summary: React.FC<SummaryProps> = ({ cart }) => {
                         {/*        isPurchased={true}*/}
                         {/*    />*/}
                         {/*</Flex>*/}
-                        <Text ml="1rem" fontSize={{ base: '14px', md: '16px' }}>
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
                             Quantity: {item.quantity}
                         </Text>
                     </Flex>
