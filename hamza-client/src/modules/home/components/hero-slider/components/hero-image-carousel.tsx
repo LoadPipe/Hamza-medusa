@@ -151,9 +151,9 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
             </Flex>
 
             {/* Sale Text */}
-            <Text color="#A0A0A0" fontStyle="italic">
+            {/* <Text color="#A0A0A0" fontStyle="italic">
                 The product is on sale. Buy now and grab a great discount!
-            </Text>
+            </Text> */}
         </Flex>
     );
 };

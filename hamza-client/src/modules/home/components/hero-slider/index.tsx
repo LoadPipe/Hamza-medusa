@@ -48,7 +48,8 @@ const HeroSlider: React.FC = () => {
     if (isLoading) {
         return (
             <Flex
-                mt={{ base: '-8rem', md: '0' }}
+                mt={{ base: '-4rem', md: '0' }}
+                mb={{ base: '0', md: '-4rem' }}
                 maxW="1280px"
                 height={{ base: '300px', md: '625px' }}
                 justifyContent="space-between"
@@ -126,6 +127,8 @@ const HeroSlider: React.FC = () => {
         <Flex
             maxW="1280px"
             height={{ base: '300px', md: '625px' }}
+            mt={{ base: '-4rem', md: '0' }}
+            mb={{ base: '0', md: '-4rem' }}
             justifyContent="space-between"
             flexDir="row"
             px={{ base: '1rem', md: '50px' }}
@@ -233,7 +236,7 @@ const HeroSlider: React.FC = () => {
                 <Flex
                     display={{ base: 'none', md: 'flex' }}
                     position="absolute"
-                    bottom="10px"
+                    bottom="50px"
                     left="50%"
                     transform="translateX(-50%)"
                     gap={3}
