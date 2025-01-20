@@ -80,7 +80,7 @@ const OrderDetails = ({ cart, showStatus }: OrderDetailsProps) => {
                         fontWeight={600}
                         fontSize={{ base: '14px', md: '16px' }}
                     >
-                        Order IDs
+                        Order ID
                     </Text>
                     {orderIds.map((orderId) => (
                         <Text

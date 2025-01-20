@@ -55,16 +55,6 @@ const Summary: React.FC<SummaryProps> = ({ cart }) => {
                             >
                                 {item.title}
                             </Text>
-                            <Text
-                                ml="1rem"
-                                maxW={{ base: '200px', md: '336px' }}
-                                height="46px"
-                                width="100%"
-                                fontSize={{ base: '14px', md: '16px' }}
-                                noOfLines={2}
-                            >
-                                {item.order_id}
-                            </Text>
                         </Flex>
                         <Flex ml="auto">
                             <Flex height="22px" alignItems="center" mb="auto">
@@ -94,7 +84,7 @@ const Summary: React.FC<SummaryProps> = ({ cart }) => {
                     </Flex>
 
                     {/* Twitter and Quantity */}
-                    <Flex alignItems="center" height="50px" width="100%">
+                    <Flex flexDir={'column'} height="70px" width="100%">
                         {/*<Flex alignSelf="center">*/}
                         {/*    <Tweet*/}
                         {/*        productHandle={item.variant.product.handle}*/}
@@ -103,6 +93,14 @@ const Summary: React.FC<SummaryProps> = ({ cart }) => {
                         {/*</Flex>*/}
                         <Text fontSize={{ base: '14px', md: '16px' }}>
                             Quantity: {item.quantity}
+                        </Text>
+                        <Text
+                            maxW={{ base: '200px', md: '336px' }}
+                            height="46px"
+                            width="100%"
+                            fontSize={{ base: '14px', md: '16px' }}
+                        >
+                            {item.order_id}
                         </Text>
                     </Flex>
                 </Flex>
