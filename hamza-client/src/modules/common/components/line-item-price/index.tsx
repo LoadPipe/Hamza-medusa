@@ -112,6 +112,18 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                     <Flex flexDirection={'row'} alignItems="center">
                         {/* Currency Icon */}
                         <Flex alignItems={'center'}>
+                            <Text
+                                mr={{ base: '0.4rem', md: '0.5rem' }}
+                                fontSize={{ base: '12px', md: '20px' }}
+                                fontWeight={700}
+                                lineHeight="1.1"
+                                position="relative"
+                                top="1px"
+                                color={'white'}
+                                opacity={'0.4'}
+                            >
+                                Total:
+                            </Text>
                             <Image
                                 className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
                                 src={
@@ -133,7 +145,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                         ) : (
                             <Text
                                 ml={{ base: '0.4rem', md: '0.5rem' }}
-                                fontSize={{ base: '15px', md: '24px' }}
+                                fontSize={{ base: '12px', md: '20px' }}
                                 fontWeight={700}
                                 lineHeight="1.1"
                                 position="relative"

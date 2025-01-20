@@ -119,7 +119,6 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
 
                 <Flex width={'100%'} ml="1rem">
                     <Flex
-                        pr="1rem"
                         ml={{ base: '0', md: '1rem' }}
                         flexDirection={'column'}
                     >
@@ -134,21 +133,6 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                         </Text>
                         <LineItemOptions variant={item.variant} />
                         <Flex mt="auto">
-                            <CartItemSelect
-                                value={quantity} // Visual update
-                                onChange={(valueAsNumber) =>
-                                    changeQuantity(Number(valueAsNumber))
-                                } // Debounced server update
-                                min={1}
-                                max={Math.min(
-                                    item.variant.inventory_quantity > 0
-                                        ? item.variant.inventory_quantity
-                                        : 100,
-                                    100
-                                )}
-                                className="w-12 h-8 md:w-14 md:h-10 "
-                            />
-
                             <LineItemUnitPrice
                                 item={item}
                                 currencyCode={item.currency_code}
@@ -167,6 +151,21 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                         <Flex ml="auto" mb={{ base: 'auto', md: '1.25rem' }}>
                             <DeleteButton id={item.id} />
                         </Flex>
+
+                        <CartItemSelect
+                            value={quantity} // Visual update
+                            onChange={(valueAsNumber) =>
+                                changeQuantity(Number(valueAsNumber))
+                            } // Debounced server update
+                            min={1}
+                            max={Math.min(
+                                item.variant.inventory_quantity > 0
+                                    ? item.variant.inventory_quantity
+                                    : 100,
+                                100
+                            )}
+                            className="w-12 h-8 md:w-14 md:h-10 "
+                        />
 
                         <LineItemPrice item={item} usdcOnDifferentLine={true} />
                     </Flex>
