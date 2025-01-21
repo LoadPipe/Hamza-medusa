@@ -1,59 +1,45 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { Flex, Text, Heading } from '@chakra-ui/react';
-import useProductPreview from '@/zustand/product-preview/product-preview';
+
+import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+import { Flex, Text } from '@chakra-ui/react';
 import { AiOutlineMinus, AiOutlinePlus } from 'react-icons/ai';
 
-const ItemQuantityButton = () => {
-    const [quantityAvailable, setQuantityAvailable] = useState('');
-    const { productData, setProductData, quantity, setQuantity, variantId } =
-        useProductPreview();
+type ItemQuantityButtonProps = {
+    value?: number;
+    min?: number;
+    max?: number;
+    onChange?: (valueAsNumber: number) => void;
+};
 
-    let selectedProductVariant =
-        productData &&
-        productData.variants &&
-        productData.variants.find((a: any) => a.id == variantId);
+const ItemQuantityButton = forwardRef<
+    HTMLInputElement,
+    ItemQuantityButtonProps
+>(({ value = 1, min = 1, max = 100, onChange }, ref) => {
+    const inputRef = useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
-        const updateQuantityButton = async () => {
-            if (
-                productData &&
-                productData.variants &&
-                productData.variants.length > 0 &&
-                selectedProductVariant
-            ) {
-                setQuantityAvailable(selectedProductVariant.inventory_quantity);
-            }
-        };
+    useImperativeHandle(ref, () => inputRef.current!);
 
-        updateQuantityButton();
-    }, [productData, selectedProductVariant]);
-
-    const incrementQuantity = () => {
-        if (quantity < Number(quantityAvailable)) {
-            setQuantity(quantity + 1);
-        }
-    };
-
-    const decrementQuantity = () => {
-        if (quantity > 1) {
-            setQuantity(quantity - 1);
+    const changeQuantity = (newQuantity: number) => {
+        if (onChange && newQuantity >= min && newQuantity <= max) {
+            onChange(newQuantity);
         }
     };
 
     return (
-        <Flex flexDirection="column">
+        <Flex flexDirection="column" ml="auto">
             <Flex gap="10px">
+                {/* Decrement Button */}
                 <Flex
-                    onClick={() => decrementQuantity()}
-                    borderWidth={'1px'}
-                    padding={'10px'}
-                    width={'24px'}
+                    onClick={() => changeQuantity((value || min) - 1)}
+                    borderWidth="1px"
+                    padding="10px"
+                    width="24px"
                     height={{ base: '33px', md: '24px' }}
                     backgroundColor={{ base: 'black', md: 'transparent' }}
-                    borderColor={'#3E3E3E'}
-                    cursor={'pointer'}
-                    justifyContent={'center'}
+                    borderColor="#3E3E3E"
+                    cursor={value && value > min ? 'pointer' : 'not-allowed'}
+                    justifyContent="center"
+                    opacity={value && value > min ? 1 : 0.5}
                 >
                     <Flex
                         alignSelf="center"
@@ -63,34 +49,38 @@ const ItemQuantityButton = () => {
                     </Flex>
                 </Flex>
 
+                {/* Quantity Display */}
                 <Flex
-                    borderWidth={'1px'}
-                    width={'48px'}
+                    borderWidth="1px"
+                    width="48px"
                     height={{ base: '33px', md: '24px' }}
-                    justifyContent={'center'}
+                    justifyContent="center"
                     padding={'10px'}
-                    borderColor={'#3E3E3E'}
+                    borderColor="#3E3E3E"
                     backgroundColor={{ base: 'black', md: 'transparent' }}
                 >
                     <Text
                         fontSize={{ base: '12px', md: '14px' }}
-                        alignSelf={'center'}
                         color="white"
+                        alignSelf={'center'}
+                        lineHeight={1}
                     >
-                        {quantity}
+                        {value}
                     </Text>
                 </Flex>
 
+                {/* Increment Button */}
                 <Flex
-                    onClick={() => incrementQuantity()}
-                    borderWidth={'1px'}
-                    padding={'10px'}
-                    width={'24px'}
+                    onClick={() => changeQuantity((value || min) + 1)}
+                    borderWidth="1px"
+                    padding="10px"
+                    width="24px"
                     height={{ base: '33px', md: '24px' }}
-                    borderColor={'#3E3E3E'}
-                    cursor={'pointer'}
-                    justifyContent={'center'}
+                    borderColor="#3E3E3E"
+                    cursor={value && value < max ? 'pointer' : 'not-allowed'}
+                    justifyContent="center"
                     backgroundColor={{ base: 'black', md: 'transparent' }}
+                    opacity={value && value < max ? 1 : 0.5}
                 >
                     <Flex
                         alignSelf="center"
@@ -102,6 +92,8 @@ const ItemQuantityButton = () => {
             </Flex>
         </Flex>
     );
-};
+});
+
+ItemQuantityButton.displayName = 'ItemQuantityButton';
 
 export default ItemQuantityButton;

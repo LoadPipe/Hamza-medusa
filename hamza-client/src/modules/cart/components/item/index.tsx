@@ -167,7 +167,19 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                             )}
                             className="w-12 h-8 md:w-14 md:h-10 "
                         /> */}
-                        <ItemQuantityButton />
+                        <ItemQuantityButton
+                            value={quantity}
+                            onChange={(newQuantity) =>
+                                changeQuantity(newQuantity)
+                            }
+                            min={1}
+                            max={Math.min(
+                                item.variant.inventory_quantity > 0
+                                    ? item.variant.inventory_quantity
+                                    : 100,
+                                100
+                            )}
+                        />
                         <LineItemPrice item={item} usdcOnDifferentLine={true} />
                     </Flex>
                 </Flex>
