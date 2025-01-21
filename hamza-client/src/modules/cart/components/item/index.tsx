@@ -93,7 +93,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
 
     return (
         <Flex
-            height={{ base: '102px', md: '210px' }}
+            height={{ base: '150px', md: '210px' }}
             width={'100%'}
             flexDirection={'column'}
         >
@@ -147,7 +147,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
 
                         {/* Options and Quantity Selector */}
                         <Flex
-                            mt="1rem"
+                            mt={{ base: '0', md: '1rem' }}
                             justifyContent="space-between"
                             alignItems="center"
                             width="100%"
@@ -155,7 +155,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                             <Flex width="100%">
                                 <LineItemOptions variant={item.variant} />
                             </Flex>
-                            <Flex>
+                            <Flex display={{ base: 'none', md: 'flex' }}>
                                 <ItemQuantityButton
                                     value={quantity}
                                     onChange={(newQuantity) =>
@@ -196,6 +196,19 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                         </Flex>
                     </Flex>
                 </Flex>
+            </Flex>
+            <Flex display={{ base: 'flex', md: 'none' }} my={'1rem'}>
+                <ItemQuantityButton
+                    value={quantity}
+                    onChange={(newQuantity) => changeQuantity(newQuantity)}
+                    min={1}
+                    max={Math.min(
+                        item.variant.inventory_quantity > 0
+                            ? item.variant.inventory_quantity
+                            : 100,
+                        100
+                    )}
+                />
             </Flex>
         </Flex>
     );

@@ -26,14 +26,14 @@ const ItemQuantityButton = forwardRef<
     };
 
     return (
-        <Flex flexDirection="column" ml="auto">
+        <Flex flexDirection="column" ml={{ base: '0', md: 'auto' }}>
             <Flex gap="10px">
                 {/* Decrement Button */}
                 <Flex
                     onClick={() => changeQuantity((value || min) - 1)}
                     borderWidth="1px"
                     padding="10px"
-                    width="24px"
+                    width={{ base: '33px', md: '24px' }}
                     height={{ base: '33px', md: '24px' }}
                     backgroundColor={{ base: 'black', md: 'transparent' }}
                     borderColor="#3E3E3E"
@@ -74,7 +74,7 @@ const ItemQuantityButton = forwardRef<
                     onClick={() => changeQuantity((value || min) + 1)}
                     borderWidth="1px"
                     padding="10px"
-                    width="24px"
+                    width={{ base: '33px', md: '24px' }}
                     height={{ base: '33px', md: '24px' }}
                     borderColor="#3E3E3E"
                     cursor={value && value < max ? 'pointer' : 'not-allowed'}
