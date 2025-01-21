@@ -14,6 +14,7 @@ import toast from 'react-hot-toast';
 import { debounce } from 'lodash';
 import { addDefaultShippingMethod } from '@lib/data';
 import LineItemUnitPrice from '@/modules/common/components/line-item-unit-price';
+import ItemQuantityButton from './components/item-quantity-button';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -166,7 +167,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                             )}
                             className="w-12 h-8 md:w-14 md:h-10 "
                         /> */}
-
+                        <ItemQuantityButton />
                         <LineItemPrice item={item} usdcOnDifferentLine={true} />
                     </Flex>
                 </Flex>
