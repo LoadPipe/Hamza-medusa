@@ -23,7 +23,7 @@ export const LineItemUnitPriceDisplay = ({
                     justifyContent={'flex-end'}
                 >
                     <Image
-                        className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
+                        className="h-[14px] w-[14px] md:h-[16px] md:w-[16px]"
                         src={currencyIcons[preferredCurrencyCode ?? 'usdc'].src}
                         alt={preferredCurrencyCode ?? 'usdc'}
                     />
@@ -33,7 +33,7 @@ export const LineItemUnitPriceDisplay = ({
                         variant="semibold"
                         color="white"
                         mt={1}
-                        fontSize={{ base: '12px', md: '20px' }}
+                        fontSize={{ base: '12px', md: '16px' }}
                         fontWeight={700}
                     >
                         {price}

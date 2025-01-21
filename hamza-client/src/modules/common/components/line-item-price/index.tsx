@@ -114,18 +114,15 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                         <Flex alignItems={'center'}>
                             <Text
                                 mr={{ base: '0.4rem', md: '0.5rem' }}
-                                fontSize={{ base: '12px', md: '20px' }}
+                                fontSize={{ base: '12px', md: '14px' }}
                                 fontWeight={700}
-                                lineHeight="1.1"
                                 position="relative"
-                                top="1px"
                                 color={'white'}
-                                opacity={'0.4'}
                             >
                                 Total:
                             </Text>
                             <Image
-                                className="h-[14px] w-[14px] md:h-[20px] md:w-[20px]"
+                                className="h-[14px] w-[14px] md:h-[16px] md:w-[16px]"
                                 src={
                                     currencyIcons[
                                         preferred_currency_code ?? 'usdc'
@@ -145,11 +142,9 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                         ) : (
                             <Text
                                 ml={{ base: '0.4rem', md: '0.5rem' }}
-                                fontSize={{ base: '12px', md: '20px' }}
+                                fontSize={{ base: '12px', md: '16px' }}
                                 fontWeight={700}
-                                lineHeight="1.1"
                                 position="relative"
-                                top="1px"
                                 color={'white'}
                             >
                                 {formatCryptoPrice(
@@ -163,15 +158,13 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                         {preferred_currency_code === 'eth' && (
                             <>
                                 {loadingUSDPrice ? (
-                                    <Spinner size="sm" color="white" ml={2} />
+                                    <Spinner size="sm" color="white" ml={1} />
                                 ) : (
                                     <Text
-                                        mt={2}
-                                        ml={{ base: '8px', md: '16px' }}
+                                        ml={1}
                                         as="h3"
                                         variant="semibold"
                                         color="white"
-                                        lineHeight="1.1"
                                         fontSize={{ base: '12px', md: '16px' }}
                                         fontWeight={700}
                                         textAlign="right"

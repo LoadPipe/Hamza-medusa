@@ -152,7 +152,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                             <DeleteButton id={item.id} />
                         </Flex>
 
-                        <CartItemSelect
+                        {/* <CartItemSelect
                             value={quantity} // Visual update
                             onChange={(valueAsNumber) =>
                                 changeQuantity(Number(valueAsNumber))
@@ -165,7 +165,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                                 100
                             )}
                             className="w-12 h-8 md:w-14 md:h-10 "
-                        />
+                        /> */}
 
                         <LineItemPrice item={item} usdcOnDifferentLine={true} />
                     </Flex>
