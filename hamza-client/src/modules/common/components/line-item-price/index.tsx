@@ -84,7 +84,7 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
     }, [price, preferred_currency_code]);
 
     return (
-        <div className="flex flex-col gap-x-1 text-ui-fg-subtle items-end">
+        <div className="flex flex-col text-ui-fg-subtle items-end">
             <div className="text-left">
                 {hasReducedPrice && reducedPrice !== null && (
                     <>

@@ -29,12 +29,10 @@ export const LineItemUnitPriceDisplay = ({
                     />
                     <Text
                         ml={{ base: '8px', md: '8px' }}
-                        as="h3"
-                        variant="semibold"
-                        color="white"
-                        mt={1}
                         fontSize={{ base: '12px', md: '16px' }}
                         fontWeight={700}
+                        position="relative"
+                        color={'white'}
                     >
                         {price}
                     </Text>
