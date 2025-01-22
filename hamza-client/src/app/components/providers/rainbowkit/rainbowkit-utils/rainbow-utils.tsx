@@ -29,6 +29,7 @@ import {
     linea,
     lineaTestnet,
     goerli,
+    base,
 } from 'wagmi/chains';
 import { useNetwork, useSwitchNetwork, Chain } from 'wagmi';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
@@ -106,6 +107,8 @@ if (allowedChains.length === 0) {
         11155111: sepolia,
         amoy: amoy,
         80002: amoy,
+        base: base,
+        8453: base,
     };
 
     wagmiChains = allowedChains.map(

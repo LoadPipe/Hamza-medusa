@@ -88,6 +88,25 @@ const chainConfig: any = {
             address: '0xDDa56f06D80f3D8E3E35159701A63753f39c3BCB',
         },
     },
+    8453: {
+        chain_name: 'base',
+        master_switch: {
+            address: '0x0',
+        },
+        massmarket_payment: {
+            address: '0x0',
+        },
+        lite_switch: {
+            //address: '0x08EdF664EB5617d7eCf4F1ec74Ee49d9e99Fbd5f'
+            address: '0x0',
+        },
+        escrow_multicall: {
+            address: '0x801c4C568DBfB540De91e6DD95b31d252765F7F8',
+        },
+        dao: {
+            address: '0x1542612fee591eD35C05A3E980bAB325265c06a3',
+        },
+    },
 };
 
 const getContractAddress = (contractId: string, chainId: number = 1) =>
