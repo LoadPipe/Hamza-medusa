@@ -107,6 +107,25 @@ const chainConfig: any = {
             address: '0x1542612fee591eD35C05A3E980bAB325265c06a3',
         },
     },
+    137: {
+        chain_name: 'polygon',
+        master_switch: {
+            address: '0x0',
+        },
+        massmarket_payment: {
+            address: '0x0',
+        },
+        lite_switch: {
+            //address: '0x08EdF664EB5617d7eCf4F1ec74Ee49d9e99Fbd5f'
+            address: '0x0',
+        },
+        escrow_multicall: {
+            address: '0x0000000000000000000000000000000000000000',
+        },
+        dao: {
+            address: '0x1542612fee591eD35C05A3E980bAB325265c06a3',
+        },
+    },
 };
 
 const getContractAddress = (contractId: string, chainId: number = 1) =>
