@@ -42,6 +42,29 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                     }}
                 />
 
+                {/* Chat */}
+                <script
+                    dangerouslySetInnerHTML={{
+                        __html: `
+            var FreeScoutW = {
+                s: {
+                    "color": "#5ab334",
+                    "position": "br",
+                    "id": 2009307235
+                }
+            };
+            (function(d, e, s) {
+                if (d.getElementById("freescout-w")) return;
+                var a = d.createElement(e), m = d.getElementsByTagName(e)[0];
+                a.async = 1;
+                a.id = "freescout-w";
+                a.src = "https://support.hamza.market/modules/chat/js/widget.js?v=4239";
+                m.parentNode.insertBefore(a, m);
+            })(document, "script");
+        `,
+                    }}
+                />
+
                 {/* Klaviyo Script */}
                 <Script
                     src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=S4Nw9L"
