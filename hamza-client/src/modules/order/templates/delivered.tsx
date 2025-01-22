@@ -341,6 +341,10 @@ const Delivered = ({
                                                                                 item.currency_code
                                                                             )}
                                                                         </Text>
+                                                                        <Text>
+                                                                            <strong>Order ID: </strong>
+                                                                            {order?.id && typeof order.id === 'string' ? order.id : 'Order ID not available'}
+                                                                        </Text>
                                                                     </VStack>
                                                                 </VStack>
                                                             </TabPanel>
