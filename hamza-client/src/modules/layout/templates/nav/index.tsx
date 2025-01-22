@@ -21,7 +21,7 @@ import { HiOutlineShoppingCart } from 'react-icons/hi';
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { LineItem } from '@medusajs/medusa';
 import { headers } from 'next/headers';
-import NavContainer from './nav-container';
+import MobileNavContainer from './mobile-nav-container';
 
 const fetchCart = async () => {
     const cart = await retrieveCart();
@@ -56,9 +56,9 @@ export default async function Nav() {
             alignItems={'center'}
             backgroundColor={'#020202'}
         >
-            <NavContainer>
+            <MobileNavContainer>
                 <MobileNav />
-            </NavContainer>
+            </MobileNavContainer>
 
             <Flex
                 display={{ base: 'none', md: 'flex' }}

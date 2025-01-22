@@ -3,7 +3,9 @@
 import { Flex } from '@chakra-ui/react';
 import { usePathname } from 'next/navigation';
 
-export default function NavContainer(props: { children: React.ReactNode }) {
+export default function MobileNavContainer(props: {
+    children: React.ReactNode;
+}) {
     const pathname = usePathname(); // Get the current route
 
     return (
