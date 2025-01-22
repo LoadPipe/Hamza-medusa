@@ -27,12 +27,6 @@ const CartTemplate = ({
     const { preferred_currency_code, setCustomerPreferredCurrency } =
         useCustomerAuthStore();
 
-    // Ensure `cart` is not null before calling `updateInventory`
-    const handleUpdateInventory = () => {
-        if (cart) {
-            updateInventory(cart);
-        }
-    };
 
     return (
         <Flex
