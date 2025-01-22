@@ -418,6 +418,10 @@ const Shipped = ({
                                                                                 item.currency_code
                                                                             )}
                                                                         </Text>
+                                                                        <Text>
+                                                                            <strong>Tracking Number: </strong>
+                                                                            {order?.tracking_number && typeof order.tracking_number === 'string' ? order.tracking_number : 'Tracking number not available'}
+                                                                        </Text>
                                                                     </VStack>
                                                                 </VStack>
                                                             </TabPanel>
