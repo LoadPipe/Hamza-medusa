@@ -262,6 +262,10 @@ const Refund = ({
                                                                             <strong>Order ID: </strong>
                                                                             {order?.id && typeof order.id === 'string' ? order.id : 'Order ID not available'}
                                                                         </Text>
+                                                                        <Text>
+                                                                            <strong>Tracking Number: </strong>
+                                                                            {order?.tracking_number && typeof order.tracking_number === 'string' ? order.tracking_number : 'Tracking number not available'}
+                                                                        </Text>
                                                                     </VStack>
                                                                 </VStack>
                                                             </TabPanel>
