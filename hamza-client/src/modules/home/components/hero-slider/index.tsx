@@ -154,8 +154,11 @@ const HeroSlider: React.FC = () => {
                     <Text as="span" color="primary.green.900">
                         Decentralized{' '}
                     </Text>
-                    <Text>E-commerce</Text>
+                    <Box as="span" display="block">
+                        E-commerce
+                    </Box>
                 </Text>
+
                 <Text
                     textAlign={{ base: 'center', md: 'unset' }}
                     fontSize={{ base: '12px', md: '24px' }}
