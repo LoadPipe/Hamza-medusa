@@ -161,6 +161,33 @@ const chainConfig: any = {
             },
         },
     },
+    137: {
+        chain_name: 'polygon',
+        usdc: {
+            contract_address: '0x3c499c542cef5e3811e1192ce70d8cc03d5c3359',
+            precision: {
+                db: 2,
+                native: 6,
+                display: 2,
+            },
+        },
+        usdt: {
+            contract_address: '0xc2132d05d31c914a87c6611c10748aeb04b58e8f',
+            precision: {
+                db: 2,
+                native: 6,
+                display: 2,
+            },
+        },
+        eth: {
+            contract_address: '0x0000000000000000000000000000000000000000',
+            precision: {
+                db: 8,
+                native: 18,
+                display: 6,
+            },
+        },
+    },
 };
 
 const getCurrencyAddress = (currencyId: string, chainId: number = 1) =>
