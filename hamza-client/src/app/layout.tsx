@@ -29,47 +29,52 @@ export default function RootLayout(props: { children: React.ReactNode }) {
     return (
         <html lang="en" data-mode="dark">
             <head>
-                {/* Google Tag Manager Script, Script comp wont work with this*/}
-                <script
+                {/* Google Tag Manager Script */}
+                <Script
+                    id="gtm-script"
+                    strategy="afterInteractive"
                     dangerouslySetInnerHTML={{
                         __html: `
-                (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-                new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-                })(window,document,'script','dataLayer','GTM-W9HPPFG3');
-            `,
+                            window.dataLayer = window.dataLayer || [];
+                            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+                            })(window,document,'script','dataLayer','GTM-W9HPPFG3');
+                        `
                     }}
                 />
 
-                {/* Chat */}
-                <script
+                {/* Chat Widget Script */}
+                <Script
+                    id="freescout-widget"
+                    strategy="lazyOnload"
                     dangerouslySetInnerHTML={{
                         __html: `
-            var FreeScoutW = {
-                s: {
-                    "color": "#5ab334",
-                    "position": "br",
-                    "id": 2009307235
-                }
-            };
-            (function(d, e, s) {
-                if (d.getElementById("freescout-w")) return;
-                var a = d.createElement(e), m = d.getElementsByTagName(e)[0];
-                a.async = 1;
-                a.id = "freescout-w";
-                a.src = "https://support.hamza.market/modules/chat/js/widget.js?v=4239";
-                m.parentNode.insertBefore(a, m);
-            })(document, "script");
-        `,
+                            window.FreeScoutW = {
+                                s: {
+                                    "color": "#5ab334",
+                                    "position": "br",
+                                    "id": 2009307235
+                                }
+                            };
+                            (function(d, e, s) {
+                                if (d.getElementById("freescout-w")) return;
+                                var a = d.createElement(e), m = d.getElementsByTagName(e)[0];
+                                a.async = 1;
+                                a.id = "freescout-w";
+                                a.src = "https://support.hamza.market/modules/chat/js/widget.js?v=4239";
+                                m.parentNode.insertBefore(a, m);
+                            })(document, "script");
+                        `
                     }}
                 />
 
-                {/* Klaviyo Script */}
+                {/* Klaviyo Script
                 <Script
                     src="//static.klaviyo.com/onsite/js/klaviyo.js?company_id=S4Nw9L"
                     strategy="afterInteractive"
-                />
+                /> */}
             </head>
             <body>
                 <noscript>

@@ -277,8 +277,8 @@ export default class OrderService extends MedusaOrderService {
         }
 
         const cartProducts = (cart.items || []).map((item) => ({
-            variant_id: item.variant_id, 
-            reduction_quantity: item.quantity, 
+            variant_id: item.variant_id,
+            reduction_quantity: item.quantity,
         }));
 
         const cartProductsJson = JSON.stringify(cartProducts);
@@ -858,44 +858,52 @@ export default class OrderService extends MedusaOrderService {
         cart: Cart,
         orders: Order[]
     ): Promise<void> {
-        //TODO: optimize by multithreading
-        for (let order of orders) {
-            try {
-                const items: LineItem[] =
-                    await this.getExternalProductItemsFromOrder(
-                        order,
-                        GlobetopperService.EXTERNAL_SOURCE
+        const processingPromises = orders.map((order) =>
+            this.processGlobetopperOrder(cart, order)
+        );
+
+        await Promise.all(processingPromises);
+    }
+
+    private async processGlobetopperOrder(
+        cart: Cart,
+        order: Order
+    ): Promise<void> {
+        try {
+            const items: LineItem[] =
+                await this.getExternalProductItemsFromOrder(
+                    order,
+                    GlobetopperService.EXTERNAL_SOURCE
+                );
+
+            if (items.length) {
+                const results: any[] =
+                    await this.globetopperService_.processPointOfSale(
+                        order.id,
+                        cart.customer.first_name,
+                        cart.customer.last_name,
+                        cart.email,
+                        items
                     );
 
-                if (items.length) {
-                    const results: any[] =
-                        await this.globetopperService_.processPointOfSale(
-                            order.id,
-                            cart.customer.first_name,
-                            cart.customer.last_name,
-                            cart.email,
-                            items
-                        );
-
-                    order.external_source = 'globetopper';
-                    await this.orderRepository_.save(order);
+                order.external_source = 'globetopper';
+                await this.orderRepository_.save(order);
 
                     //set fulfillment status to delivered
-                    await this.setOrderStatus(
-                        order,
-                        null,
-                        FulfillmentStatus.FULFILLED,
-                        null,
-                        null,
-                        null
-                    );
-                }
-            } catch (e: any) {
-                this.logger.error(
-                    `Error processing globetopper orders for order ${order.id}`,
-                    e
+                await this.setOrderStatus(
+                    order,
+                    null,
+                    FulfillmentStatus.FULFILLED,
+                    null,
+                    null,
+                    null
                 );
             }
+        } catch (e: any) {
+            this.logger.error(
+                    `Error processing globetopper orders for order ${order.id}`,
+                e
+            );
         }
     }
 
