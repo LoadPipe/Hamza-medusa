@@ -132,7 +132,7 @@ const chainConfig: any = {
             address: '0x0',
         },
         escrow_multicall: {
-            address: '0x0000000000000000000000000000000000000000',
+            address: '0xC4FaeAD225C62e5488dfE2dDD098A205c2f38759',
         },
         dao: {
             address: '0x1542612fee591eD35C05A3E980bAB325265c06a3',
