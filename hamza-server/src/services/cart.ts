@@ -322,9 +322,6 @@ export default class CartService extends MedusaCartService {
 
     private async restoreCartShippingAddress(cart: Cart): Promise<Cart> {
         try {
-            console.log(
-                '-----------------------------------------------------------------'
-            );
             const address = await this.getLastCartShippingAddress(
                 cart?.customer_id
             );
