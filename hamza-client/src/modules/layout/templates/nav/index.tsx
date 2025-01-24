@@ -46,7 +46,7 @@ export default async function Nav() {
         }, 0) || 0;
 
     return (
-        <MobileNavContainer>
+        <MobileNavContainer cart={cart}>
             <Flex
                 userSelect={'none'}
                 zIndex={'2'}
