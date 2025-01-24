@@ -24,9 +24,6 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
     const { tax_total, shipping_total } = data;
     const [usdPrice, setUsdPrice] = useState<string>('');
 
-    console.log(`Shipping Total ${shipping_total}`);
-    //console.log('user preferred currency code: ', preferred_currency_code);
-
     //TODO: this can be replaced later by extending the cart, if necessary
     const getCartSubtotals = (cart: any) => {
         const subtotals: { [key: string]: number } = {};
@@ -67,8 +64,10 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
             setUsdPrice(formattedResult);
         };
 
-        fetchConvertedPrice();
-    }, [grandTotal]);
+        if (currencyCode === 'eth') {
+            fetchConvertedPrice();
+        }
+    }, [grandTotal, currencyCode]);
 
     return (
         <Flex width={'100%'} flexDir={'column'} mt="2rem">
@@ -179,9 +178,11 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                             {formatCryptoPrice(grandTotal, currencyCode)}
                         </Text>
                     </Flex>
-                    <Flex ml={'auto'}>
-                        <Text>${usdPrice} USD</Text>
-                    </Flex>
+                    {currencyCode === 'eth' && (
+                        <Flex ml={'auto'}>
+                            <Text>${usdPrice} USD</Text>
+                        </Flex>
+                    )}
                 </Flex>
             </Flex>
         </Flex>
