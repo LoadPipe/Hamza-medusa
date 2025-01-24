@@ -21,6 +21,7 @@ import { HiOutlineShoppingCart } from 'react-icons/hi';
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { LineItem } from '@medusajs/medusa';
 import { headers } from 'next/headers';
+import MobileNavContainer from './mobile-nav-container';
 
 const fetchCart = async () => {
     const cart = await retrieveCart();
@@ -45,107 +46,109 @@ export default async function Nav() {
         }, 0) || 0;
 
     return (
-        <Flex
-            userSelect={'none'}
-            zIndex={'2'}
-            className="sticky top-0"
-            width="100%"
-            height={{ base: '60px', md: '125px' }}
-            justifyContent={'center'}
-            alignItems={'center'}
-            backgroundColor={'#020202'}
-        >
-            <MobileNav />
-
+        <MobileNavContainer>
             <Flex
-                display={{ base: 'none', md: 'flex' }}
-                h={'87px'}
-                mx="1rem"
-                maxWidth={'1280px'}
-                width={'100%'}
-                bgColor={'transparent'}
-                alignItems="center"
+                userSelect={'none'}
+                zIndex={'2'}
+                className="sticky top-0"
+                width="100%"
+                height={{ base: '60px', md: '125px' }}
+                justifyContent={'center'}
+                alignItems={'center'}
+                backgroundColor={'#020202'}
             >
-                <Flex width={'100%'} alignItems="center" gap={'18px'}>
-                    <a href="/">
-                        <Flex
-                            width={'190px'}
-                            height={'80px'}
-                            marginLeft="auto"
-                            flexShrink={0}
-                        >
-                            <Image
-                                style={{
-                                    alignSelf: 'left',
-                                }}
-                                src={HamzaLogo}
-                                alt="Hamza"
-                            />
-                        </Flex>
-                    </a>
+                <MobileNav />
 
-                    <NavSearchBar />
-
-                    <Box ml={'auto'}>
-                        <WalletConnectButton />
-                    </Box>
-
-                    <Flex flexDirection={'row'} alignItems={'center'}>
-                        <Flex alignSelf={'center'}>
-                            <LocalizedClientLink href="/cart">
-                                <Flex
-                                    position="relative"
-                                    width={'100%'}
-                                    color="white"
-                                    _hover={{
-                                        '.cart-text, .cart-icon': {
-                                            color: 'primary.green.900',
-                                        },
+                <Flex
+                    display={{ base: 'none', md: 'flex' }}
+                    h={'87px'}
+                    mx="1rem"
+                    maxWidth={'1280px'}
+                    width={'100%'}
+                    bgColor={'transparent'}
+                    alignItems="center"
+                >
+                    <Flex width={'100%'} alignItems="center" gap={'18px'}>
+                        <a href="/">
+                            <Flex
+                                width={'190px'}
+                                height={'80px'}
+                                marginLeft="auto"
+                                flexShrink={0}
+                            >
+                                <Image
+                                    style={{
+                                        alignSelf: 'left',
                                     }}
-                                >
+                                    src={HamzaLogo}
+                                    alt="Hamza"
+                                />
+                            </Flex>
+                        </a>
+
+                        <NavSearchBar />
+
+                        <Box ml={'auto'}>
+                            <WalletConnectButton />
+                        </Box>
+
+                        <Flex flexDirection={'row'} alignItems={'center'}>
+                            <Flex alignSelf={'center'}>
+                                <LocalizedClientLink href="/cart">
                                     <Flex
-                                        flexDirection={'row'}
-                                        alignSelf={'center'}
-                                        color={'white'}
+                                        position="relative"
+                                        width={'100%'}
+                                        color="white"
                                         _hover={{
-                                            '.cart-icon': {
+                                            '.cart-text, .cart-icon': {
                                                 color: 'primary.green.900',
-                                                transition:
-                                                    'color 0.3s ease-in-out',
                                             },
                                         }}
                                     >
-                                        <HiOutlineShoppingCart
-                                            className="cart-icon"
-                                            size={'40px'}
-                                        />
-                                    </Flex>
-                                    {totalItems > 0 && (
                                         <Flex
-                                            position="absolute"
-                                            top="-4px"
-                                            right="-4px"
-                                            width="20px"
-                                            height="20px"
-                                            borderRadius="full"
-                                            backgroundColor="#EB4C60"
-                                            justifyContent="center"
-                                            alignItems="center"
-                                            fontSize="10px"
-                                            color="white"
-                                            fontWeight="700"
+                                            flexDirection={'row'}
+                                            alignSelf={'center'}
+                                            color={'white'}
+                                            _hover={{
+                                                '.cart-icon': {
+                                                    color: 'primary.green.900',
+                                                    transition:
+                                                        'color 0.3s ease-in-out',
+                                                },
+                                            }}
                                         >
-                                            <Text fontSize={'10px'}>
-                                                {totalItems}
-                                            </Text>
+                                            <HiOutlineShoppingCart
+                                                className="cart-icon"
+                                                size={'40px'}
+                                            />
                                         </Flex>
-                                    )}
-                                </Flex>
-                            </LocalizedClientLink>
+                                        {totalItems > 0 && (
+                                            <Flex
+                                                position="absolute"
+                                                top="-4px"
+                                                right="-4px"
+                                                width="20px"
+                                                height="20px"
+                                                borderRadius="full"
+                                                backgroundColor="#EB4C60"
+                                                justifyContent="center"
+                                                alignItems="center"
+                                                fontSize="10px"
+                                                color="white"
+                                                fontWeight="700"
+                                            >
+                                                <Text fontSize={'10px'}>
+                                                    {totalItems}
+                                                </Text>
+                                            </Flex>
+                                        )}
+                                    </Flex>
+                                </LocalizedClientLink>
+                            </Flex>
                         </Flex>
                     </Flex>
                 </Flex>
             </Flex>
-        </Flex>
+        </MobileNavContainer>
     );
 }
