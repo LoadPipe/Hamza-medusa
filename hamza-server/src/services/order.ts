@@ -193,13 +193,13 @@ export default class OrderService extends MedusaOrderService {
     }
 
     async updateInventory(
-        variantOrVariantId: string,
+        variantId: string, 
         quantityToDeduct: number
     ) {
         try {
             const productVariant = await this.productVariantRepository_.findOne(
                 {
-                    where: { id: variantOrVariantId },
+                    where: { id: variantId },
                 }
             );
 
@@ -221,7 +221,7 @@ export default class OrderService extends MedusaOrderService {
             }
         } catch (e) {
             this.logger.error(
-                `Error updating inventory for variant ${variantOrVariantId}: ${e}`
+                `Error updating inventory for variant ${variantId}: ${e}`
             );
         }
     }
@@ -234,7 +234,7 @@ export default class OrderService extends MedusaOrderService {
     ): Promise<Order[]> {
         const cart = await this.cartRepository_.findOne({
             where: { id: cartId },
-            relations: ['customer'],
+            relations: ['customer' , 'items'],
         });
 
         //reconconcile cart email address
@@ -276,9 +276,16 @@ export default class OrderService extends MedusaOrderService {
             });
         }
 
+        const cartProducts = (cart.items || []).map((item) => ({
+            variant_id: item.variant_id,
+            reduction_quantity: item.quantity,
+        }));
+
+        const cartProductsJson = JSON.stringify(cartProducts);
+
         //calls to update inventory
-        //const inventoryPromises =
-        //    this.getPostCheckoutUpdateInventoryPromises(cartProductsJson);
+        const inventoryPromises =
+            this.getPostCheckoutUpdateInventoryPromises(cartProductsJson);
 
         //calls to update payments
         const paymentPromises = this.getPostCheckoutUpdatePaymentPromises(
@@ -311,7 +318,7 @@ export default class OrderService extends MedusaOrderService {
         //execute all promises
         try {
             await Promise.all([
-                //...inventoryPromises,
+                ...inventoryPromises,
                 ...paymentPromises,
                 ...orderPromises,
                 this.shippingMethodRepository_.save(shippingMethods),
@@ -352,6 +359,18 @@ export default class OrderService extends MedusaOrderService {
         }
 
         return order;
+    }
+
+    private getPostCheckoutUpdateInventoryPromises(
+        cartProductsJson: string
+    ): Promise<ProductVariant>[] {
+        const cartObject = JSON.parse(cartProductsJson);
+        return cartObject.map((item) => {
+            return this.updateInventory(
+                item.variant_id,
+                item.reduction_quantity
+            );
+        });
     }
 
     async cancelOrderFromCart(cart_id: string) {
@@ -839,44 +858,52 @@ export default class OrderService extends MedusaOrderService {
         cart: Cart,
         orders: Order[]
     ): Promise<void> {
-        //TODO: optimize by multithreading
-        for (let order of orders) {
-            try {
-                const items: LineItem[] =
-                    await this.getExternalProductItemsFromOrder(
-                        order,
-                        GlobetopperService.EXTERNAL_SOURCE
+        const processingPromises = orders.map((order) =>
+            this.processGlobetopperOrder(cart, order)
+        );
+
+        await Promise.all(processingPromises);
+    }
+
+    private async processGlobetopperOrder(
+        cart: Cart,
+        order: Order
+    ): Promise<void> {
+        try {
+            const items: LineItem[] =
+                await this.getExternalProductItemsFromOrder(
+                    order,
+                    GlobetopperService.EXTERNAL_SOURCE
+                );
+
+            if (items.length) {
+                const results: any[] =
+                    await this.globetopperService_.processPointOfSale(
+                        order.id,
+                        cart.customer.first_name,
+                        cart.customer.last_name,
+                        cart.email,
+                        items
                     );
 
-                if (items.length) {
-                    const results: any[] =
-                        await this.globetopperService_.processPointOfSale(
-                            order.id,
-                            cart.customer.first_name,
-                            cart.customer.last_name,
-                            cart.email,
-                            items
-                        );
-
-                    order.external_source = 'globetopper';
-                    await this.orderRepository_.save(order);
+                order.external_source = 'globetopper';
+                await this.orderRepository_.save(order);
 
                     //set fulfillment status to delivered
-                    await this.setOrderStatus(
-                        order,
-                        null,
-                        FulfillmentStatus.FULFILLED,
-                        null,
-                        null,
-                        null
-                    );
-                }
-            } catch (e: any) {
-                this.logger.error(
-                    `Error processing globetopper orders for order ${order.id}`,
-                    e
+                await this.setOrderStatus(
+                    order,
+                    null,
+                    FulfillmentStatus.FULFILLED,
+                    null,
+                    null,
+                    null
                 );
             }
+        } catch (e: any) {
+            this.logger.error(
+                    `Error processing globetopper orders for order ${order.id}`,
+                e
+            );
         }
     }
 

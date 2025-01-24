@@ -49,9 +49,8 @@ const CartItemSelect = forwardRef<HTMLInputElement, NativeSelectProps>(
         return (
             <Box
                 display="flex"
-                alignItems="center"
                 borderRadius="md"
-                padding={[2, 4]}
+                height={'100%'}
                 borderColor={isPlaceholder ? 'gray.400' : 'gray.600'}
                 minW={['16', '20']}
                 maxW={['20', '24']}
