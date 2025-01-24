@@ -299,6 +299,8 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         return output;
     };
 
+    console.log('product data', productData);
+
     return (
         <Flex
             padding={{ base: '0', md: '2rem' }}
@@ -343,6 +345,19 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                             preferred_currency_code ?? 'usdc'
                         )}
                     </Heading>
+                    {productData?.title?.includes('Traveler Tech') ? (
+                        <Heading
+                            display={{ base: 'none', md: 'block' }}
+                            as="h3"
+                            alignSelf={'center'}
+                            variant="semibold"
+                            fontSize="18px"
+                            color="red.500"
+                            textDecoration="line-through"
+                        >
+                            $45.00 USD
+                        </Heading>
+                    ) : null}
 
                     {authData.status == 'authenticated' && (
                         <Box
@@ -413,7 +428,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     {/*    {`${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')}`}*/}
                     {/*</Text>*/}
                 </Flex>
-
                 <Heading
                     display={{ base: 'none', md: 'block' }}
                     as="h3"
@@ -423,8 +437,9 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 >
                     {preferred_currency_code === 'eth'
                         ? `≅ $${formatCryptoPrice(parseFloat(usdPrice!), 'usdc')} USD`
-                        : `${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} ${preferred_currency_code?.toUpperCase() ?? 'USDC'}`}
+                        : `$${formatCryptoPrice(parseFloat(selectedPrice!), preferred_currency_code ?? 'usdc')} USD`}
                 </Heading>
+
                 {reviewCount > 0 ? (
                     <Flex
                         gap="5px"
@@ -487,7 +502,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         </Flex>
                     </Flex>
                 )}
-
                 <Heading
                     display={{ base: 'none', md: 'flex' }}
                     as="h4"
