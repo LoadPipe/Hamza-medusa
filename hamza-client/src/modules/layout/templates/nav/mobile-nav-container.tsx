@@ -20,7 +20,7 @@ export default function MobileNavContainer(props: {
             backgroundColor="#020202"
             display={{
                 base: pathname.includes('/products') ? 'none' : 'flex',
-                md: 'none',
+                md: 'flex',
             }}
         >
             {props.children}
