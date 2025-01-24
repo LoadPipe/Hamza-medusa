@@ -5,11 +5,13 @@ import { InformationCircleSolid } from '@medusajs/icons';
 import { Cart, Order, LineItem } from '@medusajs/medusa';
 import { Tooltip } from '@medusajs/ui';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { Flex, Text, Divider } from '@chakra-ui/react';
 import Image from 'next/image';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
+import { convertPrice } from '@/lib/util/price-conversion';
+
 type CartTotalsProps = {
     data: Omit<Cart, 'refundable_amount' | 'refunded_total'> | Order;
 };
@@ -20,6 +22,7 @@ type ExtendedLineItem = LineItem & {
 
 const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
     const { tax_total, shipping_total } = data;
+    const [usdPrice, setUsdPrice] = useState<string>('');
 
     console.log(`Shipping Total ${shipping_total}`);
     //console.log('user preferred currency code: ', preferred_currency_code);
@@ -50,6 +53,22 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
     const taxTotal = tax_total ?? 0;
     const grandTotal = (subtotals[currencyCode] ?? 0) + shippingCost + taxTotal;
     console.log(subtotals);
+
+    // Convert grand total to USD
+
+    React.useEffect(() => {
+        const fetchConvertedPrice = async () => {
+            const result = await convertPrice(
+                Number(formatCryptoPrice(grandTotal, 'eth')),
+                'eth',
+                'usdc'
+            );
+            const formattedResult = Number(result).toFixed(2);
+            setUsdPrice(formattedResult);
+        };
+
+        fetchConvertedPrice();
+    }, [grandTotal]);
 
     return (
         <Flex width={'100%'} flexDir={'column'} mt="2rem">
@@ -149,15 +168,20 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
             <Flex width={'100%'} justifyContent={'space-between'}>
                 <Text>Grand Total</Text>
 
-                <Flex>
-                    <Image
-                        className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
-                        src={currencyIcons[currencyCode ?? 'usdc']}
-                        alt={currencyCode ?? 'usdc'}
-                    />
-                    <Text ml="0.4rem">
-                        {formatCryptoPrice(grandTotal, currencyCode)}
-                    </Text>
+                <Flex flexDir={'column'} gap={2}>
+                    <Flex>
+                        <Image
+                            className="h-[14px] w-[14px] md:h-[18px] md:w-[18px] self-center"
+                            src={currencyIcons[currencyCode ?? 'usdc']}
+                            alt={currencyCode ?? 'usdc'}
+                        />
+                        <Text ml="0.4rem">
+                            {formatCryptoPrice(grandTotal, currencyCode)}
+                        </Text>
+                    </Flex>
+                    <Flex ml={'auto'}>
+                        <Text>${usdPrice} USD</Text>
+                    </Flex>
                 </Flex>
             </Flex>
         </Flex>
