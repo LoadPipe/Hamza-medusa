@@ -134,14 +134,16 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                             {price}
                         </Text>
 
-                        <Text
-                            color="gray.300"
-                            fontSize="14px"
-                            fontWeight="medium"
-                            opacity="0.7"
-                        >
-                            ≅ ${usdPrice} USD
-                        </Text>
+                        {preferred_currency_code === 'eth' && (
+                            <Text
+                                color="gray.300"
+                                fontSize="14px"
+                                fontWeight="medium"
+                                opacity="0.7"
+                            >
+                                ≅ ${usdPrice} USD
+                            </Text>
+                        )}
                     </Flex>
 
                     {/* Title */}
