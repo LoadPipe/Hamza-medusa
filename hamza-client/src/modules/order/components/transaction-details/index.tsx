@@ -7,7 +7,7 @@ import { Tooltip } from '@medusajs/ui';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import React, { useEffect, useState } from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { Flex, Text, Divider } from '@chakra-ui/react';
+import { Flex, Text, Divider, Spinner } from '@chakra-ui/react';
 import Image from 'next/image';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 import { convertPrice } from '@/lib/util/price-conversion';
@@ -43,6 +43,8 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
 
         return subtotals;
     };
+
+    console.log('data', data);
 
     const subtotals = getCartSubtotals(data);
     const currencyCode = data?.items[0]?.currency_code ?? 'usdc';
@@ -178,9 +180,14 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                             {formatCryptoPrice(grandTotal, currencyCode)}
                         </Text>
                     </Flex>
-                    {currencyCode === 'eth' && usdPrice !== '' && (
+
+                    {currencyCode === 'eth' && (
                         <Flex ml={'auto'}>
-                            <Text>≅ ${usdPrice} USD</Text>
+                            {usdPrice === '' ? (
+                                <Spinner size="sm" color="white" />
+                            ) : (
+                                <Text>≅ ${usdPrice} USD</Text>
+                            )}
                         </Flex>
                     )}
                 </Flex>
