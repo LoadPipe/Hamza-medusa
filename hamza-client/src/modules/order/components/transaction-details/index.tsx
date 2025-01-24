@@ -178,9 +178,9 @@ const TransactionDetails: React.FC<CartTotalsProps> = ({ data }) => {
                             {formatCryptoPrice(grandTotal, currencyCode)}
                         </Text>
                     </Flex>
-                    {currencyCode === 'eth' && (
+                    {currencyCode === 'eth' && usdPrice !== '' && (
                         <Flex ml={'auto'}>
-                            <Text>${usdPrice} USD</Text>
+                            <Text>≅ ${usdPrice} USD</Text>
                         </Flex>
                     )}
                 </Flex>
