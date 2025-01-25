@@ -12,6 +12,7 @@ interface HeroImageCarouselProps {
     categoryTitle: string;
     description: string;
     price: string | number;
+    usdPrice: string | number;
     productHandle: string;
     currencyCode: string;
 }
@@ -23,6 +24,7 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
     price,
     productHandle,
     currencyCode,
+    usdPrice,
 }) => {
     const router = useRouter(); // Initialize router instance
 
@@ -131,6 +133,17 @@ const HeroImageCarousel: React.FC<HeroImageCarouselProps> = ({
                         <Text color="white" fontSize="20px" fontWeight="bold">
                             {price}
                         </Text>
+
+                        {preferred_currency_code === 'eth' && (
+                            <Text
+                                color="gray.300"
+                                fontSize="14px"
+                                fontWeight="medium"
+                                opacity="0.7"
+                            >
+                                ≅ ${usdPrice} USD
+                            </Text>
+                        )}
                     </Flex>
 
                     {/* Title */}

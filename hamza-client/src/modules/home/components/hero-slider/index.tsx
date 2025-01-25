@@ -17,10 +17,12 @@ import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
 import HeroBGImage from '@/images/home/hero_bg_image.webp';
 import { motion } from 'framer-motion';
+import { convertPrice } from '@/lib/util/price-conversion';
 
 const HeroSlider: React.FC = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [usdPrice, setUsdPrice] = useState('');
 
     // Fetch product collection using react-query
     const { data, error, isLoading } = useQuery(
@@ -121,6 +123,12 @@ const HeroSlider: React.FC = () => {
             (p: any) => p.currency_code === (preferred_currency_code ?? 'usdc')
         )?.amount || 0,
         (preferred_currency_code ?? 'usdc') as string
+    );
+
+    const usdPricing = formatCryptoPrice(
+        variantPrices?.find((p: any) => p.currency_code === 'usdc')?.amount ||
+            0,
+        'usdc' as string
     );
 
     return (
@@ -233,6 +241,7 @@ const HeroSlider: React.FC = () => {
                                 'No description available'
                             }
                             price={productPricing}
+                            usdPrice={usdPricing}
                         />
                     </motion.div>
                 )}
