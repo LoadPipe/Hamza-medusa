@@ -5,7 +5,7 @@ import path from 'path';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import dotenv from 'dotenv';
 import { Lifetime } from 'awilix';
-import { createLogger, ILogger } from 'src/utils/logging/logger';
+import { createLogger, ILogger } from '../utils/logging/logger';
 dotenv.config();
 
 class SmtpMailService extends TransactionBaseService {
