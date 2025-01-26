@@ -1,17 +1,21 @@
-import { Logger } from '@medusajs/medusa';
+import { Logger, TransactionBaseService } from '@medusajs/medusa';
 import nodemailer from 'nodemailer';
 import ejs from 'ejs';
 import path from 'path';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import dotenv from 'dotenv';
 import { Lifetime } from 'awilix';
+import { createLogger, ILogger } from 'src/utils/logging/logger';
 dotenv.config();
 
-class SmtpMailService {
+class SmtpMailService extends TransactionBaseService {
     LIFE_TIME = Lifetime.SINGLETON;
+    private logger: ILogger;
     private SMTP_TRANSPORTER: nodemailer.Transporter<SMTPTransport.SentMessageInfo>;
 
-    constructor() {
+    constructor(container) {
+        super(container);
+        this.logger = createLogger(container, 'SmtpMailService');
         this.SMTP_TRANSPORTER = nodemailer.createTransport({
             port: Number(process.env.SMTP_PORT),
             host: process.env.SMTP_HOST,
@@ -52,6 +56,8 @@ class SmtpMailService {
         templateName?: string | null;
         html?: string | null;
     }) {
+        this.logger.info(`sending email from ${from} to recipient ${to}`);
+
         if (templateName) {
             ejs.renderFile(
                 path.join(__dirname, `../../views/${templateName}.ejs`),
