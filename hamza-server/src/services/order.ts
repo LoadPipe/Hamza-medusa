@@ -62,24 +62,24 @@ type OrderBucketList = { [key: string]: Order[] };
 export default class OrderService extends MedusaOrderService {
     static LIFE_TIME = Lifetime.SINGLETON; // default, but just to show how to change it
 
-    protected lineItemService: LineItemService;
-    protected cartService: CartService;
-    protected customerRepository_: typeof CustomerRepository;
-    protected orderRepository_: typeof OrderRepository;
-    protected lineItemRepository_: typeof LineItemRepository;
-    protected productRepository_: typeof ProductRepository;
-    protected paymentRepository_: typeof PaymentRepository;
-    protected cartRepository_: typeof CartRepository;
-    protected regionRepository_: typeof RegionRepository;
-    protected salesChannelRepository_: typeof SalesChannelRepository;
-    protected addressRepository_: typeof AddressRepository;
+    protected readonly lineItemService: LineItemService;
+    protected readonly cartService: CartService;
+    protected readonly customerRepository_: typeof CustomerRepository;
+    protected readonly orderRepository_: typeof OrderRepository;
+    protected readonly lineItemRepository_: typeof LineItemRepository;
+    protected readonly productRepository_: typeof ProductRepository;
+    protected readonly paymentRepository_: typeof PaymentRepository;
+    protected readonly cartRepository_: typeof CartRepository;
+    protected readonly regionRepository_: typeof RegionRepository;
+    protected readonly salesChannelRepository_: typeof SalesChannelRepository;
+    protected readonly addressRepository_: typeof AddressRepository;
     protected readonly storeRepository_: typeof StoreRepository;
     protected readonly productVariantRepository_: typeof ProductVariantRepository;
     protected readonly shippingMethodRepository_: typeof ShippingMethodRepository;
-    protected customerNotificationService_: CustomerNotificationService;
-    protected smtpMailService_: SmtpMailService = new SmtpMailService();
-    protected orderHistoryService_: OrderHistoryService;
-    protected globetopperService_: GlobetopperService;
+    protected readonly customerNotificationService_: CustomerNotificationService;
+    protected readonly smtpMailService_: SmtpMailService;
+    protected readonly orderHistoryService_: OrderHistoryService;
+    protected readonly globetopperService_: GlobetopperService;
     protected readonly logger: ILogger;
     protected buckyClient: BuckyClient;
     protected readonly cartEmailRepository_: typeof CartEmailRepository;
@@ -97,6 +97,7 @@ export default class OrderService extends MedusaOrderService {
         this.shippingMethodRepository_ = container.shippingMethodRepository;
         this.productVariantRepository_ = container.productVariantRepository;
         this.regionRepository_ = container.regionRepository;
+        this.smtpMailService_ = container.smtpMailService;
         this.salesChannelRepository_ = container.salesChannelRepository;
         this.customerNotificationService_ =
             container.customerNotificationService;
@@ -192,10 +193,7 @@ export default class OrderService extends MedusaOrderService {
         });
     }
 
-    async updateInventory(
-        variantId: string, 
-        quantityToDeduct: number
-    ) {
+    async updateInventory(variantId: string, quantityToDeduct: number) {
         try {
             const productVariant = await this.productVariantRepository_.findOne(
                 {
@@ -234,7 +232,7 @@ export default class OrderService extends MedusaOrderService {
     ): Promise<Order[]> {
         const cart = await this.cartRepository_.findOne({
             where: { id: cartId },
-            relations: ['customer' , 'items'],
+            relations: ['customer', 'items'],
         });
 
         //reconconcile cart email address
@@ -409,7 +407,11 @@ export default class OrderService extends MedusaOrderService {
         });
     }
 
-    async getCustomerOrder(customerId: string, orderId: string, includePayments: boolean = false): Promise<Order> {
+    async getCustomerOrder(
+        customerId: string,
+        orderId: string,
+        includePayments: boolean = false
+    ): Promise<Order> {
         return this.orderRepository_.findOne({
             where: {
                 customer_id: customerId,
@@ -425,7 +427,7 @@ export default class OrderService extends MedusaOrderService {
                       'cart.items.variant.product',
                       'payments',
                       'shipping_methods',
-                      'store'
+                      'store',
                   ]
                 : ['cart.items', 'cart', 'cart.items.variant.product'],
         });
@@ -889,7 +891,7 @@ export default class OrderService extends MedusaOrderService {
                 order.external_source = 'globetopper';
                 await this.orderRepository_.save(order);
 
-                    //set fulfillment status to delivered
+                //set fulfillment status to delivered
                 await this.setOrderStatus(
                     order,
                     null,
@@ -901,7 +903,7 @@ export default class OrderService extends MedusaOrderService {
             }
         } catch (e: any) {
             this.logger.error(
-                    `Error processing globetopper orders for order ${order.id}`,
+                `Error processing globetopper orders for order ${order.id}`,
                 e
             );
         }

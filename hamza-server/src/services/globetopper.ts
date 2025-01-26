@@ -1022,7 +1022,7 @@ export default class GlobetopperService extends TransactionBaseService {
             ?.replace(/[^a-zA-Z0-9 ]/g, '')
             ?.replaceAll(' ', '-');
         handle = `gc-${handle}-${externalId}`;
-        return item;
+        return handle;
     }
 
     private getSubtitle(productDetail: any): string {
