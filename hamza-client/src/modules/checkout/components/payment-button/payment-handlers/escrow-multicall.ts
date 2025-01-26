@@ -43,7 +43,7 @@ export class EscrowWalletPaymentHandler implements IWalletPaymentHandler {
                 chainId
             );
             console.log('sending payments: ', inputs);
-          
+
             //check balance first
             const currencyPayments = this.groupPaymentsByCurrency(inputs);
             for (let cp of currencyPayments) {
@@ -71,6 +71,7 @@ export class EscrowWalletPaymentHandler implements IWalletPaymentHandler {
             transaction_id = tx.transaction_id;
         }
 
+        console.log('transaction id from payment is ', transaction_id);
         return {
             payer_address,
             transaction_id,

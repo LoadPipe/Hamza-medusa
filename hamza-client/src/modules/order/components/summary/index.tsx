@@ -14,7 +14,6 @@ type SummaryProps = {
 };
 
 const Summary: React.FC<SummaryProps> = ({ cart }) => {
-    console.log(`CART ${JSON.stringify(cart)}`);
     return (
         <Flex direction="column" width="100%">
             <Text fontWeight={600} mb="1rem">
