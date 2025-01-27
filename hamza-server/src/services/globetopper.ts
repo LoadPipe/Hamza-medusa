@@ -778,7 +778,7 @@ export default class GlobetopperService extends TransactionBaseService {
 
     private getVariantPrices(item: any): number[] {
         const targetPrices: number[] = [
-            1, 3, 5, 10, 25, 50, 100, 250, 500, 1000,
+            1, 3, 5, 10, 25, 50, 100, 250, 500, 1000, 1500, 2000, 2500,
         ];
         const output: number[] = [];
 
