@@ -981,7 +981,7 @@ export default class GlobetopperService extends TransactionBaseService {
     private buildDescription(productDetail: any): string {
         const formatSection = (title: string, content: string): string => {
             if (content && content.trim() !== '') {
-                return `<h2>${title}</h2><p>${content}</p>`;
+                return `<b>${title}</b><br/><p>${content}</p><br/>`;
             }
             return '';
         };
