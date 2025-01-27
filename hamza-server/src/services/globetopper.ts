@@ -836,7 +836,7 @@ export default class GlobetopperService extends TransactionBaseService {
                         }),
                     },
                 ],
-                options: [{ value: variantPrice.toFixed(2) }],
+                options: [{ value: `variantPrice.toFixed(2) USD` }],
                 variant_rank: index,
             });
         }
@@ -867,9 +867,9 @@ export default class GlobetopperService extends TransactionBaseService {
                 : current + increment;
         };
 
-        const min = parseFloat(item.min);
-        const max = parseFloat(item.max);
-        const increment = parseFloat(item.increment);
+        const min = parseFloat(item.min.replaceAll(',', ''));
+        const max = parseFloat(item.max.replaceAll(',', ''));
+        const increment = parseFloat(item.increment.replaceAll(',', ''));
         for (let n = 0; n < targetPrices.length; n++) {
             const price: number = targetPrices[n];
             if (price < min) {
@@ -981,7 +981,7 @@ export default class GlobetopperService extends TransactionBaseService {
     private buildDescription(productDetail: any): string {
         const formatSection = (title: string, content: string): string => {
             if (content && content.trim() !== '') {
-                return `<h2>${title}</h2><p>${content}</p>`;
+                return `<b>${title}</b><br/><p>${content}</p><br/>`;
             }
             return '';
         };
