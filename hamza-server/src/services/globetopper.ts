@@ -53,74 +53,6 @@ export default class GlobetopperService extends TransactionBaseService {
         );
     }
 
-    /**
-     * @deprecated Use import instead.
-     */
-    public async import_old(
-        storeId: string,
-        categoryId: string,
-        collectionId: string,
-        salesChannelId: string,
-        currencyCode: string = 'USD'
-    ): Promise<Product[]> {
-        try {
-            //get products in two API calls
-            const gtProducts = await this.apiClient.searchProducts(
-                undefined,
-                currencyCode
-            );
-            const gtCatalogue = await this.apiClient.getCatalog();
-
-            const productInputs: (CreateProductInput & { store_id: string })[] =
-                [];
-
-            //sort the output
-            const gtRecords = gtProducts.records.sort(
-                (a, b) => (a?.operator?.id ?? 0) < (b?.operator?.id ?? 0)
-            );
-
-            const gtCat = gtCatalogue.records.sort(
-                (a, b) =>
-                    (a?.topup_product_id ?? 0) < (b?.topup_product_id ?? 0)
-            );
-
-            //create product inputs for each product
-            for (let record of gtRecords) {
-                const productDetails = gtCat.find(
-                    (r) => r.topup_product_id == (record?.operator?.id ?? 0)
-                );
-
-                if (productDetails) {
-                    productInputs.push(
-                        await this.mapDataToInsertProductInput(
-                            record,
-                            productDetails,
-                            ProductStatus.PUBLISHED,
-                            storeId,
-                            categoryId,
-                            collectionId,
-                            [salesChannelId]
-                        )
-                    );
-                }
-            }
-
-            this.logger.debug(`importing ${productInputs.length} products`);
-
-            //insert products into DB
-            const products = await this.productService_.bulkImportProducts(
-                storeId,
-                productInputs
-            );
-
-            return products;
-        } catch (e: any) {
-            this.logger.error('Error importing GlobeTopper products', e);
-        }
-
-        return [];
-    }
-
     public async import(
         storeId: string,
         behavior: string,
@@ -169,35 +101,35 @@ export default class GlobetopperService extends TransactionBaseService {
                             behavior === 'add-only' ||
                             behavior === 'combined'
                         ) {
-                            toCreate.push(
-                                await this.mapDataToInsertProductInput(
-                                    record,
-                                    productDetails,
-                                    ProductStatus.PUBLISHED,
-                                    storeId,
-                                    categoryId,
-                                    collectionId,
-                                    [salesChannelId]
-                                )
+                            const item = await this.mapDataToInsertProductInput(
+                                record,
+                                productDetails,
+                                ProductStatus.PUBLISHED,
+                                storeId,
+                                categoryId,
+                                collectionId,
+                                [salesChannelId]
                             );
+
+                            if (item?.handle) toCreate.push(item);
                         }
                     } else {
                         if (
                             behavior === 'update-only' ||
                             behavior === 'combined'
                         ) {
-                            toUpdate.push(
-                                await this.mapDataToUpdateProductInput(
-                                    record,
-                                    productDetails,
-                                    ProductStatus.PUBLISHED,
-                                    storeId,
-                                    categoryId,
-                                    collectionId,
-                                    [salesChannelId],
-                                    existingProduct
-                                )
+                            const item = await this.mapDataToUpdateProductInput(
+                                record,
+                                productDetails,
+                                ProductStatus.PUBLISHED,
+                                storeId,
+                                categoryId,
+                                collectionId,
+                                [salesChannelId],
+                                existingProduct
                             );
+
+                            if (item?.handle) toUpdate.push(item);
                         }
                     }
                 }
