@@ -867,9 +867,9 @@ export default class GlobetopperService extends TransactionBaseService {
                 : current + increment;
         };
 
-        const min = parseFloat(item.min);
-        const max = parseFloat(item.max);
-        const increment = parseFloat(item.increment);
+        const min = parseFloat(item.min.replaceAll(',', ''));
+        const max = parseFloat(item.max.replaceAll(',', ''));
+        const increment = parseFloat(item.increment.replaceAll(',', ''));
         for (let n = 0; n < targetPrices.length; n++) {
             const price: number = targetPrices[n];
             if (price < min) {
