@@ -836,7 +836,7 @@ export default class GlobetopperService extends TransactionBaseService {
                         }),
                     },
                 ],
-                options: [{ value: variantPrice.toFixed(2) }],
+                options: [{ value: `variantPrice.toFixed(2) USD` }],
                 variant_rank: index,
             });
         }
