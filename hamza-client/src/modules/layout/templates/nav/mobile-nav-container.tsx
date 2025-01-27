@@ -12,6 +12,7 @@ export default function MobileNavContainer(props: {
 }) {
     const pathname = usePathname(); // Get the current route
 
+    /*
     // clearCart management
     if (props.cart && props.cart?.completed_at !== null) {
         let countryCode = 'en';
@@ -21,6 +22,7 @@ export default function MobileNavContainer(props: {
         clearCart();
         getOrSetCart(countryCode);
     }
+    */
 
     return (
         <Flex

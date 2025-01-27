@@ -249,8 +249,8 @@ const CryptoPaymentButton = ({
                         : cart.shipping_address?.country_code?.toLowerCase();
 
                     // Clear cart
-                    console.log('clearing cart');
-                    clearCart();
+                    //console.log('clearing cart');
+                    //clearCart();
 
                     // Redirect to confirmation page
                     console.log('redirecting to confirmation page');
