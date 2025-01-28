@@ -250,7 +250,7 @@ const CryptoPaymentButton = ({
 
                     // Clear cart
                     //console.log('clearing cart');
-                    //clearCart();
+                    await clearCart();
 
                     // Redirect to confirmation page
                     console.log('redirecting to confirmation page');

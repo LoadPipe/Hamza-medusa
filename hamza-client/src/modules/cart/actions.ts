@@ -14,7 +14,6 @@ import {
     removeItem,
     updateCart,
     updateItem,
-    //clearCart,
 } from '@lib/data';
 import { getRegion } from '@/app/actions';
 
@@ -96,16 +95,6 @@ export async function addToCart({
         console.log('Cart retrieved or set:', cart);
         return cart;
     });
-
-    // check to see if this is a completed cart
-    /*if (cart?.completed_at !== null) {
-        console.log('Cart is completed, cannot add items');
-        await clearCart();
-        cart = await getOrSetCart(countryCode).then((cart) => {
-            console.log('New cart retrieved or set:', cart);
-            return cart;
-        });
-    }*/
 
     if (!cart) {
         console.log('Missing cart ID for country:', countryCode);
