@@ -29,6 +29,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
 
     useEffect(() => {
         const fetchShippingCost = async () => {
+            setShippingCost(0);
             setLoading(true);
             try {
                 const cost = await updateShippingCost(data.id);
