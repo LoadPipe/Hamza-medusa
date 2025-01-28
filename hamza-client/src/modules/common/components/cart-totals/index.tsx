@@ -69,9 +69,12 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
     const taxTotal = data.tax_total ?? 0;
 
     useEffect(() => {
-        const updatedGrandTotal =
-            (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
-        setGrandTotal(updatedGrandTotal);
+        let updatedGrandTotal = 0;
+        if (shippingCost > 0) {
+            updatedGrandTotal =
+                (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
+            setGrandTotal(updatedGrandTotal);
+        }
 
         const fetchConvertedPrice = async () => {
             const result = await convertPrice(
