@@ -169,6 +169,25 @@ const Refund = ({
                                                     >
                                                         Refund Details
                                                     </Button>
+                                                    {order.escrow_status && order.escrow_status !== 'released' && (
+                                                        <Box
+                                                            as="a"
+                                                            href={`/account/escrow/${order.id}`}
+                                                            border="1px solid"
+                                                            borderColor="white"
+                                                            borderRadius="37px"
+                                                            color="white"
+                                                            px="4"
+                                                            py="2"
+                                                            textAlign="center"
+                                                            _hover={{
+                                                                textDecoration: 'none',
+                                                                bg: 'primary.teal.600', // Adjust the hover color as needed
+                                                            }}
+                                                        >
+                                                            View Escrow Details
+                                                        </Box>
+                                                    )}
                                                 </Flex>
                                             </Flex>
                                             <Collapse
