@@ -30,13 +30,13 @@ export default async function MobileNav() {
                     <LocalizedClientLink href="/">
                         <Flex>
                             <Image
-                                className="w-[22.92px] h-[33px] md:w-[47.34px] md:h-[67px]"
+                                className="w-[20px] h-[30px]"
                                 src={HamzaLogo}
                                 alt="Hamza"
                             />
 
                             <Image
-                                src={HamzaTitleHoliday}
+                                src={HamzaBetaTitle}
                                 className="w-[64.73px] h-[15.59px]"
                                 style={{
                                     alignSelf: 'center',
