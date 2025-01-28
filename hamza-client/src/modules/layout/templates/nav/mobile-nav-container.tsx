@@ -5,24 +5,30 @@ import { getOrSetCart } from '@/modules/cart/actions';
 import { Flex } from '@chakra-ui/react';
 import { Cart } from '@medusajs/medusa';
 import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function MobileNavContainer(props: {
     children: React.ReactNode;
     cart?: Cart;
 }) {
-    const pathname = usePathname(); // Get the current route
-
-    /*
-    // clearCart management
-    if (props.cart && props.cart?.completed_at !== null) {
-        let countryCode = 'en';
-        if (process.env.NEXT_PUBLIC_FORCE_COUNTRY) {
-            countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY;
-        }
-        clearCart();
-        getOrSetCart(countryCode);
-    }
-    */
+    const pathname = usePathname();
+    let countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY || 'en';
+    
+    useEffect(() => {
+        const handleCartClear = async () => {
+            if ((pathname.includes('/cart') || pathname.includes('/checkout')) && 
+                props.cart?.completed_at !== null) {
+                try {
+                    await clearCart();
+                    await getOrSetCart(countryCode);
+                } catch (error) {
+                    console.error("Error handling cart clear:", error);
+                }
+            }
+        };
+        
+        handleCartClear();
+    }, [pathname, props.cart, countryCode]);
 
     return (
         <Flex
