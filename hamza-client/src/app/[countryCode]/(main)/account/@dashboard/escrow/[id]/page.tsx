@@ -1,3 +1,5 @@
+import { Metadata } from 'next';
+
 import { Escrow } from "@/modules/order/templates/escrow";
 
 type Props = {
