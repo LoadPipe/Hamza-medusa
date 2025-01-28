@@ -41,34 +41,21 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
     );
 
     useEffect(() => {
-        let isMounted = true; // Prevent setting state if component unmounts
-
         const fetchShippingCost = async () => {
             setLoading(true); // Start loader
             try {
                 console.log('Fetching shipping cost...');
                 const cost = await updateShippingCost(data.id);
-                if (isMounted) {
-                    console.log('Shipping cost updated:', cost);
-                    setShippingCost(cost);
-                }
+                console.log('Shipping cost updated:', cost);
+                setShippingCost(cost);
             } catch (error) {
-                if (isMounted) {
-                    console.error('Error fetching shipping cost:', error);
-                }
+                console.error('Error fetching shipping cost:', error);
             } finally {
-                if (isMounted) {
-                    setLoading(false); // Stop loader
-                }
+                setLoading(false); // Stop loader
             }
         };
 
         fetchShippingCost();
-
-        // Cleanup function to cancel updates if unmounted
-        return () => {
-            isMounted = false;
-        };
     }, [data.id, preferred_currency_code]);
 
     const getCartSubtotal = (cart: any, currencyCode: string) => {
@@ -110,9 +97,11 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
     const grandTotal = (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
     const displayCurrency =
         finalSubtotal?.currency || preferred_currency_code || 'usdc';
-
+    console.log('shipping cost', shippingCost);
+    console.log('grand total before useEffect', grandTotal);
     React.useEffect(() => {
         const fetchConvertedPrice = async () => {
+            console.log('grand total', grandTotal);
             const result = await convertPrice(
                 Number(
                     formatCryptoPrice(
@@ -127,10 +116,10 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
             setConvertedPrice(formattedResult);
         };
 
-        if (preferred_currency_code === 'eth') {
+        if (preferred_currency_code === 'eth' && shippingCost > 0) {
             fetchConvertedPrice();
         }
-    }, [grandTotal, preferred_currency_code]);
+    }, [grandTotal, preferred_currency_code, shippingCost]);
 
     return (
         <>
@@ -256,23 +245,32 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                                     )}
                                 </Text>
                             </Flex>
-                            {preferred_currency_code === 'eth' && (
-                                <Flex justifyContent="flex-end" width="100%">
-                                    <Text
-                                        as="h3"
-                                        variant="semibold"
-                                        color="white"
-                                        mt={2}
-                                        fontSize={{
-                                            base: '15px',
-                                            md: '18px',
-                                        }}
-                                        fontWeight={700}
-                                        textAlign="right"
+                            {preferred_currency_code === 'eth' ? (
+                                convertedPrice === null ? (
+                                    <Spinner size="sm" color="white" />
+                                ) : (
+                                    <Flex
+                                        justifyContent="flex-end"
+                                        width="100%"
                                     >
-                                        {`≅ $${convertedPrice} USD`}
-                                    </Text>
-                                </Flex>
+                                        <Text
+                                            as="h3"
+                                            variant="semibold"
+                                            color="white"
+                                            mt={2}
+                                            fontSize={{
+                                                base: '15px',
+                                                md: '18px',
+                                            }}
+                                            fontWeight={700}
+                                            textAlign="right"
+                                        >
+                                            {`≅ $${convertedPrice} USD`}
+                                        </Text>
+                                    </Flex>
+                                )
+                            ) : (
+                                <></>
                             )}
                         </Flex>
                     )}
