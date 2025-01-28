@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Text, Button, Flex, Box, Heading, Divider } from '@chakra-ui/react';
 import useProductPreview from '@/zustand/product-preview/product-preview';
 import QuantityButton from '../quantity-button';
-import { addToCart } from '@modules/cart/actions';
+import { addToCart, getOrSetCart } from '@modules/cart/actions';
 import { useParams, useRouter } from 'next/navigation';
 import ReviewStar from '../../../../../../../public/images/products/review-star.svg';
 import Image from 'next/image';
@@ -15,7 +15,7 @@ import toast from 'react-hot-toast';
 import OptionSelect from '../../../option-select';
 import { isEqual } from 'lodash';
 import CartPopup from '../../../cart-popup';
-import { getAverageRatings, getStore, getReviewCount } from '@lib/data';
+import { getAverageRatings, getStore, getReviewCount, clearCart } from '@lib/data';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import Spinner from '@modules/common/icons/spinner';
 import TermsOfService from '@/modules/terms-of-service/product-details-tos';
@@ -27,6 +27,7 @@ import useWishlistStore, {
 import { useWishlistMutations } from '@/zustand/wishlist/mutations/wishlist-mutations';
 import { MdOutlineShoppingCart } from 'react-icons/md';
 import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
+import { Cart } from '@medusajs/medusa';
 
 interface PreviewCheckoutProps {
     productId: string;
@@ -50,6 +51,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
     const [options, setOptions] = useState<Record<string, string>>({});
     const [cartModalOpen, setCartModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [cart, setCart] = useState<Cart | null>(null);
     const [isNavigating, setIsNavigating] = useState(false); // To prevent further navigation after the first one
 
     const updateOptions = (update: Record<string, string>) => {
@@ -298,6 +300,29 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         }
         return output;
     };
+    
+
+    useEffect(() => {
+        const fetchCart = async () => {
+            try {
+                let cart = await getOrSetCart(countryCode);
+                setCart(cart);
+
+                //Do cart house cleaning, see if its an old cart
+                if (cart.completed_at !== null) {
+                    await clearCart();
+                    cart = await getOrSetCart(countryCode).then((cart) => {
+                        // console.log('New cart retrieved or set:', cart);
+                        return cart;
+                    });
+                    setCart(cart);
+                }
+            } catch (error) {
+                console.error('Error fetching cart:', error);
+            }
+        };
+        fetchCart();
+    }, [countryCode]);
 
     return (
         <Flex
@@ -585,7 +610,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     height={{ base: '40px', md: '55px' }}
                     width="100%"
                     backgroundColor={'primary.green.900'}
-                    disabled={isLoading} // Disable button while loading
+                    disabled={isLoading || !cart} // Disable button while loading or if cart doesn't exist
                     fontSize={{ base: '12px', md: '18px' }}
                 >
                     {isLoading ? <Spinner /> : 'Buy Now'}{' '}
@@ -600,7 +625,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
 
                 <Button
                     display={{ base: 'none', md: 'flex' }}
-                    disabled={!inStock && !isWhitelisted}
+                    disabled={(!inStock && !isWhitelisted) || !cart}
                     onClick={() => {
                         if (!inStock && isWhitelisted) {
                             handleAddToCart();
@@ -662,7 +687,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     display={{ base: 'flex', md: 'none' }} // Only show on mobile
                 >
                     <Button
-                        disabled={!inStock && !isWhitelisted}
+                        disabled={(!inStock && !isWhitelisted) || !cart}
                         onClick={() => {
                             if (!inStock && isWhitelisted) {
                                 handleAddToCart();
@@ -736,7 +761,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                         width={'100%'}
                         borderRadius={'60px'}
                         backgroundColor={'primary.green.900'}
-                        disabled={isLoading} // Disable button while loading
+                        disabled={isLoading || !cart} // Disable button while loading or if cart doesn't exist
                         fontSize={{ base: '12px', md: '18px' }}
                     >
                         {isLoading ? (
