@@ -346,7 +346,10 @@ export default class CartService extends MedusaCartService {
         customerId: string
     ): Promise<Address> {
         const carts = await this.cartRepository_.find({
-            where: { shipping_address_id: Not(IsNull()) },
+            where: {
+                shipping_address_id: Not(IsNull()),
+                customer_id: customerId,
+            },
             order: { created_at: 'DESC' },
             relations: ['shipping_address'],
             take: 1,

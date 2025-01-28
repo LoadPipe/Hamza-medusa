@@ -26,6 +26,7 @@ import {
     optimism,
     sepolia,
     polygon,
+    arbitrum,
     linea,
     lineaTestnet,
     goerli,
@@ -109,6 +110,8 @@ if (allowedChains.length === 0) {
         80002: amoy,
         base: base,
         8453: base,
+        arbitrum: arbitrum,
+        42161: arbitrum,
     };
 
     wagmiChains = allowedChains.map(
