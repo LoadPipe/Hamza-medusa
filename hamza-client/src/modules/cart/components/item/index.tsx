@@ -44,7 +44,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
     // console.log('item quantity: ', item.quantity);
 
     useEffect(() => {
-        if (item.variant.inventory_quantity === 0) {
+        if (item?.variant?.inventory_quantity === 0) {
             toast.error(`Item not available at this time`);
             deleteLineItem(item.id); // Trigger delete
         } else if (
@@ -55,10 +55,10 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
             // and the API hasn't already reset it
             if (item.quantity !== 1) {
                 toast.error(`Quantity Selected is unavailable, resetting`);
-                updateLineItem({ lineId: item.id, quantity: 1 });
+                updateLineItem({ lineId: item?.id, quantity: 1 });
             }
         }
-    }, [item.variant.inventory_quantity, item.quantity]); // Track quantity and stock
+    }, [item?.variant?.inventory_quantity, item?.quantity]); // Track quantity and stock
 
     const handleUpdateLineItem = async (qty: number) => {
         const message = await updateLineItem({
@@ -67,7 +67,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
         })
             .catch((err) => {
                 toast.error('We ran into an issue, resetting');
-                setQuantity(item.quantity); // Reset to original quantity if error
+                setQuantity(item?.quantity); // Reset to original quantity if error
             })
             .finally(() => {
                 setIsUpdating(false);
@@ -138,10 +138,10 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                                 mb="auto"
                                 width="100%" // Ensures full width usage
                             >
-                                {item.title}
+                                {item?.title}
                             </Text>
                             <Flex ml="auto">
-                                <DeleteButton id={item.id} />
+                                <DeleteButton id={item?.id} />
                             </Flex>
                         </Flex>
 
@@ -153,7 +153,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                             width="100%"
                         >
                             <Flex width="100%">
-                                <LineItemOptions variant={item.variant} />
+                                <LineItemOptions variant={item?.variant} />
                             </Flex>
                             <Flex display={{ base: 'none', md: 'flex' }}>
                                 <ItemQuantityButton
@@ -163,8 +163,8 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                                     }
                                     min={1}
                                     max={Math.min(
-                                        item.variant.inventory_quantity > 0
-                                            ? item.variant.inventory_quantity
+                                        item?.variant?.inventory_quantity > 0
+                                            ? item?.variant?.inventory_quantity
                                             : 100,
                                         100
                                     )}
@@ -203,8 +203,8 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                     onChange={(newQuantity) => changeQuantity(newQuantity)}
                     min={1}
                     max={Math.min(
-                        item.variant.inventory_quantity > 0
-                            ? item.variant.inventory_quantity
+                        item?.variant?.inventory_quantity > 0
+                            ? item?.variant?.inventory_quantity
                             : 100,
                         100
                     )}
