@@ -28,6 +28,7 @@ import Link from 'next/link';
 import OrderTimeline from '@modules/order/components/order-timeline';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { upperCase } from 'lodash';
+import { chainIdToName } from '@modules/order/components/chain-enum/chain-enum';
 
 const Delivered = ({
     customer,
@@ -348,6 +349,10 @@ const Delivered = ({
                                                                         <Text>
                                                                             <strong>Tracking Number: </strong>
                                                                             {order?.tracking_number && typeof order.tracking_number === 'string' ? order.tracking_number : 'Tracking number not available'}
+                                                                        </Text>
+                                                                        <Text>
+                                                                            <strong>Order Chain: </strong> {' '}
+                                                                            {chainIdToName(order?.payments[0]?.blockchain_data?.chain_id) }
                                                                         </Text>
                                                                     </VStack>
                                                                 </VStack>

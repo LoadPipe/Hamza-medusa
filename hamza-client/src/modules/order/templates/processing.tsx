@@ -450,7 +450,6 @@ const Processing = ({
                                                                             <strong>Order Chain: </strong> {' '}
                                                                             {chainIdToName(order?.payments[0]?.blockchain_data?.chain_id) }
                                                                         </Text>
-
                                                                     </VStack>
                                                                 </VStack>
                                                             </TabPanel>

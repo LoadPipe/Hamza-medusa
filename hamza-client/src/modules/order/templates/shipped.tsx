@@ -29,6 +29,7 @@ import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import { OrdersData } from './all';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
 import OrderTimeline from '@modules/order/components/order-timeline';
+import { chainIdToName } from '@modules/order/components/chain-enum/chain-enum';
 
 const Shipped = ({
     customer,
@@ -425,6 +426,10 @@ const Shipped = ({
                                                                         <Text>
                                                                             <strong>Tracking Number: </strong>
                                                                             {order?.tracking_number && typeof order.tracking_number === 'string' ? order.tracking_number : 'Tracking number not available'}
+                                                                        </Text>
+                                                                        <Text>
+                                                                            <strong>Order Chain: </strong> {' '}
+                                                                            {chainIdToName(order?.payments[0]?.blockchain_data?.chain_id) }
                                                                         </Text>
                                                                     </VStack>
                                                                 </VStack>
