@@ -2,7 +2,6 @@ import { clx } from '@medusajs/ui';
 import { Flex, Container, Text, Box, Divider } from '@chakra-ui/react';
 import { getCategoriesList, getCollectionsList } from '@lib/data';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import { FaTwitter } from 'react-icons/fa6';
 import { FaDiscord } from 'react-icons/fa6';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -11,6 +10,7 @@ import Reputation from '@modules/home/components/reputation';
 //import HamzaTitle from '../../../../../public/images/logo/hamza-title.svg';
 import HamzaLogo from '../../../../../public/images/logo/hamza-beta.png';
 import React from 'react';
+import { FaTwitter } from 'react-icons/fa6';
 
 export default async function Footer() {
     return (
@@ -264,13 +264,6 @@ export default async function Footer() {
                         ></Text>
                     </Flex>
                 </Flex>
-
-                {/* Freescout (chat) */}
-                <Flex
-                    dangerouslySetInnerHTML={{
-                        __html: `<script>var FreeScoutW={s:{"color":"#5ab334","position":"br","id":2009307235}};(function(d,e,s){if(d.getElementById("freescout-w"))return;a=d.createElement(e);m=d.getElementsByTagName(e)[0];a.async=1;a.id="freescout-w";a.src=s;m.parentNode.insertBefore(a, m)})(document,"script","[https://support.hamza.market/modules/chat/js/widget.js?v=4239"](https://support.hamza.market/modules/chat/js/widget.js?v=4239%22));</script>`,
-                    }}
-                ></Flex>
 
                 {/* google analytics */}
                 {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TAG === 'true' && (

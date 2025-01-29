@@ -6,6 +6,7 @@ import {
     RainbowKitAuthenticationProvider,
     RainbowKitProvider,
     AuthenticationStatus,
+    AvatarComponent,
 } from '@rainbow-me/rainbowkit';
 import { useWalletClient, WagmiConfig } from 'wagmi';
 import {
@@ -32,6 +33,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 import useWishlistStore from '@/zustand/wishlist/wishlist-store';
+import ProfileImage from '@/account/@dashboard/profile/profile-form/components/customer-icon/profile-image';
 
 const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
@@ -294,6 +296,10 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
             })
     );
 
+    const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
+        return <ProfileImage centered={true} />;
+    };
+
     return (
         <div>
             <WagmiConfig config={config}>
@@ -303,6 +309,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
                         status={authData.status}
                     >
                         <RainbowKitProvider
+                            avatar={CustomAvatar}
                             theme={darkThemeConfig}
                             chains={chains}
                             modalSize="compact"

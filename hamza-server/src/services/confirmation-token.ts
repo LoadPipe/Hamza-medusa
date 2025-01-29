@@ -16,6 +16,7 @@ dotenv.config();
 export default class ConfirmationTokenService extends TransactionBaseService {
     protected readonly confirmationTokenRepository_: typeof ConfirmationTokenRepository;
     protected readonly customerRepository_: typeof CustomerRepository;
+    protected readonly smtpMailService_: SmtpMailService;
     protected readonly logger: ILogger;
     protected readonly eventBus_: EventBusService;
 
@@ -24,6 +25,7 @@ export default class ConfirmationTokenService extends TransactionBaseService {
         this.confirmationTokenRepository_ = ConfirmationTokenRepository;
         this.customerRepository_ = CustomerRepository;
         this.logger = createLogger(container, 'ConfirmationTokenService');
+        this.smtpMailService_ = container.smtpMailService;
         this.eventBus_ = container.eventBusService;
     }
 
@@ -34,8 +36,7 @@ export default class ConfirmationTokenService extends TransactionBaseService {
         customer_id: string;
         email: string;
     }) {
-        if (email)
-            email = email.trim().toLowerCase();
+        if (email) email = email.trim().toLowerCase();
 
         let emailCheck = await this.customerRepository_.findOne({
             where: { email },
@@ -60,8 +61,7 @@ export default class ConfirmationTokenService extends TransactionBaseService {
         });
 
         // Send confirmation email
-        let smtpService = new SmtpMailService();
-        await smtpService.sendMail({
+        await this.smtpMailService_.sendMail({
             from: process.env.SMTP_FROM,
             subject: 'Email Verification',
             templateName: 'verify-email',
@@ -120,7 +120,10 @@ export default class ConfirmationTokenService extends TransactionBaseService {
         //update customer record
         await this.customerRepository_.update(
             { id: customerData.id },
-            { is_verified: true, email: tokenCheck?.email_address?.trim()?.toLowerCase() }
+            {
+                is_verified: true,
+                email: tokenCheck?.email_address?.trim()?.toLowerCase(),
+            }
         );
         await this.confirmationTokenRepository_.update(
             { token: tokenCheck.token },

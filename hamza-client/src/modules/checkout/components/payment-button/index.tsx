@@ -164,6 +164,7 @@ const CryptoPaymentButton = ({
             }
 
             //get the handler to return value
+            console.log('doing wallet payment');
             const output = await handler.doWalletPayment(
                 provider,
                 signer,
@@ -189,11 +190,14 @@ const CryptoPaymentButton = ({
         cartId: string,
         countryCode: string
     ) => {
+        const url = `/${countryCode}/order/confirmed/${orderId}?cart=${cartId}`;
+        console.log('redirecting to ', url);
         //finally, if all good, redirect to order confirmation page
-        if (orderId?.length) {
-            router.push(
-                `/${countryCode}/order/confirmed/${orderId}?cart=${cartId}`
-            );
+        if (cartId?.length) {
+            router.push(url);
+        } else {
+            console.error('cartId is', cartId);
+            console.error('orderId is', orderId);
         }
     };
 
@@ -224,10 +228,12 @@ const CryptoPaymentButton = ({
             if (data) {
                 // Send the payment to the wallet for on-chain processing
                 const output = await doWalletPayment(data);
+                console.log('wallet payment output:', output);
 
                 // Finalize the checkout, if wallet payment was successful
                 if (output?.success) {
                     // TODO: MOVE TO INDEX.TS
+                    console.log('finalizing checkout');
                     await finalizeCheckout(
                         cartId,
                         output.transaction_id,
@@ -243,9 +249,11 @@ const CryptoPaymentButton = ({
                         : cart.shipping_address?.country_code?.toLowerCase();
 
                     // Clear cart
-                    clearCart();
+                    //console.log('clearing cart');
+                    await clearCart();
 
                     // Redirect to confirmation page
+                    console.log('redirecting to confirmation page');
                     redirectToOrderConfirmation(
                         data?.orders?.length ? data.orders[0].order_id : null,
                         cart.id,
@@ -372,7 +380,6 @@ const CryptoPaymentButton = ({
     const isMissingAddress = !cart?.shipping_address;
     const isMissingShippingMethod = cart?.shipping_methods?.length === 0;
     const disableButton =
-        step !== 'review' ||
         isCartEmpty ||
         isUpdating ||
         (isMissingAddress && isMissingShippingMethod);

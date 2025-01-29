@@ -86,9 +86,6 @@ const Addresses = ({
                         }
                     );
                 }
-
-                // Once the shipping method is added or if it already exists, go to the review step
-                router.push('/checkout?step=review');
             }
         };
 

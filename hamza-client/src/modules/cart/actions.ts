@@ -91,7 +91,7 @@ export async function addToCart({
         countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY;
     }
 
-    const cart = await getOrSetCart(countryCode).then((cart) => {
+    let cart = await getOrSetCart(countryCode).then((cart) => {
         console.log('Cart retrieved or set:', cart);
         return cart;
     });

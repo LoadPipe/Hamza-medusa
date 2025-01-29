@@ -32,10 +32,11 @@ const CartItems = ({
         if (cart?.shipping_address) {
             if (items) {
                 // Filter items with geo-restriction tags
-                const variantsWithGeoRestriction = cart.items.filter((i) =>
-                    i.variant.product.tags.find((t: any) =>
-                        t.id.startsWith('geo-restriction')
-                    )
+                const variantsWithGeoRestriction: any[] = cart.items.filter(
+                    (i) =>
+                        (i.variant?.product?.tags ?? []).find((t: any) =>
+                            t.id.startsWith('geo-restriction')
+                        )
                 );
 
                 if (variantsWithGeoRestriction?.length) {
@@ -96,11 +97,11 @@ const CartItems = ({
                           .map((item) => {
                               return (
                                   <Item
-                                      key={item.id}
+                                      key={item?.id}
                                       item={item}
                                       region={region}
                                       currencyCode={currencyCode}
-                                      cart_id={item.cart_id}
+                                      cart_id={item?.cart_id}
                                   />
                               );
                           })

@@ -15,6 +15,7 @@ async function getOrder(id: string) {
     const order = await retrieveOrder(id);
 
     if (!order) {
+        console.log('order', id, ' not found');
         return notFound();
     }
 
@@ -34,6 +35,7 @@ async function retrieveCart(id: string) {
     const cart = await getCart(id);
 
     if (!cart) {
+        console.log('cart', id, ' not found');
         return notFound();
     }
 

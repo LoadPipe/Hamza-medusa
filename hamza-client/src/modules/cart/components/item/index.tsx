@@ -14,6 +14,7 @@ import toast from 'react-hot-toast';
 import { debounce } from 'lodash';
 import { addDefaultShippingMethod } from '@lib/data';
 import LineItemUnitPrice from '@/modules/common/components/line-item-unit-price';
+import ItemQuantityButton from './components/item-quantity-button';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -43,7 +44,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
     // console.log('item quantity: ', item.quantity);
 
     useEffect(() => {
-        if (item.variant.inventory_quantity === 0) {
+        if (item?.variant?.inventory_quantity === 0) {
             toast.error(`Item not available at this time`);
             deleteLineItem(item.id); // Trigger delete
         } else if (
@@ -54,10 +55,10 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
             // and the API hasn't already reset it
             if (item.quantity !== 1) {
                 toast.error(`Quantity Selected is unavailable, resetting`);
-                updateLineItem({ lineId: item.id, quantity: 1 });
+                updateLineItem({ lineId: item?.id, quantity: 1 });
             }
         }
-    }, [item.variant.inventory_quantity, item.quantity]); // Track quantity and stock
+    }, [item?.variant?.inventory_quantity, item?.quantity]); // Track quantity and stock
 
     const handleUpdateLineItem = async (qty: number) => {
         const message = await updateLineItem({
@@ -66,7 +67,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
         })
             .catch((err) => {
                 toast.error('We ran into an issue, resetting');
-                setQuantity(item.quantity); // Reset to original quantity if error
+                setQuantity(item?.quantity); // Reset to original quantity if error
             })
             .finally(() => {
                 setIsUpdating(false);
@@ -92,7 +93,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
 
     return (
         <Flex
-            height={{ base: '102px', md: '210px' }}
+            height={{ base: '150px', md: '210px' }}
             width={'100%'}
             flexDirection={'column'}
         >
@@ -117,60 +118,97 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                     </Flex>
                 </LocalizedClientLink>
 
-                <Flex width={'100%'} ml="1rem">
+                <Flex width="100%" ml="1rem">
                     <Flex
-                        pr="1rem"
                         ml={{ base: '0', md: '1rem' }}
-                        flexDirection={'column'}
+                        flexDirection="column"
+                        width="100%" // Ensures full width of parent Flex
                     >
-                        <Text
-                            color={'white'}
-                            fontSize={{ base: '14px', md: '18px' }}
-                            noOfLines={{ base: 1, md: 2 }}
-                            fontWeight={600}
-                            mb="auto"
+                        {/* Title and Delete Button */}
+                        <Flex
+                            justifyContent="space-between"
+                            alignItems="center"
+                            width="100%"
                         >
-                            {item.title}
-                        </Text>
-                        <LineItemOptions variant={item.variant} />
-                        <Flex mt="auto">
-                            <CartItemSelect
-                                value={quantity} // Visual update
-                                onChange={(valueAsNumber) =>
-                                    changeQuantity(Number(valueAsNumber))
-                                } // Debounced server update
-                                min={1}
-                                max={Math.min(
-                                    item.variant.inventory_quantity > 0
-                                        ? item.variant.inventory_quantity
-                                        : 100,
-                                    100
-                                )}
-                                className="w-12 h-8 md:w-14 md:h-10 mt-auto"
-                            />
-
-                            <LineItemUnitPrice
-                                item={item}
-                                currencyCode={item.currency_code}
-                                useChakra={true}
-                                displayReducedPrice={false}
-                                displayCurrencyLetters={false}
-                            />
-                        </Flex>
-                    </Flex>
-
-                    <Flex
-                        ml="auto"
-                        flexDirection={'column'}
-                        justifyContent={'space-between'}
-                    >
-                        <Flex ml="auto" mb={{ base: 'auto', md: '1.25rem' }}>
-                            <DeleteButton id={item.id} />
+                            <Text
+                                color="white"
+                                fontSize={{ base: '14px', md: '18px' }}
+                                noOfLines={{ base: 1, md: 2 }}
+                                fontWeight={600}
+                                mb="auto"
+                                width="100%" // Ensures full width usage
+                            >
+                                {item?.title}
+                            </Text>
+                            <Flex ml="auto">
+                                <DeleteButton id={item?.id} />
+                            </Flex>
                         </Flex>
 
-                        <LineItemPrice item={item} usdcOnDifferentLine={true} />
+                        {/* Options and Quantity Selector */}
+                        <Flex
+                            mt={{ base: '0', md: '1rem' }}
+                            justifyContent="space-between"
+                            alignItems="center"
+                            width="100%"
+                        >
+                            <Flex width="100%">
+                                <LineItemOptions variant={item?.variant} />
+                            </Flex>
+                            <Flex display={{ base: 'none', md: 'flex' }}>
+                                <ItemQuantityButton
+                                    value={quantity}
+                                    onChange={(newQuantity) =>
+                                        changeQuantity(newQuantity)
+                                    }
+                                    min={1}
+                                    max={Math.min(
+                                        item?.variant?.inventory_quantity > 0
+                                            ? item?.variant?.inventory_quantity
+                                            : 100,
+                                        100
+                                    )}
+                                />
+                            </Flex>
+                        </Flex>
+
+                        {/* Price Section */}
+                        <Flex
+                            justifyContent="space-between"
+                            mt="auto"
+                            width="100%"
+                        >
+                            <Flex>
+                                <LineItemUnitPrice
+                                    item={item}
+                                    currencyCode={item.currency_code}
+                                    useChakra={true}
+                                    displayReducedPrice={false}
+                                    displayCurrencyLetters={false}
+                                />
+                            </Flex>
+                            <Flex>
+                                <LineItemPrice
+                                    item={item}
+                                    usdcOnDifferentLine={true}
+                                />
+                            </Flex>
+                        </Flex>
                     </Flex>
                 </Flex>
+            </Flex>
+            <Flex display={{ base: 'flex', md: 'none' }} my={'1rem'}>
+                <ItemQuantityButton
+                    value={quantity}
+                    onChange={(newQuantity) => changeQuantity(newQuantity)}
+                    min={1}
+                    max={Math.min(
+                        item?.variant?.inventory_quantity > 0
+                            ? item?.variant?.inventory_quantity
+                            : 100,
+                        100
+                    )}
+                />
             </Flex>
         </Flex>
     );

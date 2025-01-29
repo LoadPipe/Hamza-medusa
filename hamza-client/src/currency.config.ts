@@ -134,6 +134,87 @@ const chainConfig: any = {
             },
         },
     },
+    8453: {
+        chain_name: 'base',
+        usdc: {
+            contract_address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+            precision: {
+                db: 2,
+                native: 6,
+                display: 2,
+            },
+        },
+        usdt: {
+            contract_address: '0xfde4C96c8593536E31F229EA8f37b2ADa2699bb2',
+            precision: {
+                db: 2,
+                native: 6,
+                display: 2,
+            },
+        },
+        eth: {
+            contract_address: '0x0000000000000000000000000000000000000000',
+            precision: {
+                db: 8,
+                native: 18,
+                display: 6,
+            },
+        },
+    },
+    137: {
+        chain_name: 'polygon',
+        usdc: {
+            contract_address: '0x3c499c542cef5e3811e1192ce70d8cc03d5c3359',
+            precision: {
+                db: 2,
+                native: 6,
+                display: 2,
+            },
+        },
+        usdt: {
+            contract_address: '0xc2132d05d31c914a87c6611c10748aeb04b58e8f',
+            precision: {
+                db: 2,
+                native: 6,
+                display: 2,
+            },
+        },
+        eth: {
+            contract_address: '0x0000000000000000000000000000000000000000',
+            precision: {
+                db: 8,
+                native: 18,
+                display: 6,
+            },
+        },
+    },
+    42161: {
+        chain_name: 'polygon',
+        usdc: {
+            contract_address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+            precision: {
+                db: 2,
+                native: 6,
+                display: 2,
+            },
+        },
+        usdt: {
+            contract_address: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
+            precision: {
+                db: 2,
+                native: 6,
+                display: 2,
+            },
+        },
+        eth: {
+            contract_address: '0x0000000000000000000000000000000000000000',
+            precision: {
+                db: 8,
+                native: 18,
+                display: 6,
+            },
+        },
+    },
 };
 
 const getCurrencyAddress = (currencyId: string, chainId: number = 1) =>

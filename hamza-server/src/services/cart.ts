@@ -4,6 +4,7 @@ import {
     CartService as MedusaCartService,
     MoneyAmount,
     Logger,
+    Address,
 } from '@medusajs/medusa';
 import CustomerRepository from '@medusajs/medusa/dist/repositories/customer';
 import { LineItem } from '../models/line-item';
@@ -57,7 +58,7 @@ export default class CartService extends MedusaCartService {
                 'items.variant.product.store',
             ];
         }
-        const cart = await super.retrieve(cartId, options, totalsConfig);
+        let cart = await super.retrieve(cartId, options, totalsConfig);
 
         //handle items - mainly currency conversion
         if (cart?.items) {
@@ -146,6 +147,11 @@ export default class CartService extends MedusaCartService {
         });
         if (cartEmail) cart.email = cartEmail.email_address;
 
+        //restore cart address
+        //if (!cart.shipping_address_id) {
+        //    cart = await this.restoreCartShippingAddress(cart);
+        //}
+
         return cart;
     }
 
@@ -204,18 +210,26 @@ export default class CartService extends MedusaCartService {
         cartId: string,
         force: boolean = false
     ): Promise<void> {
-        const cart = await super.retrieve(cartId, {
-            relations: ['shipping_methods'],
-        });
-
-        if (cart && (force || cart.shipping_methods.length === 0)) {
-            this.logger.debug(
-                `Auto-adding shipping method for cart ${cart.id}`
-            );
-            const option = await this.shippingOptionRepository_.findOne({
-                where: { provider_id: 'store-fulfillment' },
+        try {
+            const cart = await super.retrieve(cartId, {
+                relations: ['shipping_methods'],
             });
-            await this.addShippingMethod(cart.id, option.id);
+
+            if (cart && (force || cart.shipping_methods.length === 0)) {
+                this.logger.debug(
+                    `Auto-adding shipping method for cart ${cart.id}`
+                );
+                const option = await this.shippingOptionRepository_.findOne({
+                    where: { provider_id: 'store-fulfillment' },
+                });
+                if (!cart.shipping_methods.find((sm) => sm.id === option.id))
+                    await this.addShippingMethod(cart.id, option.id);
+            }
+        } catch (e: any) {
+            this.logger.error(
+                `Error setting default shipping for cart ${cartId}`,
+                e
+            );
         }
     }
 
@@ -312,5 +326,48 @@ export default class CartService extends MedusaCartService {
         }
 
         return cart1;
+    }
+
+    private async restoreCartShippingAddress(cart: Cart): Promise<Cart> {
+        try {
+            const address = await this.getLastCartShippingAddress(
+                cart?.customer_id
+            );
+            if (address) {
+                cart.shipping_address = address;
+                cart.shipping_address_id = address.id;
+                cart.billing_address = address;
+                cart.billing_address_id = address.id;
+                console.log(cart.email);
+                await this.cartRepository_.save(cart);
+            }
+        } catch (e: any) {
+            this.logger.error(
+                `Error in restoreCartShippingAddress for ${cart?.id}`,
+                e
+            );
+        }
+        return cart;
+    }
+
+    private async getLastCartShippingAddress(
+        customerId: string
+    ): Promise<Address> {
+        if (customerId) {
+            const carts = await this.cartRepository_.find({
+                where: {
+                    shipping_address_id: Not(IsNull()),
+                    customer_id: customerId,
+                },
+                order: { created_at: 'DESC' },
+                relations: ['shipping_address'],
+                take: 1,
+            });
+
+            if (carts?.length) {
+                return carts[0].shipping_address;
+            }
+        }
+        return null;
     }
 }

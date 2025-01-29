@@ -16,23 +16,18 @@ const CartTemplate = ({
     cart: CartWithCheckoutStep | null;
     customer: Omit<Customer, 'password_hash'> | null;
 }) => {
-    const updateInventory = async (cart: CartWithCheckoutStep) => {
-        const items = cart.items.map((item) => ({
-            variant_id: item.variant_id,
-            quantity: item.quantity,
-        }));
-        console.log('ITEMS ARE', items);
-    };
+    // TODO: Remove this if its not being used...
+    // const updateInventory = async (cart: CartWithCheckoutStep) => {
+    //     const items = cart.items.map((item) => ({
+    //         variant_id: item.variant_id,
+    //         quantity: item.quantity,
+    //     }));
+    //     console.log('ITEMS ARE', items);
+    // };
 
     const { preferred_currency_code, setCustomerPreferredCurrency } =
         useCustomerAuthStore();
 
-    // Ensure `cart` is not null before calling `updateInventory`
-    const handleUpdateInventory = () => {
-        if (cart) {
-            updateInventory(cart);
-        }
-    };
 
     return (
         <Flex
@@ -63,7 +58,7 @@ const CartTemplate = ({
                         region={cart?.region}
                         items={cart?.items}
                         cart_id={cart?.id as string}
-                        currencyCode={preferred_currency_code ?? undefined}
+                        currencyCode={preferred_currency_code ?? 'usdc'}
                     />
                     {/* Shipping Address */}
                     {/* <CartShippingAddress customer={customer} /> */}

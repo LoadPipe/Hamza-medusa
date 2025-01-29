@@ -60,8 +60,11 @@ export type UpdateProductProductVariantDTO = {
     }[];
 };
 
-type UpdateProductInput = Omit<Partial<CreateProductInput>, 'variants'> & {
+export type UpdateProductInput = Omit<Partial<CreateProductInput>, 'variants'> & {
     variants?: UpdateProductProductVariantDTO[];
+    external_source?: string;
+    external_metadata? :any;
+    id?: string;
 };
 
 class ProductService extends MedusaProductService {
@@ -300,6 +303,83 @@ class ProductService extends MedusaProductService {
         } catch (error) {
             this.logger.error('Error in bulk importing products:', error);
             throw error;
+        }
+    }
+
+    async bulkUpdateProducts(
+        storeId: string,
+        productData: UpdateProductInput[]
+    ): Promise<Product[]> {
+        try {
+            //get the store
+            const store: Store = await this.storeRepository_.findOne({
+                where: { id: storeId },
+            });
+
+            if (!store) {
+                throw new Error(`Store ${storeId} not found.`);
+            }
+
+            //get existing products by handle
+            const existingProducts: Product[] = await Promise.all(
+                productData
+                    .filter(product => product.id)
+                    .map(product => this.productRepository_.findOne({
+                        where: { id: product.id },
+                        relations: ['variants'],
+                    }))
+            );
+
+            
+            const updatedProducts = await Promise.all(
+                productData.map((product) => this.processProductUpdate(product, existingProducts))
+            );
+            
+
+            // Ensure all products are non-null and have valid IDs
+            const validProducts = updatedProducts.filter((p) => p && p.id);
+            this.logger.info(
+                `${validProducts.length} out of ${productData.length} products were updated`
+            );
+            if (validProducts.length !== updatedProducts.length) {
+                this.logger.warn('Some products were not updated successfully');
+            }
+
+            this.logger.debug(
+                `Updated products: ${validProducts.map((p) => p.id).join(', ')}`
+            );
+            return validProducts;
+        } catch (error) {
+            this.logger.error(
+                'Error in updating products from CSV: ',
+                error
+            );
+            throw error;
+        }
+    }
+
+    public async processProductUpdate(product: UpdateProductInput, existingProducts: Product[]): Promise<Product | null> {
+        const productId = product.id;
+
+        try {
+            // Check if the product already exists by product ID
+            const existingProduct = existingProducts.find(
+                (p) => p.id === productId
+            );
+
+            // Update existing product
+            if (existingProduct) {
+                this.updateProduct(existingProduct.id, product as UpdateProductInput);
+                this.logger.info(`Updated product with product ID: ${productId}`);
+                return existingProduct;
+            }
+
+            // If the product does not exist, create a new one
+            this.logger.info(`Product with ID: ${productId} does not exist, creating new product.`);
+            return null;
+        } catch (error) {
+            this.logger.error(`Error processing product with product ID: ${productId}`, error);
+            return null;
         }
     }
 
@@ -724,6 +804,22 @@ class ProductService extends MedusaProductService {
         }
 
         return variant;
+    }
+
+    async getProductByExternalSourceAndExternalId(
+            externalId: string,
+            externalSource: string
+    ): Promise<Product | null> {
+        return await this.productRepository_.findOne({
+            where: {
+                external_source: externalSource,
+                external_id: externalId,
+            },
+            relations: [
+                'variants',
+                'options'
+            ],
+        });
     }
 
     private async convertProductPrices(

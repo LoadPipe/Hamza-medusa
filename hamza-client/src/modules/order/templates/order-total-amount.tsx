@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Flex, Text } from '@chakra-ui/react';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import Image from 'next/image';
+import { convertPrice } from '@/lib/util/price-conversion';
+import { Spinner } from '@chakra-ui/react';
 
 type PaymentTotal = {
     amount?: number | null;
@@ -24,6 +26,28 @@ const OrderTotalAmount: React.FC<OrderTotalAmountProps> = ({
     itemCount,
     paymentTotal,
 }) => {
+    const [usdPrice, setUsdPrice] = useState('');
+    useEffect(() => {
+        const fetchConvertedPrice = async () => {
+            if (subTotal && currencyCode.toLowerCase() === 'eth') {
+                try {
+                    const result = await convertPrice(
+                        Number(formatCryptoPrice(subTotal, 'eth')),
+                        'eth',
+                        'usdc'
+                    );
+                    const formattedResult = Number(result).toFixed(2);
+                    setUsdPrice(formattedResult);
+                } catch (error) {
+                    console.error('Error converting price:', error);
+                    setUsdPrice('Error');
+                }
+            }
+        };
+
+        fetchConvertedPrice();
+    }, [subTotal, currencyCode]);
+
     if (index !== itemCount) {
         return null; // Only render for the last item
     }
@@ -42,27 +66,38 @@ const OrderTotalAmount: React.FC<OrderTotalAmountProps> = ({
         currency_code: string
     ) => (
         <Flex direction={'row'} gap={2} flexWrap={'nowrap'}>
-            <Flex
-                direction={'row'}
-                gap={2}
-                alignItems={'center'}
-                flexWrap={'nowrap'}
-            >
-                <Text fontSize={'18px'} whiteSpace="nowrap">
-                    {title}
-                </Text>
-                <Image
-                    src={
-                        currencyIcons[currency_code.toLowerCase()] ??
-                        currencyIcons['usdc']
-                    }
-                    alt={currency_code.toUpperCase()}
-                    width={16}
-                    height={16}
-                />
-                <Text fontSize={'18px'} whiteSpace="nowrap">
-                    {getAmount(amount, currency_code)}
-                </Text>
+            <Flex flexDir={'column'}>
+                <Flex
+                    direction={'row'}
+                    gap={2}
+                    alignItems={'center'}
+                    flexWrap={'nowrap'}
+                >
+                    <Text fontSize={'18px'} whiteSpace="nowrap">
+                        {title}
+                    </Text>
+                    <Image
+                        src={
+                            currencyIcons[currency_code.toLowerCase()] ??
+                            currencyIcons['usdc']
+                        }
+                        alt={currency_code.toUpperCase()}
+                        width={16}
+                        height={16}
+                    />
+                    <Text fontSize={'18px'} whiteSpace="nowrap">
+                        {getAmount(amount, currency_code)}
+                    </Text>
+                </Flex>
+                {currencyCode === 'eth' && (
+                    <Flex alignItems="center" gap={2}>
+                        {usdPrice === '' ? (
+                            <Spinner size="sm" color="gray.300" />
+                        ) : (
+                            <Text> ≅ ${usdPrice} USD</Text>
+                        )}
+                    </Flex>
+                )}
             </Flex>
         </Flex>
     );

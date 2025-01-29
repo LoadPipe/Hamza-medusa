@@ -117,7 +117,7 @@ async function axiosCall(
     }
 }
 
-async function get(
+export async function get(
     url: string,
     params: any = null,
     requiresSecurity: boolean = false,
@@ -643,6 +643,19 @@ export async function updateItem({
         .update(cartId, lineId, { quantity }, headers)
         .then(({ cart }) => cart)
         .catch((err) => medusaError(err));
+}
+
+export async function updateShippingCost(cart_id: string) {
+    try {
+        const response = await getSecure('/custom/cart/shipping', {
+            cart_id,
+        });
+        const shippingCost = response?.amount ?? 0;
+        return shippingCost; // Return shipping cost for further use if needed
+    } catch (error) {
+        console.error('Error updating shipping cost:', error);
+        return 0; // Return a default value or handle the error as needed
+    }
 }
 
 export async function removeItem({

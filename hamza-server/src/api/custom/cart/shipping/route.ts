@@ -71,7 +71,7 @@ export const PUT = async (req: MedusaRequest, res: MedusaResponse) => {
         }
 
         // Add default shipping method and log the result
-        await cartService.addDefaultShippingMethod(cartId, true);
+        await cartService.addDefaultShippingMethod(cartId, false);
 
         return handler.returnStatusWithMessage(
             200,

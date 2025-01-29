@@ -14,7 +14,6 @@ type SummaryProps = {
 };
 
 const Summary: React.FC<SummaryProps> = ({ cart }) => {
-    console.log(`CART ${JSON.stringify(cart)}`);
     return (
         <Flex direction="column" width="100%">
             <Text fontWeight={600} mb="1rem">
@@ -44,16 +43,18 @@ const Summary: React.FC<SummaryProps> = ({ cart }) => {
                                 </Flex>
                             </LocalizedClientLink>
                         </Flex>
-                        <Text
-                            ml="1rem"
-                            maxW={{ base: '200px', md: '336px' }}
-                            height="46px"
-                            width="100%"
-                            fontSize={{ base: '14px', md: '16px' }}
-                            noOfLines={2}
-                        >
-                            {item.title}
-                        </Text>
+                        <Flex flexDir={'column'}>
+                            <Text
+                                ml="1rem"
+                                maxW={{ base: '200px', md: '336px' }}
+                                height="46px"
+                                width="100%"
+                                fontSize={{ base: '14px', md: '16px' }}
+                                noOfLines={2}
+                            >
+                                {item.title}
+                            </Text>
+                        </Flex>
                         <Flex ml="auto">
                             <Flex height="22px" alignItems="center" mb="auto">
                                 <Image
@@ -82,15 +83,23 @@ const Summary: React.FC<SummaryProps> = ({ cart }) => {
                     </Flex>
 
                     {/* Twitter and Quantity */}
-                    <Flex alignItems="center" height="50px" width="100%">
+                    <Flex flexDir={'column'} height="70px" width="100%">
                         {/*<Flex alignSelf="center">*/}
                         {/*    <Tweet*/}
                         {/*        productHandle={item.variant.product.handle}*/}
                         {/*        isPurchased={true}*/}
                         {/*    />*/}
                         {/*</Flex>*/}
-                        <Text ml="1rem" fontSize={{ base: '14px', md: '16px' }}>
+                        <Text fontSize={{ base: '14px', md: '16px' }}>
                             Quantity: {item.quantity}
+                        </Text>
+                        <Text
+                            maxW={{ base: '200px', md: '336px' }}
+                            height="46px"
+                            width="100%"
+                            fontSize={{ base: '14px', md: '16px' }}
+                        >
+                            {item.order_id}
                         </Text>
                     </Flex>
                 </Flex>

@@ -16,9 +16,6 @@ const chainConfig: any = {
             //address: '0x08EdF664EB5617d7eCf4F1ec74Ee49d9e99Fbd5f'
             address: '0x1fFc6ba4FcdfC3Ca72a53c2b64db3807B4A5aec8',
         },
-        dao: {
-            address: '0x8bA35513C3F5ac659907D222e3DaB38b20f8F52A',
-        },
     },
     80002: {
         chain_name: 'amoy',
@@ -35,9 +32,6 @@ const chainConfig: any = {
         escrow_multicall: {
             address: '0xa8866FF28D26cdf312e5C902e8BFDbCf663a36ce',
         },
-        dao: {
-            address: '0x1542612fee591eD35C05A3E980bAB325265c06a3',
-        },
     },
     11155420: {
         chain_name: 'op-sepolia',
@@ -50,9 +44,6 @@ const chainConfig: any = {
         lite_switch: {
             address: '0x0',
         },
-        dao: {
-            address: '0x8bA35513C3F5ac659907D222e3DaB38b20f8F52A',
-        },
     },
     1: {
         chain_name: 'mainnet',
@@ -64,9 +55,6 @@ const chainConfig: any = {
         },
         lite_switch: {
             address: '0x0',
-        },
-        dao: {
-            address: '0x20823791a73f283d20B1cde299E738D5783499d8',
         },
     },
     10: {
@@ -81,11 +69,56 @@ const chainConfig: any = {
             //address: '0x5b691FFdc872eC40d63fe34f471e3Edb16dAE154'
             address: '0x49E5231A3aE4c4272257b87b944415CFD113D2c3',
         },
-        dao: {
-            address: '0x214bef460Fda073a328aD02371C48E69Bd13442B',
-        },
         hns: {
             address: '0xDDa56f06D80f3D8E3E35159701A63753f39c3BCB',
+        },
+    },
+    8453: {
+        chain_name: 'base',
+        master_switch: {
+            address: '0x0',
+        },
+        massmarket_payment: {
+            address: '0x0',
+        },
+        lite_switch: {
+            //address: '0x08EdF664EB5617d7eCf4F1ec74Ee49d9e99Fbd5f'
+            address: '0x0',
+        },
+        escrow_multicall: {
+            address: '0x801c4C568DBfB540De91e6DD95b31d252765F7F8',
+        },
+    },
+    137: {
+        chain_name: 'polygon',
+        master_switch: {
+            address: '0x0',
+        },
+        massmarket_payment: {
+            address: '0x0',
+        },
+        lite_switch: {
+            //address: '0x08EdF664EB5617d7eCf4F1ec74Ee49d9e99Fbd5f'
+            address: '0x0',
+        },
+        escrow_multicall: {
+            address: '0xC4FaeAD225C62e5488dfE2dDD098A205c2f38759',
+        },
+    },
+    42161: {
+        chain_name: 'arbitrum',
+        master_switch: {
+            address: '0x0',
+        },
+        massmarket_payment: {
+            address: '0x0',
+        },
+        lite_switch: {
+            //address: '0x08EdF664EB5617d7eCf4F1ec74Ee49d9e99Fbd5f'
+            address: '0x0',
+        },
+        escrow_multicall: {
+            address: '0xaAa8a4393e72292043978a2EAa5A7061DfA3b413',
         },
     },
 };

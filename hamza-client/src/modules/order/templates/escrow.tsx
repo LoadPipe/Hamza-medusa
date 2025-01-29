@@ -44,6 +44,7 @@ export const Escrow = () => {
             return;
         }
 
+		// TODO: This can be all put into the server component
 		const fetchCustomerAndOrder = async () => {
 			try {
 				// Fetch customer

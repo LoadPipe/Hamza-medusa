@@ -3,7 +3,10 @@ import {
     ProductStatus,
     ProductVariant,
 } from '@medusajs/medusa';
-import ProductService from '../services/product';
+import ProductService, {
+    UpdateProductInput,
+    UpdateProductProductVariantDTO,
+} from '../services/product';
 import { Product } from '../models/product';
 import { PriceConverter } from '../utils/price-conversion';
 import {
@@ -52,6 +55,7 @@ export default class GlobetopperService extends TransactionBaseService {
 
     public async import(
         storeId: string,
+        behavior: string,
         categoryId: string,
         collectionId: string,
         salesChannelId: string,
@@ -65,8 +69,8 @@ export default class GlobetopperService extends TransactionBaseService {
             );
             const gtCatalogue = await this.apiClient.getCatalog();
 
-            const productInputs: (CreateProductInput & { store_id: string })[] =
-                [];
+            const toCreate: (CreateProductInput & { store_id: string })[] = [];
+            const toUpdate: UpdateProductInput[] = [];
 
             //sort the output
             const gtRecords = gtProducts.records.sort(
@@ -84,30 +88,92 @@ export default class GlobetopperService extends TransactionBaseService {
                     (r) => r.topup_product_id == (record?.operator?.id ?? 0)
                 );
 
-                if (productDetails) {
-                    productInputs.push(
-                        await this.mapDataToProductInput(
-                            record,
-                            productDetails,
-                            ProductStatus.PUBLISHED,
-                            storeId,
-                            categoryId,
-                            collectionId,
-                            [salesChannelId]
-                        )
+                //determine whether or not the gift card currently exists in our database
+                const existingProduct =
+                    await this.productService_.getProductByExternalSourceAndExternalId(
+                        record?.operator?.id,
+                        PRODUCT_EXTERNAL_SOURCE
                     );
+
+                if (productDetails) {
+                    if (!existingProduct) {
+                        if (
+                            behavior === 'add-only' ||
+                            behavior === 'combined'
+                        ) {
+                            const item = await this.mapDataToInsertProductInput(
+                                record,
+                                productDetails,
+                                ProductStatus.DRAFT,
+                                storeId,
+                                categoryId,
+                                collectionId,
+                                [salesChannelId]
+                            );
+
+                            if (item?.handle) toCreate.push(item);
+                        }
+                    } else {
+                        if (
+                            behavior === 'update-only' ||
+                            behavior === 'combined'
+                        ) {
+                            const item = await this.mapDataToUpdateProductInput(
+                                record,
+                                productDetails,
+                                storeId,
+                                categoryId,
+                                collectionId,
+                                [salesChannelId],
+                                existingProduct
+                            );
+
+                            if (item?.handle) toUpdate.push(item);
+                        }
+                    }
                 }
+
+                /* //TODO:
+                 now, based on behavior param, we decide how to handle existing 
+
+                 if (behavior is add-only, and existing = true, then ignore)
+                 if (behavior is update-only, and existing = false, then ignore )
+                 if existing, then update
+                 if not existing, then add 
+                */
+
+                /*
+                Fields that can be updated: 
+                    product.title
+                    product.subtitle 
+                    description
+                    thumbnail
+                    images
+                    external_metadata
+                    variants/prices
+                 */
             }
 
-            this.logger.debug(`importing ${productInputs.length} products`);
+            this.logger.debug(`importing ${toCreate.length} products`);
 
-            //insert products into DB
-            const products = await this.productService_.bulkImportProducts(
-                storeId,
-                productInputs
-            );
+            let createdProducts: Product[] = [];
+            let updatedProducts: Product[] = [];
 
-            return products;
+            if (toCreate.length) {
+                createdProducts = await this.productService_.bulkImportProducts(
+                    storeId,
+                    toCreate
+                );
+            }
+
+            if (toUpdate.length) {
+                updatedProducts = await this.productService_.bulkUpdateProducts(
+                    storeId,
+                    toUpdate
+                );
+            }
+
+            return [...createdProducts, ...updatedProducts];
         } catch (e: any) {
             this.logger.error('Error importing GlobeTopper products', e);
         }
@@ -384,7 +450,7 @@ export default class GlobetopperService extends TransactionBaseService {
         });
     }
 
-    private async mapDataToProductInput(
+    private async mapDataToInsertProductInput(
         item: any,
         productDetail: any,
         status: ProductStatus,
@@ -540,36 +606,29 @@ export default class GlobetopperService extends TransactionBaseService {
             if (!externalId) throw new Error('SPU code not found');
             const variants = await this.mapVariants(item, productDetail);
 
+            const output: CreateProductInput = this.mapProductDataToInput(
+                item,
+                productDetail,
+                status,
+                variants,
+                externalId,
+                storeId,
+                categoryId,
+                collectionId,
+                salesChannels,
+                null
+            ) as CreateProductInput;
+            /*
             //add variant images to the main product images
             const images = []; //TODO: get images
-            let description = '';
-
-            const formatSection = (title: string, content: string): string => {
-                if (content && content.trim() !== '') {
-                    return `<h2>${title}</h2><p>${content}</p>`;
-                }
-                return '';
-            };
-
-            description += formatSection('Brand Description: ', productDetail.brand_description);
-            description += formatSection('Redemption Instructions: ', productDetail.redemption_instruction);
-            description += formatSection('Disclaimer: ', productDetail.brand_disclaimer);
-            description += formatSection('Terms & Conditions: ', productDetail.term_and_conditions);
-            description += formatSection('Restriction & Policies: ', productDetail.restriction_and_policies);
-            description += formatSection('Additional Information: ', productDetail.brand_additional_information);
-
-            let handle = item?.name
-                ?.trim()
-                ?.toLowerCase()
-                ?.replace(/[^a-zA-Z0-9 ]/g, '')
-                ?.replaceAll(' ', '-');
-            handle = `gc-${handle}-${externalId}`;
+            const description = this.buildDescription(productDetail);
+            const handle = this.buildHandle(item, externalId);
 
             const output = {
                 title: item?.name,
-                subtitle: productDetail.brand_description, //TODO: find a better value
+                subtitle: this.getSubtitle(productDetail),
                 handle,
-                description: description, 
+                description,
                 is_giftcard: false,
                 status: status as ProductStatus,
                 thumbnail: item?.picUrl ?? productDetail?.card_image,
@@ -588,6 +647,7 @@ export default class GlobetopperService extends TransactionBaseService {
                 options: [{ title: 'Amount' }],
                 variants,
             };
+            */
 
             if (!output.variants?.length)
                 throw new Error(
@@ -601,6 +661,71 @@ export default class GlobetopperService extends TransactionBaseService {
                 error
             );
             return null;
+        }
+    }
+
+    private async mapDataToUpdateProductInput(
+        item: any,
+        productDetail: any,
+        storeId: string,
+        categoryId: string,
+        collectionId: string,
+        salesChannels: string[],
+        existingProduct: Product
+    ): Promise<UpdateProductInput> {
+        try {
+            const externalId = item?.operator?.id;
+
+            if (!externalId) throw new Error('SPU code not found');
+            // const updatedVariants = await this.mapVariantsForUpdate(item, productDetail, existingProduct)
+
+            const output: UpdateProductInput = this.mapProductDataToInput(
+                item,
+                productDetail,
+                undefined,
+                null,
+                externalId,
+                storeId,
+                categoryId,
+                collectionId,
+                salesChannels,
+                existingProduct
+            ) as UpdateProductInput;
+            /*
+            const images = [];
+            const description = this.buildDescription(productDetail);
+            const handle = this.buildHandle(item, externalId);
+
+            const updatePayload: UpdateProductInput = {
+                id: existingProduct.id,
+                title: item?.name,
+                subtitle: this.getSubtitle(productDetail),
+                handle,
+                description,
+                is_giftcard: false,
+                status: status as ProductStatus,
+                thumbnail: item?.picUrl ?? productDetail?.card_image,
+                images,
+                collection_id: collectionId,
+                weight: Math.round(item?.weight ?? 100),
+                discountable: true,
+                store_id: storeId,
+                external_id: externalId,
+                external_source: PRODUCT_EXTERNAL_SOURCE,
+                external_metadata: productDetail,
+                categories: categoryId?.length ? [{ id: categoryId }] : [],
+                sales_channels: salesChannels.map((sc) => ({ id: sc })),
+                // variants: updatedVariants,
+            };
+            */
+
+            return output;
+        } catch (error) {
+            this.logger.error(
+                'Error mapping Globetopper data to UpdateProductInput',
+                error
+            );
+            return {};
         }
     }
 
@@ -621,7 +746,7 @@ export default class GlobetopperService extends TransactionBaseService {
                 manage_inventory: true,
                 external_id: item?.operator?.id,
                 external_source: PRODUCT_EXTERNAL_SOURCE,
-                external_metadata: { amount:  variantPrice.toFixed(2) },
+                external_metadata: { amount: variantPrice.toFixed(2) },
                 metadata: { imgUrl: productDetail?.card_image },
                 prices: [
                     {
@@ -641,7 +766,7 @@ export default class GlobetopperService extends TransactionBaseService {
                         }),
                     },
                 ],
-                options: [{ value: variantPrice.toFixed(2) }],
+                options: [{ value: `${variantPrice.toFixed(2)} USD` }],
                 variant_rank: index,
             });
         }
@@ -651,7 +776,7 @@ export default class GlobetopperService extends TransactionBaseService {
 
     private getVariantPrices(item: any): number[] {
         const targetPrices: number[] = [
-            1, 3, 5, 10, 25, 50, 100, 250, 500, 1000,
+            1, 3, 5, 10, 25, 50, 100, 250, 500, 1000, 1500, 2000, 2500,
         ];
         const output: number[] = [];
 
@@ -672,9 +797,9 @@ export default class GlobetopperService extends TransactionBaseService {
                 : current + increment;
         };
 
-        const min = parseFloat(item.min);
-        const max = parseFloat(item.max);
-        const increment = parseFloat(item.increment);
+        const min = parseFloat(item.min.replaceAll(',', ''));
+        const max = parseFloat(item.max.replaceAll(',', ''));
+        const increment = parseFloat(item.increment.replaceAll(',', ''));
         for (let n = 0; n < targetPrices.length; n++) {
             const price: number = targetPrices[n];
             if (price < min) {
@@ -698,6 +823,183 @@ export default class GlobetopperService extends TransactionBaseService {
             }
         }
 
+        return output;
+    }
+
+    private async mapVariantsForUpdate(
+        item: any,
+        productDetail: any,
+        existingProduct: Product
+    ): Promise<UpdateProductProductVariantDTO[]> {
+        const variantPrices = this.getVariantPrices(item);
+        variantPrices.sort((a, b) => a - b);
+
+        const minPrice: number = parseFloat(item.min);
+        const maxPrice: number = parseFloat(item.max);
+
+        const updatedVariants: UpdateProductProductVariantDTO[] = [];
+        const existingVariants = existingProduct.variants || [];
+
+        let variantRank = 0;
+        for (const variantPrice of variantPrices) {
+            const isWithinRange =
+                variantPrice >= minPrice && variantPrice <= maxPrice;
+            if (!isWithinRange) {
+                const variantToDelete = existingVariants.find(
+                    (ev) =>
+                        ev.external_metadata?.amount === variantPrice.toFixed(2)
+                );
+                if (variantToDelete) {
+                    this.logger.info(
+                        `Variant with price ${variantPrice} does not meet allowed rules; variant ${variantToDelete.id} will be deleted.`
+                    );
+                }
+                continue;
+            }
+
+            const existingVariant = existingVariants.find(
+                (ev) => ev.external_metadata?.amount === variantPrice.toFixed(2)
+            );
+
+            const updatedVariant: UpdateProductProductVariantDTO = {
+                id: existingVariant?.id,
+                title: item?.name,
+                inventory_quantity: existingVariant?.inventory_quantity ?? 9999,
+                allow_backorder: false,
+                manage_inventory: true,
+                // product_id: existingProduct.id,
+                // external_id: item?.operator?.id,
+                // external_source: PRODUCT_EXTERNAL_SOURCE,
+                // external_metadata: { amount: variantPrice.toFixed(2) },
+                metadata: {
+                    ...existingVariant?.metadata,
+                    imgUrl: productDetail?.card_image,
+                },
+                prices: [
+                    {
+                        currency_code: 'usdc',
+                        amount: Math.floor(variantPrice * 100),
+                    },
+                    {
+                        currency_code: 'usdt',
+                        amount: Math.floor(variantPrice * 100),
+                    },
+                    {
+                        currency_code: 'eth',
+                        amount: await this.priceConverter.getPrice({
+                            baseAmount: Math.floor(variantPrice * 100),
+                            baseCurrency: 'usdc',
+                            toCurrency: 'eth',
+                        }),
+                    },
+                ],
+                options: [
+                    {
+                        value: variantPrice.toFixed(2),
+                        option_id:
+                            existingProduct?.options?.[0]?.id ?? 'option_id',
+                    },
+                ],
+            };
+
+            updatedVariants.push(updatedVariant);
+            variantRank++;
+        }
+        return updatedVariants;
+    }
+
+    private buildDescription(productDetail: any): string {
+        const formatSection = (title: string, content: string): string => {
+            if (content && content.trim() !== '') {
+                return `<b>${title}</b><br/><p>${content}</p><br/>`;
+            }
+            return '';
+        };
+
+        let description = '';
+        description += formatSection(
+            'Brand Description: ',
+            productDetail.brand_description
+        );
+        description += formatSection(
+            'Redemption Instructions: ',
+            productDetail.redemption_instruction
+        );
+        description += formatSection(
+            'Disclaimer: ',
+            productDetail.brand_disclaimer
+        );
+        description += formatSection(
+            'Terms & Conditions: ',
+            productDetail.term_and_conditions
+        );
+        description += formatSection(
+            'Restriction & Policies: ',
+            productDetail.restriction_and_policies
+        );
+        description += formatSection(
+            'Additional Information: ',
+            productDetail.brand_additional_information
+        );
+
+        return description;
+    }
+
+    private buildHandle(item: any, externalId: string): string {
+        let handle = item?.name
+            ?.trim()
+            ?.toLowerCase()
+            ?.replace(/[^a-zA-Z0-9 ]/g, '')
+            ?.replaceAll(' ', '-');
+        handle = `gc-${handle}-${externalId}`;
+        return handle;
+    }
+
+    private getSubtitle(productDetail: any): string {
+        return productDetail.brand_description;
+    }
+
+    private mapProductDataToInput(
+        item: any,
+        productDetail: any,
+        status: ProductStatus,
+        variants: any,
+        externalId: string,
+        storeId: string,
+        categoryId: string,
+        collectionId: string,
+        salesChannels: string[],
+        existingProduct: Product
+    ): UpdateProductInput | CreateProductInput {
+        const images = []; //TODO: get images
+        const description = this.buildDescription(productDetail);
+        const handle = this.buildHandle(item, externalId);
+
+        const output: any = {
+            id: existingProduct?.id,
+            title: item?.name,
+            subtitle: this.getSubtitle(productDetail),
+            handle,
+            description,
+            is_giftcard: false,
+            status: status as ProductStatus,
+            thumbnail: item?.picUrl ?? productDetail?.card_image,
+            images,
+            collection_id: collectionId,
+            weight: Math.round(item?.weight ?? 100),
+            discountable: true,
+            store_id: storeId,
+            external_id: externalId,
+            external_source: PRODUCT_EXTERNAL_SOURCE,
+            external_metadata: productDetail,
+            categories: categoryId?.length ? [{ id: categoryId }] : [],
+            sales_channels: salesChannels.map((sc) => {
+                return { id: sc };
+            }),
+            options: [{ title: 'Amount' }],
+        };
+
+        if (variants) output.variants = variants;
         return output;
     }
 }

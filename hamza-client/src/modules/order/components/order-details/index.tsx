@@ -26,8 +26,9 @@ const OrderDetails = ({ cart, showStatus }: OrderDetailsProps) => {
         return formatted.slice(0, 1).toUpperCase() + formatted.slice(1);
     };
 
-    // const payment = order.payments[0];
-    // console.log(`Order Summary is ${JSON.stringify(order)}`);
+    const orderIds = cart.items
+        .map((item) => item.order_id)
+        .filter((id) => id !== null);
 
     return (
         <Flex
@@ -79,11 +80,16 @@ const OrderDetails = ({ cart, showStatus }: OrderDetailsProps) => {
                         fontWeight={600}
                         fontSize={{ base: '14px', md: '16px' }}
                     >
-                        CART ID
+                        Order ID
                     </Text>
-                    <Text fontSize={{ base: '14px', md: '16px' }}>
-                        {cart.id}
-                    </Text>
+                    {orderIds.map((orderId) => (
+                        <Text
+                            key={orderId}
+                            fontSize={{ base: '14px', md: '16px' }}
+                        >
+                            {orderId}
+                        </Text>
+                    ))}
                 </Flex>
                 <Flex
                     mt={{ base: '1rem', md: '0' }}

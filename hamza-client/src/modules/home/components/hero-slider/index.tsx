@@ -17,10 +17,12 @@ import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
 import HeroBGImage from '@/images/home/hero_bg_image.webp';
 import { motion } from 'framer-motion';
+import { convertPrice } from '@/lib/util/price-conversion';
 
 const HeroSlider: React.FC = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [usdPrice, setUsdPrice] = useState('');
 
     // Fetch product collection using react-query
     const { data, error, isLoading } = useQuery(
@@ -48,7 +50,8 @@ const HeroSlider: React.FC = () => {
     if (isLoading) {
         return (
             <Flex
-                mt={{ base: '-5rem', md: '0' }}
+                mt={{ base: '-4rem', md: '0' }}
+                mb={{ base: '0', md: '-4rem' }}
                 maxW="1280px"
                 height={{ base: '300px', md: '625px' }}
                 justifyContent="space-between"
@@ -57,9 +60,6 @@ const HeroSlider: React.FC = () => {
                 py="62px"
                 mx="auto"
                 position="relative"
-                bgSize="cover"
-                bgPosition="center"
-                bgRepeat="no-repeat"
                 borderRadius="24px"
             >
                 {/* Skeleton Left Section */}
@@ -125,20 +125,24 @@ const HeroSlider: React.FC = () => {
         (preferred_currency_code ?? 'usdc') as string
     );
 
+    const usdPricing = formatCryptoPrice(
+        variantPrices?.find((p: any) => p.currency_code === 'usdc')?.amount ||
+            0,
+        'usdc' as string
+    );
+
     return (
         <Flex
-            mt={{ base: '-5rem', md: '0' }}
             maxW="1280px"
             height={{ base: '300px', md: '625px' }}
+            mt={{ base: '-4rem', md: '0' }}
+            mb={{ base: '0', md: '-4rem' }}
             justifyContent="space-between"
             flexDir="row"
             px={{ base: '1rem', md: '50px' }}
             py="62px"
             mx="auto"
             position="relative"
-            bgSize="cover"
-            bgPosition="center"
-            bgRepeat="no-repeat"
             borderRadius={'24px'}
         >
             {/* Left Section */}
@@ -158,8 +162,11 @@ const HeroSlider: React.FC = () => {
                     <Text as="span" color="primary.green.900">
                         Decentralized{' '}
                     </Text>
-                    <Text>E-commerce</Text>
+                    <Box as="span" display="block">
+                        E-commerce
+                    </Box>
                 </Text>
+
                 <Text
                     textAlign={{ base: 'center', md: 'unset' }}
                     fontSize={{ base: '12px', md: '24px' }}
@@ -234,13 +241,14 @@ const HeroSlider: React.FC = () => {
                                 'No description available'
                             }
                             price={productPricing}
+                            usdPrice={usdPricing}
                         />
                     </motion.div>
                 )}
                 <Flex
                     display={{ base: 'none', md: 'flex' }}
                     position="absolute"
-                    bottom="10px"
+                    bottom="50px"
                     left="50%"
                     transform="translateX(-50%)"
                     gap={3}

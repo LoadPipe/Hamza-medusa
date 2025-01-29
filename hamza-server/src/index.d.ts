@@ -76,5 +76,6 @@ export declare module '@medusajs/medusa/dist/model/order' {
         massmarket_amount?: string;
         external_source?: string;
         external_metadata?: Record<string, unknown>;
+        tracking_number?: string;
     }
 }
