@@ -65,6 +65,8 @@ const Addresses = ({
         onOpen();
     };
 
+    console.log('cart shipping address', cart?.shipping_address);
+
     useEffect(() => {
         const updateShippingMethod = async () => {
             if (cart?.customer_id && cart?.shipping_address) {
@@ -88,7 +90,7 @@ const Addresses = ({
                 }
 
                 // Once the shipping method is added or if it already exists, go to the review step
-                router.push('/checkout?step=review');
+                // router.push('/checkout?step=review');
             }
         };
 
