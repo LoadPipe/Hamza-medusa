@@ -97,11 +97,11 @@ const CartItems = ({
                           .map((item) => {
                               return (
                                   <Item
-                                      key={item.id}
+                                      key={item?.id}
                                       item={item}
                                       region={region}
                                       currencyCode={currencyCode}
-                                      cart_id={item.cart_id}
+                                      cart_id={item?.cart_id}
                                   />
                               );
                           })
