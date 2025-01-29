@@ -174,10 +174,27 @@ const LineItemPrice = ({ item }: LineItemPriceProps) => {
                                 )}
                             </>
                         )}
-                    </Flex>
+                    </>
                 )}
             </div>
         </div>
+    );
+};
+
+const UsdcPrice = ({ usdcPrice }: { usdcPrice: number | null }) => {
+    return (
+        <Text
+            ml={{ base: '8px', md: '16px' }}
+            as="h3"
+            variant="semibold"
+            color="white"
+            mt={2}
+            fontSize={{ base: '12px', md: '16px' }}
+            fontWeight={700}
+            textAlign="right"
+        >
+            {`≅  ${formatCryptoPrice(usdcPrice ?? 0, 'usdc')} USDC`}
+        </Text>
     );
 };
 

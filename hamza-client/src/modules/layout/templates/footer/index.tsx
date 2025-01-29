@@ -264,7 +264,6 @@ export default async function Footer() {
                         ></Text>
                     </Flex>
                 </Flex>
-
                 {/* google analytics */}
                 {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_TAG === 'true' && (
                     <Flex
