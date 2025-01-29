@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { cancelOrder, getSingleBucket } from '@lib/data';
+import {chainIdToName} from '@modules/order/components/chain-enum/chain-enum';
 import {
     Box,
     Button,
@@ -39,6 +40,7 @@ import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import { OrdersData } from './all';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
 import { upperCase } from 'lodash';
+import LocalizedClientLink from '@modules/common/components/localized-client-link';
 /**
  * The Processing component displays and manages the customer's processing orders, allowing users to view order details,
  * collapse or expand order views, and request cancellations of individual orders.
@@ -89,6 +91,7 @@ const Processing = ({
     const [isAttemptedSubmit, setIsAttemptedSubmit] = useState(false);
     const [expandViewOrder, setExpandViewOrder] = useState(false);
     const [shouldFetch, setShouldFetch] = useState(false);
+
 
     const orderActiveTab = useOrderTabStore((state) => state.orderActiveTab);
 
@@ -348,6 +351,25 @@ const Processing = ({
                                                         >
                                                             Request Cancellation
                                                         </Button>
+                                                        {order.escrow_status && order.escrow_status !== 'released' && (
+                                                            <Box
+                                                                as="a"
+                                                                href={`/account/escrow/${order.id}`}
+                                                                border="1px solid"
+                                                                borderColor="white"
+                                                                borderRadius="37px"
+                                                                color="white"
+                                                                px="4"
+                                                                py="2"
+                                                                textAlign="center"
+                                                                _hover={{
+                                                                    textDecoration: 'none',
+                                                                    bg: 'primary.teal.600', // Adjust the hover color as needed
+                                                                }}
+                                                            >
+                                                                View Escrow Details
+                                                            </Box>
+                                                        )}
                                                     </Flex>
                                                 ) : null}
                                             </Flex>
@@ -358,6 +380,7 @@ const Processing = ({
                                                 animateOpacity
                                             >
                                                 <Box mt={4}>
+
                                                     <Tabs variant="unstyled">
                                                         <TabList>
                                                             <Tab
@@ -382,6 +405,8 @@ const Processing = ({
                                                             >
                                                                 Order Details
                                                             </Tab>
+
+
                                                         </TabList>
                                                         <TabPanels>
                                                             <TabPanel>
@@ -445,7 +470,10 @@ const Processing = ({
                                                                             <strong>Order ID: </strong>
                                                                             {order?.id && typeof order.id === 'string' ? order.id : 'Order ID not available'}
                                                                         </Text>
-
+                                                                        <Text>
+                                                                            <strong>Order Chain: </strong> {' '}
+                                                                            {chainIdToName(order?.payments[0]?.blockchain_data?.chain_id) }
+                                                                        </Text>
                                                                     </VStack>
                                                                 </VStack>
                                                             </TabPanel>
