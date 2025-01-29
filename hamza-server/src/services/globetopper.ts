@@ -104,7 +104,7 @@ export default class GlobetopperService extends TransactionBaseService {
                             const item = await this.mapDataToInsertProductInput(
                                 record,
                                 productDetails,
-                                ProductStatus.PUBLISHED,
+                                ProductStatus.DRAFT,
                                 storeId,
                                 categoryId,
                                 collectionId,
@@ -121,7 +121,6 @@ export default class GlobetopperService extends TransactionBaseService {
                             const item = await this.mapDataToUpdateProductInput(
                                 record,
                                 productDetails,
-                                ProductStatus.PUBLISHED,
                                 storeId,
                                 categoryId,
                                 collectionId,
@@ -668,7 +667,6 @@ export default class GlobetopperService extends TransactionBaseService {
     private async mapDataToUpdateProductInput(
         item: any,
         productDetail: any,
-        status: ProductStatus,
         storeId: string,
         categoryId: string,
         collectionId: string,
@@ -684,7 +682,7 @@ export default class GlobetopperService extends TransactionBaseService {
             const output: UpdateProductInput = this.mapProductDataToInput(
                 item,
                 productDetail,
-                status,
+                undefined,
                 null,
                 externalId,
                 storeId,

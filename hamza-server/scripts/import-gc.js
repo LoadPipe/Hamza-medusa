@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 async function main() {
     const port = process.env.PORT;
     try {
@@ -18,7 +20,7 @@ async function main() {
         console.log(authData);
 
         const giftCardsSetup = await fetch(
-            `http://localhost:${port}/admin/custom/setup/giftcards?behavior=add-only`,
+            `http://localhost:${port}/admin/custom/setup/giftcards?behavior=add-only&sales_channel=sc_01J9EDHMZVZP7V3XZRQE45H02R`,
             {
                 method: 'POST',
                 headers: {
