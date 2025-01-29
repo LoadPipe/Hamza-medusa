@@ -94,7 +94,7 @@ const OrderTimeline: React.FC<TimelineProps> = ({ orderDetails }) => {
         // Check and transform `to_status`
         if (history.to_status) {
             if (history.to_status === 'buyer_released') {
-                details.push('Buyer released escrow');
+                details.push('Status: Buyer released escrow');
             } else if (!ignoredStatuses.includes(history.to_status)) {
                 details.push(`Status: ${history.to_status}`);
             }

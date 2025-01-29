@@ -27,7 +27,8 @@ import OrderTotalAmount from '@modules/order/templates/order-total-amount';
 import { OrdersData } from './all';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
 import OrderTimeline from '@modules/order/components/order-timeline';
-import { chainIdToName } from '@modules/order/components/chain-enum/chain-enum';
+import { chainIdToName, getChainLogo } from '@modules/order/components/chain-enum/chain-enum';
+import Image from 'next/image';
 
 const Refund = ({
     customer,
@@ -169,25 +170,6 @@ const Refund = ({
                                                     >
                                                         Refund Details
                                                     </Button>
-                                                    {order.escrow_status && order.escrow_status !== 'released' && (
-                                                        <Box
-                                                            as="a"
-                                                            href={`/account/escrow/${order.id}`}
-                                                            border="1px solid"
-                                                            borderColor="white"
-                                                            borderRadius="37px"
-                                                            color="white"
-                                                            px="4"
-                                                            py="2"
-                                                            textAlign="center"
-                                                            _hover={{
-                                                                textDecoration: 'none',
-                                                                bg: 'primary.teal.600', // Adjust the hover color as needed
-                                                            }}
-                                                        >
-                                                            View Escrow Details
-                                                        </Box>
-                                                    )}
                                                 </Flex>
                                             </Flex>
                                             <Collapse
@@ -237,60 +219,48 @@ const Refund = ({
                                                                     borderRadius="lg"
                                                                     w="100%"
                                                                 >
-                                                                    <VStack
-                                                                        align="start"
-                                                                        spacing={
-                                                                            2
-                                                                        }
-                                                                    >
-                                                                        {order
-                                                                            ?.shipping_methods[0]
-                                                                            ?.price && (
-                                                                            <Text fontSize="md">
-                                                                                <strong>
-                                                                                    Order
-                                                                                    Shipping
-                                                                                    Cost:
-                                                                                </strong>{' '}
-                                                                                {formatCryptoPrice(
-                                                                                    Number(
-                                                                                        order
-                                                                                            ?.shipping_methods[0]
-                                                                                            ?.price
-                                                                                    ),
-                                                                                    item.currency_code ??
-                                                                                        'usdc'
-                                                                                )}{' '}
-                                                                                {upperCase(
-                                                                                    item.currency_code
-                                                                                )}
-                                                                            </Text>
-                                                                        )}
-                                                                        <Text>
-                                                                            <strong>
-                                                                                Subtotal:{' '}
-                                                                            </strong>{' '}
-                                                                            {formatCryptoPrice(
-                                                                                subTotal,
-                                                                                item.currency_code
-                                                                            )}{' '}
-                                                                            {upperCase(
-                                                                                item.currency_code
+                                                                    <Flex direction={{ base: "column", md: "row" }} gap={6} w="100%">
+                                                                        {/* Left Column: Shipping Cost & Subtotal */}
+                                                                        <VStack align="start" spacing={2} flex="1">
+                                                                            {order?.shipping_methods[0]?.price && (
+                                                                                <Text fontSize="md">
+                                                                                    <strong>Order Shipping Cost:</strong>{' '}
+                                                                                    {formatCryptoPrice(Number(order?.shipping_methods[0]?.price), item.currency_code ?? 'usdc')}{' '}
+                                                                                    {upperCase(item.currency_code)}
+                                                                                </Text>
                                                                             )}
-                                                                        </Text>
-                                                                        <Text>
-                                                                            <strong>Order ID: </strong>
-                                                                            {order?.id && typeof order.id === 'string' ? order.id : 'Order ID not available'}
-                                                                        </Text>
-                                                                        <Text>
-                                                                            <strong>Tracking Number: </strong>
-                                                                            {order?.tracking_number && typeof order.tracking_number === 'string' ? order.tracking_number : 'Tracking number not available'}
-                                                                        </Text>
-                                                                        <Text>
-                                                                            <strong>Order Chain: </strong> {' '}
-                                                                            {chainIdToName(order?.payments[0]?.blockchain_data?.chain_id) }
-                                                                        </Text>
-                                                                    </VStack>
+                                                                            <Text fontSize="md">
+                                                                                <strong>Subtotal:</strong>{' '}
+                                                                                {formatCryptoPrice(subTotal, item.currency_code)}{' '}
+                                                                                {upperCase(item.currency_code)}
+                                                                            </Text>
+                                                                        </VStack>
+
+                                                                        {/* Right Column: Order ID & Chain Data */}
+                                                                        <VStack align="start" spacing={2} flex="1">
+                                                                            <Flex align="center" gap={2}>
+                                                                                <Text fontSize="md">
+                                                                                    <strong>Order ID:</strong>{' '}
+                                                                                    {order?.id && typeof order.id === 'string'
+                                                                                        ? order.id.replace(/^order_/, '') // Remove "order_" prefix
+                                                                                        : 'Order ID not available'}
+                                                                                </Text>
+                                                                            </Flex>
+
+                                                                            <Flex align="center" gap={2}>
+                                                                                <strong>Order Chain:</strong>
+                                                                                <Image
+                                                                                    src={getChainLogo(order?.payments[0]?.blockchain_data?.chain_id)}
+                                                                                    alt={chainIdToName(order?.payments[0]?.blockchain_data?.chain_id)}
+                                                                                    width={25}
+                                                                                    height={25}
+                                                                                />
+                                                                                <Text>
+                                                                                    {chainIdToName(order?.payments[0]?.blockchain_data?.chain_id)}
+                                                                                </Text>
+                                                                            </Flex>
+                                                                        </VStack>
+                                                                    </Flex>
                                                                 </VStack>
                                                             </TabPanel>
                                                         </TabPanels>
