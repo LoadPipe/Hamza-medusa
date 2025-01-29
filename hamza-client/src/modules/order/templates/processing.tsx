@@ -401,65 +401,49 @@ const Processing = ({
                                                                     borderRadius="lg"
                                                                     w="100%"
                                                                 >
-                                                                    <VStack
-                                                                        align="start"
-                                                                        spacing={
-                                                                            2
-                                                                        }
-                                                                    >
-                                                                        {order
-                                                                            ?.shipping_methods[0]
-                                                                            ?.price && (
-                                                                            <Text fontSize="md">
-                                                                                <strong>
-                                                                                    Order
-                                                                                    Shipping
-                                                                                    Cost:
-                                                                                </strong>{' '}
-                                                                                {formatCryptoPrice(
-                                                                                    Number(
-                                                                                        order
-                                                                                            ?.shipping_methods[0]
-                                                                                            ?.price
-                                                                                    ),
-                                                                                    item.currency_code ??
-                                                                                        'usdc'
-                                                                                )}{' '}
-                                                                                {upperCase(
-                                                                                    item.currency_code
-                                                                                )}
-                                                                            </Text>
-                                                                        )}
-                                                                        <Text>
-                                                                            <strong>
-                                                                                Subtotal:{' '}
-                                                                            </strong>{' '}
-                                                                            {formatCryptoPrice(
-                                                                                subTotal,
-                                                                                item.currency_code
-                                                                            )}{' '}
-                                                                            {upperCase(
-                                                                                item.currency_code
+                                                                    <Flex direction={{ base: "column", md: "row" }} gap={6} w="100%">
+                                                                        {/* Left Column: Shipping Cost & Subtotal */}
+                                                                        <VStack align="start" spacing={2} flex="1">
+                                                                            {order?.shipping_methods[0]?.price && (
+                                                                                <Text fontSize="md">
+                                                                                    <strong>Order Shipping Cost:</strong>{' '}
+                                                                                    {formatCryptoPrice(Number(order?.shipping_methods[0]?.price), item.currency_code ?? 'usdc')}{' '}
+                                                                                    {upperCase(item.currency_code)}
+                                                                                </Text>
                                                                             )}
-                                                                        </Text>
-                                                                        <Text>
-                                                                            <strong>Order ID: </strong>
-                                                                            {order?.id && typeof order.id === 'string' ? order.id : 'Order ID not available'}
-                                                                        </Text>
-                                                                        <Flex align="center" gap={2}>
-                                                                            <strong>Order Chain:</strong>
-                                                                            <Image
-                                                                                src={getChainLogo(order?.payments[0]?.blockchain_data?.chain_id)}
-                                                                                alt={chainIdToName(order?.payments[0]?.blockchain_data?.chain_id)}
-                                                                                width={25}
-                                                                                height={25}
-                                                                            />
-                                                                            <Text>
-                                                                                {chainIdToName(order?.payments[0]?.blockchain_data?.chain_id)}
+                                                                            <Text fontSize="md">
+                                                                                <strong>Subtotal:</strong>{' '}
+                                                                                {formatCryptoPrice(subTotal, item.currency_code)}{' '}
+                                                                                {upperCase(item.currency_code)}
                                                                             </Text>
-                                                                        </Flex>
+                                                                        </VStack>
 
-                                                                    </VStack>
+                                                                        {/* Right Column: Order ID & Chain Data */}
+                                                                        <VStack align="start" spacing={2} flex="1">
+                                                                            <Flex align="center" gap={2}>
+                                                                                <Text fontSize="md">
+                                                                                    <strong>Order ID:</strong>{' '}
+                                                                                    {order?.id && typeof order.id === 'string'
+                                                                                        ? order.id.replace(/^order_/, '') // Remove "order_" prefix
+                                                                                        : 'Order ID not available'}
+                                                                                </Text>
+                                                                            </Flex>
+
+                                                                            <Flex align="center" gap={2}>
+                                                                                <strong>Order Chain:</strong>
+                                                                                <Image
+                                                                                    src={getChainLogo(order?.payments[0]?.blockchain_data?.chain_id)}
+                                                                                    alt={chainIdToName(order?.payments[0]?.blockchain_data?.chain_id)}
+                                                                                    width={25}
+                                                                                    height={25}
+                                                                                />
+                                                                                <Text>
+                                                                                    {chainIdToName(order?.payments[0]?.blockchain_data?.chain_id)}
+                                                                                </Text>
+                                                                            </Flex>
+                                                                        </VStack>
+                                                                    </Flex>
+
                                                                 </VStack>
                                                             </TabPanel>
                                                         </TabPanels>
