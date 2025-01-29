@@ -22,6 +22,7 @@ const DynamicOrderStatus = ({
             alignItems={'center'}
             ml={'auto'}
             gap={1}
+            my={'4'}
         >
             <LuBox width="18px" height="20px" />
 
