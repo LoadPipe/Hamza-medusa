@@ -73,6 +73,14 @@ const OrderTimeline: React.FC<TimelineProps> = ({ orderDetails }) => {
     // Add historical events from `histories` array
     orderDetails.histories?.forEach((history) => {
         const details = [];
+        const ignoredStatuses = ['seller_released', 'in_escrow'];
+        if (
+            ignoredStatuses.includes(history.to_status as string) ||
+            ignoredStatuses.includes(history.to_payment_status as string) ||
+            ignoredStatuses.includes(history.to_fulfillment_status as string)
+        ) {
+            return; // Skip this history entry
+        }
         if (history.to_status) {
             details.push(`Status: ${history.to_status}`);
         }
@@ -82,6 +90,18 @@ const OrderTimeline: React.FC<TimelineProps> = ({ orderDetails }) => {
         if (history.to_fulfillment_status) {
             details.push(`Fulfillment: ${history.to_fulfillment_status}`);
         }
+
+        // Check and transform `to_status`
+        if (history.to_status) {
+            if (history.to_status === 'buyer_released') {
+                details.push('Buyer released escrow');
+            } else if (!ignoredStatuses.includes(history.to_status)) {
+                details.push(`Status: ${history.to_status}`);
+            }
+        }
+
+        // Skip the event if no valid details remain after filtering
+        if (details.length === 0) return;
 
         events.push({
             title:

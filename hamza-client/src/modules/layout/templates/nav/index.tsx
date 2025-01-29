@@ -26,7 +26,7 @@ import MobileNavContainer from './mobile-nav-container';
 const fetchCart = async () => {
     const cart = await retrieveCart();
 
-    if (cart?.items.length) {
+    if (cart?.items?.length) {
         const enrichedItems = await enrichLineItems(
             cart?.items,
             cart?.region_id

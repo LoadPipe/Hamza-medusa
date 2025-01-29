@@ -145,7 +145,10 @@ export class EscrowWalletPaymentHandler implements IWalletPaymentHandler {
         for (let input of inputs) {
             let existing = output.find((o) => o.currency == input.currency);
             if (!existing) {
-                existing = { currency: input.currency, amount: BigInt(0) };
+                existing = {
+                    currency: input.currency,
+                    amount: BigInt(input.amount),
+                };
                 output.push(existing);
             } else {
                 let amt: any = existing.amount;
