@@ -92,6 +92,35 @@ const nextConfig = withStoreConfig({
             {
                 protocol: 'https',
                 hostname: 'crm.dev.globetopper.com',
+            },
+            // Add blockchain logo domains
+            {
+                protocol: 'https',
+                hostname: 'cryptologos.cc',
+            },
+            {
+                protocol: 'https',
+                hostname: 'etherscan.io',
+            },
+            {
+                protocol: 'https',
+                hostname: 'optimistic.etherscan.io',
+            },
+            {
+                protocol: 'https',
+                hostname: 'arbiscan.io',
+            },
+            {
+                protocol: 'https',
+                hostname: 'basescan.org',
+            },
+            {
+                protocol: 'https',
+                hostname: 'polygonscan.com',
+            },
+            {
+                protocol: 'https',
+                hostname: 'lh3.googleusercontent.com',
             }
         ],
     },
