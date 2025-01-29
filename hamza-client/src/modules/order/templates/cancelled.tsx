@@ -25,7 +25,8 @@ import { useOrderTabStore } from '@/zustand/order-tab-state';
 import OrderTimeline from '@modules/order/components/order-timeline';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { upperCase } from 'lodash';
-import { chainIdToName } from '@modules/order/components/chain-enum/chain-enum';
+import { chainIdToName, getChainLogo } from '@modules/order/components/chain-enum/chain-enum';
+import Image from 'next/image';
 
 const Cancelled = ({
     customer,
@@ -358,10 +359,18 @@ const Cancelled = ({
                                                                             <strong>Tracking Number: </strong>
                                                                             {order?.tracking_number && typeof order.tracking_number === 'string' ? order.tracking_number : 'Tracking number not available'}
                                                                         </Text>
-                                                                        <Text>
-                                                                            <strong>Order Chain: </strong> {' '}
-                                                                            {chainIdToName(order?.payments[0]?.blockchain_data?.chain_id) }
-                                                                        </Text>
+                                                                        <Flex align="center" gap={2}>
+                                                                            <strong>Order Chain:</strong>
+                                                                            <Image
+                                                                                src={getChainLogo(order?.payments[0]?.blockchain_data?.chain_id)}
+                                                                                alt={chainIdToName(order?.payments[0]?.blockchain_data?.chain_id)}
+                                                                                width={25}
+                                                                                height={25}
+                                                                            />
+                                                                            <Text>
+                                                                                {chainIdToName(order?.payments[0]?.blockchain_data?.chain_id)}
+                                                                            </Text>
+                                                                        </Flex>
                                                                     </VStack>
                                                                 </VStack>
                                                             </TabPanel>
