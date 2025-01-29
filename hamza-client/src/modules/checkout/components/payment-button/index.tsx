@@ -380,7 +380,6 @@ const CryptoPaymentButton = ({
     const isMissingAddress = !cart?.shipping_address;
     const isMissingShippingMethod = cart?.shipping_methods?.length === 0;
     const disableButton =
-        step !== 'review' ||
         isCartEmpty ||
         isUpdating ||
         (isMissingAddress && isMissingShippingMethod);
