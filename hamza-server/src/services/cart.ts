@@ -148,9 +148,9 @@ export default class CartService extends MedusaCartService {
         if (cartEmail) cart.email = cartEmail.email_address;
 
         //restore cart address
-        if (!cart.shipping_address_id) {
-            cart = await this.restoreCartShippingAddress(cart);
-        }
+        //if (!cart.shipping_address_id) {
+        //    cart = await this.restoreCartShippingAddress(cart);
+        //}
 
         return cart;
     }
@@ -221,7 +221,8 @@ export default class CartService extends MedusaCartService {
             const option = await this.shippingOptionRepository_.findOne({
                 where: { provider_id: 'store-fulfillment' },
             });
-            await this.addShippingMethod(cart.id, option.id);
+            if (!cart.shipping_methods.find((sm) => sm.id === option.id))
+                await this.addShippingMethod(cart.id, option.id);
         }
     }
 
@@ -345,18 +346,20 @@ export default class CartService extends MedusaCartService {
     private async getLastCartShippingAddress(
         customerId: string
     ): Promise<Address> {
-        const carts = await this.cartRepository_.find({
-            where: {
-                shipping_address_id: Not(IsNull()),
-                customer_id: customerId,
-            },
-            order: { created_at: 'DESC' },
-            relations: ['shipping_address'],
-            take: 1,
-        });
+        if (customerId) {
+            const carts = await this.cartRepository_.find({
+                where: {
+                    shipping_address_id: Not(IsNull()),
+                    customer_id: customerId,
+                },
+                order: { created_at: 'DESC' },
+                relations: ['shipping_address'],
+                take: 1,
+            });
 
-        if (carts?.length) {
-            return carts[0].shipping_address;
+            if (carts?.length) {
+                return carts[0].shipping_address;
+            }
         }
         return null;
     }
