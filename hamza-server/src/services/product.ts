@@ -26,9 +26,21 @@ import { SeamlessCache } from '../utils/cache/seamless-cache';
 import { filterDuplicatesById } from '../utils/filter-duplicates';
 import { PriceConverter } from '../utils/price-conversion';
 import { getCurrencyPrecision } from '../currency.config';
+import { CreateProductVariantInput } from '@medusajs/medusa/dist/types/product-variant';
 
 type CreateProductInput = MedusaCreateProductInput & {
     store_id: string;
+};
+
+
+export type CreateProductVariantInputDTO = CreateProductVariantInput & {
+    options?: {
+        value: string;
+        option_id: string;
+    }[];
+    external_id?:string;
+    external_source?: string;
+    external_metadata?: Record<string, unknown>;
 };
 
 export type BulkImportProductInput = CreateProductInput;
@@ -54,6 +66,10 @@ export type UpdateProductProductVariantDTO = {
     material?: string;
     metadata?: Record<string, unknown>;
     prices?: CreateProductProductVariantPriceInput[];
+    external_id?: string;
+    external_source?: string;
+    external_metadata?: Record<string, unknown>;
+    variant_rank?:number; 
     options?: {
         value: string;
         option_id: string;
@@ -140,6 +156,57 @@ class ProductService extends MedusaProductService {
             );
         } catch (e) {
             this.logger.error('Error updating variant prices:', e);
+        }
+    }
+
+    async saveVariantPrices(
+        variantId: string,
+        prices: CreateProductProductVariantPriceInput[]
+    ): Promise<void> {
+        const moneyAmountRepo = this.activeManager_.getRepository(MoneyAmount);
+        const productVariantRepo =
+            this.activeManager_.getRepository(ProductVariant);
+
+        try {
+            // Get the existing variant with its prices
+            const existingVariant = await productVariantRepo.findOne({
+                where: { id: variantId },
+                relations: ['prices'],
+            });
+
+            if (!existingVariant) {
+                this.logger.error(`Variant ${variantId} not found.`);
+                return;
+            }
+
+            const updatedPrices = [];
+
+            for (const price of prices) {
+                // Find if the price already exists for this currency
+                let existingMoneyAmount = existingVariant.prices.find(
+                    (p) => p.currency_code === price.currency_code
+                );
+
+                if (existingMoneyAmount) {
+                    // Update the existing price
+                    existingMoneyAmount.amount = price.amount;
+                    existingMoneyAmount.updated_at = new Date();
+                    updatedPrices.push(existingMoneyAmount);
+                } else {
+                    // If price does not exist, create a new one
+                    const newMoneyAmount = moneyAmountRepo.create({
+                        currency_code: price.currency_code,
+                        amount: price.amount,
+                        variant_id: variantId,
+                    });
+                    updatedPrices.push(newMoneyAmount);
+                }
+            }
+
+            // Save all updated & new prices
+            await moneyAmountRepo.save(updatedPrices);
+        } catch (e) {
+            this.logger.error('Error saving variant prices:', e);
         }
     }
 
@@ -308,7 +375,9 @@ class ProductService extends MedusaProductService {
 
     async bulkUpdateProducts(
         storeId: string,
-        productData: UpdateProductInput[]
+        productData: UpdateProductInput[],
+        newVariants: CreateProductVariantInputDTO[],
+        deletedVariantIds: string[]
     ): Promise<Product[]> {
         try {
             //get the store
@@ -330,11 +399,34 @@ class ProductService extends MedusaProductService {
                     }))
             );
 
+            // Handle deleted variants 
+            if (deletedVariantIds.length) {
+                for (const variantId of deletedVariantIds) {
+                    this.logger.info(
+                        `Deleting (soft-delete) variant: ${variantId}`
+                    );
+                    await this.productVariantService_.delete(variantId);
+                }
+            }
+
             
             const updatedProducts = await Promise.all(
                 productData.map((product) => this.processProductUpdate(product, existingProducts))
             );
-            
+
+            // Handle new variants 
+            if (newVariants.length) {
+                for (const newVar of newVariants) {
+                    this.logger.info(
+                        `Creating new variant for product: ${newVar.product_id}`
+                    );
+                    await this.productVariantService_.create(
+                        newVar.product_id,
+                        newVar
+                    );
+                }
+            }
+
 
             // Ensure all products are non-null and have valid IDs
             const validProducts = updatedProducts.filter((p) => p && p.id);
@@ -369,8 +461,24 @@ class ProductService extends MedusaProductService {
 
             // Update existing product
             if (existingProduct) {
-                this.updateProduct(existingProduct.id, product as UpdateProductInput);
-                this.logger.info(`Updated product with product ID: ${productId}`);
+                await this.updateProduct(
+                    existingProduct.id,
+                    product as UpdateProductInput
+                );
+                this.logger.info(
+                    `Updated product with product ID: ${productId}`
+                );
+
+                if (product.variants?.length) {
+                    for (const variant of product.variants) {
+                        if (variant.prices && variant.prices.length > 0) {
+                            await this.saveVariantPrices(
+                                variant.id,
+                                variant.prices
+                            );
+                        }
+                    }
+                }
                 return existingProduct;
             }
 
@@ -807,8 +915,8 @@ class ProductService extends MedusaProductService {
     }
 
     async getProductByExternalSourceAndExternalId(
-            externalId: string,
-            externalSource: string
+        externalId: string,
+        externalSource: string
     ): Promise<Product | null> {
         return await this.productRepository_.findOne({
             where: {
@@ -817,7 +925,9 @@ class ProductService extends MedusaProductService {
             },
             relations: [
                 'variants',
-                'options'
+                'options',
+                'variants.options',
+                'variants.prices',
             ],
         });
     }
