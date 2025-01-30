@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 async function main() {
     const port = process.env.PORT;
     try {
