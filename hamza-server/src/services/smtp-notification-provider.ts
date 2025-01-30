@@ -43,82 +43,113 @@ class SmtpNotificationService extends AbstractNotificationService {
     }> {
         switch (event) {
             case 'order.placed':
-                const customerId = data.customerId;
-                if (
-                    !this.customerNotificationService_.hasNotifications(
-                        customerId,
-                        ['email', 'orderStatusChanged']
-                    )
-                ) {
-                    return;
-                }
+                {
+                    const customerId = data.customerId;
+                    if (
+                        !this.customerNotificationService_.hasNotifications(
+                            customerId,
+                            ['email', 'orderStatusChanged']
+                        )
+                    ) {
+                        return;
+                    }
 
-                this.logger.info(`sending email to ${JSON.stringify(data)}`);
+                    this.logger.info(
+                        `sending email to ${JSON.stringify(data)}`
+                    );
 
-                let ordersData = await Promise.all(
-                    data.orderIds.map(async (orderId: string) => {
-                        return await this.orderService_.retrieve(orderId, {
-                            select: [
-                                'shipping_total',
-                                'discount_total',
-                                'tax_total',
-                                'refunded_total',
-                                'gift_card_total',
-                                'subtotal',
-                                'total',
-                            ],
-                            relations: [
-                                'customer',
-                                'billing_address',
-                                'shipping_address',
-                                'discounts',
-                                'discounts.rule',
-                                'shipping_methods',
-                                'shipping_methods.shipping_option',
-                                'payments',
-                                'fulfillments',
-                                'returns',
-                                'gift_cards',
-                                'gift_card_transactions',
-                                'store',
-                                'items',
-                                'cart.items',
-                                'cart.items.variant',
-                                'cart.items.variant.product',
-                            ],
+                    let ordersData = await Promise.all(
+                        data.orderIds.map(async (orderId: string) => {
+                            return await this.orderService_.retrieve(orderId, {
+                                select: [
+                                    'shipping_total',
+                                    'discount_total',
+                                    'tax_total',
+                                    'refunded_total',
+                                    'gift_card_total',
+                                    'subtotal',
+                                    'total',
+                                ],
+                                relations: [
+                                    'customer',
+                                    'billing_address',
+                                    'shipping_address',
+                                    'discounts',
+                                    'discounts.rule',
+                                    'shipping_methods',
+                                    'shipping_methods.shipping_option',
+                                    'payments',
+                                    'fulfillments',
+                                    'returns',
+                                    'gift_cards',
+                                    'gift_card_transactions',
+                                    'store',
+                                    'items',
+                                    'cart.items',
+                                    'cart.items.variant',
+                                    'cart.items.variant.product',
+                                ],
+                            });
+                        })
+                    );
+
+                    let parsedOrdersData = ordersDataParser(ordersData);
+                    const customer = ordersData[0]?.customer;
+                    const cart = await this.cartService_.retrieve(
+                        ordersData[0]?.cart_id
+                    );
+
+                    const toEmail =
+                        data.email ??
+                        cart?.email ??
+                        (customer?.is_verified ? customer.email : null);
+                    this.logger.info(`sending email to recipient ${toEmail}`);
+
+                    if (toEmail) {
+                        await this.smtpMailService.sendMail({
+                            from: process.env.SMTP_FROM,
+                            subject: 'Order Placed on Hamza.market',
+                            mailData: parsedOrdersData,
+                            to: toEmail,
+                            templateName: 'order-placed',
                         });
-                    })
-                );
+                        return {
+                            to: toEmail,
+                            status: 'success',
+                            data: data,
+                        };
+                    }
+                }
+                return null;
 
-                let parsedOrdersData = ordersDataParser(ordersData);
-                const customer = ordersData[0]?.customer;
-                const cart = await this.cartService_.retrieve(
-                    ordersData[0]?.cart_id
-                );
+            case 'giftcard.order':
+                {
+                    console.log(
+                        '-------------------------------- TH EVENT HATH FIREDETH ---------------------'
+                    );
+                    console.log(data);
 
-                const toEmail =
-                    data.email ??
-                    cart?.email ??
-                    (customer?.is_verified ? customer.email : null);
-                this.logger.info(`sending email to recipient ${toEmail}`);
+                    //const toEmail =
+                    //    data.email ??
+                    //    cart?.email ??
+                    //    (customer?.is_verified ? customer.email : null);
+                    //this.logger.info(`sending email to recipient ${toEmail}`);
 
-                if (toEmail) {
+                    //TODO: can calculate at least from & subject here, freeing them from globetopper service
                     await this.smtpMailService.sendMail({
                         from: process.env.SMTP_FROM,
-                        subject: 'Order Placed on Hamza.market',
-                        mailData: parsedOrdersData,
-                        to: toEmail,
+                        subject: data.subject,
+                        mailData: data.mailData,
+                        to: data.to,
                         templateName: 'order-placed',
                     });
                     return {
-                        to: toEmail,
+                        to: data.to,
                         status: 'success',
                         data: data,
                     };
                 }
-
                 return null;
-
             default:
                 return null;
         }

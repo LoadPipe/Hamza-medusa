@@ -2,6 +2,7 @@ import {
     TransactionBaseService,
     ProductStatus,
     ProductVariant,
+    EventBusService,
 } from '@medusajs/medusa';
 import ProductService, {
     UpdateProductInput,
@@ -35,6 +36,7 @@ export default class GlobetopperService extends TransactionBaseService {
     protected readonly priceConverter: PriceConverter;
     protected readonly apiClient: GlobetopperClient;
     protected readonly externalApiLogRepository_: typeof ExternalApiLogRepository;
+    protected readonly eventBus_: EventBusService;
     public static readonly EXTERNAL_SOURCE: string = PRODUCT_EXTERNAL_SOURCE;
 
     constructor(container) {
@@ -43,6 +45,7 @@ export default class GlobetopperService extends TransactionBaseService {
         this.smtpMailService_ = container.smtpMailService;
         this.externalApiLogRepository_ = container.externalApiLogRepository;
         this.logger = createLogger(container, 'GlobetopperService');
+        this.eventBus_ = container.eventBusService;
         this.priceConverter = new PriceConverter(
             this.logger,
             container.cachedExchangeRateRepository
@@ -439,7 +442,7 @@ export default class GlobetopperService extends TransactionBaseService {
             );
         }
 
-        await this.smtpMailService_.sendMail({
+        await this.eventBus_.emit('giftcard.order', {
             from: process.env.SMTP_FROM,
             to: email,
             subject: 'Gift Card Purchase from Hamza',
@@ -448,6 +451,17 @@ export default class GlobetopperService extends TransactionBaseService {
                 body: emailBody,
             },
         });
+
+        /*
+        await this.smtpMailService_.sendMail({
+            from: process.env.SMTP_FROM,
+            to: email,
+            subject: 'Gift Card Purchase from Hamza',
+            templateName: 'gift-card-purchase',
+            mailData: {
+                body: emailBody,
+            },
+        });*/
     }
 
     private async mapDataToInsertProductInput(
