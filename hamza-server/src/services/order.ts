@@ -894,7 +894,7 @@ export default class OrderService extends MedusaOrderService {
                 //set fulfillment status to delivered
                 await this.setOrderStatus(
                     order,
-                    null,
+                    OrderStatus.COMPLETED,
                     FulfillmentStatus.FULFILLED,
                     null,
                     null,
