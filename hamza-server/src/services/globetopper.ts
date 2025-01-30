@@ -128,6 +128,7 @@ export default class GlobetopperService extends TransactionBaseService {
                             } = await this.mapDataToUpdateProductInput(
                                 record,
                                 productDetails,
+                                ProductStatus.DRAFT,
                                 storeId,
                                 categoryId,
                                 collectionId,
@@ -682,6 +683,7 @@ export default class GlobetopperService extends TransactionBaseService {
     private async mapDataToUpdateProductInput(
         item: any,
         productDetail: any,
+        status: ProductStatus,
         storeId: string,
         categoryId: string,
         collectionId: string,
