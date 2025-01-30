@@ -20,6 +20,7 @@ export default async function StorePage({
 }: {
     params: { slug: string };
 }) {
+    if (params.slug === 'tomato') params.slug = 'ready-cash-card';
     return (
         <Box>
             <StoreContent params={params} />
