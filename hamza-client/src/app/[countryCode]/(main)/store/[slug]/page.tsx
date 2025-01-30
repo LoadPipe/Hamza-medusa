@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { Box } from '@chakra-ui/react';
 import StoreContent from './components/store-content';
+import { redirect } from 'next/navigation';
 
 export async function generateMetadata({
     params,
@@ -20,7 +21,11 @@ export default async function StorePage({
 }: {
     params: { slug: string };
 }) {
-    if (params.slug === 'tomato') params.slug = 'onlyprints';
+    if (params.slug?.toLowerCase() === "stanzo's%203d%20prints")
+        redirect('/en/store/onlyprints');
+
+    //params.slug = 'onlyprints';
+    console.log(params.slug);
     return (
         <Box>
             <StoreContent params={params} />
