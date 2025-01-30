@@ -25,7 +25,6 @@ export default async function StorePage({
         redirect('/en/store/onlyprints');
 
     //params.slug = 'onlyprints';
-    console.log(params.slug);
     return (
         <Box>
             <StoreContent params={params} />
