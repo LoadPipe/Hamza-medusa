@@ -66,10 +66,13 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
 
     const shippingCost = shippingCostData ?? 0;
 
-
+    // If finalSubtotal is 0, force shippingCost to 0.
+    const effectiveShippingCost = finalSubtotal.amount === 0
+        ? 0
+        : shippingCostData ?? 0;
 
     const taxTotal = data.tax_total ?? 0;
-    const grandTotal = (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
+    const grandTotal = (finalSubtotal.amount ?? 0) + effectiveShippingCost + taxTotal;
     const isCartEmpty = !data.id || data.items?.length === 0;
 
     // Condition: Convert price to preferred currency
