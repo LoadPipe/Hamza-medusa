@@ -124,11 +124,6 @@ class SmtpNotificationService extends AbstractNotificationService {
 
             case 'giftcard.order':
                 {
-                    console.log(
-                        '-------------------------------- TH EVENT HATH FIREDETH ---------------------'
-                    );
-                    console.log(data);
-
                     //const toEmail =
                     //    data.email ??
                     //    cart?.email ??
