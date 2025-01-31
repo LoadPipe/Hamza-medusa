@@ -60,10 +60,10 @@ export default class GlobetopperService extends TransactionBaseService {
         categoryId: string,
         collectionId: string,
         salesChannelId: string,
-        currencyCode: string = 'USD'
+        currencyCode: string = 'USD',
+        deleteFlag: boolean = false
     ): Promise<Product[]> {
         try {
-            //get products in two API calls
             const gtProducts = await this.apiClient.searchProducts(
                 undefined,
                 currencyCode
@@ -74,98 +74,141 @@ export default class GlobetopperService extends TransactionBaseService {
             const toUpdate: UpdateProductInput[] = [];
             const newVariantsList: CreateProductVariantInputDTO[] = [];
             const deletedVariantIdsList: string[] = [];
+            const importedProductIds: string[] = [];
 
             //sort the output
             const gtRecords = gtProducts.records.sort(
-                (a, b) => (a?.operator?.id ?? 0) < (b?.operator?.id ?? 0)
+                (a, b) => (a?.operator?.id ?? 0) - (b?.operator?.id ?? 0)
             );
 
             const gtCat = gtCatalogue.records.sort(
                 (a, b) =>
-                    (a?.topup_product_id ?? 0) < (b?.topup_product_id ?? 0)
+                    (a?.topup_product_id ?? 0) - (b?.topup_product_id ?? 0)
+            );
+            
+            // Fetch all Active GC from DB
+            const existingProducts =
+                await this.productService_.getAllProductsByExternalSource(
+                    PRODUCT_EXTERNAL_SOURCE
+                );
+
+            // Map active products
+            const existingProductMap = new Map(
+                existingProducts.map((p) => [String(p.external_id), p]) 
             );
 
-            //create product inputs for each product
+            // Identify missing product IDs (not found in active products)
+            const missingProductIds = gtRecords
+                .map((record) => String(record?.operator?.id)) 
+                .filter((id) => !existingProductMap.has(id)); 
+
+            // Batch query to fetch soft-deleted products
+            const softDeletedProducts = missingProductIds.length
+                ? await this.productService_.getSoftDeletedProductsByIds(
+                      missingProductIds
+                  )
+                : [];
+  
+            // Map soft-deleted products 
+            const softDeletedProductMap = new Map(
+                softDeletedProducts.map((p) => [p.external_id, p])
+            );
+
+            // Process each imported gift card
             for (let record of gtRecords) {
                 const productDetails = gtCat.find(
                     (r) => r.topup_product_id == (record?.operator?.id ?? 0)
                 );
 
-                //determine whether or not the gift card currently exists in our database
-                const existingProduct =
-                    await this.productService_.getProductByExternalSourceAndExternalId(
-                        record?.operator?.id,
-                        PRODUCT_EXTERNAL_SOURCE
-                    );
+                // If Product not in catalogue , Skip the process
+                if (!productDetails) continue;
+                
+                importedProductIds.push(record?.operator?.id);
 
-                if (productDetails) {
-                    if (!existingProduct) {
-                        if (
-                            behavior === 'add-only' ||
-                            behavior === 'combined'
-                        ) {
-                            const item = await this.mapDataToInsertProductInput(
-                                record,
-                                productDetails,
-                                ProductStatus.DRAFT,
-                                storeId,
-                                categoryId,
-                                collectionId,
-                                [salesChannelId]
-                            );
+                // Check if the product exists as active
+                let existingProduct = existingProductMap.get(String(record?.operator?.id));
 
-                            if (item?.handle) toCreate.push(item);
-                        }
-                    } else {
-                        if (
-                            behavior === 'update-only' ||
-                            behavior === 'combined'
-                        ) {
-                            const {
-                                updateInput,
-                                newVariants,
-                                deletedVariantIds,
-                            } = await this.mapDataToUpdateProductInput(
-                                record,
-                                productDetails,
-                                ProductStatus.DRAFT,
-                                storeId,
-                                categoryId,
-                                collectionId,
-                                [salesChannelId],
-                                existingProduct
-                            );
+                // If not found, check if it's soft-deleted
+                if (!existingProduct) {
+                    existingProduct = softDeletedProductMap.get(String(record?.operator?.id));
+                    if (existingProduct) {
 
-                            if (updateInput?.handle) toUpdate.push(updateInput);
-                            if (newVariants.length)
-                                newVariantsList.push(...newVariants);
-                            if (deletedVariantIds.length)
-                                deletedVariantIdsList.push(
-                                    ...deletedVariantIds
-                                );
-                        }
+                        // Restore the product instead of creating a new one
+                        await this.productService_.restoreProduct(
+                            existingProduct.id
+                        );
+
+                        // Add back to active product map
+                        existingProductMap.set(
+                            String(existingProduct.external_id),
+                            existingProduct
+                        );
                     }
                 }
 
-                /* //TODO:
-                 now, based on behavior param, we decide how to handle existing 
+                if (!existingProduct) {
+                    if (
+                        behavior === 'add-only' ||
+                        behavior === 'combined'
+                    ) {
+                        const item = await this.mapDataToInsertProductInput(
+                            record,
+                            productDetails,
+                            ProductStatus.DRAFT,
+                            storeId,
+                            categoryId,
+                            collectionId,
+                            [salesChannelId]
+                        );
 
-                 if (behavior is add-only, and existing = true, then ignore)
-                 if (behavior is update-only, and existing = false, then ignore )
-                 if existing, then update
-                 if not existing, then add 
-                */
+                        if (item?.handle) toCreate.push(item);
+                    }
+                } else {
+                    if (
+                        behavior === 'update-only' ||
+                        behavior === 'combined'
+                    ) {
+                        const {
+                            updateInput,
+                            newVariants,
+                            deletedVariantIds,
+                        } = await this.mapDataToUpdateProductInput(
+                            record,
+                            productDetails,
+                            ProductStatus.DRAFT,
+                            storeId,
+                            categoryId,
+                            collectionId,
+                            [salesChannelId],
+                            existingProduct
+                        );
 
-                /*
-                Fields that can be updated: 
-                    product.title
-                    product.subtitle 
-                    description
-                    thumbnail
-                    images
-                    external_metadata
-                    variants/prices
-                 */
+                        if (updateInput?.handle) toUpdate.push(updateInput);
+                        if (newVariants.length)
+                            newVariantsList.push(...newVariants);
+                        if (deletedVariantIds.length)
+                            deletedVariantIdsList.push(
+                                ...deletedVariantIds
+                            );
+                    }
+                }
+            }
+
+            if (deleteFlag) {
+                const importedProductIdsStr = importedProductIds.map((id) =>
+                    String(id)
+                );
+
+                const productsToDelete = existingProducts.filter(
+                    (product) =>
+                        !importedProductIdsStr.includes(
+                            String(product.external_id)
+                        ) && product.deleted_at === null
+                );
+
+                for (const product of productsToDelete) {
+                    await this.productService_.softDeleteProduct(product.id);
+                }
             }
 
             this.logger.debug(`importing ${toCreate.length} products`);
