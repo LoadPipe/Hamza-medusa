@@ -25,7 +25,7 @@ type ExtendedLineItem = LineItem & {
 const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
 
-    const { data: shippingCostData, isLoading, isDisabled } = useQuery(
+    const { data: shippingCostData, isLoading  } = useQuery(
         ['shipping-cost', data.id, preferred_currency_code],
         () => updateShippingCost(data.id),
         {
