@@ -1,6 +1,9 @@
 import { CachedExchangeRateRepository } from '../../repositories/cached-exchange-rate';
 import { CurrencyConversionClient } from '../../currency-conversion/rest-client';
-import { getCurrencyAddress, getCurrencyPrecision } from '../../currency.config';
+import {
+    getCurrencyAddress,
+    getCurrencyPrecision,
+} from '../../currency.config';
 import { ILogger } from '../logging/logger';
 import { CachedExchangeRate } from '../../models/cached-exchange-rate';
 import { SeamlessCache } from '../cache/seamless-cache';
@@ -43,12 +46,16 @@ export class PriceConverter {
     }
 
     async getPrice(price: IPrice): Promise<number> {
-
-        if (price.baseAmount === 0)
-            return 0;
+        if (price.baseAmount === 0) return 0;
 
         //if identity, return as such
-        if (price.baseCurrency == price.toCurrency)
+        if (price.baseCurrency == price.toCurrency) return price.baseAmount;
+
+        //if both are usd stables, return usdc by default
+        if (
+            (price.baseCurrency == 'usdt' && price.toCurrency == 'usdc') ||
+            (price.baseCurrency == 'usdc' && price.toCurrency == 'usdt')
+        )
             return price.baseAmount;
 
         // Step 1: Try to get the rate from the cache
@@ -58,10 +65,10 @@ export class PriceConverter {
         if (!rate) {
             // Step 2: Try to get the rate from the API
             rate = await this.getFromApi(price);
-            if (EXTENDED_LOGGING) console.log("GOT RATE FROM API")
+            if (EXTENDED_LOGGING) console.log('GOT RATE FROM API');
 
             if (rate) {
-                if (EXTENDED_LOGGING) console.log("CACHING RATE")
+                if (EXTENDED_LOGGING) console.log('CACHING RATE');
                 // Step 3: Write to cache & save to DB
                 this.writeToCache(price, rate);
             } else {
@@ -69,7 +76,7 @@ export class PriceConverter {
                 const dbResult = await this.getFromDatabase(price);
                 if (dbResult) {
                     usingRateFromDb = true;
-                    if (EXTENDED_LOGGING) console.log("USING RATE FROM DB")
+                    if (EXTENDED_LOGGING) console.log('USING RATE FROM DB');
                     this.logger?.info(
                         `Using DB-cached rate for ${price.baseCurrency} to ${price.toCurrency}: ${dbResult.rate}`
                     );
@@ -115,13 +122,24 @@ export class PriceConverter {
     }
 
     private async getFromApi(price: IPrice): Promise<number> {
+        //change usdt to usdc because it's simpler
+        const baseCurrency =
+            price.baseCurrency === 'usdt' ? 'usdc' : price.baseCurrency;
+        const toCurrency =
+            price.toCurrency === 'usdt' ? 'usdc' : price.toCurrency;
+
+        //identity
+        if (baseCurrency === toCurrency) return 1;
+
         //convert to addresses
-        let baseAddr = getCurrencyAddress(price.baseCurrency, 1);
-        let toAddr = getCurrencyAddress(price.toCurrency, 1);
+        let baseAddr = getCurrencyAddress(baseCurrency, 1);
+        let toAddr = getCurrencyAddress(toCurrency, 1);
 
         if (baseAddr.length === 0) baseAddr = price.baseCurrency;
         if (toAddr.length === 0) toAddr = price.toCurrency;
 
+        if (price.toCurrency === 'usdt') toAddr = 'usdc';
+        if (price.baseCurrency === 'usdt') baseAddr = 'usdc';
         return await this.restClient.getExchangeRate(baseAddr, toAddr);
     }
 
@@ -160,16 +178,16 @@ export class PriceConverter {
                 key,
                 toCurrency,
                 baseCurrency,
-                rate: cache[key]?.value ?? 0
+                rate: cache[key]?.value ?? 0,
             });
         }
 
         dbCache.retrieve({
             cachedExchangeRateRepository: this.cachedExchangeRateRepository,
             logger: this.logger,
-            args
+            args,
         });
-        if (EXTENDED_LOGGING) console.log("SAVED TO DB")
+        if (EXTENDED_LOGGING) console.log('SAVED TO DB');
     }
 
     private getFromCache(price: IPrice): number {
@@ -177,7 +195,7 @@ export class PriceConverter {
         if (
             cache[key] &&
             this.getTimestamp() - cache[key].timestamp >=
-            this.MEMORY_CACHE_EXPIRATION_SECONDS
+                this.MEMORY_CACHE_EXPIRATION_SECONDS
         ) {
             cache[key] = null;
         }
@@ -199,7 +217,6 @@ export class PriceConverter {
     }
 }
 
-
 class ExchangeRateDbCache extends SeamlessCache {
     private sharedMem: SharedArrayBuffer = new SharedArrayBuffer(64);
     private saving: BigInt64Array = new BigInt64Array(this.sharedMem);
@@ -209,14 +226,14 @@ class ExchangeRateDbCache extends SeamlessCache {
     }
 
     async retrieve(params: {
-        cachedExchangeRateRepository: typeof CachedExchangeRateRepository,
-        logger?: ILogger,
+        cachedExchangeRateRepository: typeof CachedExchangeRateRepository;
+        logger?: ILogger;
         args: {
-            rate: number,
-            key: string,
-            toCurrency: string,
-            baseCurrency: string
-        }[]
+            rate: number;
+            key: string;
+            toCurrency: string;
+            baseCurrency: string;
+        }[];
     }): Promise<any> {
         return await super.retrieve(params);
     }
@@ -225,34 +242,52 @@ class ExchangeRateDbCache extends SeamlessCache {
         const output = [];
         const random = Math.random();
         try {
-            const result = (Atomics.compareExchange(this.saving, 0, BigInt(0), BigInt(1)));
+            const result = Atomics.compareExchange(
+                this.saving,
+                0,
+                BigInt(0),
+                BigInt(1)
+            );
             if (result === BigInt(0)) {
                 //console.log('INSIDE OF THE MUTEX', random);
 
                 try {
                     for (let args of params.args) {
-
                         if (args.rate) {
                             // check if we need to save to the database (every 5 minutes max)
-                            let existingRate = await params.cachedExchangeRateRepository.findOne({
-                                where: { id: args.key },
-                            });
+                            let existingRate =
+                                await params.cachedExchangeRateRepository.findOne(
+                                    {
+                                        where: { id: args.key },
+                                    }
+                                );
 
-                            if ((existingRate?.updated_at ?? 0) < new Date(Date.now() - 60 * 1000)) {
+                            if (
+                                (existingRate?.updated_at ?? 0) <
+                                new Date(Date.now() - 60 * 1000)
+                            ) {
                                 // Insert a new entry
 
                                 //check once before before insert
-                                existingRate = await params.cachedExchangeRateRepository.findOne({
-                                    where: { id: args.key },
-                                });
+                                existingRate =
+                                    await params.cachedExchangeRateRepository.findOne(
+                                        {
+                                            where: { id: args.key },
+                                        }
+                                    );
 
                                 //console.log('SAVING ', args.key, random);
-                                output.push(await params.cachedExchangeRateRepository.save({
-                                    id: args.key,
-                                    to_currency_code: args.toCurrency,
-                                    from_currency_code: args.baseCurrency,
-                                    rate: args.rate,
-                                }));
+                                output.push(
+                                    await params.cachedExchangeRateRepository.save(
+                                        {
+                                            id: args.key,
+                                            to_currency_code: args.toCurrency,
+                                            from_currency_code:
+                                                args.baseCurrency,
+                                            rate: args.rate,
+                                        }
+                                    )
+                                );
 
                                 params.logger?.debug(
                                     `Saved rate ${args.rate} for ${args.key} in DB`
@@ -260,8 +295,7 @@ class ExchangeRateDbCache extends SeamlessCache {
                             }
                         }
                     }
-                }
-                catch (e) {
+                } catch (e) {
                     params.logger?.error(
                         `Failed to save exchange rate to DB`,
                         e
@@ -272,10 +306,7 @@ class ExchangeRateDbCache extends SeamlessCache {
                 this.saving[0] = BigInt(0);
             }
         } catch (error) {
-            params.logger?.error(
-                `Failed to save exchange rates to DB`,
-                error
-            );
+            params.logger?.error(`Failed to save exchange rates to DB`, error);
         }
 
         return output;
