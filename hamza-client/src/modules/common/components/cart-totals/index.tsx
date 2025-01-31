@@ -62,7 +62,12 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
         preferred_currency_code ?? 'usdc'
     );
 
+    console.log(finalSubtotal.amount, 'finalSubtotal.amount')
+
     const shippingCost = shippingCostData ?? 0;
+
+
+
     const taxTotal = data.tax_total ?? 0;
     const grandTotal = (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
     const isCartEmpty = !data.id || data.items?.length === 0;
@@ -168,7 +173,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                                 )}
                             </Text>
                         </Flex>
-                        {preferred_currency_code === 'eth' ? (
+                        {finalSubtotal.amount && preferred_currency_code === 'eth' ? (
                             convertedPrice === null ? (
                                 <Spinner size="sm" color="white" />
                             ) : (

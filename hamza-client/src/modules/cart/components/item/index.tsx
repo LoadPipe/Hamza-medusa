@@ -15,6 +15,7 @@ import { debounce } from 'lodash';
 import { addDefaultShippingMethod } from '@lib/data';
 import LineItemUnitPrice from '@/modules/common/components/line-item-unit-price';
 import ItemQuantityButton from './components/item-quantity-button';
+import { useQueryClient } from '@tanstack/react-query';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
@@ -37,6 +38,8 @@ const debouncedChangeQuantity = debounce(
 );
 
 const Item = ({ item, region, cart_id }: ItemProps) => {
+    const queryClient = useQueryClient();
+
     const [quantity, setQuantity] = useState(item.quantity);
     const setIsUpdating = useCartStore((state) => state.setIsUpdating);
 
@@ -47,6 +50,8 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
         if (item?.variant?.inventory_quantity === 0) {
             toast.error(`Item not available at this time`);
             deleteLineItem(item.id); // Trigger delete
+            queryClient.invalidateQueries(['cart'])
+            queryClient.invalidateQueries(['shipping-cost'])
         } else if (
             item.quantity > item.variant.inventory_quantity &&
             item.variant.inventory_quantity > 0
