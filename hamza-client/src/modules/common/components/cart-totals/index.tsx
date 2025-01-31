@@ -25,11 +25,11 @@ type ExtendedLineItem = LineItem & {
 const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
 
-    const { data: shippingCostData, isLoading } = useQuery(
+    const { data: shippingCostData, isLoading, isDisabled } = useQuery(
         ['shipping-cost', data.id, preferred_currency_code],
         () => updateShippingCost(data.id),
         {
-            enabled: !!data.id,
+            enabled: !!data.id && data.items?.length > 0,
             staleTime: 1000 * 60,
             refetchOnMount: false,
             refetchOnWindowFocus: false
@@ -65,6 +65,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
     const shippingCost = shippingCostData ?? 0;
     const taxTotal = data.tax_total ?? 0;
     const grandTotal = (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
+    const isCartEmpty = !data.id || data.items?.length === 0;
 
     // Condition: Convert price to preferred currency
     const [convertedPrice, setConvertedPrice] = useState<string | null>(null);
@@ -107,23 +108,19 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                     </Text>
                 </Flex>
 
-                {shippingCost ? (
+                {!isCartEmpty && shippingCost ? (
                     <Flex justifyContent={'space-between'}>
-                        <Text fontSize={{ base: '14px', md: '16px' }}>
-                            Shipping
-                        </Text>
+                        <Text fontSize={{ base: '14px', md: '16px' }}>Shipping</Text>
                         {isLoading ? (
                             <Spinner size="sm" color="white" />
                         ) : (
                             <Text fontSize={{ base: '14px', md: '16px' }}>
-                                {formatCryptoPrice(
-                                    shippingCost,
-                                    finalSubtotal.currency
-                                )}
+                                {formatCryptoPrice(shippingCost, finalSubtotal.currency)}
                             </Text>
                         )}
                     </Flex>
                 ) : null}
+
             </Flex>
 
             {!useCartStyle ? (
@@ -150,7 +147,7 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                 alignItems="center"
             >
                 <Text fontSize={{ base: '15px', md: '16px' }}>Total</Text>
-                {isLoading && grandTotal === 0 ? (
+                {isLoading && grandTotal !== 0 ? (
                     <Spinner size="sm" color="white" />
                 ) : (
                     <Flex flexDirection="column" alignItems="flex-end">
