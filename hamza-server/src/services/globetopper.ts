@@ -5,6 +5,7 @@ import {
     EventBusService,
 } from '@medusajs/medusa';
 import ProductService, {
+    CreateProductVariantInputDTO,
     UpdateProductInput,
     UpdateProductProductVariantDTO,
 } from '../services/product';
@@ -74,6 +75,8 @@ export default class GlobetopperService extends TransactionBaseService {
 
             const toCreate: (CreateProductInput & { store_id: string })[] = [];
             const toUpdate: UpdateProductInput[] = [];
+            const newVariantsList: CreateProductVariantInputDTO[] = [];
+            const deletedVariantIdsList: string[] = [];
 
             //sort the output
             const gtRecords = gtProducts.records.sort(
@@ -121,9 +124,14 @@ export default class GlobetopperService extends TransactionBaseService {
                             behavior === 'update-only' ||
                             behavior === 'combined'
                         ) {
-                            const item = await this.mapDataToUpdateProductInput(
+                            const {
+                                updateInput,
+                                newVariants,
+                                deletedVariantIds,
+                            } = await this.mapDataToUpdateProductInput(
                                 record,
                                 productDetails,
+                                ProductStatus.DRAFT,
                                 storeId,
                                 categoryId,
                                 collectionId,
@@ -131,7 +139,13 @@ export default class GlobetopperService extends TransactionBaseService {
                                 existingProduct
                             );
 
-                            if (item?.handle) toUpdate.push(item);
+                            if (updateInput?.handle) toUpdate.push(updateInput);
+                            if (newVariants.length)
+                                newVariantsList.push(...newVariants);
+                            if (deletedVariantIds.length)
+                                deletedVariantIdsList.push(
+                                    ...deletedVariantIds
+                                );
                         }
                     }
                 }
@@ -172,7 +186,9 @@ export default class GlobetopperService extends TransactionBaseService {
             if (toUpdate.length) {
                 updatedProducts = await this.productService_.bulkUpdateProducts(
                     storeId,
-                    toUpdate
+                    toUpdate,
+                    newVariantsList,
+                    deletedVariantIdsList
                 );
             }
 
@@ -681,23 +697,34 @@ export default class GlobetopperService extends TransactionBaseService {
     private async mapDataToUpdateProductInput(
         item: any,
         productDetail: any,
+        status: ProductStatus,
         storeId: string,
         categoryId: string,
         collectionId: string,
         salesChannels: string[],
         existingProduct: Product
-    ): Promise<UpdateProductInput> {
+    ): Promise<{
+        updateInput: UpdateProductInput;
+        newVariants: CreateProductVariantInputDTO[];
+        deletedVariantIds: string[];
+    }> {
         try {
             const externalId = item?.operator?.id;
 
             if (!externalId) throw new Error('SPU code not found');
-            // const updatedVariants = await this.mapVariantsForUpdate(item, productDetail, existingProduct)
 
-            const output: UpdateProductInput = this.mapProductDataToInput(
+            const { updatedVariants, newVariants, deletedVariantIds } =
+                await this.mapVariantsForUpdate(
+                    item,
+                    productDetail,
+                    existingProduct
+                );
+
+            const updateInput: UpdateProductInput = this.mapProductDataToInput(
                 item,
                 productDetail,
-                undefined,
-                null,
+                status,
+                updatedVariants,
                 externalId,
                 storeId,
                 categoryId,
@@ -705,41 +732,18 @@ export default class GlobetopperService extends TransactionBaseService {
                 salesChannels,
                 existingProduct
             ) as UpdateProductInput;
-            /*
-            const images = [];
-            const description = this.buildDescription(productDetail);
-            const handle = this.buildHandle(item, externalId);
 
-            const updatePayload: UpdateProductInput = {
-                id: existingProduct.id,
-                title: item?.name,
-                subtitle: this.getSubtitle(productDetail),
-                handle,
-                description,
-                is_giftcard: false,
-                status: status as ProductStatus,
-                thumbnail: item?.picUrl ?? productDetail?.card_image,
-                images,
-                collection_id: collectionId,
-                weight: Math.round(item?.weight ?? 100),
-                discountable: true,
-                store_id: storeId,
-                external_id: externalId,
-                external_source: PRODUCT_EXTERNAL_SOURCE,
-                external_metadata: productDetail,
-                categories: categoryId?.length ? [{ id: categoryId }] : [],
-                sales_channels: salesChannels.map((sc) => ({ id: sc })),
-                // variants: updatedVariants,
-            };
-            */
-
-            return output;
+            return { updateInput, newVariants, deletedVariantIds };
         } catch (error) {
             this.logger.error(
                 'Error mapping Globetopper data to UpdateProductInput',
                 error
             );
-            return {};
+            return {
+                updateInput: {} as UpdateProductInput,
+                newVariants: [],
+                deletedVariantIds: [],
+            };
         }
     }
 
@@ -762,24 +766,7 @@ export default class GlobetopperService extends TransactionBaseService {
                 external_source: PRODUCT_EXTERNAL_SOURCE,
                 external_metadata: { amount: variantPrice.toFixed(2) },
                 metadata: { imgUrl: productDetail?.card_image },
-                prices: [
-                    {
-                        currency_code: 'usdc',
-                        amount: Math.floor(variantPrice * 100),
-                    },
-                    {
-                        currency_code: 'usdt',
-                        amount: Math.floor(variantPrice * 100),
-                    },
-                    {
-                        currency_code: 'eth',
-                        amount: await this.priceConverter.getPrice({
-                            baseAmount: Math.floor(variantPrice * 100),
-                            baseCurrency: 'usdc',
-                            toCurrency: 'eth',
-                        }),
-                    },
-                ],
+                prices: await this.buildPriceForNewVariant(variantPrice),
                 options: [{ value: `${variantPrice.toFixed(2)} USD` }],
                 variant_rank: index,
             });
@@ -840,7 +827,7 @@ export default class GlobetopperService extends TransactionBaseService {
         return output;
     }
 
-    private async mapVariantsForUpdate(
+    private async mapVariantsForUpdate_firstversion(
         item: any,
         productDetail: any,
         existingProduct: Product
@@ -922,6 +909,269 @@ export default class GlobetopperService extends TransactionBaseService {
         return updatedVariants;
     }
 
+    private async mapVariantsForUpdate(
+        item: any,
+        productDetail: any,
+        existingProduct: Product
+    ): Promise<{
+        updatedVariants: UpdateProductProductVariantDTO[];
+        newVariants: CreateProductVariantInputDTO[];
+        deletedVariantIds: string[];
+    }> {
+        // Get the list of new prices from globetopper
+        const variantPrices = this.getVariantPrices(item);
+        variantPrices.sort((a, b) => a - b);
+
+        // Gather existing variants
+        const existingVariants = existingProduct.variants || [];
+
+        // Build map for existing variants using price string:
+        const oldMap = new Map<string, ProductVariant>();
+        for (const oldVar of existingVariants) {
+            const oldPriceString = oldVar.external_metadata?.amount;
+            if (oldPriceString) {
+                oldMap.set(`${oldPriceString}-${oldVar.id}`, oldVar);
+            }
+        }
+
+        // Create arrays to return
+        const updatedVariants: UpdateProductProductVariantDTO[] = [];
+        const newVariants: CreateProductVariantInputDTO[] = [];
+        const deletedVariantIds: string[] = [];
+
+        const unmatchedNewPrices: number[] = [];
+        const unmatchedOldVariants: ProductVariant[] = [];
+
+        // old price == new price
+        for (const newPrice of variantPrices) {
+            const priceKey = newPrice.toFixed(2);
+
+            const matchingKeys = [...oldMap.keys()].filter((key) =>
+                key.startsWith(priceKey)
+            );
+
+            if (matchingKeys.length > 0) {
+                const firstMatchKey = matchingKeys.shift();
+                const oldVariant = oldMap.get(firstMatchKey!);
+
+                // Update that old variant
+                const updatedVar: UpdateProductProductVariantDTO =
+                    await this.buildUpdatedVariant(
+                        item,
+                        oldVariant,
+                        newPrice,
+                        productDetail
+                    );
+
+                updatedVariants.push(updatedVar);
+
+                // Remove from the map
+                oldMap.delete(firstMatchKey);
+            } else {
+                unmatchedNewPrices.push(newPrice);
+            }
+        }
+
+        unmatchedOldVariants.push(...oldMap.values());
+
+        //  Repurpose old variants
+        const repurposeCount = Math.min(
+            unmatchedOldVariants.length,
+            unmatchedNewPrices.length
+        );
+
+        for (let i = 0; i < repurposeCount; i++) {
+            const oldVar = unmatchedOldVariants[i];
+            const newPrice = unmatchedNewPrices[i];
+
+            const repurposed: UpdateProductProductVariantDTO =
+                await this.buildUpdatedVariant(
+                    item,
+                    oldVar,
+                    newPrice,
+                    productDetail
+                );
+
+            updatedVariants.push(repurposed);
+        }
+
+        // After repurposing, remove them from the leftover arrays
+        unmatchedOldVariants.splice(0, repurposeCount);
+        unmatchedNewPrices.splice(0, repurposeCount);
+
+        //  Add new variants for leftover new
+        for (const leftoverPrice of unmatchedNewPrices) {
+            const newVar: CreateProductVariantInputDTO =
+                await this.buildNewVariant(
+                    leftoverPrice,
+                    item,
+                    productDetail,
+                    existingProduct
+                );
+            newVariants.push(newVar);
+        }
+
+        // Delete leftover old variants
+        // Soft-delete all unmatched old variants
+        for (const leftoverOld of unmatchedOldVariants) {
+            deletedVariantIds.push(leftoverOld.id);
+        }
+        return {
+            updatedVariants,
+            newVariants,
+            deletedVariantIds,
+        };
+    }
+
+    private async buildUpdatedVariant(
+        item: any,
+        oldVariant: ProductVariant,
+        newPrice: number,
+        productDetail: any
+    ): Promise<UpdateProductProductVariantDTO> {
+        const updatedPrices = await this.buildPriceForUpdateVariant(
+            oldVariant.prices,
+            newPrice
+        );
+
+        const updatedOptions = this.buildOptionForVariant(
+            oldVariant.options,
+            newPrice
+        );
+
+        const updatedVariant: UpdateProductProductVariantDTO = {
+            id: oldVariant.id,
+            title: item?.name,
+            inventory_quantity: oldVariant.inventory_quantity ?? 9999,
+            allow_backorder: false,
+            manage_inventory: true,
+            metadata: {
+                imgUrl: productDetail?.card_image,
+            },
+            prices: updatedPrices,
+            options: updatedOptions,
+
+            external_id: item?.operator?.id,
+            external_source: PRODUCT_EXTERNAL_SOURCE,
+            external_metadata: { amount: newPrice.toFixed(2) },
+            variant_rank: oldVariant.variant_rank ?? 0,
+        };
+
+        return updatedVariant;
+    }
+
+    private async buildNewVariant(
+        newPrice: number,
+        item: any,
+        productDetail: any,
+        existingProduct: Product
+    ): Promise<CreateProductVariantInputDTO> {
+        return {
+            product_id: existingProduct.id,
+            title: item?.name,
+            inventory_quantity: 9999,
+            allow_backorder: false,
+            manage_inventory: true,
+            external_id: item?.operator?.id,
+            external_source: PRODUCT_EXTERNAL_SOURCE,
+            external_metadata: { amount: newPrice.toFixed(2) },
+            metadata: {
+                imgUrl: productDetail?.card_image,
+            },
+            prices: await this.buildPriceForNewVariant(newPrice),
+            options: [
+                {
+                    option_id: existingProduct?.options?.[0]?.id ?? 'option_id',
+                    value: `${newPrice.toFixed(2)} USD`,
+                },
+            ],
+            variant_rank: this.calculateVariantRank(
+                existingProduct.variants || []
+            ),
+        };
+    }
+
+    private calculateVariantRank(existingVariants: ProductVariant[]): number {
+        // Extract & sort existing ranks
+        const usedRanks = existingVariants
+            .map((v) => v.variant_rank)
+            .sort((a, b) => a - b);
+
+        // Find the first missing rank (fill gaps)
+        for (let i = 0; i < usedRanks.length; i++) {
+            if (usedRanks[i] !== i) {
+                return i; 
+            }
+        }
+
+        return usedRanks.length; 
+    }
+
+    private async buildPriceForUpdateVariant(
+        oldPrices: any[],
+        newPrice: number
+    ): Promise<any[]> {
+        const baseAmount = Math.floor(newPrice * 100);
+
+        // Fetch the ETH amount
+        const ethAmount = await this.priceConverter.getPrice({
+            baseAmount: baseAmount,
+            baseCurrency: 'usdc',
+            toCurrency: 'eth',
+        });
+
+        // Create a map for updated amounts by currency code
+        const updatedAmounts: { [key: string]: number } = {
+            usdc: baseAmount,
+            usdt: baseAmount,
+            eth: ethAmount,
+        };
+
+        // Update existing prices
+        const updatedPrices = oldPrices.map((price) => {
+            if (updatedAmounts.hasOwnProperty(price.currency_code)) {
+                return {
+                    ...price,
+                    amount: updatedAmounts[price.currency_code].toString(),
+                    updated_at: new Date().toISOString(),
+                };
+            }
+            return price;
+        });
+
+        return updatedPrices;
+    }
+
+    private async buildPriceForNewVariant(newPrice: number): Promise<any[]> {
+        const baseAmount = Math.floor(newPrice * 100);
+
+        return [
+            {
+                currency_code: 'usdc',
+                amount: baseAmount,
+            },
+            {
+                currency_code: 'usdt',
+                amount: baseAmount,
+            },
+            {
+                currency_code: 'eth',
+                amount: await this.priceConverter.getPrice({
+                    baseAmount: baseAmount,
+                    baseCurrency: 'usdc',
+                    toCurrency: 'eth',
+                }),
+            },
+        ];
+    }
+
+    private buildOptionForVariant(oldOptions: any[], newPrice: number): any[] {
+        return oldOptions.map(({ created_at, updated_at, ...rest }) => ({
+            ...rest,
+            value: `${newPrice.toFixed(2)} USD`,
+        }));
+    }
+
     private buildDescription(productDetail: any): string {
         const formatSection = (title: string, content: string): string => {
             if (content && content.trim() !== '') {
@@ -973,6 +1223,17 @@ export default class GlobetopperService extends TransactionBaseService {
         return productDetail.brand_description;
     }
 
+    private buildOptions(existingProduct: Product): Partial<any>[] {
+        if (!existingProduct.options) return [];
+
+        return existingProduct.options.map((opt) => ({
+            id: opt.id,
+            title: opt.title,
+            product_id: opt.product_id,
+            metadata: opt.metadata,
+        }));
+    }
+
     private mapProductDataToInput(
         item: any,
         productDetail: any,
@@ -1014,6 +1275,11 @@ export default class GlobetopperService extends TransactionBaseService {
         };
 
         if (variants) output.variants = variants;
+
+        if (existingProduct) {
+            output.options = this.buildOptions(existingProduct);
+        }
+
         return output;
     }
 }
