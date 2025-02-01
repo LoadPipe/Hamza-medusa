@@ -394,12 +394,12 @@ class ProductService extends MedusaProductService {
                 productData
                     .filter(product => product.id)
                     .map(product => this.productRepository_.findOne({
-                        where: { id: product.id },
-                        relations: ['variants'],
+                            where: { id: product.id },
+                            relations: ['variants'],
                     }))
             );
 
-            // Handle deleted variants 
+            // Handle deleted variants
             if (deletedVariantIds.length) {
                 for (const variantId of deletedVariantIds) {
                     this.logger.info(
@@ -414,7 +414,7 @@ class ProductService extends MedusaProductService {
                 productData.map((product) => this.processProductUpdate(product, existingProducts))
             );
 
-            // Handle new variants 
+            // Handle new variants
             if (newVariants.length) {
                 for (const newVar of newVariants) {
                     this.logger.info(
@@ -488,6 +488,45 @@ class ProductService extends MedusaProductService {
         } catch (error) {
             this.logger.error(`Error processing product with product ID: ${productId}`, error);
             return null;
+        }
+    }
+
+    async softDeleteProduct(productId: string): Promise<void> {
+        try {
+            await this.update(productId, { deleted_at: new Date() } as any);
+
+            this.logger.info(`Soft deleted product: ${productId}`);
+        } catch (error) {
+            this.logger.error(
+                `Error soft deleting product ${productId}:`,
+                error
+            );
+            throw error;
+        }
+    }
+
+    async restoreProduct(productId: string): Promise<void> {
+        try {
+            // Use the repository to retrieve the product, including soft-deleted ones
+            const product = await this.productRepository_.findOne({
+                where: { id: productId },
+                withDeleted: true,
+            });
+
+            if (!product) {
+                throw new Error(
+                    `Product with id: ${productId} not found in database`
+                );
+            }
+
+            // Restore the product by setting `deleted_at` to NULL
+            product.deleted_at = null;
+            await this.productRepository_.save(product);
+
+            this.logger.info(`Restored product: ${productId}`);
+        } catch (error) {
+            this.logger.error(`Error restoring product ${productId}:`, error);
+            throw error;
         }
     }
 
@@ -914,14 +953,12 @@ class ProductService extends MedusaProductService {
         return variant;
     }
 
-    async getProductByExternalSourceAndExternalId(
-        externalId: string,
+    async getAllProductsByExternalSource(
         externalSource: string
-    ): Promise<Product | null> {
-        return await this.productRepository_.findOne({
+    ): Promise<Product[]> {
+        return await this.productRepository_.find({
             where: {
                 external_source: externalSource,
-                external_id: externalId,
             },
             relations: [
                 'variants',
@@ -929,6 +966,28 @@ class ProductService extends MedusaProductService {
                 'variants.options',
                 'variants.prices',
             ],
+        });
+    }
+
+    async getSoftDeletedProductsByIds(
+        externalIds: string[]
+    ): Promise<Product[]> {
+        if (externalIds.length === 0) {
+            return [];
+        }
+
+        return await this.productRepository_.find({
+            where: {
+                external_id: In(externalIds),
+                deleted_at: Not(IsNull()),
+            },
+            relations: [
+                'variants',
+                'options',
+                'variants.options',
+                'variants.prices',
+            ],
+            withDeleted: true,
         });
     }
 
