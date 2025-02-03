@@ -17,7 +17,9 @@
         "normalclean": "chmod +x ./scripts/clean.sh && ./scripts/clean.sh",
         "softclean": "chmod +x ./scripts/softclean.sh && ./scripts/softclean.sh",
         "deepclean": "chmod +x ./scripts/deepclean.sh && ./scripts/deepclean.sh",
-        "import-currencies": "chmod +x ./scripts/import-currencies.sh && ./scripts/import-currencies.sh"
+        "import-currencies": "chmod +x ./scripts/import-currencies.sh && ./scripts/import-currencies.sh",
+        "e2e:chrome": "cypress run --browser chrome",
+        "e2e:firefox": "cypress run --browser firefox"
     },
     "resolutions": {
         "webpack": "^5",
@@ -87,7 +89,7 @@
         "@types/react-instantsearch-dom": "^6.12.3",
         "autoprefixer": "^10.4.2",
         "babel-loader": "^8.2.3",
-        "cypress": "^9.5.2",
+        "cypress": "^13.6.3",
         "eslint": "8.10.0",
         "eslint-config-next": "^13.4.5",
         "postcss": "^8.4.8",
