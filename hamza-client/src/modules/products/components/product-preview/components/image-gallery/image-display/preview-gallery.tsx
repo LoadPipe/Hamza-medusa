@@ -88,7 +88,7 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
     });
 
     return (
-        <Flex maxW={'1280px'} width={'100%'} flexDirection={'column'}>
+        <Flex maxW={'1280px'} width={'100%'} flexDirection={'column'} className="preview-gallery">
             <Grid
                 templateColumns={gridTemplateColumns}
                 templateRows={gridTemplateRows}

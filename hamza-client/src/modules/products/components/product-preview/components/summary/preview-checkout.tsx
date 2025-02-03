@@ -333,6 +333,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             flexDirection={'column'}
             backgroundColor={{ base: 'transparent', md: '#121212' }}
             overflow={'hidden'}
+            className="preview-checkout"
         >
             <Flex gap={{ base: 1, md: 3 }} flexDirection={'column'}>
                 <Heading

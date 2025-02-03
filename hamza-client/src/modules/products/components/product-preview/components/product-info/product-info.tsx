@@ -109,6 +109,7 @@ const ProductInfo = () => {
                         as="h1"
                         fontSize={'32px'}
                         color="white"
+                        className="product-info-title"
                     >
                         {productData?.title ?? ''}
                     </Heading>

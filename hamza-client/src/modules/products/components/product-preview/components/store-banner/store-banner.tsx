@@ -26,6 +26,7 @@ const StoreBanner = (props: StoreProps) => {
             height={{ base: '99px', md: '165.78px' }}
             borderRadius={'16px'}
             p={{ base: '1rem', md: '2rem' }}
+            className="store-banner"
         >
             <Flex gap={{ base: '10px', md: '20px' }}>
                 <Flex flexShrink={0} alignSelf="center">
