@@ -30,7 +30,7 @@ describe('Product cards', () => {
         cy.visit('/en');
     });
 
-    it('should have 4 product cards', () => {
+    it('should have at least 4 product cards', () => {
         cy.get('.product-cards').should('exist').within(() => {
             cy.get('.product-card').should('have.length.at.least', 4);
         });
@@ -38,3 +38,12 @@ describe('Product cards', () => {
 });
 
 // test for footer
+describe('Footer', () => {
+    beforeEach(() => {
+        cy.visit('/en');
+    });
+
+    it('should have footer', () => {
+        cy.get('.footer').should('exist');
+    });
+});

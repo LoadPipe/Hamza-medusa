@@ -19,6 +19,7 @@ export default async function Footer() {
             bgColor={'black'}
             py={{ base: '2rem', md: '4rem' }}
             justifyContent={'center'}
+            className="footer"
         >
             <Flex
                 maxWidth={'1280px'}
