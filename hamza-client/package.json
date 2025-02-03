@@ -19,7 +19,8 @@
         "deepclean": "chmod +x ./scripts/deepclean.sh && ./scripts/deepclean.sh",
         "import-currencies": "chmod +x ./scripts/import-currencies.sh && ./scripts/import-currencies.sh",
         "e2e:chrome": "cypress run --browser chrome",
-        "e2e:firefox": "cypress run --browser firefox"
+        "e2e:firefox": "cypress run --browser firefox",
+        "e2e:chrome:file": "cypress run --browser chrome --spec"
     },
     "resolutions": {
         "webpack": "^5",
