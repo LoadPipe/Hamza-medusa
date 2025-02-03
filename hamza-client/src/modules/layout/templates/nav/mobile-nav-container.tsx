@@ -34,7 +34,7 @@ export default function MobileNavContainer(props: {
         <Flex
             userSelect="none"
             zIndex="2"
-            className="sticky top-0"
+            className="sticky top-0 nav-container"
             width="100%"
             height={{ base: '60px', md: '125px' }}
             justifyContent="center"

@@ -80,6 +80,7 @@ const ProductCard: React.FC<ProductCardProps & { productId?: string }> = ({
             }}
             onClick={handleClick}
             cursor={'pointer'}
+            className="product-card"
         >
             <Box
                 height={{ base: '134.73px', md: '238px' }}
