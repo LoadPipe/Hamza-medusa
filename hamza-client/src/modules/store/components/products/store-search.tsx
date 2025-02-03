@@ -38,6 +38,7 @@ const StoreSearch = ({ storeName }: Props) => {
                 width={'100%'}
                 my={{ base: '1rem', md: '3rem' }}
                 gap={'1rem'}
+                className="store-filters"
             >
                 <StoreCatButton categoryName={'All'} />
 

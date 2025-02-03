@@ -103,6 +103,7 @@ const ProductCardGroup = ({ storeName }: Props) => {
             mx="auto"
             justifyContent={'center'}
             alignItems={'center'}
+            className="product-group-store"
         >
             <Grid
                 maxWidth={'1256.52px'}

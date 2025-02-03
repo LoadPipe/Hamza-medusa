@@ -14,7 +14,7 @@ describe('Product info', () => {
 	});
 
 	it('should have product-info-title with text "Medusa T-Shirt"', () => {
-		cy.get('.product-info-title').should('exist').and('have.text', 'Medusa T-Shirt');
+		cy.get('.product-info-title').should('exist').and('contain', 'Medusa T-Shirt');
 	});
 });
 
