@@ -624,6 +624,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 )}
 
                 <Button
+                    className="preview-checkout-add-to-cart"
                     display={{ base: 'none', md: 'flex' }}
                     disabled={(!inStock && !isWhitelisted) || !cart}
                     onClick={() => {

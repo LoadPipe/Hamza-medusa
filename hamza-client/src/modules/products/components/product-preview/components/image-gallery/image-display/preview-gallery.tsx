@@ -170,7 +170,7 @@ const PreviewGallery: React.FC<PreviewGalleryProps> = ({
                         <IconButton
                             as="button"
                             display={{ base: 'flex', md: 'none' }}
-                            icon={<ProductDetailsMobileMenu />}
+                            // icon={<ProductDetailsMobileMenu />}
                             position="absolute"
                             top="10px"
                             right="10px"
