@@ -3,7 +3,6 @@ import React from 'react';
 import { Flex, Text, Divider } from '@chakra-ui/react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import Thumbnail from '@modules/products/components/thumbnail';
-// import Tweet from '@/components/tweet';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import Image from 'next/image';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';

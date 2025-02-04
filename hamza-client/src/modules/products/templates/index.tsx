@@ -2,25 +2,17 @@
 
 import { Region } from '@medusajs/medusa';
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-
-// import ProductReview from '@modules/products/components/product-review';
-// import ProductInfo from '@modules/products/templates/product-info';
 import { notFound } from 'next/navigation';
-import { Box, Flex, Divider, Text } from '@chakra-ui/react';
+import { Flex, Divider, Text } from '@chakra-ui/react';
 import PreviewGallery from '../components/product-preview/components/image-gallery/image-display/preview-gallery';
 import ProductInfo from '../components/product-preview/components/product-info/product-info';
 import PreviewCheckout from '../components/product-preview/components/summary/preview-checkout';
 import ProductReview from '../components/product-preview/components/product-review';
-import ProductReviewMobile from '../components/product-preview/components/product-review-mobile';
 import useProductPreview from '@/zustand/product-preview/product-preview';
 import StoreBanner from '../components/product-preview/components/store-banner/store-banner';
-import SearchBar from '../components/product-preview/components/mobile-search';
-// import Tweet from '@/components/tweet';
-import { MdChevronLeft } from 'react-icons/md';
 import { getStore } from '@lib/data';
-import { BiBorderRadius } from 'react-icons/bi';
 import { FaArrowLeftLong } from 'react-icons/fa6';
 
 type ProductTemplateProps = {
