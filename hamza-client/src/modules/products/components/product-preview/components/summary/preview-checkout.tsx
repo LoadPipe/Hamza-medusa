@@ -15,10 +15,15 @@ import toast from 'react-hot-toast';
 import OptionSelect from '../../../option-select';
 import { isEqual } from 'lodash';
 import CartPopup from '../../../cart-popup';
-import { getAverageRatings, getStore, getReviewCount, clearCart } from '@lib/data';
+import {
+    getAverageRatings,
+    getStore,
+    getReviewCount,
+    clearCart,
+} from '@lib/data';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import Spinner from '@modules/common/icons/spinner';
-import TermsOfService from '@/modules/terms-of-service/product-details-tos';
+import TermsOfService from '@/modules/terms-of-service/templates/product-details-tos';
 import { renderStars } from '@modules/products/components/review-stars';
 import { BiHeart, BiSolidHeart } from 'react-icons/bi';
 import useWishlistStore, {
@@ -300,7 +305,6 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
         }
         return output;
     };
-    
 
     useEffect(() => {
         const fetchCart = async () => {
