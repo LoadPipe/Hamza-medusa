@@ -27,7 +27,7 @@ type ItemProps = {
     currencyCode?: string;
 };
 
-const Item = ({ item, region, currencyCode }: ItemProps) => {
+const ItemCheckout = ({ item, region, currencyCode }: ItemProps) => {
     const [updating, setUpdating] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -121,4 +121,4 @@ const Item = ({ item, region, currencyCode }: ItemProps) => {
     );
 };
 
-export default Item;
+export default ItemCheckout;

@@ -1,7 +1,7 @@
 import { LineItem } from '@medusajs/medusa';
 import { Metadata } from 'next';
 
-import CartTemplate from '@modules/cart/templates';
+import CartTemplate from '@/modules/cart/templates/cart-template';
 
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { getCheckoutStep } from '@lib/util/get-checkout-step';

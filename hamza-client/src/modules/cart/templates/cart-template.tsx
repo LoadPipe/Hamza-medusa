@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import ItemsTemplate from './items';
+import ItemsTemplate from './items-template';
 import Summary from './summary';
 import { CartWithCheckoutStep } from '@/types/global';
 import SignInPrompt from '../components/sign-in-prompt';
@@ -27,7 +27,6 @@ const CartTemplate = ({
 
     const { preferred_currency_code, setCustomerPreferredCurrency } =
         useCustomerAuthStore();
-
 
     return (
         <Flex

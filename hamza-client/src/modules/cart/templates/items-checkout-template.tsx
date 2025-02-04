@@ -16,7 +16,7 @@ type ItemsTemplateProps = {
     cart_id: string;
 };
 
-const ItemsTemplate = ({
+const ItemsCheckoutTemplate = ({
     items,
     region,
     currencyCode,
@@ -73,4 +73,4 @@ const ItemsTemplate = ({
     );
 };
 
-export default ItemsTemplate;
+export default ItemsCheckoutTemplate;
