@@ -4,11 +4,7 @@ import { Text, FormControl, Box } from '@chakra-ui/react';
 
 import React, { useState } from 'react';
 import 'react-phone-number-input/style.css';
-import PhoneInput, {
-    formatPhoneNumber,
-    formatPhoneNumberIntl,
-    Value,
-} from 'react-phone-number-input';
+import PhoneInput from 'react-phone-number-input';
 import { css } from '@emotion/react';
 
 const customStyles = css`
