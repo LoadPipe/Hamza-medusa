@@ -4,7 +4,7 @@ import { Region, Variant } from '@/types/medusa';
 
 import { isEmpty } from './isEmpty';
 import { ProductVariantInfo, RegionInfo } from '../../types/global';
-import { noDivisionCurrencies } from '@lib/constants';
+import { noDivisionCurrencies } from '@/lib/config/constants';
 import { formatCryptoPrice } from './get-product-price';
 
 export const findCheapestRegionPrice = (
@@ -303,9 +303,10 @@ export const formatPriceBetweenCurrencies = (
 ) => {
     let formattedPrice: string | number = '';
     if (from_currency_code === 'eth') {
-        const fromPrice = variant_prices.find(
-            (price: any) => price.currency_code === to_currency_code
-        )?.amount || variant_prices?.[0]?.amount;
+        const fromPrice =
+            variant_prices.find(
+                (price: any) => price.currency_code === to_currency_code
+            )?.amount || variant_prices?.[0]?.amount;
         formattedPrice = formatCryptoPrice(fromPrice ?? 0, to_currency_code);
     }
     return formattedPrice;

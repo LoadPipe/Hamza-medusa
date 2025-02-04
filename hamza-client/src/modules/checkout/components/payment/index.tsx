@@ -16,7 +16,7 @@ import Divider from '@modules/common/components/divider';
 import Spinner from '@modules/common/icons/spinner';
 import PaymentContainer from '@modules/checkout/components/payment-container';
 import { setPaymentMethod } from '@modules/checkout/actions';
-import { paymentInfoMap } from '@lib/constants';
+import { paymentInfoMap } from '@/lib/config/constants';
 import EnsureWalletConnected from '@/modules/common/components/ensure-wallet-connected';
 const Payment = ({
     cart,

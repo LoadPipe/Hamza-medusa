@@ -23,7 +23,7 @@ import {
     ProductCategoryWithChildren,
     ProductPreviewType,
 } from '@/types/global';
-import { medusaClient } from '../config';
+import { medusaClient } from '../config/config';
 import medusaError from '@lib/util/medusa-error';
 import axios from 'axios';
 
@@ -927,7 +927,7 @@ export async function getCustomer() {
 export async function getCustomerOrder(customer_id: string, order_id: string) {
     const orders = await postSecure('/custom/order', {
         customer_id: customer_id,
-        order_id: order_id
+        order_id: order_id,
     });
     return orders[0];
 }
