@@ -20,7 +20,7 @@ import {
     deleteNotifications,
 } from '@lib/data';
 
-const ToggleNotifications = ({ region }: { region: Region }) => {
+const NotificationToggle = ({ region }: { region: Region }) => {
     // Explicitly typing `selectedNotifications` as an array of strings
     const [selectedNotifications, setSelectedNotifications] = useState<
         string[]
@@ -291,4 +291,4 @@ const ToggleNotifications = ({ region }: { region: Region }) => {
     );
 };
 
-export default ToggleNotifications;
+export default NotificationToggle;
