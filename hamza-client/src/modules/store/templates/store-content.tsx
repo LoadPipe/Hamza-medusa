@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 import { Flex, Box, Text, Image, Divider, Skeleton } from '@chakra-ui/react';
-import StoreProductDisplay from '@modules/store/components/products/store-product-display';
+import StoreProductDisplay from './store-product-display';
 import { getVendorStoreBySlug } from '@lib/data';
 import {
     MdOutlineKeyboardArrowRight,
