@@ -12,9 +12,9 @@ import {
     ModalBody,
     ModalFooter,
 } from '@chakra-ui/react';
-import ShippingPolicy from './policies/shipping-policy';
-import PaymentPolicy from './policies/payment-policy';
-import ReturnPolicy from './policies/return-policy';
+import ShippingPolicy from '../policies/shipping-policy';
+import PaymentPolicy from '../policies/payment-policy';
+import ReturnPolicy from '../policies/return-policy';
 import DisclaimerPolicy from '@modules/terms-of-service/policies/disclaimer-policy';
 import BuyerSellerProtection from '@modules/terms-of-service/policies/buyer-seller-protection';
 import LimitationOfLiability from '@modules/terms-of-service/policies/limitation-of-liability';
