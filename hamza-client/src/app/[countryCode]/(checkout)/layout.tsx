@@ -3,7 +3,7 @@ import React from 'react';
 import Nav from '@modules/layout/templates/nav';
 import Footer from '@modules/layout/templates/footer';
 import { Flex } from '@chakra-ui/react';
-import ForceWalletConnect from '@/app/components/loaders/force-wallet-connect';
+import ForceWalletConnect from '@/modules/common/components/force-wallet-connect';
 
 export default function CheckoutLayout({
     children,

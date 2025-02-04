@@ -20,7 +20,7 @@ import {
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { useEffect, useState } from 'react';
-import HamzaLogoLoader from '../hamza-logo-loader';
+import HamzaLogoLoader from '../../../../../app/components/loaders/hamza-logo-loader';
 
 export const CheckoutWalletButton = () => {
     const { error, isLoading, pendingChainId, switchNetwork } =

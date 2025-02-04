@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { LineItem } from '@medusajs/medusa';
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { Flex } from '@chakra-ui/react';
-import ForceWalletConnect from '@/app/components/loaders/force-wallet-connect';
+import ForceWalletConnect from '@/modules/common/components/force-wallet-connect';
 import CheckoutTemplate from '@/modules/checkout/templates';
 import { SwitchNetwork } from '@/app/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 
