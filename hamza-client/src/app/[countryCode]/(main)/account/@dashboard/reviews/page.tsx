@@ -7,7 +7,7 @@ import {
     listRegions,
     getVerificationStatus,
 } from '@lib/data';
-import getQueryClient from '@/getQueryClient';
+import getQueryClient from '@/app/query-utils/getQueryClient';
 import { dehydrate } from '@tanstack/react-query';
 import ReviewTemplate from '@modules/account/components/reviews/reviews-template';
 import { getAllProductReviews, getNotReviewedOrders } from '@lib/data';
@@ -55,10 +55,10 @@ export default async function Reviews() {
             p={'24px'}
             rounded="lg"
         >
-                <ReviewTemplate
-                    customer={customer}
-                    dehydratedState={dehydrateReviews}
-                />
+            <ReviewTemplate
+                customer={customer}
+                dehydratedState={dehydrateReviews}
+            />
         </Flex>
     );
 }

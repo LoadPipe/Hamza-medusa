@@ -18,7 +18,7 @@ import { getAllProductReviews, getNotReviewedOrders } from '@lib/data';
 import EditReviewTemplate from '@modules/editreview/[id]/edit-review-template';
 import ReviewTemplate from '@modules/review/[id]/review-template';
 import { useQueries, useQuery } from '@tanstack/react-query';
-import getQueryClient from '@/getQueryClient';
+import getQueryClient from '@/app/query-utils/getQueryClient';
 
 import Spinner from '@modules/common/icons/spinner';
 
