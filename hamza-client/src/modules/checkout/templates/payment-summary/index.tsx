@@ -5,7 +5,7 @@ import { LineItem } from '@medusajs/medusa';
 import CartTotals from '@modules/common/components/cart-totals';
 import PaymentButton from '@modules/checkout/components/payment-button';
 import DiscountCode from '@modules/checkout/components/discount-code';
-import CheckoutTermsOfService from '@modules/terms-of-service/checkout-tos';
+import CheckoutTermsOfService from '@/modules/terms-of-service/templates/checkout-tos';
 
 const PaymentSummary = async (params: any) => {
     const cartId = params.cartId;
