@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import '@rainbow-me/rainbowkit/styles.css';
 import {
     createAuthenticationAdapter,
@@ -282,19 +282,28 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
         },
     });
 
-    // Set default staleTime to avoid refetching immediately on the client
-    // Ensures ensures that data is not shared between different users and requests
+    // ***Ensures data is not shared between different users and requests***
     // https://tanstack.com/query/v4/docs/framework/react/guides/ssr#using-hydration
-    const [queryClient] = useState(
-        () =>
-            new QueryClient({
-                defaultOptions: {
-                    queries: {
-                        staleTime: 60 * 1000,
-                    },
+    const queryClientRef = useRef();
+
+    if (!queryClientRef.current) {
+        queryClientRef.current = new QueryClient({
+            defaultOptions: {
+                queries: {
+                    staleTime: 2 * 60 * 1000, // ⏳ 2 min - Prevents unnecessary refetches, keeping data fresh
+                    cacheTime: 2 * 60 * 1000, // 💾 2 min - Retains inactive queries for instant recall
+                    refetchOnWindowFocus: false, // 🚫 Avoids re-fetching when switching tabs
+                    refetchOnReconnect: true, // ✅ Ensures fresh data after reconnection
+                    refetchOnMount: false, // 🚀 Prevents redundant fetches when remounting components
+                    retry: 2, // 🔄 Retries failed queries twice before throwing an error
                 },
-            })
-    );
+                mutations: {
+                    retry: 2, // 🔄 Retries mutations twice before failing (handles network issues)
+                },
+            },
+        });
+    }
+
 
     const CustomAvatar: AvatarComponent = ({ address, ensImage, size }) => {
         return <ProfileImage centered={true} />;
@@ -303,7 +312,7 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
     return (
         <div>
             <WagmiConfig config={config}>
-                <QueryClientProvider client={queryClient}>
+                <QueryClientProvider client={queryClientRef.current}>
                     <RainbowKitAuthenticationProvider
                         adapter={walletSignature}
                         status={authData.status}

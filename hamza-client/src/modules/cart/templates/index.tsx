@@ -8,9 +8,10 @@ import Divider from '@modules/common/components/divider';
 import { Customer } from '@medusajs/medusa';
 import { Flex } from '@chakra-ui/react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-
+import { useQuery } from '@tanstack/react-query';
+import { retrieveCart } from '@modules/cart/actions';
 const CartTemplate = ({
-    cart,
+    cart: initialCart,
     customer,
 }: {
     cart: CartWithCheckoutStep | null;
@@ -28,6 +29,13 @@ const CartTemplate = ({
     const { preferred_currency_code, setCustomerPreferredCurrency } =
         useCustomerAuthStore();
 
+    // Use TanStack Query with initialData
+    const { data: cart, isFetching } = useQuery({
+        queryKey: ['cart'],
+        queryFn: retrieveCart,
+        initialData: initialCart, // Use SSR-fetched cart
+        staleTime: 1000 * 60 * 5, // Keep fresh for 5 minutes
+    });
 
     return (
         <Flex

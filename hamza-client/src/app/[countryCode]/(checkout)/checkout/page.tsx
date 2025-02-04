@@ -1,3 +1,15 @@
+/**
+ * Author: Garo Nazarian
+ * Refactored by: Doom
+ * We're going to use Tanstack Query here with Hydration and Suspense
+ * We're going to use a similar architecture as in the Order Page where we have done this...
+ *
+ * 1. Allow automatic background refetching if data becomes stale
+ * 2. Improve performance and UX by reducing unnecessary re-fetches.
+ * 3. Ensure QueryClient handles the state properly across client & server
+ *
+ */
+
 import { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
@@ -7,15 +19,10 @@ import { Flex } from '@chakra-ui/react';
 import ForceWalletConnect from '@/app/components/loaders/force-wallet-connect';
 import CheckoutTemplate from '@/modules/checkout/templates';
 import { SwitchNetwork } from '@/app/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
+import { dehydrate } from '@tanstack/react-query';
 
 export const metadata: Metadata = {
     title: 'Checkout',
-};
-
-const sleep = (seconds: number) => {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => resolve(true), seconds * 1000);
-    });
 };
 
 const fetchCart = async (cartId: string) => {

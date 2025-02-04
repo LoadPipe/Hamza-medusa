@@ -17,8 +17,7 @@ import { format } from 'date-fns';
 import { getAllProductReviews, getNotReviewedOrders } from '@lib/data';
 import EditReviewTemplate from '@modules/editreview/[id]/edit-review-template';
 import ReviewTemplate from '@modules/review/[id]/review-template';
-import { useQueries, useQuery } from '@tanstack/react-query';
-import getQueryClient from '@/getQueryClient';
+import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import Spinner from '@modules/common/icons/spinner';
 
@@ -84,7 +83,7 @@ const ReviewPage = ({ customer }: { customer: any }) => {
     const customer_id = customer.id;
 
     // setup query client
-    const queryClient = getQueryClient();
+    const queryClient = useQueryClient();
 
     const results = useQueries({
         queries: [
