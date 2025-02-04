@@ -1,6 +1,6 @@
 import { Flex } from '@chakra-ui/react';
 import React from 'react';
-import ProfileForm from './profile-form/profile-form';
+import ProfileForm from './components/profile-form/profile-form';
 
 interface ProfileProps {
     customer: any; // Replace 'any' with the actual type of 'customer' if known

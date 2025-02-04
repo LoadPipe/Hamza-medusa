@@ -1,13 +1,7 @@
 'use client';
 
-import {
-    Flex,
-    Input,
-    FormControl,
-    FormLabel,
-    FormErrorMessage,
-} from '@chakra-ui/react';
-import React, { ChangeEvent, useState } from 'react';
+import { Flex, Input, FormControl, FormLabel } from '@chakra-ui/react';
+import React, { ChangeEvent } from 'react';
 
 interface ProfileInputProps {
     label: string;
