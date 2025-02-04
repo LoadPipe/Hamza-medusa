@@ -1,8 +1,8 @@
 import { Customer, Region } from '@medusajs/medusa';
 import React from 'react';
 
-import AddAddress from '../address-card/add-address';
-import EditAddress from '../address-card/edit-address-modal';
+import AddAddress from '../address-book/components/add-address';
+import EditAddress from '../address-book/components/edit-address-modal';
 import NotificationToggle from '../notification-toggle';
 // import
 
