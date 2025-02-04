@@ -2,16 +2,14 @@
 
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-import { useParams, usePathname } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import { Popover, Transition } from '@headlessui/react';
 import { WishlistType } from '@/zustand/wishlist/types/wishlist-types';
 import Image from 'next/image';
 import { Button } from '@medusajs/ui';
-import Thumbnail from '@modules/products/components/thumbnail';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { FaRegHeart } from 'react-icons/fa';
 
 interface WishlistPopoverItemProps {
     item?: WishlistType;
