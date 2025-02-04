@@ -2,46 +2,17 @@
 
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import Head from 'next/head';
-import ProductCollections from '@modules/collections/product_collection_filter';
-import {
-    Flex,
-    Box,
-    Text,
-    Image,
-    Button,
-    Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
-    ModalBody,
-    ModalCloseButton,
-    FormControl,
-    FormLabel,
-    Textarea,
-    Select,
-    useDisclosure,
-    Alert,
-    AlertIcon,
-    AlertTitle,
-    AlertDescription,
-    FormErrorMessage,
-    Divider,
-    Skeleton,
-} from '@chakra-ui/react';
+
+import { Flex, Box, Text, Image, Divider, Skeleton } from '@chakra-ui/react';
 import StoreProductDisplay from '@modules/store/components/products/store-product-display';
 import { getVendorStoreBySlug } from '@lib/data';
 import {
     MdOutlineKeyboardArrowRight,
     MdOutlineKeyboardArrowUp,
 } from 'react-icons/md';
-import { Metadata } from 'next';
-
-const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
 
 export default function StoreContent({ params }: { params: { slug: string } }) {
-    const slug = params.slug?.trim(); //capitalizeSlug(params.slug);
+    const slug = params.slug?.trim();
     const [reviewStats, setReviewStats] = useState({
         reviewCount: 0,
         reviews: [],
@@ -410,17 +381,4 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
             <StoreProductDisplay storeName={slug} />
         </Box>
     );
-}
-
-// Function to capitalize each word in the slug
-function capitalizeSlug(slug: string) {
-    // Decode URI components before processing
-    const decodedSlug = decodeURIComponent(slug);
-    return decodedSlug
-        .replace(/\+/g, ' ')
-        .split(/[\s-]+/) // Split on any sequence of spaces or dashes
-        .map(
-            (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-        )
-        .join(' ');
 }
