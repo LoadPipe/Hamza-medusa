@@ -3,7 +3,7 @@ import React from 'react';
 import ProfileForm from './components/profile-form/profile-form';
 
 interface ProfileProps {
-    customer: any; // Replace 'any' with the actual type of 'customer' if known
+    customer: any;
 }
 
 function Profile({ customer }: ProfileProps) {
