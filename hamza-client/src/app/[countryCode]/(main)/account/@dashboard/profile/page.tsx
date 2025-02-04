@@ -1,8 +1,6 @@
 import { Metadata } from 'next';
 import { getHamzaCustomer, listRegions } from '@lib/data';
 import { notFound } from 'next/navigation';
-import { Flex } from '@chakra-ui/react';
-import ProfileForm from './profile-form/profile-form';
 import Profile from '@/modules/account/components/profile';
 
 export const metadata: Metadata = {

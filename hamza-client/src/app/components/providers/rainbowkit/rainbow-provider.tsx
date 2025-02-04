@@ -33,7 +33,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 import useWishlistStore from '@/zustand/wishlist/wishlist-store';
-import ProfileImage from '@/account/@dashboard/profile/profile-form/components/customer-icon/profile-image';
+import ProfileImage from '@/modules/common/components/customer-icon/profile-image';
 
 const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';

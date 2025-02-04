@@ -20,7 +20,7 @@ import { AiFillSetting } from 'react-icons/ai';
 import { AuthorizedAccount } from '../../menu-desktop/components/authorized-account';
 import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import ProfileImage from '@/account/@dashboard/profile/profile-form/components/customer-icon/profile-image';
+import ProfileImage from '@/modules/common/components/customer-icon/profile-image';
 
 const MobileAccountMenu = () => {
     const { authData } = useCustomerAuthStore();
