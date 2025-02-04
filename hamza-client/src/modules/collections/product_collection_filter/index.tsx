@@ -16,14 +16,20 @@ type Props = {
 };
 
 const ProductCollections = ({ storeName }: Props) => {
-    const { data, error, isLoading } = useQuery(
-        ['products', { vendor: storeName }],
-        () =>
-            getProductsByStoreName(storeName).catch((err) => {
-                console.log(err);
-                return null;
-            })
-    );
+
+    const { data, error, isLoading } = useQuery({
+        queryKey: ['products', { vendor: storeName }], // ✅ Ensure correct queryKey structure
+        queryFn: async () => {
+            try {
+                return await getProductsByStoreName(storeName);
+            } catch (err) {
+                console.error('Error fetching products:', err);
+                return null; // ✅ Return null explicitly if an error occurs
+            }
+        },
+        enabled: !!storeName, // ✅ Ensures the query only runs when storeName is defined
+    });
+
 
     const { authData, preferred_currency_code } = useCustomerAuthStore();
     //console.log('user preferred currency code: ', preferred_currency_code);
@@ -63,7 +69,7 @@ const ProductCollections = ({ storeName }: Props) => {
                                     product.variants[0].prices.find(
                                         (a: any) =>
                                             a.currency_code ==
-                                            preferred_currency_code
+                                            preferred_currency_code,
                                     );
                                 return (
                                     <LocalizedClientLink
@@ -82,14 +88,14 @@ const ProductCollections = ({ storeName }: Props) => {
                                                 {/*    <br />*/}
 
                                                 {authData.status ==
-                                                    'authenticated' &&
+                                                'authenticated' &&
                                                 preferred_currency_code &&
                                                 preferredPrice ? (
                                                     <>
                                                         {' '}
                                                         {formatCryptoPrice(
                                                             preferredPrice.amount,
-                                                            preferred_currency_code
+                                                            preferred_currency_code,
                                                         )}{' '}
                                                         {preferredPrice.currency_code.toUpperCase()}
                                                     </>
@@ -101,14 +107,14 @@ const ProductCollections = ({ storeName }: Props) => {
                                                                     <>
                                                                         {formatCryptoPrice(
                                                                             price.amount,
-                                                                            price.currency_code
+                                                                            price.currency_code,
                                                                         )}{' '}
                                                                         {price.currency_code.toUpperCase()}
                                                                         <br />
                                                                         {'  '}
                                                                     </>
                                                                 );
-                                                            }
+                                                            },
                                                         )}
                                                     </>
                                                 )}

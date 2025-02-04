@@ -14,28 +14,30 @@ import { IconContext } from 'react-icons';
 
 import Item from '@modules/cart/components/item';
 import SkeletonLineItem from '@modules/skeletons/components/skeleton-line-item';
+import { useQuery } from '@tanstack/react-query';
+import { fetchCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
 };
 
 type ItemsTemplateProps = {
-    items?: Omit<ExtendedLineItem, 'beforeInsert'>[];
-    region?: Region;
     currencyCode?: string;
-    cart_id: string;
 };
 
 const ItemsTemplate = ({
-    items,
-    region,
     currencyCode,
-    cart_id,
 }: ItemsTemplateProps) => {
+    const { data: cart } = useQuery({
+        queryKey: ['cart'],
+        queryFn: fetchCart,
+        staleTime: 1000 * 60 * 5,
+    });
+    if (!cart || !cart.items) return <p>No items in cart</p>
     return (
         <Flex
             flexDir={'column'}
-            maxW={items && items.length > 0 ? '830px' : '100%'}
+            maxW={cart.items && cart.items.length > 0 ? '830px' : '100%'}
             width={'100%'}
             height={'auto'}
             alignSelf={'self-start'}
@@ -56,8 +58,8 @@ const ItemsTemplate = ({
                 </Text>
             </Flex>
             <Box mt="1rem" minHeight={{ base: '170px', md: '400px' }}>
-                {items && items.length > 0 && region ? (
-                    items
+                {cart.items && cart.items.length > 0 && cart.region ? (
+                    cart.items
                         .sort((a, b) => {
                             return a.created_at > b.created_at ? -1 : 1;
                         })
@@ -66,8 +68,8 @@ const ItemsTemplate = ({
                                 <Item
                                     key={item.id}
                                     item={item}
-                                    region={region}
-                                    cart_id={cart_id}
+                                    region={cart.region}
+                                    cart_id={cart.id}
                                     currencyCode={currencyCode}
                                 />
                             );

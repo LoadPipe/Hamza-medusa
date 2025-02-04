@@ -44,10 +44,10 @@ const PaymentSummary = async (params: any) => {
                 Payment Summary
             </Text>
 
-            <CartTotals data={cart} useCartStyle={true} />
+            <CartTotals useCartStyle={true} />
 
             <Flex mt="auto" flexDir={'column'} gap={5}>
-                <DiscountCode cart={cart} />
+                <DiscountCode />
                 <PaymentButton cart={cart} />
                 {/* <Text
                     textAlign="center"

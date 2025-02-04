@@ -102,15 +102,15 @@ const ReviewPage = ({ customer }: { customer: any }) => {
     const [pendingReviewsQuery, reviewQuery] = results;
 
     const handleReviewUpdated = async () => {
-        await queryClient.resetQueries(['reviewQuery', customer_id]);
-        await queryClient.resetQueries(['homeProducts']);
-        await queryClient.refetchQueries(['homeProducts']);
+        await queryClient.resetQueries({ queryKey: ['reviewQuery', customer_id] });
+        await queryClient.resetQueries({ queryKey:['homeProducts']});
+        await queryClient.refetchQueries({ queryKey:['homeProducts']});
     };
 
     const handlePendingUpdated = async () => {
         await pendingReviewsQuery.refetch();
-        await queryClient.resetQueries(['homeProducts']);
-        await queryClient.refetchQueries(['homeProducts']);
+        await queryClient.resetQueries({ queryKey:['homeProducts']});
+        await queryClient.refetchQueries({ queryKey:['homeProducts']});
     };
 
     const handleReviewEdit = (review: any) => {

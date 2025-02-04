@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import '@rainbow-me/rainbowkit/styles.css';
 import {
     createAuthenticationAdapter,
@@ -284,15 +284,14 @@ export function RainbowWrapper({ children }: { children: React.ReactNode }) {
 
     // ***Ensures data is not shared between different users and requests***
     // https://tanstack.com/query/v4/docs/framework/react/guides/ssr#using-hydration
-    const queryClientRef = useRef();
+    const queryClientRef = React.useRef<QueryClient>();
 
     if (!queryClientRef.current) {
         queryClientRef.current = new QueryClient({
             defaultOptions: {
                 queries: {
                     staleTime: 2 * 60 * 1000, // ⏳ 2 min - Prevents unnecessary refetches, keeping data fresh
-                    cacheTime: 2 * 60 * 1000, // 💾 2 min - Retains inactive queries for instant recall
-                    refetchOnWindowFocus: false, // 🚫 Avoids re-fetching when switching tabs
+                    refetchOnWindowFocus: false, // Avoids re-fetching when switching tabs
                     refetchOnReconnect: true, // ✅ Ensures fresh data after reconnection
                     refetchOnMount: false, // 🚀 Prevents redundant fetches when remounting components
                     retry: 2, // 🔄 Retries failed queries twice before throwing an error

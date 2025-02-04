@@ -13,6 +13,8 @@ import { useCartShippingOptions } from 'medusa-react';
 import axios from 'axios';
 import { getClientCookie } from '@lib/util/get-client-cookies';
 import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
+import { fetchCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart';
+import { useQuery } from '@tanstack/react-query';
 
 type CartTotalsProps = {
     data: Omit<Cart, 'refundable_amount' | 'refunded_total'> | Order;
@@ -23,53 +25,24 @@ type ExtendedLineItem = LineItem & {
     currency_code?: string;
 };
 
-const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
-    const {
-        subtotal,
-        discount_total,
-        gift_card_total,
-        tax_total,
-        shipping_total,
-        total,
-    } = data;
-
+const CartTotals: React.FC<{ useCartStyle: boolean }> = ({ useCartStyle }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
-    const [shippingCost, setShippingCost] = useState<number>(0);
-    const [loading, setLoading] = useState<boolean>(false); // Added loading state
-    const [convertedPrice, setConvertedPrice] = React.useState<string | null>(
-        null
-    );
 
-    useEffect(() => {
-        let isMounted = true; // Prevent setting state if component unmounts
+    const { data: cart } = useQuery({
+        queryKey: ['cart'],
+        queryFn: fetchCart,
+        staleTime: 1000 * 60 * 5,
+    });
 
-        const fetchShippingCost = async () => {
-            setLoading(true); // Start loader
-            try {
-                console.log('Fetching shipping cost...');
-                const cost = await updateShippingCost(data.id);
-                if (isMounted) {
-                    console.log('Shipping cost updated:', cost);
-                    setShippingCost(cost);
-                }
-            } catch (error) {
-                if (isMounted) {
-                    console.error('Error fetching shipping cost:', error);
-                }
-            } finally {
-                if (isMounted) {
-                    setLoading(false); // Stop loader
-                }
-            }
-        };
 
-        fetchShippingCost();
 
-        // Cleanup function to cancel updates if unmounted
-        return () => {
-            isMounted = false;
-        };
-    }, [data.id, preferred_currency_code]);
+    const { data: shippingCost, isLoading: loading } = useQuery({
+        queryKey: ['shippingCost', cart?.id, preferred_currency_code], // ✅ Unique key per cart
+        queryFn: () => updateShippingCost(cart!.id), // ✅ Only fetch when cart exists
+        enabled: !!cart?.id, // ✅ Prevents fetching if no cart ID is available
+        staleTime: 1000 * 60 * 5, // ✅ Cache shipping cost for 5 minutes
+    });
+
 
     const getCartSubtotal = (cart: any, currencyCode: string) => {
         const subtotals: { [key: string]: number } = {};
@@ -103,34 +76,30 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
     };
 
     const finalSubtotal = getCartSubtotal(
-        data,
+        cart,
         preferred_currency_code ?? 'usdc'
     );
-    const taxTotal = data.tax_total ?? 0;
+    const taxTotal = cart?.tax_total ?? 0;
     const grandTotal = (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
     const displayCurrency =
         finalSubtotal?.currency || preferred_currency_code || 'usdc';
 
-    React.useEffect(() => {
-        const fetchConvertedPrice = async () => {
+    const { data: convertedPrice, isLoading: isConverting } = useQuery({
+        queryKey: ['convertedPrice', grandTotal, preferred_currency_code], // ✅ Unique key per conversion
+        queryFn: async () => {
             const result = await convertPrice(
-                Number(
-                    formatCryptoPrice(
-                        grandTotal,
-                        preferred_currency_code ?? 'usdc'
-                    )
-                ),
+                Number(formatCryptoPrice(grandTotal, preferred_currency_code ?? 'usdc')),
                 'eth',
                 'usdc'
             );
-            const formattedResult = Number(result).toFixed(2);
-            setConvertedPrice(formattedResult);
-        };
+            return Number(result).toFixed(2);
+        },
+        enabled: preferred_currency_code === 'eth', // ✅ Fetch only when preferred currency is ETH
+        staleTime: 1000 * 60 * 5, // ✅ Cache conversion result for 5 minutes
+    });
 
-        if (preferred_currency_code === 'eth') {
-            fetchConvertedPrice();
-        }
-    }, [grandTotal, preferred_currency_code]);
+
+    if (!cart || cart.items.length === 0) return <p>No Cart Data... Refresh</p>; // ✅ Hide totals if cart is empty
 
     return (
         <>
@@ -162,12 +131,12 @@ const CartTotals: React.FC<CartTotalsProps> = ({ data, useCartStyle }) => {
                     </Flex>
                 )}
 
-                {!!discount_total && (
+                {!!cart.discount_total && (
                     <Text fontSize={{ base: '14px', md: '16px' }}>
                         <span>Discount</span>
                     </Text>
                 )}
-                {!!gift_card_total && (
+                {!!cart.gift_card_total && (
                     <Text fontSize={{ base: '14px', md: '16px' }}>
                         Gift Card
                     </Text>

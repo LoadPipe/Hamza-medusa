@@ -2,40 +2,44 @@
 import React from 'react';
 import ItemsTemplate from './items';
 import Summary from './summary';
-import { CartWithCheckoutStep } from '@/types/global';
 import SignInPrompt from '../components/sign-in-prompt';
 import Divider from '@modules/common/components/divider';
 import { Customer } from '@medusajs/medusa';
 import { Flex } from '@chakra-ui/react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { useQuery } from '@tanstack/react-query';
-import { retrieveCart } from '@modules/cart/actions';
+import { fetchCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart';
+
+/**
+ * @param initialCart - CartWithCheckoutStep | null (if initialCart prop changes and ANY re-renders
+ * that change isn't reflected in the cart state since initialCart is only used to set the initial value)
+ * So we won't be using initialCart to get data into the cache.
+ * @Author Garo
+ * @What: `What if instead of fetching on the server and sending that data to the client,
+ * we fetch on the server, add it to the cache, and then send the whole cache to the client to hydrate?`
+ * @API's: `dehydrate` `HydrationBoundary`
+ */
 const CartTemplate = ({
-    cart: initialCart,
     customer,
 }: {
-    cart: CartWithCheckoutStep | null;
     customer: Omit<Customer, 'password_hash'> | null;
 }) => {
-    // TODO: Remove this if its not being used...
-    // const updateInventory = async (cart: CartWithCheckoutStep) => {
-    //     const items = cart.items.map((item) => ({
-    //         variant_id: item.variant_id,
-    //         quantity: item.quantity,
-    //     }));
-    //     console.log('ITEMS ARE', items);
-    // };
-
     const { preferred_currency_code, setCustomerPreferredCurrency } =
         useCustomerAuthStore();
 
-    // Use TanStack Query with initialData
-    const { data: cart, isFetching } = useQuery({
+    const { data: initialCart, isLoading, isError } = useQuery({
         queryKey: ['cart'],
-        queryFn: retrieveCart,
-        initialData: initialCart, // Use SSR-fetched cart
-        staleTime: 1000 * 60 * 5, // Keep fresh for 5 minutes
-    });
+        queryFn: fetchCart,
+        staleTime: 1000 * 60 * 5, // Cache cart for 5 minutes
+    })
+
+    if (isLoading) {
+        return <p>Loading cart...</p>; // ✅ Better UX
+    }
+
+    if (isError) {
+        return <p>Error loading cart. Please try again.</p>; // ✅ Handle errors
+    }
 
     return (
         <Flex
@@ -63,17 +67,14 @@ const CartTemplate = ({
                     )}
                     {/* Cart Items */}
                     <ItemsTemplate
-                        region={cart?.region}
-                        items={cart?.items}
-                        cart_id={cart?.id as string}
                         currencyCode={preferred_currency_code ?? 'usdc'}
                     />
                     {/* Shipping Address */}
                     {/* <CartShippingAddress customer={customer} /> */}
                 </Flex>
 
-                {cart?.items?.length !== 0 && cart?.region && (
-                    <Summary cart={cart} />
+                {initialCart?.items?.length !== 0 && initialCart?.region && (
+                    <Summary/>
                 )}
             </Flex>
         </Flex>

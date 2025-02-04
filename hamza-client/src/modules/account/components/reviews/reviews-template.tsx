@@ -1,6 +1,6 @@
 'use client';
 
-import { Hydrate } from '@tanstack/react-query';
+import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import ReviewPage from '@/modules/account/components/reviews';
 import React from 'react';
 
@@ -32,9 +32,9 @@ const ReviewTemplate = ({
 }) => {
     return (
         <>
-            <Hydrate state={dehydratedState}>
+            <HydrationBoundary state={dehydratedState}>
                 <ReviewPage customer={customer} />
-            </Hydrate>
+            </HydrationBoundary>
         </>
     );
 };

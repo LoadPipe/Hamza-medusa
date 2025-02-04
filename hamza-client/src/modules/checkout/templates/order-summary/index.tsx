@@ -5,14 +5,17 @@ import CartItems from '@modules/checkout/components/cart-items';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import React from 'react';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
+import { useQuery } from '@tanstack/react-query';
+import { fetchCart } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart';
 
-const OrderSummary = ({
-    cart,
-}: {
-    cart: Omit<Cart, 'refundable_amount' | 'refunded_total'> | null;
-}) => {
+const OrderSummary = ({ cartId }: { cartId: string }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
-
+    const { data: cart } = useQuery({
+        queryKey: ['cart', cartId],
+        queryFn: () => fetchCart(cartId),
+        staleTime: 1000 * 60 * 5,
+        enabled: !!cartId,
+    });
     const isCartEmpty = !cart?.items || cart.items.length === 0;
     return (
         <Flex

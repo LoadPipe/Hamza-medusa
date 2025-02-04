@@ -22,17 +22,17 @@ import { useSearchParams } from 'next/navigation';
 import { formatPriceBetweenCurrencies } from '@/lib/util/prices';
 
 const ProductCardGroup = ({
-    columns = { base: 2, lg: 4 },
-    gap = { base: 4, md: '25.5px' },
-    skeletonCount = 8,
-    skeletonHeight = { base: '134.73', md: '238px' },
-    visibleProductCountInitial = 16,
-    padding = { base: '1rem', md: '1rem' },
-}) => {
+                              columns = { base: 2, lg: 4 },
+                              gap = { base: 4, md: '25.5px' },
+                              skeletonCount = 8,
+                              skeletonHeight = { base: '134.73', md: '238px' },
+                              visibleProductCountInitial = 16,
+                              padding = { base: '1rem', md: '1rem' },
+                          }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const { categorySelect, setCategorySelect } = useProductGroup();
     const [visibleProductsCount, setVisibleProductsCount] = useState(
-        visibleProductCountInitial
+        visibleProductCountInitial,
     );
 
     const { rangeUpper, rangeLower } = useProductFilterModal();
@@ -46,20 +46,17 @@ const ProductCardGroup = ({
         }
     }, [categoryFromUrl, setCategorySelect]);
 
-    const { data, error, isLoading } = useQuery(
-        ['categories', categorySelect, rangeUpper, rangeLower],
-        () =>
+    const { data, error, isLoading } = useQuery({
+        queryKey: ['categories', categorySelect, rangeUpper, rangeLower],
+        queryFn: () =>
             getAllProducts(
                 categorySelect,
                 rangeUpper,
                 rangeLower,
-                preferred_currency_code ?? 'usdc'
+                preferred_currency_code ?? 'usdc',
             ),
-        {
-            staleTime: 60 * 1000,
-            cacheTime: 2 * 60 * 1000,
-        }
-    );
+        staleTime: 60 * 1000,
+    });
 
     const productsAll = data?.products ?? [];
 
@@ -134,26 +131,26 @@ const ProductCardGroup = ({
                         variant?.prices?.find(
                             (price: any) =>
                                 price.currency_code ===
-                                (preferred_currency_code ?? 'usdc')
+                                (preferred_currency_code ?? 'usdc'),
                         )?.amount ||
                         variant?.prices?.[0]?.amount ||
                         0;
 
                     const formattedPrice = formatCryptoPrice(
                         productPricing ?? 0,
-                        preferred_currency_code as string
+                        preferred_currency_code as string,
                     );
 
                     const usdcFormattedPrice = formatPriceBetweenCurrencies(
                         variant?.prices,
                         preferred_currency_code ?? 'usdc',
-                        'usdc'
+                        'usdc',
                     );
 
                     const reviewCounter = product.reviews.length;
                     const totalRating = product.reviews.reduce(
                         (acc: number, review: any) => acc + review.rating,
-                        0
+                        0,
                     );
                     const avgRating = reviewCounter
                         ? totalRating / reviewCounter

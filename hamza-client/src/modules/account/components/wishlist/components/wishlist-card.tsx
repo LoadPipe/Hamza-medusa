@@ -74,17 +74,15 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
     productVariantId,
     countryCode,
 }) => {
-    const { data, error, isLoading, isFetching } = useQuery(
-        ['wishlist', productVariantId], // Use the variant ID directly as part of the query key
-        async () => {
+    const { data, error, isLoading, isFetching } = useQuery({
+        queryKey: ['wishlist', productVariantId], // Use variant ID in query key
+        queryFn: async () => {
             const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/product/inventory?variant_id=${productVariantId}`;
             const response = await axios.get(url);
-            return response.data; // Return only the data part of the response
+            return response.data; // Return only the data
         },
-        {
-            enabled: !!productVariantId, // Ensure the query only runs if productVarientId is defined
-        }
-    );
+        enabled: !!productVariantId, // Ensure query only runs if productVariantId is defined
+    });
 
     console.log(`VARIANT THUMB ${productVariantImage}`);
 
@@ -96,7 +94,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
 
     const resetCard = async () => {
         if (productVariantId !== null && isFetching)
-            await queryClient.resetQueries(['wishlist']);
+            await queryClient.resetQueries({queryKey: ['wishlist']});
     };
 
     // Get inventory data

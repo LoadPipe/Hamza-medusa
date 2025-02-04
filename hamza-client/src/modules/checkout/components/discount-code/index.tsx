@@ -1,15 +1,12 @@
 'use client';
 
-import { InformationCircleSolid } from '@medusajs/icons';
 import { Cart } from '@medusajs/medusa';
-import { Heading, Label, Text, Tooltip } from '@medusajs/ui';
 import React, { useMemo } from 'react';
 import { useFormState } from 'react-dom';
 
+import { useQuery } from '@tanstack/react-query';
+import { fetchCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart';
 // import Input from '@modules/common/components/input';
-import Trash from '@modules/common/icons/trash';
-import ErrorMessage from '@modules/checkout/components/error-message';
-import { SubmitButton } from '@modules/checkout/components/submit-button';
 import { Button, Flex, Box, Input } from '@chakra-ui/react';
 import {
     removeDiscount,
@@ -22,40 +19,46 @@ type DiscountCodeProps = {
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
 };
 
-const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
-    const [isOpen, setIsOpen] = React.useState(false);
 
-    const { discounts, gift_cards, region } = cart;
+const DiscountCode: React.FC = () => {
+    const { data: cart } = useQuery({
+        queryKey: ['cart'],
+        queryFn: fetchCart,
+        staleTime: 1000 * 60 * 5, // ✅ Cache cart data for 5 minutes
+    });
+
 
     const appliedDiscount = useMemo(() => {
-        if (!discounts || !discounts.length) {
+        if (!cart?.discounts || !cart?.discounts.length) {
             return undefined;
         }
 
-        switch (discounts[0].rule.type) {
+        switch (cart?.discounts[0].rule.type) {
             case 'percentage':
-                return `${discounts[0].rule.value}%`;
+                return `${cart?.discounts[0].rule.value}%`;
             case 'fixed':
                 return `- ${formatAmount({
-                    amount: discounts[0].rule.value,
-                    region: region,
+                    amount: cart?.discounts[0].rule.value,
+                    region: cart?.region,
                     currency_code: '',
                 })}`;
 
             default:
                 return 'Free shipping';
         }
-    }, [discounts, region]);
+    }, [cart?.discounts, cart?.region]);
 
     const removeGiftCardCode = async (code: string) => {
-        await removeGiftCard(code, gift_cards);
+        await removeGiftCard(code, cart?.gift_cards ?? []);
     };
 
     const removeDiscountCode = async () => {
-        await removeDiscount(discounts[0].code);
+        await removeDiscount(cart?.discounts[0].code);
     };
 
     const [message, formAction] = useFormState(submitDiscountForm, null);
+
+    if (!cart) return null; // ✅ Hide component if no cart data    const [isOpen, setIsOpen] = React.useState(false);
 
     return (
         <Flex mt="1rem">

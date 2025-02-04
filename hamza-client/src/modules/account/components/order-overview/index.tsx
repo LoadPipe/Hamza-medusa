@@ -14,7 +14,7 @@ import Cancelled from '@modules/order/templates/cancelled';
 import Refund from '@modules/order/templates/refund';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
 import React from 'react';
-import { Hydrate } from '@tanstack/react-query';
+import { HydrationBoundary } from '@tanstack/react-query';
 import { OrderTabsStyle } from './order-tabs-style';
 
 
@@ -83,7 +83,7 @@ const OrderOverview = ({
                     ))}
                 </ButtonGroup>
             )}
-            <Hydrate state={dehydratedState}>{renderTabContent()}</Hydrate>
+            <HydrationBoundary state={dehydratedState}>{renderTabContent()}</HydrationBoundary>
         </Flex>
     );
 };

@@ -25,21 +25,19 @@ const HeroSlider: React.FC = () => {
     const [usdPrice, setUsdPrice] = useState('');
 
     // Fetch product collection using react-query
-    const { data, error, isLoading } = useQuery(
-        ['productCollection'],
-        () => getProductCollection(),
-        {
-            staleTime: 60 * 1000,
-            cacheTime: 2 * 60 * 1000,
-        }
-    );
+    const { data, error, isLoading } = useQuery({
+
+        queryKey: ['productCollection'],
+        queryFn: () => getProductCollection(),
+        staleTime: 60 * 1000,
+    });
 
     // Automatic carousel timer
     useEffect(() => {
         const timer = setInterval(() => {
             if (data?.products?.length) {
                 setCurrentIndex(
-                    (prevIndex) => (prevIndex + 1) % data.products.length
+                    (prevIndex) => (prevIndex + 1) % data.products.length,
                 );
             }
         }, 5000); // Change slide every 5 seconds
@@ -120,15 +118,15 @@ const HeroSlider: React.FC = () => {
 
     const productPricing = formatCryptoPrice(
         variantPrices?.find(
-            (p: any) => p.currency_code === (preferred_currency_code ?? 'usdc')
+            (p: any) => p.currency_code === (preferred_currency_code ?? 'usdc'),
         )?.amount || 0,
-        (preferred_currency_code ?? 'usdc') as string
+        (preferred_currency_code ?? 'usdc') as string,
     );
 
     const usdPricing = formatCryptoPrice(
         variantPrices?.find((p: any) => p.currency_code === 'usdc')?.amount ||
-            0,
-        'usdc' as string
+        0,
+        'usdc' as string,
     );
 
     return (

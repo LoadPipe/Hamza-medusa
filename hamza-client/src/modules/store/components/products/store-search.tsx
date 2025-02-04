@@ -13,13 +13,14 @@ type Props = {
 
 const StoreSearch = ({ storeName }: Props) => {
     // Get categories and update buttons
-    const { data, error, isLoading } = useQuery(
-        ['categoriesStore', storeName],
-        () => {
-            const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/categories?store_name=${storeName}`;
-            return axios.get(url);
-        }
-    );
+    const { data, error, isLoading } = useQuery({
+        queryKey: ['categoriesStore', storeName
+],
+    queryFn: () => {
+        const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/store/categories?store_name=${storeName}`;
+        return axios.get(url);
+    }
+});
 
     let categoryNames = [];
 

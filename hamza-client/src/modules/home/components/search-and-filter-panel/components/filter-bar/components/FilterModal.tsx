@@ -20,6 +20,7 @@ import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import useProductGroup from '@/zustand/products/product-group/product-group';
 import useProductFilterModal from '@/zustand/products/filter/product-filter';
+
 interface FilterModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -39,10 +40,10 @@ const USE_PRICE_FILTER: boolean = false;
 type RangeType = [number, number];
 
 const FilterModalHome: React.FC<FilterModalProps> = ({
-    isOpen,
-    onClose,
-    categories,
-}) => {
+                                                         isOpen,
+                                                         onClose,
+                                                         categories,
+                                                     }) => {
     const { setCategorySelect } = useProductGroup();
 
     const {
@@ -53,24 +54,24 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
     } = useProductFilterModal();
 
     // Fetching categories data
-    const { data, isLoading } = useQuery<Category[]>(
-        ['categories'],
-        async () => {
+    const { data, isLoading } = useQuery<Category[]>({
+        queryKey: ['categories'],
+        queryFn: async () => {
             const url = `${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'}/custom/category/all`;
             const response = await axios.get(url);
             return response.data;
-        }
-    );
+        },
+    });
 
     const [range, setRange] = useState<RangeType>([0, 350]);
 
     // Extract unique category names with id
     const uniqueCategories: Category[] = data
         ? data.map((category) => ({
-              name: category.name,
-              id: category.id,
-              metadata: category.metadata,
-          }))
+            name: category.name,
+            id: category.id,
+            metadata: category.metadata,
+        }))
         : [];
 
     const isDisabled =
@@ -113,7 +114,7 @@ const FilterModalHome: React.FC<FilterModalProps> = ({
                                     categoryName={category.name}
                                     url={category.metadata?.icon_url}
                                 />
-                            )
+                            ),
                         )}
                     </Flex>
 

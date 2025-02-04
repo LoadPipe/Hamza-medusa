@@ -24,14 +24,11 @@ const All = ({ customer }: { customer: string }) => {
     const [deliveredFetched, setDeliveredFetched] = useState(false);
     const [cancelledFetched, setCancelledFetched] = useState(false);
 
-    const { data, error, isLoading } = useQuery<OrdersData>(
-        ['batchOrders'],
-        () => getOrderBucket(customer),
-        {
-            staleTime: 5000, // Keep data fresh for 5 seconds
-            cacheTime: 60000, // Cache data for 1 minute
-        }
-    );
+    const { data, error, isLoading } = useQuery<OrdersData>({
+        queryKey: ['batchOrders'],
+        queryFn: () => getOrderBucket(customer),
+        staleTime: 5000, // Keep data fresh for 5 seconds
+    });
 
     // Check if any tab contains data
     const ordersExist =

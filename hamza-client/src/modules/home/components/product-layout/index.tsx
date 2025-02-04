@@ -19,14 +19,18 @@ type Props = {
 
 const ProductCardGroup = ({ vendorName, category }: Props) => {
     // Get products from vendor
-    const { data, error, isLoading } = useQuery(
-        ['products', { vendor: vendorName }],
-        () =>
+    const { data, error, isLoading } = useQuery({
+        queryKey: ['products',
+            {
+                vendor: vendorName,
+            },
+        ],
+        queryFn: () =>
             getProductsByStoreName(vendorName).catch((err) => {
                 console.log(err);
                 return null;
-            })
-    );
+            }),
+    });
 
     console.log(data);
 
@@ -62,7 +66,7 @@ const ProductCardGroup = ({ vendorName, category }: Props) => {
                         const reviewCounter = product.reviews.length;
                         const totalRating = product.reviews.reduce(
                             (acc: number, review: any) => acc + review.rating,
-                            0
+                            0,
                         );
                         const avgRating = reviewCounter
                             ? totalRating / reviewCounter
@@ -70,9 +74,9 @@ const ProductCardGroup = ({ vendorName, category }: Props) => {
                         const productPricing = formatCryptoPrice(
                             variantPrices.find(
                                 (p: any) =>
-                                    p.currency_code === preferred_currency_code
+                                    p.currency_code === preferred_currency_code,
                             )?.amount || 0,
-                            preferred_currency_code as string
+                            preferred_currency_code as string,
                         );
                         variantID = product.variants[0].id;
 
