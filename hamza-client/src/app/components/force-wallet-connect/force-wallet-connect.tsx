@@ -2,7 +2,7 @@
 
 import { Box } from '@chakra-ui/react';
 import React from 'react';
-import { CheckoutWalletButton } from '../components/checkout-wallet-button';
+import { CheckoutWalletButton } from './components/checkout-wallet-button';
 
 interface HamzaLogoLoaderProps {
     message?: string; // Optional message prop
