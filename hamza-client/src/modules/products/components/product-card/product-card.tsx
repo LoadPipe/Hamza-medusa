@@ -31,7 +31,7 @@ interface ProductCardProps {
 }
 
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { getAverageRatings, getReviewCount } from '@lib/data';
+import { getAverageRatings, getReviewCount } from '@/lib/server';
 import useProductPreview from '@/zustand/product-preview/product-preview';
 import { useRouter } from 'next/navigation';
 

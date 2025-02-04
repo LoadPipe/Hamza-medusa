@@ -20,7 +20,7 @@ import { useWishlistMutations } from '@/zustand/wishlist/mutations/wishlist-muta
 import Medusa from '@medusajs/medusa-js';
 import useWishlistStore from '@/zustand/wishlist/wishlist-store';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { getInventoryCount, getStore } from '@lib/data';
+import { getInventoryCount, getStore } from '@/lib/server';
 
 type ProductActionsProps = {
     product: PricedProduct;

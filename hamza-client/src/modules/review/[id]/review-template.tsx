@@ -14,7 +14,7 @@ import {
     Box,
     Flex,
 } from '@chakra-ui/react';
-import { createReview } from '@lib/data';
+import { createReview } from '@/lib/server';
 import toast from 'react-hot-toast';
 
 const ReviewTemplate = ({

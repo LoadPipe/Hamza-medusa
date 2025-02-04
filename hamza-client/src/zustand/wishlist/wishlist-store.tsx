@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { getWishlist } from '@lib/data/index';
+import { getWishlist } from '@/lib/server/index';
 
 export type PriceDictionary = {
     eth?: string;

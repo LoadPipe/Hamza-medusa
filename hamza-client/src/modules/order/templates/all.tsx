@@ -7,7 +7,7 @@ import Cancelled from '@modules/order/templates/cancelled';
 import Refund from '@modules/order/templates/refund';
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getOrderBucket } from '@lib/data';
+import { getOrderBucket } from '@/lib/server';
 
 type Order = {};
 export type OrdersData = {

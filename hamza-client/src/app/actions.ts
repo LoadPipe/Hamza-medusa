@@ -7,7 +7,7 @@ import { revalidateTag } from 'next/cache';
 import { cookies, headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
-import { listRegions, updateCart } from '@lib/data';
+import { listRegions, updateCart } from '@/lib/server';
 
 import { Region } from '@medusajs/medusa';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { clearCart } from '@/lib/data';
+import { clearCart } from '@/lib/server';
 import { getOrSetCart } from '@/modules/cart/actions';
 import { Flex } from '@chakra-ui/react';
 import { Cart } from '@medusajs/medusa';
@@ -13,20 +13,23 @@ export default function MobileNavContainer(props: {
 }) {
     const pathname = usePathname();
     let countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY || 'en';
-    
+
     useEffect(() => {
         const handleCartClear = async () => {
-            if ((pathname.includes('/cart') || pathname.includes('/checkout')) && 
-                props.cart?.completed_at !== null) {
+            if (
+                (pathname.includes('/cart') ||
+                    pathname.includes('/checkout')) &&
+                props.cart?.completed_at !== null
+            ) {
                 try {
                     await clearCart();
                     await getOrSetCart(countryCode);
                 } catch (error) {
-                    console.error("Error handling cart clear:", error);
+                    console.error('Error handling cart clear:', error);
                 }
             }
         };
-        
+
         handleCartClear();
     }, [pathname, props.cart, countryCode]);
 

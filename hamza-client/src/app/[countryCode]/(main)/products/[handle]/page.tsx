@@ -8,7 +8,7 @@ import {
     getProductsList,
     listRegions,
     retrievePricedProductById,
-} from '@lib/data';
+} from '@/lib/server';
 import { Region } from '@medusajs/medusa';
 import ProductTemplate from '@modules/products/templates';
 import { getRegion } from '@/app/actions';

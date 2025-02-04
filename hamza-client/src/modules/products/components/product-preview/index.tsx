@@ -2,7 +2,7 @@ import { Text } from '@medusajs/ui';
 
 import { ProductPreviewType } from '@/types/global';
 
-import { retrievePricedProductById } from '@lib/data';
+import { retrievePricedProductById } from '@/lib/server';
 import { getProductPrice } from '@lib/util/get-product-price';
 import { Region } from '@medusajs/medusa';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';

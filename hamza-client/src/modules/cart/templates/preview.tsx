@@ -5,7 +5,7 @@ import { Table, clx } from '@medusajs/ui';
 import { Text, Flex } from '@chakra-ui/react';
 import Item from '@modules/cart/components/item-checkout';
 import SkeletonLineItem from '@modules/skeletons/components/skeleton-line-item';
-import { getHamzaCustomer } from '@lib/data';
+import { getHamzaCustomer } from '@/lib/server';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useCustomerProfileStore } from '@/zustand/customer-profile/customer-profile';

@@ -4,7 +4,7 @@ import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { verifyToken } from '@lib/data/index';
+import { verifyToken } from '@/lib/server/index';
 import { Box, Flex, Text, Button } from '@chakra-ui/react';
 import { FaRegCheckCircle } from 'react-icons/fa';
 

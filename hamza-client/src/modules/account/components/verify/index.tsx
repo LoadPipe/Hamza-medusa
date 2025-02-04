@@ -10,7 +10,7 @@ import { IoLogoGoogle } from 'react-icons/io5';
 import { FaXTwitter } from 'react-icons/fa6';
 import { BsDiscord } from 'react-icons/bs';
 import { Flex, Text, Input, Divider, Button } from '@chakra-ui/react';
-import { putOAuth, verifyEmail } from '@lib/data/index';
+import { putOAuth, verifyEmail } from '@/lib/server/index';
 import VerifyFail from './components/verify-fail';
 import VerifySuccess from './components/verify-success';
 import HamzaLogoLoader from '@/components/loaders/hamza-logo-loader';

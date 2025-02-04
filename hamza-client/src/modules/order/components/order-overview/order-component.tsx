@@ -20,7 +20,7 @@ import router from 'next/router';
 import { toast } from 'react-hot-toast';
 import { addToCart, enrichLineItems } from '@/modules/cart/actions';
 import { LineItem } from '@medusajs/medusa';
-import { retrieveOrder } from '@/lib/data';
+import { retrieveOrder } from '@/lib/server';
 import { notFound } from 'next/navigation';
 import { Order } from '@/web3/contracts/escrow';
 

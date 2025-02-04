@@ -12,7 +12,7 @@ import {
 import HeroImageCarousel from './components/hero-image-carousel';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
-import { getProductCollection } from '@/lib/data';
+import { getProductCollection } from '@/lib/server';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
 import HeroBGImage from '@/images/home/hero_bg_image.webp';

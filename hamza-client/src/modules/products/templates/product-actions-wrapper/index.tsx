@@ -1,4 +1,4 @@
-import { retrievePricedProductById } from '@lib/data';
+import { retrievePricedProductById } from '@/lib/server';
 import { Region } from '@medusajs/medusa';
 import ProductActions from '@modules/products/components/product-actions';
 

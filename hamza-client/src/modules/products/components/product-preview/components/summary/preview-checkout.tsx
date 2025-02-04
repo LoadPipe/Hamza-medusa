@@ -20,7 +20,7 @@ import {
     getStore,
     getReviewCount,
     clearCart,
-} from '@lib/data';
+} from '@/lib/server';
 import currencyIcons from '@/images/currencies/crypto-currencies';
 import Spinner from '@modules/common/icons/spinner';
 import TermsOfService from '@/modules/terms-of-service/templates/product-details-tos';

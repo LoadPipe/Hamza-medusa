@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { Flex, Text, Divider, Spinner } from '@chakra-ui/react';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
-import { getCartShippingCost, updateShippingCost } from '@lib/data';
+import { getCartShippingCost, updateShippingCost } from '@/lib/server';
 import { useCartShippingOptions } from 'medusa-react';
 import axios from 'axios';
 import { getClientCookie } from '@lib/util/get-client-cookies';

@@ -12,7 +12,7 @@ import PreviewCheckout from '../components/product-preview/components/summary/pr
 import ProductReview from '../components/product-preview/components/product-review';
 import useProductPreview from '@/zustand/product-preview/product-preview';
 import StoreBanner from '../components/product-preview/components/store-banner/store-banner';
-import { getStore } from '@lib/data';
+import { getStore } from '@/lib/server';
 import { FaArrowLeftLong } from 'react-icons/fa6';
 
 type ProductTemplateProps = {

@@ -12,7 +12,7 @@ import LocalizedClientLink from '@modules/common/components/localized-client-lin
 import { Flex, Text, Divider } from '@chakra-ui/react';
 import toast from 'react-hot-toast';
 import { debounce } from 'lodash';
-import { addDefaultShippingMethod } from '@lib/data';
+import { addDefaultShippingMethod } from '@/lib/server';
 import LineItemUnitPrice from '@/modules/common/components/line-item-unit-price';
 import ItemQuantityButton from './components/item-quantity-button';
 

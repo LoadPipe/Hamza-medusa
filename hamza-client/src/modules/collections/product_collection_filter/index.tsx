@@ -9,7 +9,7 @@ import { SimpleGrid } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { getProductsByStoreName } from '@lib/data';
+import { getProductsByStoreName } from '@/lib/server';
 
 type Props = {
     storeName: string;

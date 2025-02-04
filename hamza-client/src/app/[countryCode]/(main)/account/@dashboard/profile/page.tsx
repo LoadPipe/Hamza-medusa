@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { getHamzaCustomer, listRegions } from '@lib/data';
+import { getHamzaCustomer, listRegions } from '@/lib/server';
 import { notFound } from 'next/navigation';
 import Profile from '@/modules/account/components/profile';
 

@@ -14,7 +14,7 @@ import {
     Divider,
 } from '@chakra-ui/react';
 import { format } from 'date-fns';
-import { getAllProductReviews, getNotReviewedOrders } from '@lib/data';
+import { getAllProductReviews, getNotReviewedOrders } from '@/lib/server';
 import EditReviewTemplate from '@modules/editreview/[id]/edit-review-template';
 import ReviewTemplate from '@modules/review/[id]/review-template';
 import { useQueries, useQuery } from '@tanstack/react-query';

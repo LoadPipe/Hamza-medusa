@@ -4,7 +4,7 @@ import { Text } from '@chakra-ui/react';
 import Error from '../../../../../error';
 import Notification from '@modules/account/components/notifications';
 
-import { getHamzaCustomer, getVerificationStatus } from '@lib/data';
+import { getHamzaCustomer, getVerificationStatus } from '@/lib/server';
 
 import { getRegion } from '@/app/actions';
 import { headers } from 'next/headers';

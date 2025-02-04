@@ -6,11 +6,11 @@ import {
     getHamzaCustomer,
     listRegions,
     getVerificationStatus,
-} from '@lib/data';
+} from '@/lib/server';
 import getQueryClient from '@/app/query-utils/getQueryClient';
 import { dehydrate } from '@tanstack/react-query';
 import ReviewTemplate from '@modules/account/components/reviews/reviews-template';
-import { getAllProductReviews, getNotReviewedOrders } from '@lib/data';
+import { getAllProductReviews, getNotReviewedOrders } from '@/lib/server';
 import React from 'react';
 
 export const metadata: Metadata = {

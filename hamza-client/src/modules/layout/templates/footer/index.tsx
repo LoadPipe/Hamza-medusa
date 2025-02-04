@@ -1,6 +1,6 @@
 import { clx } from '@medusajs/ui';
 import { Flex, Container, Text, Box, Divider } from '@chakra-ui/react';
-import { getCategoriesList, getCollectionsList } from '@lib/data';
+import { getCategoriesList, getCollectionsList } from '@/lib/server';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { FaDiscord } from 'react-icons/fa6';
 import Link from 'next/link';

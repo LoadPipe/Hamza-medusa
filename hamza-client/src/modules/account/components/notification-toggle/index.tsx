@@ -18,7 +18,7 @@ import {
     addNotifications,
     getNotifications,
     deleteNotifications,
-} from '@lib/data';
+} from '@/lib/server';
 
 const NotificationToggle = ({ region }: { region: Region }) => {
     // Explicitly typing `selectedNotifications` as an array of strings

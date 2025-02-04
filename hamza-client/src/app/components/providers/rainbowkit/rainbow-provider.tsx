@@ -26,7 +26,7 @@ import {
     getHamzaCustomer,
     getToken,
     recoverCart,
-} from '@lib/data';
+} from '@/lib/server';
 import { signOut } from '@modules/account/actions';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import axios from 'axios';

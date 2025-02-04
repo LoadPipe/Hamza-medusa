@@ -17,7 +17,7 @@ import Spinner from '@modules/common/icons/spinner';
 import PaymentContainer from '@modules/checkout/components/payment-container';
 import { setPaymentMethod } from '@modules/checkout/actions';
 import { paymentInfoMap } from '@lib/constants';
-import { EnsureWalletConnected } from '@/components/providers/ensure-wallet-connected';
+import EnsureWalletConnected from '@/modules/common/components/ensure-wallet-connected';
 const Payment = ({
     cart,
 }: {

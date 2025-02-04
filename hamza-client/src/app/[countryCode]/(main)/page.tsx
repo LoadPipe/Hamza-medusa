@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { getAllProducts } from '@lib/data';
+import { getAllProducts } from '@/lib/server';
 import { getRegion } from '@/app/actions';
 import SearchAndFilterPanel from '@modules/home/components/search-and-filter-panel';
 import { Box } from '@chakra-ui/react';

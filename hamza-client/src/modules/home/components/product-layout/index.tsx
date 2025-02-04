@@ -10,7 +10,7 @@ import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { addToCart } from '@modules/cart/actions';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import SkeletonProductGrid from '@modules/skeletons/components/skeleton-product-grid';
-import { getProductsByStoreName } from '@lib/data';
+import { getProductsByStoreName } from '@/lib/server';
 
 type Props = {
     vendorName: string;

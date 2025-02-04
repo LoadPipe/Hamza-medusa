@@ -18,7 +18,7 @@ import { useEffect, useState } from 'react';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { setPaymentMethod } from '@modules/checkout/actions';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { addDefaultShippingMethod } from '@lib/data';
+import { addDefaultShippingMethod } from '@/lib/server';
 
 type ShippingProps = {
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;

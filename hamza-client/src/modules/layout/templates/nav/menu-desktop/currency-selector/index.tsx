@@ -16,7 +16,7 @@ import { ChevronDownIcon } from '@chakra-ui/icons';
 import Image from 'next/image';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import currencyIcons from '@/images/currencies/crypto-currencies';
-import { setCurrency } from '@/lib/data';
+import { setCurrency } from '@/lib/server';
 
 const CurrencySelector = (props: any) => {
     const { preferred_currency_code, setCustomerPreferredCurrency, authData } =

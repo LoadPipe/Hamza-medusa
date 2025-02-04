@@ -6,7 +6,11 @@ import ProfileInput from './components/profile-input';
 import ProfileImage from '@/modules/common/components/customer-icon/profile-image';
 
 import ProfileCurrency from './components/profile-currency';
-import { getVerificationStatus, setCurrency, updateCustomer } from '@lib/data';
+import {
+    getVerificationStatus,
+    setCurrency,
+    updateCustomer,
+} from '@/lib/server';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 
 const ProfileForm: React.FC<any> = ({ customer }) => {

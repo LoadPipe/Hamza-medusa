@@ -15,7 +15,7 @@ import Image from 'next/image';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { getStore } from '@lib/data';
+import { getStore } from '@/lib/server';
 import { addToCart } from '@modules/cart/actions';
 import CartPopup from '@modules/products/components/cart-popup';
 import { useWishlistMutations } from '@/zustand/wishlist/mutations/wishlist-mutations';
