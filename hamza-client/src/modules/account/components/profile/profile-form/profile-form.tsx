@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { Flex, Button, Text } from '@chakra-ui/react';
 import ProfileInput from './components/profile-input';
 // import ProfileImage from './components/profile-image';
-import ProfileImage from './components/customer-icon/profile-image';
+import ProfileImage from '@/modules/common/components/customer-icon/profile-image';
 
 import ProfileCurrency from '@modules/account/components/profile-currency';
 import { getVerificationStatus, setCurrency, updateCustomer } from '@lib/data';
