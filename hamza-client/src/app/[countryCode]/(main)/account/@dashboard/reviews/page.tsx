@@ -9,7 +9,7 @@ import {
 } from '@/lib/server';
 import getQueryClient from '@/app/query-utils/getQueryClient';
 import { dehydrate } from '@tanstack/react-query';
-import ReviewTemplate from '@modules/account/components/reviews/reviews-template';
+import ReviewTemplate from '@/modules/account/templates/reviews-template';
 import { getAllProductReviews, getNotReviewedOrders } from '@/lib/server';
 import React from 'react';
 
