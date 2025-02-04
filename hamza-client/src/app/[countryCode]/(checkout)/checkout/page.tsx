@@ -1,6 +1,6 @@
 /**
  * Author: Garo Nazarian
- * Refactored by: Doom
+ * TODO: Checkout Page
  * We're going to use Tanstack Query here with Hydration and Suspense
  * We're going to use a similar architecture as in the Order Page where we have done this...
  *
