@@ -1,7 +1,5 @@
-import { Box, Flex, Radio, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { LineItem, Region } from '@medusajs/medusa';
-import { Heading, Table } from '@medusajs/ui';
-
 import Item from '@modules/cart/components/item';
 import SkeletonLineItem from '@modules/skeletons/components/skeleton-line-item';
 

@@ -7,7 +7,6 @@ import DiscountCode from '@modules/checkout/components/discount-code';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import Spinner from '@modules/common/icons/spinner';
 import { useCartStore } from '@/zustand/cart-store/cart-store'; // Import Zustand store
-import { useEffect, useState } from 'react';
 
 type SummaryProps = {
     cart: CartWithCheckoutStep;

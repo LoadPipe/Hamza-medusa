@@ -1,19 +1,7 @@
-import {
-    Box,
-    Flex,
-    Radio,
-    Text,
-    Button,
-    Link,
-    Divider,
-} from '@chakra-ui/react';
+import { Box, Flex, Text, Button, Link, Divider } from '@chakra-ui/react';
 import { LineItem, Region } from '@medusajs/medusa';
-import { Heading, Table } from '@medusajs/ui';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
-import { IconContext } from 'react-icons';
-
 import Item from '@modules/cart/components/item';
-import SkeletonLineItem from '@modules/skeletons/components/skeleton-line-item';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
