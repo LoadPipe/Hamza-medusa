@@ -26,11 +26,9 @@ import HamzaLogoLoader from '@/components/loaders/hamza-logo-loader';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
 import Spinner from '@/modules/common/icons/spinner';
 import { MESSAGES } from './payment-message/message';
-// import { useUpdateCartCustom, useCompleteCartCustom, useCancelOrderCustom } from "./useCartMutations";
-import { useMutation } from '@tanstack/react-query';
+import { useCompleteCartCustom } from './useCartMutations';
 
 //TODO: we need a global common function to replace this
-
 
 
 const MEDUSA_SERVER_URL =
@@ -38,30 +36,6 @@ const MEDUSA_SERVER_URL =
 
 type PaymentButtonProps = {
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
-};
-
-// Custom mutations for useCompleteCart
-const useCompleteCartCustom = () => {
-    return useMutation({
-        mutationFn: async (cartId: string) => {
-            if (!cartId) {
-                throw new Error("Cart ID is required for completing checkout.");
-            }
-
-            console.log(`Completing cart with ID: ${cartId}`);
-
-            const response = await axios.post(
-                `${MEDUSA_SERVER_URL}/store/carts/${cartId}/complete`,
-                {},
-                {
-                    headers: {
-                        authorization: getClientCookie("_medusa_jwt"),
-                    },
-                }
-            );
-            return response.data;
-        },
-    });
 };
 
 // Extend the Window interface
@@ -96,7 +70,7 @@ const CryptoPaymentButton = ({
     const [submitting, setSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loaderVisible, setLoaderVisible] = useState(false);
-    console.log(cart.id)
+    console.log(cart.id);
     // const completeCart = useCompleteCart(cart.id);
     const updateCart = useUpdateCart(cart.id);
     const { openConnectModal } = useConnectModal();
@@ -211,12 +185,12 @@ const CryptoPaymentButton = ({
     const redirectToOrderConfirmation = (
         orderId: string,
         cartId: string,
-        countryCode: string
+        countryCode: string,
     ) => {
         //finally, if all good, redirect to order confirmation page
         if (orderId?.length) {
             router.push(
-                `/${countryCode}/order/confirmed/${orderId}?cart=${cartId}`
+                `/${countryCode}/order/confirmed/${orderId}?cart=${cartId}`,
             );
         }
     };
@@ -232,7 +206,7 @@ const CryptoPaymentButton = ({
      */
     const completeCheckout = async (cartId: string) => {
         try {
-            console.log(`DOES THIS RUN`)
+            console.log(`DOES THIS RUN`);
             // Retrieve data (cart id, currencies, amounts, etc.) needed for wallet checkout
             //onst data: CheckoutData = await getCheckoutData(cartId);
             const checkoutData = await axios.get(
@@ -325,15 +299,12 @@ const CryptoPaymentButton = ({
         }
     };
 
-    // Use custom mutations
     const { mutate: completeCart } = useCompleteCartCustom();
     /**
      * Handles the click of the checkout button
      * @returns
      */
     const handlePayment = async () => {
-        console.log('isConnected?', isConnected);
-
         if (!isConnected) {
             openConnectModal?.();
             return;
@@ -344,25 +315,24 @@ const CryptoPaymentButton = ({
             setLoaderVisible(true);
             setErrorMessage('');
 
-            console.log("Completing Cart...");
             await new Promise((resolve, reject) => {
                 completeCart(cart.id, {
                     onSuccess: async () => {
                         try {
-                            console.log("Finalizing Checkout...");
+                            console.log('Finalizing Checkout...');
                             await completeCheckout(cart.id);
                             resolve(1);
                         } catch (e) {
                             console.error(e);
                             setSubmitting(false);
-                            displayError("Checkout was not completed");
+                            displayError('Checkout was not completed');
                             reject(e);
                         }
                     },
                     onError: async (e) => {
-                        console.error("Error completing cart:", e);
+                        console.error('Error completing cart:', e);
                         setSubmitting(false);
-                        displayError("Checkout was not completed");
+                        displayError('Checkout was not completed');
                         reject(e);
                     },
                 });
@@ -370,7 +340,7 @@ const CryptoPaymentButton = ({
 
         } catch (e) {
             console.error(e);
-            displayError("Checkout was not completed");
+            displayError('Checkout was not completed');
             await cancelOrderFromCart();
         } finally {
             setSubmitting(false);
