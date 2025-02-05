@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 import SkeletonProductGrid from '@modules/skeletons/templates/skeleton-product-grid';
 import RefinementList from '@modules/shop/components/refinement-list';
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
-import PaginatedProducts from '@modules/shop/components/pagination/paginated-products';
+import PaginatedProducts from '@/modules/shop/components/pagination';
 
 export default function CollectionTemplate({
     sortBy,

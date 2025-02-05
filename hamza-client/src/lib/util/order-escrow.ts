@@ -1,5 +1,10 @@
 import { ITransactionOutput } from '@/web3';
-import { EscrowClient, Order, Payment, PaymentDefinition } from '@/web3/contracts/escrow';
+import {
+    EscrowClient,
+    Order,
+    Payment,
+    PaymentDefinition,
+} from '@/web3/contracts/escrow';
 import { BigNumberish, ethers } from 'ethers';
 import { keccak256, toUtf8Bytes } from 'ethers';
 
@@ -34,7 +39,7 @@ export async function releaseEscrowPayment(
             if (validateBy === 'seller' || validateBy === 'all') {
                 validatePaymentNotReleasedBySeller(payment, order.id);
             }
-            
+
             const releaseData = await escrow.releaseEscrow(
                 keccak256(toUtf8Bytes(order.id))
             );
@@ -107,7 +112,9 @@ export function findEscrowDataFromOrder(order: Order): {
     address: string;
     chain_id: number;
 } {
-    order?.payments?.sort((a: Payment, b: Payment) => (a.created_at < b.created_at ? -1 : 1));
+    order?.payments?.sort((a: Payment, b: Payment) =>
+        a.created_at < b.created_at ? -1 : 1
+    );
     return {
         address: order?.payments[0]?.blockchain_data?.escrow_address,
         chain_id: order?.payments[0]?.blockchain_data?.chain_id ?? 0,

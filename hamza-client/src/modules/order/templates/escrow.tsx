@@ -7,7 +7,7 @@ import { getCustomerOrder, getHamzaCustomer } from '@/lib/server';
 import { useEffect, useState } from 'react';
 import { ReleaseEscrowDialog } from '../components/escrow/release-escrow-dialog';
 import EscrowStatus from '../components/order-overview/escrow-status';
-import { getEscrowPayment } from '@/utils/order-escrow';
+import { getEscrowPayment } from '@/lib/util/order-escrow';
 import { Order, PaymentDefinition } from '@/web3/contracts/escrow';
 import { useAccount } from 'wagmi';
 import { ModalCoverWalletConnect } from '@/modules/common/components/modal-cover-wallet-connect';

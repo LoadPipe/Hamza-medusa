@@ -1,5 +1,8 @@
 'use client';
-import { getEscrowPayment, releaseEscrowPayment } from '@/utils/order-escrow';
+import {
+    getEscrowPayment,
+    releaseEscrowPayment,
+} from '@/lib/util/order-escrow';
 import { getChainId } from '@/web3';
 import { PaymentDefinition } from '@/web3/contracts/escrow';
 import {

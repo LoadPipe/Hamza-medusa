@@ -1,6 +1,6 @@
 import { getProductsListWithSort, getRegion } from '@/lib/server';
 import ProductPreview from '@modules/products/components/product-preview';
-import { Pagination } from './pagination';
+import { Pagination } from './components/pagination';
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
 
 const PRODUCT_LIMIT = 12;
