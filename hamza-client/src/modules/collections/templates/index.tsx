@@ -1,6 +1,5 @@
 import { ProductCollection } from '@medusajs/medusa';
 import { Suspense } from 'react';
-
 import SkeletonProductGrid from '@modules/skeletons/templates/skeleton-product-grid';
 import RefinementList from '@modules/shop/components/refinement-list';
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';

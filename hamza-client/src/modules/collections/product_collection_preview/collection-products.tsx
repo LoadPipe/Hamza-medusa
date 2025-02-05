@@ -1,7 +1,5 @@
 import { getProductsListWithSort } from '@/lib/server';
 import ProductPreview from '@modules/products/components/product-preview';
-import { Pagination } from '@/modules/shop/components/pagination/components/pagination';
-import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
 import { getRegion } from '@/app/actions';
 
 const PRODUCT_LIMIT = 8;
