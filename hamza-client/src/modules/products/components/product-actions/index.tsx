@@ -10,7 +10,7 @@ import { useIntersection } from '@lib/hooks/use-in-view';
 import { addToCart } from '@modules/cart/actions';
 import Divider from '@modules/common/components/divider';
 import OptionSelect from '@modules/products/components/option-select';
-import BuyButton from '../buttons/buy-button';
+import ProductBuyButton from '../buttons/product-buy-button';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import MobileActions from './components/mobile-actions';
 import ProductPrice from '../product-price';
@@ -280,7 +280,7 @@ export default function ProductActions({
                     </Button>
                 )} */}
                 <LocalizedClientLink href="/checkout?step=address">
-                    <BuyButton
+                    <ProductBuyButton
                         styles={'w-full h-10 text-white'}
                         handleBuyNow={handleBuyNow}
                         loader={buyNowLoader}

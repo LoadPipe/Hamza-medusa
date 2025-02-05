@@ -9,7 +9,7 @@ type BuyButtonProps = {
     isWhitelisted: boolean;
 };
 
-const BuyButton: React.FC<BuyButtonProps> = ({
+const ProductBuyButton: React.FC<BuyButtonProps> = ({
     styles,
     handleBuyNow,
     loader,
@@ -37,4 +37,4 @@ const BuyButton: React.FC<BuyButtonProps> = ({
     );
 };
 
-export default BuyButton;
+export default ProductBuyButton;

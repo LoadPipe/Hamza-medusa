@@ -7,7 +7,7 @@ import { getProductPrice } from '@lib/util/get-product-price';
 import { Region } from '@medusajs/medusa';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import Thumbnail from '../thumbnail';
-import PreviewPrice from './price';
+import PreviewPrice from './components/preview-price';
 
 export default async function ProductPreview({
     productPreview,

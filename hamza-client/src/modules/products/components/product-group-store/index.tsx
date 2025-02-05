@@ -12,7 +12,7 @@ import {
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import ProductCard from '../product-card/product-card';
+import ProductCard from '../product-card';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import useVendor from '@/zustand/store-page/vendor';
 import { formatPriceBetweenCurrencies } from '@/lib/util/prices';
