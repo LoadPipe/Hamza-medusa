@@ -1,23 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import {
-    Flex,
-    Text,
-    Button,
-    Box,
-    Skeleton,
-    SkeletonText,
-} from '@chakra-ui/react';
+import { Flex, Text, Box, Skeleton, SkeletonText } from '@chakra-ui/react';
 import HeroImageCarousel from './components/hero-image-carousel';
-import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { getProductCollection } from '@/lib/server';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { formatCryptoPrice } from '@/lib/util/get-product-price';
-import HeroBGImage from '@/images/home/hero_bg_image.webp';
 import { motion } from 'framer-motion';
-import { convertPrice } from '@/lib/util/price-conversion';
 
 const HeroSlider: React.FC = () => {
     const { preferred_currency_code } = useCustomerAuthStore();
