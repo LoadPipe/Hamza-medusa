@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { cancelOrder, getSingleBucket } from '@/lib/server';
+import React, { useState } from 'react';
+import { cancelOrder } from '@/lib/server';
 import {
     chainIdToName,
     getChainLogo,

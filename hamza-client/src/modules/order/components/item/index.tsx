@@ -1,6 +1,5 @@
 import { LineItem, Region } from '@medusajs/medusa';
 import { Table, Text } from '@medusajs/ui';
-
 import LineItemOptions from '@/modules/common/components/line-item/line-item-options';
 import LineItemPrice from '@/modules/common/components/line-item/line-item-price';
 import LineItemUnitPrice from '@/modules/common/components/line-item/line-item-unit-price';
