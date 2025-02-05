@@ -3,7 +3,7 @@ import { Flex, Text } from '@chakra-ui/react';
 import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
 import { LineItem } from '@medusajs/medusa';
 import CartTotals from '@modules/common/components/cart-totals';
-import PaymentButton from '@modules/checkout/components/payment-button';
+import PaymentButton from '@/modules/checkout/components/payment/components/payment-button';
 import DiscountCode from '@modules/checkout/components/discount-code';
 import CheckoutTermsOfService from '@/modules/terms-of-service/templates/checkout-tos';
 

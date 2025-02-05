@@ -10,7 +10,7 @@ import {
 } from './payment-handlers';
 import { Button } from '@chakra-ui/react';
 import React, { useState, useEffect, useRef } from 'react';
-import ErrorMessage from '../error-message';
+import ErrorMessage from '../../../error-message';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useAccount, useConnect, WindowProvider, useWalletClient } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';

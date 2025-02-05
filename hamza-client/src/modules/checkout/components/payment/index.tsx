@@ -1,20 +1,19 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { RadioGroup } from '@headlessui/react';
 import ErrorMessage from '@modules/checkout/components/error-message';
 import { Cart } from '@medusajs/medusa';
-import { CheckCircleSolid, CreditCard } from '@medusajs/icons';
-import { Container, Heading, Text, Tooltip, clx } from '@medusajs/ui';
+import { CheckCircleSolid } from '@medusajs/icons';
+import { Heading, Text, Tooltip, clx } from '@medusajs/ui';
 import { Button } from '@chakra-ui/react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useAccount, useConnect } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
-import { SwitchNetwork } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import Divider from '@modules/common/components/divider';
 import Spinner from '@modules/common/icons/spinner';
-import PaymentContainer from '@modules/checkout/components/payment-container';
+import PaymentContainer from '@/modules/checkout/components/payment/components/payment-container';
 import { setPaymentMethod } from '@modules/checkout/actions';
 import { paymentInfoMap } from '@/lib/config/constants';
 import EnsureWalletConnected from '@/modules/common/components/ensure-wallet-connected';

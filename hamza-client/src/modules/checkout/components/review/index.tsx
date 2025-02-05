@@ -2,7 +2,7 @@
 
 import { Heading, Text, clx } from '@medusajs/ui';
 
-import PaymentButton from '../payment-button';
+import PaymentButton from '../payment/components/payment-button';
 import { useSearchParams } from 'next/navigation';
 import { Cart } from '@medusajs/medusa';
 import HamzaLogoLoader from '@/components/loaders/hamza-logo-loader';
