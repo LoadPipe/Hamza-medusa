@@ -42,7 +42,7 @@ export const useCompleteCartCustom = () => {
  * @params: Provide it a region_id
  * @returns: Cart
  */
-
+// TODO: This should probably be a mutation, I don't want to implement that until my faucet resets though... to test
 export const cancelOrderFromCart = async (cartId: string) => {
     try {
         const response = await axios.post(
