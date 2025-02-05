@@ -1,30 +1,10 @@
 'use client';
 
-// import { Popover, Transition } from '@headlessui/react';
 import { Cart } from '@medusajs/medusa';
-import { Button } from '@medusajs/ui';
-import { useParams, usePathname } from 'next/navigation';
-import { Fragment, useEffect, useRef, useState } from 'react';
-import {
-    Flex,
-    Box,
-    Text,
-    Popover,
-    PopoverTrigger,
-    PopoverContent,
-    PopoverHeader,
-    PopoverBody,
-    PopoverFooter,
-    PopoverArrow,
-    PopoverCloseButton,
-    PopoverAnchor,
-} from '@chakra-ui/react';
-import { formatAmount } from '@lib/util/prices';
-import DeleteButton from '@modules/common/components/delete-button';
-import LineItemOptions from '@/modules/common/components/line-item/line-item-options';
-import LineItemPrice from '@/modules/common/components/line-item/line-item-price';
+import { usePathname } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { Flex, Text } from '@chakra-ui/react';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import Thumbnail from '@modules/products/components/thumbnail';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
 
 const CartDropdown = ({
@@ -36,8 +16,6 @@ const CartDropdown = ({
         undefined
     );
     const [cartDropdownOpen, setCartDropdownOpen] = useState(false);
-
-    const { countryCode } = useParams();
 
     const open = () => setCartDropdownOpen(true);
     const close = () => setCartDropdownOpen(false);

@@ -1,9 +1,6 @@
 import { Text } from '@medusajs/ui';
 
-import Medusa from '../../../common/icons/medusa';
-import NextJs from '../../../common/icons/nextjs';
-
-const MedusaCTA = () => {
+const HamzaCTA = () => {
     return (
         <Text className="flex gap-x-2 txt-compact-small-plus items-center text-white">
             © {new Date().getFullYear()} Hamza.market. All rights reserved.
@@ -11,4 +8,4 @@ const MedusaCTA = () => {
     );
 };
 
-export default MedusaCTA;
+export default HamzaCTA;
