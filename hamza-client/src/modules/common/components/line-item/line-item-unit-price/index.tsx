@@ -3,10 +3,9 @@ import { clx } from '@medusajs/ui';
 import { getPercentageDiff } from '@lib/util/get-precentage-diff';
 import { CalculatedVariant } from '@/types/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
-import currencyIcons from '@/images/currencies/crypto-currencies';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-
 import { LineItemUnitPriceDisplay } from './line-item-display';
+
 type ExtendedLineItem = LineItem & {
     currency_code?: string;
 };
