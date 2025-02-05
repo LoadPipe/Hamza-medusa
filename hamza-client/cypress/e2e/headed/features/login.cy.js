@@ -18,8 +18,45 @@ describe('Metamask login then user profile', () => {
 
     // cy.wait(3000); // Wait 3 seconds before continuing
 
-    cy.get('.account-profile-link').click();   
+    cy.get('.account-profile-link', { timeout: 10000 })
+        .should('be.visible')
+        .should((elem) => {
+            return new Cypress.Promise((resolve, reject) => {
+                let attempts = 0;
+                const maxAttempts = 5; // 10 seconds total with 2s intervals
+                const check = () => {
+                    attempts++;
+                    if (Cypress.$(elem).is(':visible')) {
+                        resolve();
+                    } else if (attempts >= maxAttempts) {
+                        reject(new Error('Profile link not visible after 10 seconds'));
+                    } else {
+                        setTimeout(check, 2000);
+                    }
+                };
+                check();
+            });
+        })
+        .click();
     
-    cy.contains('Personal Information').should('exist');
+    cy.contains('Personal Information', { timeout: 10000 })
+        .should('be.visible')
+        .should((elem) => {
+            return new Cypress.Promise((resolve, reject) => {
+                let attempts = 0;
+                const maxAttempts = 5; // 10 seconds total with 2s intervals
+                const check = () => {
+                    attempts++;
+                    if (Cypress.$(elem).is(':visible')) {
+                        resolve();
+                    } else if (attempts >= maxAttempts) {
+                        reject(new Error('Personal Information not visible after 10 seconds'));
+                    } else {
+                        setTimeout(check, 2000);
+                    }
+                };
+                check();
+            });
+        });
   });
 });
