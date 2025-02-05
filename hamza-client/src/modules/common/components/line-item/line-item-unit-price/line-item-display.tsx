@@ -1,4 +1,4 @@
-import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
+import currencyIcons from '@/images/currencies/crypto-currencies';
 import { Flex, Image, Text } from '@chakra-ui/react';
 
 type LineItemUnitPriceDisplayProps = {

@@ -5,7 +5,7 @@ import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { Flex, Spinner, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
+import currencyIcons from '../../../../../../public/images/currencies/crypto-currencies';
 import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
 import { convertCryptoPrice } from '@lib/util/get-product-price';
 
