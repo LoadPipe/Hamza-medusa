@@ -12,7 +12,7 @@ import {
     Box,
 } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import AccountMenu from '@modules/layout/templates/nav/menu-desktop/account-menu';
+import AccountMenu from '@/modules/nav/templates/nav/menu-desktop/account-menu';
 import { useSwitchNetwork, useWalletClient, useAccount } from 'wagmi';
 import {
     getAllowedChainsFromConfig,

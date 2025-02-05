@@ -2,7 +2,7 @@
 
 import { Button, Flex } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import AccountMenu from '@modules/layout/templates/nav/menu-desktop/account-menu';
+import AccountMenu from '@/modules/nav/templates/nav/menu-desktop/account-menu';
 import { useWalletClient, useAccount } from 'wagmi';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { useEffect } from 'react';
