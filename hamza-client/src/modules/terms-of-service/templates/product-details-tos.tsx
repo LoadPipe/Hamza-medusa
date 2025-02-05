@@ -14,7 +14,6 @@ import {
     TabList,
     TabPanels,
     Tab,
-    TabPanel,
     UnorderedList,
     ListItem,
 } from '@chakra-ui/react';
@@ -22,11 +21,8 @@ import React from 'react';
 import ShippingpPolicy from '../policies/shipping-policy';
 import PaymentPolicy from '../policies/payment-policy';
 import ReturnPolicy from '../policies/return-policy';
-import { MdCurrencyBitcoin } from 'react-icons/md';
-import { FiTruck } from 'react-icons/fi';
 import { GiAnticlockwiseRotation } from 'react-icons/gi';
 import { BsBoxSeam } from 'react-icons/bs';
-import { SiBitcoinsv } from 'react-icons/si';
 import { CiBitcoin } from 'react-icons/ci';
 
 interface TermsOfServiceProps {

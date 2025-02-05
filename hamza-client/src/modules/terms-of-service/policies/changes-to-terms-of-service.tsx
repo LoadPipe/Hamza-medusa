@@ -1,4 +1,4 @@
-import { Flex, Text, UnorderedList, ListItem } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import React from 'react';
 
 const ChangesToTermsOfService = () => {
