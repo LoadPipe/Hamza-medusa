@@ -15,7 +15,6 @@ import {
 import { PricedProduct } from '@medusajs/medusa/dist/types/pricing';
 import { cache } from 'react';
 import { decode } from 'jsonwebtoken';
-
 import sortProducts from '@lib/util/sort-products';
 import transformProductPreview from '@lib/util/transform-product-preview';
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
@@ -26,9 +25,7 @@ import {
 import { medusaClient } from '../config/config';
 import medusaError from '@lib/util/medusa-error';
 import axios from 'axios';
-
 import { cookies } from 'next/headers';
-import { next } from 'sucrase/dist/types/parser/tokenizer';
 import { EscrowStatus } from './enums';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL;
