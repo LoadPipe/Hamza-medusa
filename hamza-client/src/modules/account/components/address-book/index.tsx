@@ -1,6 +1,5 @@
 import { Customer, Region } from '@medusajs/medusa';
 import React from 'react';
-
 import AddAddress from './components/add-address';
 import EditAddress from './components/edit-address-modal';
 

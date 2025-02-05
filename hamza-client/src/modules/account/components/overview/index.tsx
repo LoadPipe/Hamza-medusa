@@ -1,6 +1,5 @@
 import { Customer, Order } from '@medusajs/medusa';
 import { Container } from '@medusajs/ui';
-import { formatAmount } from '@lib/util/prices';
 import ChevronDown from '@modules/common/icons/chevron-down';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import { formatCryptoPrice } from '@lib/util/get-product-price';

@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
-import { Flex, Text, MenuItem, Box, Image } from '@chakra-ui/react';
-import { formatAddress } from '@lib/util/format-address';
+import { Flex, Text, Box } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { CiLogout } from 'react-icons/ci';
 export const LogoutDesktop = () => {

@@ -1,10 +1,7 @@
 'use client';
 import { CgProfile } from 'react-icons/cg';
-import { LiaBoxOpenSolid } from 'react-icons/lia';
 import { FaRegHeart, FaRegBell } from 'react-icons/fa';
 import { PiNotePencilLight } from 'react-icons/pi';
-import { CiLogout } from 'react-icons/ci';
-
 import { Customer } from '@medusajs/medusa';
 import {
     useParams,
@@ -13,12 +10,9 @@ import {
     useSearchParams,
 } from 'next/navigation';
 import { MdOutlineRateReview } from 'react-icons/md';
-
 import { Flex, Box, Text, IconButton, Collapse } from '@chakra-ui/react';
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
-import NextLink from 'next/link';
 import { useOrderTabStore } from '@/zustand/order-tab-state';
-
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';

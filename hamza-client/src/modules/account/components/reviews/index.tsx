@@ -1,11 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     Text,
-    Stack,
-    StackDivider,
     useDisclosure,
     ButtonGroup,
     Flex,
@@ -17,7 +15,7 @@ import { format } from 'date-fns';
 import { getAllProductReviews, getNotReviewedOrders } from '@/lib/server';
 import EditReviewTemplate from '@modules/editreview/[id]/edit-review-template';
 import ReviewTemplate from '@modules/review/[id]/review-template';
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useQueries } from '@tanstack/react-query';
 import getQueryClient from '@/app/query-utils/getQueryClient';
 
 import Spinner from '@modules/common/icons/spinner';

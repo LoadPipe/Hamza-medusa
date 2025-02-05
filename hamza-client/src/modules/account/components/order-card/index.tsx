@@ -5,6 +5,7 @@ import { FaCheckCircle } from 'react-icons/fa';
 import React, { useEffect, useState } from 'react';
 import { getStore } from '@/lib/server';
 import Link from 'next/link';
+
 type OrderDetails = {
     thumbnail: string;
     title: string;
