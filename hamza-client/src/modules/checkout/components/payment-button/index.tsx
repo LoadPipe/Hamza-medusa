@@ -26,7 +26,7 @@ import HamzaLogoLoader from '@/components/loaders/hamza-logo-loader';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
 import Spinner from '@/modules/common/icons/spinner';
 import { MESSAGES } from './payment-message/message';
-import { useCompleteCartCustom } from './useCartMutations';
+import { useCompleteCartCustom, cancelOrderFromCart } from './useCartMutations';
 
 //TODO: we need a global common function to replace this
 
@@ -66,13 +66,11 @@ const CryptoPaymentButton = ({
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
     notReady: boolean;
 }) => {
-    console.log(`WHY ARE U NOT READY? ${notReady}`);
     const [submitting, setSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loaderVisible, setLoaderVisible] = useState(false);
     console.log(cart.id);
     // const completeCart = useCompleteCart(cart.id);
-    const updateCart = useUpdateCart(cart.id);
     const { openConnectModal } = useConnectModal();
     const { connector: activeConnector, isConnected } = useAccount();
     const { data: walletClient, isError } = useWalletClient();
@@ -206,7 +204,6 @@ const CryptoPaymentButton = ({
      */
     const completeCheckout = async (cartId: string) => {
         try {
-            console.log(`DOES THIS RUN`);
             // Retrieve data (cart id, currencies, amounts, etc.) needed for wallet checkout
             //onst data: CheckoutData = await getCheckoutData(cartId);
             const checkoutData = await axios.get(
@@ -227,7 +224,6 @@ const CryptoPaymentButton = ({
 
                 // Finalize the checkout, if wallet payment was successful
                 if (output?.success) {
-                    // TODO: MOVE TO INDEX.TS
                     console.log('finalizing checkout');
                     await finalizeCheckout(
                         cartId,
@@ -236,15 +232,12 @@ const CryptoPaymentButton = ({
                         output.chain_id,
                     );
 
-                    // TODO: examine response
-
                     // Country code needed for redirect (get before clearing the cart)
                     const countryCode = process.env.NEXT_PUBLIC_FORCE_COUNTRY
                         ? process.env.NEXT_PUBLIC_FORCE_COUNTRY
                         : cart.shipping_address?.country_code?.toLowerCase();
 
                     // Clear cart
-                    //console.log('clearing cart');
                     await clearCart();
 
                     // Redirect to confirmation page
@@ -261,11 +254,11 @@ const CryptoPaymentButton = ({
                             ? output.message
                             : 'Checkout was not completed.',
                     );
-                    await cancelOrderFromCart();
+                    await cancelOrderFromCart(cartId);
                 }
             } else {
                 setLoaderVisible(false);
-                await cancelOrderFromCart();
+                await cancelOrderFromCart(cartId);
                 throw new Error('Checkout failed to complete.');
             }
         } catch (error) {
@@ -276,28 +269,7 @@ const CryptoPaymentButton = ({
         }
     };
 
-    const cancelOrderFromCart = async () => {
-        try {
-            setLoaderVisible(false);
-            const response = await axios.post(
-                `${MEDUSA_SERVER_URL}/custom/cart/cancel`,
-                {
-                    cart_id: cart.id,
-                },
-                {
-                    headers: {
-                        authorization: getClientCookie('_medusa_jwt'),
-                    },
-                },
-            );
-            setLoaderVisible(false);
-            return response;
-        } catch (e) {
-            setLoaderVisible(false);
-            console.log('error in cancelling order ', e);
-            return;
-        }
-    };
+
 
     const { mutate: completeCart } = useCompleteCartCustom();
     /**
@@ -341,7 +313,9 @@ const CryptoPaymentButton = ({
         } catch (e) {
             console.error(e);
             displayError('Checkout was not completed');
-            await cancelOrderFromCart();
+            setLoaderVisible(false);
+            await cancelOrderFromCart(cart.id);
+
         } finally {
             setSubmitting(false);
             setLoaderVisible(false);

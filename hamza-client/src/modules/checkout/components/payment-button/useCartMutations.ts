@@ -5,7 +5,7 @@ import { getClientCookie } from '@lib/util/get-client-cookies';
 const MEDUSA_SERVER_URL = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
 
 /**
- * Custom Tanstack v5 mutation wrapper for completing a cart
+ * Custom Tanstack v5 mutation for completing a cart
  * @function: updateCart
  * @What: Finalize a cart and creates the corresponding order in the Backend
  * @params: Provide it a cart_id
@@ -33,4 +33,32 @@ export const useCompleteCartCustom = () => {
             return response.data;
         },
     });
+};
+
+/**
+ * Custom Tanstack v5 mutation for creating a cart
+ * @function: createCart
+ * @What: Creates a new cart in the backend
+ * @params: Provide it a region_id
+ * @returns: Cart
+ */
+
+export const cancelOrderFromCart = async (cartId: string) => {
+    try {
+        const response = await axios.post(
+            `${MEDUSA_SERVER_URL}/custom/cart/cancel`,
+            {
+                cart_id: cartId,
+            },
+            {
+                headers: {
+                    authorization: getClientCookie('_medusa_jwt'),
+                },
+            },
+        );
+        return response;
+    } catch (e) {
+        console.log('error in cancelling order ', e);
+        return;
+    }
 };
