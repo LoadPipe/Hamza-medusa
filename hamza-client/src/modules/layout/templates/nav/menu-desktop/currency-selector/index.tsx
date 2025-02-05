@@ -142,6 +142,7 @@ const CurrencySelector = (props: any) => {
                                     gap={3}
                                     backgroundColor={'transparent'}
                                     _hover={{ color: 'primary.green.900' }}
+                                    className="currency-selector-item"
                                     onClick={() =>
                                         handleCurrencySelect(currency)
                                     }
