@@ -5,15 +5,13 @@ import {
     createAuthenticationAdapter,
     RainbowKitAuthenticationProvider,
     RainbowKitProvider,
-    AuthenticationStatus,
     AvatarComponent,
 } from '@rainbow-me/rainbowkit';
-import { useWalletClient, WagmiConfig } from 'wagmi';
+import { WagmiConfig } from 'wagmi';
 import {
     chains,
     config,
     darkThemeConfig,
-    SwitchNetwork,
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { HnsClient } from '@/web3/contracts/hns-client';

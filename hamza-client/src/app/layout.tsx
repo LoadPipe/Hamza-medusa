@@ -5,9 +5,9 @@ import { cookies } from 'next/headers';
 
 const BASE_URL =
     process.env.NEXT_PUBLIC_MEDUSA_CLIENT_URL || 'https://localhost:8000';
-import MedusaProvider from '@/components/providers/medusa/medusa-provider'; // Import MedusaProvider
+import MedusaProvider from '@/components/providers/medusa/medusa-provider';
 import { RainbowWrapper } from '@/components/providers/rainbowkit/rainbow-provider';
-import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { ChakraProvider } from '@chakra-ui/react';
 import theme from '../styles/chakra-theme';
 import { Toaster } from 'react-hot-toast';
 import { Sora } from 'next/font/google';
@@ -41,7 +41,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                             j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
                             })(window,document,'script','dataLayer','GTM-W9HPPFG3');
-                        `
+                        `,
                     }}
                 />
 
@@ -66,7 +66,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                                 a.src = "https://support.hamza.market/modules/chat/js/widget.js?v=4239";
                                 m.parentNode.insertBefore(a, m);
                             })(document, "script");
-                        `
+                        `,
                     }}
                 />
 

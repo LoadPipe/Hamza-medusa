@@ -8,18 +8,16 @@ import {
     ModalContent,
     ModalBody,
     Text,
-    Skeleton,
     Box,
 } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import AccountMenu from '@/modules/nav/templates/nav/menu-desktop/account-menu';
-import { useSwitchNetwork, useWalletClient, useAccount } from 'wagmi';
+import { useSwitchNetwork, useAccount } from 'wagmi';
 import {
     getAllowedChainsFromConfig,
     getBlockchainNetworkName,
 } from '@/components/providers/rainbowkit/rainbowkit-utils/rainbow-utils';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import HamzaLogoLoader from '../../loaders/hamza-logo-loader';
 
 export const CheckoutWalletButton = () => {

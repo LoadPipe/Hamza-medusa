@@ -3,7 +3,6 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-
 import { Text, Flex, Heading, Button } from '@chakra-ui/react';
 import ErrorIcon from '../../public/images/error/error-icon.svg';
 

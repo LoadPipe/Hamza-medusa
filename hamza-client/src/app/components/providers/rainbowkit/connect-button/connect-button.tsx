@@ -1,9 +1,8 @@
 'use client';
-import { Box, Button, Text, Flex, Image } from '@chakra-ui/react';
+import { Box, Text, Flex, Image } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { formatAddress } from '@lib/util/format-address';
 import { MdOutlineAccountBalanceWallet } from 'react-icons/md';
-import { getAllowedChainsFromConfig } from '../rainbowkit-utils/rainbow-utils';
 
 export const WalletConnectButton = () => {
     return (
