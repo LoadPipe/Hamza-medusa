@@ -26,8 +26,6 @@ import HamzaLogoLoader from '@/components/loaders/hamza-logo-loader';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
 import Spinner from '@/modules/common/icons/spinner';
 import { MESSAGES } from './payment-message/message';
-import { useQuery } from '@tanstack/react-query';
-import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
 //TODO: we need a global common function to replace this
 const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
@@ -43,14 +41,7 @@ declare global {
     }
 }
 
-const PaymentButton: React.FC<{cartId: string}> = ({ cartId }) => {
-
-    const { data: cart } = useQuery({
-        queryKey: ['cart', cartId],
-        queryFn: () => fetchCartForCheckout(cartId),
-        staleTime: 1000 * 60 * 5,
-        enabled: !!cartId,
-    });
+const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
     const notReady =
         !cart ||
         !cart.shipping_address ||
