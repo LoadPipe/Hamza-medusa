@@ -1,7 +1,5 @@
 import { MoneyAmount } from '@medusajs/medusa';
-
 import { Region, Variant } from '@/types/medusa';
-
 import { isEmpty } from './isEmpty';
 import { ProductVariantInfo, RegionInfo } from '../../types/global';
 import { noDivisionCurrencies } from '@/lib/config/constants';

@@ -1,4 +1,3 @@
-import { MdOutlineOutput } from 'react-icons/md';
 import { get } from '../server/index';
 import { SeamlessCache } from './seamless-cache';
 
