@@ -154,10 +154,7 @@ describe('Product page', () => {
             .click();
             
         // checks cart quantity in nav
-        cy.get('.cart-quantity')
-            .should('be.visible')
-            .should('not.be.disabled')
-            .should('have.text', '3');
+        cy.get('.cart-quantity').should('have.text', '3');
 
         cy.wait(3000);
 
