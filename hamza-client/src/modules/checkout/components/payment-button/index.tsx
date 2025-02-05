@@ -47,15 +47,14 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
         !cart.shipping_address ||
         !cart.billing_address ||
         !cart.email ||
-        (cart.shipping_methods?.length ?? 0) === 0;
+        (cart.shipping_methods?.length ?? 0) > 0;
 
 
-    console.log(`WTF IS THIS CART DATA?? ${JSON.stringify(cart)}`);
+    console.log(`1AHD IS THIS CART DATA?? ${JSON.stringify(cart)}`);
 
     return <CryptoPaymentButton notReady={notReady} cart={cart} />;
 };
 
-// TODO: (For G) Typescriptify this function with verbose error handling
 const CryptoPaymentButton = ({
                                  cart,
                                  notReady,
@@ -63,8 +62,7 @@ const CryptoPaymentButton = ({
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
     notReady: boolean;
 }) => {
-    console.log(`$$$$$ WTF IS THIS SHIT `);
-    console.log(`WTF ${notReady}`);
+    console.log(`WHY ARE U NOT READY? ${notReady}`);
     const [submitting, setSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loaderVisible, setLoaderVisible] = useState(false);
@@ -95,15 +93,6 @@ const CryptoPaymentButton = ({
 
         fetchChainId();
     }, [walletClient]);
-
-    const cartRef = useRef<
-        Array<{ variant_id: string; reduction_quantity: number }>
-    >(
-        cart.items.map((item) => ({
-            variant_id: item.variant_id,
-            reduction_quantity: item.quantity, // or any logic to determine the reduction quantity
-        })),
-    );
 
     // Get the prescribed checkout mode from the server
     const getCheckoutMode = async () => {
