@@ -301,77 +301,31 @@ const CryptoPaymentButton = ({
      * @returns
      */
     const handlePayment = async () => {
-        console.log('isConnected?', isConnected);
-
         if (!isConnected) {
-            if (openConnectModal) openConnectModal();
-        } else {
-            try {
-                setSubmitting(true);
-                setLoaderVisible(true);
-                setErrorMessage('');
+            openConnectModal && openConnectModal();
+            return;
+        }
 
-                /**
-                 * @factory: updateCart (medusa-react) React-Query V4
-                 * @function: updateCart
-                 * @What: Finalize a cart and creates the corresponding order in the Backend
-                 * @params: Provide it a cart_id
-                 * @returns: Order
-                 **/
-                updateCart.mutate(
-                    { context: {} },
-                    {
-                        onSuccess: ({}) => {
-                            //this calls the CartCompletion routine
-                            completeCart.mutate(void 0, {
-                                onSuccess: async ({ data, type }) => {
-                                    //TODO: data is undefined
-                                    try {
-                                        //this does wallet payment, and everything after
-                                        completeCheckout(cart.id);
-                                    } catch (e) {
-                                        setLoaderVisible(false);
-                                        console.error(e);
-                                        setSubmitting(false);
-                                        displayError(
-                                            'Checkout was not completed',
-                                        );
-                                        await cancelOrderFromCart();
-                                    }
-                                },
-                                onError: async (e) => {
-                                    setLoaderVisible(false);
-                                    setSubmitting(false);
-                                    console.error(e);
-                                    if (
-                                        e.message?.indexOf('status code 401') >=
-                                        0
-                                    ) {
-                                        displayError(
-                                            'Customer not whitelisted',
-                                        );
-                                    } else {
-                                        displayError(
-                                            'Checkout was not completed',
-                                        );
-                                    }
+        try {
+            setSubmitting(true);
+            setLoaderVisible(true);
+            setErrorMessage('');
 
-                                    //TODO: this is a really bad way to do this
-                                    await cancelOrderFromCart();
-                                },
-                            });
-                        },
-                    },
-                );
+            // Await the updateCart mutation
+            await updateCart.mutateAsync({ context: {} });
 
-                return;
-            } catch (e) {
-                setLoaderVisible(false);
-                console.error(e);
-                setSubmitting(false);
-                displayError('Checkout was not completed');
-                await cancelOrderFromCart();
-            }
+            // Await the completeCart mutation
+            await completeCart.mutateAsync(void 0);
+
+            // Proceed with the final checkout step
+            await completeCheckout(cart.id);
+
+        } catch (e) {
+            console.error(e);
+            setLoaderVisible(false);
+            setSubmitting(false);
+            displayError('Checkout was not completed');
+            await cancelOrderFromCart();
         }
     };
 
