@@ -57,7 +57,7 @@ const PaymentSummary = ({ cartId }: { cartId: string }) => {
             <CartTotals useCartStyle={true} />
 
             <Flex mt="auto" flexDir={'column'} gap={5}>
-                <DiscountCode />
+                <DiscountCode cartId={enrichedCart?.id as string} />
                 {enrichedCart ? <PaymentButton cart={enrichedCart} /> : <Text>Loading cart...</Text>}
             </Flex>
         </Flex>
