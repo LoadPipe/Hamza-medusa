@@ -137,7 +137,7 @@ export default async function Nav() {
                                                 color="white"
                                                 fontWeight="700"
                                             >
-                                                <Text fontSize={'10px'}>
+                                                <Text fontSize={'10px'} className='cart-quantity'>
                                                     {totalItems}
                                                 </Text>
                                             </Flex>

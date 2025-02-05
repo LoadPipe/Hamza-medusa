@@ -40,6 +40,7 @@ const ItemQuantityButton = forwardRef<
                     cursor={value && value > min ? 'pointer' : 'not-allowed'}
                     justifyContent="center"
                     opacity={value && value > min ? 1 : 0.5}
+                    className="cart-item-quantity-button-decrement"
                 >
                     <Flex
                         alignSelf="center"
@@ -64,6 +65,7 @@ const ItemQuantityButton = forwardRef<
                         color="white"
                         alignSelf={'center'}
                         lineHeight={1}
+                        className='cart-item-quantity-display'
                     >
                         {value}
                     </Text>
@@ -81,6 +83,7 @@ const ItemQuantityButton = forwardRef<
                     justifyContent="center"
                     backgroundColor={{ base: 'black', md: 'transparent' }}
                     opacity={value && value < max ? 1 : 0.5}
+                    className='cart-item-quantity-button-increment'
                 >
                     <Flex
                         alignSelf="center"
