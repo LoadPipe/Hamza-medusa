@@ -12,7 +12,7 @@ import X from '@modules/common/icons/x';
 
 import { getProductPrice } from '@lib/util/get-product-price';
 import { Region } from '@medusajs/medusa';
-import OptionSelect from '../option-select';
+import OptionSelect from '../../option-select';
 
 type MobileActionsProps = {
     product: PricedProduct;
@@ -124,8 +124,8 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                                 {!variant
                                     ? 'Select variant'
                                     : !inStock
-                                        ? 'Out of stock'
-                                        : 'Add to Cart'}
+                                      ? 'Out of stock'
+                                      : 'Add to Cart'}
                             </Button>
                         </div>
                     </div>
@@ -180,8 +180,8 @@ const MobileActions: React.FC<MobileActionsProps> = ({
                                                                     }
                                                                     current={
                                                                         options[
-                                                                        option
-                                                                            .id
+                                                                            option
+                                                                                .id
                                                                         ]
                                                                     }
                                                                     updateOption={
