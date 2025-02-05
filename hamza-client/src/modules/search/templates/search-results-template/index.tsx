@@ -1,6 +1,4 @@
 import { Heading, Text } from '@medusajs/ui';
-import Link from 'next/link';
-
 import RefinementList from '@modules/shop/components/refinement-list';
 import { SortOptions } from '@modules/shop/components/refinement-list/sort-products';
 import PaginatedProducts from '@/modules/shop/components/pagination';

@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react';
 import SearchModal from '../search-modal';
 import { Input } from '@medusajs/ui';
-import { MagnifyingGlass } from '@medusajs/icons';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 
 export default function SearchModalWrapper() {
     const [searchOpened, setSearchOpened] = useState(false);

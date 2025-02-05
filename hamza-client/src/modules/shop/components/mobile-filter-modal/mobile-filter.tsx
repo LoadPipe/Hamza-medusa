@@ -15,7 +15,6 @@ import FilterModal from './components/filter-modal';
 import { usePathname } from 'next/navigation';
 import SearchModal from '@modules/search/templates/search-modal';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
-import RangeSliderModal from './components/range-slider-modal';
 
 const MobileFilter = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
