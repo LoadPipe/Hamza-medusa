@@ -1,28 +1,42 @@
+'use client'; // ✅ Mark as a Client Component
+
 import React from 'react';
 import { Flex, Text } from '@chakra-ui/react';
-import { enrichLineItems, retrieveCart } from '@modules/cart/actions';
-import { LineItem } from '@medusajs/medusa';
+import { enrichLineItems } from '@modules/cart/actions';
+import { Cart, LineItem } from '@medusajs/medusa';
 import CartTotals from '@modules/common/components/cart-totals';
 import PaymentButton from '@modules/checkout/components/payment-button';
 import DiscountCode from '@modules/checkout/components/discount-code';
-import CheckoutTermsOfService from '@modules/terms-of-service/checkout-tos';
+import { useQuery } from '@tanstack/react-query';
+import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
+import Spinner from '@modules/common/icons/spinner';
 
-const PaymentSummary = async (params: any) => {
-    const cartId = params.cartId;
-    const cart = await retrieveCart(cartId).then((cart) => cart);
+const PaymentSummary = ({ cartId }: { cartId: string }) => {
+    // Fetch the cart
+    const { data: cart, isLoading: cartLoading, isError: cartError } = useQuery({
+        queryKey: ['cart', cartId], // Include cartId to refetch when it changes
+        queryFn: async () => fetchCartForCheckout(cartId), // ✅ Call the function properly
+        staleTime: 1000 * 60 * 5, // Cache cart for 5 minutes
+    });
 
-    if (!cart) {
-        console.log('cart not found');
-        return null;
+    // Fetch enriched line items
+    const { data: enrichedCart, isLoading: enrichLoading, isError: enrichError } = useQuery({
+        queryKey: ['enrichedCart', cart?.id],
+        queryFn: async () => {
+            if (!cart || !cart.items.length) return cart;
+            const enrichedItems = await enrichLineItems(cart.items, cart.region_id);
+            return { ...cart, items: enrichedItems as LineItem[] } as Omit<Cart, 'refundable_amount' | 'refunded_total'>;
+        },
+        enabled: !!cart?.id,
+    });
+
+
+    if (cartLoading || enrichLoading) return <Spinner size={36} />;
+    if (cartError || enrichError || !cart) {
+        console.log('Cart not found or error occurred');
+        return <Text>Error loading cart</Text>;
     }
 
-    if (cart?.items.length) {
-        const enrichedItems = await enrichLineItems(
-            cart?.items,
-            cart?.region_id
-        );
-        cart.items = enrichedItems as LineItem[];
-    }
 
     return (
         <Flex
@@ -36,11 +50,7 @@ const PaymentSummary = async (params: any) => {
             borderRadius={'16px'}
             p={{ base: '16px', md: '40px' }}
         >
-            <Text
-                color={'primary.green.900'}
-                fontSize={'18px'}
-                fontWeight={600}
-            >
+            <Text color={'primary.green.900'} fontSize={'18px'} fontWeight={600}>
                 Payment Summary
             </Text>
 
@@ -48,16 +58,7 @@ const PaymentSummary = async (params: any) => {
 
             <Flex mt="auto" flexDir={'column'} gap={5}>
                 <DiscountCode />
-                <PaymentButton cart={cart} />
-                {/* <Text
-                    textAlign="center"
-                    fontSize={{ base: '10px', md: '12px' }}
-                    maxW={'236px'}
-                    mx="auto"
-                >
-                    By clicking on confirm order, you agree to these{' '}
-                    <CheckoutTermsOfService />
-                </Text> */}
+                {enrichedCart ? <PaymentButton cart={enrichedCart} /> : <Text>Loading cart...</Text>}
             </Flex>
         </Flex>
     );

@@ -18,7 +18,7 @@ const CheckoutTemplate = ({ cartId }: { cartId: string }) => {
                 <CheckoutDetails cartId={cartId} />
                 <OrderSummary cartId={cartId} />
             </Flex>
-            <PaymentSummary />
+            <PaymentSummary cartId={cartId } />
         </Flex>
     );
 };

@@ -25,7 +25,7 @@ import { getClientCookie } from '@lib/util/get-client-cookies';
 import HamzaLogoLoader from '@/components/loaders/hamza-logo-loader';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
 import Spinner from '@/modules/common/icons/spinner';
-
+import { MESSAGES } from './payment-message/message';
 //TODO: we need a global common function to replace this
 const MEDUSA_SERVER_URL =
     process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000';
@@ -47,9 +47,10 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
         !cart.shipping_address ||
         !cart.billing_address ||
         !cart.email ||
-        cart.shipping_methods.length < 1
-            ? true
-            : false;
+        (cart.shipping_methods?.length ?? 0) === 0;
+
+
+    console.log(`WTF IS THIS CART DATA?? ${JSON.stringify(cart)}`);
 
     return <CryptoPaymentButton notReady={notReady} cart={cart} />;
 };
@@ -62,6 +63,8 @@ const CryptoPaymentButton = ({
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
     notReady: boolean;
 }) => {
+    console.log(`$$$$$ WTF IS THIS SHIT `);
+    console.log(`WTF ${notReady}`);
     const [submitting, setSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [loaderVisible, setLoaderVisible] = useState(false);
@@ -82,8 +85,8 @@ const CryptoPaymentButton = ({
             if (walletClient) {
                 try {
                     const chainId = await walletClient.getChainId();
-                    // console.log('Connected to Chain ID:', chainId);
-                    // console.log('walletClient data:', walletClient);
+                    console.log('Connected to Chain ID:', chainId);
+                    console.log('walletClient data:', walletClient);
                 } catch (error) {
                     console.error('Error fetching chain ID:', error);
                 }
@@ -309,6 +312,8 @@ const CryptoPaymentButton = ({
      * @returns
      */
     const handlePayment = async () => {
+        console.log('isConnected?', isConnected);
+
         if (!isConnected) {
             if (openConnectModal) openConnectModal();
         } else {
@@ -402,51 +407,9 @@ const CryptoPaymentButton = ({
         <>
             {loaderVisible && (
                 <HamzaLogoLoader
-                    messages={[
-                        'Processing order',
-                        'Charging the flux capacitor',
-                        'Running on caffeine and code',
-                        'Double-checking everything twice',
-                        'Getting things just right',
-                        'Aligning all the stars',
-                        'Calibrating awesomeness',
-                        'Fetching some digital magic',
-                        'Crossing the t’s and dotting the i’s',
-                        'Waking up the hamsters on the wheel',
-                        'Cooking up something great',
-                        'Dusting off the keyboard',
-                        'Wrangling code into shape',
-                        'Consulting the manual (just kidding)',
-                        'Building something epic',
-                        'Gearing up for greatness',
-                        'Rehearsing our victory dance',
-                        'Making sure it’s perfect for you',
-                        'Channeling good vibes into the code',
-                        'Stretching out some last-minute bugs',
-                        'Preparing the finishing touches',
-                        'Wow this is taking a long time',
-                        'Person, woman, man, camera... TV',
-                        'What’s for dinner tonight?',
-                        'Sending a message to the Mayor of Blockchain',
-                        'Contacting the blockchain',
-                        'Ein, zwei, drei',
-                        'Finalizing your purchase',
-                        'Preparing your receipt',
-                        'Nearly done',
-                        'Randomizing whimsical checkout messages',
-                        'Preparing you a glass of maple syrup',
-                        'Patience is the companion of wisdom',
-                        'Have patience with all things but first of all with yourself',
-                        'It’s nice to be able to buy normal stuff with crypto',
-                        'Hamza was born in 2024',
-                        'Reordering the punch-cards',
-                        'Hacking the Gibson',
-                        'Beuller.... Beuller',
-                        'Waking up and choosing crypto',
-                        '',
-                        'Let there be light',
-                        'dot dot dot',
-                    ]}
+                    messages={
+                        MESSAGES
+                    }
                 />
             )}
             <Button
