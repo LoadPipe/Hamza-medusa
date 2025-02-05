@@ -1,6 +1,6 @@
 'use client';
 
-import { ethers, BigNumberish, TransactionResponse } from 'ethers';
+import { ethers } from 'ethers';
 import {
     IWalletPaymentHandler,
     CheckoutData,

@@ -3,8 +3,7 @@ import OrderSummary from './order-summary';
 import PaymentSummary from './payment-summary';
 import CheckoutDetails from './checkout-details';
 import { Flex } from '@chakra-ui/react';
-import { Cart, Customer } from '@medusajs/medusa';
-import { useAccount } from 'wagmi';
+import { Cart } from '@medusajs/medusa';
 
 const CheckoutTemplate = ({
     cart,

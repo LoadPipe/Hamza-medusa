@@ -2,7 +2,7 @@
 
 import { getCurrencyAddress } from '@/currency.config';
 import { erc20abi } from '@/web3/abi/erc20-abi';
-import { BigNumberish, ethers } from 'ethers';
+import { ethers } from 'ethers';
 
 export type WalletPaymentResponse = {
     transaction_id: string;

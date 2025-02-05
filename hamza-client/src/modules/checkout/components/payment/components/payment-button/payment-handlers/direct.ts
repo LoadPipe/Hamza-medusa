@@ -1,6 +1,6 @@
 'use client';
 
-import { ethers, BigNumberish, TransactionResponse } from 'ethers';
+import { ethers, BigNumberish } from 'ethers';
 import { getCurrencyPrecision } from '@/currency.config';
 import { getCurrencyAddress } from '@/currency.config';
 import { getContractAddress } from '@/contracts.config';
