@@ -56,9 +56,9 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({ cart }) => {
 
 // TODO: (For G) Typescriptify this function with verbose error handling
 const CryptoPaymentButton = ({
-    cart,
-    notReady,
-}: {
+                                 cart,
+                                 notReady,
+                             }: {
     cart: Omit<Cart, 'refundable_amount' | 'refunded_total'>;
     notReady: boolean;
 }) => {
@@ -99,7 +99,7 @@ const CryptoPaymentButton = ({
         cart.items.map((item) => ({
             variant_id: item.variant_id,
             reduction_quantity: item.quantity, // or any logic to determine the reduction quantity
-        }))
+        })),
     );
 
     // Get the prescribed checkout mode from the server
@@ -157,7 +157,7 @@ const CryptoPaymentButton = ({
                 //TODO: get provider, chain id & signer from window.ethereum
                 if (window.ethereum?.providers) {
                     provider = new ethers.BrowserProvider(
-                        window.ethereum?.providers[0]
+                        window.ethereum?.providers[0],
                     );
                     signer = await provider.getSigner();
                 }
@@ -169,7 +169,7 @@ const CryptoPaymentButton = ({
                 provider,
                 signer,
                 chainId,
-                data
+                data,
             );
 
             return output;
@@ -188,7 +188,7 @@ const CryptoPaymentButton = ({
     const redirectToOrderConfirmation = (
         orderId: string,
         cartId: string,
-        countryCode: string
+        countryCode: string,
     ) => {
         const url = `/${countryCode}/order/confirmed/${orderId}?cart=${cartId}`;
         console.log('redirecting to ', url);
@@ -221,7 +221,7 @@ const CryptoPaymentButton = ({
                     headers: {
                         Authorization: `${getClientCookie('_medusa_jwt')}`,
                     },
-                }
+                },
             );
             const data = checkoutData.data;
 
@@ -238,7 +238,7 @@ const CryptoPaymentButton = ({
                         cartId,
                         output.transaction_id,
                         output.payer_address,
-                        output.chain_id
+                        output.chain_id,
                     );
 
                     // TODO: examine response
@@ -257,14 +257,14 @@ const CryptoPaymentButton = ({
                     redirectToOrderConfirmation(
                         data?.orders?.length ? data.orders[0].order_id : null,
                         cart.id,
-                        countryCode
+                        countryCode,
                     );
                 } else {
                     setLoaderVisible(false);
                     displayError(
                         output?.message
                             ? output.message
-                            : 'Checkout was not completed.'
+                            : 'Checkout was not completed.',
                     );
                     await cancelOrderFromCart();
                 }
@@ -293,7 +293,7 @@ const CryptoPaymentButton = ({
                     headers: {
                         authorization: getClientCookie('_medusa_jwt'),
                     },
-                }
+                },
             );
             setLoaderVisible(false);
             return response;
@@ -317,6 +317,13 @@ const CryptoPaymentButton = ({
                 setLoaderVisible(true);
                 setErrorMessage('');
 
+                /**
+                 * @factory: updateCart (medusa-react) React-Query V4
+                 * @function: updateCart
+                 * @What: Finalize a cart and creates the corresponding order in the Backend
+                 * @params: Provide it a cart_id
+                 * @returns: Order
+                 **/
                 updateCart.mutate(
                     { context: {} },
                     {
@@ -333,7 +340,7 @@ const CryptoPaymentButton = ({
                                         console.error(e);
                                         setSubmitting(false);
                                         displayError(
-                                            'Checkout was not completed'
+                                            'Checkout was not completed',
                                         );
                                         await cancelOrderFromCart();
                                     }
@@ -347,11 +354,11 @@ const CryptoPaymentButton = ({
                                         0
                                     ) {
                                         displayError(
-                                            'Customer not whitelisted'
+                                            'Customer not whitelisted',
                                         );
                                     } else {
                                         displayError(
-                                            'Checkout was not completed'
+                                            'Checkout was not completed',
                                         );
                                     }
 
@@ -360,7 +367,7 @@ const CryptoPaymentButton = ({
                                 },
                             });
                         },
-                    }
+                    },
                 );
 
                 return;

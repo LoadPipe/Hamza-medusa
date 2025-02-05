@@ -8,7 +8,7 @@ import { Customer } from '@medusajs/medusa';
 import { Flex } from '@chakra-ui/react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { useQuery } from '@tanstack/react-query';
-import { fetchCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart';
+import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 
 /**
  * @param initialCart - CartWithCheckoutStep | null (if initialCart prop changes and ANY re-renders
@@ -29,7 +29,7 @@ const CartTemplate = ({
 
     const { data: initialCart, isLoading, isError } = useQuery({
         queryKey: ['cart'],
-        queryFn: fetchCart,
+        queryFn: fetchCartForCart,
         staleTime: 1000 * 60 * 5, // Cache cart for 5 minutes
     })
 

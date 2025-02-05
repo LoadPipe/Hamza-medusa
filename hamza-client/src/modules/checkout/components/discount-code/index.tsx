@@ -5,7 +5,7 @@ import React, { useMemo } from 'react';
 import { useFormState } from 'react-dom';
 
 import { useQuery } from '@tanstack/react-query';
-import { fetchCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart';
+import { fetchCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 // import Input from '@modules/common/components/input';
 import { Button, Flex, Box, Input } from '@chakra-ui/react';
 import {

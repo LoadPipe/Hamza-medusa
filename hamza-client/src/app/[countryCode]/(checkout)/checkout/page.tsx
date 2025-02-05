@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import { Flex } from '@chakra-ui/react';
 import ForceWalletConnect from '@/app/components/loaders/force-wallet-connect';
 import CheckoutTemplate from '@/modules/checkout/templates';
-import { fetchCart } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart';
+import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
 
 export const metadata: Metadata = {
     title: 'Checkout',
@@ -26,7 +26,7 @@ export default async function Checkout(params: any) {
     // Prefetch and hydrate the cart
     await queryClient.prefetchQuery({
         queryKey: ['cart', cartId],
-        queryFn: () => fetchCart(cartId),
+        queryFn: () => fetchCartForCheckout(cartId),
         staleTime: 1000 * 60 * 5,
     });
 

@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 import CartTemplate from '@modules/cart/templates';
 import { getHamzaCustomer } from '@lib/data';
 import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query'
-import { fetchCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart';
+import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 
 
 // Single source of truth
@@ -24,7 +24,7 @@ export default async function Cart() {
     // Prefetch cart with enrichment & checkout step
     await queryClient.prefetchQuery({
         queryKey: ['cart'],
-        queryFn: () => fetchCart,
+        queryFn: fetchCartForCart,
         staleTime: 1000 * 60 * 5,
     });
 

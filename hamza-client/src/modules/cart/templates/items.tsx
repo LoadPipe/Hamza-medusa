@@ -15,7 +15,7 @@ import { IconContext } from 'react-icons';
 import Item from '@modules/cart/components/item';
 import SkeletonLineItem from '@modules/skeletons/components/skeleton-line-item';
 import { useQuery } from '@tanstack/react-query';
-import { fetchCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart';
+import { fetchCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 
 type ExtendedLineItem = LineItem & {
     currency_code?: string;

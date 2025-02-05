@@ -6,13 +6,13 @@ import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import React from 'react';
 import { HiOutlineShoppingCart } from 'react-icons/hi';
 import { useQuery } from '@tanstack/react-query';
-import { fetchCart } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart';
+import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
 
 const OrderSummary = ({ cartId }: { cartId: string }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
     const { data: cart } = useQuery({
         queryKey: ['cart', cartId],
-        queryFn: () => fetchCart(cartId),
+        queryFn: () => fetchCartForCheckout(cartId),
         staleTime: 1000 * 60 * 5,
         enabled: !!cartId,
     });

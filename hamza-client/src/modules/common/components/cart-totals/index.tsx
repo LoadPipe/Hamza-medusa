@@ -4,20 +4,21 @@ import Image from 'next/image';
 import { Cart, Order, LineItem } from '@medusajs/medusa';
 import { formatCryptoPrice } from '@lib/util/get-product-price';
 import { convertPrice } from '@/lib/util/price-conversion';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useCustomerAuthStore } from '@/zustand/customer-auth/customer-auth';
 import { Flex, Text, Divider, Spinner } from '@chakra-ui/react';
 import currencyIcons from '../../../../../public/images/currencies/crypto-currencies';
 import { getCartShippingCost, updateShippingCost } from '@lib/data';
 import { useCartShippingOptions } from 'medusa-react';
-import axios from 'axios';
 import { getClientCookie } from '@lib/util/get-client-cookies';
 import { getPriceByCurrency } from '@/lib/util/get-price-by-currency';
-import { fetchCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart';
+import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
+import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
+import { CartWithCheckoutStep } from '@/types/global';
 import { useQuery } from '@tanstack/react-query';
 
 type CartTotalsProps = {
-    data: Omit<Cart, 'refundable_amount' | 'refunded_total'> | Order;
+    cartId?: string // Option, cartId for checkout flow...
     useCartStyle: boolean;
 };
 
@@ -25,13 +26,15 @@ type ExtendedLineItem = LineItem & {
     currency_code?: string;
 };
 
-const CartTotals: React.FC<{ useCartStyle: boolean }> = ({ useCartStyle }) => {
+const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
 
-    const { data: cart } = useQuery({
-        queryKey: ['cart'],
-        queryFn: fetchCart,
+    // ✅ Determine which fetch function to use based on cartId presence
+    const { data: cart } = useQuery<CartWithCheckoutStep | null>({
+        queryKey: cartId ? ['cart', cartId] : ['cart'],
+        queryFn: cartId ? () => fetchCartForCheckout(cartId) : fetchCartForCart,
         staleTime: 1000 * 60 * 5,
+        enabled: true, // Always fetch
     });
 
 
@@ -44,41 +47,23 @@ const CartTotals: React.FC<{ useCartStyle: boolean }> = ({ useCartStyle }) => {
     });
 
 
-    const getCartSubtotal = (cart: any, currencyCode: string) => {
-        const subtotals: { [key: string]: number } = {};
-        const itemCurrencyCode = currencyCode;
+    // Refactor: Imperative code to Declarative subset (Functional) code
+    const getCartSubtotal = (cart: CartWithCheckoutStep | null, currencyCode: string) => {
+        if (!cart?.items) return { currency: currencyCode, amount: 0 };
 
-        for (const item of cart.items) {
-            const itemPrice = getPriceByCurrency(
-                item.variant.prices,
-                itemCurrencyCode
-            );
-
-            if (itemCurrencyCode?.length) {
-                if (!subtotals[itemCurrencyCode]) {
-                    subtotals[itemCurrencyCode] = 0;
-                }
-                const itemTotal =
-                    Number(itemPrice) * item.quantity -
-                    (item.discount_total ?? 0);
-                subtotals[itemCurrencyCode] += itemTotal;
-            } else {
-                console.log('Currency is missing or invalid for item:', item);
-            }
-        }
-
-        return subtotals[itemCurrencyCode]
-            ? {
-                  currency: itemCurrencyCode,
-                  amount: subtotals[itemCurrencyCode],
-              }
-            : { currency: itemCurrencyCode, amount: 0 };
+        return cart.items.reduce(
+            (total, item) => {
+                const itemPrice = getPriceByCurrency(item.variant.prices, currencyCode);
+                return {
+                    currency: currencyCode,
+                    amount: total.amount + (Number(itemPrice) * item.quantity - (item.discount_total ?? 0)),
+                };
+            },
+            { currency: currencyCode, amount: 0 }
+        );
     };
 
-    const finalSubtotal = getCartSubtotal(
-        cart,
-        preferred_currency_code ?? 'usdc'
-    );
+    const finalSubtotal = getCartSubtotal(cart ?? null, preferred_currency_code ?? 'usdc');
     const taxTotal = cart?.tax_total ?? 0;
     const grandTotal = (finalSubtotal.amount ?? 0) + shippingCost + taxTotal;
     const displayCurrency =

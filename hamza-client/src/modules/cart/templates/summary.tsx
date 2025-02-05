@@ -7,15 +7,15 @@ import DiscountCode from '@modules/checkout/components/discount-code';
 import LocalizedClientLink from '@modules/common/components/localized-client-link';
 import Spinner from '@modules/common/icons/spinner';
 import { useCartStore } from '@/zustand/cart-store/cart-store';
-import { fetchCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart';
 import { useQuery } from '@tanstack/react-query'; // Import Zustand store
+import { fetchCartForCart } from '@/app/[countryCode]/(main)/cart/utils/fetch-cart-for-cart';
 
 
 const Summary = () => {
 
     const { data: cart } = useQuery({
         queryKey: ['cart'],
-        queryFn: fetchCart,
+        queryFn: fetchCartForCart,
         staleTime: 1000 * 60 * 5,
     });
 
