@@ -138,8 +138,8 @@ export class PriceConverter {
         if (baseAddr.length === 0) baseAddr = price.baseCurrency;
         if (toAddr.length === 0) toAddr = price.toCurrency;
 
-        if (price.toCurrency === 'usdt') toAddr = 'usdc';
-        if (price.baseCurrency === 'usdt') baseAddr = 'usdc';
+        if (price.toCurrency === 'usdt') toAddr = getCurrencyAddress('usdc', 1);
+        if (price.baseCurrency === 'usdt') baseAddr = getCurrencyAddress('usdc', 1);
         return await this.restClient.getExchangeRate(baseAddr, toAddr);
     }
 
