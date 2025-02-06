@@ -52,6 +52,7 @@ const Summary = () => {
                     borderRadius={'full'}
                     fontSize={{ base: '14px', md: '16px' }}
                     isDisabled={cart?.items?.length === 0 || isUpdating}
+                    className='checkout-now-button'
                     _hover={{
                         backgroundColor: 'white',
                         color: 'black',

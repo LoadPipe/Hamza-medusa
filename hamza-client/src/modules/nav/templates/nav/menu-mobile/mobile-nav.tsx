@@ -18,6 +18,7 @@ export default async function MobileNav() {
             maxWidth={'1280px'}
             width={'100%'}
             bgColor={'transparent'}
+            className="mobile-nav"
             display={{ base: 'flex', md: 'none' }}
             justifyContent={'space-between'}
             alignItems="center"

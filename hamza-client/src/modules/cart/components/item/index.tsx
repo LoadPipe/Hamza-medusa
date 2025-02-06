@@ -97,7 +97,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
         >
             <Divider borderColor="#3E3E3E" />
 
-            <Flex my="auto">
+            <Flex my="auto" className='cart-item-container'>
                 {/* <Radio mr="2rem" /> */}
 
                 <LocalizedClientLink href={`/products/${handle}`}>
@@ -139,7 +139,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                                 {item?.title}
                             </Text>
                             <Flex ml="auto">
-                                <DeleteButton id={item?.id} />
+                                <DeleteButton id={item?.id} className="delete-button" />
                             </Flex>
                         </Flex>
 

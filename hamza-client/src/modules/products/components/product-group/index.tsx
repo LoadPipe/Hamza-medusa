@@ -114,6 +114,7 @@ const ProductCardGroup = ({
             flexDir={'column'}
             justifyContent={'center'}
             alignItems={'center'}
+            className="product-cards"
             px={{ base: padding.base, md: padding.md }}
         >
             <Grid

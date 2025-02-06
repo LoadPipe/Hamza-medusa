@@ -50,7 +50,7 @@ export default async function Nav() {
             <Flex
                 userSelect={'none'}
                 zIndex={'2'}
-                className="sticky top-0"
+                className="sticky top-0 desktop-nav"
                 width="100%"
                 height={{ base: '60px', md: '125px' }}
                 justifyContent={'center'}
@@ -137,7 +137,7 @@ export default async function Nav() {
                                                 color="white"
                                                 fontWeight="700"
                                             >
-                                                <Text fontSize={'10px'}>
+                                                <Text fontSize={'10px'} className='cart-quantity'>
                                                     {totalItems}
                                                 </Text>
                                             </Flex>

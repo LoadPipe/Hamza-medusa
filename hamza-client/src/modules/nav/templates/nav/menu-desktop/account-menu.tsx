@@ -32,7 +32,7 @@ const AccountMenu = () => {
         }, 0) || 0;
 
     return (
-        <Flex display={{ base: 'none', md: 'flex' }} height={'100%'}>
+        <Flex display={{ base: 'none', md: 'flex' }} height={'100%'} className="account-menu">
             <Menu placement="bottom-end">
                 <MenuButton
                     width={'48px'}
@@ -43,6 +43,7 @@ const AccountMenu = () => {
                     border={'none'}
                     cursor={'pointer'}
                     position="relative"
+                    className="account-menu-button"
                     _hover={{
                         '.profile-icon': {
                             color: 'primary.green.900',
@@ -90,7 +91,7 @@ const AccountMenu = () => {
                             borderColor={'white'}
                         />
                     </Box>
-                    <Link href={`/account/profile`}>
+                    <Link href={`/account/profile`} className="account-profile-link">
                         <MenuItem
                             fontWeight={'600'}
                             my="1rem"

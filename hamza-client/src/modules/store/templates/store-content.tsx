@@ -86,6 +86,7 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
                 width="100%"
                 justifyContent={'center'}
                 alignItems={'center'}
+                className="store-header"
             >
                 <Flex
                     flexDir={'column'}
@@ -128,7 +129,7 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
                             )}
 
                             <Flex flexDir={'column'} alignSelf={'center'}>
-                                <Text fontSize={{ base: '12px', md: '24px' }}>
+                                <Text fontSize={{ base: '12px', md: '24px' }} className="store-name">
                                     {storeName}{' '}
                                     {/* Display the capitalized slug */}
                                 </Text>
@@ -228,6 +229,7 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
                                         fontSize={{ base: '9px', md: '32px' }}
                                         textAlign={'center'}
                                         color="primary.green.900"
+                                        className="store-product-count"
                                     >
                                         {reviewStats.productCount}
                                     </Text>

@@ -337,6 +337,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
             flexDirection={'column'}
             backgroundColor={{ base: 'transparent', md: '#121212' }}
             overflow={'hidden'}
+            className="preview-checkout"
         >
             <Flex gap={{ base: 1, md: 3 }} flexDirection={'column'}>
                 <Heading
@@ -616,6 +617,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                     backgroundColor={'primary.green.900'}
                     disabled={isLoading || !cart} // Disable button while loading or if cart doesn't exist
                     fontSize={{ base: '12px', md: '18px' }}
+                    className="buy-now-button"
                 >
                     {isLoading ? <Spinner /> : 'Buy Now'}{' '}
                     {/* Show spinner when loading */}
@@ -628,6 +630,7 @@ const PreviewCheckout: React.FC<PreviewCheckoutProps> = ({
                 )}
 
                 <Button
+                    className="preview-checkout-add-to-cart"
                     display={{ base: 'none', md: 'flex' }}
                     disabled={(!inStock && !isWhitelisted) || !cart}
                     onClick={() => {

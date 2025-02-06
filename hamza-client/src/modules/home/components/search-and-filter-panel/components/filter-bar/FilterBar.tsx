@@ -79,6 +79,7 @@ const FilterBar = () => {
             width={'100%'}
             alignItems={'center'}
             justifyContent={'center'}
+            className="filter-bar"
             py="2rem"
         >
             <Flex
