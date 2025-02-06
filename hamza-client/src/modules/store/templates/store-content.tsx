@@ -29,7 +29,12 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
     const [storeName, setStoreName] = useState('');
     const router = useRouter();
 
-
+    useEffect(() => {
+        getStorePage().then((r) => {
+            console.log(r);
+            if (r?.length) router.push(r);
+        });
+    }, [params.slug]);
 
     const getStorePage = async () => {
         try {
@@ -53,13 +58,6 @@ export default function StoreContent({ params }: { params: { slug: string } }) {
 
         return '';
     };
-
-    if(params.slug){
-        getStorePage().then((r) => {
-            console.log(r);
-            if (r?.length) router.push(r);
-        });
-    }
 
     let readableDate = 'Invalid date';
     if (reviewStats.createdAt) {
