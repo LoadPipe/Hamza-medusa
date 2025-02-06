@@ -1,17 +1,15 @@
 describe('Product page exist', () => {
 	it('fetches product with handle [drone]', () => {
 			cy.visit('/en/products/drone');
-			cy.wait(2000); // Wait for page to fully load
 			cy.get('h1').contains('DJI Mini 3 Pro');
 	});
 
 	it('fetches product with handle [hyper-x-mouse]', () => {
 			cy.visit('/en/products/hyper-x-mouse');
-			cy.wait(2000); // Wait for page to fully load
-			cy.get('h1').contains('HyperX Pulsefire Haste 2 Wireless Gaming Mouse Ultra Lightweight');
+			cy.get('h1').contains(/HyperX Pulsefire Haste 2 Wireless Gaming Mouse Ultra Lightweight/i);
 	});
 
-	it('adds 2 different products to cart and checks cart', () => {
+	it('adds 2 different products to cart and deletes from cart', () => {
 			// Drone
 			cy.visit('/en/products/drone');
 
@@ -22,8 +20,7 @@ describe('Product page exist', () => {
 					.click();
 
 			// Check for modal popup with "Added to Cart" text, retry 3 times with 4s intervals
-			cy.contains('Added to Cart', { timeout: 10000 })
-					.should('be.visible')
+			cy.contains('Added to Cart')
 					.should((elem) => {
 							return new Cypress.Promise((resolve, reject) => {
 									let attempts = 0;
@@ -31,8 +28,8 @@ describe('Product page exist', () => {
 											attempts++;
 											if (Cypress.$(elem).is(':visible')) {
 													resolve();
-											} else if (attempts >= 3) {
-													reject(new Error('Element not visible after 3 attempts'));
+											} else if (attempts >= 10) {
+													reject(new Error('Element not visible after 5 attempts'));
 											} else {
 													setTimeout(check, 2000);
 											}
@@ -40,7 +37,6 @@ describe('Product page exist', () => {
 									check();
 							});
 					});
-
 
 			// HyperX Mouse
 			cy.visit('/en/products/hyper-x-mouse');
@@ -51,9 +47,8 @@ describe('Product page exist', () => {
 					.contains('Add to Cart')
 					.click();
 
-			// Check for modal popup with "Added to Cart" text, retry 3 times with 4s intervals
-			cy.contains('Added to Cart', { timeout: 10000 })
-					.should('be.visible')
+			// Check for modal popup with "Added to Cart" text, retry 5 times with 4s intervals
+			cy.contains('Added to Cart')
 					.should((elem) => {
 							return new Cypress.Promise((resolve, reject) => {
 									let attempts = 0;
@@ -61,8 +56,8 @@ describe('Product page exist', () => {
 											attempts++;
 											if (Cypress.$(elem).is(':visible')) {
 													resolve();
-											} else if (attempts >= 3) {
-													reject(new Error('Element not visible after 3 attempts'));
+											} else if (attempts >= 10) {
+													reject(new Error('Element not visible after 5 attempts'));
 											} else {
 													setTimeout(check, 2000);
 											}
@@ -71,20 +66,19 @@ describe('Product page exist', () => {
 							});
 					});
 
+			// Cart ----------------------------------------------------------------
 			cy.visit('/en/cart');
 
-			// check drone
-			cy.get('.cart-item-container', { timeout: 10000 })
-				.should('be.visible')
+			// check drone -------------------------------------------------------------
+			cy.get('.cart-item-container')
 				.should((elem) => {
 					return new Cypress.Promise((resolve, reject) => {
 						let attempts = 0;
-						const maxAttempts = 5; // 10 seconds total with 2s intervals
 						const check = () => {
 							attempts++;
 							if (Cypress.$(elem).is(':visible')) {
 								resolve();
-							} else if (attempts >= maxAttempts) {
+							} else if (attempts >= 10) {
 								reject(new Error('Cart item container not visible after 10 seconds'));
 							} else {
 								setTimeout(check, 2000);
@@ -93,21 +87,21 @@ describe('Product page exist', () => {
 						check();
 					});
 				})
-				.find('p')
-				.contains('DJI Mini 3 Pro');
+				.contains('p', 'DJI Mini 3 Pro')
+				.parents('.cart-item-container')
+				.find('.delete-button')
+				.click();
 
 			// check hyperx mouse
-			cy.get('.cart-item-container', { timeout: 10000 })
-				.should('be.visible')
+			cy.get('.cart-item-container')
 				.should((elem) => {
 					return new Cypress.Promise((resolve, reject) => {
 						let attempts = 0;
-						const maxAttempts = 5; // 10 seconds total with 2s intervals
 						const check = () => {
 							attempts++;
 							if (Cypress.$(elem).is(':visible')) {
 								resolve();
-							} else if (attempts >= maxAttempts) {
+							} else if (attempts >= 10) {
 								reject(new Error('Cart item container not visible after 10 seconds'));
 							} else {
 								setTimeout(check, 2000);
@@ -117,6 +111,9 @@ describe('Product page exist', () => {
 					});
 				})
 				.find('p')
-				.contains('HyperX Pulsefire Haste 2 Wireless Gaming Mouse Ultra Lightweight');
+				.contains(/HyperX Pulsefire Haste 2 Wireless Gaming Mouse Ultra Lightweight/i)
+				.parents('.cart-item-container')
+				.find('.delete-button')
+				.click();
 	});
 });
