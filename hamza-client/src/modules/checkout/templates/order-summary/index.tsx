@@ -18,6 +18,7 @@ const OrderSummary = ({ cartId }: { cartId: string }) => {
         staleTime: 1000 * 60 * 5,
         enabled: !!cartId,
     });
+
     // State to control delay for showing ForceWalletConnect
     const { isAuthenticated, showAuthCheck } = useDelayedAuthCheck();
     // If the delay has passed and the user is NOT logged in, show ForceWalletConnect
