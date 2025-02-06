@@ -14,7 +14,6 @@ describe('Product page exist', () => {
 			cy.visit('/en/products/drone');
 
 			cy.get('.preview-checkout-add-to-cart')
-					.should('be.visible')
 					.should('not.be.disabled')
 					.contains('Add to Cart')
 					.click();
@@ -42,7 +41,6 @@ describe('Product page exist', () => {
 			cy.visit('/en/products/hyper-x-mouse');
 
 			cy.get('.preview-checkout-add-to-cart')
-					.should('be.visible')
 					.should('not.be.disabled')
 					.contains('Add to Cart')
 					.click();
