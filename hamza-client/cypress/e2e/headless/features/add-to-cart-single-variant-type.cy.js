@@ -15,7 +15,7 @@ describe('Product page', () => {
             .click();
 
         // Check for modal popup with "Added to Cart" text, retry 3 times with 4s intervals
-        cy.contains('Added to Cart', { timeout: 12000 })
+        cy.contains('Added to Cart', { timeout: 10000 })
             .should('be.visible')
             .should((elem) => {
                 return new Cypress.Promise((resolve, reject) => {
@@ -27,7 +27,7 @@ describe('Product page', () => {
                         } else if (attempts >= 3) {
                             reject(new Error('Element not visible after 3 attempts'));
                         } else {
-                            setTimeout(check, 4000);
+                            setTimeout(check, 2000);
                         }
                     };
                     check();
