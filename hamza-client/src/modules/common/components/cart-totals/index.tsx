@@ -29,7 +29,7 @@ type ExtendedLineItem = LineItem & {
 const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
     const { preferred_currency_code } = useCustomerAuthStore();
 
-    // ✅ Determine which fetch function to use based on cartId presence
+    // Determine which fetch function to use based on cartId presence
     const { data: cart } = useQuery<CartWithCheckoutStep | null>({
         queryKey: cartId ? ['cart', cartId] : ['cart'],
         queryFn: cartId ? () => fetchCartForCheckout(cartId) : fetchCartForCart,
@@ -40,10 +40,10 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
 
 
     const { data: shippingCost, isLoading: loading } = useQuery({
-        queryKey: ['shippingCost', cart?.id, preferred_currency_code], // ✅ Unique key per cart
-        queryFn: () => updateShippingCost(cart!.id), // ✅ Only fetch when cart exists
-        enabled: !!cart?.id, // ✅ Prevents fetching if no cart ID is available
-        staleTime: 1000 * 60 * 5, // ✅ Cache shipping cost for 5 minutes
+        queryKey: ['shippingCost', cart?.id, preferred_currency_code], // Unique key per cart
+        queryFn: () => updateShippingCost(cart!.id), // Only fetch when cart exists
+        enabled: !!cart?.id, // Prevents fetching if no cart ID is available
+        staleTime: 1000 * 60 * 5, // Cache shipping cost for 5 minutes
     });
 
 
@@ -79,12 +79,12 @@ const CartTotals: React.FC<CartTotalsProps> = ({ useCartStyle, cartId }) => {
             );
             return Number(result).toFixed(2);
         },
-        enabled: preferred_currency_code === 'eth', // ✅ Fetch only when preferred currency is ETH
-        staleTime: 1000 * 60 * 5, // ✅ Cache conversion result for 5 minutes
+        enabled: preferred_currency_code === 'eth', //  Fetch only when preferred currency is ETH
+        staleTime: 1000 * 60 * 5, // Cache conversion result for 5 minutes
     });
 
 
-    if (!cart || cart.items.length === 0) return <p>No Cart Data... Refresh</p>; // ✅ Hide totals if cart is empty
+    if (!cart || cart.items.length === 0) return <p>Empty Cart</p>; // Hide totals if cart is empty
 
     return (
         <>

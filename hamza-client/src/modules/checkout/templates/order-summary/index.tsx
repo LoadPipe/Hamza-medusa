@@ -8,6 +8,7 @@ import { HiOutlineShoppingCart } from 'react-icons/hi';
 import { useQuery } from '@tanstack/react-query';
 import { fetchCartForCheckout } from '@/app/[countryCode]/(checkout)/checkout/utils/fetch-cart-for-checkout';
 import ForceWalletConnect from '@modules/common/components/force-wallet-connect';
+import { useDelayedAuthCheck } from '@modules/common/components/force-wallet-connect/components/useDelayedAuthCheck';
 
 const OrderSummary = ({ cartId }: { cartId: string }) => {
     const { preferred_currency_code, authData } = useCustomerAuthStore();
@@ -17,7 +18,13 @@ const OrderSummary = ({ cartId }: { cartId: string }) => {
         staleTime: 1000 * 60 * 5,
         enabled: !!cartId,
     });
-    if (!authData?.customer_id) return <ForceWalletConnect />
+    // State to control delay for showing ForceWalletConnect
+    const { isAuthenticated, showAuthCheck } = useDelayedAuthCheck();
+    // If the delay has passed and the user is NOT logged in, show ForceWalletConnect
+    if (showAuthCheck && !isAuthenticated) {
+        return <ForceWalletConnect />;
+    }
+
     const isCartEmpty = !cart?.items || cart.items.length === 0;
     return (
         <Flex
