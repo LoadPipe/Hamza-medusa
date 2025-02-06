@@ -141,7 +141,7 @@ const Item = ({ item, region, cart_id }: ItemProps) => {
                                 {item?.title}
                             </Text>
                             <Flex ml="auto">
-                                <DeleteButton id={item?.id} />
+                                <DeleteButton id={item?.id} className="delete-button" />
                             </Flex>
                         </Flex>
 
